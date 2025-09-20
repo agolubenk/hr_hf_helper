@@ -1,0 +1,1100 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% load common_filters %}
+
+{% block title %}Бенчмарки зарплат{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/finance.css' %}">
+<style>
+.benchmark-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-16);
+    margin-bottom: var(--space-12);
+    transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.benchmark-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.benchmark-type {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-8);
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.benchmark-type.candidate {
+    background: rgba(40, 167, 69, 0.1);
+    color: var(--color-success);
+}
+
+.benchmark-type.vacancy {
+    background: rgba(0, 123, 255, 0.1);
+    color: var(--color-primary);
+}
+
+.benchmark-amount {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.benchmark-amount-small {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.benchmark-location {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+}
+
+.filters-section {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-16);
+    margin-bottom: var(--space-16);
+}
+
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-12);
+    margin-bottom: var(--space-16);
+}
+
+.stat-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-16);
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.stat-label {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    margin-top: var(--space-4);
+}
+
+[data-theme="dark"] .benchmark-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .benchmark-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .filters-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Стили для коллапсирующих столбцов */
+.collapsible-column {
+    display: none;
+}
+
+.collapsible-column.show {
+    display: table-cell;
+}
+
+.collapsible-toggle {
+    cursor: pointer;
+    user-select: none;
+    padding: 8px 12px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.collapsible-toggle:hover {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.collapsible-toggle.active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+/* Горизонтальный скролл для таблицы */
+.table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-container table {
+    min-width: 800px; /* Минимальная ширина таблицы */
+}
+
+/* Стили для дополнительных полей */
+.additional-field {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: relative;
+    display: inline-block;
+}
+
+.additional-field:hover {
+    overflow: visible;
+    white-space: normal;
+    background: var(--color-surface);
+    padding: 4px;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    word-wrap: break-word;
+    border: 1px solid var(--color-border);
+}
+
+/* Обеспечиваем, что ячейки таблицы остаются в одном ряду */
+.table td {
+    vertical-align: middle;
+    white-space: nowrap;
+    position: relative;
+    max-width: 200px;
+    overflow: hidden;
+}
+
+/* Специальные стили для дополнительных полей в ячейках */
+.table td .additional-field {
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+}
+
+/* Обеспечиваем, что при наведении контент не влияет на размеры таблицы */
+.table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Дополнительные стили для стабильности таблицы */
+.table-container {
+    position: relative;
+}
+
+.table tbody tr {
+    position: relative;
+}
+
+/* Ограничиваем ширину ячеек с дополнительными полями */
+.table td.collapsible-column {
+    max-width: 180px;
+    min-width: 120px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Специальные стили для ячеек с дополнительными полями при наведении */
+.table td.collapsible-column:hover {
+    overflow: visible;
+}
+
+/* Стили для badge в дополнительных полях */
+.additional-field .badge {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Цветные стили для форматов работы */
+.badge.work-format-office {
+    background-color: #007bff !important; /* Синий для офиса */
+    color: white !important;
+}
+
+.badge.work-format-hybrid {
+    background-color: #28a745 !important; /* Зеленый для гибрида */
+    color: white !important;
+}
+
+.badge.work-format-remote {
+    background-color: #fd7e14 !important; /* Оранжевый для удаленки */
+    color: white !important;
+}
+
+.badge.work-format-all-world {
+    background-color: #6f42c1 !important; /* Фиолетовый для all world */
+    color: white !important;
+}
+
+/* Дополнительная специфичность для переопределения Bootstrap */
+.additional-field .badge.work-format-office {
+    background-color: #007bff !important;
+    color: white !important;
+}
+
+.additional-field .badge.work-format-hybrid {
+    background-color: #28a745 !important;
+    color: white !important;
+}
+
+.additional-field .badge.work-format-remote {
+    background-color: #fd7e14 !important;
+    color: white !important;
+}
+
+.additional-field .badge.work-format-all-world {
+    background-color: #6f42c1 !important;
+    color: white !important;
+}
+
+/* Стили для темной темы */
+[data-theme="dark"] .additional-field:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Адаптация цветов для темной темы */
+[data-theme="dark"] .badge.work-format-office {
+    background-color: #0056b3 !important; /* Темнее синий для темной темы */
+    color: white !important;
+}
+
+[data-theme="dark"] .badge.work-format-hybrid {
+    background-color: #1e7e34 !important; /* Темнее зеленый для темной темы */
+    color: white !important;
+}
+
+[data-theme="dark"] .badge.work-format-remote {
+    background-color: #e55a00 !important; /* Темнее оранжевый для темной темы */
+    color: white !important;
+}
+
+[data-theme="dark"] .badge.work-format-all-world {
+    background-color: #5a2d91 !important; /* Темнее фиолетовый для темной темы */
+    color: white !important;
+}
+
+/* Дополнительная специфичность для темной темы */
+[data-theme="dark"] .additional-field .badge.work-format-office {
+    background-color: #0056b3 !important;
+    color: white !important;
+}
+
+[data-theme="dark"] .additional-field .badge.work-format-hybrid {
+    background-color: #1e7e34 !important;
+    color: white !important;
+}
+
+[data-theme="dark"] .additional-field .badge.work-format-remote {
+    background-color: #e55a00 !important;
+    color: white !important;
+}
+
+[data-theme="dark"] .additional-field .badge.work-format-all-world {
+    background-color: #5a2d91 !important;
+    color: white !important;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Хлебные крошки -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'finance:dashboard' %}">Финансы</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'finance:benchmarks_dashboard' %}">Бенчмарки</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Список</li>
+                </ol>
+            </nav>
+
+            <!-- Заголовок -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-1">Бенчмарки зарплат</h1>
+                    <p class="text-muted mb-0">Анализ рынка зарплат по вакансиям и грейдам</p>
+                </div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createBenchmarkModal">
+                    <i class="fas fa-plus me-2"></i>Добавить бенчмарк
+                </button>
+            </div>
+
+            <!-- Статистика -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_count }}</div>
+                    <div class="stat-label">Всего бенчмарков</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ candidate_count }}</div>
+                    <div class="stat-label">Кандидаты</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ vacancy_count }}</div>
+                    <div class="stat-label">Вакансии</div>
+                </div>
+            </div>
+
+            <!-- Фильтры -->
+            <div class="filters-section">
+                <form method="get" class="row g-3">
+                    <div class="col-md-3">
+                        <label for="search" class="form-label">Поиск</label>
+                        <input type="text" class="form-control" id="search" name="search" 
+                               value="{{ search_query }}" placeholder="Поиск по вакансии, грейду, локации...">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="type" class="form-label">Тип</label>
+                        <select class="form-select" id="type" name="type">
+                            <option value="">Все типы</option>
+                            {% for value, label in benchmark_types %}
+                                <option value="{{ value }}" {% if type_filter == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="vacancy" class="form-label">Вакансия</label>
+                        <select class="form-select" id="vacancy" name="vacancy">
+                            <option value="">Все вакансии</option>
+                            {% for vacancy in vacancies %}
+                                <option value="{{ vacancy.id }}" {% if vacancy_filter == vacancy.id|stringformat:"s" %}selected{% endif %}>{{ vacancy.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="grade" class="form-label">Грейд</label>
+                        <select class="form-select" id="grade" name="grade">
+                            <option value="">Все грейды</option>
+                            {% for grade in grades %}
+                                <option value="{{ grade.id }}" {% if grade_filter == grade.id|stringformat:"s" %}selected{% endif %}>{{ grade.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="is_active" class="form-label">Статус</label>
+                        <select class="form-select" id="is_active" name="is_active">
+                            <option value="">Все</option>
+                            <option value="true" {% if status_filter == "true" %}selected{% endif %}>Активные</option>
+                            <option value="false" {% if status_filter == "false" %}selected{% endif %}>Неактивные</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                        <label class="form-label">&nbsp;</label>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <a href="{% url 'finance:benchmarks_list' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Кнопки переключения дополнительных полей -->
+            {% if enabled_fields|length > 5 %}
+            <div class="mb-3">
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="text-muted me-2">Дополнительные поля:</span>
+                    {% if 'work_format' in enabled_fields %}
+                    <button class="collapsible-toggle" data-column="work_format">Формат работы</button>
+                    {% endif %}
+                    {% if 'compensation' in enabled_fields %}
+                    <button class="collapsible-toggle" data-column="compensation">Компенсации</button>
+                    {% endif %}
+                    {% if 'benefits' in enabled_fields %}
+                    <button class="collapsible-toggle" data-column="benefits">Бенефиты</button>
+                    {% endif %}
+                    {% if 'development' in enabled_fields %}
+                    <button class="collapsible-toggle" data-column="development">Развитие</button>
+                    {% endif %}
+                    {% if 'technologies' in enabled_fields %}
+                    <button class="collapsible-toggle" data-column="technologies">Технологии</button>
+                    {% endif %}
+                    {% if 'domain' in enabled_fields %}
+                    <button class="collapsible-toggle" data-column="domain">Домен</button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Список бенчмарков -->
+            <div class="card">
+                <div class="card-body">
+                    {% if page_obj %}
+                        <div class="table-responsive table-container">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Тип</th>
+                                        <th>Вакансия</th>
+                                        <th>Грейд</th>
+                                        <th>Сумма</th>
+                                        <th>Локация</th>
+                                        {% if 'work_format' in enabled_fields %}
+                                        <th class="collapsible-column" data-column="work_format">Формат работы</th>
+                                        {% endif %}
+                                        {% if 'compensation' in enabled_fields %}
+                                        <th class="collapsible-column" data-column="compensation">Компенсации</th>
+                                        {% endif %}
+                                        {% if 'benefits' in enabled_fields %}
+                                        <th class="collapsible-column" data-column="benefits">Бенефиты</th>
+                                        {% endif %}
+                                        {% if 'development' in enabled_fields %}
+                                        <th class="collapsible-column" data-column="development">Развитие</th>
+                                        {% endif %}
+                                        {% if 'technologies' in enabled_fields %}
+                                        <th class="collapsible-column" data-column="technologies">Технологии</th>
+                                        {% endif %}
+                                        {% if 'domain' in enabled_fields %}
+                                        <th class="collapsible-column" data-column="domain">Домен</th>
+                                        {% endif %}
+                                        <th>Дата</th>
+                                        <th>Статус</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for benchmark in page_obj %}
+                                    <tr>
+                                        <td>
+                                            <span class="benchmark-type {{ benchmark.type }}" title="{{ benchmark.get_type_display }}">
+                                                <i class="{{ benchmark.type_icon }}"></i>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <strong>{{ benchmark.vacancy.name }}</strong>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-primary">{{ benchmark.grade.name }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="benchmark-amount-small">{{ benchmark.get_salary_display }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="benchmark-location">
+                                                <i class="fas fa-map-marker-alt me-1"></i>{{ benchmark.location|get_country }}
+                                            </div>
+                                        </td>
+                                        {% if 'work_format' in enabled_fields %}
+                                        <td class="collapsible-column" data-column="work_format">
+                                            {% if benchmark.work_format %}
+                                                <span class="additional-field" title="{{ benchmark.get_work_format_display }}">
+                                                    {% if benchmark.work_format == 'офис' %}
+                                                        <span class="badge work-format-office">{{ benchmark.get_work_format_display }}</span>
+                                                    {% elif benchmark.work_format == 'гибрид' %}
+                                                        <span class="badge work-format-hybrid">{{ benchmark.get_work_format_display }}</span>
+                                                    {% elif benchmark.work_format == 'удаленка' %}
+                                                        <span class="badge work-format-remote">{{ benchmark.get_work_format_display }}</span>
+                                                    {% elif benchmark.work_format == 'all world' %}
+                                                        <span class="badge work-format-all-world">{{ benchmark.get_work_format_display }}</span>
+                                                    {% else %}
+                                                        <span class="badge bg-secondary">{{ benchmark.get_work_format_display }}</span>
+                                                    {% endif %}
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">—</span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+                                        {% if 'compensation' in enabled_fields %}
+                                        <td class="collapsible-column" data-column="compensation">
+                                            {% if benchmark.compensation %}
+                                                <span class="additional-field" title="{{ benchmark.compensation }}">
+                                                    <small class="text-muted">{{ benchmark.compensation }}</small>
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">—</span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+                                        {% if 'benefits' in enabled_fields %}
+                                        <td class="collapsible-column" data-column="benefits">
+                                            {% if benchmark.benefits %}
+                                                <span class="additional-field" title="{{ benchmark.benefits }}">
+                                                    <small class="text-muted">{{ benchmark.benefits }}</small>
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">—</span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+                                        {% if 'development' in enabled_fields %}
+                                        <td class="collapsible-column" data-column="development">
+                                            {% if benchmark.development %}
+                                                <span class="additional-field" title="{{ benchmark.development }}">
+                                                    <small class="text-muted">{{ benchmark.development }}</small>
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">—</span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+                                        {% if 'technologies' in enabled_fields %}
+                                        <td class="collapsible-column" data-column="technologies">
+                                            {% if benchmark.technologies %}
+                                                <span class="additional-field" title="{{ benchmark.technologies }}">
+                                                    <small class="text-muted">{{ benchmark.technologies }}</small>
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">—</span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+                                        {% if 'domain' in enabled_fields %}
+                                        <td class="collapsible-column" data-column="domain">
+                                            {% if benchmark.domain %}
+                                                <span class="additional-field" title="{{ benchmark.domain }}">
+                                                    <small class="text-muted">{{ benchmark.domain }}</small>
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">—</span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+                                        <td>
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar me-1"></i>{{ benchmark.date_added|date:"d.m.Y" }}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            {% if benchmark.is_active %}
+                                                <span class="badge bg-success">Активен</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Неактивен</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{% url 'finance:benchmark_detail' benchmark.pk %}" 
+                                                   class="btn btn-outline-primary" title="Просмотр">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{% url 'finance:benchmark_edit' benchmark.pk %}" 
+                                                   class="btn btn-outline-secondary" title="Редактировать">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button class="btn btn-outline-danger delete-benchmark-btn" 
+                                                        data-benchmark-id="{{ benchmark.pk }}"
+                                                        title="Удалить">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">Бенчмарки не найдены</h4>
+                            <p class="text-muted">Попробуйте изменить фильтры или добавьте первый бенчмарк</p>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createBenchmarkModal">
+                                <i class="fas fa-plus me-2"></i>Добавить бенчмарк
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Пагинация -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Пагинация бенчмарков">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page=1">Первая</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}">Предыдущая</a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.next_page_number }}">Следующая</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.paginator.num_pages }}">Последняя</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно создания бенчмарка -->
+<div class="modal fade" id="createBenchmarkModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Добавить бенчмарк</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="createBenchmarkForm">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="createType" class="form-label">Тип бенчмарка *</label>
+                            <select class="form-select" id="createType" name="type" required>
+                                <option value="">Выберите тип</option>
+                                {% for value, label in benchmark_types %}
+                                    <option value="{{ value }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="createSalaryFrom" class="form-label">Зарплата от (USD) *</label>
+                            <input type="number" class="form-control" id="createSalaryFrom" name="salary_from" 
+                                   step="0.01" min="0" required placeholder="3000.00">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="createSalaryTo" class="form-label">Зарплата до (USD)</label>
+                            <input type="number" class="form-control" id="createSalaryTo" name="salary_to" 
+                                   step="0.01" min="0" placeholder="5000.00">
+                            <div class="form-text">Оставьте пустым для кандидатов или если указана только одна сумма</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="createVacancy" class="form-label">Вакансия *</label>
+                            <select class="form-select" id="createVacancy" name="vacancy_id" required>
+                                <option value="">Выберите вакансию</option>
+                                {% for vacancy in vacancies %}
+                                    <option value="{{ vacancy.id }}">{{ vacancy.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="createGrade" class="form-label">Грейд *</label>
+                            <select class="form-select" id="createGrade" name="grade_id" required>
+                                <option value="">Выберите грейд</option>
+                                {% for grade in grades %}
+                                    <option value="{{ grade.id }}">{{ grade.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="createLocation" class="form-label">Локация *</label>
+                            <input type="text" class="form-control" id="createLocation" name="location" 
+                                   required placeholder="Минск, Беларусь">
+                        </div>
+                        <div class="col-12">
+                            <label for="createNotes" class="form-label">Примечания</label>
+                            <textarea class="form-control" id="createNotes" name="notes" rows="3" 
+                                      placeholder="Дополнительная информация о бенчмарке..."></textarea>
+                        </div>
+                        
+                        <!-- Дополнительные поля в зависимости от настроек -->
+                        {% if 'work_format' in enabled_fields %}
+                        <div class="col-md-6">
+                            <label for="createWorkFormat" class="form-label">Формат работы</label>
+                            <select class="form-select" id="createWorkFormat" name="work_format">
+                                <option value="">Выберите формат</option>
+                                <option value="офис">Офис</option>
+                                <option value="гибрид">Гибрид</option>
+                                <option value="удаленка">Удаленка</option>
+                                <option value="all world">All World</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        
+                        {% if 'compensation' in enabled_fields %}
+                        <div class="col-12">
+                            <label for="createCompensation" class="form-label">Компенсации</label>
+                            <textarea class="form-control" id="createCompensation" name="compensation" rows="2" 
+                                      placeholder="Дополнительные компенсации и бонусы..."></textarea>
+                        </div>
+                        {% endif %}
+                        
+                        {% if 'benefits' in enabled_fields %}
+                        <div class="col-12">
+                            <label for="createBenefits" class="form-label">Бенефиты</label>
+                            <textarea class="form-control" id="createBenefits" name="benefits" rows="2" 
+                                      placeholder="Социальные льготы и бенефиты..."></textarea>
+                        </div>
+                        {% endif %}
+                        
+                        {% if 'development' in enabled_fields %}
+                        <div class="col-12">
+                            <label for="createDevelopment" class="form-label">Развитие/обучение</label>
+                            <textarea class="form-control" id="createDevelopment" name="development" rows="2" 
+                                      placeholder="Возможности для развития и обучения..."></textarea>
+                        </div>
+                        {% endif %}
+                        
+                        {% if 'technologies' in enabled_fields %}
+                        <div class="col-12">
+                            <label for="createTechnologies" class="form-label">Технологии</label>
+                            <textarea class="form-control" id="createTechnologies" name="technologies" rows="2" 
+                                      placeholder="Используемые технологии и стеки..."></textarea>
+                        </div>
+                        {% endif %}
+                        
+                        {% if 'domain' in enabled_fields %}
+                        <div class="col-12">
+                            <label for="createDomain" class="form-label">Домен</label>
+                            <input type="text" class="form-control" id="createDomain" name="domain" 
+                                   placeholder="Домен деятельности компании">
+                        </div>
+                        {% endif %}
+                        
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="createIsActive" name="is_active" checked>
+                                <label class="form-check-label" for="createIsActive">
+                                    Активен
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Создать бенчмарк</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Создание бенчмарка
+document.getElementById('createBenchmarkForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+    
+    try {
+        const response = await fetch('{% url "finance:benchmark_create" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showAlert('success', result.message);
+            bootstrap.Modal.getInstance(document.getElementById('createBenchmarkModal')).hide();
+            this.reset();
+            location.reload();
+        } else {
+            showAlert('error', result.message);
+        }
+    } catch (error) {
+        showAlert('error', 'Ошибка при создании бенчмарка');
+    }
+});
+
+// Функции для редактирования и удаления
+function editBenchmark(id) {
+    // TODO: Реализовать редактирование
+    showAlert('info', 'Функция редактирования будет добавлена');
+}
+
+function deleteBenchmark(id) {
+    if (confirm('Вы уверены, что хотите удалить этот бенчмарк?')) {
+        fetch(`/finance/benchmarks/${id}/delete/`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                showAlert('success', result.message);
+                location.reload();
+            } else {
+                showAlert('error', result.message);
+            }
+        })
+        .catch(error => {
+            showAlert('error', 'Ошибка при удалении бенчмарка');
+        });
+    }
+}
+
+// Функция показа уведомлений
+function showAlert(type, message) {
+    const alertClass = type === 'success' ? 'alert-success' : 
+                      type === 'error' ? 'alert-danger' : 'alert-info';
+    
+    const alert = document.createElement('div');
+    alert.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
+    alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    alert.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(alert);
+    
+    setTimeout(() => {
+        if (alert.parentNode) {
+            alert.parentNode.removeChild(alert);
+        }
+    }, 5000);
+}
+// Переключатель темы для Huntflow
+// Функция для переключения темы
+function toggleTheme() {
+    console.log('🔄 Huntflow: Переключение темы...');
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    console.log('📊 Huntflow: Текущая тема:', currentTheme);
+    console.log('🎯 Huntflow: Новая тема:', newTheme);
+    
+    // Устанавливаем новую тему
+    html.setAttribute('data-theme', newTheme);
+    console.log('✅ Huntflow: Атрибут data-theme установлен:', html.getAttribute('data-theme'));
+    
+    // Принудительно обновляем CSS переменные
+    const root = document.documentElement;
+    if (newTheme === 'dark') {
+        root.style.setProperty('--color-background', '#0d1117');
+        root.style.setProperty('--color-surface', '#161b22');
+        root.style.setProperty('--color-text', 'var(--color-luna-400)');
+        root.style.setProperty('--color-primary', 'var(--color-pink-400)');
+        console.log('🌙 Huntflow: Принудительно установлены темные цвета');
+    } else {
+        root.style.setProperty('--color-background', '#ffffff');
+        root.style.setProperty('--color-surface', '#ffffff');
+        root.style.setProperty('--color-text', '#13343b');
+        root.style.setProperty('--color-primary', 'var(--color-lime-500)');
+        console.log('☀️ Huntflow: Принудительно установлены светлые цвета');
+    }
+    
+    // Сохраняем в localStorage
+    localStorage.setItem('theme', newTheme);
+    console.log('💾 Huntflow: Тема сохранена в localStorage:', localStorage.getItem('theme'));
+    
+    // Обновляем иконку
+    updateThemeIcon(newTheme);
+    
+    // Показываем уведомление
+    showThemeNotification(newTheme);
+}
+
+// Функция для обновления иконки темы
+function updateThemeIcon(theme) {
+    const themeIcon = document.getElementById('themeIcon');
+    if (themeIcon) {
+        if (theme === 'dark') {
+            themeIcon.className = 'fas fa-moon';
+        } else {
+            themeIcon.className = 'fas fa-sun';
+        }
+        console.log('🎨 Huntflow: Иконка обновлена для темы:', theme);
+    }
+}
+
+// Функция для показа уведомления о смене темы
+function showThemeNotification(theme) {
+    const themeName = theme === 'dark' ? 'Тёмная' : 'Светлая';
+    
+    // Создаем уведомление
+    const notification = document.createElement('div');
+    notification.className = 'alert alert-info alert-dismissible fade show position-fixed';
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 200px;';
+    
+    notification.innerHTML = `
+        <i class="fas fa-${theme === 'dark' ? 'moon' : 'sun'} me-2"></i>
+        Переключено на ${themeName} тему
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    // Добавляем на страницу
+    document.body.appendChild(notification);
+    
+    // Автоматически удаляем через 3 секунды
+    setTimeout(function() {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 3000);
+}
+
+// Управление коллапсирующими столбцами
+document.addEventListener('DOMContentLoaded', function() {
+    // Инициализация коллапсирующих столбцов
+    const collapsibleToggles = document.querySelectorAll('.collapsible-toggle');
+    const collapsibleColumns = document.querySelectorAll('.collapsible-column');
+    
+    // Загружаем сохраненное состояние из localStorage
+    const savedColumns = JSON.parse(localStorage.getItem('benchmarkColumns') || '{}');
+    
+    // Применяем сохраненное состояние
+    collapsibleToggles.forEach(toggle => {
+        const columnName = toggle.dataset.column;
+        const isVisible = savedColumns[columnName] || false;
+        
+        if (isVisible) {
+            toggle.classList.add('active');
+            // Показываем соответствующие столбцы
+            const columns = document.querySelectorAll(`[data-column="${columnName}"]`);
+            columns.forEach(col => col.classList.add('show'));
+        }
+    });
+    
+    // Обработчики кликов для кнопок переключения
+    collapsibleToggles.forEach(toggle => {
+        toggle.addEventListener('click', function() {
+            const columnName = this.dataset.column;
+            const isActive = this.classList.contains('active');
+            
+            if (isActive) {
+                // Скрываем столбцы
+                this.classList.remove('active');
+                const columns = document.querySelectorAll(`[data-column="${columnName}"]`);
+                columns.forEach(col => col.classList.remove('show'));
+                savedColumns[columnName] = false;
+            } else {
+                // Показываем столбцы
+                this.classList.add('active');
+                const columns = document.querySelectorAll(`[data-column="${columnName}"]`);
+                columns.forEach(col => col.classList.add('show'));
+                savedColumns[columnName] = true;
+            }
+            
+            // Сохраняем состояние в localStorage
+            localStorage.setItem('benchmarkColumns', JSON.stringify(savedColumns));
+        });
+    });
+    
+    // Обработчики для кнопок удаления
+    const deleteButtons = document.querySelectorAll('.delete-benchmark-btn');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const benchmarkId = this.dataset.benchmarkId;
+            deleteBenchmark(benchmarkId);
+        });
+    });
+});
+
+// Инициализация темы при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Huntflow: Инициализация переключателя темы...');
+    
+    // Получаем сохраненную тему или используем системную
+    const savedTheme = localStorage.getItem('theme');
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    const theme = savedTheme || systemTheme;
+    
+    console.log('💾 Huntflow: Сохраненная тема:', savedTheme);
+    console.log('🖥️ Huntflow: Системная тема:', systemTheme);
+    console.log('🎯 Huntflow: Выбранная тема:', theme);
+    
+    // Устанавливаем тему
+    document.documentElement.setAttribute('data-theme', theme);
+    console.log('✅ Huntflow: Атрибут data-theme установлен при загрузке:', document.documentElement.getAttribute('data-theme'));
+    
+    // Принудительно обновляем CSS переменные при загрузке
+    const root = document.documentElement;
+    if (theme === 'dark') {
+        root.style.setProperty('--color-background', '#0d1117');
+        root.style.setProperty('--color-surface', '#161b22');
+        root.style.setProperty('--color-text', 'var(--color-luna-400)');
+        root.style.setProperty('--color-primary', 'var(--color-pink-400)');
+        console.log('🌙 Huntflow: Принудительно установлены темные цвета при загрузке');
+    } else {
+        root.style.setProperty('--color-background', '#ffffff');
+        root.style.setProperty('--color-surface', '#ffffff');
+        root.style.setProperty('--color-text', '#13343b');
+        root.style.setProperty('--color-primary', 'var(--color-lime-500)');
+        console.log('☀️ Huntflow: Принудительно установлены светлые цвета при загрузке');
+    }
+    
+    // Обновляем иконку
+    updateThemeIcon(theme);
+    
+    // Добавляем обработчик клика на кнопку переключения темы
+    const themeToggle = document.getElementById('themeToggle');
+    console.log('🔘 Huntflow: Кнопка переключения темы найдена:', themeToggle);
+    if (themeToggle) {
+        // Удаляем старые обработчики, если они есть
+        themeToggle.removeEventListener('click', toggleTheme);
+        // Добавляем новый обработчик
+        themeToggle.addEventListener('click', toggleTheme);
+        console.log('✅ Huntflow: Обработчик клика добавлен');
+    } else {
+        console.error('❌ Huntflow: Кнопка переключения темы не найдена!');
+    }
+    
+    // Слушаем изменения системной темы
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+        if (!localStorage.getItem('theme')) {
+            const newTheme = e.matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+    });
+    
+    console.log('✅ Huntflow: Инициализация переключателя темы завершена');
+    
+    // Глобальная функция для тестирования
+    window.testThemeToggle = function() {
+        console.log('🧪 Huntflow: Тестируем переключение темы...');
+        toggleTheme();
+    };
+});
+</script>
+{% endblock %}
+

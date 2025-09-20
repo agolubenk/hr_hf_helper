@@ -1,0 +1,137 @@
+Watching for file changes with StatReloader
+[20/Sep/2025 00:28:13] "GET / HTTP/1.1" 302 0
+[20/Sep/2025 00:28:35] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
+/Users/agolubenko/hrhelper/backend/config/settings.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 00:28:08
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+💾 Сохранены события календаря в кэш: 28 событий
+🔍 API CALENDAR EVENTS: Получено 28 событий из API
+🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/backend/config/urls.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+
+You have 2 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): django_telethon.
+Run 'python manage.py migrate' to apply them.
+September 20, 2025 - 00:30:17
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+Watching for file changes with StatReloader
+[20/Sep/2025 00:33:34] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
+[20/Sep/2025 00:38:34] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
+[20/Sep/2025 00:43:34] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
+[20/Sep/2025 01:23:37] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
+[20/Sep/2025 01:28:36] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
+[20/Sep/2025 01:33:36] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
+[20/Sep/2025 01:38:37] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
+[20/Sep/2025 01:43:36] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
+[20/Sep/2025 01:48:36] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
+[20/Sep/2025 01:53:36] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
+/Users/agolubenko/hrhelper/backend/config/settings.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+
+You have 2 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): django_telethon.
+Run 'python manage.py migrate' to apply them.
+September 20, 2025 - 00:30:19
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+💾 Сохранены события календаря в кэш: 28 событий
+🔍 API CALENDAR EVENTS: Получено 28 событий из API
+🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
+💾 Сохранены события календаря в кэш: 28 событий
+🔍 API CALENDAR EVENTS: Получено 28 событий из API
+🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
+💾 Сохранены события календаря в кэш: 28 событий
+🔍 API CALENDAR EVENTS: Получено 28 событий из API
+🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
+💾 Сохранены события календаря в кэш: 28 событий
+🔍 API CALENDAR EVENTS: Получено 28 событий из API
+🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
+💾 Сохранены события календаря в кэш: 28 событий
+🔍 API CALENDAR EVENTS: Получено 28 событий из API
+🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
+💾 Сохранены события календаря в кэш: 28 событий
+🔍 API CALENDAR EVENTS: Получено 28 событий из API
+🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
+💾 Сохранены события календаря в кэш: 28 событий
+🔍 API CALENDAR EVENTS: Получено 28 событий из API
+🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
+💾 Сохранены события календаря в кэш: 28 событий
+🔍 API CALENDAR EVENTS: Получено 28 событий из API
+🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
+💾 Сохранены события календаря в кэш: 28 событий
+🔍 API CALENDAR EVENTS: Получено 28 событий из API
+🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
+💾 Сохранены события календаря в кэш: 28 событий
+🔍 API CALENDAR EVENTS: Получено 28 событий из API
+🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/backend/config/settings.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+
+You have 2 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): django_telethon.
+Run 'python manage.py migrate' to apply them.
+September 20, 2025 - 01:56:18
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/backend/config/settings.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+
+You have 2 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): django_telethon.
+Run 'python manage.py migrate' to apply them.
+September 20, 2025 - 01:56:24
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+Watching for file changes with StatReloader
+[20/Sep/2025 01:58:36] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
+/Users/agolubenko/hrhelper/backend/config/settings.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+
+You have 2 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): django_telethon.
+Run 'python manage.py migrate' to apply them.
+September 20, 2025 - 01:56:30
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+💾 Сохранены события календаря в кэш: 28 событий
+🔍 API CALENDAR EVENTS: Получено 28 событий из API
+🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
+Watching for file changes with StatReloader

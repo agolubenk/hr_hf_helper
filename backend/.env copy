@@ -1,0 +1,7 @@
+# Telegram API настройки
+# Получите эти ключи на https://my.telegram.org
+TELEGRAM_API_ID=11383291
+TELEGRAM_API_HASH=cb4a2adc6b83e9f0cca5b659f407a01c
+
+# Уровень логирования
+TELEGRAM_LOG_LEVEL=INFO

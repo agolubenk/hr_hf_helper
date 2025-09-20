@@ -1,0 +1,525 @@
+/* =============================================================================
+   SOCIAL ACCOUNT APP - СТИЛИ
+   Социальные аккаунты и авторизация
+   ============================================================================= */
+
+/* === СТИЛИ ДЛЯ КАРТОЧЕК СОЦИАЛЬНЫХ АККАУНТОВ === */
+.social-account-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: white;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.social-account-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.social-account-card .card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px 15px 0 0;
+    border: none;
+    padding: 1.5rem;
+}
+
+.social-account-card .card-title {
+    color: white;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.social-account-card .card-body {
+    padding: 1.5rem;
+}
+
+/* === СТИЛИ ДЛЯ ОШИБОК АВТОРИЗАЦИИ === */
+.auth-error-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: white;
+    overflow: hidden;
+}
+
+.auth-error-card .card-header {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    border-radius: 15px 15px 0 0;
+    border: none;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.auth-error-card .card-title {
+    color: white;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.auth-error-card .card-body {
+    padding: 2rem;
+    text-align: center;
+}
+
+.auth-error-icon {
+    font-size: 4rem;
+    color: #dc3545;
+    margin-bottom: 1rem;
+}
+
+.auth-error-title {
+    color: #dc3545;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.auth-error-description {
+    color: #6c757d;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+/* === СТИЛИ ДЛЯ ПОДКЛЮЧЕННЫХ АККАУНТОВ === */
+.connected-accounts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.connected-account-item {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1rem;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.connected-account-item:hover {
+    border-color: #667eea;
+    background: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+}
+
+.connected-account-item.selected {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.connected-account-icon {
+    font-size: 2rem;
+    margin-right: 1rem;
+    width: 50px;
+    text-align: center;
+}
+
+.connected-account-icon.google {
+    color: #db4437;
+}
+
+.connected-account-icon.default {
+    color: #6c757d;
+}
+
+.connected-account-info h6 {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.connected-account-info small {
+    color: #6c757d;
+}
+
+/* === СТИЛИ ДЛЯ ФОРМ ПОДКЛЮЧЕНИЯ === */
+.social-signup-form {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 1px solid #e9ecef;
+}
+
+.social-signup-form .form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.social-signup-form .form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.social-signup-form .form-label {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.social-signup-form .form-text {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+/* === СТИЛИ ДЛЯ ИНФОРМАЦИИ ИЗ GOOGLE === */
+.google-info-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 1px solid #dee2e6;
+}
+
+.google-info-card h6 {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.google-info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.google-info-item:last-child {
+    border-bottom: none;
+}
+
+.google-info-label {
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.google-info-value {
+    color: #212529;
+    font-weight: 600;
+}
+
+/* === СТИЛИ ДЛЯ КНОПОК СОЦИАЛЬНЫХ АККАУНТОВ === */
+.social-btn {
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.social-btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.social-btn-primary:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: translateY(-1px);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.social-btn-google {
+    background: linear-gradient(135deg, #db4437 0%, #c23321 100%);
+    color: white;
+}
+
+.social-btn-google:hover {
+    background: linear-gradient(135deg, #c23321 0%, #a52a1a 100%);
+    transform: translateY(-1px);
+    color: white;
+    box-shadow: 0 4px 12px rgba(219, 68, 55, 0.3);
+}
+
+.social-btn-outline-secondary {
+    background: transparent;
+    color: #6c757d;
+    border: 2px solid #6c757d;
+}
+
+.social-btn-outline-secondary:hover {
+    background: #6c757d;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* === СТИЛИ ДЛЯ ОТЛАДКИ === */
+.debug-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 1px solid #e9ecef;
+    margin-bottom: 1rem;
+}
+
+.debug-info {
+    background: #e9ecef;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+
+.debug-info h6 {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.debug-info ul {
+    margin-bottom: 0;
+    padding-left: 1.5rem;
+}
+
+.debug-info li {
+    margin-bottom: 0.25rem;
+}
+
+.debug-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.debug-btn {
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.debug-btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.debug-btn-primary:hover {
+    background: #0056b3;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.debug-btn-warning {
+    background: #ffc107;
+    color: #212529;
+}
+
+.debug-btn-warning:hover {
+    background: #e0a800;
+    color: #212529;
+    transform: translateY(-1px);
+}
+
+.debug-btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.debug-btn-danger:hover {
+    background: #c82333;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* === СТИЛИ ДЛЯ ПРЕДУПРЕЖДЕНИЙ === */
+.social-alert {
+    border: none;
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.social-alert.alert-info {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    color: #0c5460;
+    border-left: 4px solid #17a2b8;
+}
+
+.social-alert.alert-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    color: #856404;
+    border-left: 4px solid #ffc107;
+}
+
+.social-alert.alert-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+}
+
+.social-alert h6 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.social-alert ul {
+    margin-bottom: 0;
+    padding-left: 1.5rem;
+}
+
+.social-alert li {
+    margin-bottom: 0.25rem;
+}
+
+/* === СТИЛИ ДЛЯ ИНСТРУКЦИЙ === */
+.social-instructions {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 1px solid #e9ecef;
+    margin-bottom: 1rem;
+}
+
+.social-instructions h6 {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.social-instructions ol,
+.social-instructions ul {
+    margin-bottom: 0;
+    padding-left: 1.5rem;
+}
+
+.social-instructions li {
+    margin-bottom: 0.5rem;
+    color: #6c757d;
+}
+
+.social-instructions strong {
+    color: #495057;
+}
+
+.social-instructions a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.social-instructions a:hover {
+    text-decoration: underline;
+}
+
+/* === АДАПТИВНОСТЬ === */
+@media (max-width: 768px) {
+    .social-account-card .card-body {
+        padding: 1rem;
+    }
+    
+    .connected-accounts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .connected-account-item {
+        padding: 0.75rem;
+    }
+    
+    .connected-account-icon {
+        font-size: 1.5rem;
+        margin-right: 0.75rem;
+        width: 40px;
+    }
+    
+    .social-signup-form {
+        padding: 1rem;
+    }
+    
+    .google-info-card {
+        padding: 1rem;
+    }
+    
+    .debug-card {
+        padding: 1rem;
+    }
+    
+    .debug-buttons {
+        flex-direction: column;
+    }
+    
+    .debug-btn {
+        justify-content: center;
+    }
+    
+    .social-instructions {
+        padding: 1rem;
+    }
+}
+
+/* === АНИМАЦИИ === */
+@keyframes socialFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.social-account-card {
+    animation: socialFadeIn 0.6s ease-out;
+}
+
+.connected-account-item {
+    animation: socialFadeIn 0.6s ease-out;
+    animation-delay: 0.1s;
+    animation-fill-mode: both;
+}
+
+.social-signup-form {
+    animation: socialFadeIn 0.6s ease-out;
+    animation-delay: 0.2s;
+    animation-fill-mode: both;
+}
+
+.google-info-card {
+    animation: socialFadeIn 0.6s ease-out;
+    animation-delay: 0.3s;
+    animation-fill-mode: both;
+}
+
+/* === ДОПОЛНИТЕЛЬНЫЕ УТИЛИТЫ === */
+.social-text-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.social-bg-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.social-shadow-soft {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.social-shadow-medium {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.social-shadow-strong {
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}

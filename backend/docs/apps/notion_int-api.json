@@ -1,0 +1,1064 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Notion Integration API",
+    "version": "1.0.0",
+    "description": "API endpoints for Notion integration, page synchronization, caching, and Huntflow transfer in the HR Helper system."
+  },
+  "servers": [
+    {
+      "url": "/api/v1/notion-int/"
+    }
+  ],
+  "paths": {
+    "/settings/": {
+      "get": {
+        "summary": "Get Notion Settings",
+        "description": "Retrieve the Notion integration settings for the authenticated user.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notion settings for the user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotionSettings"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Settings not found."
+          }
+        }
+      },
+      "post": {
+        "summary": "Update Notion Settings",
+        "description": "Update the Notion integration settings for the authenticated user.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotionSettingsUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Settings updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid settings data."
+          }
+        }
+      }
+    },
+    "/settings/test-connection/": {
+      "post": {
+        "summary": "Test Notion Connection",
+        "description": "Test the connection to Notion API using the user's integration token.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Connection test result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/settings/databases/": {
+      "get": {
+        "summary": "Get Available Databases",
+        "description": "Retrieve the list of available Notion databases for the authenticated user.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of available databases.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "databases": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "plain_text": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pages/": {
+      "get": {
+        "summary": "List Notion Pages",
+        "description": "Retrieve a paginated list of cached Notion pages for the authenticated user with optional filtering and search.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search query for page title, content, or status"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by page status"
+          },
+          {
+            "name": "priority",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by page priority"
+          },
+          {
+            "name": "assignee",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by assignee"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "-date_updated"
+            },
+            "description": "Sort order (e.g., '-date_updated', 'title', 'status')"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A paginated list of Notion pages.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/NotionPage"
+                      }
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "next": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "previous": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pages/{page_id}/": {
+      "get": {
+        "summary": "Retrieve a Notion Page",
+        "description": "Retrieve detailed information about a specific Notion page by ID.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the Notion page."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Details of the Notion page.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotionPageDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Page not found."
+          }
+        }
+      }
+    },
+    "/sync/": {
+      "post": {
+        "summary": "Sync Notion Pages",
+        "description": "Trigger synchronization of Notion pages from the configured database.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Synchronization completed successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "pages_processed": {
+                      "type": "integer"
+                    },
+                    "pages_created": {
+                      "type": "integer"
+                    },
+                    "pages_updated": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Synchronization failed or settings incomplete."
+          }
+        }
+      }
+    },
+    "/clear-cache/": {
+      "post": {
+        "summary": "Clear Notion Cache",
+        "description": "Clear all cached Notion pages for the authenticated user.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cache cleared successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transfer-to-huntflow/": {
+      "post": {
+        "summary": "Transfer Notion Page to Huntflow",
+        "description": "Transfer data from a Notion page to Huntflow as a candidate.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotionTransferRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transfer completed successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "applicant_id": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Transfer failed or invalid data."
+          },
+          "404": {
+            "description": "Page not found."
+          }
+        }
+      }
+    },
+    "/sync-logs/": {
+      "get": {
+        "summary": "List Sync Logs",
+        "description": "Retrieve a paginated list of synchronization logs for the authenticated user.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A paginated list of sync logs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/NotionSyncLog"
+                      }
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "next": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "previous": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bulk-imports/": {
+      "get": {
+        "summary": "List Bulk Imports",
+        "description": "Retrieve a paginated list of bulk import operations for the authenticated user.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["running", "completed", "failed", "cancelled", "stopped"]
+            },
+            "description": "Filter by import status"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A paginated list of bulk imports.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/NotionBulkImport"
+                      }
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "next": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "previous": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Start Bulk Import",
+        "description": "Start a bulk import operation for Notion pages.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotionBulkImportRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Bulk import started successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotionBulkImport"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid import parameters."
+          }
+        }
+      }
+    },
+    "/bulk-imports/{id}/": {
+      "get": {
+        "summary": "Retrieve Bulk Import",
+        "description": "Retrieve details of a specific bulk import operation by ID.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the bulk import."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Details of the bulk import.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotionBulkImport"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bulk import not found."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Cancel Bulk Import",
+        "description": "Cancel a running bulk import operation.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the bulk import."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Bulk import cancelled successfully."
+          },
+          "404": {
+            "description": "Bulk import not found."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "NotionSettings": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "user": {
+            "type": "integer",
+            "description": "User ID"
+          },
+          "database_id": {
+            "type": "string",
+            "description": "ID of the Notion database"
+          },
+          "auto_sync": {
+            "type": "boolean",
+            "description": "Enable automatic synchronization"
+          },
+          "sync_interval": {
+            "type": "integer",
+            "description": "Sync interval in minutes",
+            "minimum": 1,
+            "maximum": 1440
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "last_sync_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "required": ["user", "database_id", "auto_sync", "sync_interval"]
+      },
+      "NotionSettingsUpdate": {
+        "type": "object",
+        "properties": {
+          "database_id": {
+            "type": "string",
+            "description": "ID of the Notion database"
+          },
+          "auto_sync": {
+            "type": "boolean",
+            "description": "Enable automatic synchronization"
+          },
+          "sync_interval": {
+            "type": "integer",
+            "description": "Sync interval in minutes",
+            "minimum": 1,
+            "maximum": 1440
+          }
+        },
+        "required": ["database_id", "auto_sync", "sync_interval"]
+      },
+      "NotionPage": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "page_id": {
+            "type": "string",
+            "description": "Unique ID of the page in Notion"
+          },
+          "title": {
+            "type": "string",
+            "description": "Page title"
+          },
+          "content": {
+            "type": "string",
+            "description": "Page content in HTML format"
+          },
+          "status": {
+            "type": "string",
+            "description": "Page status"
+          },
+          "priority": {
+            "type": "string",
+            "description": "Page priority"
+          },
+          "date_created": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Creation date in Notion"
+          },
+          "date_updated": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Last update date in Notion"
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Due date"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Link to the page in Notion"
+          },
+          "user": {
+            "type": "integer",
+            "description": "User ID"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": ["page_id", "title", "user"]
+      },
+      "NotionPageDetail": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NotionPage"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "comments": {
+                "type": "array",
+                "description": "Page comments",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "author": {
+                      "type": "string"
+                    },
+                    "created_time": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              },
+              "assignees": {
+                "type": "array",
+                "description": "Page assignees",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "tags": {
+                "type": "array",
+                "description": "Page tags",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "attachments": {
+                "type": "array",
+                "description": "Page attachments",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "type": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "custom_properties": {
+                "type": "object",
+                "description": "Custom page properties",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "NotionSyncLog": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "user": {
+            "type": "integer",
+            "description": "User ID"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["success", "error", "partial"],
+            "description": "Sync status"
+          },
+          "pages_processed": {
+            "type": "integer",
+            "description": "Number of pages processed"
+          },
+          "pages_created": {
+            "type": "integer",
+            "description": "Number of pages created"
+          },
+          "pages_updated": {
+            "type": "integer",
+            "description": "Number of pages updated"
+          },
+          "error_message": {
+            "type": "string",
+            "description": "Error message if sync failed"
+          },
+          "sync_duration": {
+            "type": "number",
+            "description": "Sync duration in seconds"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": ["user", "status", "pages_processed"]
+      },
+      "NotionBulkImport": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "user": {
+            "type": "integer",
+            "description": "User ID"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["running", "completed", "failed", "cancelled", "stopped"],
+            "description": "Import status"
+          },
+          "total_pages": {
+            "type": "integer",
+            "description": "Total number of pages to import"
+          },
+          "processed_pages": {
+            "type": "integer",
+            "description": "Number of pages processed"
+          },
+          "successful_pages": {
+            "type": "integer",
+            "description": "Number of successfully imported pages"
+          },
+          "failed_pages": {
+            "type": "integer",
+            "description": "Number of failed imports"
+          },
+          "failed_page_ids": {
+            "type": "array",
+            "description": "List of failed page IDs",
+            "items": {
+              "type": "string"
+            }
+          },
+          "error_message": {
+            "type": "string",
+            "description": "Error message if import failed"
+          },
+          "celery_task_id": {
+            "type": "string",
+            "description": "Celery task ID"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "completed_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "progress_percentage": {
+            "type": "number",
+            "readOnly": true,
+            "description": "Import progress percentage"
+          },
+          "success_rate": {
+            "type": "number",
+            "readOnly": true,
+            "description": "Success rate percentage"
+          }
+        },
+        "required": ["user", "status", "total_pages"]
+      },
+      "NotionBulkImportRequest": {
+        "type": "object",
+        "properties": {
+          "database_id": {
+            "type": "string",
+            "description": "ID of the Notion database to import from"
+          },
+          "max_pages": {
+            "type": "integer",
+            "description": "Maximum number of pages to import",
+            "minimum": 1,
+            "maximum": 1000,
+            "default": 100
+          },
+          "filter_dict": {
+            "type": "object",
+            "description": "Optional filter for pages to import"
+          }
+        },
+        "required": ["database_id"]
+      },
+      "NotionTransferRequest": {
+        "type": "object",
+        "properties": {
+          "page_id": {
+            "type": "string",
+            "description": "ID of the Notion page to transfer"
+          },
+          "account_id": {
+            "type": "integer",
+            "description": "Huntflow account ID"
+          },
+          "vacancy_id": {
+            "type": "integer",
+            "description": "Optional Huntflow vacancy ID to attach candidate to"
+          }
+        },
+        "required": ["page_id", "account_id"]
+      }
+    },
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "sessionid"
+      },
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  }
+}

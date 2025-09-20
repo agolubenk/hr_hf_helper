@@ -1,0 +1,9 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block title %}{% block gemini_title %}Gemini AI - HR Helper{% endblock %}{% endblock %}
+{% block page_title %}{% block gemini_page_title %}Gemini AI{% endblock %}{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/gemini.css' %}" rel="stylesheet">
+{% endblock %}

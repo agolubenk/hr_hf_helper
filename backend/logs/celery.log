@@ -1,0 +1,28 @@
+ 
+ -------------- celery@andrei-golubenko-macbook.local v5.5.3 (immunity)
+--- ***** ----- 
+-- ******* ---- macOS-15.6.1-arm64-arm-64bit-Mach-O 2025-09-20 00:28:06
+- *** --- * --- 
+- ** ---------- [config]
+- ** ---------- .> app:         hrhelper:0x1030c6ba0
+- ** ---------- .> transport:   redis://127.0.0.1:6379/0
+- ** ---------- .> results:     redis://127.0.0.1:6379/0
+- *** --- * --- .> concurrency: 10 (prefork)
+-- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+--- ***** ----- 
+ -------------- [queues]
+                .> celery           exchange=celery(direct) key=celery
+                
+
+[tasks]
+  . apps.clickup_int.tasks.bulk_import_clickup_tasks
+  . apps.clickup_int.tasks.import_single_task
+  . apps.clickup_int.tasks.retry_failed_tasks
+  . apps.notion_int.tasks.auto_sync_notion_pages
+  . apps.notion_int.tasks.bulk_import_notion_pages
+  . apps.notion_int.tasks.retry_failed_pages
+
+[2025-09-20 00:28:07,421: INFO/MainProcess] Connected to redis://127.0.0.1:6379/0
+[2025-09-20 00:28:07,423: INFO/MainProcess] mingle: searching for neighbors
+[2025-09-20 00:28:08,433: INFO/MainProcess] mingle: all alone
+[2025-09-20 00:28:08,443: INFO/MainProcess] celery@andrei-golubenko-macbook.local ready.
