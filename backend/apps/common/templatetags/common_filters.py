@@ -490,6 +490,15 @@ def common_sidebar_menu(context):
             'children': []
         })
         
+        google_oauth_item['children'].append({
+            'type': 'google_oauth_chat',
+            'name': 'Чат-помощник',
+            'url': 'google_oauth:chat_workflow',
+            'icon': 'fas fa-comments',
+            'active': full_url_name == 'google_oauth:chat_workflow',
+            'children': []
+        })
+        
         menu_items.append(google_oauth_item)
         
         # 6. Gemini AI с иерархическим меню

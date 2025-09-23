@@ -715,3 +715,38 @@ class CombinedForm(forms.Form):
             # По умолчанию HR-скрининг
             print(f"🔍 DETERMINE_ACTION_TYPE: Определен тип по умолчанию: hr_screening")
             return 'hr_screening'
+
+
+class ChatForm(forms.Form):
+    """
+    Форма для чата
+    """
+    
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 3,
+            'placeholder': 'Введите сообщение...',
+            'required': True
+        }),
+        label=_('Сообщение'),
+        help_text=_('Введите ссылку на кандидата и любые дополнительные данные')
+    )
+    
+    session_id = forms.IntegerField(
+        widget=forms.HiddenInput(),
+        required=False
+    )
+    
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+    
+    def clean_message(self):
+        """Валидация сообщения"""
+        message = self.cleaned_data.get('message', '').strip()
+        
+        if not message:
+            raise forms.ValidationError(_('Сообщение не может быть пустым'))
+        
+        return message

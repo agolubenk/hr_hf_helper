@@ -1248,6 +1248,17 @@ class Invite(models.Model):
             print(f"❌ Ошибка форматирования даты: {e}")
             return f"{self.interview_datetime.strftime('%d.%m.%Y %H:%M')}"
     
+    def get_candidate_system_url(self):
+        """Возвращает ссылку на кандидата в нашей системе"""
+        try:
+            account_id = self._get_user_account_id()
+            if account_id and self.candidate_id:
+                return f"http://127.0.0.1:8000/huntflow/accounts/{account_id}/applicants/{self.candidate_id}/"
+            return None
+        except Exception as e:
+            print(f"❌ Ошибка получения ссылки на кандидата: {e}")
+            return None
+    
     def _generate_calendar_event_title(self):
         """Генерирует название календарного события: [Заголовок инвайтов] [Фамилия Имя]"""
         try:
@@ -3086,6 +3097,17 @@ class HRScreening(models.Model):
         except json.JSONDecodeError:
             return None
     
+    def get_candidate_system_url(self):
+        """Возвращает ссылку на кандидата в нашей системе"""
+        try:
+            account_id = self._get_user_account_id()
+            if account_id and self.candidate_id:
+                return f"http://127.0.0.1:8000/huntflow/accounts/{account_id}/applicants/{self.candidate_id}/"
+            return None
+        except Exception as e:
+            print(f"❌ Ошибка получения ссылки на кандидата: {e}")
+            return None
+    
     def update_candidate_in_huntflow(self):
         """Обновляет поля кандидата в Huntflow на основе анализа"""
         try:
@@ -3241,3 +3263,48 @@ class QuestionTemplate(models.Model):
     
     def __str__(self):
         return f'Вопросы для {self.get_country_display()}'
+
+
+class ChatSession(models.Model):
+    """Модель для хранения сессий чата"""
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_sessions')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Обновлено")
+    
+    class Meta:
+        verbose_name = "Сессия чата"
+        verbose_name_plural = "Сессии чата"
+        ordering = ['-updated_at']
+    
+    def __str__(self):
+        return f'Чат {self.id} - {self.user.username} ({self.created_at.strftime("%d.%m.%Y %H:%M")})'
+
+
+class ChatMessage(models.Model):
+    """Модель для хранения сообщений в чате"""
+    
+    MESSAGE_TYPES = [
+        ('user', 'Пользователь'),
+        ('system', 'Система'),
+        ('hr_screening', 'HR-скрининг'),
+        ('invite', 'Инвайт'),
+    ]
+    
+    session = models.ForeignKey(ChatSession, on_delete=models.CASCADE, related_name='messages')
+    message_type = models.CharField(max_length=20, choices=MESSAGE_TYPES, verbose_name="Тип сообщения")
+    content = models.TextField(verbose_name="Содержимое")
+    metadata = models.JSONField(default=dict, blank=True, verbose_name="Метаданные")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
+    
+    # Связи с созданными объектами
+    hr_screening = models.ForeignKey('HRScreening', on_delete=models.SET_NULL, null=True, blank=True, related_name='chat_messages')
+    invite = models.ForeignKey('Invite', on_delete=models.SET_NULL, null=True, blank=True, related_name='chat_messages')
+    
+    class Meta:
+        verbose_name = "Сообщение чата"
+        verbose_name_plural = "Сообщения чата"
+        ordering = ['created_at']
+    
+    def __str__(self):
+        return f'{self.get_message_type_display()} - {self.created_at.strftime("%d.%m.%Y %H:%M")}'

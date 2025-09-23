@@ -59,6 +59,10 @@ urlpatterns = [
     # Объединенный рабочий процесс
     path('combined-workflow/', views.combined_workflow, name='combined_workflow'),
     
+    # Чат-интерфейс
+    path('chat/', views.chat_workflow, name='chat_workflow'),
+    path('chat/<int:session_id>/', views.chat_workflow, name='chat_workflow_session'),
+    
     # G-данные и автоматизация
     path('gdata-automation/', views.gdata_automation, name='gdata_automation'),
     
