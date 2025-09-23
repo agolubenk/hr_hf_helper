@@ -2643,9 +2643,7 @@ def chat_workflow(request, session_id=None):
                         print(f"🔍 CHAT: Инвайт сохранен с ID: {invite.id}")
                         
                         # Формируем ответ
-                        response_content = f"""**Инвайт создан:**
-
-**Вакансия:** {invite.vacancy_title or 'Не указана'}
+                        response_content = f"""**Вакансия:** {invite.vacancy_title or 'Не указана'}
 **Имя:** {invite.candidate_name or 'Не указано'}
 **Уровень:** {invite.candidate_grade or 'Не определен'}
 
