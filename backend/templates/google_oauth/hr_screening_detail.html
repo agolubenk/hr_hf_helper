@@ -84,6 +84,58 @@
                         </div>
                     </div>
 
+                    <!-- Извлеченная информация о зарплате и грейде -->
+                    {% if hr_screening.extracted_salary or hr_screening.determined_grade %}
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-chart-line"></i> Анализ зарплаты и грейда
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    {% if hr_screening.extracted_salary %}
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <i class="fas fa-dollar-sign text-success me-2"></i>
+                                                <div>
+                                                    <strong>Извлеченная зарплата:</strong><br>
+                                                    <span class="h5 text-success">{{ hr_screening.extracted_salary }} {{ hr_screening.salary_currency }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    {% if hr_screening.determined_grade %}
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <i class="fas fa-star text-warning me-2"></i>
+                                                <div>
+                                                    <strong>Определенный грейд:</strong><br>
+                                                    <span class="h5 text-warning">{{ hr_screening.determined_grade }}</span>
+                                                    {% if hr_screening.huntflow_grade_id %}
+                                                        <br><small class="text-muted">ID уровня в Huntflow: {{ hr_screening.huntflow_grade_id }}</small>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                {% if hr_screening.extracted_salary and hr_screening.determined_grade %}
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle"></i>
+                                        <strong>Автоматический анализ:</strong> На основе зарплаты {{ hr_screening.extracted_salary }} {{ hr_screening.salary_currency }} 
+                                        определен грейд "{{ hr_screening.determined_grade }}". 
+                                        {% if hr_screening.huntflow_grade_id %}
+                                            Уровень кандидата обновлен в Huntflow.
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+
                     <!-- Исходные данные -->
                     <div class="card mb-4">
                         <div class="card-header">
@@ -107,6 +159,48 @@
                             <div class="card-body">
                                 {% if parsed_analysis %}
                                     <div class="row">
+                                        <!-- Извлеченная зарплата (если есть) -->
+                                        {% if hr_screening.extracted_salary %}
+                                            <div class="col-md-6 mb-3">
+                                                <strong>{{ money_field_info.field_title|default:"Извлеченная зарплата" }}:</strong><br>
+                                                {% if money_field_info %}
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-key"></i> Huntflow: {{ money_field_info.field_key }}
+                                                    </small><br>
+                                                {% endif %}
+                                                <span class="badge bg-success fs-6">{{ hr_screening.extracted_salary|floatformat:0 }} {{ hr_screening.salary_currency }}</span>
+                                            </div>
+                                        {% endif %}
+                                        
+                                        <!-- Определенный грейд (если есть) -->
+                                        {% if hr_screening.determined_grade %}
+                                            <div class="col-md-6 mb-3">
+                                                <strong>{{ level_field_info.field_title|default:"Определенный грейд" }}:</strong><br>
+                                                {% if level_field_info %}
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-key"></i> Huntflow: {{ level_field_info.field_key }}
+                                                    </small><br>
+                                                    {% if level_field_info.selected_value %}
+                                                        <small class="text-muted">
+                                                            <i class="fas fa-check-circle"></i> Выбрано: {{ level_field_info.selected_value }}
+                                                            {% if level_field_info.selected_index is not None %}
+                                                                (индекс: {{ level_field_info.selected_index }})
+                                                            {% endif %}
+                                                        </small><br>
+                                                    {% endif %}
+                                                {% endif %}
+                                                <span class="badge bg-warning fs-6">{{ hr_screening.determined_grade }}</span>
+                                                {% if hr_screening.huntflow_grade_id %}
+                                                    <br><small class="text-muted">ID уровня: {{ hr_screening.huntflow_grade_id }}</small>
+                                                {% endif %}
+                                                {% if level_field_info.available_values %}
+                                                    <br><small class="text-muted">
+                                                        <i class="fas fa-list"></i> Доступные варианты: {{ level_field_info.available_values|join:", " }}
+                                                    </small>
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                        
                                         <!-- Основные поля с новой структурой -->
                                         {% for field_name, field_data in parsed_analysis.items %}
                                             {% if field_name != 'comment' and field_name != 'additional_fields' %}

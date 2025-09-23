@@ -172,7 +172,7 @@ class InviteAdmin(admin.ModelAdmin):
 class HRScreeningAdmin(admin.ModelAdmin):
     list_display = [
         'id', 'candidate_name', 'vacancy_title', 
-        'has_gemini_analysis', 'created_at'
+        'has_gemini_analysis', 'extracted_salary_display', 'determined_grade', 'created_at'
     ]
     list_filter = [
         'created_at', 'updated_at'
@@ -183,7 +183,8 @@ class HRScreeningAdmin(admin.ModelAdmin):
     ]
     readonly_fields = [
         'created_at', 'updated_at', 'candidate_id', 'vacancy_id',
-        'candidate_url', 'gemini_analysis'
+        'candidate_url', 'gemini_analysis', 'extracted_salary', 'salary_currency',
+        'determined_grade', 'huntflow_grade_id'
     ]
     
     fieldsets = (
@@ -205,6 +206,14 @@ class HRScreeningAdmin(admin.ModelAdmin):
             'classes': ('collapse',),
             'description': 'JSON ответ от Gemini AI с данными для обновления кандидата'
         }),
+        ('Извлеченная информация о зарплате', {
+            'fields': ('extracted_salary', 'salary_currency'),
+            'description': 'Автоматически извлеченная информация о зарплате'
+        }),
+        ('Определенный грейд', {
+            'fields': ('determined_grade', 'huntflow_grade_id'),
+            'description': 'Грейд, определенный на основе зарплатных вилок из @vacancies/'
+        }),
         ('Метаданные', {
             'fields': ('created_at', 'updated_at'),
             'classes': ('collapse',)
@@ -223,6 +232,14 @@ class HRScreeningAdmin(admin.ModelAdmin):
             )
     has_gemini_analysis.short_description = 'Анализ Gemini'
     has_gemini_analysis.admin_order_field = 'gemini_analysis'
+    
+    def extracted_salary_display(self, obj):
+        """Отображает извлеченную зарплату с валютой"""
+        if obj.extracted_salary:
+            return f"{obj.extracted_salary} {obj.salary_currency}"
+        return "-"
+    extracted_salary_display.short_description = 'Зарплата'
+    extracted_salary_display.admin_order_field = 'extracted_salary'
     
     def get_queryset(self, request):
         """Оптимизация запросов"""

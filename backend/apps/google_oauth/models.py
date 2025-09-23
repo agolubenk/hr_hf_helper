@@ -2363,6 +2363,36 @@ class HRScreening(models.Model):
         help_text='JSON ответ от Gemini AI с данными для обновления кандидата'
     )
     
+    # Извлеченная информация о зарплате
+    extracted_salary = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name='Извлеченная зарплата',
+        help_text='Первое числовое значение из поля Зарплата'
+    )
+    salary_currency = models.CharField(
+        max_length=3,
+        default='USD',
+        verbose_name='Валюта зарплаты',
+        help_text='Валюта зарплаты (по умолчанию USD)'
+    )
+    
+    # Определенный грейд
+    determined_grade = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name='Определенный грейд',
+        help_text='Грейд, определенный на основе зарплатных вилок'
+    )
+    huntflow_grade_id = models.CharField(
+        max_length=50,
+        blank=True,
+        verbose_name='ID уровня в Huntflow',
+        help_text='ID уровня в системе Huntflow (соответствует грейду)'
+    )
+    
     # Метаданные
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -2558,6 +2588,17 @@ class HRScreening(models.Model):
                 cleaned_response = cleaned_response.strip()
                 
                 self.gemini_analysis = cleaned_response
+                
+                # Извлекаем зарплату и определяем грейд
+                print(f"🔍 HR_SCREENING_ANALYSIS: Вызываем _extract_salary_and_determine_grade")
+                try:
+                    self._extract_salary_and_determine_grade(cleaned_response)
+                    print(f"🔍 HR_SCREENING_ANALYSIS: Метод _extract_salary_and_determine_grade завершен успешно")
+                except Exception as e:
+                    print(f"❌ HR_SCREENING_ANALYSIS: Ошибка в _extract_salary_and_determine_grade: {e}")
+                    import traceback
+                    traceback.print_exc()
+                
                 return True, "Анализ завершен успешно"
             else:
                 return False, f"Ошибка Gemini API: {metadata.get('error', 'Неизвестная ошибка')}"
@@ -2634,6 +2675,293 @@ class HRScreening(models.Model):
             return False, f"Вакансия с ID {self.vacancy_id} не найдена в локальной базе данных"
         except Exception as e:
             return False, f"Ошибка при подготовке промпта: {str(e)}"
+    
+    def _extract_salary_and_determine_grade(self, gemini_response):
+        """Извлекает зарплату из ответа Gemini и определяет грейд"""
+        try:
+            import json
+            import re
+            from decimal import Decimal
+            
+            # Парсим JSON ответ от Gemini
+            try:
+                analysis_data = json.loads(gemini_response)
+            except json.JSONDecodeError:
+                print(f"❌ Не удалось распарсить JSON ответ от Gemini: {gemini_response}")
+                return
+            
+            # Извлекаем зарплату из поля "money", "Зарплата" или "salary"
+            salary_text = ""
+            if isinstance(analysis_data, dict):
+                # Сначала ищем в поле money (как возвращает Gemini)
+                money_field = analysis_data.get('money', {})
+                if isinstance(money_field, dict):
+                    salary_text = money_field.get('value', '')
+                elif isinstance(money_field, str):
+                    salary_text = money_field
+                
+                # Если не найдено, ищем в других полях
+                if not salary_text:
+                    salary_text = analysis_data.get('Зарплата', analysis_data.get('salary', ''))
+            
+            if not salary_text:
+                print("❌ Поле с зарплатой не найдено в ответе Gemini")
+                return
+            
+            # Извлекаем первое числовое значение
+            salary_match = re.search(r'(\d+(?:\.\d+)?)', str(salary_text))
+            if salary_match:
+                salary_value = Decimal(salary_match.group(1))
+                self.extracted_salary = salary_value
+                print(f"✅ Извлечена зарплата: {salary_value}")
+            else:
+                print(f"❌ Не удалось извлечь числовое значение из: {salary_text}")
+                return
+            
+            # Определяем валюту
+            currency = self._detect_currency(str(salary_text))
+            self.salary_currency = currency
+            print(f"✅ Определена валюта: {currency}")
+            
+            # Определяем грейд на основе зарплатных вилок в исходной валюте
+            print(f"🔍 HR_SCREENING_GRADE: Определяем грейд для зарплаты {salary_value} {currency}")
+            grade = self._determine_grade_by_salary(salary_value, currency)
+            if grade:
+                self.determined_grade = grade
+                print(f"✅ Определен грейд: {grade}")
+                
+                # Получаем ID уровня из Huntflow
+                print(f"🔍 HR_SCREENING_LEVEL: Получаем ID уровня для грейда '{grade}'")
+                huntflow_level_id = self._get_huntflow_level_id(grade)
+                if huntflow_level_id:
+                    self.huntflow_grade_id = huntflow_level_id
+                    print(f"✅ ID уровня в Huntflow: {huntflow_level_id}")
+                    print(f"🔍 HR_SCREENING_LEVEL: ID уровня сохранен, обновление произойдет в update_candidate_in_huntflow")
+                else:
+                    print("❌ Не удалось получить ID уровня из Huntflow")
+            else:
+                print("❌ Не удалось определить грейд по зарплате")
+            
+            # Сохраняем изменения
+            self.save()
+            
+        except Exception as e:
+            print(f"❌ Ошибка при извлечении зарплаты и определении грейда: {e}")
+    
+    def _detect_currency(self, salary_text):
+        """Определяет валюту из текста зарплаты"""
+        salary_text_lower = salary_text.lower()
+        
+        currency_mapping = {
+            'usd': 'USD',
+            '$': 'USD',
+            'доллар': 'USD',
+            'dollar': 'USD',
+            'eur': 'EUR',
+            '€': 'EUR',
+            'евро': 'EUR',
+            'euro': 'EUR',
+            'rub': 'RUB',
+            '₽': 'RUB',
+            'рубль': 'RUB',
+            'ruble': 'RUB',
+            'byn': 'BYN',
+            'бел.руб': 'BYN',
+            'белорусский рубль': 'BYN',
+            'pln': 'PLN',
+            'злотый': 'PLN',
+            'zloty': 'PLN'
+        }
+        
+        for key, currency in currency_mapping.items():
+            if key in salary_text_lower:
+                return currency
+        
+        # По умолчанию USD
+        return 'USD'
+    
+    def _convert_to_usd(self, amount, currency):
+        """Конвертирует сумму в USD"""
+        if currency == 'USD':
+            return amount
+        
+        try:
+            from apps.finance.models import CurrencyRate
+            
+            # Получаем последний курс валюты
+            rate = CurrencyRate.objects.filter(
+                code=currency
+            ).order_by('-fetched_at').first()
+            
+            if rate:
+                return amount / rate.rate
+            else:
+                print(f"⚠️ Курс валюты {currency} не найден, используем 1:1")
+                return amount
+                
+        except Exception as e:
+            print(f"❌ Ошибка при конвертации валюты: {e}")
+            return amount
+    
+    def _determine_grade_by_salary(self, salary_amount, currency):
+        """Определяет грейд на основе зарплаты в указанной валюте"""
+        try:
+            from apps.vacancies.models import SalaryRange, Vacancy
+            
+            # Получаем вакансию
+            vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
+            
+            # Определяем поля для фильтрации в зависимости от валюты
+            if currency == 'USD':
+                min_field = 'salary_min_usd'
+                max_field = 'salary_max_usd'
+            elif currency == 'PLN':
+                min_field = 'salary_min_pln'
+                max_field = 'salary_max_pln'
+            elif currency == 'BYN':
+                min_field = 'salary_min_byn'
+                max_field = 'salary_max_byn'
+            else:
+                print(f"❌ Неподдерживаемая валюта: {currency}")
+                return None
+            
+            # Получаем зарплатные вилки для этой вакансии
+            filter_kwargs = {
+                'vacancy': vacancy,
+                'is_active': True,
+                f'{min_field}__lte': salary_amount,
+                f'{max_field}__gte': salary_amount
+            }
+            
+            salary_ranges = SalaryRange.objects.filter(**filter_kwargs).order_by(min_field)
+            
+            if salary_ranges.exists():
+                # Берем первую подходящую зарплатную вилку
+                salary_range = salary_ranges.first()
+                print(f"✅ Найдена подходящая зарплатная вилка: {salary_range.grade.name} ({salary_amount} {currency})")
+                return salary_range.grade.name
+            else:
+                print(f"❌ Не найдено подходящих зарплатных вилок для зарплаты {salary_amount} {currency}")
+                return None
+                
+        except Exception as e:
+            print(f"❌ Ошибка при определении грейда: {e}")
+            return None
+    
+    def _get_huntflow_level_id(self, grade_name):
+        """Получает ID уровня из Huntflow по названию грейда"""
+        try:
+            from apps.huntflow.services import HuntflowService
+            
+            huntflow_service = HuntflowService(self.user)
+            
+            # Получаем схему полей кандидата
+            accounts = huntflow_service.get_accounts()
+            if not accounts or 'items' not in accounts or not accounts['items']:
+                print("❌ Не удалось получить список аккаунтов")
+                return None
+            
+            account_id = accounts['items'][0]['id']
+            schema = huntflow_service.get_applicant_questionary_schema(account_id)
+            
+            if schema:
+                # Ищем поле "Уровень" - схема содержит прямые ключи полей
+                for field_id, field_data in schema.items():
+                    title = field_data.get('title', '')
+                    if title == 'Уровень':
+                        # Получаем список доступных значений
+                        values = field_data.get('values', [])
+                        grade_name_lower = grade_name.lower()
+                        
+                        # Ищем точное совпадение
+                        for index, value in enumerate(values):
+                            if value.lower() == grade_name_lower:
+                                print(f"✅ Найден точный уровень '{value}' в Huntflow (индекс: {index})")
+                                return str(index)
+                        
+                        # Если точного совпадения нет, ищем частичное
+                        for index, value in enumerate(values):
+                            if grade_name_lower in value.lower() or value.lower() in grade_name_lower:
+                                print(f"✅ Найден похожий уровень '{value}' для грейда '{grade_name}' (индекс: {index})")
+                                return str(index)
+                        
+                        print(f"❌ Уровень '{grade_name}' не найден среди доступных: {values}")
+                        return None
+            
+            print("❌ Поле 'Уровень' не найдено в схеме полей Huntflow")
+            return None
+            
+        except Exception as e:
+            print(f"❌ Ошибка при получении ID уровня из Huntflow: {e}")
+            return None
+    
+    def _update_huntflow_level(self, grade_id):
+        """Обновляет уровень кандидата в Huntflow"""
+        try:
+            from apps.huntflow.services import HuntflowService
+            
+            huntflow_service = HuntflowService(self.user)
+            
+            # Получаем схему полей, чтобы найти правильное название поля для уровня
+            accounts = huntflow_service.get_accounts()
+            if not accounts or 'items' not in accounts or not accounts['items']:
+                print("❌ Не удалось получить список аккаунтов")
+                return False
+            
+            account_id = accounts['items'][0]['id']
+            schema = huntflow_service.get_applicant_questionary_schema(account_id)
+            
+            if schema:
+                # Ищем поле "Уровень" и получаем его search_field
+                for field_id, field_data in schema.items():
+                    if field_data.get('title') == 'Уровень':
+                        search_field = field_data.get('search_field', '')
+                        values = field_data.get('values', [])
+                        
+                        if search_field and values:
+                            # Получаем значение по индексу (как для поля "Офис")
+                            try:
+                                grade_index = int(grade_id)
+                                if 0 <= grade_index < len(values):
+                                    grade_value = values[grade_index]
+                                    print(f"🔍 HR_SCREENING_LEVEL_UPDATE: Индекс {grade_index} соответствует значению '{grade_value}'")
+                                    
+                                    # Обновляем поле уровня кандидата значением (как для поля "Офис")
+                                    # Используем field_id (как для поля "Офис")
+                                    update_data = {
+                                        field_id: grade_value
+                                    }
+                                    
+                                    print(f"🔍 HR_SCREENING_LEVEL_UPDATE: Обновляем поле {field_id} значением '{grade_value}'")
+                                    
+                                    success = huntflow_service.update_applicant_questionary(
+                                        account_id,
+                                        int(self.candidate_id),
+                                        update_data
+                                    )
+                                    
+                                    if success:
+                                        print(f"✅ Уровень кандидата обновлен в Huntflow: {grade_value}")
+                                        return True
+                                    else:
+                                        print(f"❌ Не удалось обновить уровень кандидата в Huntflow")
+                                        return False
+                                else:
+                                    print(f"❌ Индекс {grade_index} выходит за границы списка значений {values}")
+                                    return False
+                            except ValueError:
+                                print(f"❌ Неверный формат индекса: {grade_id}")
+                                return False
+                        else:
+                            print("❌ Не найден search_field или values для поля 'Уровень'")
+                            return False
+            
+            print("❌ Поле 'Уровень' не найдено в схеме полей")
+            return False
+                
+        except Exception as e:
+            print(f"❌ Ошибка при обновлении уровня в Huntflow: {e}")
+            return False
     
     def _normalize_level(self, level_value):
         """Нормализует уровень кандидата"""
@@ -2756,7 +3084,18 @@ class HRScreening(models.Model):
                     print(f"❌ HR_SCREENING_UPDATE_CANDIDATE: Ошибка при обновлении дополнительных полей")
                     return False, "Ошибка при обновлении дополнительных полей"
             
-            if not money_data and not questionary_data:
+            # Обновляем уровень кандидата если он был определен
+            if self.huntflow_grade_id:
+                print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем уровень кандидата: {self.huntflow_grade_id}")
+                level_result = self._update_huntflow_level(self.huntflow_grade_id)
+                if level_result:
+                    print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Уровень кандидата обновлен")
+                else:
+                    print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Не удалось обновить уровень кандидата")
+            else:
+                print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: ID уровня не определен, пропускаем обновление уровня")
+            
+            if not money_data and not questionary_data and not self.huntflow_grade_id:
                 print(f"❌ HR_SCREENING_UPDATE_CANDIDATE: Нет данных для обновления")
                 return False, "Нет данных для обновления"
             # Обновляем статус кандидата на "HR Screening" и добавляем комментарий

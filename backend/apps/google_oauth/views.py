@@ -2038,9 +2038,77 @@ def hr_screening_detail(request, pk):
     # Парсим анализ от Gemini
     parsed_analysis = hr_screening.get_parsed_analysis()
     
+    # Получаем информацию о поле "Уровень" из Huntflow
+    level_field_info = None
+    if hr_screening.determined_grade:
+        try:
+            fields_schema_success, fields_schema = hr_screening.get_candidate_fields_schema()
+            if fields_schema_success and fields_schema:
+                # Ищем поле "Уровень" в схеме
+                for field_id, field_data in fields_schema.items():
+                    if field_data.get('title') == 'Уровень':
+                        # Получаем список доступных значений
+                        values = field_data.get('values', [])
+                        determined_grade = hr_screening.determined_grade
+                        
+                        # Ищем правильное значение из вариантов
+                        selected_value = None
+                        selected_index = None
+                        if determined_grade and values:
+                            grade_name_lower = determined_grade.lower()
+                            
+                            # Ищем точное совпадение
+                            for index, value in enumerate(values):
+                                if value.lower() == grade_name_lower:
+                                    selected_value = value
+                                    selected_index = index
+                                    break
+                            
+                            # Если точного совпадения нет, ищем частичное
+                            if not selected_value:
+                                for index, value in enumerate(values):
+                                    if grade_name_lower in value.lower() or value.lower() in grade_name_lower:
+                                        selected_value = value
+                                        selected_index = index
+                                        break
+                        
+                        level_field_info = {
+                            'field_key': field_id,  # Используем field_id вместо search_field
+                            'field_title': field_data.get('title', 'Уровень'),
+                            'field_id': field_id,
+                            'search_field': field_data.get('search_field', 'string_field_1'),
+                            'selected_value': selected_value,  # Выбранное значение из вариантов
+                            'selected_index': selected_index,  # Индекс выбранного значения
+                            'available_values': values  # Все доступные варианты
+                        }
+                        break
+        except Exception as e:
+            print(f"Ошибка при получении информации о поле уровня: {e}")
+    
+    # Получаем информацию о поле "money" из Huntflow
+    money_field_info = None
+    if hr_screening.extracted_salary:
+        try:
+            fields_schema_success, fields_schema = hr_screening.get_candidate_fields_schema()
+            if fields_schema_success and fields_schema:
+                # Ищем поле "money" в схеме
+                for field_id, field_data in fields_schema.items():
+                    if field_data.get('title') == 'Зарплата' or field_id == 'money':
+                        money_field_info = {
+                            'field_key': field_id,  # Используем field_id вместо 'money'
+                            'field_title': field_data.get('title', 'Зарплата'),
+                            'field_id': field_id,
+                            'search_field': 'money'
+                        }
+                        break
+        except Exception as e:
+            print(f"Ошибка при получении информации о поле зарплаты: {e}")
+    
     context = {
         'hr_screening': hr_screening,
         'parsed_analysis': parsed_analysis,
+        'level_field_info': level_field_info,
+        'money_field_info': money_field_info,
     }
     
     return render(request, 'google_oauth/hr_screening_detail.html', context)

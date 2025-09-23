@@ -1770,3 +1770,86 @@ class HuntflowService:
                 'success': False,
                 'error': str(e)
             }
+    
+    def update_candidate_field(self, candidate_id: str, field_data: Dict[str, Any]) -> bool:
+        """
+        Обновляет поле кандидата в Huntflow
+        
+        Args:
+            candidate_id: ID кандидата в Huntflow
+            field_data: Словарь с данными для обновления
+            
+        Returns:
+            bool: True если обновление прошло успешно, False в противном случае
+        """
+        try:
+            # Получаем account_id
+            accounts = self.get_accounts()
+            if not accounts or 'items' not in accounts or not accounts['items']:
+                print("❌ Не удалось получить список аккаунтов")
+                return False
+            
+            account_id = accounts['items'][0]['id']
+            
+            # Определяем, какие поля являются дополнительными (string_field_*, custom_field_*)
+            additional_fields = {}
+            main_fields = {}
+            
+            for field_name, field_value in field_data.items():
+                if field_name.startswith('string_field_') or field_name.startswith('custom_field_'):
+                    additional_fields[field_name] = field_value
+                else:
+                    main_fields[field_name] = field_value
+            
+            success = True
+            
+            # Обновляем основные поля
+            if main_fields:
+                url = f"{self.base_url}/v2/accounts/{account_id}/applicants/{candidate_id}"
+                print(f"🔍 Обновляем основные поля кандидата {candidate_id}")
+                print(f"📤 Данные для обновления: {main_fields}")
+                
+                response = requests.patch(
+                    url,
+                    headers=self.headers,
+                    json=main_fields,
+                    timeout=30
+                )
+                
+                print(f"📥 Ответ API: {response.status_code}")
+                
+                if response.status_code == 200:
+                    print(f"✅ Основные поля кандидата {candidate_id} успешно обновлены")
+                else:
+                    print(f"❌ Ошибка при обновлении основных полей: {response.status_code}")
+                    print(f"📥 Тело ответа: {response.text}")
+                    success = False
+            
+            # Обновляем дополнительные поля
+            if additional_fields:
+                url = f"{self.base_url}/v2/accounts/{account_id}/applicants/{candidate_id}/questionary"
+                print(f"🔍 Обновляем дополнительные поля кандидата {candidate_id}")
+                print(f"📤 Данные для обновления: {additional_fields}")
+                
+                response = requests.patch(
+                    url,
+                    headers=self.headers,
+                    json=additional_fields,
+                    timeout=30
+                )
+                
+                print(f"📥 Ответ API: {response.status_code}")
+                
+                if response.status_code == 200:
+                    print(f"✅ Дополнительные поля кандидата {candidate_id} успешно обновлены")
+                else:
+                    print(f"❌ Ошибка при обновлении дополнительных полей: {response.status_code}")
+                    print(f"📥 Тело ответа: {response.text}")
+                    success = False
+            
+            return success
+                
+        except Exception as e:
+            print(f"❌ Ошибка при обновлении поля кандидата: {e}")
+            return False
+    
