@@ -484,25 +484,28 @@ def applicant_edit(request, account_id, applicant_id):
     Редактирование кандидата
     """
     try:
+        # Получаем правильный account_id
+        correct_account_id = get_correct_account_id(request.user, account_id)
+        
         huntflow_service = HuntflowService(request.user)
         
-        # Получаем информацию о кандидате
-        applicant = huntflow_service.get_applicant(account_id, applicant_id)
+        # Получаем информацию о кандидате с правильным account_id
+        applicant = huntflow_service.get_applicant(correct_account_id, applicant_id)
         
         if not applicant:
             messages.error(request, 'Кандидат не найден')
-            return redirect('huntflow:applicants_list', account_id=account_id)
+            return redirect('huntflow:applicants_list', account_id=correct_account_id)
         
         # Получаем анкету кандидата
-        questionary = huntflow_service.get_applicant_questionary(account_id, applicant_id)
+        questionary = huntflow_service.get_applicant_questionary(correct_account_id, applicant_id)
         
         # Получаем схему анкеты
-        questionary_schema = huntflow_service.get_applicant_questionary_schema(account_id)
+        questionary_schema = huntflow_service.get_applicant_questionary_schema(correct_account_id)
         
         # Получаем статусы, вакансии и метки для обогащения данных
-        statuses = huntflow_service.get_vacancy_statuses(account_id)
-        vacancies = huntflow_service.get_vacancies(account_id, count=100)
-        tags = huntflow_service.get_tags(account_id)
+        statuses = huntflow_service.get_vacancy_statuses(correct_account_id)
+        vacancies = huntflow_service.get_vacancies(correct_account_id, count=100)
+        tags = huntflow_service.get_tags(correct_account_id)
         
         # Создаем словари для быстрого поиска
         statuses_dict = {}
@@ -663,7 +666,7 @@ def applicant_edit(request, account_id, applicant_id):
                     for key, value in update_data.items():
                         print(f"DEBUG: Поле '{key}': '{value}'")
                     
-                    updated_applicant = huntflow_service.update_applicant(account_id, applicant_id, update_data)
+                    updated_applicant = huntflow_service.update_applicant(correct_account_id, applicant_id, update_data)
                     print(f"DEBUG: Результат общего обновления: {updated_applicant}")
                     
                     if updated_applicant:
@@ -677,7 +680,7 @@ def applicant_edit(request, account_id, applicant_id):
                 if 'tags' in request.POST:
                     tag_ids = [int(tag_id) for tag_id in request.POST.getlist('tags') if tag_id]
                     tags_result = huntflow_service.update_applicant_tags(
-                        account_id, applicant_id, tag_ids
+                        correct_account_id, applicant_id, tag_ids
                     )
                     if tags_result:
                         success_messages.append('Метки обновлены')
@@ -687,7 +690,7 @@ def applicant_edit(request, account_id, applicant_id):
                 # 3. Обновляем анкету отдельно
                 if questionary_data:
                     questionary_result = huntflow_service.update_applicant_questionary(
-                        account_id, applicant_id, questionary_data
+                        correct_account_id, applicant_id, questionary_data
                     )
                     if questionary_result:
                         success_messages.append('Анкета обновлена')
@@ -736,17 +739,17 @@ def applicant_edit(request, account_id, applicant_id):
                     # Добавляем небольшую задержку для синхронизации с Huntflow
                     import time
                     time.sleep(1)
-                    return redirect('huntflow:applicant_detail', account_id=account_id, applicant_id=applicant_id)
+                    return redirect('huntflow:applicant_detail', account_id=correct_account_id, applicant_id=applicant_id)
                     
             except Exception as e:
                 messages.error(request, f'Ошибка при обновлении: {str(e)}')
         
         # Получаем информацию об организации для хлебных крошек
         accounts = huntflow_service.get_accounts()
-        account_name = f'Организация {account_id}'
+        account_name = f'Организация {correct_account_id}'
         if accounts and 'items' in accounts:
             for account in accounts['items']:
-                if account['id'] == account_id:
+                if account['id'] == correct_account_id:
                     account_name = account.get('name', account_name)
                     break
         
@@ -756,7 +759,7 @@ def applicant_edit(request, account_id, applicant_id):
             applicant_name = f"{applicant.get('first_name', '')} {applicant.get('last_name', '')}".strip()
         
         context = {
-            'account_id': account_id,
+            'account_id': correct_account_id,  # Используем правильный account_id
             'account_name': account_name,
             'accounts': accounts,  # Добавляем для sidebar menu
             'applicant': applicant,
@@ -772,7 +775,7 @@ def applicant_edit(request, account_id, applicant_id):
         
     except Exception as e:
         messages.error(request, f'Ошибка при загрузке кандидата: {str(e)}')
-        return redirect('huntflow:applicants_list', account_id=account_id)
+        return redirect('huntflow:applicants_list', account_id=correct_account_id)
 
 
 @login_required
