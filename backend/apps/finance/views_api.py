@@ -3,9 +3,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Count, Avg, Min, Max
 from decimal import Decimal
-from .models import Grade, CurrencyRate, PLNTax, SalaryRange, Benchmark, BenchmarkSettings
+from .models import Grade, CurrencyRate, PLNTax, SalaryRange, Benchmark, BenchmarkSettings, Domain
 from .serializers import (
-    GradeSerializer, CurrencyRateSerializer, PLNTaxSerializer,
+    GradeSerializer, CurrencyRateSerializer, PLNTaxSerializer, 
     SalaryRangeSerializer, BenchmarkSerializer, BenchmarkSettingsSerializer,
     SalaryCalculationSerializer, TaxCalculationSerializer
 )
@@ -159,7 +159,7 @@ class BenchmarkViewSet(viewsets.ModelViewSet):
     queryset = Benchmark.objects.all()
     serializer_class = BenchmarkSerializer
     permission_classes = [permissions.IsAuthenticated]
-    filterset_fields = ['type', 'vacancy', 'grade', 'is_active']
+    filterset_fields = ['type', 'vacancy', 'grade', 'domain', 'is_active']
     search_fields = ['vacancy__name', 'grade__name', 'location', 'domain']
     ordering_fields = ['salary_from', 'salary_to', 'date_added', 'created_at']
     ordering = ['-date_added']

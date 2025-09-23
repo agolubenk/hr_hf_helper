@@ -1,137 +1,411 @@
 Watching for file changes with StatReloader
-[20/Sep/2025 00:28:13] "GET / HTTP/1.1" 302 0
-[20/Sep/2025 00:28:35] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
-/Users/agolubenko/hrhelper/backend/config/settings.py changed, reloading.
+[23/Sep/2025 12:30:57] "GET / HTTP/1.1" 302 0
+[23/Sep/2025 12:31:54] "GET /admin/finance/benchmark/57/change/ HTTP/1.1" 200 55427
+[23/Sep/2025 12:31:54] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 12:32:51] "GET /admin/finance/benchmark/ HTTP/1.1" 200 68165
+[23/Sep/2025 12:32:57] "GET /admin/finance/hhvacancytemp/ HTTP/1.1" 200 105940
+[23/Sep/2025 12:32:57] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 12:34:10] "GET /admin/finance/hhvacancytemp/ HTTP/1.1" 200 105940
+[23/Sep/2025 12:34:11] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 12:37:08] "GET /admin/finance/hhvacancytemp/ HTTP/1.1" 200 105940
+[23/Sep/2025 12:37:08] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 12:37:28] "GET /admin/finance/benchmark/ HTTP/1.1" 200 68165
+[23/Sep/2025 12:37:28] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 12:38:11] "GET /admin/finance/benchmark/ HTTP/1.1" 200 68165
+[23/Sep/2025 12:38:11] "GET /static/admin/js/theme.js HTTP/1.1" 200 1653
+[23/Sep/2025 12:38:11] "GET /static/admin/css/base.css HTTP/1.1" 200 22120
+[23/Sep/2025 12:38:11] "GET /static/admin/css/changelists.css HTTP/1.1" 200 6878
+[23/Sep/2025 12:38:11] "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2810
+[23/Sep/2025 12:38:11] "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2808
+[23/Sep/2025 12:38:11] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 12:38:11] "GET /static/admin/css/responsive.css HTTP/1.1" 200 16565
+[23/Sep/2025 12:38:11] "GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+[23/Sep/2025 12:38:11] "GET /static/admin/js/core.js HTTP/1.1" 200 6208
+[23/Sep/2025 12:38:11] "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 200 9777
+[23/Sep/2025 12:38:11] "GET /static/admin/js/urlify.js HTTP/1.1" 200 7887
+[23/Sep/2025 12:38:11] "GET /static/admin/js/actions.js HTTP/1.1" 200 8076
+[23/Sep/2025 12:38:11] "GET /static/admin/js/prepopulate.js HTTP/1.1" 200 1531
+[23/Sep/2025 12:38:11] "GET /static/admin/img/icon-yes.svg HTTP/1.1" 200 436
+[23/Sep/2025 12:38:11] "GET /static/admin/img/search.svg HTTP/1.1" 200 458
+[23/Sep/2025 12:38:11] "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 200 285314
+[23/Sep/2025 12:38:11] "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 200 325171
+[23/Sep/2025 12:38:11] "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+[23/Sep/2025 12:38:11] "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+[23/Sep/2025 12:38:11] "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+[23/Sep/2025 12:38:11] "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 331
+[23/Sep/2025 12:38:11] "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 200 1097
+[23/Sep/2025 12:38:11] "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 200 581
+WARNING Not Found: /favicon.ico
+Not Found: /favicon.ico
+[23/Sep/2025 12:38:11] "GET /favicon.ico HTTP/1.1" 404 4605
+[23/Sep/2025 12:38:37] "GET / HTTP/1.1" 302 0
+[23/Sep/2025 12:38:40] "GET /huntflow/ HTTP/1.1" 200 49183
+[23/Sep/2025 12:38:40] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[23/Sep/2025 12:38:40] "GET /static/css/huntflow.css HTTP/1.1" 304 0
+[23/Sep/2025 12:39:16] "GET /admin/finance/benchmark/ HTTP/1.1" 200 68165
+[23/Sep/2025 12:39:16] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 12:40:19] "GET /google-oauth/gdata-automation/ HTTP/1.1" 200 111306
+[23/Sep/2025 12:40:19] "GET /static/css/google-oauth.css HTTP/1.1" 304 0
+[23/Sep/2025 12:40:27] "GET /google-oauth/gdata-automation/?vacancy_id=1 HTTP/1.1" 200 113034
 Performing system checks...
 
 System check identified no issues (0 silenced).
-September 20, 2025 - 00:28:08
+September 23, 2025 - 12:30:54
 Django version 5.2.6, using settings 'config.settings'
 Starting development server at http://127.0.0.1:8000/
 Quit the server with CONTROL-C.
 
 WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
 For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
-💾 Сохранены события календаря в кэш: 28 событий
-🔍 API CALENDAR EVENTS: Получено 28 событий из API
-🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
-Watching for file changes with StatReloader
-/Users/agolubenko/hrhelper/backend/config/urls.py changed, reloading.
-Performing system checks...
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/me
+📥 Ответ API: 200
+📥 Тело ответа: {"id":694,"name":"andrei.golubenko@softnetix.io","position":null,"email":"andrei.golubenko@softnetix.io","phone":null,"locale":"ru_RU"}...
+✅ Подключение к Huntflow успешно!
+👤 Пользователь: andrei.golubenko@softnetix.io
+📧 Email: andrei.golubenko@softnetix.io
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = huntflow:dashboard
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+💾 Сохранены события календаря в кэш: 34 событий
+🔍 DEBUG G-DATA: Получено 34 событий из API
+🔍 DEBUG G-DATA: Настройки слотов для пользователя andrei.golubenko: {'currentWeekPrefix': 'У нас есть такие слоты:', 'nextWeekPrefix': 'На следующей неделе у нас доступны такие слоты:', 'allSlotsPrefix': 'У нас есть вот такие слоты:', 'separatorText': 'И на следующей неделе:'}
+🔍 DEBUG G-DATA: Передаем 34 событий в шаблон
+🔍 DEBUG G-DATA: Событие:  JS Tech Screening | Матяш Андрей в 2025-09-23T12:00:00+03:00
+🔍 DEBUG G-DATA: Событие: SM Screening | Титов Александр в 2025-09-23T13:00:00+03:00
+🔍 DEBUG G-DATA: Событие: Обед в 2025-09-23T14:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:gdata_automation
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+📦 Получены события календаря из кэша: 34 событий
+🔍 DEBUG G-DATA: Получено 34 событий из API
+🔍 DEBUG G-DATA: Настройки слотов для пользователя andrei.golubenko: {'currentWeekPrefix': 'У нас есть такие слоты:', 'nextWeekPrefix': 'На следующей неделе у нас доступны такие слоты:', 'allSlotsPrefix': 'У нас есть вот такие слоты:', 'separatorText': 'И на следующей неделе:'}
+🔍 DEBUG G-DATA: Передаем 34 событий в шаблон
+🔍 DEBUG G-DATA: Событие:  JS Tech Screening | Матяш Андрей в 2025-09-23T12:00:00+03:00
+🔍 DEBUG G-DATA: Событие: SM Screening | Титов Александр в 2025-09-23T13:00:00+03:00
+🔍 DEBUG G-DATA: Событие: Обед в 2025-09-23T14:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:gdata_automation
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}][23/Sep/2025 12:41:42] "GET /admin/finance/benchmark/ HTTP/1.1" 200 68165
+[23/Sep/2025 12:41:42] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 12:42:01] "GET /admin/finance/benchmark/ HTTP/1.1" 200 68165
+[23/Sep/2025 12:42:01] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 12:42:08] "GET /admin/finance/hhvacancytemp/ HTTP/1.1" 200 105940
+[23/Sep/2025 12:42:08] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 12:42:13] "GET /admin/finance/hhvacancytemp/?q=532 HTTP/1.1" 200 55651
+[23/Sep/2025 12:42:13] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 12:42:27] "GET /admin/finance/hhvacancytemp/?q= HTTP/1.1" 200 108587
+[23/Sep/2025 12:42:27] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 12:49:49] "GET /admin/ HTTP/1.1" 200 41487
+[23/Sep/2025 12:49:49] "GET /static/admin/css/dashboard.css HTTP/1.1" 200 441
+[23/Sep/2025 12:49:49] "GET /static/admin/img/icon-deletelink.svg HTTP/1.1" 304 0
+[23/Sep/2025 12:49:53] "GET /admin/finance/benchmark/ HTTP/1.1" 200 68165
+[23/Sep/2025 12:49:53] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 12:56:08] "GET /admin/finance/hhvacancytemp/?q= HTTP/1.1" 200 108587
+[23/Sep/2025 12:56:08] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 12:58:06] "GET /admin/finance/benchmark/ HTTP/1.1" 200 68165
+[23/Sep/2025 12:58:06] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 13:20:32] "GET /admin/finance/benchmark/ HTTP/1.1" 200 68165
+[23/Sep/2025 13:20:32] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 13:20:37] "GET /admin/finance/hhvacancytemp/?q= HTTP/1.1" 200 108587
+[23/Sep/2025 13:20:37] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 13:20:53] "GET / HTTP/1.1" 302 0
+[23/Sep/2025 13:20:56] "GET /huntflow/ HTTP/1.1" 200 49183
+[23/Sep/2025 13:21:30] "GET /accounts/api-keys/ HTTP/1.1" 200 55062
+[23/Sep/2025 13:21:30] "GET /static/css/profile.css HTTP/1.1" 304 0
+[23/Sep/2025 13:21:32] "POST /accounts/api-keys/ HTTP/1.1" 302 0
+[23/Sep/2025 13:21:33] "GET /accounts/api-keys/ HTTP/1.1" 200 55405
+[23/Sep/2025 13:22:30] "GET /admin/finance/benchmark/ HTTP/1.1" 200 68165
+[23/Sep/2025 13:22:30] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 13:22:38] "GET /admin/finance/benchmark/65/change/ HTTP/1.1" 200 55308
+[23/Sep/2025 13:22:38] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 13:23:09] "GET /admin/finance/benchmark/ HTTP/1.1" 200 68165
+/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1671: RuntimeWarning: DateTimeField Benchmark.date_added received a naive datetime (2024-09-23 13:23:44.259067) while time zone support is active.
+  warnings.warn(
+[23/Sep/2025 13:23:45] "GET /finance/benchmarks/ HTTP/1.1" 200 210580
+[23/Sep/2025 13:23:45] "GET /static/css/finance.css HTTP/1.1" 304 0
 
-System check identified no issues (0 silenced).
-
-You have 2 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): django_telethon.
-Run 'python manage.py migrate' to apply them.
-September 20, 2025 - 00:30:17
-Django version 5.2.6, using settings 'config.settings'
-Starting development server at http://127.0.0.1:8000/
-Quit the server with CONTROL-C.
-
-WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
-For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
-Watching for file changes with StatReloader
-[20/Sep/2025 00:33:34] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
-[20/Sep/2025 00:38:34] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
-[20/Sep/2025 00:43:34] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
-[20/Sep/2025 01:23:37] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
-[20/Sep/2025 01:28:36] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
-[20/Sep/2025 01:33:36] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
-[20/Sep/2025 01:38:37] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
-[20/Sep/2025 01:43:36] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
-[20/Sep/2025 01:48:36] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
-[20/Sep/2025 01:53:36] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
-/Users/agolubenko/hrhelper/backend/config/settings.py changed, reloading.
-Performing system checks...
-
-System check identified no issues (0 silenced).
-
-You have 2 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): django_telethon.
-Run 'python manage.py migrate' to apply them.
-September 20, 2025 - 00:30:19
-Django version 5.2.6, using settings 'config.settings'
-Starting development server at http://127.0.0.1:8000/
-Quit the server with CONTROL-C.
-
-WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
-For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
-💾 Сохранены события календаря в кэш: 28 событий
-🔍 API CALENDAR EVENTS: Получено 28 событий из API
-🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
-💾 Сохранены события календаря в кэш: 28 событий
-🔍 API CALENDAR EVENTS: Получено 28 событий из API
-🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
-💾 Сохранены события календаря в кэш: 28 событий
-🔍 API CALENDAR EVENTS: Получено 28 событий из API
-🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
-💾 Сохранены события календаря в кэш: 28 событий
-🔍 API CALENDAR EVENTS: Получено 28 событий из API
-🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
-💾 Сохранены события календаря в кэш: 28 событий
-🔍 API CALENDAR EVENTS: Получено 28 событий из API
-🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
-💾 Сохранены события календаря в кэш: 28 событий
-🔍 API CALENDAR EVENTS: Получено 28 событий из API
-🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
-💾 Сохранены события календаря в кэш: 28 событий
-🔍 API CALENDAR EVENTS: Получено 28 событий из API
-🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
-💾 Сохранены события календаря в кэш: 28 событий
-🔍 API CALENDAR EVENTS: Получено 28 событий из API
-🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
-💾 Сохранены события календаря в кэш: 28 событий
-🔍 API CALENDAR EVENTS: Получено 28 событий из API
-🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
-💾 Сохранены события календаря в кэш: 28 событий
-🔍 API CALENDAR EVENTS: Получено 28 событий из API
-🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
-Watching for file changes with StatReloader
-/Users/agolubenko/hrhelper/backend/config/settings.py changed, reloading.
-Performing system checks...
-
-System check identified no issues (0 silenced).
-
-You have 2 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): django_telethon.
-Run 'python manage.py migrate' to apply them.
-September 20, 2025 - 01:56:18
-Django version 5.2.6, using settings 'config.settings'
-Starting development server at http://127.0.0.1:8000/
-Quit the server with CONTROL-C.
-
-WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
-For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
-Watching for file changes with StatReloader
-/Users/agolubenko/hrhelper/backend/config/settings.py changed, reloading.
-Performing system checks...
-
-System check identified no issues (0 silenced).
-
-You have 2 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): django_telethon.
-Run 'python manage.py migrate' to apply them.
-September 20, 2025 - 01:56:24
-Django version 5.2.6, using settings 'config.settings'
-Starting development server at http://127.0.0.1:8000/
-Quit the server with CONTROL-C.
-
-WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
-For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
-Watching for file changes with StatReloader
-[20/Sep/2025 01:58:36] "GET /google-oauth/api/calendar-events/ HTTP/1.1" 200 7235
-/Users/agolubenko/hrhelper/backend/config/settings.py changed, reloading.
-Performing system checks...
-
-System check identified no issues (0 silenced).
-
-You have 2 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): django_telethon.
-Run 'python manage.py migrate' to apply them.
-September 20, 2025 - 01:56:30
-Django version 5.2.6, using settings 'config.settings'
-Starting development server at http://127.0.0.1:8000/
-Quit the server with CONTROL-C.
-
-WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
-For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
-💾 Сохранены события календаря в кэш: 28 событий
-🔍 API CALENDAR EVENTS: Получено 28 событий из API
-🔍 API CALENDAR EVENTS: Передаем 28 событий в ответе
-Watching for file changes with StatReloader
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/me
+📥 Ответ API: 200
+📥 Тело ответа: {"id":694,"name":"andrei.golubenko@softnetix.io","position":null,"email":"andrei.golubenko@softnetix.io","phone":null,"locale":"ru_RU"}...
+✅ Подключение к Huntflow успешно!
+👤 Пользователь: andrei.golubenko@softnetix.io
+📧 Email: andrei.golubenko@softnetix.io
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = huntflow:dashboard
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = accounts:api_keys
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = accounts:api_keys
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmarks_dashboard
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+[23/Sep/2025 13:24:28] "GET /finance/benchmarks/list/ HTTP/1.1" 200 179120
+[23/Sep/2025 13:24:41] "GET /finance/benchmarks/list/?page=2 HTTP/1.1" 200 151620
+[23/Sep/2025 13:31:53] "GET /finance/benchmarks/list/?page=2 HTTP/1.1" 200 158416
+[23/Sep/2025 13:32:06] "GET /admin/finance/benchmark/ HTTP/1.1" 200 69135
+[23/Sep/2025 13:32:06] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 13:35:11] "GET /finance/benchmarks/list/?page=2&page=1 HTTP/1.1" 200 178310
+[23/Sep/2025 13:35:38] "GET /finance/benchmarks/66/ HTTP/1.1" 200 54243
+[23/Sep/2025 13:35:48] "GET /finance/benchmarks/66/edit/ HTTP/1.1" 200 61224
+[23/Sep/2025 13:36:19] "GET /admin/finance/benchmark/ HTTP/1.1" 200 70109
+[23/Sep/2025 13:36:19] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 13:36:36] "POST /finance/benchmarks/66/edit/ HTTP/1.1" 302 0
+[23/Sep/2025 13:36:37] "GET /finance/benchmarks/66/ HTTP/1.1" 200 53175
+[23/Sep/2025 13:36:41] "GET /finance/benchmarks/list/ HTTP/1.1" 200 177301
+[23/Sep/2025 13:37:21] "GET /admin/vacancies/vacancy/ HTTP/1.1" 200 43966
+[23/Sep/2025 13:37:21] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 13:37:24] "GET /admin/vacancies/vacancy/32/change/ HTTP/1.1" 200 54773
+[23/Sep/2025 13:37:24] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 13:37:26] "POST /admin/vacancies/vacancy/32/change/ HTTP/1.1" 302 0
+[23/Sep/2025 13:37:27] "GET /admin/vacancies/vacancy/ HTTP/1.1" 200 44187
+[23/Sep/2025 13:37:27] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 13:37:33] "GET /admin/vacancies/vacancy/26/change/ HTTP/1.1" 200 54799
+[23/Sep/2025 13:37:33] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 13:37:35] "POST /admin/vacancies/vacancy/26/change/ HTTP/1.1" 302 0
+[23/Sep/2025 13:37:36] "GET /admin/vacancies/vacancy/ HTTP/1.1" 200 44178
+[23/Sep/2025 13:37:36] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 13:37:39] "GET /admin/vacancies/vacancy/25/change/ HTTP/1.1" 200 54775
+[23/Sep/2025 13:37:39] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 13:37:40] "POST /admin/vacancies/vacancy/25/change/ HTTP/1.1" 302 0
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmarks_list
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmarks_list
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmarks_list
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmarks_list
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmark_detail
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmark_edit
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmark_detail
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmarks_list
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...[23/Sep/2025 13:37:42] "GET /admin/vacancies/vacancy/ HTTP/1.1" 200 44154
+[23/Sep/2025 13:37:42] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 13:37:46] "GET /admin/vacancies/vacancy/13/change/ HTTP/1.1" 200 54790
+[23/Sep/2025 13:37:46] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 13:37:52] "POST /admin/vacancies/vacancy/13/change/ HTTP/1.1" 302 0
+[23/Sep/2025 13:38:00] "GET /admin/vacancies/vacancy/ HTTP/1.1" 200 44153
+[23/Sep/2025 13:38:00] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 13:38:06] "GET /admin/vacancies/vacancy/3/change/ HTTP/1.1" 200 55868
+[23/Sep/2025 13:38:06] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 13:38:11] "POST /admin/vacancies/vacancy/3/change/ HTTP/1.1" 302 0
+[23/Sep/2025 13:38:11] "GET /admin/vacancies/vacancy/ HTTP/1.1" 200 44145
+[23/Sep/2025 13:38:11] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 13:40:51] "GET /admin/finance/benchmarksettings/ HTTP/1.1" 302 0
+[23/Sep/2025 13:41:12,697] - Broken pipe from ('127.0.0.1', 65109)
+[23/Sep/2025 13:41:21] "GET /admin/finance/benchmarksettings/1/change/ HTTP/1.1" 200 52372
+[23/Sep/2025 13:41:21,672] - Broken pipe from ('127.0.0.1', 49663)
+[23/Sep/2025 13:41:54] "GET /admin/vacancies/vacancy/ HTTP/1.1" 200 43902
+WARNING Not Found: /favicon.ico
+Not Found: /favicon.ico
+[23/Sep/2025 13:41:54] "GET /favicon.ico HTTP/1.1" 404 4605
+[23/Sep/2025 13:41:54] "GET /google-oauth/gdata-automation/?vacancy_id=1 HTTP/1.1" 200 111171
+[23/Sep/2025 13:41:54,993] - Broken pipe from ('127.0.0.1', 49746)
+[23/Sep/2025 13:42:13] "GET /google-oauth/gdata-automation/?vacancy_id=1 HTTP/1.1" 200 111171
+[23/Sep/2025 13:43:05] "GET /admin/finance/benchmarksettings/ HTTP/1.1" 302 0
+[23/Sep/2025 13:43:51] "GET /admin/finance/benchmarksettings/1/change/ HTTP/1.1" 200 52372
+[23/Sep/2025 13:43:51] "GET /admin/finance/hhvacancytemp/?q= HTTP/1.1" 200 108587
+[23/Sep/2025 13:43:51] "GET /admin/jsi18n/ HTTP/1.1" 200 17546

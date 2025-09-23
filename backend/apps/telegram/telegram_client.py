@@ -280,7 +280,8 @@ class TelegramAuthClient:
             
             # Проверка авторизации уже сделана в начале метода через базу данных
             
-            # Ждем авторизации
+            # Ждем авторизации - РЕАЛЬНОЕ ожидание сканирования QR
+            logger.info(f"Ждем реального сканирования QR-кода для {self.session_name}...")
             user = await asyncio.wait_for(self.qr_login.wait(), timeout=timeout)
             
             if user:
@@ -642,8 +643,18 @@ def run_telegram_auth_sync(telegram_user_id: int, action: str, **kwargs):
     asyncio.set_event_loop(loop)
     
     try:
-        return loop.run_until_complete(run_telegram_auth_async(telegram_user_id, action, **kwargs))
+        result = loop.run_until_complete(run_telegram_auth_async(telegram_user_id, action, **kwargs))
+        return result
     finally:
+        # Закрываем все соединения перед закрытием loop
+        try:
+            # Отключаем все клиенты из кэша
+            for client_key, client in list(_telegram_clients.items()):
+                if client and hasattr(client, 'client') and client.client and client.client.is_connected():
+                    loop.run_until_complete(client.client.disconnect())
+            _telegram_clients.clear()
+        except Exception as e:
+            logger.warning(f"Ошибка при отключении клиентов: {e}")
         loop.close()
 
 async def run_telegram_auth_async(telegram_user_id: int, action: str, **kwargs):

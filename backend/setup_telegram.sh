@@ -61,3 +61,5 @@ echo "4. Отправка тестового сообщения:"
 echo "   python manage.py send_telegram_message @username 'Привет!'"
 echo ""
 echo "=== Настройка завершена ==="
+
+

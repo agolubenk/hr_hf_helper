@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from decimal import Decimal
-from .models import Grade, CurrencyRate, PLNTax, SalaryRange, Benchmark, BenchmarkSettings
+from .models import Grade, CurrencyRate, PLNTax, SalaryRange, Benchmark, BenchmarkSettings, Domain
 
 
 class GradeSerializer(serializers.ModelSerializer):
@@ -10,6 +10,8 @@ class GradeSerializer(serializers.ModelSerializer):
         model = Grade
         fields = ['id', 'name']
         read_only_fields = ['id']
+
+
 
 
 class CurrencyRateSerializer(serializers.ModelSerializer):
@@ -64,6 +66,8 @@ class BenchmarkSerializer(serializers.ModelSerializer):
     """Сериализатор для бенчмарков"""
     vacancy_name = serializers.CharField(source='vacancy.name', read_only=True)
     grade_name = serializers.CharField(source='grade.name', read_only=True)
+    domain_display = serializers.CharField(source='get_domain_display', read_only=True)
+    domain_description = serializers.SerializerMethodField()
     salary_display = serializers.SerializerMethodField()
     type_icon = serializers.ReadOnlyField()
     type_color = serializers.ReadOnlyField()
@@ -74,14 +78,18 @@ class BenchmarkSerializer(serializers.ModelSerializer):
             'id', 'type', 'vacancy', 'vacancy_name', 'grade', 'grade_name',
             'salary_from', 'salary_to', 'salary_display', 'location',
             'work_format', 'compensation', 'benefits', 'development',
-            'technologies', 'domain', 'notes', 'is_active',
+                'technologies', 'domain', 'domain_display', 'domain_description', 'hh_vacancy_id', 'notes', 'is_active',
             'type_icon', 'type_color', 'date_added', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'date_added', 'created_at', 'updated_at', 'salary_display', 'type_icon', 'type_color']
+        read_only_fields = ['id', 'date_added', 'created_at', 'updated_at', 'salary_display', 'type_icon', 'type_color', 'domain_display', 'domain_description']
     
     def get_salary_display(self, obj):
         """Возвращает отформатированное отображение зарплаты"""
         return obj.get_salary_display()
+    
+    def get_domain_description(self, obj):
+        """Возвращает описание домена для тултипа"""
+        return obj.get_domain_description()
     
     def validate(self, attrs):
         """Валидация бенчмарка"""

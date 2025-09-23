@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.shortcuts import redirect
+from django.http import HttpResponse
 # from django_telethon.urls import django_telethon_urls  # Отключено
 
 def redirect_to_huntflow(request):
@@ -34,4 +35,7 @@ urlpatterns = [
     path('notion/', include('apps.notion_int.urls')),
     path('telegram/', include('apps.telegram.urls')),
     # path('telegram-api/', django_telethon_urls()),  # Отключено
+    
+    # Test page
+    path('test-telegram/', lambda request: HttpResponse(open('/Users/agolubenko/hrhelper/fullstack/backend/test_simple_telegram.html').read(), content_type='text/html'), name='test_telegram'),
 ]

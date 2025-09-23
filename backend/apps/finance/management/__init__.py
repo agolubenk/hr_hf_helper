@@ -1,3 +1,1 @@
-
-
-
+# Management commands for finance app

@@ -25,6 +25,7 @@ async function generateQR() {
         console.log('QR response:', data);
         
         if (data.success) {
+            // Сервер уже возвращает data URL
             document.getElementById('qr-image').src = data.qr_image;
             showElement('qr-container');
             hideElement('step-initial');
@@ -33,12 +34,13 @@ async function generateQR() {
         } else if (data.redirect) {
             location.reload();
         } else {
-            showError('Ошибка создания QR: ' + data.error);
+            console.error('❌ Ошибка создания QR:', data);
+            showError('Ошибка создания QR: ' + (data.error || 'Неизвестная ошибка'));
         }
         
     } catch (error) {
         console.error('Ошибка generateQR:', error);
-        showError('Ошибка: ' + error.message);
+        showError('Ошибка сети: ' + error.message);
     }
 }
 
@@ -86,7 +88,7 @@ async function checkAuthStatus() {
             stopAuthCheck();
             show2FA();
             
-        } else if (data.status === 'waiting') {
+        } else if (data.status === 'waiting' || data.status === 'timeout') {
             console.log('⏳ Ожидание авторизации...');
             showStatus('Ожидание сканирования QR-кода...', 'warning');
             
@@ -98,11 +100,14 @@ async function checkAuthStatus() {
             if (data.error.includes('не найден') || data.error.includes('не подключен')) {
                 stopAuthCheck();
             }
+        } else {
+            console.log('❓ Неизвестный статус:', data.status);
+            showStatus('Неизвестный статус: ' + data.status, 'warning');
         }
         
     } catch (error) {
         console.error('Ошибка проверки статуса:', error);
-        // Не показываем ошибку пользователю, просто логируем
+        showStatus('Ошибка сети: ' + error.message, 'danger');
     }
 }
 
@@ -192,11 +197,11 @@ function showSuccess(user) {
     
     showStatus('Авторизация завершена успешно!', 'success');
     
-    // Автоматическое перенаправление на дашборд через 3 секунды
-    setTimeout(() => {
-        console.log('Перенаправляем на дашборд...');
-        window.location.href = '/telegram/dashboard/';
-    }, 3000);
+            // Автоматическое перенаправление на дашборд через 2 секунды
+            setTimeout(() => {
+                console.log('Перенаправляем на дашборд...');
+                window.location.href = '/telegram/dashboard/';
+            }, 2000);
 }
 
 async function resetAuth() {

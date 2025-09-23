@@ -33,4 +33,21 @@ urlpatterns = [
     path('benchmarks/<int:pk>/update/', views.benchmark_update, name='benchmark_update'),
     path('benchmarks/<int:pk>/delete/', views.benchmark_delete, name='benchmark_delete'),
     path('benchmarks/settings/', views.benchmark_settings, name='benchmark_settings'),
+    
+    # HH.ru Analysis URLs
+    path('hh-analysis/', views.hh_analysis_dashboard, name='hh_analysis_dashboard'),
+    path('hh-analysis/start/', views.start_hh_analysis, name='start_hh_analysis'),
+    path('hh-analysis/batch/', views.start_batch_hh_analysis, name='start_batch_hh_analysis'),
+    
+    # AI Analysis URLs
+    path('ai-analysis/', views.ai_analysis_dashboard, name='ai_analysis_dashboard'),
+    path('ai-analysis/run/', views.run_ai_analysis, name='run_ai_analysis'),
+    path('ai-analysis/update-prompt/', views.update_ai_prompt, name='update_ai_prompt'),
+    
+    # Task Status URL
+    path('task-status/<str:task_id>/', views.task_status, name='task_status'),
+    
+    # Настройки hh.ru
+    path('benchmarks/settings/', views.benchmarks_settings, name='benchmarks_settings'),
+    path('api/hh/start-collection/', views.start_hh_collection_manual, name='start_hh_collection'),
 ]

@@ -2,6 +2,7 @@ from __future__ import annotations
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 from decimal import Decimal
 
 
@@ -407,6 +408,38 @@ class SalaryRange(models.Model):
             salary_range.update_currency_amounts()
 
 
+class Domain(models.TextChoices):
+    """Домены деятельности компаний"""
+    RETAIL = "retail", _("Retail (Ритейл)")
+    FINTECH = "fintech", _("Fintech (Финтех)")
+    GAMING = "gaming", _("Gaming (Гейминг)")
+    GAMBLING = "gambling", _("Gambling (Гемблинг)")
+    BETTING = "betting", _("Betting (Беттинг)")
+    MEDTECH = "medtech", _("Medtech/Healthtech (Медтех/Здравоохранение)")
+    TELECOM = "telecom", _("Telecom (Телеком)")
+    EDTECH = "edtech", _("Edtech (Образовательные технологии)")
+    AGRITECH = "agritech", _("Agritech (Агротех)")
+    PROPTECH = "proptech", _("Proptech (Недвижимость)")
+    LEGALTECH = "legaltech", _("Legaltech (Юридические технологии)")
+    GOVTECH = "govtech", _("Govtech (Государственное управление)")
+    LOGISTICS = "logistics", _("Logistics/Supply Chain (Логистика)")
+    FOODTECH = "foodtech", _("Foodtech (Пищевые технологии)")
+    INSURTECH = "insurtech", _("Insurtech (Страхование)")
+    MARTECH = "martech", _("Martech (Маркетинговые технологии)")
+    ADTECH = "adtech", _("Adtech (Рекламные технологии)")
+    CYBERSECURITY = "cybersecurity", _("Cybersecurity (Кибербезопасность)")
+    CLEANTECH = "cleantech", _("Cleantech/Sustaintech (Экологические технологии)")
+    HRTECH = "hrtech", _("HRtech (Управление персоналом)")
+    TRAVELTECH = "traveltech", _("Traveltech (Туризм)")
+    SPORTTECH = "sporttech", _("Sporttech (Спортивные технологии)")
+    ENTERTAINMENT = "entertainment", _("Entertainment (Развлечения)")
+    ECOMMERCE = "ecommerce", _("E-commerce (Электронная коммерция)")
+    BLOCKCHAIN = "blockchain", _("Blockchain/Crypto (Блокчейн и крипто)")
+    AIML = "aiml", _("AI/ML (Искусственный интеллект и машинное обучение)")
+    IOT = "iot", _("IoT (Интернет вещей)")
+    CLOUD = "cloud", _("Cloud Computing (Облачные вычисления)")
+
+
 class BenchmarkType(models.TextChoices):
     """Типы бенчмарков"""
     CANDIDATE = "candidate", _("Кандидат")
@@ -496,6 +529,16 @@ class Benchmark(models.Model):
         help_text=_("Формат работы")
     )
     
+    # ID вакансии с hh.ru для избежания дублирования
+    hh_vacancy_id = models.CharField(
+        _("ID вакансии hh.ru"),
+        max_length=50,
+        blank=True,
+        null=True,
+        unique=True,
+        help_text=_("ID вакансии на hh.ru для предотвращения дублирования")
+    )
+    
     compensation = models.TextField(
         _("Компенсации"),
         blank=True,
@@ -526,7 +569,8 @@ class Benchmark(models.Model):
     
     domain = models.CharField(
         _("Домен"),
-        max_length=200,
+        max_length=20,
+        choices=Domain.choices,
         blank=True,
         null=True,
         help_text=_("Домен деятельности компании")
@@ -620,9 +664,47 @@ class Benchmark(models.Model):
     def type_color(self):
         """Возвращает цвет для типа бенчмарка"""
         if self.type == BenchmarkType.CANDIDATE:
-            return "success"  # Зеленый для кандидатов
+            return "success"
         else:
-            return "primary"  # Синий для вакансий
+            return "info"
+    
+    def get_domain_description(self):
+        """Возвращает описание домена для тултипа"""
+        if not self.domain:
+            return ""
+        
+        domain_descriptions = {
+            Domain.RETAIL: "ИТ-решения для розничной торговли, включая e-commerce, логистику и персонализацию покупок.",
+            Domain.FINTECH: "Финансовые технологии, такие как мобильный банкинг, криптовалюты и платежные системы.",
+            Domain.GAMING: "Разработка игр, виртуальной реальности и киберспорта.",
+            Domain.GAMBLING: "Онлайн-казино и азартные платформы с элементами безопасности и аналитики.",
+            Domain.BETTING: "Ставки на спорт и события с использованием данных и алгоритмов прогнозирования.",
+            Domain.MEDTECH: "Медицинские технологии, телемедицина, носимые устройства и анализ здоровья.",
+            Domain.TELECOM: "Телекоммуникации, сети 5G/6G, IoT и облачные сервисы связи.",
+            Domain.EDTECH: "Онлайн-обучение, платформы для курсов и виртуальные классы.",
+            Domain.AGRITECH: "Технологии для сельского хозяйства, включая дроны, точное земледелие и мониторинг урожая.",
+            Domain.PROPTECH: "ИТ для рынка недвижимости, виртуальные туры и управление активами.",
+            Domain.LEGALTECH: "Автоматизация юридических процессов, контракты на блокчейне и анализ документов.",
+            Domain.GOVTECH: "Цифровые сервисы для правительства, e-gov и общественные платформы.",
+            Domain.LOGISTICS: "Управление цепочками поставок, трекинг и оптимизация транспорта.",
+            Domain.FOODTECH: "Доставка еды, фуд-трекинг и устойчивые производства.",
+            Domain.INSURTECH: "Цифровые страховые продукты, риски на основе AI и claims-менеджмент.",
+            Domain.MARTECH: "Инструменты для маркетинга, CRM и анализ поведения потребителей.",
+            Domain.ADTECH: "Цифровая реклама, таргетинг и programmatic-платформы.",
+            Domain.CYBERSECURITY: "Защита данных, антивирусы и мониторинг угроз.",
+            Domain.CLEANTECH: "ИТ для устойчивости, мониторинг окружающей среды и зеленая энергетика.",
+            Domain.HRTECH: "Рекрутинг, HR-системы и анализ сотрудников.",
+            Domain.TRAVELTECH: "Бронирование, виртуальные туры и персонализированные путешествия.",
+            Domain.SPORTTECH: "Фитнес-аппы, анализ производительности и фан-платформы.",
+            Domain.ENTERTAINMENT: "Стриминговые сервисы, контент-платформы и AR/VR для медиа.",
+            Domain.ECOMMERCE: "Общие платформы для онлайн-торговли, часто пересекающиеся с retail.",
+            Domain.BLOCKCHAIN: "Децентрализованные приложения, NFT и смарт-контракты.",
+            Domain.AIML: "Общие решения на базе AI, интегрируемые в другие домены.",
+            Domain.IOT: "Устройства и сети для умных городов, домов и промышленности.",
+            Domain.CLOUD: "Платформы as-a-Service для хранения и обработки данных."
+        }
+        
+        return domain_descriptions.get(self.domain, "")
 
 
 class DataSource(models.TextChoices):
@@ -651,6 +733,37 @@ class VacancyField(models.TextChoices):
     DOMAIN = "domain", _("Домен")
 
 
+class HHVacancyTemp(models.Model):
+    """Временная модель для хранения сырых вакансий с hh.ru перед обработкой"""
+    hh_id = models.CharField(
+        _("ID вакансии hh.ru"),
+        max_length=50,
+        unique=True,
+        help_text=_("Уникальный ID вакансии на hh.ru")
+    )
+    
+    raw_data = models.JSONField(
+        _("Сырые данные"),
+        help_text=_("JSON данные вакансии с API hh.ru")
+    )
+    
+    processed = models.BooleanField(
+        _("Обработана"),
+        default=False,
+        help_text=_("Была ли вакансия отправлена на AI анализ")
+    )
+    
+    created_at = models.DateTimeField(_("Создана"), auto_now_add=True)
+    
+    class Meta:
+        verbose_name = _("Временная вакансия hh.ru")
+        verbose_name_plural = _("Временные вакансии hh.ru")
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"HH Vacancy {self.hh_id}"
+
+
 class BenchmarkSettings(models.Model):
     """
     Настройки для системы бенчмарков.
@@ -664,6 +777,7 @@ class BenchmarkSettings(models.Model):
         help_text=_("Количество дней для расчета средних значений бенчмарков")
     )
     
+    
     # Налог в РБ для пересчета
     belarus_tax_rate = models.DecimalField(
         _("Налог в РБ (%)"),
@@ -676,7 +790,113 @@ class BenchmarkSettings(models.Model):
     # Промпт для анализа данных через ИИ
     ai_analysis_prompt = models.TextField(
         _("Промпт для анализа данных через ИИ"),
-        default="Проанализируй данные о зарплатах и предоставь статистику по рынку труда.",
+        default="""Ты - эксперт по анализу рынка труда и зарплат в IT-сфере. Проанализируй предоставленные данные о ВАКАНСИЯХ и верни структурированные данные для сохранения в базу данных.
+
+⚠️ ВАЖНО: В поле vacancy_name используй ТОЛЬКО названия из списка наших вакансий ИЛИ "skip". ЗАПРЕЩЕНО создавать новые названия!
+
+ДАННЫЕ ДЛЯ АНАЛИЗА:
+{benchmark_data}
+
+КУРСЫ ВАЛЮТ ДЛЯ ПЕРЕСЧЕТА:
+{currency_rates}
+
+НАШИ ВАКАНСИИ ДЛЯ УНИФИКАЦИИ (используй ТОЛЬКО эти названия):
+{our_vacancies}
+
+ЗАДАЧИ:
+1. Проанализируй каждую ВАКАНСИЮ из данных
+2. Извлеки структурированную информацию для сохранения в базу
+3. ВАЖНО: Зарплата может быть в формате {'from': 5000, 'to': 5400, 'currency': 'EUR', 'gross': True} - извлекай from и to значения
+4. Конвертируй все зарплаты в USD используя текущие курсы валют
+5. Если зарплата не указана, используй рекомендуемые диапазоны для рынка
+6. Выяви дополнительные данные из доступных полей:
+   - Формат работы: "Удалённо" = remote, "На месте работодателя" = office, "Гибрид" = hybrid
+   - Технологии: из snippet.requirement и snippet.responsibility
+   - Домен: определи по названию компании или описанию
+   - Компенсации/бенефиты/развитие: если не указаны, используй "Не указано"
+
+ФОРМАТ ОТВЕТА (строго JSON):
+{{
+    "analysis_metadata": {{
+        "analysis_date": "YYYY-MM-DD HH:MM:SS",
+        "total_processed": число,
+        "data_source": "источник данных"
+    }},
+    "structured_benchmarks": [
+        {{
+            "type": "vacancy",
+            "vacancy_id": "ID_ИЗ_ПОЛЯ_ID_ВАКАНСИИ_В_ДАННЫХ",
+            "vacancy_name": "ТОЧНОЕ_название_из_списка_наших_вакансий_ИЛИ_skip",
+            "grade": "грейд_из_нашего_списка_ИЛИ_skip",
+            "salary_from": число_в_USD,
+            "salary_to": число_в_USD,
+            "location": "локация (город, страна)",
+            "work_format": "remote/office/hybrid/all world",
+            "compensation": "дополнительные компенсации и бонусы",
+            "benefits": "социальные льготы и бенефиты",
+            "development": "возможности для развития и обучения",
+            "technologies": "используемые технологии и стеки",
+            "domain": "домен деятельности (retail/fintech/gaming/etc)",
+            "notes": "дополнительные заметки",
+            "skip_reason": "причина_пропуска_если_vacancy_name=skip"
+        }}
+    ]
+}}
+
+ВАЖНЫЕ ТРЕБОВАНИЯ:
+- АНАЛИЗИРУЙ ТОЛЬКО ВАКАНСИИ (type всегда "vacancy")
+- ОБЯЗАТЕЛЬНО используй ID из поля "ID вакансии:" в данных для поля vacancy_id
+- Все суммы ОБЯЗАТЕЛЬНО конвертируй в USD используя предоставленные курсы валют
+- Формат работы: только из списка (remote/office/hybrid/all world)
+- Домен: только из предустановленного списка (retail/fintech/gaming/gambling/betting/medtech/telecom/edtech/agritech/proptech/legaltech/govtech/logistics/foodtech/insurtech/martech/adtech/cybersecurity/cleantech/hrtech/traveltech/sporttech/entertainment/ecommerce/blockchain/aiml/iot/cloud)
+- Грейд: Junior/Junior+/Middle/Middle+/Senior/Senior+/Lead/Head
+- Поле salary_to ОБЯЗАТЕЛЬНО для вакансий (всегда указывай диапазон)
+- Технологии указывай через запятую
+- Локация в формате "Город, Страна" (например, "Минск, Беларусь")
+- При конвертации валют учитывай налоги и указывай в notes если необходимо
+
+КРИТИЧЕСКИ ВАЖНО ДЛЯ vacancy_name:
+- Используй ТОЛЬКО точные названия из списка наших вакансий ИЛИ "skip"
+- ЗАПРЕЩЕНО создавать новые названия!
+- Список наших вакансий находится выше в разделе "НАШИ ВАКАНСИИ ДЛЯ УНИФИКАЦИИ"
+
+НАШИ ГРЕЙДЫ (используй ТОЛЬКО эти названия):
+{our_grades}
+
+- Если внешняя вакансия НЕ соответствует нашим, используй "skip"
+- Сопоставляй по смыслу и технологиям:
+  * Java/Backend разработчики → "Backend Engineer (Java)" (если Java в стеке)
+  * React/Frontend разработчики → "Frontend Engineer (React)" (если React в стеке)
+  * QA/тестировщики → "QA Engineer"
+  * DevOps/SRE/инфраструктура → "DevOps Engineer"
+  * Менеджеры проектов → "Project Manager"
+  * Системные администраторы → "System Administrator"
+  * UI/UX дизайнеры → "UX/UI Designer"
+  * Поддержка/сервис → "Support Engineer (Service Manager/Sport Analyst)"
+- ВСЕ ОСТАЛЬНОЕ → "skip"
+
+ВАЖНО: Если vacancy_name = "skip", то:
+- salary_from и salary_to должны быть null
+- skip_reason должен содержать причину пропуска
+- Примеры причин:
+  * "Не соответствует стек технологий (Node.js вместо Java)"
+  * "Не IT вакансия"
+  * "Нет подходящей вакансии в нашем списке"
+  * "Технологии не соответствуют требованиям"
+
+ПРАВИЛА ОБРАБОТКИ ЗАРПЛАТЫ:
+- Если зарплата указана как {'from': 5000, 'to': 5400, 'currency': 'EUR', 'gross': True}, используй from=5000, to=5400
+- Если зарплата указана как {'from': 3000, 'currency': 'USD', 'gross': False}, используй from=3000, to=3000 (или рассчитай диапазон)
+- Если зарплата None или пустая, рассчитай рекомендуемый диапазон для данной позиции и грейда
+
+ПРАВИЛА КОНВЕРТАЦИИ ВАЛЮТ:
+- Если зарплата указана в BYN: умножь на курс BYN к USD
+- Если зарплата указана в PLN: умножь на курс PLN к USD  
+- Если зарплата указана в EUR: умножь на курс EUR к USD (примерно 1.1)
+- Если зарплата указана в других валютах: используй ближайший курс или укажи в notes
+- Всегда указывай исходную валюту в notes при конвертации
+
+Отвечай ТОЛЬКО в формате JSON, без дополнительных комментариев.""",
         help_text=_("Промпт для анализа данных о зарплатах через ИИ")
     )
     
@@ -690,7 +910,7 @@ class BenchmarkSettings(models.Model):
     # Максимальное количество задач для обработки в день
     max_daily_tasks = models.PositiveIntegerField(
         _("Максимальное количество задач в день"),
-        default=100,
+        default=100,  # 1 задача в минуту (60 минут * 1 задача)
         help_text=_("Максимальное количество задач для обработки в день")
     )
     
@@ -699,6 +919,25 @@ class BenchmarkSettings(models.Model):
         _("Поля для сохранения вакансий"),
         default=list,
         help_text=_("Список полей для сохранения информации о вакансиях")
+    )
+    
+    # Настройки для hh.ru
+    hh_channel_active = models.BooleanField(
+        _("Канал hh.ru активен"),
+        default=True,
+        help_text=_("Включить/отключить сбор вакансий с hh.ru")
+    )
+    
+    max_daily_hh_tasks = models.IntegerField(
+        _("Максимум задач hh.ru в сутки"),
+        default=100,
+        help_text=_("Лимит обработки вакансий с hh.ru за день")
+    )
+    
+    hh_ai_prompt = models.TextField(
+        _("AI промпт для hh.ru"),
+        default="",
+        help_text=_("Специальный промпт для анализа вакансий с hh.ru")
     )
     
     # Временные метки

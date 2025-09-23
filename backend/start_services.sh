@@ -109,7 +109,7 @@ mkdir -p logs
 
 # Запускаем Celery Worker в фоне
 print_status "Запуск Celery Worker..."
-nohup celery -A hrhelper worker --loglevel=info > logs/celery.log 2>&1 &
+nohup celery -A config worker --loglevel=info > logs/celery.log 2>&1 &
 CELERY_PID=$!
 echo $CELERY_PID > logs/celery.pid
 

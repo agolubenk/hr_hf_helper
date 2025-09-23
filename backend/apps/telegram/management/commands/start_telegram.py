@@ -132,3 +132,5 @@ class Command(BaseCommand):
         self.stdout.write(
             f'Обработчики настроены для {auth_client.telegram_user}'
         )
+
+

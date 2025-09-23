@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import path
 from django.contrib import messages
 from django.utils.html import format_html
-from .models import Grade, CurrencyRate, PLNTax, SalaryRange, Benchmark, BenchmarkSettings, DataSource, VacancyField
+from .models import Grade, CurrencyRate, PLNTax, SalaryRange, Benchmark, BenchmarkSettings, DataSource, VacancyField, Domain, HHVacancyTemp
 
 
 @admin.register(Grade)
@@ -245,9 +245,9 @@ class SalaryRangeAdmin(admin.ModelAdmin):
 
 @admin.register(Benchmark)
 class BenchmarkAdmin(admin.ModelAdmin):
-    list_display = ("type_display", "vacancy", "grade", "salary_display", "location", "work_format", "domain", "is_active", "date_added")
+    list_display = ("type_display", "vacancy", "grade", "salary_display", "location", "work_format", "domain", "hh_vacancy_id", "is_active", "date_added")
     list_filter = ("type", "is_active", "grade", "vacancy", "work_format", "domain", "date_added")
-    search_fields = ("vacancy__name", "grade__name", "location", "notes", "work_format", "technologies", "domain")
+    search_fields = ("vacancy__name", "grade__name", "location", "notes", "work_format", "technologies", "domain", "hh_vacancy_id")
     readonly_fields = ("created_at", "updated_at", "date_added")
     fieldsets = (
         (None, {
@@ -258,7 +258,7 @@ class BenchmarkAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Дополнительные поля вакансии', {
-            'fields': ('work_format', 'compensation', 'benefits', 'development', 'technologies', 'domain'),
+            'fields': ('work_format', 'compensation', 'benefits', 'development', 'technologies', 'domain', 'hh_vacancy_id'),
             'classes': ('collapse',),
             'description': 'Дополнительные поля, которые отображаются в зависимости от настроек бенчмарков'
         }),
@@ -315,6 +315,43 @@ class BenchmarkAdmin(admin.ModelAdmin):
         return super().changelist_view(request, extra_context)
 
 
+@admin.register(HHVacancyTemp)
+class HHVacancyTempAdmin(admin.ModelAdmin):
+    list_display = ("hh_id", "processed", "created_at", "company_name", "vacancy_title")
+    list_filter = ("processed", "created_at")
+    search_fields = ("hh_id", "raw_data")
+    readonly_fields = ("hh_id", "raw_data", "created_at")
+    fieldsets = (
+        (None, {
+            'fields': ('hh_id', 'processed')
+        }),
+        ('Данные вакансии', {
+            'fields': ('raw_data',),
+            'classes': ('collapse',)
+        }),
+        ('Информация', {
+            'fields': ('created_at',),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def company_name(self, obj):
+        """Извлекает название компании из raw_data"""
+        try:
+            return obj.raw_data.get('employer', {}).get('name', 'Не указано')
+        except:
+            return 'Не указано'
+    company_name.short_description = "Компания"
+    
+    def vacancy_title(self, obj):
+        """Извлекает название вакансии из raw_data"""
+        try:
+            return obj.raw_data.get('name', 'Не указано')[:50]
+        except:
+            return 'Не указано'
+    vacancy_title.short_description = "Вакансия"
+
+
 @admin.register(BenchmarkSettings)
 class BenchmarkSettingsAdmin(admin.ModelAdmin):
     list_display = (
@@ -323,6 +360,8 @@ class BenchmarkSettingsAdmin(admin.ModelAdmin):
         "max_daily_tasks",
         "data_sources_display",
         "vacancy_fields_display",
+        "hh_channel_active",
+        "max_daily_hh_tasks",
         "updated_at",
     )
     fieldsets = (
@@ -342,6 +381,10 @@ class BenchmarkSettingsAdmin(admin.ModelAdmin):
             'fields': ('vacancy_fields',),
             'description': 'Выберите дополнительные поля, которые будут сохраняться для вакансий.',
         }),
+                ('Настройки hh.ru', {
+                    'fields': ('hh_channel_active', 'max_daily_hh_tasks', 'hh_ai_prompt'),
+                    'description': 'Настройки для интеграции с hh.ru',
+                }),
     )
     
     # Переопределяем методы для синглтон модели

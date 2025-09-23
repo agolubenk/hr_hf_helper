@@ -40,3 +40,4 @@ django-cors-headers==4.9.0
 # Дополнительные зависимости
 beautifulsoup4==4.12.2
 lxml==4.9.3
+python-dotenv==1.0.0

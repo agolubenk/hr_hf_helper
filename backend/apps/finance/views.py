@@ -5,16 +5,19 @@ from django.core.management import call_command
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.db import models
+from django.db.models import Count, Avg, Min, Max, Case, When
 from io import StringIO
 import json
-from .models import Grade, CurrencyRate, PLNTax, SalaryRange, Benchmark, BenchmarkType, BenchmarkSettings, DataSource, VacancyField
+from .models import Grade, CurrencyRate, PLNTax, SalaryRange, Benchmark, BenchmarkType, BenchmarkSettings, DataSource, VacancyField, HHVacancyTemp
 
 
 @login_required
 def benchmarks_dashboard(request):
     """Отдельный дашборд для бенчмарков с аналитикой и статистикой"""
-    from django.db.models import Count, Avg, Min, Max
     from decimal import Decimal
+    from django.db.models import Count, Avg, Min, Max, Case, When
+    from django.db import models
     
     # Получаем фильтры из GET параметров
     grade_filter = request.GET.getlist('grades')
@@ -1110,3 +1113,382 @@ def benchmark_settings(request):
     }
     
     return render(request, 'finance/benchmark_settings.html', context)
+
+
+# Views для анализа hh.ru и ИИ
+
+@login_required
+def hh_analysis_dashboard(request):
+    """Дашборд для анализа hh.ru"""
+    from apps.vacancies.models import Vacancy
+    
+    # Получаем активные вакансии и грейды
+    vacancies = Vacancy.objects.filter(is_active=True).order_by('name')
+    grades = Grade.objects.all().order_by('name')
+    
+    # Статистика по бенчмаркам
+    total_benchmarks = Benchmark.objects.filter(is_active=True).count()
+    hh_benchmarks = Benchmark.objects.filter(
+        is_active=True,
+        notes__icontains='hh.ru'
+    ).count()
+    
+    # Последние бенчмарки
+    recent_benchmarks = Benchmark.objects.filter(
+        is_active=True
+    ).select_related('vacancy', 'grade').order_by('-date_added')[:10]
+    
+    context = {
+        'vacancies': vacancies,
+        'grades': grades,
+        'total_benchmarks': total_benchmarks,
+        'hh_benchmarks': hh_benchmarks,
+        'recent_benchmarks': recent_benchmarks,
+    }
+    
+    return render(request, 'finance/hh_analysis_dashboard.html', context)
+
+
+@login_required
+@csrf_exempt
+@require_http_methods(["POST"])
+def start_hh_analysis(request):
+    """Запуск анализа hh.ru"""
+    try:
+        data = json.loads(request.body)
+        
+        vacancy_id = data.get('vacancy_id')
+        grade_id = data.get('grade_id')
+        search_query = data.get('search_query', '').strip()
+        country = data.get('country', 'belarus')
+        area = data.get('area', None)
+        
+        if not vacancy_id or not grade_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Не указаны вакансия или грейд'
+            })
+        
+        # Проверяем существование объектов
+        try:
+            vacancy = Vacancy.objects.get(id=vacancy_id)
+            grade = Grade.objects.get(id=grade_id)
+        except (Vacancy.DoesNotExist, Grade.DoesNotExist):
+            return JsonResponse({
+                'success': False,
+                'message': 'Вакансия или грейд не найдены'
+            })
+        
+        # Запускаем Celery задачу
+        from .tasks import analyze_hh_vacancies
+        task = analyze_hh_vacancies.delay(vacancy_id, grade_id, search_query, country, area)
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Анализ hh.ru запущен для вакансии "{vacancy.name}" (грейд: {grade.name})',
+            'task_id': task.id,
+            'vacancy_name': vacancy.name,
+            'grade_name': grade.name
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'message': 'Неверный формат JSON'
+        })
+    except Exception as e:
+        logger.error(f"Ошибка при запуске анализа hh.ru: {e}")
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка при запуске анализа: {str(e)}'
+        })
+
+
+@login_required
+@csrf_exempt
+@require_http_methods(["POST"])
+def start_batch_hh_analysis(request):
+    """Запуск массового анализа hh.ru"""
+    try:
+        data = json.loads(request.body)
+        
+        vacancy_grade_pairs = data.get('vacancy_grade_pairs', [])
+        search_queries = data.get('search_queries', {})
+        
+        if not vacancy_grade_pairs:
+            return JsonResponse({
+                'success': False,
+                'message': 'Не указаны пары вакансия-грейд для анализа'
+            })
+        
+        # Валидируем пары
+        valid_pairs = []
+        for pair in vacancy_grade_pairs:
+            if isinstance(pair, list) and len(pair) == 2:
+                vacancy_id, grade_id = pair
+                try:
+                    Vacancy.objects.get(id=vacancy_id)
+                    Grade.objects.get(id=grade_id)
+                    valid_pairs.append((vacancy_id, grade_id))
+                except (Vacancy.DoesNotExist, Grade.DoesNotExist):
+                    continue
+        
+        if not valid_pairs:
+            return JsonResponse({
+                'success': False,
+                'message': 'Не найдено валидных пар вакансия-грейд'
+            })
+        
+        # Запускаем Celery задачу
+        from .tasks import analyze_hh_vacancies_batch
+        task = analyze_hh_vacancies_batch.delay(valid_pairs, search_queries)
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Массовый анализ hh.ru запущен для {len(valid_pairs)} пар',
+            'task_id': task.id,
+            'pairs_count': len(valid_pairs)
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'message': 'Неверный формат JSON'
+        })
+    except Exception as e:
+        logger.error(f"Ошибка при запуске массового анализа hh.ru: {e}")
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка при запуске массового анализа: {str(e)}'
+        })
+
+
+@login_required
+def ai_analysis_dashboard(request):
+    """Дашборд для ИИ анализа"""
+    from .ai_analyzer import AIBenchmarkAnalyzer
+    
+    analyzer = AIBenchmarkAnalyzer()
+    
+    # Получаем настройки
+    settings = BenchmarkSettings.load()
+    
+    # Статистика по бенчмаркам
+    total_benchmarks = Benchmark.objects.filter(is_active=True).count()
+    candidate_benchmarks = Benchmark.objects.filter(
+        type=BenchmarkType.CANDIDATE,
+        is_active=True
+    ).count()
+    vacancy_benchmarks = Benchmark.objects.filter(
+        type=BenchmarkType.VACANCY,
+        is_active=True
+    ).count()
+    
+    # Получаем текущий промпт
+    current_prompt = analyzer.get_ai_analysis_prompt()
+    
+    context = {
+        'total_benchmarks': total_benchmarks,
+        'candidate_benchmarks': candidate_benchmarks,
+        'vacancy_benchmarks': vacancy_benchmarks,
+        'current_prompt': current_prompt,
+        'settings': settings,
+    }
+    
+    return render(request, 'finance/ai_analysis_dashboard.html', context)
+
+
+@login_required
+@csrf_exempt
+@require_http_methods(["POST"])
+def run_ai_analysis(request):
+    """Запуск ИИ анализа бенчмарков"""
+    try:
+        data = json.loads(request.body)
+        
+        # Получаем фильтры
+        filters = data.get('filters', {})
+        custom_prompt = data.get('custom_prompt', '').strip()
+        save_to_db = data.get('save_to_db', False)
+        
+        from .ai_analyzer import AIBenchmarkAnalyzer
+        analyzer = AIBenchmarkAnalyzer()
+        
+        # Подготавливаем данные
+        benchmark_data = analyzer.prepare_benchmark_data_for_ai(filters)
+        
+        # Запускаем анализ
+        result = analyzer.analyze_with_ai(benchmark_data, custom_prompt)
+        
+        # Если нужно сохранить в базу и анализ успешен
+        if save_to_db and result.get('success') and result.get('analysis'):
+            save_result = analyzer.save_structured_benchmarks_to_db(result['analysis'])
+            result['save_result'] = save_result
+        
+        return JsonResponse(result)
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'error': 'Неверный формат JSON'
+        })
+    except Exception as e:
+        logger.error(f"Ошибка при ИИ анализе: {e}")
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })
+
+
+@login_required
+@csrf_exempt
+@require_http_methods(["POST"])
+def update_ai_prompt(request):
+    """Обновление промпта для ИИ анализа"""
+    try:
+        data = json.loads(request.body)
+        
+        new_prompt = data.get('prompt', '').strip()
+        
+        if not new_prompt:
+            return JsonResponse({
+                'success': False,
+                'message': 'Промпт не может быть пустым'
+            })
+        
+        from .ai_analyzer import AIBenchmarkAnalyzer
+        analyzer = AIBenchmarkAnalyzer()
+        
+        success = analyzer.update_ai_prompt(new_prompt)
+        
+        if success:
+            return JsonResponse({
+                'success': True,
+                'message': 'Промпт для ИИ анализа обновлен'
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'message': 'Ошибка при обновлении промпта'
+            })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'message': 'Неверный формат JSON'
+        })
+    except Exception as e:
+        logger.error(f"Ошибка при обновлении промпта: {e}")
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка при обновлении промпта: {str(e)}'
+        })
+
+
+@login_required
+def task_status(request, task_id):
+    """Проверка статуса задачи"""
+    try:
+        from celery.result import AsyncResult
+        
+        task_result = AsyncResult(task_id)
+        
+        if task_result.state == 'PENDING':
+            response = {
+                'state': task_result.state,
+                'status': 'Задача ожидает выполнения'
+            }
+        elif task_result.state == 'PROGRESS':
+            response = {
+                'state': task_result.state,
+                'status': 'Задача выполняется',
+                'progress': task_result.info
+            }
+        elif task_result.state == 'SUCCESS':
+            response = {
+                'state': task_result.state,
+                'status': 'Задача выполнена успешно',
+                'result': task_result.result
+            }
+        else:  # FAILURE
+            response = {
+                'state': task_result.state,
+                'status': 'Задача завершилась с ошибкой',
+                'error': str(task_result.info)
+            }
+        
+        return JsonResponse(response)
+        
+    except Exception as e:
+        logger.error(f"Ошибка при проверке статуса задачи: {e}")
+        return JsonResponse({
+            'state': 'ERROR',
+            'status': 'Ошибка при проверке статуса задачи',
+            'error': str(e)
+        })
+
+
+@login_required
+def benchmarks_settings(request):
+    """Страница настроек бенчмарков с управлением hh.ru"""
+    settings = BenchmarkSettings.load()
+    
+    if request.method == 'POST':
+        # Обновляем настройки hh.ru
+        settings.hh_channel_active = request.POST.get('hh_channel_active') == 'on'
+        settings.max_daily_hh_tasks = int(request.POST.get('max_daily_hh_tasks', 100))
+        settings.hh_ai_prompt = request.POST.get('hh_ai_prompt', '')
+        settings.save()
+        
+        messages.success(request, 'Настройки hh.ru обновлены')
+        return redirect('finance:benchmarks_settings')
+    
+    # Статистика
+    from datetime import date
+    today = date.today()
+    
+    # Статистика по hh.ru
+    hh_stats = {
+        'temp_vacancies': HHVacancyTemp.objects.count(),
+        'processed_today': HHVacancyTemp.objects.filter(
+            created_at__date=today,
+            processed=True
+        ).count(),
+        'pending_processing': HHVacancyTemp.objects.filter(processed=False).count(),
+        'benchmarks_from_hh': Benchmark.objects.filter(
+            hh_vacancy_id__isnull=False,
+            is_active=True
+        ).count()
+    }
+    
+    context = {
+        'settings': settings,
+        'hh_stats': hh_stats,
+        'available_domains': Domain.choices,
+    }
+    
+    return render(request, 'finance/benchmarks_settings.html', context)
+
+
+@login_required
+@csrf_exempt
+@require_http_methods(["POST"])
+def start_hh_collection_manual(request):
+    """Ручной запуск сбора вакансий с hh.ru"""
+    try:
+        from .tasks import fetch_hh_vacancies_task
+        
+        task = fetch_hh_vacancies_task.delay()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Сбор вакансий с hh.ru запущен',
+            'task_id': task.id
+        })
+        
+    except Exception as e:
+        logger.error(f"Ошибка при запуске сбора hh.ru: {e}")
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка: {str(e)}'
+        })

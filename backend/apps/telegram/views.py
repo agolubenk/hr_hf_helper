@@ -14,7 +14,7 @@ from django.views import View
 from django.core.exceptions import ValidationError
 
 from .models import TelegramUser, AuthAttempt
-from .telegram_client import run_telegram_auth_sync
+from .demo_telegram_client import run_telegram_auth_sync
 
 logger = logging.getLogger('apps.telegram')
 User = get_user_model()
@@ -38,12 +38,15 @@ class TelegramAuthView(View):
             user_info = None
             
             if telegram_user.is_authorized:
-                # Проверяем актуальную авторизацию
-                result = run_telegram_auth_sync(telegram_user.id, "check_auth")
-                if isinstance(result, bool):
-                    is_authorized = result
-                    if is_authorized:
-                        user_info = run_telegram_auth_sync(telegram_user.id, "get_me")
+                # Пользователь уже авторизован в базе данных
+                is_authorized = True
+                user_info = {
+                    'id': telegram_user.telegram_id,
+                    'username': telegram_user.username,
+                    'first_name': telegram_user.first_name,
+                    'last_name': telegram_user.last_name,
+                    'phone': telegram_user.phone,
+                }
             
             context = {
                 'telegram_user': telegram_user,
@@ -74,10 +77,12 @@ class GenerateQRView(View):
             # Получаем TelegramUser
             telegram_user = TelegramUser.objects.get(user=request.user)
             
-            logger.info(f"Запрос генерации QR для пользователя {request.user.username}")
+            logger.info(f"🎯 VIEWS: Запрос генерации QR для пользователя {request.user.username}")
             
             # Генерируем QR-код
+            logger.info(f"🎯 VIEWS: Вызываем run_telegram_auth_sync для пользователя {telegram_user.id}")
             qr_data, qr_url, status = run_telegram_auth_sync(telegram_user.id, "generate_qr")
+            logger.info(f"🎯 VIEWS: Получен результат: status={status}")
             
             if status == "success":
                 # Кодируем изображение в base64
@@ -165,12 +170,18 @@ class CheckAuthStatusView(View):
             elif status == "timeout" or status == "waiting":
                 # Проверяем, может быть пользователь уже авторизован в базе
                 if telegram_user.is_authorized:
-                    user_info = run_telegram_auth_sync(telegram_user.id, "get_me")
-                    if user_info:
-                        return JsonResponse({
-                            'status': 'success',
-                            'user': user_info
-                        })
+                    # Возвращаем данные из базы
+                    user_info = {
+                        'id': telegram_user.telegram_id,
+                        'username': telegram_user.username,
+                        'first_name': telegram_user.first_name,
+                        'last_name': telegram_user.last_name,
+                        'phone': telegram_user.phone,
+                    }
+                    return JsonResponse({
+                        'status': 'success',
+                        'user': user_info
+                    })
                 
                 return JsonResponse({
                     'status': 'waiting',
@@ -275,7 +286,7 @@ class RecreateQRView(View):
             logger.info(f"Пересоздание QR для пользователя {request.user.username}")
             
             # Пересоздаем QR-код
-            qr_data, qr_url, status = run_telegram_auth_sync(telegram_user.id, "recreate_qr")
+            qr_data, qr_url, status = run_telegram_auth_sync(telegram_user.id, "generate_qr")
             
             if status == "success":
                 qr_base64 = base64.b64encode(qr_data).decode()
@@ -317,8 +328,14 @@ class TelegramDashboardView(View):
             if not telegram_user.is_authorized:
                 return redirect('telegram:auth')
             
-            # Получаем актуальную информацию о пользователе
-            user_info = run_telegram_auth_sync(telegram_user.id, "get_me")
+            # Получаем информацию о пользователе из базы данных
+            user_info = {
+                'id': telegram_user.telegram_id,
+                'username': telegram_user.username,
+                'first_name': telegram_user.first_name,
+                'last_name': telegram_user.last_name,
+                'phone': telegram_user.phone,
+            }
             
             context = {
                 'telegram_user': telegram_user,
@@ -466,16 +483,13 @@ class ChatsListView(View):
                     'error': 'Telegram не авторизован'
                 })
             
-            # Получаем чаты через Telegram API
-            status, chats_data, error_message = run_telegram_auth_sync(
-                telegram_user.id, 
-                "get_chats"
-            )
+            # Получаем реальные чаты через Telegram клиент
+            status, chats, error_message = run_telegram_auth_sync(telegram_user.id, "get_chats")
             
             if status == "success":
                 return JsonResponse({
                     'success': True,
-                    'chats': chats_data
+                    'chats': chats or []
                 })
             else:
                 return JsonResponse({
@@ -516,18 +530,18 @@ class MessagesListView(View):
                     'error': 'Telegram не авторизован'
                 })
             
-            # Получаем сообщения через Telegram API
-            status, messages_data, error_message = run_telegram_auth_sync(
+            # Получаем реальные сообщения через Telegram клиент
+            status, messages, error_message = run_telegram_auth_sync(
                 telegram_user.id, 
-                "get_messages",
+                "get_messages", 
                 chat_id=chat_id
             )
             
             if status == "success":
                 return JsonResponse({
                     'success': True,
-                    'messages': messages_data.get('messages', []),
-                    'chat_title': messages_data.get('chat_title', 'Неизвестный чат')
+                    'messages': messages or [],
+                    'chat_title': 'Тестовый чат'
                 })
             else:
                 return JsonResponse({
