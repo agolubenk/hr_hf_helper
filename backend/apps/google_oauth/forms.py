@@ -511,7 +511,7 @@ class HRScreeningForm(forms.ModelForm):
             'input_data': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 10,
-                'placeholder': 'Вставьте данные для HR-скрининга...\n\nПример:\nhttps://sandbox.huntflow.dev/my/org499#/vacancy/3/filter/workon/id/17\n\nКандидат: Иван Петров\nОжидания по зарплате: 150,000 - 200,000 руб\nОпыт работы: 3 года в разработке\nТехнологии: Python, Django, PostgreSQL\nДополнительная информация: ...',
+                'placeholder': 'Вставьте данные для HR-скрининга...\n\nПример:\nhttps://sandbox.huntflow.dev/my/org[ваш_org_id]#/vacancy/3/filter/workon/id/17\n\nКандидат: Иван Петров\nОжидания по зарплате: 150,000 - 200,000 руб\nОпыт работы: 3 года в разработке\nТехнологии: Python, Django, PostgreSQL\nДополнительная информация: ...',
                 'required': True
             })
         }
@@ -626,7 +626,7 @@ class CombinedForm(forms.Form):
         widget=forms.Textarea(attrs={
             'class': 'form-control',
             'rows': 8,
-            'placeholder': 'Вставьте ссылку на кандидата и любые дополнительные данные...\n\nПримеры:\n\nДля HR-скрининга (много текста):\nhttps://sandbox.huntflow.dev/my/org499#/vacancy/3/filter/workon/id/17\n\nКандидат: Иван Петров\nОжидания по зарплате: 150,000 - 200,000 руб\nОпыт работы: 3 года в разработке\nТехнологии: Python, Django, PostgreSQL\nДополнительная информация: ...\n\nДля инвайта (дата + время):\nhttps://sandbox.huntflow.dev/my/org499#/vacancy/3/filter/workon/id/17\n2025-09-15 14:00',
+            'placeholder': 'Вставьте ссылку на кандидата и любые дополнительные данные...\n\nПримеры:\n\nДля HR-скрининга (много текста):\nhttps://sandbox.huntflow.dev/my/org[ваш_org_id]#/vacancy/3/filter/workon/id/17\n\nКандидат: Иван Петров\nОжидания по зарплате: 150,000 - 200,000 руб\nОпыт работы: 3 года в разработке\nТехнологии: Python, Django, PostgreSQL\nДополнительная информация: ...\n\nДля инвайта (дата + время):\nhttps://sandbox.huntflow.dev/my/org[ваш_org_id]#/vacancy/3/filter/workon/id/17\n2025-09-15 14:00',
             'required': True
         }),
         label=_('Ссылка на кандидата и данные'),
@@ -675,7 +675,10 @@ class CombinedForm(forms.Form):
         # Дни недели
         weekdays = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье',
                    'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
-                   'пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс']
+                   'пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс', 
+                   'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', 
+                   'пнд', 'втр', 'срд', 'чтв', 'птн', 'сбт', 'всн',
+                   'MN', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']
         
         # Проверяем наличие дат
         has_date = any(re.search(pattern, combined_data, re.IGNORECASE) for pattern in date_patterns)

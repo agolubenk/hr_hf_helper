@@ -2104,11 +2104,15 @@ def hr_screening_detail(request, pk):
         except Exception as e:
             print(f"Ошибка при получении информации о поле зарплаты: {e}")
     
+    # Получаем реальный account_id пользователя
+    account_id = hr_screening._get_user_account_id()
+    
     context = {
         'hr_screening': hr_screening,
         'parsed_analysis': parsed_analysis,
         'level_field_info': level_field_info,
         'money_field_info': money_field_info,
+        'account_id': account_id,
     }
     
     return render(request, 'google_oauth/hr_screening_detail.html', context)

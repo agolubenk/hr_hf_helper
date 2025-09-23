@@ -579,9 +579,11 @@ class Invite(models.Model):
                 return True, "Информация о вакансии получена (заглушка - API ключи не настроены)"
             
             # Проверяем, что account_id соответствует доступным аккаунтам
-            if account_id != 694:  # Пока только аккаунт 694 доступен
+            # Получаем реальный account_id пользователя
+            user_account_id = self._get_user_account_id()
+            if account_id != int(user_account_id):
                 self.vacancy_title = f"Вакансия {self.vacancy_id}"
-                return True, f"Информация о вакансии получена (заглушка - аккаунт {account_id} недоступен, используйте org694)"
+                return True, f"Информация о вакансии получена (заглушка - аккаунт {account_id} недоступен, используйте org{user_account_id})"
             
             # Пытаемся получить реальную информацию из Huntflow API
             try:
@@ -1278,6 +1280,36 @@ class Invite(models.Model):
             # Fallback к простому названию
             return f"Интервью: {self.candidate_name} - {self.vacancy_title}"
     
+    def _get_user_account_id(self):
+        """Получает реальный account_id пользователя из Huntflow"""
+        try:
+            # Сначала пытаемся извлечь account_id из URL кандидата
+            if self.candidate_url:
+                import re
+                # Ищем org{account_id} в URL
+                org_match = re.search(r'/my/org(\d+)#/', self.candidate_url)
+                if org_match:
+                    account_id = org_match.group(1)
+                    print(f"🔍 Извлечен account_id из URL кандидата: {account_id}")
+                    return account_id
+            
+            # Если не удалось извлечь из URL, получаем из API
+            from apps.huntflow.services import HuntflowService
+            huntflow_service = HuntflowService(self.user)
+            accounts = huntflow_service.get_accounts()
+            
+            if accounts and 'items' in accounts and accounts['items']:
+                account_id = accounts['items'][0]['id']
+                print(f"🔍 Получен account_id из API: {account_id}")
+                return account_id
+            else:
+                print(f"⚠️ Не удалось получить account_id, используем fallback")
+                return '694'  # Fallback
+                
+        except Exception as e:
+            print(f"❌ Ошибка получения account_id: {e}")
+            return '694'  # Fallback
+
     def _generate_huntflow_candidate_link(self):
         """Генерирует ссылку на кандидата в Huntflow"""
         try:
@@ -1296,8 +1328,11 @@ class Invite(models.Model):
                 vacancy_id = vacancy_match.group(1)
                 candidate_id = candidate_match.group(1)
                 
+                # Получаем реальный account_id пользователя
+                account_id = self._get_user_account_id()
+                
                 # Формируем ссылку с workon вместо статуса
-                huntflow_link = f"https://sandbox.huntflow.dev/my/org499#/vacancy/{vacancy_id}/filter/workon/id/{candidate_id}"
+                huntflow_link = f"https://sandbox.huntflow.dev/my/org{account_id}#/vacancy/{vacancy_id}/filter/workon/id/{candidate_id}"
                 
                 print(f"🔗 Сгенерирована ссылка на Huntflow: {huntflow_link}")
                 return huntflow_link
@@ -2606,6 +2641,36 @@ class HRScreening(models.Model):
         except Exception as e:
             return False, f"Ошибка при анализе с Gemini: {str(e)}"
     
+    def _get_user_account_id(self):
+        """Получает реальный account_id пользователя из Huntflow"""
+        try:
+            # Сначала пытаемся извлечь account_id из URL кандидата
+            if self.candidate_url:
+                import re
+                # Ищем org{account_id} в URL
+                org_match = re.search(r'/my/org(\d+)#/', self.candidate_url)
+                if org_match:
+                    account_id = org_match.group(1)
+                    print(f"🔍 Извлечен account_id из URL кандидата: {account_id}")
+                    return account_id
+            
+            # Если не удалось извлечь из URL, получаем из API
+            from apps.huntflow.services import HuntflowService
+            huntflow_service = HuntflowService(self.user)
+            accounts = huntflow_service.get_accounts()
+            
+            if accounts and 'items' in accounts and accounts['items']:
+                account_id = accounts['items'][0]['id']
+                print(f"🔍 Получен account_id из API: {account_id}")
+                return account_id
+            else:
+                print(f"⚠️ Не удалось получить account_id, используем fallback")
+                return '694'  # Fallback
+                
+        except Exception as e:
+            print(f"❌ Ошибка получения account_id: {e}")
+            return '694'  # Fallback
+
     def _prepare_gemini_prompt(self):
         """Подготавливает промпт для Gemini AI"""
         try:
@@ -2618,10 +2683,7 @@ class HRScreening(models.Model):
                 return False, f"Промпт для обновления кандидата не настроен для вакансии {vacancy.name}"
             
             # Получаем account_id для формирования ссылки
-            from apps.huntflow.services import HuntflowService
-            huntflow_service = HuntflowService(self.user)
-            accounts = huntflow_service.get_accounts()
-            account_id = accounts['items'][0]['id'] if accounts and 'items' in accounts and accounts['items'] else '694'
+            account_id = self._get_user_account_id()
             
             candidate_system_url = f"http://127.0.0.1:8000/huntflow/accounts/{account_id}/applicants/{self.candidate_id}/"
             

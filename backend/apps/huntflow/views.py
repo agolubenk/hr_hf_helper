@@ -9,6 +9,34 @@ import json
 from .services import HuntflowService
 
 
+def get_correct_account_id(user, fallback_account_id=None):
+    """
+    Получает правильный account_id пользователя из Huntflow API
+    
+    Args:
+        user: Пользователь
+        fallback_account_id: Fallback account_id если не удалось получить из API
+        
+    Returns:
+        Правильный account_id
+    """
+    try:
+        huntflow_service = HuntflowService(user)
+        accounts = huntflow_service.get_accounts()
+        
+        if accounts and 'items' in accounts and accounts['items']:
+            account_id = accounts['items'][0]['id']
+            print(f"🔍 Получен account_id из API: {account_id}")
+            return account_id
+        else:
+            print(f"⚠️ Не удалось получить account_id из API, используем fallback: {fallback_account_id}")
+            return fallback_account_id
+            
+    except Exception as e:
+        print(f"❌ Ошибка получения account_id: {e}")
+        return fallback_account_id
+
+
 @login_required
 def huntflow_dashboard(request):
     """
@@ -67,6 +95,9 @@ def vacancies_list(request, account_id):
     Список вакансий для организации
     """
     try:
+        # Получаем правильный account_id
+        correct_account_id = get_correct_account_id(request.user, account_id)
+        
         huntflow_service = HuntflowService(request.user)
         
         # Получаем параметры фильтрации
@@ -74,16 +105,16 @@ def vacancies_list(request, account_id):
         count = request.GET.get('count', 30)
         state = request.GET.get('state', '')
         
-        # Получаем вакансии
+        # Получаем вакансии с правильным account_id
         vacancies = huntflow_service.get_vacancies(
-            account_id=account_id,
+            account_id=correct_account_id,
             page=page,
             count=count,
             state=state if state else None
         )
         
         # Получаем статусы для фильтрации
-        statuses = huntflow_service.get_vacancy_statuses(account_id)
+        statuses = huntflow_service.get_vacancy_statuses(correct_account_id)
         
         # Получаем информацию об организации для хлебных крошек
         accounts = huntflow_service.get_accounts()
@@ -95,7 +126,7 @@ def vacancies_list(request, account_id):
                     break
         
         context = {
-            'account_id': account_id,
+            'account_id': correct_account_id,  # Используем правильный account_id
             'account_name': account_name,
             'accounts': accounts,  # Добавляем для sidebar menu
             'vacancies': vacancies,
@@ -118,17 +149,20 @@ def vacancy_detail(request, account_id, vacancy_id):
     Детальная информация о вакансии
     """
     try:
+        # Получаем правильный account_id
+        correct_account_id = get_correct_account_id(request.user, account_id)
+        
         huntflow_service = HuntflowService(request.user)
         
-        # Получаем информацию о вакансии
-        vacancy = huntflow_service.get_vacancy(account_id, vacancy_id)
+        # Получаем информацию о вакансии с правильным account_id
+        vacancy = huntflow_service.get_vacancy(correct_account_id, vacancy_id)
         
         if not vacancy:
             messages.error(request, 'Вакансия не найдена')
-            return redirect('huntflow:vacancies_list', account_id=account_id)
+            return redirect('huntflow:vacancies_list', account_id=correct_account_id)
         
         # Получаем дополнительные поля
-        additional_fields = huntflow_service.get_vacancy_additional_fields(account_id)
+        additional_fields = huntflow_service.get_vacancy_additional_fields(correct_account_id)
         
         # Получаем информацию об организации для хлебных крошек
         accounts = huntflow_service.get_accounts()
@@ -140,7 +174,7 @@ def vacancy_detail(request, account_id, vacancy_id):
                     break
         
         context = {
-            'account_id': account_id,
+            'account_id': correct_account_id,  # Используем правильный account_id
             'account_name': account_name,
             'accounts': accounts,  # Добавляем для sidebar menu
             'vacancy': vacancy,
@@ -161,6 +195,9 @@ def applicants_list(request, account_id):
     Список кандидатов для организации
     """
     try:
+        # Получаем правильный account_id
+        correct_account_id = get_correct_account_id(request.user, account_id)
+        
         huntflow_service = HuntflowService(request.user)
         
         # Получаем параметры фильтрации
@@ -169,9 +206,9 @@ def applicants_list(request, account_id):
         status = request.GET.get('status', '')
         vacancy = request.GET.get('vacancy', '')
         
-        # Получаем кандидатов
+        # Получаем кандидатов с правильным account_id
         applicants = huntflow_service.get_applicants(
-            account_id=account_id,
+            account_id=correct_account_id,
             page=page,
             count=count,
             status=status if status else None,
@@ -179,10 +216,10 @@ def applicants_list(request, account_id):
         )
         
         # Получаем статусы для фильтрации
-        statuses = huntflow_service.get_vacancy_statuses(account_id)
+        statuses = huntflow_service.get_vacancy_statuses(correct_account_id)
         
         # Получаем вакансии для фильтрации
-        vacancies = huntflow_service.get_vacancies(account_id, count=100)
+        vacancies = huntflow_service.get_vacancies(correct_account_id, count=100)
         
         # Создаем словари для быстрого поиска
         statuses_dict = {}
@@ -215,7 +252,7 @@ def applicants_list(request, account_id):
                     break
         
         context = {
-            'account_id': account_id,
+            'account_id': correct_account_id,  # Используем правильный account_id
             'account_name': account_name,
             'accounts': accounts,  # Добавляем для sidebar menu
             'applicants': applicants,
@@ -240,29 +277,32 @@ def applicant_detail(request, account_id, applicant_id):
     Детальная информация о кандидате
     """
     try:
+        # Получаем правильный account_id
+        correct_account_id = get_correct_account_id(request.user, account_id)
+        
         huntflow_service = HuntflowService(request.user)
         
-        # Получаем информацию о кандидате
-        applicant = huntflow_service.get_applicant(account_id, applicant_id)
+        # Получаем информацию о кандидате с правильным account_id
+        applicant = huntflow_service.get_applicant(correct_account_id, applicant_id)
         
         if not applicant:
             messages.error(request, 'Кандидат не найден')
-            return redirect('huntflow:applicants_list', account_id=account_id)
+            return redirect('huntflow:applicants_list', account_id=correct_account_id)
         
         # Получаем анкету кандидата
-        questionary = huntflow_service.get_applicant_questionary(account_id, applicant_id)
+        questionary = huntflow_service.get_applicant_questionary(correct_account_id, applicant_id)
         
         # Получаем схему анкеты
-        questionary_schema = huntflow_service.get_applicant_questionary_schema(account_id)
+        questionary_schema = huntflow_service.get_applicant_questionary_schema(correct_account_id)
         
         # Получаем логи кандидата для поиска комментариев
-        applicant_logs = huntflow_service.get_applicant_logs(account_id, applicant_id)
+        applicant_logs = huntflow_service.get_applicant_logs(correct_account_id, applicant_id)
         # print(f"DEBUG: Получены логи кандидата {applicant_id}: {applicant_logs}")
         
         # Получаем статусы, вакансии и метки для обогащения данных
-        statuses = huntflow_service.get_vacancy_statuses(account_id)
-        vacancies = huntflow_service.get_vacancies(account_id, count=100)
-        tags = huntflow_service.get_tags(account_id)
+        statuses = huntflow_service.get_vacancy_statuses(correct_account_id)
+        vacancies = huntflow_service.get_vacancies(correct_account_id, count=100)
+        tags = huntflow_service.get_tags(correct_account_id)
         
         # Создаем словари для быстрого поиска
         statuses_dict = {}
@@ -415,7 +455,7 @@ def applicant_detail(request, account_id, applicant_id):
             applicant_name = f"{applicant.get('first_name', '')} {applicant.get('last_name', '')}".strip()
         
         context = {
-            'account_id': account_id,
+            'account_id': correct_account_id,  # Используем правильный account_id
             'account_name': account_name,
             'accounts': accounts,  # Добавляем для sidebar menu
             'applicant': applicant,

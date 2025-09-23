@@ -221,7 +221,9 @@ def common_sidebar_menu(context):
         })
         
         for account in accounts_list:
-            is_current = 'account_id' in url_kwargs and account['id'] == url_kwargs['account_id']
+            # Используем account_id из контекста, который уже исправлен в views
+            context_account_id = context.get('account_id')
+            is_current = context_account_id and account['id'] == context_account_id
             
             account_item = {
                 'type': 'account',
@@ -237,8 +239,8 @@ def common_sidebar_menu(context):
             
             organization_item['children'].append(account_item)
             
-            if is_current and 'account_id' in url_kwargs:
-                account_id = url_kwargs['account_id']
+            if is_current and context_account_id:
+                account_id = context_account_id
                 
                 account_item['children'].append({
                     'type': 'vacancies',
