@@ -409,3 +409,199 @@ Not Found: /favicon.ico
 [23/Sep/2025 13:43:51] "GET /admin/finance/benchmarksettings/1/change/ HTTP/1.1" 200 52372
 [23/Sep/2025 13:43:51] "GET /admin/finance/hhvacancytemp/?q= HTTP/1.1" 200 108587
 [23/Sep/2025 13:43:51] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[23/Sep/2025 14:59:06] "GET /finance/benchmarks/list/ HTTP/1.1" 200 172024
+/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1671: RuntimeWarning: DateTimeField Benchmark.date_added received a naive datetime (2024-09-23 14:59:41.333971) while time zone support is active.
+  warnings.warn(
+
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+💾 Сохранены события календаря в кэш: 33 событий
+🔍 DEBUG G-DATA: Получено 33 событий из API
+🔍 DEBUG G-DATA: Настройки слотов для пользователя andrei.golubenko: {'currentWeekPrefix': 'У нас есть такие слоты:', 'nextWeekPrefix': 'На следующей неделе у нас доступны такие слоты:', 'allSlotsPrefix': 'У нас есть вот такие слоты:', 'separatorText': 'И на следующей неделе:'}
+🔍 DEBUG G-DATA: Передаем 33 событий в шаблон
+🔍 DEBUG G-DATA: Событие: SM Screening | Титов Александр в 2025-09-23T13:00:00+03:00
+🔍 DEBUG G-DATA: Событие: Обед в 2025-09-23T14:00:00+03:00
+🔍 DEBUG G-DATA: Событие:  JS Tech Screening | Гринь Никита в 2025-09-23T17:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+❌ Ошибка запроса к Huntflow: HTTPSConnectionPool(host='sandbox-api.huntflow.dev', port=443): Read timed out. (read timeout=30)
+DEBUG context_processor: accounts_list = []
+DEBUG template_tag: full_url_name = google_oauth:gdata_automation
+DEBUG template_tag: accounts = {'items': []}
+DEBUG template_tag: menu_items count = 10
+❌ Ошибка запроса к Huntflow: HTTPSConnectionPool(host='sandbox-api.huntflow.dev', port=443): Max retries exceeded with url: /v2/accounts (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x10ecded50>, 'Connection to sandbox-api.huntflow.dev timed out. (connect timeout=30)'))
+DEBUG context_processor: accounts_list = []
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📦 Получены события календаря из кэша: 33 событий
+🔍 DEBUG G-DATA: Получено 33 событий из API
+🔍 DEBUG G-DATA: Настройки слотов для пользователя andrei.golubenko: {'currentWeekPrefix': 'У нас есть такие слоты:', 'nextWeekPrefix': 'На следующей неделе у нас доступны такие слоты:', 'allSlotsPrefix': 'У нас есть вот такие слоты:', 'separatorText': 'И на следующей неделе:'}
+🔍 DEBUG G-DATA: Передаем 33 событий в шаблон
+🔍 DEBUG G-DATA: Событие: SM Screening | Титов Александр в 2025-09-23T13:00:00+03:00
+🔍 DEBUG G-DATA: Событие: Обед в 2025-09-23T14:00:00+03:00
+🔍 DEBUG G-DATA: Событие:  JS Tech Screening | Гринь Никита в 2025-09-23T17:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📦 Получены события календаря из кэша: 33 событий
+🔍 DEBUG G-DATA: Получено 33 событий из API
+🔍 DEBUG G-DATA: Настройки слотов для пользователя andrei.golubenko: {'currentWeekPrefix': 'У нас есть такие слоты:', 'nextWeekPrefix': 'На следующей неделе у нас доступны такие слоты:', 'allSlotsPrefix': 'У нас есть вот такие слоты:', 'separatorText': 'И на следующей неделе:'}
+🔍 DEBUG G-DATA: Передаем 33 событий в шаблон
+🔍 DEBUG G-DATA: Событие: SM Screening | Титов Александр в 2025-09-23T13:00:00+03:00
+🔍 DEBUG G-DATA: Событие: Обед в 2025-09-23T14:00:00+03:00
+🔍 DEBUG G-DATA: Событие:  JS Tech Screening | Гринь Никита в 2025-09-23T17:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+❌ Ошибка запроса к Huntflow: HTTPSConnectionPool(host='sandbox-api.huntflow.dev', port=443): Max retries exceeded with url: /v2/accounts (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x1144f5950>, 'Connection to sandbox-api.huntflow.dev timed out. (connect timeout=30)'))
+DEBUG context_processor: accounts_list = []
+❌ Ошибка запроса к Huntflow: HTTPSConnectionPool(host='sandbox-api.huntflow.dev', port=443): Max retries exceeded with url: /v2/accounts (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x10ee89950>, 'Connection to sandbox-api.huntflow.dev timed out. (connect timeout=30)'))
+DEBUG context_processor: accounts_list = []
+DEBUG template_tag: full_url_name = google_oauth:gdata_automation
+DEBUG template_tag: accounts = {'items': []}
+DEBUG template_tag: menu_items count = 10
+❌ Ошибка запроса к Huntflow: HTTPSConnectionPool(host='sandbox-api.huntflow.dev', port=443): Max retries exceeded with url: /v2/accounts (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x10ee8a710>, 'Connection to sandbox-api.huntflow.dev timed out. (connect timeout=30)'))
+DEBUG context_processor: accounts_list = []
+DEBUG template_tag: full_url_name = google_oauth:gdata_automation
+DEBUG template_tag: accounts = {'items': []}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+❌ Ошибка запроса к Huntflow: HTTPSConnectionPool(host='sandbox-api.huntflow.dev', port=443): Read timed out. (read timeout=30)
+DEBUG context_processor: accounts_list = []
+❌ Ошибка запроса к Huntflow: HTTPSConnectionPool(host='sandbox-api.huntflow.dev', port=443): Read timed out. (read timeout=30)
+DEBUG context_processor: accounts_list = []
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmarks_list
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...[23/Sep/2025 14:59:41] "GET /finance/benchmarks/ HTTP/1.1" 200 211851
+[23/Sep/2025 15:00:22] "GET /finance/benchmarks/75/ HTTP/1.1" 200 53468
+[23/Sep/2025 15:00:26] "DELETE /finance/benchmarks/75/delete/ HTTP/1.1" 200 240
+[23/Sep/2025 15:00:27] "GET /finance/benchmarks/list/ HTTP/1.1" 200 172662
+/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1671: RuntimeWarning: DateTimeField Benchmark.date_added received a naive datetime (2024-09-23 15:00:30.355746) while time zone support is active.
+  warnings.warn(
+[23/Sep/2025 15:00:30] "GET /finance/benchmarks/ HTTP/1.1" 200 211855
+[23/Sep/2025 15:01:00] "GET /google-oauth/gdata-automation/?vacancy_id=10 HTTP/1.1" 200 111587
+/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1671: RuntimeWarning: DateTimeField Benchmark.date_added received a naive datetime (2024-09-23 15:15:07.109716) while time zone support is active.
+  warnings.warn(
+[23/Sep/2025 15:15:07] "GET /finance/benchmarks/ HTTP/1.1" 200 211820
+[23/Sep/2025 15:15:23] "GET /finance/benchmarks/81/ HTTP/1.1" 200 53479
+[23/Sep/2025 15:15:41] "GET /finance/benchmarks/81/edit/ HTTP/1.1" 200 60583
+[23/Sep/2025 15:15:55] "GET /finance/benchmarks/list/ HTTP/1.1" 200 170799
+[23/Sep/2025 15:16:00] "GET /finance/benchmarks/82/ HTTP/1.1" 200 54248
+[23/Sep/2025 15:16:30] "GET /admin/vacancies/vacancy/ HTTP/1.1" 200 43902
+[23/Sep/2025 15:16:34] "GET /admin/finance/benchmark/ HTTP/1.1" 200 83638
+[23/Sep/2025 15:16:34] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmarks_dashboard
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmark_detail
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmarks_list
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmarks_dashboard
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+💾 Сохранены события календаря в кэш: 34 событий
+🔍 DEBUG G-DATA: Получено 34 событий из API
+🔍 DEBUG G-DATA: Настройки слотов для пользователя andrei.golubenko: {'currentWeekPrefix': 'У нас есть такие слоты:', 'nextWeekPrefix': 'На следующей неделе у нас доступны такие слоты:', 'allSlotsPrefix': 'У нас есть вот такие слоты:', 'separatorText': 'И на следующей неделе:'}
+🔍 DEBUG G-DATA: Передаем 34 событий в шаблон
+🔍 DEBUG G-DATA: Событие:  JS Tech Screening | Гринь Никита в 2025-09-23T17:00:00+03:00
+🔍 DEBUG G-DATA: Событие:  JS Tech Screening | Трейго Сергей в 2025-09-24T11:00:00+03:00
+🔍 DEBUG G-DATA: Событие:  JS Tech Screening | Elshin Pavel в 2025-09-24T12:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:gdata_automation
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmarks_dashboard
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmark_detail
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmark_edit
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmarks_list
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmark_detail
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = finance:benchmark_detail[23/Sep/2025 15:19:40] "GET /finance/benchmarks/82/ HTTP/1.1" 200 55865
+[23/Sep/2025 15:28:49] "GET /finance/benchmarks/82/ HTTP/1.1" 200 55865
+[23/Sep/2025 15:28:49] "GET /static/css/finance.css HTTP/1.1" 200 49238
+[23/Sep/2025 15:28:49] "GET /static/css/hrhelper.css HTTP/1.1" 200 75043
+WARNING Not Found: /favicon.ico
+Not Found: /favicon.ico
+[23/Sep/2025 15:28:53] "GET /favicon.ico HTTP/1.1" 404 4605
+[23/Sep/2025 15:29:06] "GET /finance/benchmarks/list/ HTTP/1.1" 200 180048
+[23/Sep/2025 15:32:41] "GET /finance/benchmarks/80/edit/ HTTP/1.1" 200 60537
+[23/Sep/2025 15:32:49] "GET /finance/benchmarks/80/edit/ HTTP/1.1" 200 60537

@@ -600,6 +600,14 @@
                                         </td>
                                         <td>
                                             <div class="btn-group btn-group-sm">
+                                                {% if benchmark.hh_vacancy_id %}
+                                                <a href="https://hh.ru/vacancy/{{ benchmark.hh_vacancy_id }}" 
+                                                   target="_blank" 
+                                                   rel="noopener noreferrer"
+                                                   class="btn btn-outline-success" title="Посмотреть на hh.ru">
+                                                    <i class="fas fa-external-link-alt"></i>
+                                                </a>
+                                                {% endif %}
                                                 <a href="{% url 'finance:benchmark_detail' benchmark.pk %}" 
                                                    class="btn btn-outline-primary" title="Просмотр">
                                                     <i class="fas fa-eye"></i>
