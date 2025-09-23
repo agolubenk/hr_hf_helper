@@ -56,6 +56,9 @@ urlpatterns = [
     path('hr-screening/<int:pk>/delete/', views.hr_screening_delete, name='hr_screening_delete'),
     path('hr-screening/<int:pk>/retry-analysis/', views.hr_screening_retry_analysis, name='hr_screening_retry_analysis'),
     
+    # Объединенный рабочий процесс
+    path('combined-workflow/', views.combined_workflow, name='combined_workflow'),
+    
     # G-данные и автоматизация
     path('gdata-automation/', views.gdata_automation, name='gdata_automation'),
     

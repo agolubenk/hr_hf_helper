@@ -615,3 +615,100 @@ class HRScreeningForm(forms.ModelForm):
                 raise
         
         return hr_screening
+
+
+class CombinedForm(forms.Form):
+    """
+    Упрощенная форма для автоматического определения типа действия
+    """
+    
+    combined_data = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 8,
+            'placeholder': 'Вставьте ссылку на кандидата и любые дополнительные данные...\n\nПримеры:\n\nДля HR-скрининга (много текста):\nhttps://sandbox.huntflow.dev/my/org499#/vacancy/3/filter/workon/id/17\n\nКандидат: Иван Петров\nОжидания по зарплате: 150,000 - 200,000 руб\nОпыт работы: 3 года в разработке\nТехнологии: Python, Django, PostgreSQL\nДополнительная информация: ...\n\nДля инвайта (дата + время):\nhttps://sandbox.huntflow.dev/my/org499#/vacancy/3/filter/workon/id/17\n2025-09-15 14:00',
+            'required': True
+        }),
+        label=_('Ссылка на кандидата и данные'),
+        help_text=_('Вставьте ссылку на кандидата и любые дополнительные данные. Система автоматически определит тип действия: если есть дата/время - создаст инвайт, если много текста - проведет HR-скрининг.')
+    )
+    
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+    
+    def clean_combined_data(self):
+        """Валидация объединенных данных"""
+        combined_data = self.cleaned_data.get('combined_data', '').strip()
+        
+        if not combined_data:
+            raise forms.ValidationError(_('Поле не может быть пустым'))
+        
+        # Проверяем, что в тексте есть ссылка на Huntflow
+        if 'huntflow' not in combined_data.lower() and '/vacancy/' not in combined_data:
+            raise forms.ValidationError(
+                _('В тексте должна быть ссылка на кандидата в Huntflow (содержащая /vacancy/)')
+            )
+        
+        return combined_data
+    
+    def determine_action_type(self):
+        """Автоматическое определение типа действия на основе содержимого"""
+        combined_data = self.cleaned_data.get('combined_data', '')
+        
+        # Паттерны для поиска дат, дней недели и времени
+        import re
+        
+        # Паттерны дат
+        date_patterns = [
+            r'\d{4}-\d{2}-\d{2}',  # 2025-09-15
+            r'\d{2}\.\d{2}\.\d{4}',  # 15.09.2025
+            r'\d{2}/\d{2}/\d{4}',   # 15/09/2025
+        ]
+        
+        # Паттерны времени
+        time_patterns = [
+            r'\d{1,2}:\d{2}',  # 14:00, 9:30
+            r'\d{1,2}:\d{2}:\d{2}',  # 14:00:00
+        ]
+        
+        # Дни недели
+        weekdays = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье',
+                   'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
+                   'пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс']
+        
+        # Проверяем наличие дат
+        has_date = any(re.search(pattern, combined_data, re.IGNORECASE) for pattern in date_patterns)
+        
+        # Проверяем наличие времени
+        has_time = any(re.search(pattern, combined_data) for pattern in time_patterns)
+        
+        # Проверяем наличие дней недели
+        has_weekday = any(day in combined_data.lower() for day in weekdays)
+        
+        # Проверяем количество текста (исключая ссылку)
+        lines = combined_data.split('\n')
+        non_url_lines = [line.strip() for line in lines if line.strip() and 'huntflow' not in line.lower() and '/vacancy/' not in line]
+        text_length = sum(len(line) for line in non_url_lines)
+        
+        # Добавляем отладочную информацию
+        print(f"🔍 DETERMINE_ACTION_TYPE: Анализируем данные:")
+        print(f"🔍 DETERMINE_ACTION_TYPE: has_date = {has_date}")
+        print(f"🔍 DETERMINE_ACTION_TYPE: has_time = {has_time}")
+        print(f"🔍 DETERMINE_ACTION_TYPE: has_weekday = {has_weekday}")
+        print(f"🔍 DETERMINE_ACTION_TYPE: text_length = {text_length}")
+        print(f"🔍 DETERMINE_ACTION_TYPE: non_url_lines = {non_url_lines}")
+        
+        # Логика определения:
+        # Если есть дата/время/день недели И мало текста - это инвайт
+        # Если много текста - это HR-скрининг
+        if (has_date or has_time or has_weekday) and text_length < 200:
+            print(f"🔍 DETERMINE_ACTION_TYPE: Определен тип: invite")
+            return 'invite'
+        elif text_length > 100:
+            print(f"🔍 DETERMINE_ACTION_TYPE: Определен тип: hr_screening")
+            return 'hr_screening'
+        else:
+            # По умолчанию HR-скрининг
+            print(f"🔍 DETERMINE_ACTION_TYPE: Определен тип по умолчанию: hr_screening")
+            return 'hr_screening'

@@ -479,6 +479,15 @@ def common_sidebar_menu(context):
             'children': []
         })
         
+        google_oauth_item['children'].append({
+            'type': 'google_oauth_combined_workflow',
+            'name': 'Объединенный процесс',
+            'url': 'google_oauth:combined_workflow',
+            'icon': 'fas fa-magic',
+            'active': full_url_name == 'google_oauth:combined_workflow',
+            'children': []
+        })
+        
         menu_items.append(google_oauth_item)
         
         # 6. Gemini AI с иерархическим меню

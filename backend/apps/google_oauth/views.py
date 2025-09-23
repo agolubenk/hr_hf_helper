@@ -573,7 +573,7 @@ def sync_all(request):
 from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import SyncSettings, Invite, HRScreening
-from .forms import SyncSettingsForm, InviteForm, InviteUpdateForm, InviteCombinedForm, HRScreeningForm
+from .forms import SyncSettingsForm, InviteForm, InviteUpdateForm, InviteCombinedForm, HRScreeningForm, CombinedForm
 
 
 @login_required
@@ -2355,4 +2355,118 @@ def api_calendar_events(request):
             'success': False,
             'message': f'Ошибка получения событий: {str(e)}'
         })
+
+
+@login_required
+def combined_workflow(request):
+    """Объединенная страница для HR-скрининга и инвайтов"""
+    print(f"🔍 COMBINED_WORKFLOW: Метод запроса: {request.method}")
+    print(f"🔍 COMBINED_WORKFLOW: Пользователь: {request.user}")
+    
+    if request.method == 'POST':
+        print(f"🔍 COMBINED_WORKFLOW: POST запрос получен!")
+        print(f"🔍 COMBINED_WORKFLOW: POST данные: {request.POST}")
+        
+        form = CombinedForm(request.POST, user=request.user)
+        print(f"🔍 COMBINED_WORKFLOW: Форма создана")
+        
+        is_valid = form.is_valid()
+        print(f"🔍 COMBINED_WORKFLOW: Форма валидна: {is_valid}")
+        
+        if not is_valid:
+            print(f"❌ COMBINED_WORKFLOW: Ошибки формы: {form.errors}")
+            print(f"❌ COMBINED_WORKFLOW: Ошибки полей: {form.errors.as_data()}")
+        
+        if is_valid:
+            print(f"✅ COMBINED_WORKFLOW: Форма валидна, обрабатываем...")
+            try:
+                combined_data = form.cleaned_data['combined_data']
+                action_type = form.determine_action_type()
+                
+                print(f"🔍 COMBINED_WORKFLOW: Автоматически определен тип действия: {action_type}")
+                
+                hr_screening = None
+                invite = None
+                
+                # Создаем HR-скрининг если нужно - используем существующую форму
+                if action_type in ['hr_screening', 'both']:
+                    print(f"🔍 COMBINED_WORKFLOW: Создаем HR-скрининг через HRScreeningForm...")
+                    
+                    # Создаем данные для HRScreeningForm
+                    hr_form_data = {'input_data': combined_data}
+                    hr_form = HRScreeningForm(hr_form_data, user=request.user)
+                    
+                    if hr_form.is_valid():
+                        hr_screening = hr_form.save()
+                        print(f"✅ COMBINED_WORKFLOW: HR-скрининг создан с ID: {hr_screening.id}")
+                    else:
+                        print(f"❌ COMBINED_WORKFLOW: Ошибки HR-скрининга: {hr_form.errors}")
+                        raise forms.ValidationError(f'Ошибка создания HR-скрининга: {hr_form.errors}')
+                
+                # Создаем инвайт если нужно - используем InviteCombinedForm (полная функциональность)
+                if action_type in ['invite', 'both']:
+                    print(f"🔍 COMBINED_WORKFLOW: Создаем инвайт через InviteCombinedForm...")
+                    
+                    # Создаем данные для InviteCombinedForm
+                    invite_form_data = {'combined_data': combined_data}
+                    invite_form = InviteCombinedForm(invite_form_data, user=request.user)
+                    
+                    if invite_form.is_valid():
+                        invite = invite_form.save()
+                        print(f"✅ COMBINED_WORKFLOW: Инвайт создан с ID: {invite.id}")
+                    else:
+                        print(f"❌ COMBINED_WORKFLOW: Ошибки инвайта: {invite_form.errors}")
+                        raise forms.ValidationError(f'Ошибка создания инвайта: {invite_form.errors}')
+                
+                # Формируем сообщение об успехе
+                success_messages = []
+                if hr_screening:
+                    success_messages.append(f'HR-скрининг создан (ID: {hr_screening.id})')
+                if invite:
+                    success_messages.append(f'Инвайт создан (ID: {invite.id})')
+                
+                messages.success(request, ' | '.join(success_messages))
+                
+                # Перенаправляем на соответствующую страницу
+                if action_type == 'hr_screening' and hr_screening:
+                    return redirect('google_oauth:hr_screening_detail', pk=hr_screening.pk)
+                elif action_type == 'invite' and invite:
+                    return redirect('google_oauth:invite_detail', pk=invite.pk)
+                elif action_type == 'both':
+                    # Если созданы оба, перенаправляем на HR-скрининг
+                    if hr_screening:
+                        return redirect('google_oauth:hr_screening_detail', pk=hr_screening.pk)
+                    elif invite:
+                        return redirect('google_oauth:invite_detail', pk=invite.pk)
+                
+            except Exception as e:
+                print(f"❌ COMBINED_WORKFLOW: Ошибка при обработке: {e}")
+                import traceback
+                traceback.print_exc()
+                messages.error(request, f'Ошибка при обработке: {str(e)}')
+        else:
+            print(f"❌ COMBINED_WORKFLOW: Форма невалидна")
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'{field}: {error}')
+    else:
+        print(f"🔍 COMBINED_WORKFLOW: GET запрос, создаем пустую форму")
+        form = CombinedForm(user=request.user)
+    
+    # Получаем настройки структуры папок для отображения
+    try:
+        from apps.google_oauth.models import ScorecardPathSettings
+        path_settings = ScorecardPathSettings.get_or_create_for_user(request.user)
+        path_preview = path_settings.get_path_preview()
+    except Exception as e:
+        print(f"❌ COMBINED_WORKFLOW: Ошибка получения настроек пути: {e}")
+        path_preview = "Ошибка получения настроек"
+    
+    context = {
+        'form': form,
+        'title': 'Объединенный рабочий процесс',
+        'path_preview': path_preview,
+    }
+    
+    return render(request, 'google_oauth/combined_workflow.html', context)
 
