@@ -2616,12 +2616,9 @@ def chat_workflow(request, session_id=None):
                         try:
                             hr_screening = hr_form.save()
                             
-                            response_content = f"""**HR-скрининг обработан**
-
-**Кандидат:** {hr_screening.candidate_name or 'Не указан'}
+                            response_content = f"""**Кандидат:** {hr_screening.candidate_name or 'Не указан'}
 **Вакансия:** {hr_screening.vacancy_title or 'Не указана'}
-**Уровень:** {hr_screening.determined_grade or 'Не определен'}
-**Зарплата:** {hr_screening.extracted_salary or 'Не указана'} {hr_screening.salary_currency if hr_screening.extracted_salary else ''} {'(определена ИИ)' if hr_screening.extracted_salary else ''}
+**Зарплата:** {hr_screening.extracted_salary or 'Не указана'} {hr_screening.salary_currency if hr_screening.extracted_salary else ''} {'' if hr_screening.extracted_salary else ''} | **Уровень:** {hr_screening.determined_grade or 'Не определен'}
 
 ✅ **Данные сохранены и переданы в Huntflow**"""
                             
