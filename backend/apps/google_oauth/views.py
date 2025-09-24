@@ -2583,9 +2583,15 @@ def chat_workflow(request, session_id=None):
         try:
             chat_session = ChatSession.objects.get(id=session_id, user=request.user)
         except ChatSession.DoesNotExist:
-            chat_session = ChatSession.objects.create(user=request.user)
+            # Если указанная сессия не найдена, берем последнюю сессию пользователя
+            chat_session = ChatSession.objects.filter(user=request.user).order_by('-updated_at').first()
+            if not chat_session:
+                chat_session = ChatSession.objects.create(user=request.user)
     else:
-        chat_session = ChatSession.objects.create(user=request.user)
+        # Если session_id не указан, берем последнюю сессию пользователя
+        chat_session = ChatSession.objects.filter(user=request.user).order_by('-updated_at').first()
+        if not chat_session:
+            chat_session = ChatSession.objects.create(user=request.user)
 
     # Получаем все сообщения в этой сессии
     messages = chat_session.messages.all().order_by('created_at')

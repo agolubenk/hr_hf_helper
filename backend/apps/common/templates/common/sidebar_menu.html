@@ -32,6 +32,9 @@
                         {% elif item.url_kwargs.account_id %}
                             <a class="nav-link {% if item.active %}active{% endif %}" 
                                href="{% url item.url account_id=item.url_kwargs.account_id %}">
+                        {% elif item.url_kwargs.session_id %}
+                            <a class="nav-link {% if item.active %}active{% endif %}" 
+                               href="{% url item.url session_id=item.url_kwargs.session_id %}">
                         {% else %}
                             <a class="nav-link {% if item.active %}active{% endif %}" 
                                href="{% url item.url %}">
@@ -73,6 +76,9 @@
                         {% elif child.url_kwargs.account_id %}
                             <a class="nav-link {% if child.active %}active{% endif %}" 
                                href="{% url child.url account_id=child.url_kwargs.account_id %}">
+                        {% elif child.url_kwargs.session_id %}
+                            <a class="nav-link {% if child.active %}active{% endif %}" 
+                               href="{% url child.url session_id=child.url_kwargs.session_id %}">
                         {% else %}
                             <a class="nav-link {% if child.active %}active{% endif %}" 
                                href="{% url child.url %}">

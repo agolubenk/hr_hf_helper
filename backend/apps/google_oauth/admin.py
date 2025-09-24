@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import GoogleOAuthAccount, SyncSettings, Invite, ScorecardPathSettings, SlotsSettings, HRScreening, QuestionTemplate
+from .models import GoogleOAuthAccount, SyncSettings, Invite, ScorecardPathSettings, SlotsSettings, HRScreening, QuestionTemplate, ChatSession, ChatMessage
 
 
 @admin.register(GoogleOAuthAccount)
@@ -280,3 +280,76 @@ class QuestionTemplateAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         """Оптимизация запросов"""
         return super().get_queryset(request)
+
+
+@admin.register(ChatSession)
+class ChatSessionAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'created_at', 'updated_at', 'messages_count']
+    list_filter = ['created_at', 'updated_at']
+    search_fields = ['user__username', 'user__email']
+    readonly_fields = ['created_at', 'updated_at']
+    ordering = ['-updated_at']
+    
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('user',)
+        }),
+        ('Метаданные', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def messages_count(self, obj):
+        """Показывает количество сообщений в сессии"""
+        return obj.messages.count()
+    messages_count.short_description = 'Сообщений'
+    messages_count.admin_order_field = 'messages__count'
+    
+    def get_queryset(self, request):
+        """Оптимизация запросов"""
+        return super().get_queryset(request).select_related('user').prefetch_related('messages')
+
+
+@admin.register(ChatMessage)
+class ChatMessageAdmin(admin.ModelAdmin):
+    list_display = ['id', 'session', 'message_type', 'content_preview', 'created_at']
+    list_filter = ['message_type', 'created_at', 'session__user']
+    search_fields = ['content', 'session__user__username', 'session__user__email']
+    readonly_fields = ['created_at', 'session', 'message_type', 'content', 'metadata']
+    ordering = ['-created_at']
+    
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('session', 'message_type', 'content')
+        }),
+        ('Метаданные', {
+            'fields': ('metadata',),
+            'classes': ('collapse',),
+            'description': 'JSON метаданные сообщения'
+        }),
+        ('Связанные объекты', {
+            'fields': ('hr_screening', 'invite'),
+            'classes': ('collapse',),
+            'description': 'Связи с созданными HR-скринингами и инвайтами'
+        }),
+        ('Метаданные времени', {
+            'fields': ('created_at',),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def content_preview(self, obj):
+        """Показывает превью содержимого сообщения"""
+        if len(obj.content) > 100:
+            return obj.content[:100] + "..."
+        return obj.content
+    content_preview.short_description = 'Содержимое'
+    
+    def get_queryset(self, request):
+        """Оптимизация запросов"""
+        return super().get_queryset(request).select_related('session__user', 'hr_screening', 'invite')
+    
+    def get_readonly_fields(self, request, obj=None):
+        """Делаем все поля только для чтения, так как сообщения создаются автоматически"""
+        return self.readonly_fields

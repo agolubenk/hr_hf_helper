@@ -137,6 +137,27 @@ def common_sidebar_menu(context):
         
         menu_items = []
         
+        # 0. Чат-помощник - в самый верх меню
+        from apps.google_oauth.models import ChatSession
+        last_chat_session = None
+        try:
+            last_chat_session = ChatSession.objects.filter(user=request.user).order_by('-updated_at').first()
+        except:
+            pass
+        
+        # Всегда ведем на chat_workflow без session_id - функция сама найдет последний чат
+        chat_url = 'google_oauth:chat_workflow'
+        
+        chat_item = {
+            'type': 'chat_helper',
+            'name': 'Чат-помощник',
+            'url': chat_url,
+            'icon': 'fas fa-comments',
+            'active': full_url_name and (full_url_name.startswith('google_oauth:chat_workflow') or full_url_name.startswith('google_oauth:chat_workflow_session')),
+            'children': []
+        }
+        menu_items.append(chat_item)
+        
         # 1. Профиль пользователя с подменю
         profile_item = {
             'type': 'profile',
@@ -424,6 +445,7 @@ def common_sidebar_menu(context):
             'children': []
         }
         
+        
         # Добавляем подменю для Google OAuth - всегда показываем
         google_oauth_item['children'].append({
             'type': 'google_oauth_dashboard',
@@ -490,14 +512,6 @@ def common_sidebar_menu(context):
             'children': []
         })
         
-        google_oauth_item['children'].append({
-            'type': 'google_oauth_chat',
-            'name': 'Чат-помощник',
-            'url': 'google_oauth:chat_workflow',
-            'icon': 'fas fa-comments',
-            'active': full_url_name == 'google_oauth:chat_workflow',
-            'children': []
-        })
         
         menu_items.append(google_oauth_item)
         

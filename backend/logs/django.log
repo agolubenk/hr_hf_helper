@@ -1063,3 +1063,1217 @@ Not Found: /favicon.ico
 [24/Sep/2025 18:38:36] "GET /google-oauth/chat/15/?vacancy_id=10 HTTP/1.1" 200 211579
 [24/Sep/2025 18:40:56] "GET /google-oauth/chat/15/?vacancy_id=9 HTTP/1.1" 200 209805
 [24/Sep/2025 18:41:50] "GET /google-oauth/chat/ HTTP/1.1" 200 145523
+/Users/agolubenko/hrhelper/fullstack/backend/apps/common/templatetags/common_filters.py changed, reloading.
+
+💾 Сохранены события календаря в кэш: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/common/templatetags/common_filters.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 24, 2025 - 18:43:59
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+Watching for file changes with StatReloader
+ERROR Internal Server Error: /google-oauth/chat/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py", line 2836, in chat_workflow
+    return render(request, 'google_oauth/chat_workflow.html', context)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/library.py", line 381, in render
+    return t.render(new_context)
+           ~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 173, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+                    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+                    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/urls/base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'chat_workflow_session' with no arguments not found. 1 pattern(s) tried: ['google\\-oauth/chat/(?P<session_id>[0-9]+)/\\Z']
+Internal Server Error: /google-oauth/chat/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py", line 2836, in chat_workflow
+    return render(request, 'google_oauth/chat_workflow.html', context)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/library.py", line 381, in render
+    return t.render(new_context)
+           ~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 173, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+                    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+                    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/urls/base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'chat_workflow_session' with no arguments not found. 1 pattern(s) tried: ['google\\-oauth/chat/(?P<session_id>[0-9]+)/\\Z']
+[24/Sep/2025 18:44:20] "GET /google-oauth/chat/ HTTP/1.1" 500 531696
+WARNING Not Found: /favicon.ico
+Not Found: /favicon.ico
+[24/Sep/2025 18:44:20] "GET /favicon.ico HTTP/1.1" 404 4605
+[24/Sep/2025 18:44:26] "GET /google-oauth/chat/ HTTP/1.1" 200 148066
+[24/Sep/2025 18:44:26] "GET /static/js/vacancy-slots.js HTTP/1.1" 200 30753
+[24/Sep/2025 18:44:26] "GET /static/css/hrhelper.css HTTP/1.1" 200 75043
+WARNING Not Found: /favicon.ico
+Not Found: /favicon.ico
+[24/Sep/2025 18:44:30] "GET /favicon.ico HTTP/1.1" 404 4605
+/Users/agolubenko/hrhelper/fullstack/backend/apps/common/templatetags/common_filters.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 24, 2025 - 18:44:03
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/common/templatetags/common_filters.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 24, 2025 - 18:44:35
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/common/templatetags/common_filters.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 24, 2025 - 18:45:11
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/common/templatetags/common_filters.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 24, 2025 - 18:45:16
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+Watching for file changes with StatReloader
+ERROR Internal Server Error: /google-oauth/chat/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py", line 2836, in chat_workflow
+    return render(request, 'google_oauth/chat_workflow.html', context)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/library.py", line 381, in render
+    return t.render(new_context)
+           ~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 173, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+                    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/urls/base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'chat_workflow_session' with no arguments not found. 1 pattern(s) tried: ['google\\-oauth/chat/(?P<session_id>[0-9]+)/\\Z']
+Internal Server Error: /google-oauth/chat/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py", line 2836, in chat_workflow
+    return render(request, 'google_oauth/chat_workflow.html', context)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/library.py", line 381, in render
+    return t.render(new_context)
+           ~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 173, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+                    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/urls/base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'chat_workflow_session' with no arguments not found. 1 pattern(s) tried: ['google\\-oauth/chat/(?P<session_id>[0-9]+)/\\Z']
+[24/Sep/2025 18:45:31] "GET /google-oauth/chat/ HTTP/1.1" 500 491633
+WARNING Not Found: /favicon.ico
+Not Found: /favicon.ico
+[24/Sep/2025 18:45:31] "GET /favicon.ico HTTP/1.1" 404 4605
+ERROR Internal Server Error: /google-oauth/chat/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py", line 2836, in chat_workflow
+    return render(request, 'google_oauth/chat_workflow.html', context)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/library.py", line 381, in render
+    return t.render(new_context)
+           ~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 173, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+                    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/urls/base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'chat_workflow_session' with no arguments not found. 1 pattern(s) tried: ['google\\-oauth/chat/(?P<session_id>[0-9]+)/\\Z']
+Internal Server Error: /google-oauth/chat/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py", line 2836, in chat_workflow
+    return render(request, 'google_oauth/chat_workflow.html', context)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/library.py", line 381, in render
+    return t.render(new_context)
+           ~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 173, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 243, in render
+    nodelist.append(node.render_annotated(context))
+                    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/urls/base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'chat_workflow_session' with no arguments not found. 1 pattern(s) tried: ['google\\-oauth/chat/(?P<session_id>[0-9]+)/\\Z']
+[24/Sep/2025 18:45:39] "GET /google-oauth/chat/ HTTP/1.1" 500 491219
+WARNING Not Found: /favicon.ico
+Not Found: /favicon.ico
+[24/Sep/2025 18:45:39] "GET /favicon.ico HTTP/1.1" 404 4605
+[24/Sep/2025 18:46:10] "GET /google-oauth/chat/ HTTP/1.1" 200 150673
+[24/Sep/2025 18:46:10] "GET /static/js/vacancy-slots.js HTTP/1.1" 200 30753
+[24/Sep/2025 18:46:10] "GET /static/css/hrhelper.css HTTP/1.1" 200 75043
+WARNING Not Found: /favicon.ico
+Not Found: /favicon.ico
+[24/Sep/2025 18:46:14] "GET /favicon.ico HTTP/1.1" 404 4605
+[24/Sep/2025 18:46:21] "GET /google-oauth/chat/21/ HTTP/1.1" 200 150681
+[24/Sep/2025 18:46:26] "GET /google-oauth/chat/21/ HTTP/1.1" 200 150681
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 24, 2025 - 18:45:24
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 11
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 11
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 11
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 11
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 11
+🔍 DEBUG: OAuth account found: andrei.golubenko@softnetix.io
+🔍 DEBUG: Token valid: True
+🔍 DEBUG: Token expires at: 2025-09-24 15:53:45.130712+00:00
+🔍 DEBUG: Current time: 2025-09-24 15:46:30.259698+00:00
+💾 Сохранены события календаря в кэш: 100 событий
+💾 Сохранены файлы Drive в кэш: 100 файлов
+🔍 DEBUG: Found 100 upcoming events (from cache/API)
+🔍 DEBUG: Found 100 files (from cache/API)
+🔍 DEBUG: Event: A2+ at 2025-09-25 09:20:00+03:00
+🔍 DEBUG: Event: SM Screening | ЧЕРЕПАН РОМАН at 2025-09-25 11:00:00+03:00
+🔍 DEBUG: Event: JS Tech Screening | Кравчук Илья at 2025-09-25 13:00:00+03:00
+🔍 DEBUG: Event: Обед at 2025-09-25 14:00:00+03:00
+🔍 DEBUG: Event:  SM Screening | Суворов Павел at 2025-09-25 15:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...[24/Sep/2025 18:46:50] "GET /google-oauth/ HTTP/1.1" 200 74709
+[24/Sep/2025 18:46:53] "GET /google-oauth/chat/21/ HTTP/1.1" 200 150681
+[24/Sep/2025 18:47:38] "GET /admin/ HTTP/1.1" 200 41922
+[24/Sep/2025 18:47:38] "GET /static/admin/css/base.css HTTP/1.1" 304 0
+[24/Sep/2025 18:47:38] "GET /static/admin/css/dark_mode.css HTTP/1.1" 304 0
+[24/Sep/2025 18:47:38] "GET /static/admin/css/responsive.css HTTP/1.1" 304 0
+[24/Sep/2025 18:47:38] "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 304 0
+[24/Sep/2025 18:47:38] "GET /static/admin/css/dashboard.css HTTP/1.1" 304 0
+[24/Sep/2025 18:47:38] "GET /static/admin/js/theme.js HTTP/1.1" 304 0
+[24/Sep/2025 18:47:38] "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
+[24/Sep/2025 18:47:38] "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 304 0
+[24/Sep/2025 18:47:38] "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 304 0
+[24/Sep/2025 18:47:38] "GET /static/admin/img/icon-deletelink.svg HTTP/1.1" 304 0
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/admin.py changed, reloading.
+
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:dashboard
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 11
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 11
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/admin.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 24, 2025 - 18:49:09
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/admin.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 24, 2025 - 18:49:56
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+Watching for file changes with StatReloader
+[24/Sep/2025 18:50:05] "GET /admin/ HTTP/1.1" 200 43322
+[24/Sep/2025 18:50:09] "GET /admin/google_oauth/chatsession/ HTTP/1.1" 200 50585
+[24/Sep/2025 18:50:10] "GET /static/admin/css/changelists.css HTTP/1.1" 304 0
+[24/Sep/2025 18:50:10] "GET /static/admin/js/jquery.init.js HTTP/1.1" 304 0
+[24/Sep/2025 18:50:10] "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 304 0
+[24/Sep/2025 18:50:10] "GET /static/admin/js/urlify.js HTTP/1.1" 304 0
+[24/Sep/2025 18:50:10] "GET /static/admin/js/core.js HTTP/1.1" 304 0
+[24/Sep/2025 18:50:10] "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 304 0
+[24/Sep/2025 18:50:10] "GET /static/admin/js/actions.js HTTP/1.1" 304 0
+[24/Sep/2025 18:50:10] "GET /static/admin/js/prepopulate.js HTTP/1.1" 304 0
+[24/Sep/2025 18:50:10] "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 304 0
+[24/Sep/2025 18:50:10] "GET /static/admin/img/search.svg HTTP/1.1" 304 0
+[24/Sep/2025 18:50:10] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[24/Sep/2025 18:50:10] "GET /static/admin/js/filters.js HTTP/1.1" 304 0
+[24/Sep/2025 18:50:10] "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 304 0
+[24/Sep/2025 18:50:10] "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 304 0
+[24/Sep/2025 18:50:19] "POST /admin/google_oauth/chatsession/ HTTP/1.1" 200 49097
+[24/Sep/2025 18:50:19] "GET /static/admin/js/cancel.js HTTP/1.1" 200 884
+[24/Sep/2025 18:50:21] "POST /admin/google_oauth/chatsession/ HTTP/1.1" 302 0
+[24/Sep/2025 18:50:22] "GET /admin/google_oauth/chatsession/ HTTP/1.1" 200 38588
+[24/Sep/2025 18:50:22] "GET /admin/jsi18n/ HTTP/1.1" 200 17546
+[24/Sep/2025 18:50:22] "GET /static/admin/img/icon-yes.svg HTTP/1.1" 304 0
+[24/Sep/2025 18:50:35] "GET /google-oauth/chat/21/ HTTP/1.1" 200 127437
+[24/Sep/2025 18:50:42] "GET /google-oauth/chat/ HTTP/1.1" 200 128670
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 24, 2025 - 18:50:03
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 11
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 11
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/common/templatetags/common_filters.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 24, 2025 - 18:57:41
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/common/templatetags/common_filters.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 24, 2025 - 18:57:53
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+Watching for file changes with StatReloader
+[24/Sep/2025 18:58:15] "GET /google-oauth/chat/23/ HTTP/1.1" 200 128617
+[24/Sep/2025 18:58:15] "GET /static/js/vacancy-slots.js HTTP/1.1" 304 0
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 24, 2025 - 18:58:08
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 11
+Watching for file changes with StatReloader
+[24/Sep/2025 18:58:21] "GET /google-oauth/chat/ HTTP/1.1" 200 128609
+[24/Sep/2025 18:58:29] "GET /google-oauth/chat/22/ HTTP/1.1" 200 128617
+[24/Sep/2025 18:58:31] "GET /google-oauth/chat/ HTTP/1.1" 200 128609
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 24, 2025 - 18:58:18
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 11
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 11
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 11
+Watching for file changes with StatReloader
+[24/Sep/2025 18:59:19] "GET /google-oauth/chat/?vacancy_id=10 HTTP/1.1" 200 127145
