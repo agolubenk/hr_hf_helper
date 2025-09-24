@@ -2722,10 +2722,14 @@ def chat_workflow(request, session_id=None):
             chat_session.save()
             return redirect('google_oauth:chat_workflow_session', session_id=chat_session.id)
 
+    # Получаем все сессии пользователя для боковой панели
+    all_sessions = ChatSession.objects.filter(user=request.user).order_by('-updated_at')[:20]
+    
     context = {
         'form': form,
         'chat_session': chat_session,
         'messages': messages,
+        'all_sessions': all_sessions,
         'title': 'Чат-помощник',
     }
 

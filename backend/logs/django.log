@@ -4991,3 +4991,88 @@ Not Found: /favicon.ico
 WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
 Not Found: /.well-known/appspecific/com.chrome.devtools.json
 [24/Sep/2025 15:22:14] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4716
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
+
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+Watching for file changes with StatReloader
+[24/Sep/2025 16:16:08] "GET /google-oauth/chat/15/ HTTP/1.1" 200 153678
+[24/Sep/2025 16:16:17] "GET /google-oauth/chat/1/ HTTP/1.1" 200 90311
+[24/Sep/2025 16:16:26] "GET /google-oauth/chat/1/ HTTP/1.1" 200 90311
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 24, 2025 - 16:15:30
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow_session
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 10
+Watching for file changes with StatReloader
+[24/Sep/2025 16:16:49] "GET /google-oauth/chat/15/ HTTP/1.1" 200 153678
+[24/Sep/2025 16:16:54] "GET /google-oauth/chat/15/ HTTP/1.1" 200 153678
+[24/Sep/2025 16:17:21] "GET /google-oauth/chat/15/ HTTP/1.1" 200 153683
+[24/Sep/2025 16:18:46] "GET /google-oauth/chat/15/ HTTP/1.1" 200 153743
+[24/Sep/2025 16:19:04] "GET /google-oauth/chat/15/ HTTP/1.1" 200 153758
