@@ -5,58 +5,208 @@
 
 {% block content %}
 <div class="container-fluid">
-    <div class="row">
+    <!-- Селектор вакансии и свободные слоты -->
+    <div class="row" style="margin-bottom: -5px;">
         <div class="col-12">
-            <!-- Заголовок -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3 mb-0">{{ title }}</h1>
-                <div>
-                    <a href="{% url 'google_oauth:combined_workflow' %}" class="btn btn-outline-info me-2">
-                        <i class="fas fa-magic me-2"></i>Combined Workflow
-                    </a>
-                    <a href="{% url 'google_oauth:dashboard' %}" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>Назад
-                    </a>
+            <div class="vacancy-selector">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h3 class="mb-0">
+                            <i class="fas fa-briefcase me-2"></i>
+                            Выберите вакансию для работы
+                        </h3>
+                        <!-- Информация о выбранной вакансии -->
+                        {% if selected_vacancy %}
+                        <div class="automation-card mt-3">
+                            <div class="row align-items-center">
+                                <div class="col-12">
+                                    <!-- Кнопки копирования вопросов и слотов -->
+                                    <div class="copy-buttons">
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <!-- Кнопки копирования для Беларуси -->
+                                            <button class="btn-copy btn-copy-vacancy-link-belarus position-relative" 
+                                                    onclick="window.copyVacancyLink('belarus')"
+                                                    {% if not selected_vacancy.vacancy_link_belarus %}disabled{% endif %}
+                                                    title="Скопировать ссылку на вакансию (Беларусь)">
+                                                <i class="fas fa-link"></i>
+                                                <div class="position-absolute top-0 start-100 translate-middle">
+                                                    <span class="flag-emoji">🇧🇾</span>
+                </div>
+                                                <div class="copy-tooltip">Скопировать ссылку на вакансию (Беларусь)</div>
+                                            </button>
+                                            
+                                            <button class="btn-copy btn-copy-belarus position-relative" 
+                                                    onclick="copyQuestions('belarus')"
+                                                    {% if not selected_vacancy.questions_belarus %}disabled{% endif %}
+                                                    title="Скопировать вопросы для Беларуси">
+                                                <i class="fas fa-question"></i>
+                                                <div class="position-absolute top-0 start-100 translate-middle">
+                                                    <span class="flag-emoji">🇧🇾</span>
+            </div>
+                                                <div class="copy-tooltip">Скопировать вопросы для Беларуси</div>
+                                            </button>
+                                            
+                                            <!-- Кнопки копирования для Польши -->
+                                            <button class="btn-copy btn-copy-vacancy-link-poland position-relative" 
+                                                    onclick="window.copyVacancyLink('poland')"
+                                                    {% if not selected_vacancy.vacancy_link_poland %}disabled{% endif %}
+                                                    title="Скопировать ссылку на вакансию (Польша)">
+                                                <i class="fas fa-link"></i>
+                                                <div class="position-absolute top-0 start-100 translate-middle">
+                                                    <span class="flag-emoji">🇵🇱</span>
+                                                </div>
+                                                <div class="copy-tooltip">Скопировать ссылку на вакансию (Польша)</div>
+                                            </button>
+                                            
+                                            <button class="btn-copy btn-copy-poland position-relative" 
+                                                    onclick="copyQuestions('poland')"
+                                                    {% if not selected_vacancy.questions_poland %}disabled{% endif %}
+                                                    title="Скопировать вопросы для Польши">
+                                                <i class="fas fa-question"></i>
+                                                <div class="position-absolute top-0 start-100 translate-middle">
+                                                    <span class="flag-emoji">🇵🇱</span>
+                                                </div>
+                                                <div class="copy-tooltip">Скопировать вопросы для Польши</div>
+                                            </button>
+                                            
+                                            <!-- Кнопки копирования слотов -->
+                                            <button class="btn-copy btn-copy-current-week" 
+                                                    onclick="window.copyWeekSlots('current')"
+                                                    title="Скопировать слоты текущей недели">
+                                                <i class="fas fa-calendar-week"></i>
+                                                <div class="copy-tooltip">Скопировать слоты текущей недели</div>
+                                            </button>
+                                            
+                                            <button class="btn-copy btn-copy-next-week" 
+                                                    onclick="window.copyWeekSlots('next')"
+                                                    title="Скопировать слоты следующей недели">
+                                                <i class="fas fa-calendar-plus"></i>
+                                                <div class="copy-tooltip">Скопировать слоты следующей недели</div>
+                                            </button>
+                                            
+                                            <button class="btn-copy btn-copy-all-slots" 
+                                                    onclick="window.copyAllSlots()"
+                                                    title="Скопировать все слоты">
+                                                <i class="fas fa-copy"></i>
+                                                <div class="copy-tooltip">Скопировать все слоты</div>
+                                            </button>
+                                            
+                                            <button class="btn-copy btn-refresh-slots" 
+                                                    onclick="window.refreshSlots()"
+                                                    title="Обновить слоты">
+                                                <i class="fas fa-sync-alt"></i>
+                                                <div class="copy-tooltip">Обновить слоты</div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <form method="GET" id="vacancyForm">
+                            <select name="vacancy_id" style="margin-top: 40px!important;" class="form-select" onchange="this.form.submit()">
+                                <option value="">-- Выберите вакансию --</option>
+                                {% for vacancy in active_vacancies %}
+                                    <option value="{{ vacancy.id }}" 
+                                            {% if selected_vacancy and vacancy.id == selected_vacancy.id %}selected{% endif %}>
+                                        {{ vacancy.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                        {% if selected_vacancy %}
+                        <div class="mt-2 text-end">
+                            <span class="badge bg-success fs-6 clickable-badge" onclick="toggleSlotsCard()" style="cursor: pointer;">
+                                <i class="fas fa-clock me-2"></i> Свободные слоты
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    
+
+    <!-- Свободные слоты -->
+    {% if selected_vacancy %}
     <div class="row">
-        <div class="col-lg-8">
+        <div class="col-12">
+            <div class="collapse" id="slotsCardBody">
+            <!-- Текущая неделя -->
+            <div class="week-section current-week mb-4">
+                <h6 class="text-primary mb-3">
+                    <i class="fas fa-calendar-week me-2"></i>
+                    Текущая неделя
+                    <button class="btn btn-sm btn-outline-primary float-end btn-collapse" type="button" data-bs-toggle="collapse" data-bs-target="#currentWeekSlots" aria-expanded="true" aria-controls="currentWeekSlots">
+                        <i class="fas fa-chevron-up"></i>
+                    </button>
+                </h6>
+                <div class="collapse show" id="currentWeekSlots">
+                    <div class="row">
+                        <!-- Слоты будут добавлены через JavaScript -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Следующая неделя -->
+            <div class="week-section next-week">
+                <h6 class="text-info mb-3">
+                    <i class="fas fa-calendar-plus me-2"></i>
+                    Следующая неделя
+                    <button class="btn btn-sm btn-outline-info float-end btn-collapse" type="button" data-bs-toggle="collapse" data-bs-target="#nextWeekSlots" aria-expanded="true" aria-controls="nextWeekSlots">
+                        <i class="fas fa-chevron-up"></i>
+                    </button>
+                </h6>
+                <div class="collapse show" id="nextWeekSlots">
+                    <div class="row">
+                        <!-- Слоты будут добавлены через JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+            <div class="row">
+                <div class="col-lg-8">
             <!-- Чат -->
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-comments me-2"></i>HR-помощник
                         <span class="badge bg-secondary ms-2">#{{ chat_session.id }}</span>
-                    </h6>
-                </div>
+                            </h6>
+                        </div>
                 
-                <div class="card-body p-0">
+                        <div class="card-body p-0">
                     <!-- Сообщения чата -->
                     <div id="chat-messages" class="chat-messages" style="height: 500px; overflow-y: auto;">
-                        {% for message in messages %}
+                                {% for message in messages %}
                             <div class="message mb-3 {% if message.message_type == 'user' %}user-message{% elif message.message_type == 'hr_screening' %}system-message hr-screening-message{% elif message.message_type == 'invite' %}system-message invite-message{% else %}system-message{% endif %}">
-                                <div class="d-flex {% if message.message_type == 'user' %}justify-content-end{% else %}justify-content-start{% endif %}">
-                                    <div class="message-bubble {% if message.message_type == 'user' %}user-bubble{% else %}system-bubble{% endif %}">
+                                        <div class="d-flex {% if message.message_type == 'user' %}justify-content-end{% else %}justify-content-start{% endif %}">
+                                            <div class="message-bubble {% if message.message_type == 'user' %}user-bubble{% else %}system-bubble{% endif %}">
                                         
                                         <!-- Пользовательское сообщение -->
-                                        {% if message.message_type == 'user' %}
-                                            <div class="message-header">
-                                                <i class="fas fa-user me-1"></i>
-                                                <strong>Вы</strong>
-                                                <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
-                                            </div>
+                                                {% if message.message_type == 'user' %}
+                                                    <div class="message-header">
+                                                        <i class="fas fa-user me-1"></i>
+                                                        <strong>Вы</strong>
+                                                        <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                    </div>
                                             <div class="message-content user-content">{{ message.content|linebreaks }}</div>
-                                        
+                                                
                                         <!-- HR-скрининг -->
-                                        {% elif message.message_type == 'hr_screening' %}
-                                            <div class="message-header">
-                                                <i class="fas fa-clipboard-list me-1"></i>
-                                                <strong>HR-скрининг</strong>
-                                                <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
-                                            </div>
+                                                {% elif message.message_type == 'hr_screening' %}
+                                                    <div class="message-header">
+                                                        <i class="fas fa-clipboard-list me-1"></i>
+                                                        <strong>HR-скрининг</strong>
+                                                        <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                    </div>
                                             <div class="message-content bot-content-fixed">
                                                 <!-- Контейнер с информацией и кнопками -->
                                                 <div class="message-body-with-buttons">
@@ -92,30 +242,30 @@
                                                     </div>
                                                     
                                                     <!-- Кнопки действий справа -->
-                                                    {% if message.metadata %}
+                                                        {% if message.metadata %}
                                                         <div class="action-buttons-right">
-                                                            {% if message.metadata.candidate_url %}
+                                                                    {% if message.metadata.candidate_url %}
                                                                 <a href="{{ message.metadata.candidate_url }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Открыть в Huntflow">
-                                                                    <i class="fas fa-external-link-alt"></i>
-                                                                </a>
-                                                            {% endif %}
-                                                            {% if message.hr_screening %}
+                                                                            <i class="fas fa-external-link-alt"></i>
+                                                                        </a>
+                                                                    {% endif %}
+                                                                    {% if message.hr_screening %}
                                                                 <a href="{% url 'google_oauth:hr_screening_detail' message.hr_screening.id %}" class="btn btn-sm btn-outline-success" title="Подробности">
-                                                                    <i class="fas fa-eye"></i>
-                                                                </a>
-                                                            {% endif %}
-                                                        </div>
-                                                    {% endif %}
+                                                                            <i class="fas fa-eye"></i>
+                                                                        </a>
+                                                                    {% endif %}
+                                                            </div>
+                                                        {% endif %}
                                                 </div>
-                                            </div>
-                                        
+                                                    </div>
+                                                
                                         <!-- Инвайт -->
-                                        {% elif message.message_type == 'invite' %}
-                                            <div class="message-header">
-                                                <i class="fas fa-calendar-plus me-1"></i>
-                                                <strong>Инвайт</strong>
-                                                <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
-                                            </div>
+                                                {% elif message.message_type == 'invite' %}
+                                                    <div class="message-header">
+                                                        <i class="fas fa-calendar-plus me-1"></i>
+                                                        <strong>Инвайт</strong>
+                                                        <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                    </div>
                                             <div class="message-content bot-content-fixed">
                                                 <!-- Контейнер с информацией и кнопками -->
                                                 <div class="message-body-with-buttons">
@@ -176,78 +326,78 @@
                                                     </div>
                                                     
                                                     <!-- Кнопки действий справа -->
-                                                    {% if message.metadata %}
+                                                        {% if message.metadata %}
                                                         <div class="action-buttons-right">
-                                                            {% if message.metadata.candidate_url %}
+                                                                    {% if message.metadata.candidate_url %}
                                                                 <a href="{{ message.metadata.candidate_url }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Открыть в Huntflow">
-                                                                    <i class="fas fa-external-link-alt"></i>
-                                                                </a>
-                                                            {% endif %}
-                                                            {% if message.invite %}
+                                                                            <i class="fas fa-external-link-alt"></i>
+                                                                        </a>
+                                                                    {% endif %}
+                                                                    {% if message.invite %}
                                                                 <a href="{% url 'google_oauth:invite_detail' message.invite.id %}" class="btn btn-sm btn-outline-success" title="Подробности">
-                                                                    <i class="fas fa-eye"></i>
-                                                                </a>
+                                                                            <i class="fas fa-eye"></i>
+                                                                        </a>
                                                                 <button type="button" class="btn btn-sm btn-outline-warning copy-invitation-btn" data-invite-id="{{ message.invite.id }}" title="Копировать текст инвайта">
-                                                                    <i class="fas fa-copy"></i>
-                                                                </button>
-                                                            {% endif %}
-                                                        </div>
-                                                    {% endif %}
+                                                                            <i class="fas fa-copy"></i>
+                                                                        </button>
+                                                                    {% endif %}
+                                                            </div>
+                                                        {% endif %}
                                                 </div>
-                                            </div>
-                                        
+                                                    </div>
+                                                
                                         <!-- Системное сообщение -->
-                                        {% else %}
-                                            <div class="message-header">
-                                                <i class="fas fa-robot me-1"></i>
-                                                <strong>Система</strong>
-                                                <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                {% else %}
+                                                    <div class="message-header">
+                                                        <i class="fas fa-robot me-1"></i>
+                                                        <strong>Система</strong>
+                                                        <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                    </div>
+                                                    <div class="message-content">{{ message.content|linebreaks }}</div>
+                                                {% endif %}
                                             </div>
-                                            <div class="message-content">{{ message.content|linebreaks }}</div>
-                                        {% endif %}
+                                        </div>
                                     </div>
-                                </div>
+                                {% empty %}
+                                    <div class="text-center text-muted py-5">
+                                        <i class="fas fa-comments fa-3x mb-3"></i>
+                                        <p>Начните диалог, отправив сообщение</p>
+                                    </div>
+                                {% endfor %}
                             </div>
-                        {% empty %}
-                            <div class="text-center text-muted py-5">
-                                <i class="fas fa-comments fa-3x mb-3"></i>
-                                <p>Начните диалог, отправив сообщение</p>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    
-                    <!-- Форма ввода -->
-                    <div class="card-footer">
-                        <form method="post" id="chat-form">
-                            {% csrf_token %}
-                            <input type="hidden" name="session_id" value="{{ chat_session.id }}">
-                            <div class="input-group">
-                                {{ form.message }}
-                                <button type="submit" class="btn btn-primary" id="send-btn">
-                                    <i class="fas fa-paper-plane"></i>
-                                </button>
-                            </div>
-                            {% if form.message.errors %}
-                                <div class="alert alert-danger small mt-2">
-                                    {% for error in form.message.errors %}
+                            
+                            <!-- Форма ввода -->
+                            <div class="card-footer">
+                                <form method="post" id="chat-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="session_id" value="{{ chat_session.id }}">
+                                    <div class="input-group">
+                                        {{ form.message }}
+                                        <button type="submit" class="btn btn-primary" id="send-btn">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                    {% if form.message.errors %}
+                                        <div class="alert alert-danger small mt-2">
+                                            {% for error in form.message.errors %}
                                         <i class="fas fa-exclamation-triangle me-1"></i>{{ error|striptags }}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </form>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        
+
          <!-- Боковая панель со списком сессий -->
-         <div class="col-lg-4">
-             <div class="card shadow">
-                 <div class="card-header py-3">
-                     <h6 class="m-0 font-weight-bold text-primary">
+                <div class="col-lg-4">
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">
                          <i class="fas fa-comments me-2"></i>История чатов
-                     </h6>
-                 </div>
+                            </h6>
+                        </div>
                  <div class="card-body p-0 pt-2">
                      <!-- Список сессий -->
                      <div class="sessions-list" style="max-height: 400px; overflow-y: auto;">
@@ -258,13 +408,13 @@
                                          <div class="session-info">
                                              <span class="session-id">#{{ session.id }}</span>
                                              <span class="session-date">{{ session.updated_at|date:"d.m.Y H:i" }}</span>
-                                         </div>
+                            </div>
                                          <div class="session-status">
                                              {% if session.id == chat_session.id %}
                                                  <i class="fas fa-circle text-primary" style="font-size: 8px;"></i>
                                              {% endif %}
-                                         </div>
-                                     </div>
+                            </div>
+                        </div>
                                      <div class="session-preview">
                                          {% if session.messages.last %}
                                              <span class="session-last-message">
@@ -285,24 +435,24 @@
                                                  Пустой чат
                                              </span>
                                          {% endif %}
-                                     </div>
+                    </div>
                                  </a>
-                             </div>
+                </div>
                          {% empty %}
                              <div class="text-center text-muted py-4">
                                  <i class="fas fa-comments fa-2x mb-2"></i>
                                  <p class="mb-0">Нет чатов</p>
-                             </div>
+            </div>
                          {% endfor %}
-                     </div>
-                 </div>
+                            </div>
+                        </div>
                  <div class="card-footer py-2">
                      <a href="{% url 'google_oauth:chat_workflow' %}" class="btn btn-sm btn-outline-primary w-100">
                          <i class="fas fa-plus me-1"></i>Новый чат
                      </a>
-                 </div>
-             </div>
-         </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -575,12 +725,13 @@
 
 .card #id_message {
     border-radius: 18px 0 0 18px;
+    min-height: 48px !important;
+    max-height: 576px !important; /* 12 строк * 48px */
+    overflow-y: auto;
     border-right: none;
     padding: 8px 12px;
     font-size: 1.1rem; /* ТАКОЙ ЖЕ размер как и в сообщениях */
-    min-height: 36px;
-    resize: vertical;
-    max-height: 100px;
+    resize: none;
 }
 
 .card #send-btn {
@@ -841,7 +992,444 @@
  .card .sessions-list::-webkit-scrollbar-thumb:hover {
      background: var(--hr-primary-hover, #0056b3);
  }
- </style>
+
+ /* === СТИЛИ ДЛЯ СЕЛЕКТОРА ВАКАНСИИ И СЛОТОВ === */
+ .vacancy-selector {
+     background: var(--hr-card-bg, #ffffff);
+     border: 1px solid var(--hr-border, #dee2e6);
+     border-radius: 12px;
+     padding: 20px;
+     margin-bottom: 20px;
+ }
+
+ .automation-card {
+     background: var(--hr-surface, #f8f9fa);
+     border: 1px solid var(--hr-border, #dee2e6);
+     border-radius: 8px;
+     padding: 15px;
+ }
+
+ .copy-buttons {
+     margin-top: 10px;
+ }
+
+ .btn-copy {
+     background: var(--hr-primary, #007bff);
+     color: white;
+     border: none;
+     border-radius: 6px;
+     padding: 8px 12px;
+     font-size: 0.9rem;
+     cursor: pointer;
+     transition: all 0.2s ease;
+     position: relative;
+     display: inline-flex;
+     align-items: center;
+     gap: 6px;
+ }
+
+ .btn-copy:hover {
+     background: var(--hr-primary-hover, #0056b3);
+        transform: translateY(-1px);
+ }
+
+ .btn-copy:disabled {
+     background: var(--hr-secondary, #6c757d);
+     cursor: not-allowed;
+     transform: none;
+ }
+
+ .flag-emoji {
+     font-size: 12px;
+     line-height: 1;
+ }
+
+ .copy-tooltip {
+     position: absolute;
+     bottom: 100%;
+     left: 50%;
+     transform: translateX(-50%);
+     background: var(--hr-dark, #333);
+     color: white;
+     padding: 4px 8px;
+     border-radius: 4px;
+     font-size: 0.75rem;
+     white-space: nowrap;
+     opacity: 0;
+     visibility: hidden;
+     transition: all 0.2s ease;
+     z-index: 1000;
+     margin-bottom: 5px;
+ }
+
+ .btn-copy:hover .copy-tooltip {
+     opacity: 1;
+     visibility: visible;
+ }
+
+ .general-card {
+     background: var(--hr-card-bg, #ffffff);
+     border: 1px solid var(--hr-border, #dee2e6);
+     border-radius: 12px;
+     padding: 20px;
+     margin-bottom: 20px;
+ }
+
+ .week-section {
+     margin-bottom: 20px;
+ }
+
+ .slot-card {
+     background: var(--hr-surface, #f8f9fa);
+     border: 1px solid var(--hr-border, #dee2e6);
+     transition: all 0.2s ease;
+ }
+
+ .slot-card:hover {
+     transform: translateY(-2px);
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+ }
+
+ .btn-collapse {
+     background: transparent;
+     border: 1px solid var(--hr-border, #dee2e6);
+     color: var(--hr-text, #333);
+     border-radius: 4px;
+     padding: 4px 8px;
+     font-size: 0.8rem;
+     transition: all 0.2s ease;
+ }
+
+ .btn-collapse:hover {
+     background: var(--hr-surface, #f8f9fa);
+     border-color: var(--hr-primary, #007bff);
+     color: var(--hr-primary, #007bff);
+ }
+
+ /* Темная тема для новых элементов */
+ [data-theme="dark"] .vacancy-selector {
+     background: var(--color-surface, #2d3748);
+     border-color: var(--color-border, #4a5568);
+ }
+
+ [data-theme="dark"] .automation-card {
+     background: var(--color-surface-hover, #374151);
+     border-color: var(--color-border, #4a5568);
+ }
+
+ [data-theme="dark"] .general-card {
+     background: var(--color-surface, #2d3748);
+     border-color: var(--color-border, #4a5568);
+ }
+
+ [data-theme="dark"] .slot-card {
+     background: var(--color-surface-hover, #374151);
+     border-color: var(--color-border, #4a5568);
+ }
+
+ [data-theme="dark"] .btn-collapse {
+     background: transparent;
+     border-color: var(--color-border, #4a5568);
+     color: var(--color-text, #e2e8f0);
+ }
+
+ [data-theme="dark"] .btn-collapse:hover {
+     background: var(--color-surface-hover, #374151);
+     border-color: var(--color-primary, #3182ce);
+     color: var(--color-primary, #3182ce);
+ }
+
+ /* === ДОПОЛНИТЕЛЬНЫЕ СТИЛИ ДЛЯ КНОПОК КОПИРОВАНИЯ === */
+ .copy-buttons .btn-copy {
+     width: 40px !important;
+     height: 40px !important;
+     border-radius: 50% !important;
+     border: none !important;
+     display: flex !important;
+     align-items: center !important;
+     justify-content: center !important;
+     font-size: 16px !important;
+     transition: all 0.3s ease !important;
+     cursor: pointer !important;
+     position: relative !important;
+     margin: 2px !important;
+ }
+
+ .copy-buttons .btn-copy-belarus {
+     background: linear-gradient(135deg, #ff6b6b, #ee5a24) !important;
+     color: white !important;
+     border: 2px solid #fff !important;
+     box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3) !important;
+ }
+
+ .copy-buttons .btn-copy-belarus:hover {
+     background: linear-gradient(135deg, #ee5a24, #d63031) !important;
+     box-shadow: 0 4px 15px rgba(255, 107, 107, 0.5) !important;
+     transform: scale(1.1) !important;
+ }
+
+ .copy-buttons .btn-copy-poland {
+     background: linear-gradient(135deg, #4834d4, #686de0) !important;
+     color: white !important;
+     border: 2px solid #fff !important;
+     box-shadow: 0 2px 8px rgba(72, 52, 212, 0.3) !important;
+ }
+
+ .copy-buttons .btn-copy-poland:hover {
+     background: linear-gradient(135deg, #686de0, #5f3dc4) !important;
+     box-shadow: 0 4px 15px rgba(72, 52, 212, 0.5) !important;
+     transform: scale(1.1) !important;
+ }
+
+ .copy-buttons .btn-copy-vacancy-link-belarus {
+     background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+     color: white !important;
+     border: 2px solid #fff !important;
+     box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3) !important;
+ }
+
+ .copy-buttons .btn-copy-vacancy-link-belarus:hover {
+     background: linear-gradient(135deg, #c0392b, #a93226) !important;
+     box-shadow: 0 4px 15px rgba(231, 76, 60, 0.5) !important;
+     transform: scale(1.1) !important;
+ }
+
+ .copy-buttons .btn-copy-vacancy-link-poland {
+     background: linear-gradient(135deg, #f39c12, #e67e22) !important;
+     color: white !important;
+     border: 2px solid #fff !important;
+     box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3) !important;
+ }
+
+ .copy-buttons .btn-copy-vacancy-link-poland:hover {
+     background: linear-gradient(135deg, #e67e22, #d35400) !important;
+     box-shadow: 0 4px 15px rgba(243, 156, 18, 0.5) !important;
+     transform: scale(1.1) !important;
+ }
+
+ .copy-buttons .btn-copy-current-week {
+     background: linear-gradient(135deg, #fd79a8, #e84393) !important;
+     color: white !important;
+     border: 2px solid #fff !important;
+     box-shadow: 0 2px 8px rgba(253, 121, 168, 0.3) !important;
+ }
+
+ .copy-buttons .btn-copy-current-week:hover {
+     background: linear-gradient(135deg, #e84393, #d63031) !important;
+     box-shadow: 0 4px 15px rgba(253, 121, 168, 0.5) !important;
+     transform: scale(1.1) !important;
+ }
+
+ .copy-buttons .btn-copy-next-week {
+     background: linear-gradient(135deg, #0984e3, #74b9ff) !important;
+     color: white !important;
+     border: 2px solid #fff !important;
+     box-shadow: 0 2px 8px rgba(9, 132, 227, 0.3) !important;
+ }
+
+ .copy-buttons .btn-copy-next-week:hover {
+     background: linear-gradient(135deg, #74b9ff, #0984e3) !important;
+     box-shadow: 0 4px 15px rgba(9, 132, 227, 0.5) !important;
+     transform: scale(1.1) !important;
+ }
+
+ .copy-buttons .btn-copy-all-slots {
+     background: linear-gradient(135deg, #6c5ce7, #a29bfe) !important;
+     color: white !important;
+     border: 2px solid #fff !important;
+     box-shadow: 0 2px 8px rgba(108, 92, 231, 0.3) !important;
+ }
+
+ .copy-buttons .btn-copy-all-slots:hover {
+     background: linear-gradient(135deg, #a29bfe, #6c5ce7) !important;
+     box-shadow: 0 4px 15px rgba(108, 92, 231, 0.5) !important;
+     transform: scale(1.1) !important;
+ }
+
+ .copy-buttons .btn-refresh-slots {
+     background: linear-gradient(135deg, #17a2b8, #138496) !important;
+     color: white !important;
+     border: 2px solid #fff !important;
+     box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3) !important;
+ }
+
+ .copy-buttons .btn-refresh-slots:hover {
+     background: linear-gradient(135deg, #138496, #0f6674) !important;
+     box-shadow: 0 4px 15px rgba(23, 162, 184, 0.5) !important;
+     transform: scale(1.1) !important;
+ }
+
+ .copy-buttons .btn-copy:disabled {
+     opacity: 0.4 !important;
+     cursor: not-allowed !important;
+     transform: none !important;
+     filter: grayscale(0.8) !important;
+     background: linear-gradient(135deg, #6c757d, #495057) !important;
+     border: 2px solid #6c757d !important;
+     box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2) !important;
+ }
+
+ .copy-buttons .btn-copy:disabled:hover {
+     transform: none !important;
+     box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2) !important;
+     filter: grayscale(0.8) !important;
+ }
+
+ .copy-buttons .btn-copy .copy-tooltip {
+     position: absolute !important;
+     bottom: -35px !important;
+     left: 50% !important;
+     transform: translateX(-50%) !important;
+     background: rgba(0, 0, 0, 0.8) !important;
+     color: white !important;
+     padding: 5px 10px !important;
+     border-radius: 5px !important;
+     font-size: 12px !important;
+     white-space: nowrap !important;
+     opacity: 0 !important;
+     transition: opacity 0.3s ease !important;
+     pointer-events: none !important;
+     z-index: 1000 !important;
+ }
+
+ .copy-buttons .btn-copy:hover .copy-tooltip {
+     opacity: 1 !important;
+ }
+
+ .copy-buttons .btn-copy .flag-emoji {
+     font-size: 12px !important;
+     line-height: 1 !important;
+     background: rgba(230, 230, 230, 0.15) !important;
+     border-radius: 50% !important;
+     padding: 2px !important;
+     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+     border: 1px solid rgba(0, 0, 0, 0.1) !important;
+     display: inline-block !important;
+     line-height: 1 !important;
+     min-width: 21px !important;
+     min-height: 21px !important;
+     text-align: center !important;
+     margin-top: 7px !important;
+     margin-left: -7px !important;
+ }
+
+ /* Стили для успешного копирования */
+ .copy-buttons .btn-copy.copy-success {
+     background: linear-gradient(135deg, #00b894, #00cec9) !important;
+ }
+
+ .copy-buttons .btn-copy.copy-success:hover {
+     background: linear-gradient(135deg, #00b894, #00cec9) !important;
+     transform: scale(1.1) !important;
+ }
+
+ /* Темная тема для кнопок копирования */
+ [data-theme="dark"] .copy-buttons .btn-copy-vacancy-link-belarus {
+     background: linear-gradient(135deg, #ff4757, #ff3742) !important;
+     border: 2px solid #2c2c2c !important;
+     box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4) !important;
+ }
+
+ [data-theme="dark"] .copy-buttons .btn-copy-vacancy-link-belarus:hover {
+     background: linear-gradient(135deg, #ff3742, #ff2f3a) !important;
+     box-shadow: 0 4px 15px rgba(255, 71, 87, 0.6) !important;
+ }
+
+ [data-theme="dark"] .copy-buttons .btn-copy-vacancy-link-poland {
+     background: linear-gradient(135deg, #ffa502, #ff9500) !important;
+     border: 2px solid #2c2c2c !important;
+     box-shadow: 0 2px 8px rgba(255, 165, 2, 0.4) !important;
+ }
+
+ [data-theme="dark"] .copy-buttons .btn-copy-vacancy-link-poland:hover {
+     background: linear-gradient(135deg, #ff9500, #ff8c00) !important;
+     box-shadow: 0 4px 15px rgba(255, 165, 2, 0.6) !important;
+ }
+
+ [data-theme="dark"] .copy-buttons .btn-copy-belarus {
+     background: linear-gradient(135deg, #ff6b6b, #ee5a24) !important;
+     border: 2px solid #2c2c2c !important;
+     box-shadow: 0 2px 8px rgba(255, 107, 107, 0.4) !important;
+ }
+
+ [data-theme="dark"] .copy-buttons .btn-copy-belarus:hover {
+     background: linear-gradient(135deg, #ee5a24, #d63031) !important;
+     box-shadow: 0 4px 15px rgba(255, 107, 107, 0.6) !important;
+ }
+
+ [data-theme="dark"] .copy-buttons .btn-copy-poland {
+     background: linear-gradient(135deg, #4834d4, #686de0) !important;
+     border: 2px solid #2c2c2c !important;
+     box-shadow: 0 2px 8px rgba(72, 52, 212, 0.4) !important;
+ }
+
+ [data-theme="dark"] .copy-buttons .btn-copy-poland:hover {
+     background: linear-gradient(135deg, #686de0, #5f3dc4) !important;
+     box-shadow: 0 4px 15px rgba(72, 52, 212, 0.6) !important;
+ }
+
+ [data-theme="dark"] .copy-buttons .btn-copy-current-week {
+     background: linear-gradient(135deg, #fd79a8, #e84393) !important;
+     border: 2px solid #2c2c2c !important;
+     box-shadow: 0 2px 8px rgba(253, 121, 168, 0.4) !important;
+ }
+
+ [data-theme="dark"] .copy-buttons .btn-copy-current-week:hover {
+     background: linear-gradient(135deg, #e84393, #d63031) !important;
+     box-shadow: 0 4px 15px rgba(253, 121, 168, 0.6) !important;
+ }
+
+ [data-theme="dark"] .copy-buttons .btn-copy-next-week {
+     background: linear-gradient(135deg, #0984e3, #74b9ff) !important;
+     border: 2px solid #2c2c2c !important;
+     box-shadow: 0 2px 8px rgba(9, 132, 227, 0.4) !important;
+ }
+
+ [data-theme="dark"] .copy-buttons .btn-copy-next-week:hover {
+     background: linear-gradient(135deg, #74b9ff, #0984e3) !important;
+     box-shadow: 0 4px 15px rgba(9, 132, 227, 0.6) !important;
+ }
+
+ [data-theme="dark"] .copy-buttons .btn-copy-all-slots {
+     background: linear-gradient(135deg, #6c5ce7, #a29bfe) !important;
+     border: 2px solid #2c2c2c !important;
+     box-shadow: 0 2px 8px rgba(108, 92, 231, 0.4) !important;
+ }
+
+ [data-theme="dark"] .copy-buttons .btn-copy-all-slots:hover {
+     background: linear-gradient(135deg, #a29bfe, #6c5ce7) !important;
+     box-shadow: 0 4px 15px rgba(108, 92, 231, 0.6) !important;
+ }
+
+ [data-theme="dark"] .copy-buttons .btn-refresh-slots {
+     background: linear-gradient(135deg, #17a2b8, #138496) !important;
+     border: 2px solid #2c2c2c !important;
+     box-shadow: 0 2px 8px rgba(23, 162, 184, 0.4) !important;
+ }
+
+ [data-theme="dark"] .copy-buttons .btn-refresh-slots:hover {
+     background: linear-gradient(135deg, #138496, #0f6674) !important;
+     box-shadow: 0 4px 15px rgba(23, 162, 184, 0.6) !important;
+ }
+
+ [data-theme="dark"] .copy-buttons .btn-copy:disabled {
+     opacity: 0.3 !important;
+     background: linear-gradient(135deg, #495057, #343a40) !important;
+     border: 2px solid #495057 !important;
+     box-shadow: 0 2px 4px rgba(73, 80, 87, 0.3) !important;
+ }
+
+ [data-theme="dark"] .copy-buttons .btn-copy:disabled:hover {
+     transform: none !important;
+     box-shadow: 0 2px 4px rgba(73, 80, 87, 0.3) !important;
+ }
+
+ [data-theme="dark"] .copy-buttons .btn-copy.copy-success {
+     background: linear-gradient(135deg, #00b894, #00cec9) !important;
+     border: 2px solid #2c2c2c !important;
+     box-shadow: 0 4px 15px rgba(0, 184, 148, 0.6) !important;
+}
+</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -849,13 +1437,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatForm = document.getElementById('chat-form');
     const messageInput = document.getElementById('id_message');
     const sendBtn = document.getElementById('send-btn');
-
-    // Прокрутка вниз
+    
+    // Прокрутка вниз чата (без скролла всей страницы)
     function scrollToBottom() {
+        if (chatMessages) {
         chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
     }
+    
+    // Прокручиваем чат к последним сообщениям при загрузке (только внутри контейнера чата)
+    setTimeout(() => {
     scrollToBottom();
-
+        // Инициализируем размер textarea в одну строку
+        resetTextareaSize();
+    }, 100);
+    
     // Отправка формы
     chatForm.addEventListener('submit', function(e) {
         if (!messageInput.value.trim()) {
@@ -866,14 +1462,28 @@ document.addEventListener('DOMContentLoaded', function() {
         sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
         sendBtn.disabled = true;
         messageInput.disabled = true;
+        
+        // Сбрасываем размер textarea после отправки
+        setTimeout(() => {
+            resetTextareaSize();
+        }, 100);
     });
-
-    // Автоматическое изменение размера textarea
+    
+    // Функция для сброса размера textarea к одной строке
+    function resetTextareaSize() {
+        messageInput.style.height = 'auto';
+        messageInput.style.height = '48px'; // Высота одной строки
+        messageInput.scrollTop = 0;
+    }
+    
+    // Автоматическое изменение размера textarea (1-12 строк)
     messageInput.addEventListener('input', function() {
         this.style.height = 'auto';
-        this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+        const maxHeight = 48 * 12; // 12 строк * 48px на строку
+        const newHeight = Math.min(this.scrollHeight, maxHeight);
+        this.style.height = newHeight + 'px';
     });
-
+    
     // Отправка по Enter (без Shift)
     messageInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -881,10 +1491,10 @@ document.addEventListener('DOMContentLoaded', function() {
             chatForm.submit();
         }
     });
-
-    // Фокус на поле ввода
-    messageInput.focus();
-
+    
+    // Фокус на поле ввода (убираем автоматический фокус при загрузке)
+    // messageInput.focus();
+    
     // Копирование текста инвайта
     document.addEventListener('click', function(e) {
         if (e.target.closest('.copy-invitation-btn')) {
@@ -938,5 +1548,147 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
 </script>
-{% endblock %}
+
+{{ calendar_events_data|json_script:"calendar-events" }}
+
+<!-- Отладочная информация для событий календаря -->
+<script>
+console.log('🔍 DEBUG: calendar_events_data из Django:', {{ calendar_events_data|safe }});
+console.log('🔍 DEBUG: Количество событий:', {{ calendar_events_data|length }});
+</script>
+
+{% if selected_vacancy %}
+<script type="application/json" id="vacancy-data">
+{
+    "vacancy_link_belarus": "{{ selected_vacancy.vacancy_link_belarus|escapejs }}",
+    "vacancy_link_poland": "{{ selected_vacancy.vacancy_link_poland|escapejs }}",
+    "questions_belarus": "{{ selected_vacancy.questions_belarus|escapejs }}",
+    "questions_poland": "{{ selected_vacancy.questions_poland|escapejs }}"
+}
+</script>
+
+<!-- Отладочная информация -->
+<script>
+console.log('🔍 DEBUG: Выбранная вакансия:', {
+    id: {{ selected_vacancy.id }},
+    name: "{{ selected_vacancy.name|escapejs }}",
+    vacancy_link_belarus: "{{ selected_vacancy.vacancy_link_belarus|escapejs }}",
+    vacancy_link_poland: "{{ selected_vacancy.vacancy_link_poland|escapejs }}",
+    questions_belarus: "{{ selected_vacancy.questions_belarus|escapejs }}",
+    questions_poland: "{{ selected_vacancy.questions_poland|escapejs }}"
+});
+</script>
+{% else %}
+<script>
+console.log('⚠️ DEBUG: Вакансия не выбрана');
+</script>
+{% endif %}
+
+<script type="application/json" id="slots-settings-data">
+{{ slots_settings.to_dict|default:"{}"|safe }}
+</script>
+
+<!-- Отладочная информация для настроек слотов -->
+<script>
+console.log('🔍 DEBUG: slots_settings.to_dict:', {{ slots_settings.to_dict|default:"{}"|safe }});
+</script>
+
+<script>
+// Данные событий из Django контекста (как на странице календаря)
+console.log('🔍 DEBUG: Начинаем загрузку событий...');
+console.log('🔍 DEBUG: Количество событий в контексте:', {{ calendar_events_data|length|default:"0" }});
+
+// Загружаем реальные данные событий
+const calendarEvents = JSON.parse(document.getElementById('calendar-events').textContent);
+console.log('🔍 DEBUG: Загружены реальные события, количество:', calendarEvents.length);
+
+// Настройки слотов из Django контекста
+let slotsSettings = {{ slots_settings.to_dict|default:"{}"|safe }};
+console.log('🔍 DEBUG: Настройки слотов:', slotsSettings);
+
+console.log('📊 Загружено событий календаря:', calendarEvents.length);
+console.log('🔍 DEBUG: Первое событие:', calendarEvents[0]);
+console.log('🔍 DEBUG: Все события:', calendarEvents);
+
+{% if selected_vacancy %}
+window.vacancyLinkBelarus = "{{ selected_vacancy.vacancy_link_belarus|escapejs }}";
+window.vacancyLinkPoland = "{{ selected_vacancy.vacancy_link_poland|escapejs }}";
+window.questionsBelarus = "{{ selected_vacancy.questions_belarus|escapejs }}";
+window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
+{% endif %}
+</script>
+
+            <script src="{% static 'js/vacancy-slots.js' %}"></script>
+            
+            <script>
+            // Функция для переключения карточки слотов по клику на бейдж
+            function toggleSlotsCard() {
+                console.log('🔄 toggleSlotsCard вызвана');
+                const slotsCardBody = document.getElementById('slotsCardBody');
+                const collapseButton = document.querySelector('[data-bs-target="#slotsCardBody"]');
+                
+                console.log('🔍 slotsCardBody найден:', !!slotsCardBody);
+                console.log('🔍 collapseButton найден:', !!collapseButton);
+                console.log('🔍 slotsCardBody элемент:', slotsCardBody);
+                
+                if (slotsCardBody) {
+                    // Проверяем текущее состояние
+                    const isCollapsed = slotsCardBody.classList.contains('collapse') && !slotsCardBody.classList.contains('show');
+                    console.log('🔍 Карточка свернута:', isCollapsed);
+                    
+                    // Пробуем Bootstrap Collapse
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Collapse) {
+                        const bsCollapse = new bootstrap.Collapse(slotsCardBody, {
+                            toggle: true
+                        });
+                        console.log('✅ Bootstrap Collapse инициализирован');
+                    } else {
+                        // Альтернативный способ без Bootstrap
+                        console.log('⚠️ Bootstrap недоступен, используем альтернативный способ');
+                        if (slotsCardBody.classList.contains('show')) {
+                            slotsCardBody.classList.remove('show');
+                            slotsCardBody.style.display = 'none';
+                        } else {
+                            slotsCardBody.classList.add('show');
+                            slotsCardBody.style.display = 'block';
+                        }
+                        console.log('✅ Альтернативное переключение выполнено');
+                    }
+                } else {
+                    console.error('❌ Элемент slotsCardBody не найден!');
+                }
+            }
+            
+            // Добавляем стили для кликабельного бейджа
+            document.addEventListener('DOMContentLoaded', function() {
+                // Проверяем, что Bootstrap загружен
+                console.log('🔍 Bootstrap доступен:', typeof bootstrap !== 'undefined');
+                console.log('🔍 Bootstrap.Collapse доступен:', typeof bootstrap?.Collapse !== 'undefined');
+                
+                const clickableBadge = document.querySelector('.clickable-badge');
+                console.log('🔍 Кликабельный бейдж найден:', !!clickableBadge);
+                if (clickableBadge) {
+                    // Добавляем hover эффект
+                    clickableBadge.addEventListener('mouseenter', function() {
+                        this.style.transform = 'scale(1.05)';
+                        this.style.transition = 'transform 0.2s ease';
+                    });
+                    
+                    clickableBadge.addEventListener('mouseleave', function() {
+                        this.style.transform = 'scale(1)';
+                    });
+                    
+                    // Добавляем активный эффект при клике
+                    clickableBadge.addEventListener('mousedown', function() {
+                        this.style.transform = 'scale(0.95)';
+                    });
+                    
+                    clickableBadge.addEventListener('mouseup', function() {
+                        this.style.transform = 'scale(1.05)';
+                    });
+                }
+            });
+            </script>
+            {% endblock %}

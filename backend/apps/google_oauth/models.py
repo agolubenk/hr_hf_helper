@@ -2554,10 +2554,10 @@ class SlotsSettings(models.Model):
     def to_dict(self):
         """Возвращает настройки в виде словаря для JavaScript"""
         return {
-            'currentWeekPrefix': self.current_week_prefix,
-            'nextWeekPrefix': self.next_week_prefix,
-            'allSlotsPrefix': self.all_slots_prefix,
-            'separatorText': self.separator_text
+            'currentWeekPrefix': self.current_week_prefix or '',
+            'nextWeekPrefix': self.next_week_prefix or '',
+            'allSlotsPrefix': self.all_slots_prefix or '',
+            'separatorText': self.separator_text or '---'
         }
     
     @classmethod

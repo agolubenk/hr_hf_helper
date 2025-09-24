@@ -2722,16 +2722,116 @@ def chat_workflow(request, session_id=None):
             chat_session.save()
             return redirect('google_oauth:chat_workflow_session', session_id=chat_session.id)
 
+    print(f"🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: {request.user.username}")
+    
     # Получаем все сессии пользователя для боковой панели
     all_sessions = ChatSession.objects.filter(user=request.user).order_by('-updated_at')[:20]
+    
+    # Получаем все активные вакансии для выбора
+    from apps.vacancies.models import Vacancy
+    active_vacancies = Vacancy.objects.filter(is_active=True).order_by('name')
+    
+    # Получаем выбранную вакансию из параметров
+    selected_vacancy_id = request.GET.get('vacancy_id')
+    selected_vacancy = None
+    
+    if selected_vacancy_id:
+        try:
+            selected_vacancy = Vacancy.objects.get(id=selected_vacancy_id, is_active=True)
+        except Vacancy.DoesNotExist:
+            messages.warning(request, 'Выбранная вакансия не найдена')
+    
+    # Если вакансия не выбрана, берем первую активную
+    if not selected_vacancy and active_vacancies.exists():
+        selected_vacancy = active_vacancies.first()
+    
+    # Получаем данные о событиях календаря для JavaScript (как на странице gdata_automation)
+    calendar_events_data = []
+    try:
+        from apps.google_oauth.services import GoogleOAuthService, GoogleCalendarService
+        import json
+        from datetime import datetime, timedelta
+        import pytz
+        
+        print(f"🔍 DEBUG CHAT: Получение событий для пользователя: {request.user.username}")
+        oauth_service = GoogleOAuthService(request.user)
+        oauth_account = oauth_service.get_oauth_account()
+        
+        if oauth_account:
+            # Получаем события через GoogleCalendarService (как на странице gdata_automation)
+            calendar_service = GoogleCalendarService(oauth_service)
+            events_data = calendar_service.get_events(days_ahead=14)
+            
+            print(f"🔍 DEBUG CHAT: Получено {len(events_data)} событий из API")
+            
+            if events_data:
+                # Преобразуем данные API в формат для JavaScript (как на странице gdata_automation)
+                for event_data in events_data:
+                    try:
+                        # Парсим время начала
+                        start_time = None
+                        if 'dateTime' in event_data['start']:
+                            start_time = datetime.fromisoformat(event_data['start']['dateTime'].replace('Z', '+00:00'))
+                            # Конвертируем в локальный часовой пояс Minsk
+                            import pytz
+                            minsk_tz = pytz.timezone('Europe/Minsk')
+                            start_time = start_time.astimezone(minsk_tz)
+                        elif 'date' in event_data['start']:
+                            start_time = datetime.fromisoformat(event_data['start']['date'] + 'T00:00:00+00:00')
+                        
+                        # Парсим время окончания
+                        end_time = None
+                        if 'dateTime' in event_data['end']:
+                            end_time = datetime.fromisoformat(event_data['end']['dateTime'].replace('Z', '+00:00'))
+                            end_time = end_time.astimezone(minsk_tz)
+                        elif 'date' in event_data['end']:
+                            end_time = datetime.fromisoformat(event_data['end']['date'] + 'T23:59:59+00:00')
+                        
+                        if start_time:
+                            # Очищаем description от HTML-тегов для безопасного использования в JavaScript
+                            description = event_data.get('description', '')
+                            if description:
+                                import re
+                                # Удаляем HTML-теги
+                                description = re.sub(r'<[^>]+>', '', description)
+                                # Заменяем кавычки на безопасные символы
+                                description = description.replace('"', "'").replace("'", "'")
+                            
+                            calendar_events_data.append({
+                                'id': event_data['id'],
+                                'title': event_data.get('summary', 'Без названия'),
+                                'start': start_time.isoformat(),
+                                'end': end_time.isoformat() if end_time else start_time.isoformat(),
+                                'is_all_day': 'date' in event_data['start'],
+                                'location': event_data.get('location', ''),
+                                'description': description,
+                            })
+                    except Exception as e:
+                        print(f"Ошибка обработки события {event_data.get('id', 'unknown')}: {e}")
+                        continue
+    except Exception as e:
+        print(f"Ошибка получения данных о событиях: {e}")
+    
+    # Получаем настройки слотов для пользователя
+    from apps.google_oauth.models import SlotsSettings
+    slots_settings = SlotsSettings.get_or_create_for_user(request.user)
     
     context = {
         'form': form,
         'chat_session': chat_session,
         'messages': messages,
         'all_sessions': all_sessions,
+        'active_vacancies': active_vacancies,
+        'selected_vacancy': selected_vacancy,
+        'calendar_events_data': calendar_events_data,
+        'slots_settings': slots_settings,
         'title': 'Чат-помощник',
     }
+
+    # Отладочная информация (как на странице gdata_automation)
+    print(f"🔍 DEBUG CHAT: Передаем {len(calendar_events_data)} событий в шаблон")
+    for event in calendar_events_data[:3]:  # Показываем первые 3 события
+        print(f"🔍 DEBUG CHAT: Событие: {event['title']} в {event['start']}")
 
     return render(request, 'google_oauth/chat_workflow.html', context)
 
