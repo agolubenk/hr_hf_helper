@@ -9,6 +9,7 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 from datetime import datetime, timedelta
 from django.contrib.auth import get_user_model, login
+from django import forms
 import json
 
 from .models import GoogleOAuthAccount, ScorecardPathSettings, SlotsSettings
@@ -37,16 +38,37 @@ def determine_action_type_from_text(text):
         r'\d{2}/\d{2}/\d{4}',   # 15/09/2025
     ]
     
-    # Паттерны времени
+    # Паттерны времени (более строгие, чтобы не ловить зарплатные цифры)
     time_patterns = [
-        r'\d{1,2}:\d{2}',  # 14:00, 9:30
-        r'\d{1,2}:\d{2}:\d{2}',  # 14:00:00
+        r'\b\d{1,2}:\d{2}\b',  # 14:00, 9:30 (с границами слов)
+        r'\b\d{1,2}:\d{2}:\d{2}\b',  # 14:00:00 (с границами слов)
     ]
     
     # Дни недели
     weekdays = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье',
                 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
                 'пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс']
+
+    # Слова-индикаторы встречи/интервью
+    meeting_indicators = [
+        'встреча', 'интервью', 'собеседование', 'скрининг', 'время', 'дата',
+        'когда', 'встретимся', 'поговорим', 'созвонимся', 'созвон',
+        'встречаемся', 'договоримся', 'назначим', 'планируем',
+        'meeting', 'interview', 'call', 'schedule', 'time', 'date'
+    ]
+
+    # Слова-индикаторы HR-скрининга (информация о кандидате)
+    # ИСКЛЮЧАЕМ дни недели - они относятся к инвайтам
+    hr_indicators = [
+        'опыт', 'стаж', 'работал', 'работаю', 'компания', 'проект',
+        'технологии', 'навыки', 'знаю', 'умею', 'зарплата', 'зарплату',
+        'оклад', 'деньги', 'рублей', 'долларов', 'евро', 'byn', 'usd',
+        'локация', 'место', 'удаленка', 'офис', 'гибрид', 'минск',
+        'возраст', 'лет', 'военник', 'стабильное', 'недель', 'месяцев',
+        'senior', 'junior', 'middle', 'lead', 'head', 'главный', 'ведущий',
+        'сеньор', 'джуниор', 'мидл', 'лид', 'хеда', 'должности',
+        'комфортно', 'ищу', 'стабильное', 'локация', 'текущая', 'идеале'
+    ]
     
     # Проверяем наличие дат
     has_date = any(re.search(pattern, text, re.IGNORECASE) for pattern in date_patterns)
@@ -57,27 +79,42 @@ def determine_action_type_from_text(text):
     # Проверяем наличие дней недели
     has_weekday = any(day.lower() in text.lower() for day in weekdays)
     
+    # Проверяем наличие индикаторов встречи
+    has_meeting_indicators = any(indicator.lower() in text.lower() for indicator in meeting_indicators)
+    
+    # Проверяем наличие индикаторов HR-скрининга (с границами слов для точности)
+    has_hr_indicators = any(re.search(r'\b' + re.escape(indicator.lower()) + r'\b', text.lower()) for indicator in hr_indicators)
+    
     # Проверяем длину текста
     text_length = len(text.strip())
     
-    # Добавляем отладочную информацию
-    print(f"🔍 DETERMINE_ACTION_TYPE: Анализируем текст: {text[:100]}...")
-    print(f"🔍 DETERMINE_ACTION_TYPE: has_date = {has_date}")
-    print(f"🔍 DETERMINE_ACTION_TYPE: has_time = {has_time}")
-    print(f"🔍 DETERMINE_ACTION_TYPE: has_weekday = {has_weekday}")
-    print(f"🔍 DETERMINE_ACTION_TYPE: text_length = {text_length}")
+    # Улучшенная логика определения с приоритетом HR-индикаторов
+    # ПРИОРИТЕТ 1: Если есть явные индикаторы HR-скрининга - это HR-скрининг (даже если есть время)
+    if has_hr_indicators:
+        return 'hr_screening'
     
-    # Логика определения
-    if has_date or has_time or has_weekday:
-        print(f"🔍 DETERMINE_ACTION_TYPE: Найдены дата/время/день недели, определяем как invite")
+    # ПРИОРИТЕТ 2: Если есть ключевые слова о кандидате - это HR-скрининг (с границами слов)
+    elif any(re.search(r'\b' + re.escape(keyword.lower()) + r'\b', text.lower()) for keyword in ['от', 'комфортно', 'готов', 'опыт', 'работаю', 'технологии', 'middle', 'senior', 'junior', 'хеда', 'сеньор', 'возраст', 'военник', 'стабильное', 'недель', 'локация', 'минск', 'гибрид', 'ищу', 'стабильное', 'должности', 'текущая', 'идеале']):
+        return 'hr_screening'
+    
+    # ПРИОРИТЕТ 3: Если есть явные временные указания (дата/время/день недели) - это инвайт
+    elif has_date or has_time or has_weekday:
         return 'invite'
+    
+    # ПРИОРИТЕТ 4: Если есть индикаторы встречи И нет индикаторов HR-скрининга - это инвайт
+    elif has_meeting_indicators and not has_hr_indicators:
+        return 'invite'
+    
+    # ПРИОРИТЕТ 5: Если текст длинный и нет явных индикаторов - по умолчанию HR-скрининг
     elif text_length > 100:
-        print(f"🔍 DETERMINE_ACTION_TYPE: Определен тип: hr_screening")
         return 'hr_screening'
+    
+    # По умолчанию HR-скрининг
     else:
-        # По умолчанию HR-скрининг
-        print(f"🔍 DETERMINE_ACTION_TYPE: Определен тип по умолчанию: hr_screening")
         return 'hr_screening'
+    
+    # ВАЖНО: Никогда не возвращаем 'both' - это создает и HR-скрининг, и инвайт одновременно!
+    # HR-скрининг и инвайт должны создаваться отдельно
 
 User = get_user_model()
 
@@ -407,13 +444,13 @@ def calendar_view(request):
     # Подготавливаем данные участников для JavaScript
     import json
     attendees_data = {}
-    for event in events:
-        if event.attendees:
-            attendees_data[event.title] = event.attendees
+    for event in month_events:
+        if 'attendees' in event:
+            attendees_data[event['title']] = event['attendees']
     
     context = {
         'oauth_account': oauth_account,
-        'events': events,
+        'events': month_events,
         'events_by_day': events_by_day,
         'calendar': cal,
         'year': year,
@@ -2537,12 +2574,10 @@ def combined_workflow(request):
 
 @login_required
 def chat_workflow(request, session_id=None):
-    """
-    Чат-интерфейс для обработки HR-скринингов и инвайтов
-    """
+    """Чат-воркфлоу для HR-скрининга и инвайтов"""
     from .models import ChatSession, ChatMessage
-    from .forms import ChatForm, CombinedForm
-    
+    from .forms import ChatForm, HRScreeningForm, InviteCombinedForm
+
     # Получаем или создаем сессию чата
     if session_id:
         try:
@@ -2551,76 +2586,68 @@ def chat_workflow(request, session_id=None):
             chat_session = ChatSession.objects.create(user=request.user)
     else:
         chat_session = ChatSession.objects.create(user=request.user)
-    
-    # Получаем историю сообщений
+
+    # Получаем все сообщения в этой сессии
     messages = chat_session.messages.all().order_by('created_at')
-    
-    # Создаем форму
     form = ChatForm(user=request.user)
-    
+
     if request.method == 'POST':
         form = ChatForm(request.POST, user=request.user)
-        
         if form.is_valid():
             message_text = form.cleaned_data['message']
             
-            # Сохраняем сообщение пользователя
+            # Сохраняем пользовательское сообщение
             user_message = ChatMessage.objects.create(
                 session=chat_session,
                 message_type='user',
                 content=message_text
             )
-            
+
             # Определяем тип действия
             action_type = determine_action_type_from_text(message_text)
-            
             print(f"🔍 CHAT: Определен тип действия: {action_type}")
-            print(f"🔍 CHAT: Текст сообщения: {message_text[:100]}...")
-            
+
             try:
                 if action_type == 'hr_screening':
-                    print(f"🔍 CHAT: Обрабатываем как HR-скрининг")
-                    # Обрабатываем как HR-скрининг - используем тот же метод save(), что и в обычной форме
+                    # Создаем HR-скрининг с ПРАВИЛЬНЫМИ данными
                     hr_form = HRScreeningForm({'input_data': message_text}, user=request.user)
+                    
                     if hr_form.is_valid():
-                        print(f"🔍 CHAT: HR-форма валидна, сохраняем...")
-                        # Используем save() - user уже передан в __init__
-                        hr_screening = hr_form.save()
-                        print(f"🔍 CHAT: HR-скрининг сохранен с ID: {hr_screening.id}")
-                        
-                        # Формируем ответ
-                        response_content = f"""**HR-скрининг выполнен:**
+                        try:
+                            hr_screening = hr_form.save()
+                            
+                            response_content = f"""**HR-скрининг обработан**
 
-**Вакансия:** {hr_screening.vacancy_name or 'Не указана'}
-**Имя:** {hr_screening.candidate_name or 'Не указано'}
+**Кандидат:** {hr_screening.candidate_name or 'Не указан'}
+**Вакансия:** {hr_screening.vacancy_title or 'Не указана'}
 **Уровень:** {hr_screening.determined_grade or 'Не определен'}
+**Зарплата:** {hr_screening.extracted_salary or 'Не указана'} {hr_screening.salary_currency if hr_screening.extracted_salary else ''} {'(определена ИИ)' if hr_screening.extracted_salary else ''}
 
-**Ссылки:**
-- **Huntflow:** {hr_screening.candidate_url or 'Не указана'}
-- **Наша система:** {hr_screening.get_candidate_system_url() or 'Не доступна'}
-
-**Анализ от Gemini AI:**
-{hr_screening.gemini_analysis or 'Анализ не выполнен'}"""
-                        
-                        # Сохраняем ответ системы
-                        ChatMessage.objects.create(
-                            session=chat_session,
-                            message_type='hr_screening',
-                            content=response_content,
-                            hr_screening=hr_screening,
-                            metadata={
-                                'action_type': 'hr_screening',
-                                'hr_screening_id': hr_screening.id,
-                                'candidate_name': hr_screening.candidate_name,
-                                'vacancy_name': hr_screening.vacancy_name,
-                                'determined_grade': hr_screening.determined_grade,
-                                'candidate_url': hr_screening.candidate_url,
-                                'system_url': hr_screening.get_candidate_system_url()
-                            }
-                        )
+✅ **Данные сохранены и переданы в Huntflow**"""
+                            
+                            ChatMessage.objects.create(
+                                session=chat_session,
+                                message_type='hr_screening',
+                                content=response_content,
+                                hr_screening=hr_screening,
+                                metadata={
+                                    'action_type': 'hr_screening',
+                                    'hr_screening_id': hr_screening.id,
+                                    'candidate_name': hr_screening.candidate_name,
+                                    'vacancy_name': hr_screening.vacancy_title,
+                                    'determined_grade': hr_screening.determined_grade,
+                                    'candidate_url': hr_screening.candidate_url
+                                }
+                            )
+                        except Exception as e:
+                            print(f"🔍 CHAT: Ошибка сохранения HR: {str(e)}")
+                            ChatMessage.objects.create(
+                                session=chat_session,
+                                message_type='system',
+                                content=f"Ошибка при обработке HR-скрининга: {str(e)}"
+                            )
                     else:
-                        # Ошибка валидации
-                        print(f"🔍 CHAT: Ошибка валидации HR-формы: {hr_form.errors}")
+                        # Ошибки валидации
                         error_content = "Ошибка при обработке HR-скрининга:\n"
                         for field, errors in hr_form.errors.items():
                             error_content += f"- {field}: {', '.join(errors)}\n"
@@ -2630,92 +2657,80 @@ def chat_workflow(request, session_id=None):
                             message_type='system',
                             content=error_content
                         )
-                
-                elif action_type == 'invite':
-                    print(f"🔍 CHAT: Обрабатываем как инвайт")
-                    # Обрабатываем как инвайт - используем тот же метод save(), что и в обычной форме
-                    invite_form = InviteCombinedForm({'combined_data': message_text}, user=request.user)
-                    print(f"🔍 CHAT: Инвайт-форма создана, проверяем валидность...")
-                    if invite_form.is_valid():
-                        print(f"🔍 CHAT: Инвайт-форма валидна, сохраняем...")
-                        # Используем save() - user уже передан в __init__
-                        invite = invite_form.save()
-                        print(f"🔍 CHAT: Инвайт сохранен с ID: {invite.id}")
-                        
-                        # Формируем ответ
-                        response_content = f"""**Вакансия:** {invite.vacancy_title or 'Не указана'}
-**Имя:** {invite.candidate_name or 'Не указано'}
-**Уровень:** {invite.candidate_grade or 'Не определен'}
 
-**Создан scorecard:** {invite.get_google_drive_file_path() or 'Не создан'}
-**Дата и время интервью:** {invite.get_formatted_interview_datetime() or 'Не указано'}"""
-                        
-                        # Сохраняем ответ системы
-                        print(f"🔍 CHAT: Создаем сообщение с ответом...")
-                        ChatMessage.objects.create(
-                            session=chat_session,
-                            message_type='invite',
-                            content=response_content,
-                            invite=invite,
-                            metadata={
-                                'action_type': 'invite',
-                                'invite_id': invite.id,
-                                'candidate_name': invite.candidate_name,
-                                'vacancy_name': invite.vacancy_title,
-                                'determined_grade': invite.candidate_grade,
-                                'scorecard_path': invite.get_google_drive_file_path(),
-                                'interview_datetime': invite.get_formatted_interview_datetime(),
-                                'candidate_url': invite.candidate_url,
-                                'system_url': invite.get_candidate_system_url()
-                            }
-                        )
-                        print(f"🔍 CHAT: Сообщение с ответом создано!")
+                elif action_type == 'invite':
+                    # Создаем инвайт с ПРАВИЛЬНЫМИ данными
+                    invite_form = InviteCombinedForm({'combined_data': message_text}, user=request.user)
+                    
+                    if invite_form.is_valid():
+                        try:
+                            invite = invite_form.save()
+                            
+                            response_content = f"""**Инвайт создан**
+
+**Кандидат:** {invite.candidate_name or 'Не указан'}
+**Вакансия:** {invite.vacancy_title or 'Не указана'}
+**Уровень:** {invite.candidate_grade or 'Не определен'}
+**Scorecard:** {invite.google_drive_file_url or 'Создается...'}
+**Дата интервью:** {invite.interview_datetime.strftime('%d.%m.%Y %H:%M') if invite.interview_datetime else 'Не указана'}
+**Google Meet:** {invite.google_meet_url or 'Будет создана'}
+
+✅ **Инвайт отправлен и добавлен в календарь**"""
+                            
+                            ChatMessage.objects.create(
+                                session=chat_session,
+                                message_type='invite',
+                                content=response_content,
+                                invite=invite,
+                                metadata={
+                                    'action_type': 'invite',
+                                    'invite_id': invite.id,
+                                    'candidate_name': invite.candidate_name,
+                                    'vacancy_name': invite.vacancy_title,
+                                    'determined_grade': invite.candidate_grade,
+                                    'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
+                                    'candidate_url': invite.candidate_url
+                                }
+                            )
+                        except Exception as e:
+                            print(f"🔍 CHAT: Ошибка сохранения инвайта: {str(e)}")
+                            ChatMessage.objects.create(
+                                session=chat_session,
+                                message_type='system',
+                                content=f"Ошибка при обработке инвайта: {str(e)}"
+                            )
                     else:
-                        # Ошибка валидации
-                        print(f"🔍 CHAT: Ошибка валидации инвайт-формы: {invite_form.errors}")
+                        # Ошибки валидации
                         error_content = "Ошибка при обработке инвайта:\n"
                         for field, errors in invite_form.errors.items():
                             error_content += f"- {field}: {', '.join(errors)}\n"
                         
-                        print(f"🔍 CHAT: Создаем сообщение с ошибкой валидации...")
                         ChatMessage.objects.create(
                             session=chat_session,
                             message_type='system',
                             content=error_content
                         )
-                        print(f"🔍 CHAT: Сообщение с ошибкой валидации создано!")
-                
-                else:
-                    # Неизвестный тип действия
-                    ChatMessage.objects.create(
-                        session=chat_session,
-                        message_type='system',
-                        content="Не удалось определить тип действия. Попробуйте добавить больше информации."
-                    )
-            
+
             except Exception as e:
-                # Ошибка обработки
-                print(f"🔍 CHAT: Исключение при обработке: {str(e)}")
+                print(f"🔍 CHAT: Критическая ошибка: {str(e)}")
                 import traceback
-                print(f"🔍 CHAT: Traceback: {traceback.format_exc()}")
+                traceback.print_exc()
                 ChatMessage.objects.create(
                     session=chat_session,
                     message_type='system',
                     content=f"Ошибка при обработке: {str(e)}"
                 )
-            
-            # Обновляем время сессии
+
+            # Обновляем время сессии и перенаправляем
             chat_session.save()
-            
-            # Перенаправляем на ту же страницу с обновленной сессией
             return redirect('google_oauth:chat_workflow_session', session_id=chat_session.id)
-    
+
     context = {
         'form': form,
         'chat_session': chat_session,
         'messages': messages,
         'title': 'Чат-помощник',
     }
-    
+
     return render(request, 'google_oauth/chat_workflow.html', context)
 

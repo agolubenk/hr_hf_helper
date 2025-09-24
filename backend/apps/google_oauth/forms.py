@@ -306,27 +306,48 @@ class InviteCombinedForm(forms.ModelForm):
                     raise forms.ValidationError(f'Ошибка парсинга URL: {message}')
                 print(f"✅ COMBINED_FORM_SAVE: URL распарсен успешно")
                 
-                # Получаем информацию о кандидате и вакансии
+                # Получаем информацию о кандидате и вакансии (с улучшенной обработкой ошибок)
                 print(f"🔍 COMBINED_FORM_SAVE: Получаем информацию о кандидате...")
-                success, message = invite.get_candidate_info()
-                if not success:
-                    print(f"❌ COMBINED_FORM_SAVE: Ошибка получения информации о кандидате: {message}")
-                    raise forms.ValidationError(f'Ошибка получения информации о кандидате: {message}')
-                print(f"✅ COMBINED_FORM_SAVE: Информация о кандидате получена")
+                try:
+                    success, message = invite.get_candidate_info()
+                    if not success:
+                        print(f"⚠️ COMBINED_FORM_SAVE: Предупреждение при получении информации о кандидате: {message}")
+                        # Продолжаем работу с частичными данными
+                    else:
+                        print(f"✅ COMBINED_FORM_SAVE: Информация о кандидате получена")
+                except Exception as e:
+                    print(f"⚠️ COMBINED_FORM_SAVE: Huntflow API недоступен для кандидата: {e}")
+                    # Продолжаем работу без данных кандидата
                 
                 print(f"🔍 COMBINED_FORM_SAVE: Получаем информацию о вакансии...")
-                success, message = invite.get_vacancy_info()
-                if not success:
-                    print(f"❌ COMBINED_FORM_SAVE: Ошибка получения информации о вакансии: {message}")
-                    raise forms.ValidationError(f'Ошибка получения информации о вакансии: {message}')
-                print(f"✅ COMBINED_FORM_SAVE: Информация о вакансии получена")
+                try:
+                    success, message = invite.get_vacancy_info()
+                    if not success:
+                        print(f"⚠️ COMBINED_FORM_SAVE: Предупреждение при получении информации о вакансии: {message}")
+                        # Продолжаем работу с частичными данными
+                    else:
+                        print(f"✅ COMBINED_FORM_SAVE: Информация о вакансии получена")
+                except Exception as e:
+                    print(f"⚠️ COMBINED_FORM_SAVE: Huntflow API недоступен для вакансии: {e}")
+                    # Продолжаем работу без данных вакансии
                 
                 # Анализируем время с помощью Gemini AI (это определит дату интервью)
                 print(f"🤖 COMBINED_FORM_SAVE: Анализируем время с помощью Gemini AI...")
                 success, message = invite.analyze_time_with_gemini()
                 if not success:
                     print(f"❌ COMBINED_FORM_SAVE: Ошибка при анализе времени с Gemini: {message}")
-                    raise forms.ValidationError(f'Ошибка анализа времени с Gemini: {message}')
+                    
+                    # Более понятные сообщения об ошибках для пользователя
+                    if "не смог найти подходящее время" in message:
+                        user_message = "Не удалось найти подходящее время для встречи в доступных слотах календаря. Пожалуйста, проверьте доступность или попробуйте позже."
+                    elif "не настроен в профиле" in message:
+                        user_message = "API ключ Gemini не настроен. Обратитесь к администратору."
+                    elif "нет исходных данных" in message:
+                        user_message = "Недостаточно данных для анализа времени. Проверьте заполнение формы."
+                    else:
+                        user_message = f"Ошибка анализа времени: {message}"
+                    
+                    raise forms.ValidationError(user_message)
                 else:
                     print(f"✅ COMBINED_FORM_SAVE: Время проанализировано с помощью Gemini AI")
                     # Парсим дату из ответа Gemini
@@ -346,21 +367,31 @@ class InviteCombinedForm(forms.ModelForm):
                         print(f"❌ COMBINED_FORM_SAVE: Gemini не вернул время")
                         raise forms.ValidationError('Gemini не вернул время для интервью')
                 
-                # Создаем структуру в Google Drive
+                # Создаем структуру в Google Drive (с улучшенной обработкой ошибок)
                 print(f"🔍 COMBINED_FORM_SAVE: Создаем структуру Google Drive...")
-                success, message = invite.create_google_drive_structure()
-                if not success:
-                    print(f"❌ COMBINED_FORM_SAVE: Ошибка создания структуры Google Drive: {message}")
-                    raise forms.ValidationError(f'Ошибка создания структуры Google Drive: {message}')
-                print(f"✅ COMBINED_FORM_SAVE: Структура Google Drive создана")
+                try:
+                    success, message = invite.create_google_drive_structure()
+                    if not success:
+                        print(f"⚠️ COMBINED_FORM_SAVE: Предупреждение при создании структуры Google Drive: {message}")
+                        # Продолжаем работу без Google Drive структуры
+                    else:
+                        print(f"✅ COMBINED_FORM_SAVE: Структура Google Drive создана")
+                except Exception as e:
+                    print(f"⚠️ COMBINED_FORM_SAVE: Google Drive API недоступен: {e}")
+                    # Продолжаем работу без Google Drive
                 
-                # Обрабатываем scorecard
+                # Обрабатываем scorecard (с улучшенной обработкой ошибок)
                 print(f"🔍 COMBINED_FORM_SAVE: Обрабатываем scorecard...")
-                success, message = invite.process_scorecard()
-                if not success:
-                    print(f"❌ COMBINED_FORM_SAVE: Ошибка обработки scorecard: {message}")
-                    raise forms.ValidationError(f'Ошибка обработки scorecard: {message}')
-                print(f"✅ COMBINED_FORM_SAVE: Scorecard обработан")
+                try:
+                    success, message = invite.process_scorecard()
+                    if not success:
+                        print(f"⚠️ COMBINED_FORM_SAVE: Предупреждение при обработке scorecard: {message}")
+                        # Продолжаем работу без scorecard
+                    else:
+                        print(f"✅ COMBINED_FORM_SAVE: Scorecard обработан")
+                except Exception as e:
+                    print(f"⚠️ COMBINED_FORM_SAVE: Google Drive API недоступен для scorecard: {e}")
+                    # Продолжаем работу без scorecard
                 
                 invite.status = 'sent'
                 invite.save()
@@ -566,21 +597,33 @@ class HRScreeningForm(forms.ModelForm):
                     raise forms.ValidationError(f'Ошибка парсинга URL: {message}')
                 print(f"✅ HR_SCREENING_FORM_SAVE: URL распарсен успешно")
                 
-                # Получаем информацию о кандидате и вакансии
+                # Получаем информацию о кандидате и вакансии (с улучшенной обработкой ошибок)
                 print(f"🔍 HR_SCREENING_FORM_SAVE: Получаем информацию о кандидате...")
-                success, message = hr_screening.get_candidate_info()
-                if not success:
-                    print(f"❌ HR_SCREENING_FORM_SAVE: Ошибка получения информации о кандидате: {message}")
-                    raise forms.ValidationError(f'Ошибка получения информации о кандидате: {message}')
-                print(f"✅ HR_SCREENING_FORM_SAVE: Информация о кандидате получена")
+                try:
+                    success, message = hr_screening.get_candidate_info()
+                    if not success:
+                        print(f"⚠️ HR_SCREENING_FORM_SAVE: Предупреждение при получении информации о кандидате: {message}")
+                        # Продолжаем работу с частичными данными
+                    else:
+                        print(f"✅ HR_SCREENING_FORM_SAVE: Информация о кандидате получена")
+                except Exception as e:
+                    print(f"⚠️ HR_SCREENING_FORM_SAVE: Huntflow API недоступен для кандидата: {e}")
+                    # Продолжаем работу без данных кандидата
+                
                 hr_screening.save()  # Сохраняем промежуточные данные
                 
                 print(f"🔍 HR_SCREENING_FORM_SAVE: Получаем информацию о вакансии...")
-                success, message = hr_screening.get_vacancy_info()
-                if not success:
-                    print(f"❌ HR_SCREENING_FORM_SAVE: Ошибка получения информации о вакансии: {message}")
-                    raise forms.ValidationError(f'Ошибка получения информации о вакансии: {message}')
-                print(f"✅ HR_SCREENING_FORM_SAVE: Информация о вакансии получена")
+                try:
+                    success, message = hr_screening.get_vacancy_info()
+                    if not success:
+                        print(f"⚠️ HR_SCREENING_FORM_SAVE: Предупреждение при получении информации о вакансии: {message}")
+                        # Продолжаем работу с частичными данными
+                    else:
+                        print(f"✅ HR_SCREENING_FORM_SAVE: Информация о вакансии получена")
+                except Exception as e:
+                    print(f"⚠️ HR_SCREENING_FORM_SAVE: Huntflow API недоступен для вакансии: {e}")
+                    # Продолжаем работу без данных вакансии
+                
                 hr_screening.save()  # Сохраняем промежуточные данные
                 
                 # Анализируем данные с помощью Gemini AI
@@ -601,12 +644,19 @@ class HRScreeningForm(forms.ModelForm):
                 
                 # Автоматически обновляем кандидата в Huntflow
                 print(f"🔄 HR_SCREENING_FORM_SAVE: Автоматически обновляем кандидата в Huntflow...")
-                success, message = hr_screening.update_candidate_in_huntflow()
-                if success:
-                    print(f"✅ HR_SCREENING_FORM_SAVE: Кандидат успешно обновлен в Huntflow: {message}")
-                else:
-                    print(f"⚠️ HR_SCREENING_FORM_SAVE: Предупреждение при обновлении кандидата: {message}")
-                    # Не прерываем процесс, так как HR-скрининг уже создан и проанализирован
+                try:
+                    success, message = hr_screening.update_candidate_in_huntflow()
+                    if success:
+                        print(f"✅ HR_SCREENING_FORM_SAVE: Кандидат успешно обновлен в Huntflow: {message}")
+                    else:
+                        print(f"⚠️ HR_SCREENING_FORM_SAVE: Предупреждение при обновлении кандидата: {message}")
+                        # Не прерываем процесс, так как HR-скрининг уже создан и проанализирован
+                except Exception as e:
+                    print(f"⚠️ HR_SCREENING_FORM_SAVE: Huntflow API недоступен: {e}")
+                    # НЕ поднимаем исключение, продолжаем работу
+                
+                # ВАЖНО: HR-скрининг НЕ создает инвайт и скоркард!
+                print(f"✅ HR_SCREENING_FORM_SAVE: HR-скрининг завершен БЕЗ создания инвайта")
                 
             except Exception as e:
                 print(f"❌ HR_SCREENING_FORM_SAVE: Исключение в save(): {e}")
@@ -704,10 +754,14 @@ class CombinedForm(forms.Form):
         
         # Логика определения:
         # Если есть дата/время/день недели И мало текста - это инвайт
+        # Если есть информация о кандидате (зарплата, опыт) - это HR-скрининг
         # Если много текста - это HR-скрининг
         if (has_date or has_time or has_weekday) and text_length < 200:
             print(f"🔍 DETERMINE_ACTION_TYPE: Определен тип: invite")
             return 'invite'
+        elif any(keyword in combined_data.lower() for keyword in ['от', 'комфортно', 'готов', 'опыт', 'работаю', 'технологии', 'middle', 'senior', 'junior']):
+            print(f"🔍 DETERMINE_ACTION_TYPE: Найдены ключевые слова о кандидате, определяем как hr_screening")
+            return 'hr_screening'
         elif text_length > 100:
             print(f"🔍 DETERMINE_ACTION_TYPE: Определен тип: hr_screening")
             return 'hr_screening'
@@ -715,6 +769,9 @@ class CombinedForm(forms.Form):
             # По умолчанию HR-скрининг
             print(f"🔍 DETERMINE_ACTION_TYPE: Определен тип по умолчанию: hr_screening")
             return 'hr_screening'
+        
+        # ВАЖНО: Никогда не возвращаем 'both' - это создает и HR-скрининг, и инвайт одновременно!
+        # HR-скрининг и инвайт должны создаваться отдельно
 
 
 class ChatForm(forms.Form):

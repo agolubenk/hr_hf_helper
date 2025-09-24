@@ -1,10 +1,10 @@
  
  -------------- celery@andrei-golubenko-macbook.local v5.5.3 (immunity)
 --- ***** ----- 
--- ******* ---- macOS-26.0-arm64-arm-64bit-Mach-O 2025-09-23 18:06:49
+-- ******* ---- macOS-26.0-arm64-arm-64bit-Mach-O 2025-09-24 11:20:25
 - *** --- * --- 
 - ** ---------- [config]
-- ** ---------- .> app:         hrhelper:0x10ab63a10
+- ** ---------- .> app:         hrhelper:0x1076eba10
 - ** ---------- .> transport:   redis://127.0.0.1:6379/0
 - ** ---------- .> results:     redis://127.0.0.1:6379/0
 - *** --- * --- .> concurrency: 1 (prefork)
@@ -32,214 +32,738 @@
   . config.celery.debug_task
   . config.celery.save_hh_analysis_result
 
-[2025-09-23 18:06:49,131: INFO/MainProcess] Connected to redis://127.0.0.1:6379/0
-[2025-09-23 18:06:49,139: INFO/MainProcess] mingle: searching for neighbors
-[2025-09-23 18:06:50,149: INFO/MainProcess] mingle: all alone
-[2025-09-23 18:06:50,156: INFO/MainProcess] celery@andrei-golubenko-macbook.local ready.
-[2025-09-23 18:07:29,420: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[12f946f9-27dd-431d-b0f1-c105fcdba06e] received
-[2025-09-23 18:07:29,449: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 18:07:29,457: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[12f946f9-27dd-431d-b0f1-c105fcdba06e] succeeded in 0.03285554099420551s: {'message': 'Лимит достигнут'}
-[2025-09-23 18:09:50,432: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[ee921eac-5c61-42f9-b084-e3458dbf657c] received
-[2025-09-23 18:09:50,448: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 18:09:50,452: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[ee921eac-5c61-42f9-b084-e3458dbf657c] succeeded in 0.01706479200220201s: {'message': 'Лимит достигнут'}
-[2025-09-23 18:10:07,700: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[959d6403-238a-4e3e-9eb3-00a8c0a636bc] received
-[2025-09-23 18:10:07,713: INFO/ForkPoolWorker-1] Пропускаем сбор - есть 118 необработанных вакансий
-[2025-09-23 18:10:07,713: INFO/ForkPoolWorker-1] Пропускаем сбор вакансий - очередь еще не обработана или недавно собирали
-[2025-09-23 18:10:07,716: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[959d6403-238a-4e3e-9eb3-00a8c0a636bc] succeeded in 0.01369091699598357s: {'success': True, 'message': 'Сбор пропущен по умной логике', 'fetched': 0}
-[2025-09-23 18:12:29,433: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[c18d35b5-b7ca-4190-b90b-06b17ea51af0] received
-[2025-09-23 18:12:29,451: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 18:12:29,454: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[c18d35b5-b7ca-4190-b90b-06b17ea51af0] succeeded in 0.015080124998348765s: {'message': 'Лимит достигнут'}
-[2025-09-23 18:12:46,649: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[03aea6ac-0d4b-4f10-80bf-925190288319] received
-[2025-09-23 18:12:46,665: INFO/ForkPoolWorker-1] Пропускаем сбор - есть 118 необработанных вакансий
-[2025-09-23 18:12:46,667: INFO/ForkPoolWorker-1] Пропускаем сбор вакансий - очередь еще не обработана или недавно собирали
-[2025-09-23 18:12:46,669: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[03aea6ac-0d4b-4f10-80bf-925190288319] succeeded in 0.016710208990843967s: {'success': True, 'message': 'Сбор пропущен по умной логике', 'fetched': 0}
-[2025-09-23 18:14:50,452: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[98db3742-5361-424a-be56-16e945bfc5f9] received
-[2025-09-23 18:14:50,465: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 18:14:50,467: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[98db3742-5361-424a-be56-16e945bfc5f9] succeeded in 0.013140374998329207s: {'message': 'Лимит достигнут'}
-[2025-09-23 18:17:29,435: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[a0db8aa5-87ea-4db4-8411-5b9d0a6cac8d] received
-[2025-09-23 18:17:29,459: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 18:17:29,462: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[a0db8aa5-87ea-4db4-8411-5b9d0a6cac8d] succeeded in 0.02344366601028014s: {'message': 'Лимит достигнут'}
-[2025-09-23 18:19:50,446: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[89dc7783-f9c1-4fb2-a390-de5d16677b52] received
-[2025-09-23 18:19:50,469: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 18:19:50,472: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[89dc7783-f9c1-4fb2-a390-de5d16677b52] succeeded in 0.022153833007905632s: {'message': 'Лимит достигнут'}
-[2025-09-23 18:22:29,436: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[02b3f045-13f5-4639-8289-4bb517c47805] received
-[2025-09-23 18:22:29,463: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 18:22:29,466: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[02b3f045-13f5-4639-8289-4bb517c47805] succeeded in 0.01756508299149573s: {'message': 'Лимит достигнут'}
-[2025-09-23 18:24:50,451: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[f5b9de4c-94ec-48e7-851b-e966a8aee127] received
-[2025-09-23 18:24:50,476: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 18:24:50,478: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[f5b9de4c-94ec-48e7-851b-e966a8aee127] succeeded in 0.02302866699756123s: {'message': 'Лимит достигнут'}
-[2025-09-23 18:27:35,033: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[32c52a80-8c5e-4fb3-a0ec-9957427ae37d] received
-[2025-09-23 18:27:35,075: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 18:27:35,077: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[32c52a80-8c5e-4fb3-a0ec-9957427ae37d] succeeded in 0.018554207985289395s: {'message': 'Лимит достигнут'}
-[2025-09-23 18:35:13,694: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[29c9831a-a555-4e80-8602-02823c3be79d] received
-[2025-09-23 18:35:13,700: INFO/MainProcess] Task apps.finance.tasks.generate_benchmark_statistics[f9efeb32-7434-460d-bf19-ca88e6051f2b] received
-[2025-09-23 18:35:13,702: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[e2270b36-9216-4ae5-8d2c-124c8e700ace] received
-[2025-09-23 18:35:13,704: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[3f14170f-e565-45ad-9dcc-9fe6a8537e9e] received
-[2025-09-23 18:35:13,719: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 18:35:13,721: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[29c9831a-a555-4e80-8602-02823c3be79d] succeeded in 0.023749457992380485s: {'message': 'Лимит достигнут'}
-[2025-09-23 18:35:13,777: INFO/ForkPoolWorker-1] Сгенерирована статистика по 60 бенчмаркам
-[2025-09-23 18:35:13,783: INFO/ForkPoolWorker-1] Task apps.finance.tasks.generate_benchmark_statistics[f9efeb32-7434-460d-bf19-ca88e6051f2b] succeeded in 0.05886170797748491s: {'success': True, 'message': 'Статистика успешно сгенерирована', 'statistics': {'type_stats': [{...}], 'grade_stats': [{...}, {...}, {...}, {...}, {...}, {...}], 'location_stats': [{...}, {...}, {...}, {...}, {...}, {...}, {...}], 'total_benchmarks': 60, 'generated_at': '2025-09-23T15:35:13.776988+00:00'}}
-[2025-09-23 18:35:13,785: INFO/ForkPoolWorker-1] Пропускаем сбор - есть 118 необработанных вакансий
-[2025-09-23 18:35:13,785: INFO/ForkPoolWorker-1] Пропускаем сбор вакансий - очередь еще не обработана или недавно собирали
-[2025-09-23 18:35:13,785: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[e2270b36-9216-4ae5-8d2c-124c8e700ace] succeeded in 0.0023470410087611526s: {'success': True, 'message': 'Сбор пропущен по умной логике', 'fetched': 0}
-[2025-09-23 18:35:13,798: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
-[2025-09-23 18:35:13,799: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[3f14170f-e565-45ad-9dcc-9fe6a8537e9e] succeeded in 0.012608249991899356s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
-[2025-09-23 18:37:52,694: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[9dca50ab-dcc1-4c79-aa25-ab0ff6c532d6] received
-[2025-09-23 18:37:52,698: INFO/MainProcess] Task apps.finance.tasks.generate_benchmark_statistics[9d85e544-ff62-4a3f-a6b5-495c95ecb170] received
-[2025-09-23 18:37:52,713: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[0a0ff4e2-eb59-48ac-84d8-65b5808df4e3] received
-[2025-09-23 18:37:52,713: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 18:37:52,714: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[5ebe0305-ee67-47f2-9f6a-653fefd5d02b] received
-[2025-09-23 18:37:52,715: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[9dca50ab-dcc1-4c79-aa25-ab0ff6c532d6] succeeded in 0.013863083004252985s: {'message': 'Лимит достигнут'}
-[2025-09-23 18:37:52,725: INFO/ForkPoolWorker-1] Сгенерирована статистика по 60 бенчмаркам
-[2025-09-23 18:37:52,726: INFO/ForkPoolWorker-1] Task apps.finance.tasks.generate_benchmark_statistics[9d85e544-ff62-4a3f-a6b5-495c95ecb170] succeeded in 0.0101302920083981s: {'success': True, 'message': 'Статистика успешно сгенерирована', 'statistics': {'type_stats': [{...}], 'grade_stats': [{...}, {...}, {...}, {...}, {...}, {...}], 'location_stats': [{...}, {...}, {...}, {...}, {...}, {...}, {...}], 'total_benchmarks': 60, 'generated_at': '2025-09-23T15:37:52.725614+00:00'}}
-[2025-09-23 18:37:52,728: INFO/ForkPoolWorker-1] Пропускаем сбор - есть 118 необработанных вакансий
-[2025-09-23 18:37:52,728: INFO/ForkPoolWorker-1] Пропускаем сбор вакансий - очередь еще не обработана или недавно собирали
-[2025-09-23 18:37:52,728: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[0a0ff4e2-eb59-48ac-84d8-65b5808df4e3] succeeded in 0.0019235419749747962s: {'success': True, 'message': 'Сбор пропущен по умной логике', 'fetched': 0}
-[2025-09-23 18:37:52,731: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
-[2025-09-23 18:37:52,732: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[5ebe0305-ee67-47f2-9f6a-653fefd5d02b] succeeded in 0.002220875001512468s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
-[2025-09-23 18:40:13,700: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[a5eb7143-e019-4b25-9cca-1c3a456a88cc] received
-[2025-09-23 18:40:13,727: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 18:40:13,734: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[a5eb7143-e019-4b25-9cca-1c3a456a88cc] succeeded in 0.028521667001768947s: {'message': 'Лимит достигнут'}
-[2025-09-23 18:42:52,698: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[b1e4dbcd-a9c0-4b00-8447-14a4d8783b35] received
-[2025-09-23 18:42:52,726: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 18:42:52,729: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[b1e4dbcd-a9c0-4b00-8447-14a4d8783b35] succeeded in 0.026671667001210153s: {'message': 'Лимит достигнут'}
-[2025-09-23 18:45:13,700: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[ec53a038-b987-4ce9-8f97-a0f16c3d0728] received
-[2025-09-23 18:45:13,723: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 18:45:13,725: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[ec53a038-b987-4ce9-8f97-a0f16c3d0728] succeeded in 0.019814166997093707s: {'message': 'Лимит достигнут'}
-[2025-09-23 18:47:52,705: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[5031b949-64d0-408c-b123-38b33a68a2c1] received
-[2025-09-23 18:47:52,727: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 18:47:52,730: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[5031b949-64d0-408c-b123-38b33a68a2c1] succeeded in 0.02075029199477285s: {'message': 'Лимит достигнут'}
-[2025-09-23 18:50:13,698: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[45f6d384-32fb-4854-b855-9d57c29dd81f] received
-[2025-09-23 18:50:13,730: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 18:50:13,731: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[45f6d384-32fb-4854-b855-9d57c29dd81f] succeeded in 0.02005483297398314s: {'message': 'Лимит достигнут'}
-[2025-09-23 18:52:52,700: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[1581e13c-29f7-41d4-97b8-80e31e2d0e7b] received
-[2025-09-23 18:52:52,725: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 18:52:52,727: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[1581e13c-29f7-41d4-97b8-80e31e2d0e7b] succeeded in 0.023752457986120135s: {'message': 'Лимит достигнут'}
-[2025-09-23 18:55:13,695: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[02ccdad3-6e56-4fcb-bf75-edf30b395311] received
-[2025-09-23 18:55:13,697: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[01ab5deb-2c60-4cb2-b600-18b8363a4565] received
-[2025-09-23 18:55:13,720: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 18:55:13,722: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[02ccdad3-6e56-4fcb-bf75-edf30b395311] succeeded in 0.022233291994780302s: {'message': 'Лимит достигнут'}
-[2025-09-23 18:55:13,724: INFO/ForkPoolWorker-1] Пропускаем сбор - есть 118 необработанных вакансий
-[2025-09-23 18:55:13,724: INFO/ForkPoolWorker-1] Пропускаем сбор вакансий - очередь еще не обработана или недавно собирали
-[2025-09-23 18:55:13,725: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[01ab5deb-2c60-4cb2-b600-18b8363a4565] succeeded in 0.002358833997277543s: {'success': True, 'message': 'Сбор пропущен по умной логике', 'fetched': 0}
-[2025-09-23 18:57:52,703: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[b0bd004a-4238-4762-9890-92106e9a6829] received
-[2025-09-23 18:57:52,705: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[7ce966a1-2476-47f6-9f4d-61467e303bdd] received
-[2025-09-23 18:57:52,734: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 18:57:52,739: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[b0bd004a-4238-4762-9890-92106e9a6829] succeeded in 0.024479457992129028s: {'message': 'Лимит достигнут'}
-[2025-09-23 18:57:52,744: INFO/ForkPoolWorker-1] Пропускаем сбор - есть 118 необработанных вакансий
-[2025-09-23 18:57:52,745: INFO/ForkPoolWorker-1] Пропускаем сбор вакансий - очередь еще не обработана или недавно собирали
-[2025-09-23 18:57:52,746: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[7ce966a1-2476-47f6-9f4d-61467e303bdd] succeeded in 0.005334666988346726s: {'success': True, 'message': 'Сбор пропущен по умной логике', 'fetched': 0}
-[2025-09-23 19:00:13,695: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[cba7b985-01ef-4502-89d1-0f8e170e780d] received
-[2025-09-23 19:00:13,718: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 19:00:13,720: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[cba7b985-01ef-4502-89d1-0f8e170e780d] succeeded in 0.01696987499599345s: {'message': 'Лимит достигнут'}
-[2025-09-23 19:02:52,701: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[f387f137-2101-4a04-970d-55fc6d48cade] received
-[2025-09-23 19:02:52,716: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 19:02:52,718: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[f387f137-2101-4a04-970d-55fc6d48cade] succeeded in 0.015134374989429489s: {'message': 'Лимит достигнут'}
-[2025-09-23 19:05:13,699: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[b67463db-e5b3-4a0a-8b2e-c2d4afb7969d] received
-[2025-09-23 19:05:13,704: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[019a0fba-3c90-4f97-a8a5-6e0a0c8c2041] received
-[2025-09-23 19:05:13,720: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 19:05:13,723: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[b67463db-e5b3-4a0a-8b2e-c2d4afb7969d] succeeded in 0.019681207981193438s: {'message': 'Лимит достигнут'}
-[2025-09-23 19:05:13,729: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
-[2025-09-23 19:05:13,732: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[019a0fba-3c90-4f97-a8a5-6e0a0c8c2041] succeeded in 0.007254124997416511s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
-[2025-09-23 19:07:52,712: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[60ee5c6d-c1be-4305-a43d-9db8b39f49ed] received
-[2025-09-23 19:07:52,715: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[49549004-9a10-4222-ae64-f0c2efeca26e] received
-[2025-09-23 19:07:52,760: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 19:07:52,762: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[60ee5c6d-c1be-4305-a43d-9db8b39f49ed] succeeded in 0.046745792002184317s: {'message': 'Лимит достигнут'}
-[2025-09-23 19:07:52,765: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
-[2025-09-23 19:07:52,766: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[49549004-9a10-4222-ae64-f0c2efeca26e] succeeded in 0.002894957986427471s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
-[2025-09-23 19:10:13,698: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[f83aebda-205c-456e-a3fd-bbe5b047193b] received
-[2025-09-23 19:10:13,714: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 19:10:13,715: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[f83aebda-205c-456e-a3fd-bbe5b047193b] succeeded in 0.01457520798430778s: {'message': 'Лимит достигнут'}
-[2025-09-23 19:12:52,702: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[3117a63d-8765-47dd-82df-e04e4d43d256] received
-[2025-09-23 19:12:52,724: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 19:12:52,726: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[3117a63d-8765-47dd-82df-e04e4d43d256] succeeded in 0.02173937499173917s: {'message': 'Лимит достигнут'}
-[2025-09-23 19:15:13,704: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[d503296c-ff37-4b38-8b61-c60167a7b9f9] received
-[2025-09-23 19:15:13,707: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[e6bbd645-68d2-476a-b67f-b149770f4bb7] received
-[2025-09-23 19:15:13,718: INFO/ForkPoolWorker-1] Пропускаем сбор - есть 118 необработанных вакансий
-[2025-09-23 19:15:13,718: INFO/ForkPoolWorker-1] Пропускаем сбор вакансий - очередь еще не обработана или недавно собирали
-[2025-09-23 19:15:13,729: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[d503296c-ff37-4b38-8b61-c60167a7b9f9] succeeded in 0.020410875004017726s: {'success': True, 'message': 'Сбор пропущен по умной логике', 'fetched': 0}
-[2025-09-23 19:15:13,736: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 19:15:13,737: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[e6bbd645-68d2-476a-b67f-b149770f4bb7] succeeded in 0.006081874977098778s: {'message': 'Лимит достигнут'}
-[2025-09-23 19:17:52,712: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[66a8a94c-6ed4-4903-bf5f-ac7614f14e21] received
-[2025-09-23 19:17:52,715: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[343ca8e7-6557-4299-962d-e12b76eed405] received
-[2025-09-23 19:17:52,729: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 19:17:52,731: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[66a8a94c-6ed4-4903-bf5f-ac7614f14e21] succeeded in 0.01503862498793751s: {'message': 'Лимит достигнут'}
-[2025-09-23 19:17:52,735: INFO/ForkPoolWorker-1] Пропускаем сбор - есть 118 необработанных вакансий
-[2025-09-23 19:17:52,735: INFO/ForkPoolWorker-1] Пропускаем сбор вакансий - очередь еще не обработана или недавно собирали
-[2025-09-23 19:17:52,737: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[343ca8e7-6557-4299-962d-e12b76eed405] succeeded in 0.004985833977116272s: {'success': True, 'message': 'Сбор пропущен по умной логике', 'fetched': 0}
-[2025-09-23 19:20:13,751: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[0a25834b-9c0c-47b0-8887-58ed81a256b8] received
-[2025-09-23 19:20:13,770: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 19:20:13,772: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[0a25834b-9c0c-47b0-8887-58ed81a256b8] succeeded in 0.019366499996976927s: {'message': 'Лимит достигнут'}
-[2025-09-23 19:22:52,707: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[01708daf-8701-4d86-ac9f-c8020e7e30d2] received
-[2025-09-23 19:22:52,726: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 19:22:52,729: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[01708daf-8701-4d86-ac9f-c8020e7e30d2] succeeded in 0.01820054100244306s: {'message': 'Лимит достигнут'}
-[2025-09-23 19:25:13,741: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[abb93617-5c70-4229-9356-cfc7fd6e78c5] received
-[2025-09-23 19:25:13,761: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 19:25:13,763: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[abb93617-5c70-4229-9356-cfc7fd6e78c5] succeeded in 0.015306749992305413s: {'message': 'Лимит достигнут'}
-[2025-09-23 19:27:52,722: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[3decd040-df44-40ef-afb0-f66fa7c4b948] received
-[2025-09-23 19:27:52,758: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 19:27:52,760: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[3decd040-df44-40ef-afb0-f66fa7c4b948] succeeded in 0.02877099998295307s: {'message': 'Лимит достигнут'}
-[2025-09-23 19:30:13,749: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[9e976c4d-bc04-418d-8892-2f10aab4c39b] received
-[2025-09-23 19:30:13,776: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 19:30:13,779: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[9e976c4d-bc04-418d-8892-2f10aab4c39b] succeeded in 0.02204820900806226s: {'message': 'Лимит достигнут'}
-[2025-09-23 19:32:52,722: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[dfc4db64-6540-46c1-8411-399b7f3ad4d8] received
-[2025-09-23 19:32:52,749: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 19:32:52,752: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[dfc4db64-6540-46c1-8411-399b7f3ad4d8] succeeded in 0.020169791008811444s: {'message': 'Лимит достигнут'}
-[2025-09-23 19:35:13,700: INFO/MainProcess] Task apps.finance.tasks.generate_benchmark_statistics[68ec2cfb-5170-4a14-81a3-8260d85a0c43] received
-[2025-09-23 19:35:13,703: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[149acc9f-1976-4a26-836c-8db508216de3] received
-[2025-09-23 19:35:13,725: INFO/ForkPoolWorker-1] Сгенерирована статистика по 60 бенчмаркам
-[2025-09-23 19:35:13,727: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[f3b7dd4c-1a10-49b3-938e-7e74dbde6226] received
-[2025-09-23 19:35:13,730: INFO/ForkPoolWorker-1] Task apps.finance.tasks.generate_benchmark_statistics[68ec2cfb-5170-4a14-81a3-8260d85a0c43] succeeded in 0.025743666978087276s: {'success': True, 'message': 'Статистика успешно сгенерирована', 'statistics': {'type_stats': [{...}], 'grade_stats': [{...}, {...}, {...}, {...}, {...}, {...}], 'location_stats': [{...}, {...}, {...}, {...}, {...}, {...}, {...}], 'total_benchmarks': 60, 'generated_at': '2025-09-23T16:35:13.725548+00:00'}}
-[2025-09-23 19:35:13,736: INFO/ForkPoolWorker-1] Пропускаем сбор - есть 118 необработанных вакансий
-[2025-09-23 19:35:13,736: INFO/ForkPoolWorker-1] Пропускаем сбор вакансий - очередь еще не обработана или недавно собирали
-[2025-09-23 19:35:13,737: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[149acc9f-1976-4a26-836c-8db508216de3] succeeded in 0.0063161670113913715s: {'success': True, 'message': 'Сбор пропущен по умной логике', 'fetched': 0}
-[2025-09-23 19:35:13,742: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
-[2025-09-23 19:35:13,742: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[f3b7dd4c-1a10-49b3-938e-7e74dbde6226] succeeded in 0.003293582994956523s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
-[2025-09-23 19:35:13,744: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[7e18ac8f-4689-4b3e-bb37-c0a971883ecc] received
-[2025-09-23 19:35:13,748: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 19:35:13,749: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[7e18ac8f-4689-4b3e-bb37-c0a971883ecc] succeeded in 0.0041483750101178885s: {'message': 'Лимит достигнут'}
-[2025-09-23 19:37:52,711: INFO/MainProcess] Task apps.finance.tasks.generate_benchmark_statistics[754454aa-b58b-4cbc-85ba-f421bba8c8f9] received
-[2025-09-23 19:37:52,714: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[9967120c-7d8f-474c-8680-47a7099f404d] received
-[2025-09-23 19:37:52,717: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[f3e688b8-1384-457d-a0c3-43a00f81cb5a] received
-[2025-09-23 19:37:52,725: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[d2799527-1377-4655-8ccc-d05d8f5706cc] received
-[2025-09-23 19:37:52,732: INFO/ForkPoolWorker-1] Сгенерирована статистика по 60 бенчмаркам
-[2025-09-23 19:37:52,736: INFO/ForkPoolWorker-1] Task apps.finance.tasks.generate_benchmark_statistics[754454aa-b58b-4cbc-85ba-f421bba8c8f9] succeeded in 0.02123974999994971s: {'success': True, 'message': 'Статистика успешно сгенерирована', 'statistics': {'type_stats': [{...}], 'grade_stats': [{...}, {...}, {...}, {...}, {...}, {...}], 'location_stats': [{...}, {...}, {...}, {...}, {...}, {...}, {...}], 'total_benchmarks': 60, 'generated_at': '2025-09-23T16:37:52.732050+00:00'}}
-[2025-09-23 19:37:52,745: INFO/ForkPoolWorker-1] Пропускаем сбор - есть 118 необработанных вакансий
-[2025-09-23 19:37:52,745: INFO/ForkPoolWorker-1] Пропускаем сбор вакансий - очередь еще не обработана или недавно собирали
-[2025-09-23 19:37:52,746: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[9967120c-7d8f-474c-8680-47a7099f404d] succeeded in 0.008838250010740012s: {'success': True, 'message': 'Сбор пропущен по умной логике', 'fetched': 0}
-[2025-09-23 19:37:52,751: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
-[2025-09-23 19:37:52,752: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[f3e688b8-1384-457d-a0c3-43a00f81cb5a] succeeded in 0.004584290989441797s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
-[2025-09-23 19:37:52,760: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 19:37:52,760: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[d2799527-1377-4655-8ccc-d05d8f5706cc] succeeded in 0.00799141702009365s: {'message': 'Лимит достигнут'}
-[2025-09-23 19:40:13,759: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[20721ee7-10f1-4cb2-83f8-eb65b22a1dd7] received
-[2025-09-23 19:40:13,783: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 19:40:13,785: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[20721ee7-10f1-4cb2-83f8-eb65b22a1dd7] succeeded in 0.023817166016669944s: {'message': 'Лимит достигнут'}
-[2025-09-23 20:19:30,839: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[1eba5ef0-2644-429b-8a72-95357d39ff1e] received
-[2025-09-23 20:19:30,841: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[7cad8e2b-405a-43b9-9c57-151b5f451392] received
-[2025-09-23 20:19:30,845: INFO/MainProcess] Task apps.finance.tasks.cleanup_old_benchmarks[154a6c5c-810e-4251-a6ff-054df88c7788] received
-[2025-09-23 20:19:30,848: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[3049897c-8087-4ef0-964c-92b6adfc6c84] received
-[2025-09-23 20:19:30,861: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 20:19:30,863: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[1eba5ef0-2644-429b-8a72-95357d39ff1e] succeeded in 0.01984437499777414s: {'message': 'Лимит достигнут'}
-[2025-09-23 20:19:30,866: INFO/ForkPoolWorker-1] Пропускаем сбор - есть 118 необработанных вакансий
-[2025-09-23 20:19:30,866: INFO/ForkPoolWorker-1] Пропускаем сбор вакансий - очередь еще не обработана или недавно собирали
-[2025-09-23 20:19:30,867: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[7cad8e2b-405a-43b9-9c57-151b5f451392] succeeded in 0.0028288339963182807s: {'success': True, 'message': 'Сбор пропущен по умной логике', 'fetched': 0}
-[2025-09-23 20:19:30,882: INFO/ForkPoolWorker-1] Удалено 0 старых бенчмарков
-[2025-09-23 20:19:30,883: INFO/ForkPoolWorker-1] Task apps.finance.tasks.cleanup_old_benchmarks[154a6c5c-810e-4251-a6ff-054df88c7788] succeeded in 0.014435666991630569s: {'success': True, 'message': 'Удалено 0 старых бенчмарков', 'deleted_count': 0}
-[2025-09-23 20:19:30,886: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
-[2025-09-23 20:19:30,887: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[3049897c-8087-4ef0-964c-92b6adfc6c84] succeeded in 0.0033336250053253025s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
-[2025-09-23 20:49:00,065: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[a08bb499-aaf6-4ead-9e22-418ee92d10f4] received
-[2025-09-23 20:49:00,070: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[cdea43a5-76c7-44ab-b323-f493140f47d0] received
-[2025-09-23 20:49:00,071: INFO/MainProcess] Task apps.finance.tasks.cleanup_old_benchmarks[05e5e73e-6c73-4b5e-8942-10f76fbd1c47] received
-[2025-09-23 20:49:00,074: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[3033810d-23cc-42ff-8c1f-1ade817afad4] received
-[2025-09-23 20:49:00,078: INFO/MainProcess] Task apps.finance.tasks.generate_benchmark_statistics[b5ca7ae3-fefa-4a9d-b162-8961dd8e0de3] received
-[2025-09-23 20:49:00,106: INFO/ForkPoolWorker-1] Достигнут дневной лимит задач hh.ru
-[2025-09-23 20:49:00,110: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[a08bb499-aaf6-4ead-9e22-418ee92d10f4] succeeded in 0.031895624997559935s: {'message': 'Лимит достигнут'}
-[2025-09-23 20:49:00,119: INFO/ForkPoolWorker-1] Пропускаем сбор - есть 118 необработанных вакансий
-[2025-09-23 20:49:00,119: INFO/ForkPoolWorker-1] Пропускаем сбор вакансий - очередь еще не обработана или недавно собирали
-[2025-09-23 20:49:00,120: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[cdea43a5-76c7-44ab-b323-f493140f47d0] succeeded in 0.00413579199812375s: {'success': True, 'message': 'Сбор пропущен по умной логике', 'fetched': 0}
-[2025-09-23 20:49:00,123: INFO/ForkPoolWorker-1] Удалено 0 старых бенчмарков
-[2025-09-23 20:49:00,123: INFO/ForkPoolWorker-1] Task apps.finance.tasks.cleanup_old_benchmarks[05e5e73e-6c73-4b5e-8942-10f76fbd1c47] succeeded in 0.002800000016577542s: {'success': True, 'message': 'Удалено 0 старых бенчмарков', 'deleted_count': 0}
-[2025-09-23 20:49:00,126: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
-[2025-09-23 20:49:00,127: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[3033810d-23cc-42ff-8c1f-1ade817afad4] succeeded in 0.002766958001302555s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
-[2025-09-23 20:49:00,133: INFO/ForkPoolWorker-1] Сгенерирована статистика по 60 бенчмаркам
-[2025-09-23 20:49:00,134: INFO/ForkPoolWorker-1] Task apps.finance.tasks.generate_benchmark_statistics[b5ca7ae3-fefa-4a9d-b162-8961dd8e0de3] succeeded in 0.006986458000028506s: {'success': True, 'message': 'Статистика успешно сгенерирована', 'statistics': {'type_stats': [{...}], 'grade_stats': [{...}, {...}, {...}, {...}, {...}, {...}], 'location_stats': [{...}, {...}, {...}, {...}, {...}, {...}, {...}], 'total_benchmarks': 60, 'generated_at': '2025-09-23T17:49:00.133297+00:00'}}
+[2025-09-24 11:20:25,060: INFO/MainProcess] Connected to redis://127.0.0.1:6379/0
+[2025-09-24 11:20:25,061: INFO/MainProcess] mingle: searching for neighbors
+[2025-09-24 11:20:26,066: INFO/MainProcess] mingle: all alone
+[2025-09-24 11:20:26,080: INFO/MainProcess] celery@andrei-golubenko-macbook.local ready.
+[2025-09-24 11:20:26,084: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[5f90dddc-965e-4bbf-8557-7f14e799a518] received
+[2025-09-24 11:20:26,085: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[a743bc71-10f3-41af-83bc-6c17c359b6e6] received
+[2025-09-24 11:20:26,087: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[c003652d-0652-4711-bb60-5e55fd54dfcb] received
+[2025-09-24 11:20:26,087: INFO/MainProcess] Task apps.finance.tasks.generate_benchmark_statistics[836680fc-ea85-4b57-9d8a-da22b267974f] received
+[2025-09-24 11:20:26,088: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[15c36df6-2c30-46bc-95f0-0d3b4770655c] received
+[2025-09-24 11:20:26,104: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 11:20:26,108: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[5f90dddc-965e-4bbf-8557-7f14e799a518] succeeded in 0.022443124995334074s: {'processed': 0}
+[2025-09-24 11:20:26,111: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[5b60d84b-98a9-4e7e-864f-f6fa4ea94cd5] received
+[2025-09-24 11:20:26,114: WARNING/ForkPoolWorker-1] /Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1671: RuntimeWarning: DateTimeField HHVacancyTemp.created_at received a naive datetime (2025-09-24 09:20:26.113640) while time zone support is active.
+  warnings.warn(
+
+[2025-09-24 11:20:26,115: INFO/ForkPoolWorker-1] Нет данных о последнем сборе - начинаем сбор
+[2025-09-24 11:20:26,115: INFO/ForkPoolWorker-1] 🎯 Будем искать по 37 ключевым словам
+[2025-09-24 11:20:26,115: INFO/ForkPoolWorker-1] 📍 Профессиональные роли: 9, Локации: 2
+[2025-09-24 11:20:26,115: INFO/ForkPoolWorker-1] 🔍 Ищем по ключевому слову: 'java'
+[2025-09-24 11:20:26,116: INFO/ForkPoolWorker-1]   📍 Локация: belarus (16)
+[2025-09-24 11:20:26,116: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 11:20:56,194: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:20:56,196: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (programmer)
+[2025-09-24 11:20:56,196: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 11:21:26,277: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:21:26,281: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (designer)
+[2025-09-24 11:21:26,281: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 11:21:56,380: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:21:56,384: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (devops)
+[2025-09-24 11:21:56,385: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 11:22:26,495: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:22:26,498: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (product_manager)
+[2025-09-24 11:22:26,498: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 11:22:56,586: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:22:56,589: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (project_manager)
+[2025-09-24 11:22:56,589: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 11:23:26,712: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:23:26,714: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (network_engineer)
+[2025-09-24 11:23:26,714: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 11:23:56,796: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:23:56,799: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (sysadmin)
+[2025-09-24 11:23:56,799: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 11:24:26,877: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:24:26,881: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (tech_support)
+[2025-09-24 11:24:26,882: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 11:24:56,961: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:24:56,964: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (tester)
+[2025-09-24 11:25:32,473: INFO/ForkPoolWorker-1]   📍 Локация: poland (74)
+[2025-09-24 11:25:32,477: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 11:26:02,557: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:26:02,559: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (programmer)
+[2025-09-24 11:26:02,560: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 11:26:32,645: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:26:32,648: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (designer)
+[2025-09-24 11:26:32,648: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 11:27:02,725: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:27:02,728: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (devops)
+[2025-09-24 11:27:02,728: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 11:27:32,808: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:27:32,810: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (product_manager)
+[2025-09-24 11:27:32,810: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 11:28:02,888: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:28:02,891: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (project_manager)
+[2025-09-24 11:28:02,892: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 11:28:32,977: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:28:32,981: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (network_engineer)
+[2025-09-24 11:28:32,982: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 11:29:03,063: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:29:03,065: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (sysadmin)
+[2025-09-24 11:29:03,065: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 11:29:33,165: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:29:33,166: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (tech_support)
+[2025-09-24 11:29:33,166: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 11:30:03,244: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:30:03,246: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (tester)
+[2025-09-24 11:30:20,665: INFO/ForkPoolWorker-1] 🔍 Ищем по ключевому слову: 'javascript'
+[2025-09-24 11:30:20,666: INFO/ForkPoolWorker-1]   📍 Локация: belarus (16)
+[2025-09-24 11:30:20,667: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 11:30:50,741: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:30:50,742: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (programmer)
+[2025-09-24 11:30:50,742: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 11:31:20,815: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:31:20,816: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (designer)
+[2025-09-24 11:31:20,816: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 11:31:50,897: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:31:50,899: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (devops)
+[2025-09-24 11:31:50,899: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 11:32:20,978: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:32:20,981: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (product_manager)
+[2025-09-24 11:32:20,982: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 11:32:51,061: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:32:51,063: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (project_manager)
+[2025-09-24 11:32:51,064: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 11:33:21,167: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:33:21,168: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (network_engineer)
+[2025-09-24 11:33:21,168: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 11:33:51,260: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:33:51,262: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (sysadmin)
+[2025-09-24 11:33:51,263: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 11:34:21,343: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:34:21,345: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (tech_support)
+[2025-09-24 11:34:21,345: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 11:34:51,432: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:34:51,435: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (tester)
+[2025-09-24 11:35:10,703: INFO/ForkPoolWorker-1]   📍 Локация: poland (74)
+[2025-09-24 11:35:10,705: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 11:35:40,787: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:35:40,790: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (programmer)
+[2025-09-24 11:35:40,790: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 11:36:10,873: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:36:10,874: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (designer)
+[2025-09-24 11:36:10,875: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 11:36:40,956: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:36:40,958: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (devops)
+[2025-09-24 11:36:40,959: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 11:37:11,038: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:37:11,039: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (product_manager)
+[2025-09-24 11:37:11,039: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 11:37:41,123: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:37:41,124: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (project_manager)
+[2025-09-24 11:37:41,124: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 11:38:11,210: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:38:11,211: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (network_engineer)
+[2025-09-24 11:38:11,212: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 11:38:41,292: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:38:41,294: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (sysadmin)
+[2025-09-24 11:38:41,295: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 11:39:11,369: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:39:11,371: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (tech_support)
+[2025-09-24 11:39:11,372: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 11:39:41,452: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:39:41,454: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (tester)
+[2025-09-24 11:40:03,263: INFO/ForkPoolWorker-1] 🔍 Ищем по ключевому слову: 'spring'
+[2025-09-24 11:40:03,266: INFO/ForkPoolWorker-1]   📍 Локация: belarus (16)
+[2025-09-24 11:40:03,267: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 11:40:33,354: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:40:33,356: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (programmer)
+[2025-09-24 11:40:33,356: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 11:41:03,439: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:41:03,440: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (designer)
+[2025-09-24 11:41:03,440: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 11:41:33,508: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:41:33,510: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (devops)
+[2025-09-24 11:41:33,511: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 11:42:03,587: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:42:03,589: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (product_manager)
+[2025-09-24 11:42:03,589: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 11:42:33,670: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:42:33,672: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (project_manager)
+[2025-09-24 11:42:33,673: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 11:43:03,747: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:43:03,749: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (network_engineer)
+[2025-09-24 11:43:03,749: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 11:43:33,819: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:43:33,822: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (sysadmin)
+[2025-09-24 11:43:33,822: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 11:44:03,894: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:44:03,896: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (tech_support)
+[2025-09-24 11:44:03,896: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 11:44:33,977: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:44:33,981: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (tester)
+[2025-09-24 11:44:53,577: INFO/ForkPoolWorker-1]   📍 Локация: poland (74)
+[2025-09-24 11:44:53,587: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 11:45:23,738: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:45:23,739: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в poland (programmer)
+[2025-09-24 11:45:23,739: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 11:45:26,118: WARNING/MainProcess] Soft time limit (1500s) exceeded for apps.finance.tasks.fetch_hh_vacancies_task[a743bc71-10f3-41af-83bc-6c17c359b6e6]
+[2025-09-24 11:45:26,122: ERROR/ForkPoolWorker-1] Ошибка при сборе вакансий hh.ru: SoftTimeLimitExceeded()
+[2025-09-24 11:45:26,171: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[a743bc71-10f3-41af-83bc-6c17c359b6e6] retry: Retry in 60s
+[2025-09-24 11:45:26,183: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[42298566-175a-41cd-b305-605cf94a887b] received
+[2025-09-24 11:45:26,188: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
+[2025-09-24 11:45:26,189: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[c003652d-0652-4711-bb60-5e55fd54dfcb] succeeded in 0.00860583400935866s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
+[2025-09-24 11:45:26,191: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[a63b909c-ab5d-4dbb-923a-cac049ccd526] received
+[2025-09-24 11:45:26,197: INFO/ForkPoolWorker-1] Сгенерирована статистика по 95 бенчмаркам
+[2025-09-24 11:45:26,197: INFO/ForkPoolWorker-1] Task apps.finance.tasks.generate_benchmark_statistics[836680fc-ea85-4b57-9d8a-da22b267974f] succeeded in 0.007752499979687855s: {'success': True, 'message': 'Статистика успешно сгенерирована', 'statistics': {'type_stats': [{...}], 'grade_stats': [{...}, {...}, {...}, {...}, {...}, {...}], 'location_stats': [{...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}], 'total_benchmarks': 95, 'generated_at': '2025-09-24T08:45:26.197097+00:00'}}
+[2025-09-24 11:45:26,198: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[f4122ad8-406c-4eb2-8418-d3a586cebc19] received
+[2025-09-24 11:45:26,206: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 11:45:26,207: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[15c36df6-2c30-46bc-95f0-0d3b4770655c] succeeded in 0.008838417008519173s: {'processed': 0}
+[2025-09-24 11:45:26,208: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[6f679150-ddde-449c-8059-cc992075c070] received
+[2025-09-24 11:45:26,209: WARNING/ForkPoolWorker-1] /Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1671: RuntimeWarning: DateTimeField HHVacancyTemp.created_at received a naive datetime (2025-09-24 09:45:26.208611) while time zone support is active.
+  warnings.warn(
+
+[2025-09-24 11:45:26,209: INFO/ForkPoolWorker-1] Нет данных о последнем сборе - начинаем сбор
+[2025-09-24 11:45:26,209: INFO/ForkPoolWorker-1] 🎯 Будем искать по 37 ключевым словам
+[2025-09-24 11:45:26,209: INFO/ForkPoolWorker-1] 📍 Профессиональные роли: 9, Локации: 2
+[2025-09-24 11:45:26,209: INFO/ForkPoolWorker-1] 🔍 Ищем по ключевому слову: 'java'
+[2025-09-24 11:45:26,210: INFO/ForkPoolWorker-1]   📍 Локация: belarus (16)
+[2025-09-24 11:45:26,210: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 11:45:56,272: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:45:56,275: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (programmer)
+[2025-09-24 11:45:56,275: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 11:46:26,357: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:46:26,359: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (designer)
+[2025-09-24 11:46:26,360: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 11:46:56,452: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:46:56,454: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (devops)
+[2025-09-24 11:46:56,455: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 11:47:26,538: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:47:26,542: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (product_manager)
+[2025-09-24 11:47:26,542: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 11:47:56,625: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:47:56,627: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (project_manager)
+[2025-09-24 11:47:56,627: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 11:48:26,706: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:48:26,709: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (network_engineer)
+[2025-09-24 11:48:26,709: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 11:48:56,790: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:48:56,792: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (sysadmin)
+[2025-09-24 11:48:56,793: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 11:49:26,874: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:49:26,876: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (tech_support)
+[2025-09-24 11:49:26,877: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 11:49:56,963: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:49:56,965: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (tester)
+[2025-09-24 11:50:17,884: INFO/ForkPoolWorker-1]   📍 Локация: poland (74)
+[2025-09-24 11:50:17,887: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 11:50:47,972: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:50:47,977: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (programmer)
+[2025-09-24 11:50:47,977: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 11:51:18,056: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:51:18,058: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (designer)
+[2025-09-24 11:51:18,059: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 11:51:48,135: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:51:48,137: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (devops)
+[2025-09-24 11:51:48,137: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 11:52:18,237: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:52:18,239: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (product_manager)
+[2025-09-24 11:52:18,239: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 11:52:48,321: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:52:48,324: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (project_manager)
+[2025-09-24 11:52:48,324: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 11:53:18,423: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:53:18,426: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (network_engineer)
+[2025-09-24 11:53:18,426: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 11:53:48,508: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:53:48,510: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (sysadmin)
+[2025-09-24 11:53:48,511: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 11:54:18,587: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:54:18,590: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (tech_support)
+[2025-09-24 11:54:18,590: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 11:54:48,678: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:54:48,680: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (tester)
+[2025-09-24 11:55:13,116: INFO/ForkPoolWorker-1] 🔍 Ищем по ключевому слову: 'javascript'
+[2025-09-24 11:55:13,125: INFO/ForkPoolWorker-1]   📍 Локация: belarus (16)
+[2025-09-24 11:55:13,126: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 11:55:43,555: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:55:43,556: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (programmer)
+[2025-09-24 11:55:43,557: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 11:56:13,634: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:56:13,636: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (designer)
+[2025-09-24 11:56:13,637: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 11:56:43,773: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:56:43,774: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (devops)
+[2025-09-24 11:56:43,774: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 11:57:13,846: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:57:13,848: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (product_manager)
+[2025-09-24 11:57:13,849: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 11:57:43,914: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:57:43,916: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (project_manager)
+[2025-09-24 11:57:43,917: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 11:58:13,982: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:58:13,984: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (network_engineer)
+[2025-09-24 11:58:13,985: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 11:58:44,063: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:58:44,067: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (sysadmin)
+[2025-09-24 11:58:44,068: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 11:59:14,139: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:59:14,142: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (tech_support)
+[2025-09-24 11:59:14,142: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 11:59:44,221: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 11:59:44,223: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (tester)
+[2025-09-24 12:00:15,924: INFO/ForkPoolWorker-1]   📍 Локация: poland (74)
+[2025-09-24 12:00:15,926: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 12:00:46,024: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:00:46,030: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (programmer)
+[2025-09-24 12:00:46,030: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 12:01:16,113: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:01:16,115: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (designer)
+[2025-09-24 12:01:16,115: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 12:01:46,204: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:01:46,206: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (devops)
+[2025-09-24 12:01:46,207: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 12:02:16,295: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:02:16,298: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (product_manager)
+[2025-09-24 12:02:16,298: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 12:02:46,384: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:02:46,386: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (project_manager)
+[2025-09-24 12:02:46,386: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 12:03:16,489: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:03:16,491: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (network_engineer)
+[2025-09-24 12:03:16,493: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 12:03:46,577: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:03:46,579: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (sysadmin)
+[2025-09-24 12:03:46,580: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 12:04:16,660: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:04:16,662: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (tech_support)
+[2025-09-24 12:04:16,662: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 12:04:46,743: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:04:46,746: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (tester)
+[2025-09-24 12:05:09,945: INFO/ForkPoolWorker-1] 🔍 Ищем по ключевому слову: 'spring'
+[2025-09-24 12:05:09,946: INFO/ForkPoolWorker-1]   📍 Локация: belarus (16)
+[2025-09-24 12:05:09,947: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 12:05:40,021: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:05:40,024: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (programmer)
+[2025-09-24 12:05:40,024: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 12:06:10,104: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:06:10,106: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (designer)
+[2025-09-24 12:06:10,106: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 12:06:40,187: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:06:40,188: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (devops)
+[2025-09-24 12:06:40,188: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 12:07:10,262: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:07:10,264: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (product_manager)
+[2025-09-24 12:07:10,265: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 12:07:40,347: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:07:40,349: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (project_manager)
+[2025-09-24 12:07:40,349: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 12:08:10,425: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:08:10,427: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (network_engineer)
+[2025-09-24 12:08:10,427: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 12:08:40,504: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:08:40,506: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (sysadmin)
+[2025-09-24 12:08:40,506: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 12:09:10,573: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:09:10,575: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (tech_support)
+[2025-09-24 12:09:10,575: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 12:09:40,672: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:09:40,675: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (tester)
+[2025-09-24 12:10:01,633: INFO/ForkPoolWorker-1]   📍 Локация: poland (74)
+[2025-09-24 12:10:01,636: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 12:10:26,220: WARNING/MainProcess] Soft time limit (1500s) exceeded for apps.finance.tasks.fetch_hh_vacancies_task[5b60d84b-98a9-4e7e-864f-f6fa4ea94cd5]
+[2025-09-24 12:10:26,232: ERROR/ForkPoolWorker-1] Ошибка при сборе вакансий hh.ru: SoftTimeLimitExceeded()
+[2025-09-24 12:10:26,332: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[5b60d84b-98a9-4e7e-864f-f6fa4ea94cd5] retry: Retry in 60s
+[2025-09-24 12:10:26,388: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
+[2025-09-24 12:10:26,391: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[42298566-175a-41cd-b305-605cf94a887b] succeeded in 0.022974666993832216s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
+[2025-09-24 12:10:26,393: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[320cd607-2229-43cf-89d2-1a7252601af5] received
+[2025-09-24 12:10:26,394: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[2cf1abbd-dc04-4c5a-954b-a8995593655a] received
+[2025-09-24 12:10:26,406: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 12:10:26,407: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[a63b909c-ab5d-4dbb-923a-cac049ccd526] succeeded in 0.013796832994557917s: {'processed': 0}
+[2025-09-24 12:10:26,408: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[2bc22ac6-62aa-490b-9213-d28cb05cd0b0] received
+[2025-09-24 12:10:26,410: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 12:10:26,410: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[f4122ad8-406c-4eb2-8418-d3a586cebc19] succeeded in 0.002608749986393377s: {'processed': 0}
+[2025-09-24 12:10:26,411: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[846648e5-c6a1-45b0-a975-67e8563502b7] received
+[2025-09-24 12:10:26,413: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 12:10:26,413: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[6f679150-ddde-449c-8059-cc992075c070] succeeded in 0.0025353339733555913s: {'processed': 0}
+[2025-09-24 12:10:26,414: INFO/MainProcess] Task apps.finance.tasks.generate_benchmark_statistics[05b97b9c-9cd9-47c7-97e7-62f11a007d89] received
+[2025-09-24 12:10:26,416: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 12:10:26,417: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[320cd607-2229-43cf-89d2-1a7252601af5] succeeded in 0.0030806660070084035s: {'processed': 0}
+[2025-09-24 12:10:26,418: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[4c126dec-ba06-4509-892e-90e1368aa9c8] received
+[2025-09-24 12:10:26,420: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 12:10:26,421: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[2cf1abbd-dc04-4c5a-954b-a8995593655a] succeeded in 0.003475292003713548s: {'processed': 0}
+[2025-09-24 12:10:26,421: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[e015d5ef-f667-427d-ab60-3a4b307bd1ef] received
+[2025-09-24 12:10:26,423: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 12:10:26,423: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[2bc22ac6-62aa-490b-9213-d28cb05cd0b0] succeeded in 0.0024676249886397272s: {'processed': 0}
+[2025-09-24 12:10:26,424: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[ef0ee02c-730e-451b-b945-8807af829298] received
+[2025-09-24 12:10:26,426: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 12:10:26,431: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[846648e5-c6a1-45b0-a975-67e8563502b7] succeeded in 0.007112916995538399s: {'processed': 0}
+[2025-09-24 12:10:26,432: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[3755f747-ab74-4ea6-8aff-a53cbdc6e685] received
+[2025-09-24 12:10:26,436: INFO/ForkPoolWorker-1] Сгенерирована статистика по 95 бенчмаркам
+[2025-09-24 12:10:26,436: INFO/ForkPoolWorker-1] Task apps.finance.tasks.generate_benchmark_statistics[05b97b9c-9cd9-47c7-97e7-62f11a007d89] succeeded in 0.004858542000874877s: {'success': True, 'message': 'Статистика успешно сгенерирована', 'statistics': {'type_stats': [{...}], 'grade_stats': [{...}, {...}, {...}, {...}, {...}, {...}], 'location_stats': [{...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}], 'total_benchmarks': 95, 'generated_at': '2025-09-24T09:10:26.436056+00:00'}}
+[2025-09-24 12:10:26,437: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[8c806f9f-3e7d-4561-a958-19eaf841b77c] received
+[2025-09-24 12:10:26,439: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 12:10:26,439: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[4c126dec-ba06-4509-892e-90e1368aa9c8] succeeded in 0.0025813749816734344s: {'processed': 0}
+[2025-09-24 12:10:26,440: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[00b63b66-ca53-42ca-bd14-00aeb778d580] received
+[2025-09-24 12:10:26,440: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
+[2025-09-24 12:10:26,440: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[e015d5ef-f667-427d-ab60-3a4b307bd1ef] succeeded in 0.0010243340220768005s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
+[2025-09-24 12:10:26,441: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[cc6f2faa-79fd-4f28-9e5e-054cec7cb348] received
+[2025-09-24 12:10:26,442: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 12:10:26,443: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[ef0ee02c-730e-451b-b945-8807af829298] succeeded in 0.002376874996116385s: {'processed': 0}
+[2025-09-24 12:10:26,444: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[74068117-5883-440d-85dc-2d88b3d07f16] received
+[2025-09-24 12:10:26,444: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
+[2025-09-24 12:10:26,444: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[3755f747-ab74-4ea6-8aff-a53cbdc6e685] succeeded in 0.0011740420013666153s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
+[2025-09-24 12:10:26,445: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[0554ac09-842d-4ded-911e-086d61b4add0] received
+[2025-09-24 12:10:26,447: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 12:10:26,447: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[8c806f9f-3e7d-4561-a958-19eaf841b77c] succeeded in 0.002417084004264325s: {'processed': 0}
+[2025-09-24 12:10:26,449: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[7ea6e9c8-019f-4195-89c6-9b74ad660d9a] received
+[2025-09-24 12:10:26,450: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 12:10:26,451: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[00b63b66-ca53-42ca-bd14-00aeb778d580] succeeded in 0.003551792004145682s: {'processed': 0}
+[2025-09-24 12:10:26,452: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[7a7d5e36-646e-4c0f-ae8c-edeefc0c4be8] received
+[2025-09-24 12:10:26,454: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 12:10:26,454: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[cc6f2faa-79fd-4f28-9e5e-054cec7cb348] succeeded in 0.0023862079833634198s: {'processed': 0}
+[2025-09-24 12:10:26,455: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[f7d0f8a8-5f3b-4585-9348-5578fefd9010] received
+[2025-09-24 12:10:26,456: WARNING/ForkPoolWorker-1] /Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1671: RuntimeWarning: DateTimeField HHVacancyTemp.created_at received a naive datetime (2025-09-24 10:10:26.456136) while time zone support is active.
+  warnings.warn(
+
+[2025-09-24 12:10:26,457: INFO/ForkPoolWorker-1] Нет данных о последнем сборе - начинаем сбор
+[2025-09-24 12:10:26,457: INFO/ForkPoolWorker-1] 🎯 Будем искать по 37 ключевым словам
+[2025-09-24 12:10:26,457: INFO/ForkPoolWorker-1] 📍 Профессиональные роли: 9, Локации: 2
+[2025-09-24 12:10:26,457: INFO/ForkPoolWorker-1] 🔍 Ищем по ключевому слову: 'java'
+[2025-09-24 12:10:26,457: INFO/ForkPoolWorker-1]   📍 Локация: belarus (16)
+[2025-09-24 12:10:26,458: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 12:10:56,526: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:10:56,530: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (programmer)
+[2025-09-24 12:10:56,530: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 12:11:26,612: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:11:26,613: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (designer)
+[2025-09-24 12:11:26,613: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 12:11:56,686: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:11:56,688: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (devops)
+[2025-09-24 12:11:56,689: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 12:12:26,808: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:12:26,811: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (product_manager)
+[2025-09-24 12:12:26,811: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 12:12:56,896: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:12:56,902: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (project_manager)
+[2025-09-24 12:12:56,902: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 12:13:27,025: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:13:27,027: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (network_engineer)
+[2025-09-24 12:13:27,027: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 12:13:57,131: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:13:57,135: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (sysadmin)
+[2025-09-24 12:13:57,135: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 12:14:27,324: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:14:27,333: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (tech_support)
+[2025-09-24 12:14:27,334: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 12:14:57,448: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:14:57,450: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (tester)
+[2025-09-24 12:15:17,519: INFO/ForkPoolWorker-1]   📍 Локация: poland (74)
+[2025-09-24 12:15:17,521: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 12:15:47,605: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:15:47,606: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (programmer)
+[2025-09-24 12:15:47,607: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 12:16:17,689: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:16:17,693: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (designer)
+[2025-09-24 12:16:17,693: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 12:16:47,775: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:16:47,777: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (devops)
+[2025-09-24 12:16:47,777: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 12:17:17,897: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:17:17,900: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (product_manager)
+[2025-09-24 12:17:17,900: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 12:17:47,985: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:17:47,987: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (project_manager)
+[2025-09-24 12:17:47,987: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 12:18:18,064: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:18:18,065: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (network_engineer)
+[2025-09-24 12:18:18,066: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 12:18:48,193: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:18:48,196: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (sysadmin)
+[2025-09-24 12:18:48,196: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 12:19:18,281: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:19:18,283: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (tech_support)
+[2025-09-24 12:19:18,284: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 12:19:48,362: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:19:48,365: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (tester)
+[2025-09-24 12:20:18,926: INFO/ForkPoolWorker-1] 🔍 Ищем по ключевому слову: 'javascript'
+[2025-09-24 12:20:18,929: INFO/ForkPoolWorker-1]   📍 Локация: belarus (16)
+[2025-09-24 12:20:18,929: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 12:20:49,013: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:20:49,016: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (programmer)
+[2025-09-24 12:20:49,016: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 12:21:19,086: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:21:19,088: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (designer)
+[2025-09-24 12:21:19,089: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 12:21:49,173: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:21:49,176: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (devops)
+[2025-09-24 12:21:49,185: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 12:22:19,268: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:22:19,271: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (product_manager)
+[2025-09-24 12:22:19,272: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 12:22:49,349: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:22:49,352: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (project_manager)
+[2025-09-24 12:22:49,353: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 12:23:19,435: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:23:19,438: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (network_engineer)
+[2025-09-24 12:23:19,439: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 12:23:49,532: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:23:49,537: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (sysadmin)
+[2025-09-24 12:23:49,538: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 12:24:19,628: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:24:19,631: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (tech_support)
+[2025-09-24 12:24:19,632: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 12:24:49,708: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:24:49,711: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (tester)
+[2025-09-24 12:25:09,620: INFO/ForkPoolWorker-1]   📍 Локация: poland (74)
+[2025-09-24 12:25:09,623: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 12:25:39,707: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:25:39,709: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (programmer)
+[2025-09-24 12:25:39,709: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 12:26:09,783: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:26:09,786: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (designer)
+[2025-09-24 12:26:09,786: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 12:26:39,872: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:26:39,875: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (devops)
+[2025-09-24 12:26:39,875: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 12:27:09,970: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:27:09,974: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (product_manager)
+[2025-09-24 12:27:09,974: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 12:27:40,060: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:27:40,062: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (project_manager)
+[2025-09-24 12:27:40,063: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 12:28:10,147: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:28:10,149: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (network_engineer)
+[2025-09-24 12:28:10,149: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 12:28:40,258: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:28:40,260: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (sysadmin)
+[2025-09-24 12:28:40,260: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 12:29:10,334: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:29:10,335: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (tech_support)
+[2025-09-24 12:29:10,336: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 12:29:40,402: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:29:40,409: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (tester)
+[2025-09-24 12:30:07,800: INFO/ForkPoolWorker-1] 🔍 Ищем по ключевому слову: 'spring'
+[2025-09-24 12:30:07,803: INFO/ForkPoolWorker-1]   📍 Локация: belarus (16)
+[2025-09-24 12:30:07,803: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 12:30:37,889: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:30:37,891: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (programmer)
+[2025-09-24 12:30:37,892: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 12:31:07,971: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:31:07,975: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (designer)
+[2025-09-24 12:31:07,975: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 12:31:38,060: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:31:38,063: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (devops)
+[2025-09-24 12:31:38,063: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 12:32:08,147: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:32:08,150: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (product_manager)
+[2025-09-24 12:32:08,150: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 12:32:38,235: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:32:38,238: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (project_manager)
+[2025-09-24 12:32:38,239: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 12:33:08,336: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:33:08,340: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (network_engineer)
+[2025-09-24 12:33:08,340: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 12:33:38,416: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:33:38,417: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (sysadmin)
+[2025-09-24 12:33:38,418: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 12:34:08,483: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:34:08,485: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (tech_support)
+[2025-09-24 12:34:08,485: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 12:34:38,554: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:34:38,558: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (tester)
+[2025-09-24 12:34:58,057: INFO/ForkPoolWorker-1]   📍 Локация: poland (74)
+[2025-09-24 12:34:58,060: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 12:35:26,462: WARNING/MainProcess] Soft time limit (1500s) exceeded for apps.finance.tasks.fetch_hh_vacancies_task[74068117-5883-440d-85dc-2d88b3d07f16]
+[2025-09-24 12:35:26,510: ERROR/ForkPoolWorker-1] Ошибка при сборе вакансий hh.ru: SoftTimeLimitExceeded()
+[2025-09-24 12:35:26,627: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[74068117-5883-440d-85dc-2d88b3d07f16] retry: Retry in 60s
+[2025-09-24 12:35:26,715: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 12:35:26,718: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[0e068730-c581-461b-b6b5-53af6959fadf] received
+[2025-09-24 12:35:26,718: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[0554ac09-842d-4ded-911e-086d61b4add0] succeeded in 0.0588441250147298s: {'processed': 0}
+[2025-09-24 12:35:26,723: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[c2733d4c-34bd-447f-90ba-725204debfe9] received
+[2025-09-24 12:35:26,726: WARNING/ForkPoolWorker-1] /Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1671: RuntimeWarning: DateTimeField HHVacancyTemp.created_at received a naive datetime (2025-09-24 10:35:26.725449) while time zone support is active.
+  warnings.warn(
+
+[2025-09-24 12:35:26,727: INFO/ForkPoolWorker-1] Нет данных о последнем сборе - начинаем сбор
+[2025-09-24 12:35:26,727: INFO/ForkPoolWorker-1] 🎯 Будем искать по 37 ключевым словам
+[2025-09-24 12:35:26,727: INFO/ForkPoolWorker-1] 📍 Профессиональные роли: 9, Локации: 2
+[2025-09-24 12:35:26,727: INFO/ForkPoolWorker-1] 🔍 Ищем по ключевому слову: 'java'
+[2025-09-24 12:35:26,727: INFO/ForkPoolWorker-1]   📍 Локация: belarus (16)
+[2025-09-24 12:35:26,727: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 12:35:56,794: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:35:56,795: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (programmer)
+[2025-09-24 12:35:56,795: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 12:36:26,867: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:36:26,868: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (designer)
+[2025-09-24 12:36:26,868: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 12:36:56,941: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:36:56,942: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (devops)
+[2025-09-24 12:36:56,943: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 12:37:27,022: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:37:27,025: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (product_manager)
+[2025-09-24 12:37:27,025: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 12:37:57,110: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:37:57,112: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (project_manager)
+[2025-09-24 12:37:57,112: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 12:38:27,209: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:38:27,213: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (network_engineer)
+[2025-09-24 12:38:27,213: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 12:38:57,298: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:38:57,300: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (sysadmin)
+[2025-09-24 12:38:57,300: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 12:39:27,388: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:39:27,391: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (tech_support)
+[2025-09-24 12:39:27,391: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 12:39:57,481: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:39:57,482: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (tester)
+[2025-09-24 12:40:25,723: INFO/ForkPoolWorker-1]   📍 Локация: poland (74)
+[2025-09-24 12:40:25,725: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 12:40:55,801: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:40:55,807: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (programmer)
+[2025-09-24 12:40:55,808: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 12:41:25,888: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:41:25,890: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (designer)
+[2025-09-24 12:41:25,891: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 12:41:56,027: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:41:56,028: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (devops)
+[2025-09-24 12:41:56,028: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 12:42:26,097: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:42:26,100: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (product_manager)
+[2025-09-24 12:42:26,101: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 12:42:56,184: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:42:56,186: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (project_manager)
+[2025-09-24 12:42:56,187: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 12:43:26,261: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:43:26,262: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (network_engineer)
+[2025-09-24 12:43:26,263: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 12:43:56,344: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:43:56,345: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (sysadmin)
+[2025-09-24 12:43:56,345: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 12:44:26,458: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:44:26,461: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (tech_support)
+[2025-09-24 12:44:26,461: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 12:44:56,545: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:44:56,546: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в poland (tester)
+[2025-09-24 12:45:17,650: INFO/ForkPoolWorker-1] 🔍 Ищем по ключевому слову: 'javascript'
+[2025-09-24 12:45:17,654: INFO/ForkPoolWorker-1]   📍 Локация: belarus (16)
+[2025-09-24 12:45:17,655: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 12:45:47,784: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:45:47,786: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (programmer)
+[2025-09-24 12:45:47,787: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 12:46:17,934: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:46:17,937: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (designer)
+[2025-09-24 12:46:17,938: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 12:46:48,024: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:46:48,027: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (devops)
+[2025-09-24 12:46:48,028: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 12:47:18,105: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:47:18,107: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (product_manager)
+[2025-09-24 12:47:18,109: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 12:47:48,192: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:47:48,194: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (project_manager)
+[2025-09-24 12:47:48,194: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 12:48:18,278: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:48:18,281: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (network_engineer)
+[2025-09-24 12:48:18,281: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 12:48:48,371: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:48:48,372: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (sysadmin)
+[2025-09-24 12:48:48,372: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 12:49:18,455: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:49:18,459: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (tech_support)
+[2025-09-24 12:49:18,459: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 12:49:48,575: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:49:48,578: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в belarus (tester)
+[2025-09-24 12:50:15,783: INFO/ForkPoolWorker-1]   📍 Локация: poland (74)
+[2025-09-24 12:50:15,787: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 12:50:45,887: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:50:45,889: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (programmer)
+[2025-09-24 12:50:45,889: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 12:51:15,961: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:51:15,963: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (designer)
+[2025-09-24 12:51:15,963: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 12:51:46,043: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:51:46,045: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (devops)
+[2025-09-24 12:51:46,045: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 12:52:16,128: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:52:16,130: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (product_manager)
+[2025-09-24 12:52:16,130: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 12:52:46,225: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:52:46,230: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (project_manager)
+[2025-09-24 12:52:46,230: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 12:53:16,339: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:53:16,342: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (network_engineer)
+[2025-09-24 12:53:16,343: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 12:53:46,432: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:53:46,435: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (sysadmin)
+[2025-09-24 12:53:46,435: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 12:54:16,515: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:54:16,517: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (tech_support)
+[2025-09-24 12:54:16,517: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 12:55:15,043: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:55:15,045: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'javascript' в poland (tester)
+[2025-09-24 12:55:36,651: INFO/ForkPoolWorker-1] 🔍 Ищем по ключевому слову: 'spring'
+[2025-09-24 12:55:36,654: INFO/ForkPoolWorker-1]   📍 Локация: belarus (16)
+[2025-09-24 12:55:36,654: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 12:59:03,328: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:59:03,329: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (programmer)
+[2025-09-24 12:59:03,330: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)
+[2025-09-24 12:59:33,466: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 12:59:33,468: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (designer)
+[2025-09-24 12:59:33,469: INFO/ForkPoolWorker-1]     👤 Роль: devops (160)
+[2025-09-24 13:00:03,549: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 13:00:03,551: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (devops)
+[2025-09-24 13:00:03,552: INFO/ForkPoolWorker-1]     👤 Роль: product_manager (73)
+[2025-09-24 13:00:33,620: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 13:00:33,622: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (product_manager)
+[2025-09-24 13:00:33,622: INFO/ForkPoolWorker-1]     👤 Роль: project_manager (107)
+[2025-09-24 13:01:03,709: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 13:01:03,711: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (project_manager)
+[2025-09-24 13:01:03,711: INFO/ForkPoolWorker-1]     👤 Роль: network_engineer (112)
+[2025-09-24 13:01:33,853: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 13:01:33,856: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (network_engineer)
+[2025-09-24 13:01:33,856: INFO/ForkPoolWorker-1]     👤 Роль: sysadmin (113)
+[2025-09-24 13:02:03,922: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 13:02:03,924: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (sysadmin)
+[2025-09-24 13:02:03,925: INFO/ForkPoolWorker-1]     👤 Роль: tech_support (121)
+[2025-09-24 13:02:34,003: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 13:02:34,009: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (tech_support)
+[2025-09-24 13:02:34,010: INFO/ForkPoolWorker-1]     👤 Роль: tester (124)
+[2025-09-24 13:03:04,092: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 13:03:04,094: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'spring' в belarus (tester)
+[2025-09-24 13:03:29,609: INFO/ForkPoolWorker-1]   📍 Локация: poland (74)
+[2025-09-24 13:03:29,612: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 13:03:51,752: WARNING/MainProcess] Soft time limit (1500s) exceeded for apps.finance.tasks.fetch_hh_vacancies_task[7ea6e9c8-019f-4195-89c6-9b74ad660d9a]
+[2025-09-24 13:03:51,762: ERROR/ForkPoolWorker-1] Ошибка при сборе вакансий hh.ru: SoftTimeLimitExceeded()
+[2025-09-24 13:03:51,902: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[7ea6e9c8-019f-4195-89c6-9b74ad660d9a] retry: Retry in 60s
+[2025-09-24 13:03:51,934: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 13:03:51,937: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[7a7d5e36-646e-4c0f-ae8c-edeefc0c4be8] succeeded in 0.02268629102036357s: {'processed': 0}
+[2025-09-24 13:03:51,940: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[980d6d3f-119d-4b85-ac5e-5c9d46f2d97e] received
+[2025-09-24 13:03:51,941: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[6642aab7-ff4a-4017-a225-e12bb047086e] received
+[2025-09-24 13:03:51,942: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 13:03:51,943: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[f7d0f8a8-5f3b-4585-9348-5578fefd9010] succeeded in 0.00625095801660791s: {'processed': 0}
+[2025-09-24 13:03:51,946: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[2af9d70f-680e-44cd-ab93-3ce8fc7e2966] received
+[2025-09-24 13:03:51,950: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 13:03:51,951: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[0e068730-c581-461b-b6b5-53af6959fadf] succeeded in 0.0064522079774178565s: {'processed': 0}
+[2025-09-24 13:03:51,952: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[7e0eea37-ae0e-4e05-88f4-b9f1ab78e4ad] received
+[2025-09-24 13:03:51,955: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 13:03:51,955: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[c2733d4c-34bd-447f-90ba-725204debfe9] succeeded in 0.0037224169936962426s: {'processed': 0}
+[2025-09-24 13:03:51,958: INFO/MainProcess] Task apps.finance.tasks.generate_benchmark_statistics[7f1db4b5-f14f-49c9-b330-41db399ce2d2] received
+[2025-09-24 13:03:51,959: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 13:03:51,959: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[980d6d3f-119d-4b85-ac5e-5c9d46f2d97e] succeeded in 0.0033118339779321104s: {'processed': 0}
+[2025-09-24 13:03:51,960: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[339fb393-6287-4e2c-9291-3448f97fc484] received
+[2025-09-24 13:03:51,962: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 13:03:51,963: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[6642aab7-ff4a-4017-a225-e12bb047086e] succeeded in 0.0029791250126436353s: {'processed': 0}
+[2025-09-24 13:03:51,964: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[191dd0e5-993e-4abf-bbe7-b0304b39916e] received
+[2025-09-24 13:03:51,966: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-24 13:03:51,967: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[2af9d70f-680e-44cd-ab93-3ce8fc7e2966] succeeded in 0.0035661669971887022s: {'processed': 0}
+[2025-09-24 13:03:51,968: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[61dd654b-7e8f-492a-8618-4bb9ae117f99] received
+[2025-09-24 13:03:51,970: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
+[2025-09-24 13:03:51,971: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[7e0eea37-ae0e-4e05-88f4-b9f1ab78e4ad] succeeded in 0.00355370799661614s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
+[2025-09-24 13:03:51,972: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[2ab7b1c1-144d-46be-adcf-6a21eca61214] received
+[2025-09-24 13:03:51,977: INFO/ForkPoolWorker-1] Сгенерирована статистика по 95 бенчмаркам
+[2025-09-24 13:03:51,978: INFO/ForkPoolWorker-1] Task apps.finance.tasks.generate_benchmark_statistics[7f1db4b5-f14f-49c9-b330-41db399ce2d2] succeeded in 0.0065199579985346645s: {'success': True, 'message': 'Статистика успешно сгенерирована', 'statistics': {'type_stats': [{...}], 'grade_stats': [{...}, {...}, {...}, {...}, {...}, {...}], 'location_stats': [{...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}], 'total_benchmarks': 95, 'generated_at': '2025-09-24T10:03:51.977380+00:00'}}
+[2025-09-24 13:03:51,980: WARNING/ForkPoolWorker-1] /Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1671: RuntimeWarning: DateTimeField HHVacancyTemp.created_at received a naive datetime (2025-09-24 11:03:51.979890) while time zone support is active.
+  warnings.warn(
+
+[2025-09-24 13:03:51,980: INFO/ForkPoolWorker-1] Нет данных о последнем сборе - начинаем сбор
+[2025-09-24 13:03:51,981: INFO/ForkPoolWorker-1] 🎯 Будем искать по 37 ключевым словам
+[2025-09-24 13:03:51,981: INFO/ForkPoolWorker-1] 📍 Профессиональные роли: 9, Локации: 2
+[2025-09-24 13:03:51,981: INFO/ForkPoolWorker-1] 🔍 Ищем по ключевому слову: 'java'
+[2025-09-24 13:03:51,981: INFO/ForkPoolWorker-1]   📍 Локация: belarus (16)
+[2025-09-24 13:03:51,981: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-24 13:03:51,989: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[cc3b6b12-561e-44fd-84dd-c85a62ce1487] received
+[2025-09-24 13:03:51,990: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[1079be88-f7d2-4890-9ab2-42a6ddb58bfd] received
+[2025-09-24 13:04:22,044: WARNING/ForkPoolWorker-1] ❌ Ошибка API hh.ru: HTTPSConnectionPool(host='api.hh.ru', port=443): Read timed out. (read timeout=30)
+[2025-09-24 13:04:22,046: INFO/ForkPoolWorker-1]       ✅ Найдено 0 новых вакансий для 'java' в belarus (programmer)
+[2025-09-24 13:04:22,046: INFO/ForkPoolWorker-1]     👤 Роль: designer (34)

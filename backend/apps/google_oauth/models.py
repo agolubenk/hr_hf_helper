@@ -1682,6 +1682,18 @@ class Invite(models.Model):
                 print(f"🤖 CALENDAR_DEBUG: Ошибка получения событий: {e}")
                 time_slots = {}
             
+            # Проверяем, есть ли в тексте временные указания
+            if not self._has_time_indicators(text_without_url):
+                print(f"🤖 TIME_CHECK: В тексте нет временных указаний - используем автоматический выбор ближайшего слота")
+                # Если нет временных указаний, автоматически выбираем ближайший доступный слот
+                fallback_time = self._get_fallback_time(time_slots, current_date)
+                if fallback_time:
+                    self.gemini_suggested_datetime = fallback_time
+                    print(f"🤖 AUTO_SLOT: Автоматически выбран слот: {fallback_time}")
+                    return True, "Время автоматически выбрано из доступных слотов"
+                else:
+                    return False, "Нет доступных временных слотов в календаре"
+            
             # Получаем текущую дату
             minsk_tz = pytz.timezone('Europe/Minsk')
             current_date = datetime.now(minsk_tz)
@@ -1695,7 +1707,19 @@ class Invite(models.Model):
 - current_datetime: "{current_date.strftime('%d.%m.%Y %H:%M')}"
 - specialist_slots: {json.dumps(time_slots, ensure_ascii=False, indent=2)}
 
-ВАЖНО: Верни ТОЛЬКО JSON в формате {{"suggested_datetime": "DD.MM.YYYY HH:MM"}}. Никакого кода, объяснений или дополнительного текста!
+ВАЖНО: Если в user_text нет явных указаний времени, выбери наиболее подходящее время из доступных слотов специалиста, начиная с ближайшей даты.
+
+КРИТИЧЕСКИ ВАЖНО: 
+1. Верни ТОЛЬКО JSON в формате {{"suggested_datetime": "DD.MM.YYYY HH:MM"}}
+2. Дата должна быть в формате ДД.ММ.ГГГГ (например: 25.09.2025)
+3. Время должно быть в формате ЧЧ:ММ (например: 14:30)
+4. НЕ добавляй никаких объяснений, комментариев или дополнительного текста
+5. НЕ используй markdown форматирование
+6. НЕ заключай ответ в блоки кода
+7. Если нет подходящих слотов, верни {{"suggested_datetime": "None"}}
+
+Пример правильного ответа:
+{{"suggested_datetime": "25.09.2025 14:30"}}
 """
             
             print(f"🤖 GEMINI_PROMPT: Полный промпт для Gemini:")
@@ -1713,31 +1737,153 @@ class Invite(models.Model):
             print(f"🤖 GEMINI_RESPONSE: {response}")
             print(f"🤖 GEMINI_RESPONSE: Конец ответа")
             
+            # Очищаем ответ от возможных markdown блоков и лишних символов
+            if response:
+                # Убираем markdown блоки кода
+                response = re.sub(r'```json\s*', '', response)
+                response = re.sub(r'```\s*', '', response)
+                response = re.sub(r'`\s*', '', response)
+                # Убираем лишние пробелы и переносы строк
+                response = response.strip()
+                print(f"🤖 GEMINI_RESPONSE_CLEANED: Очищенный ответ: {response}")
+            
             # Парсим ответ от Gemini
             try:
+                print(f"🤖 GEMINI_PARSE_DEBUG: Начинаем парсинг ответа длиной {len(response)} символов")
+                print(f"🤖 GEMINI_PARSE_DEBUG: Первые 200 символов ответа: {response[:200]}")
+                
+                # Очищаем ответ от лишних символов
+                cleaned_response = response.strip()
+                
                 # Пытаемся найти время в разных форматах
-                datetime_match = re.search(r'"suggested_datetime":\s*"(\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2})"', response)
+                datetime_patterns = [
+                    # JSON формат с кавычками
+                    r'"suggested_datetime":\s*"(\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2})"',
+                    # JSON формат без кавычек
+                    r'suggested_datetime["\s]*:\s*["\s]*(\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2})',
+                    # Просто дата и время в формате DD.MM.YYYY HH:MM
+                    r'(\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2})',
+                    # Альтернативные форматы даты
+                    r'(\d{1,2}\.\d{1,2}\.\d{4}\s+\d{1,2}:\d{2})',
+                    # Формат с тире
+                    r'(\d{2}-\d{2}-\d{4}\s+\d{2}:\d{2})',
+                    # Формат с слешами
+                    r'(\d{2}/\d{2}/\d{4}\s+\d{2}:\d{2})',
+                ]
                 
-                if not datetime_match:
-                    # Пытаемся найти время без кавычек
-                    datetime_match = re.search(r'suggested_datetime["\s]*:\s*["\s]*(\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2})', response)
+                suggested_datetime = None
+                matched_pattern = None
                 
-                if not datetime_match:
-                    # Пытаемся найти просто дату и время в формате DD.MM.YYYY HH:MM
-                    datetime_match = re.search(r'(\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2})', response)
+                for i, pattern in enumerate(datetime_patterns):
+                    print(f"🤖 GEMINI_PARSE_DEBUG: Проверяем паттерн {i+1}: {pattern}")
+                    datetime_match = re.search(pattern, cleaned_response)
+                    if datetime_match:
+                        suggested_datetime = datetime_match.group(1)
+                        matched_pattern = pattern
+                        print(f"🤖 GEMINI_PARSE_DEBUG: Найдено совпадение с паттерном {i+1}: {suggested_datetime}")
+                        
+                        # Проверяем, не вернул ли Gemini "None"
+                        if suggested_datetime is None or suggested_datetime == "None" or suggested_datetime == "null":
+                            print(f"🤖 GEMINI_PARSE_INFO: Gemini вернул None - нет подходящих временных слотов")
+                            return False, "Gemini не смог найти подходящее время для встречи в доступных слотах"
+                        
+                        break
                 
-                if not datetime_match:
-                    print(f"🤖 GEMINI_PARSE_ERROR: Не удалось найти время в ответе: {response}")
-                    return False, "Gemini не вернул время в требуемом формате"
+                if not suggested_datetime:
+                    print(f"🤖 GEMINI_PARSE_ERROR: Не удалось найти время в ответе")
+                    print(f"🤖 GEMINI_PARSE_ERROR: Полный ответ: {response}")
+                    print(f"🤖 GEMINI_PARSE_ERROR: Очищенный ответ: {cleaned_response}")
+                    
+                    # Попробуем парсить как JSON
+                    try:
+                        import json
+                        json_data = json.loads(cleaned_response)
+                        if isinstance(json_data, dict) and 'suggested_datetime' in json_data:
+                            suggested_datetime = json_data['suggested_datetime']
+                            print(f"🤖 GEMINI_PARSE_DEBUG: Найдено время через JSON парсинг: {suggested_datetime}")
+                            
+                            # Проверяем, не вернул ли Gemini "None"
+                            if suggested_datetime is None or suggested_datetime == "None" or suggested_datetime == "null":
+                                print(f"🤖 GEMINI_PARSE_INFO: Gemini вернул None - пробуем fallback логику")
+                                # Пробуем fallback - выбираем ближайший доступный слот
+                                fallback_time = self._get_fallback_time(time_slots, current_date)
+                                if fallback_time:
+                                    suggested_datetime = fallback_time
+                                    print(f"🤖 GEMINI_FALLBACK: Выбран fallback слот: {suggested_datetime}")
+                                else:
+                                    return False, "Gemini не смог найти подходящее время для встречи в доступных слотах"
+                        else:
+                            print(f"🤖 GEMINI_PARSE_ERROR: JSON не содержит поле suggested_datetime: {json_data}")
+                    except json.JSONDecodeError as e:
+                        print(f"🤖 GEMINI_PARSE_ERROR: Не удалось распарсить как JSON: {e}")
+                    
+                    # Если JSON парсинг не помог, попробуем найти любые цифры, которые могут быть датой
+                    if not suggested_datetime:
+                        all_numbers = re.findall(r'\d+', cleaned_response)
+                        print(f"🤖 GEMINI_PARSE_ERROR: Все числа в ответе: {all_numbers}")
+                        
+                        # Попробуем найти дату в формате YYYY-MM-DD или DD.MM.YYYY
+                        date_candidates = re.findall(r'\d{4}-\d{2}-\d{2}|\d{2}\.\d{2}\.\d{4}|\d{1,2}\.\d{1,2}\.\d{4}', cleaned_response)
+                        time_candidates = re.findall(r'\d{1,2}:\d{2}', cleaned_response)
+                        print(f"🤖 GEMINI_PARSE_ERROR: Кандидаты на дату: {date_candidates}")
+                        print(f"🤖 GEMINI_PARSE_ERROR: Кандидаты на время: {time_candidates}")
+                        
+                        if date_candidates and time_candidates:
+                            # Попробуем скомбинировать дату и время
+                            candidate_datetime = f"{date_candidates[0]} {time_candidates[0]}"
+                            print(f"🤖 GEMINI_PARSE_DEBUG: Попытка использовать комбинацию: {candidate_datetime}")
+                            suggested_datetime = candidate_datetime
+                    
+                    if not suggested_datetime:
+                        return False, "Gemini не вернул время в требуемом формате"
                 
-                suggested_datetime = datetime_match.group(1)
+                # Валидируем найденную дату
+                try:
+                    from datetime import datetime
+                    parsed_date = None
+                    
+                    # Список возможных форматов даты
+                    date_formats = [
+                        '%d.%m.%Y %H:%M',      # 25.09.2025 14:30
+                        '%d-%m-%Y %H:%M',      # 25-09-2025 14:30
+                        '%d/%m/%Y %H:%M',      # 25/09/2025 14:30
+                        '%Y-%m-%d %H:%M',      # 2025-09-25 14:30
+                        '%d.%m.%Y %H:%M:%S',   # 25.09.2025 14:30:00
+                        '%d-%m-%Y %H:%M:%S',   # 25-09-2025 14:30:00
+                        '%d/%m/%Y %H:%M:%S',   # 25/09/2025 14:30:00
+                        '%Y-%m-%d %H:%M:%S',   # 2025-09-25 14:30:00
+                    ]
+                    
+                    for date_format in date_formats:
+                        try:
+                            parsed_date = datetime.strptime(suggested_datetime, date_format)
+                            print(f"🤖 GEMINI_PARSE_DEBUG: Дата распарсена с форматом {date_format}: {parsed_date}")
+                            break
+                        except ValueError:
+                            continue
+                    
+                    if not parsed_date:
+                        print(f"🤖 GEMINI_PARSE_ERROR: Не удалось распарсить дату: {suggested_datetime}")
+                        return False, f"Неверный формат даты в ответе Gemini: {suggested_datetime}"
+                    
+                    # Проверяем, что дата не в прошлом
+                    current_time = datetime.now()
+                    if parsed_date < current_time:
+                        print(f"🤖 GEMINI_PARSE_WARNING: Предложенная дата в прошлом: {parsed_date}")
+                        # Не возвращаем ошибку, просто предупреждаем
+                    
+                except Exception as e:
+                    print(f"🤖 GEMINI_PARSE_ERROR: Ошибка валидации даты: {str(e)}")
+                    return False, f"Ошибка валидации даты: {str(e)}"
                 
                 # Сохраняем результат
                 self.gemini_suggested_datetime = suggested_datetime
+                print(f"🤖 GEMINI_PARSE_SUCCESS: Время сохранено: {suggested_datetime}")
                 return True, "Время успешно проанализировано с помощью Gemini AI"
                 
             except Exception as e:
                 print(f"🤖 GEMINI_PARSE_ERROR: Ошибка парсинга ответа: {str(e)}")
+                print(f"🤖 GEMINI_PARSE_ERROR: Ответ, вызвавший ошибку: {response}")
                 return False, f"Ошибка обработки ответа от Gemini: {str(e)}"
                 
         except Exception as e:
@@ -1751,6 +1897,84 @@ class Invite(models.Model):
         # Убираем лишние пробелы и переносы строк
         text_without_url = re.sub(r'\s+', ' ', text_without_url).strip()
         return text_without_url
+    
+    def _has_time_indicators(self, text):
+        """Проверяет, есть ли в тексте указания времени для встречи"""
+        import re
+        
+        # Паттерны для поиска дат, дней недели и времени
+        date_patterns = [
+            r'\d{4}-\d{2}-\d{2}',  # 2025-09-15
+            r'\d{2}\.\d{2}\.\d{4}',  # 15.09.2025
+            r'\d{2}/\d{2}/\d{4}',   # 15/09/2025
+        ]
+        
+        time_patterns = [
+            r'\d{1,2}:\d{2}',  # 14:00, 9:30
+            r'\d{1,2}:\d{2}:\d{2}',  # 14:00:00
+        ]
+        
+        weekdays = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье',
+                    'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
+                    'пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс']
+        
+        meeting_indicators = [
+            'встреча', 'интервью', 'собеседование', 'скрининг', 'время', 'дата',
+            'когда', 'встретимся', 'поговорим', 'созвонимся', 'созвон',
+            'встречаемся', 'договоримся', 'назначим', 'планируем',
+            'meeting', 'interview', 'call', 'schedule'
+        ]
+        
+        # Проверяем наличие дат
+        has_date = any(re.search(pattern, text, re.IGNORECASE) for pattern in date_patterns)
+        
+        # Проверяем наличие времени
+        has_time = any(re.search(pattern, text, re.IGNORECASE) for pattern in time_patterns)
+        
+        # Проверяем наличие дней недели
+        has_weekday = any(day.lower() in text.lower() for day in weekdays)
+        
+        # Проверяем наличие индикаторов встречи
+        has_meeting_indicators = any(indicator.lower() in text.lower() for indicator in meeting_indicators)
+        
+        print(f"🤖 TIME_CHECK: has_date = {has_date}, has_time = {has_time}, has_weekday = {has_weekday}, has_meeting_indicators = {has_meeting_indicators}")
+        
+        return has_date or has_time or has_weekday or has_meeting_indicators
+    
+    def _get_fallback_time(self, time_slots, current_date):
+        """Выбирает ближайший доступный временной слот"""
+        from datetime import datetime, timedelta
+        import re
+        
+        if not time_slots:
+            return None
+        
+        # Сортируем даты по возрастанию
+        sorted_dates = sorted(time_slots.keys())
+        
+        for date_str in sorted_dates:
+            # Пропускаем даты в прошлом
+            try:
+                slot_date = datetime.strptime(date_str, '%d.%m.%Y').date()
+                if slot_date < current_date.date():
+                    continue
+            except ValueError:
+                continue
+            
+            # Парсим временные слоты для этой даты
+            slots_text = time_slots[date_str]
+            print(f"🤖 FALLBACK_DEBUG: Анализируем слоты для {date_str}: {slots_text}")
+            
+            # Ищем первый доступный час (например, "11-17" -> 11:00)
+            time_match = re.search(r'(\d{1,2})', slots_text)
+            if time_match:
+                hour = int(time_match.group(1))
+                # Формируем время в формате DD.MM.YYYY HH:MM
+                fallback_time = f"{date_str} {hour:02d}:00"
+                print(f"🤖 FALLBACK_SUCCESS: Выбран слот {fallback_time}")
+                return fallback_time
+        
+        return None
     
     def _calculate_time_slots(self, events_data):
         """
