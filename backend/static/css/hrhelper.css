@@ -988,9 +988,32 @@ body {
 }
 
 .sidebar .nav-link.active {
-    background-color: var(--hr-sidebar-active);
-    color: white;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: #ffffff !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
     font-weight: var(--font-weight-medium);
+}
+
+.sidebar .nav-link.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+    pointer-events: none;
+}
+
+.sidebar .nav-link.active:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 /* Темная тема - черный текст в сайдбаре */
@@ -1003,7 +1026,9 @@ body {
 }
 
 [data-theme="dark"] .sidebar .nav-link.active {
-    color: black;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff !important;
 }
 
 /* === СТИЛИ ДЛЯ ИЕРАРХИЧЕСКОГО МЕНЮ === */

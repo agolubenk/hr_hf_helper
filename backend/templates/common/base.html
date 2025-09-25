@@ -1,6 +1,6 @@
 {% load static %}
 {% load huntflow_filters %}
-{% load common_filters %}
+{% load sidebar_tags %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -15,6 +15,61 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- HR Helper Custom CSS -->
     <link href="{% static 'css/hrhelper.css' %}" rel="stylesheet">
+    
+    <!-- Стили для многоуровневого сайдбара -->
+    <style>
+    /* Стили для многоуровневого сайдбара */
+    .sidebar .nav-item.has-submenu > .nav-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .sidebar .nav-item.has-submenu .submenu-arrow {
+        transition: transform 0.2s ease;
+        font-size: 0.8em;
+    }
+
+    .sidebar .nav-item.has-submenu .nav-link[aria-expanded="true"] .submenu-arrow {
+        transform: rotate(180deg);
+    }
+
+    /* Стили для вложенных пунктов */
+    .sidebar .nav-item .nav-item .nav-link {
+        padding-left: 2rem;
+        font-size: 0.9em;
+        border-left: 2px solid transparent;
+        border-radius: 6px;
+        margin: 2px 0;
+    }
+
+    .sidebar .nav-item .nav-item .nav-link:hover {
+        border-left-color: rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Стили для глубокой вложенности (3 уровня) */
+    .sidebar .nav-item .nav-item .nav-item .nav-link {
+        padding-left: 3rem;
+        font-size: 0.85em;
+    }
+
+    /* Анимации для collapse */
+    .collapse {
+        transition: height 0.25s ease;
+    }
+
+    /* Responsive адаптация для мобильных */
+    @media (max-width: 768px) {
+        .sidebar .nav-item .nav-item .nav-link {
+            padding-left: 1.5rem;
+        }
+        
+        .sidebar .nav-item .nav-item .nav-item .nav-link {
+            padding-left: 2.5rem;
+        }
+    }
+    </style>
     
         {% block extra_css %}{% endblock %}
 </head>
@@ -32,87 +87,27 @@
                         <p class="text-white-50 small">Система управления HR</p>
                     </div>
                     
-                    <!-- Иерархическое меню -->
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.namespace == 'huntflow' %}active{% endif %}" 
-                               href="{% url 'huntflow:dashboard' %}">
-                                <i class="fas fa-users me-2"></i>
-                                Huntflow
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.namespace == 'google_oauth' %}active{% endif %}" 
-                               href="{% url 'google_oauth:dashboard' %}">
-                                <i class="fab fa-google me-2"></i>
-                                Google OAuth
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.namespace == 'gemini' %}active{% endif %}" 
-                               href="{% url 'gemini:dashboard' %}">
-                                <i class="fas fa-robot me-2"></i>
-                                Gemini AI
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.namespace == 'finance' %}active{% endif %}" 
-                               href="{% url 'finance:dashboard' %}">
-                                <i class="fas fa-dollar-sign me-2"></i>
-                                Финансы
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.namespace == 'vacancies' %}active{% endif %}" 
-                               href="{% url 'vacancies:dashboard' %}">
-                                <i class="fas fa-briefcase me-2"></i>
-                                Вакансии
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.namespace == 'interviewers' %}active{% endif %}" 
-                               href="{% url 'interviewers:dashboard' %}">
-                                <i class="fas fa-user-tie me-2"></i>
-                                Интервьюеры
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.namespace == 'clickup_int' %}active{% endif %}" 
-                               href="{% url 'clickup_int:dashboard' %}">
-                                <i class="fas fa-tasks me-2"></i>
-                                ClickUp
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.namespace == 'notion_int' %}active{% endif %}" 
-                               href="{% url 'notion_int:dashboard' %}">
-                                <i class="fas fa-sticky-note me-2"></i>
-                                Notion
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.namespace == 'telegram' %}active{% endif %}" 
-                               href="{% url 'telegram:dashboard' %}">
-                                <i class="fab fa-telegram me-2"></i>
-                                Telegram
-                            </a>
-                        </li>
-                    </ul>
+                    <!-- Динамичное многоуровневое меню -->
+                    {% render_sidebar_menu %}
 
-                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                        <span>Настройки</span>
-                    </h6>
+                    <hr class="my-4" style="border-color: rgba(255,255,255,0.5); border-width: 1px;">
                     <ul class="nav flex-column mb-2">
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:profile' %}">
+                            <a class="nav-link{% if request.resolver_match.url_name == 'profile' %} active{% endif %}" href="{% url 'accounts:profile' %}">
                                 <i class="fas fa-user me-2"></i>
                                 Профиль
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:integrations' %}">
+                            <a class="nav-link{% if request.resolver_match.url_name == 'integrations' %} active{% endif %}" href="{% url 'accounts:integrations' %}">
                                 <i class="fas fa-plug me-2"></i>
                                 Интеграции
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link{% if request.resolver_match.namespace == 'admin' %} active{% endif %}" href="{% url 'admin:index' %}">
+                                <i class="fas fa-cog me-2"></i>
+                                Admin-панель
                             </a>
                         </li>
                     </ul>
@@ -207,23 +202,47 @@
             }, 5000);
         }
         
-        // Функциональность сворачиваемого меню
+        // Функциональность многоуровневого сайдбара
         document.addEventListener('DOMContentLoaded', function() {
+            // Проверяем, находимся ли мы на странице "Главная" (чат-помощник)
+            const isMainPage = window.location.pathname.includes('/google-oauth/chat/');
+            
+            // Сначала сворачиваем ВСЕ меню
+            const allCollapseElements = document.querySelectorAll('.sidebar .collapse');
+            allCollapseElements.forEach(element => {
+                element.classList.remove('show');
+                const toggle = document.querySelector(`[data-bs-target="#${element.id}"]`);
+                if (toggle) {
+                    toggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+            
+            // Если мы на главной странице (чат-помощник), не разворачиваем никаких меню
+            if (isMainPage) {
+                // Убираем класс active со всех элементов на главной странице
+                const allNavLinks = document.querySelectorAll('.sidebar .nav-link');
+                allNavLinks.forEach(link => {
+                    link.classList.remove('active');
+                });
+                console.log('🏠 Главная страница: убран класс active со всех элементов');
+                return; // Выходим из функции, оставляя все меню свернутыми
+            }
+            
             // Находим все активные элементы меню
             const activeMenuItems = document.querySelectorAll('.sidebar .nav-link.active');
             
-            // Для каждого активного элемента, разворачиваем все родительские меню
+            // Для каждого активного элемента, разворачиваем только родительские меню
             activeMenuItems.forEach(function(activeItem) {
                 let currentItem = activeItem.closest('.nav-item');
                 
-                // Поднимаемся по иерархии и разворачиваем родительские меню
+                // Поднимаемся по иерархии и разворачиваем только родительские меню
                 while (currentItem) {
-                    const parentToggle = currentItem.querySelector('.menu-toggle');
+                    const parentToggle = currentItem.querySelector('.sidebar-toggle');
                     if (parentToggle) {
                         const targetId = parentToggle.getAttribute('data-bs-target');
                         const targetElement = document.querySelector(targetId);
                         
-                        if (targetElement && !targetElement.classList.contains('show')) {
+                        if (targetElement) {
                             targetElement.classList.add('show');
                             parentToggle.setAttribute('aria-expanded', 'true');
                         }
@@ -232,6 +251,57 @@
                     // Переходим к следующему родительскому элементу
                     currentItem = currentItem.parentElement.closest('.nav-item');
                 }
+            });
+            
+            // Обработка кликов по многоуровневому меню
+            const sidebarToggles = document.querySelectorAll('.sidebar-toggle');
+            
+            sidebarToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(e) {
+                    // Если это ссылка с подменю - предотвратить переход
+                    if (this.dataset.bsToggle === 'collapse') {
+                        e.preventDefault();
+                        
+                        // Определяем уровень текущего элемента
+                        const currentNavItem = this.closest('.nav-item');
+                        const currentLevel = currentNavItem.classList.contains('ms-1') ? 1 : 
+                                           currentNavItem.classList.contains('ms-2') ? 2 : 0;
+                        
+                        // Сворачиваем только меню того же уровня
+                        const allCollapses = document.querySelectorAll('.sidebar .collapse');
+                        allCollapses.forEach(collapse => {
+                            if (collapse.id !== this.dataset.bsTarget.replace('#', '')) {
+                                const collapseToggle = document.querySelector(`[data-bs-target="#${collapse.id}"]`);
+                                if (collapseToggle) {
+                                    const collapseNavItem = collapseToggle.closest('.nav-item');
+                                    const collapseLevel = collapseNavItem.classList.contains('ms-1') ? 1 : 
+                                                        collapseNavItem.classList.contains('ms-2') ? 2 : 0;
+                                    
+                                    // Сворачиваем только если это тот же уровень
+                                    if (collapseLevel === currentLevel) {
+                                        collapse.classList.remove('show');
+                                        collapseToggle.setAttribute('aria-expanded', 'false');
+                                    }
+                                }
+                            }
+                        });
+                        
+                        // Переключаем текущее меню
+                        const targetId = this.dataset.bsTarget.replace('#', '');
+                        const targetElement = document.querySelector(this.dataset.bsTarget);
+                        const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                        
+                        if (isExpanded) {
+                            // Сворачиваем
+                            targetElement.classList.remove('show');
+                            this.setAttribute('aria-expanded', 'false');
+                        } else {
+                            // Разворачиваем
+                            targetElement.classList.add('show');
+                            this.setAttribute('aria-expanded', 'true');
+                        }
+                    }
+                });
             });
         });
         
