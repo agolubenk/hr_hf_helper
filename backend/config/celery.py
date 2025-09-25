@@ -36,11 +36,6 @@ app.autodiscover_tasks(['apps.finance', 'apps.clickup_int', 'apps.notion_int'])
 @app.task
 def save_hh_analysis_result(ai_response: dict, vacancy_data: dict):
     """Сохраняет результат AI анализа в Benchmark"""
-    import os
-    import django
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
-    django.setup()
-    
     from apps.finance.tasks import save_hh_analysis_result as original_task
     return original_task(ai_response, vacancy_data)
 

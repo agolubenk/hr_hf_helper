@@ -1,16 +1,16 @@
-{% extends 'google_oauth/base.html' %}
+{% extends 'common/base.html' %}
 {% load static %}
 {% load calendar_filters %}
 
-{% block google_oauth_title %}Google Calendar - HR Helper{% endblock %}
-{% block google_oauth_page_title %}Google Calendar{% endblock %}
-{% block google_oauth_header_title %}Google Calendar{% endblock %}
+{% block title %}Google Calendar - HR Helper{% endblock %}
+{% block page_title %}Google Calendar{% endblock %}
+
 {% block google_oauth_breadcrumb %}
     <li class="breadcrumb-item"><a href="{% url 'accounts:profile' %}">Профиль</a></li>
     <li class="breadcrumb-item active">Calendar</li>
 {% endblock %}
 
-{% block google_oauth_content %}
+{% block content %}
 {% csrf_token %}
 <div class="row">
     <div class="col-12">

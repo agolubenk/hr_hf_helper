@@ -475,14 +475,6 @@ def common_sidebar_menu(context):
             'children': []
         })
         
-        google_oauth_item['children'].append({
-            'type': 'google_oauth_drive',
-            'name': 'Google Drive',
-            'url': 'google_oauth:drive_files',
-            'icon': 'fas fa-folder',
-            'active': full_url_name == 'google_oauth:drive_files',
-            'children': []
-        })
         
         
         google_oauth_item['children'].append({
@@ -494,14 +486,6 @@ def common_sidebar_menu(context):
             'children': []
         })
         
-        google_oauth_item['children'].append({
-            'type': 'google_oauth_hr_screening',
-            'name': 'HR-скрининг',
-            'url': 'google_oauth:hr_screening_list',
-            'icon': 'fas fa-clipboard-list',
-            'active': full_url_name and full_url_name.startswith('google_oauth:hr_screening'),
-            'children': []
-        })
         
         google_oauth_item['children'].append({
             'type': 'google_oauth_combined_workflow',

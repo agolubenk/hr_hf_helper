@@ -13,9 +13,8 @@ urlpatterns = [
     path('oauth/callback/', views.google_oauth_callback, name='oauth_callback'),
     path('disconnect/', views.disconnect_google, name='disconnect'),
     
-    # Календарь и Drive
+    # Календарь
     path('calendar/', views.calendar_events, name='calendar_events'),
-    path('drive/', views.drive_files, name='drive_files'),
     
     # Синхронизация
     path('sync/calendar/', views.sync_calendar, name='sync_calendar'),
@@ -49,12 +48,6 @@ urlpatterns = [
     path('invites/settings/', views.scorecard_path_settings, name='scorecard_path_settings'),
     path('api/scorecard-path-settings/', views.api_scorecard_path_settings, name='api_scorecard_path_settings'),
     
-    # HR-скрининг
-    path('hr-screening/', views.hr_screening_list, name='hr_screening_list'),
-    path('hr-screening/create/', views.hr_screening_create, name='hr_screening_create'),
-    path('hr-screening/<int:pk>/', views.hr_screening_detail, name='hr_screening_detail'),
-    path('hr-screening/<int:pk>/delete/', views.hr_screening_delete, name='hr_screening_delete'),
-    path('hr-screening/<int:pk>/retry-analysis/', views.hr_screening_retry_analysis, name='hr_screening_retry_analysis'),
     
     # Объединенный рабочий процесс
     path('combined-workflow/', views.combined_workflow, name='combined_workflow'),
@@ -70,7 +63,6 @@ urlpatterns = [
     path('start/', views.google_oauth_start, name='oauth_start_old'),
     path('callback/', views_simple.google_oauth_callback_simple, name='oauth_callback_old'),
     path('calendar-view/', views.calendar_view, name='calendar_view'),
-    path('drive-view/', views.drive_view, name='drive_view'),
     path('sheets/', views.sheets_view, name='sheets'),
     path('sync/sheets/', views.sync_sheets, name='sync_sheets'),
     path('sync/all/', views.sync_all, name='sync_all'),

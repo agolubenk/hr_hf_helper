@@ -1,10 +1,8 @@
-{% extends 'notion_int/base.html' %}
+{% extends 'common/base.html' %}
 {% load static %}
 
-{% block header_title %}Страницы Notion{% endblock %}
-{% block header_subtitle %}Список страниц из Notion{% endblock %}
 
-{% block notion_content %}
+{% block content %}
 {% csrf_token %}
 <div class="row">
     <div class="col-12">

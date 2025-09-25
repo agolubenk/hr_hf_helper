@@ -1,10 +1,8 @@
-{% extends 'notion_int/base.html' %}
+{% extends 'common/base.html' %}
 {% load static %}
 
-{% block header_title %}{{ page.title }}{% endblock %}
-{% block header_subtitle %}Детальная информация о странице{% endblock %}
 
-{% block notion_content %}
+{% block content %}
 {% csrf_token %}
 <div class="row">
     <div class="col-lg-8">

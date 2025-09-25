@@ -1,11 +1,9 @@
-{% extends 'clickup_int/base.html' %}
+{% extends 'common/base.html' %}
 {% load static %}
 {% load common_filters %}
 
-{% block header_title %}{{ task.name }}{% endblock %}
-{% block header_subtitle %}Детальная информация о задаче{% endblock %}
 
-{% block clickup_content %}
+{% block content %}
 {% csrf_token %}
 <div class="row">
     <div class="col-lg-8">

@@ -1,15 +1,15 @@
-{% extends 'google_oauth/base.html' %}
+{% extends 'common/base.html' %}
 {% load static %}
 
-{% block google_oauth_title %}Google Sheets - HR Helper{% endblock %}
-{% block google_oauth_page_title %}Google Sheets{% endblock %}
-{% block google_oauth_header_title %}Google Sheets{% endblock %}
+{% block title %}Google Sheets - HR Helper{% endblock %}
+{% block page_title %}Google Sheets{% endblock %}
+
 {% block google_oauth_breadcrumb %}
     <li class="breadcrumb-item"><a href="{% url 'accounts:profile' %}">Профиль</a></li>
     <li class="breadcrumb-item active">Sheets</li>
 {% endblock %}
 
-{% block google_oauth_content %}
+{% block content %}
 {% csrf_token %}
 <div class="row">
     <div class="col-12">

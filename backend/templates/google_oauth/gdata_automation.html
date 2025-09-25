@@ -1,4 +1,4 @@
-{% extends 'google_oauth/base.html' %}
+{% extends 'common/base.html' %}
 {% load static %}
 
 {% block title %}G-данные и автоматизация{% endblock %}
@@ -234,10 +234,6 @@
                         <h5>Google Drive</h5>
                         <p class="text-muted mb-3">Управление файлами и документами в облачном хранилище</p>
                         <div class="d-grid gap-2">
-                            <a href="{% url 'google_oauth:drive_files' %}" class="btn btn-primary btn-automation">
-                                <i class="fas fa-folder me-1"></i>
-                                Открыть Drive
-                            </a>
                             <a href="{% url 'google_oauth:sync_drive' %}" class="btn btn-outline-primary btn-automation">
                                 <i class="fas fa-sync me-1"></i>
                                 Синхронизировать
@@ -272,10 +268,6 @@
                         <h5>AI Автоматизация</h5>
                         <p class="text-muted mb-3">Искусственный интеллект для анализа и обработки данных</p>
                         <div class="d-grid gap-2">
-                            <a href="{% url 'google_oauth:hr_screening_list' %}" class="btn btn-primary btn-automation">
-                                <i class="fas fa-user-check me-1"></i>
-                                HR-скрининг
-                            </a>
                             <a href="{% url 'google_oauth:invite_dashboard' %}" class="btn btn-outline-primary btn-automation">
                                 <i class="fas fa-envelope me-1"></i>
                                 Инвайты

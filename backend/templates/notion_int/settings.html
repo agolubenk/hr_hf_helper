@@ -1,4 +1,4 @@
-{% extends 'notion_int/base.html' %}
+{% extends 'common/base.html' %}
 {% load static %}
 
 {% block title %}Настройки Notion{% endblock %}
@@ -128,10 +128,8 @@
 </style>
 {% endblock %}
 
-{% block header_title %}Настройки Notion{% endblock %}
-{% block header_subtitle %}Конфигурация интеграции с Notion{% endblock %}
 
-{% block notion_content %}
+{% block content %}
 <div class="container-fluid">
     <!-- Заголовок -->
     <div class="row mb-4">

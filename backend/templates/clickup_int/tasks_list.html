@@ -1,10 +1,8 @@
-{% extends 'clickup_int/base.html' %}
+{% extends 'common/base.html' %}
 {% load static %}
 
-{% block header_title %}Задачи ClickUp{% endblock %}
-{% block header_subtitle %}Список задач из ClickUp{% endblock %}
 
-{% block clickup_content %}
+{% block content %}
 {% csrf_token %}
 <div class="row">
     <div class="col-12">

@@ -1,10 +1,10 @@
-{% extends 'google_oauth/base.html' %}
+{% extends 'common/base.html' %}
 
-{% block google_oauth_title %}Файлы Google Drive - Google OAuth - HR Helper{% endblock %}
-{% block google_oauth_page_title %}<i class="fas fa-folder me-2"></i>Файлы Google Drive{% endblock %}
-{% block google_oauth_header_title %}G-данные и автоматизации{% endblock %}
+{% block title %}Файлы Google Drive - Google OAuth - HR Helper{% endblock %}
+{% block page_title %}<i class="fas fa-folder me-2"></i>Файлы Google Drive{% endblock %}
 
-{% block google_oauth_content %}
+
+{% block content %}
 {% csrf_token %}
 <div class="row">
     <div class="col-12">

@@ -1,15 +1,15 @@
-{% extends 'google_oauth/base.html' %}
+{% extends 'common/base.html' %}
 {% load static %}
 
-{% block google_oauth_title %}Google Drive - HR Helper{% endblock %}
-{% block google_oauth_page_title %}Google Drive{% endblock %}
-{% block google_oauth_header_title %}Google Drive{% endblock %}
+{% block title %}Google Drive - HR Helper{% endblock %}
+{% block page_title %}Google Drive{% endblock %}
+
 {% block google_oauth_breadcrumb %}
     <li class="breadcrumb-item"><a href="{% url 'accounts:profile' %}">Профиль</a></li>
     <li class="breadcrumb-item active">Drive</li>
 {% endblock %}
 
-{% block google_oauth_content %}
+{% block content %}
 {% csrf_token %}
 <div class="row">
     <div class="col-12">

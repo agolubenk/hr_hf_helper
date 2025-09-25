@@ -1,0 +1,655 @@
+{% extends 'common/base.html' %}
+
+{% block title %}{{ chat_session.title }} - Gemini AI{% endblock %}
+{% block page_title %}{{ chat_session.title }}{% endblock %}
+
+{% block page_actions %}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-3">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="fas fa-comments me-2"></i>
+                    История чатов
+                </h6>
+            </div>
+            <div class="card-body">
+                <a href="{% url 'gemini:new_chat' %}" class="btn-new-chat">
+                    <i class="fas fa-plus me-2"></i>
+                    Новый чат
+                </a>
+                
+                {% for session in all_sessions %}
+                    <div class="session-item {% if session.id == chat_session.id %}active{% endif %}" 
+                         data-session-id="{{ session.id }}">
+                        <div class="session-content" onclick="location.href='{% url 'gemini:chat_session' session.id %}'">
+                            <div class="session-title">{{ session.title }}</div>
+                            <div class="session-date">
+                                {{ session.updated_at|date:"d.m.Y H:i" }}
+                            </div>
+                        </div>
+                        <div class="session-actions">
+                            <i class="fas fa-trash session-delete-icon" 
+                               onclick="event.stopPropagation(); deleteSessionFromList({{ session.id }})"
+                               title="Удалить чат"></i>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-9">
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center">
+                            <h4 class="mb-0 me-2" id="chat-title-display">{{ chat_session.title }}</h4>
+                            <button class="btn btn-sm btn-outline-secondary" id="edit-title-btn" title="Редактировать название">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                        <small class="opacity-75">
+                            Создан: {{ chat_session.created_at|date:"d.m.Y H:i" }}
+                        </small>
+                    </div>
+                    <div class="chat-header-actions">
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteSession()" title="Удалить чат">
+                            <i class="fas fa-trash me-1"></i>
+                            Удалить чат
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-messages" id="chat-messages">
+                {% for message in messages %}
+                    <div class="message {{ message.role }}">
+                        <div class="message-avatar">
+                            {% if message.role == 'user' %}
+                                <i class="fas fa-user"></i>
+                            {% else %}
+                                <i class="fas fa-robot"></i>
+                            {% endif %}
+                        </div>
+                        <div class="message-content">
+                            {{ message.content|linebreaks }}
+                            {% if message.role == 'assistant' and message.response_time %}
+                                <small class="text-muted d-block mt-2">
+                                    <i class="fas fa-clock me-1"></i>
+                                    {{ message.response_time|floatformat:2 }}с
+                                    {% if message.tokens_used %}
+                                        • {{ message.tokens_used }} токенов
+                                    {% endif %}
+                                </small>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-comments" style="font-size: 3rem; opacity: 0.3;"></i>
+                        <p class="mt-3 mb-0">Начните общение с Gemini AI</p>
+                        <small>Задайте любой вопрос или попросите помощи</small>
+                    </div>
+                {% endfor %}
+                
+                <div class="typing-indicator" id="typing-indicator">
+                    <div class="message assistant">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <span class="loading-spinner me-2"></span>
+                            Gemini печатает...
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-input">
+                <form id="chat-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="session_id" value="{{ chat_session.id }}">
+                    <div class="input-group">
+                        <input type="text" 
+                               class="form-control" 
+                               id="message-input" 
+                               name="message" 
+                               placeholder="Введите ваше сообщение..."
+                               autocomplete="off"
+                               required>
+                        <button type="submit" class="btn-send" id="send-btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chatForm = document.getElementById('chat-form');
+    const messageInput = document.getElementById('message-input');
+    const sendBtn = document.getElementById('send-btn');
+    const chatMessages = document.getElementById('chat-messages');
+    const typingIndicator = document.getElementById('typing-indicator');
+    
+    // Автофокус на поле ввода
+    messageInput.focus();
+    
+    // Отправка сообщения
+    chatForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const message = messageInput.value.trim();
+        if (!message) return;
+        
+        // Добавляем сообщение пользователя в чат
+        addMessageToChat('user', message);
+        
+        // Очищаем поле ввода
+        messageInput.value = '';
+        
+        // Показываем индикатор печати
+        showTypingIndicator();
+        
+        // Отправляем запрос
+        sendMessage(message);
+    });
+    
+    // Отправка сообщения по Enter (но не Shift+Enter)
+    messageInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            chatForm.dispatchEvent(new Event('submit'));
+        }
+    });
+    
+    function addMessageToChat(role, content) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${role}`;
+        
+        const avatar = document.createElement('div');
+        avatar.className = 'message-avatar';
+        avatar.innerHTML = role === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        contentDiv.innerHTML = content.replace(/\n/g, '<br>');
+        
+        messageDiv.appendChild(avatar);
+        messageDiv.appendChild(contentDiv);
+        
+        chatMessages.insertBefore(messageDiv, typingIndicator);
+        
+        // Удаляем любые X иконки, которые могли появиться
+        removeCloseButtons(messageDiv);
+        
+        scrollToBottom();
+    }
+    
+    function removeCloseButtons(element) {
+        // Удаляем элементы с X иконками
+        const closeElements = element.querySelectorAll('.fa-times, .fa-x, .close, .delete, [class*="close"], [class*="delete"], [class*="remove"], [class*="dismiss"]');
+        closeElements.forEach(el => el.remove());
+        
+        // Удаляем элементы с X символом
+        const allElements = element.querySelectorAll('*');
+        allElements.forEach(el => {
+            if (el.textContent && (el.textContent.includes('×') || el.textContent.includes('✕') || el.textContent.includes('X'))) {
+                if (el.textContent.trim() === '×' || el.textContent.trim() === '✕' || el.textContent.trim() === 'X') {
+                    el.remove();
+                }
+            }
+        });
+        
+        // Удаляем алерты внутри элемента
+        const alerts = element.querySelectorAll('.alert, .messages');
+        alerts.forEach(alert => alert.remove());
+    }
+    
+    function showTypingIndicator(message = 'Gemini печатает...') {
+        const messageContent = typingIndicator.querySelector('.message-content');
+        messageContent.innerHTML = `
+            <span class="loading-spinner me-2"></span>
+            ${message}
+        `;
+        typingIndicator.classList.add('show');
+        scrollToBottom();
+    }
+    
+    function hideTypingIndicator() {
+        typingIndicator.classList.remove('show');
+    }
+    
+    function scrollToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    function sendMessage(message) {
+        const sessionId = document.querySelector('input[name="session_id"]').value;
+        
+        fetch('{% url "gemini:send_message" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                session_id: sessionId,
+                message: message
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideTypingIndicator();
+            
+            if (data.success) {
+                addMessageToChat('assistant', data.response);
+            } else {
+                // Показываем более детальную информацию об ошибке
+                let errorMessage = '❌ Ошибка: ' + data.error;
+                
+                // Добавляем подсказки для специфических ошибок
+                if (data.error.includes('перегружена')) {
+                    errorMessage += '\n\n💡 Попробуйте отправить сообщение через несколько минут.';
+                } else if (data.error.includes('лимит запросов')) {
+                    errorMessage += '\n\n💡 Подождите немного перед отправкой следующего сообщения.';
+                } else if (data.error.includes('API ключ')) {
+                    errorMessage += '\n\n💡 Проверьте настройки API ключа в разделе "Настройки".';
+                }
+                
+                addMessageToChat('assistant', errorMessage);
+            }
+        })
+        .catch(error => {
+            hideTypingIndicator();
+            addMessageToChat('assistant', '❌ Ошибка соединения с сервером');
+            console.error('Error:', error);
+        });
+    }
+    
+    // Функция удаления сессии
+    window.deleteSession = function() {
+        if (confirm('Вы уверены, что хотите удалить эту сессию чата?')) {
+            fetch('{% url "gemini:delete_session" chat_session.id %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(() => {
+                window.location.href = '{% url "gemini:dashboard" %}';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Ошибка при удалении сессии', 'error');
+            });
+        }
+    };
+    
+    // Функция удаления сессии из списка
+    window.deleteSessionFromList = function(sessionId) {
+        if (confirm('Вы уверены, что хотите удалить эту сессию чата?')) {
+            fetch(`/gemini/session/${sessionId}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(() => {
+                // Удаляем элемент из списка
+                const sessionElement = document.querySelector(`[data-session-id="${sessionId}"]`);
+                if (sessionElement) {
+                    sessionElement.remove();
+                }
+                
+                // Если удаляем текущую сессию, перенаправляем на дашборд
+                if (sessionId == {{ chat_session.id }}) {
+                    window.location.href = '{% url "gemini:dashboard" %}';
+                }
+                
+                showNotification('Сессия чата удалена', 'success');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Ошибка при удалении сессии', 'error');
+            });
+        }
+    };
+    
+    // Автоскролл при загрузке страницы
+    scrollToBottom();
+    
+    // Удаляем алерты сразу при загрузке
+    const alerts = document.querySelectorAll('.alert, .messages');
+    alerts.forEach(alert => alert.remove());
+    
+    // Периодически удаляем X иконки и алерты
+    setInterval(() => {
+        const messages = document.querySelectorAll('.message');
+        messages.forEach(message => {
+            removeCloseButtons(message);
+        });
+        
+        // Удаляем Django messages алерты
+        const alerts = document.querySelectorAll('.alert, .messages');
+        alerts.forEach(alert => alert.remove());
+    }, 1000);
+    
+    // Инлайн редактирование названия чата
+    const editTitleBtn = document.getElementById('edit-title-btn');
+    const chatTitleDisplay = document.getElementById('chat-title-display');
+    
+    console.log('Edit button found:', editTitleBtn);
+    console.log('Title display found:', chatTitleDisplay);
+    
+    if (editTitleBtn && chatTitleDisplay) {
+        console.log('Adding click listener to edit button');
+        editTitleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Edit button clicked!');
+        const currentTitle = chatTitleDisplay.textContent.trim();
+        
+        // Создаем input поле
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = currentTitle;
+        input.className = 'form-control form-control-sm d-inline-block';
+        input.style.width = '300px';
+        input.style.fontSize = '1.25rem';
+        input.style.fontWeight = '500';
+        
+        // Создаем кнопки
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'btn btn-sm btn-success ms-2';
+        saveBtn.innerHTML = '<i class="fas fa-check"></i>';
+        saveBtn.title = 'Сохранить';
+        
+        const cancelBtn = document.createElement('button');
+        cancelBtn.className = 'btn btn-sm btn-secondary ms-1';
+        cancelBtn.innerHTML = '<i class="fas fa-times"></i>';
+        cancelBtn.title = 'Отмена';
+        
+        // Заменяем заголовок на input
+        chatTitleDisplay.style.display = 'none';
+        editTitleBtn.style.display = 'none';
+        
+        chatTitleDisplay.parentNode.insertBefore(input, chatTitleDisplay);
+        chatTitleDisplay.parentNode.insertBefore(saveBtn, chatTitleDisplay);
+        chatTitleDisplay.parentNode.insertBefore(cancelBtn, chatTitleDisplay);
+        
+        // Фокус на input
+        input.focus();
+        input.select();
+        
+        // Функция отмены
+        function cancelEdit() {
+            console.log('Cancelling edit');
+            input.remove();
+            saveBtn.remove();
+            cancelBtn.remove();
+            chatTitleDisplay.style.display = 'block';
+            editTitleBtn.style.display = 'inline-block';
+        }
+        
+        // Функция сохранения
+        function saveTitle() {
+            const newTitle = input.value.trim();
+            
+            if (!newTitle) {
+                alert('Название не может быть пустым');
+                return;
+            }
+            
+            if (newTitle === currentTitle) {
+                cancelEdit();
+                return;
+            }
+            
+            // Показываем индикатор загрузки
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            saveBtn.disabled = true;
+            
+            // Отправляем запрос на сервер
+            fetch(`{% url "gemini:update_session_title" chat_session.id %}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    title: newTitle
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Обновляем заголовок
+                    chatTitleDisplay.textContent = newTitle;
+                    cancelEdit();
+                    
+                    // Показываем уведомление об успехе
+                    showNotification('Название чата обновлено', 'success');
+                } else {
+                    alert('Ошибка при обновлении названия: ' + data.error);
+                    saveBtn.innerHTML = '<i class="fas fa-check"></i>';
+                    saveBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ошибка соединения с сервером');
+                saveBtn.innerHTML = '<i class="fas fa-check"></i>';
+                saveBtn.disabled = false;
+            });
+        }
+        
+        // Обработчики событий
+        saveBtn.addEventListener('click', saveTitle);
+        cancelBtn.addEventListener('click', cancelEdit);
+        
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                saveTitle();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                cancelEdit();
+            }
+        });
+        
+        // Отмена при клике вне элемента
+        document.addEventListener('click', function(e) {
+            if (!input.contains(e.target) && !saveBtn.contains(e.target) && !cancelBtn.contains(e.target)) {
+                cancelEdit();
+            }
+        }, { once: true });
+        });
+    }
+    
+    // Функция для показа уведомлений
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
+        
+        const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle';
+        
+        notification.innerHTML = `
+            <i class="fas fa-${icon} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Автоматически удаляем через 3 секунды
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 3000);
+    }
+});
+// Переключатель темы для Huntflow
+// Функция для переключения темы
+function toggleTheme() {
+    console.log('🔄 Huntflow: Переключение темы...');
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    console.log('📊 Huntflow: Текущая тема:', currentTheme);
+    console.log('🎯 Huntflow: Новая тема:', newTheme);
+    
+    // Устанавливаем новую тему
+    html.setAttribute('data-theme', newTheme);
+    console.log('✅ Huntflow: Атрибут data-theme установлен:', html.getAttribute('data-theme'));
+    
+    // Принудительно обновляем CSS переменные
+    const root = document.documentElement;
+    if (newTheme === 'dark') {
+        root.style.setProperty('--color-background', '#0d1117');
+        root.style.setProperty('--color-surface', '#161b22');
+        root.style.setProperty('--color-text', 'var(--color-luna-400)');
+        root.style.setProperty('--color-primary', 'var(--color-pink-400)');
+        console.log('🌙 Huntflow: Принудительно установлены темные цвета');
+    } else {
+        root.style.setProperty('--color-background', '#ffffff');
+        root.style.setProperty('--color-surface', '#ffffff');
+        root.style.setProperty('--color-text', '#13343b');
+        root.style.setProperty('--color-primary', 'var(--color-lime-500)');
+        console.log('☀️ Huntflow: Принудительно установлены светлые цвета');
+    }
+    
+    // Сохраняем в localStorage
+    localStorage.setItem('theme', newTheme);
+    console.log('💾 Huntflow: Тема сохранена в localStorage:', localStorage.getItem('theme'));
+    
+    // Обновляем иконку
+    updateThemeIcon(newTheme);
+    
+    // Показываем уведомление
+    showThemeNotification(newTheme);
+}
+
+// Функция для обновления иконки темы
+function updateThemeIcon(theme) {
+    const themeIcon = document.getElementById('themeIcon');
+    if (themeIcon) {
+        if (theme === 'dark') {
+            themeIcon.className = 'fas fa-moon';
+        } else {
+            themeIcon.className = 'fas fa-sun';
+        }
+        console.log('🎨 Huntflow: Иконка обновлена для темы:', theme);
+    }
+}
+
+// Функция для показа уведомления о смене темы
+function showThemeNotification(theme) {
+    const themeName = theme === 'dark' ? 'Тёмная' : 'Светлая';
+    
+    // Создаем уведомление
+    const notification = document.createElement('div');
+    notification.className = 'alert alert-info alert-dismissible fade show position-fixed';
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 200px;';
+    
+    notification.innerHTML = `
+        <i class="fas fa-${theme === 'dark' ? 'moon' : 'sun'} me-2"></i>
+        Переключено на ${themeName} тему
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    // Добавляем на страницу
+    document.body.appendChild(notification);
+    
+    // Автоматически удаляем через 3 секунды
+    setTimeout(function() {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 3000);
+}
+
+// Инициализация темы при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Huntflow: Инициализация переключателя темы...');
+    
+    // Получаем сохраненную тему или используем системную
+    const savedTheme = localStorage.getItem('theme');
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    const theme = savedTheme || systemTheme;
+    
+    console.log('💾 Huntflow: Сохраненная тема:', savedTheme);
+    console.log('🖥️ Huntflow: Системная тема:', systemTheme);
+    console.log('🎯 Huntflow: Выбранная тема:', theme);
+    
+    // Устанавливаем тему
+    document.documentElement.setAttribute('data-theme', theme);
+    console.log('✅ Huntflow: Атрибут data-theme установлен при загрузке:', document.documentElement.getAttribute('data-theme'));
+    
+    // Принудительно обновляем CSS переменные при загрузке
+    const root = document.documentElement;
+    if (theme === 'dark') {
+        root.style.setProperty('--color-background', '#0d1117');
+        root.style.setProperty('--color-surface', '#161b22');
+        root.style.setProperty('--color-text', 'var(--color-luna-400)');
+        root.style.setProperty('--color-primary', 'var(--color-pink-400)');
+        console.log('🌙 Huntflow: Принудительно установлены темные цвета при загрузке');
+    } else {
+        root.style.setProperty('--color-background', '#ffffff');
+        root.style.setProperty('--color-surface', '#ffffff');
+        root.style.setProperty('--color-text', '#13343b');
+        root.style.setProperty('--color-primary', 'var(--color-lime-500)');
+        console.log('☀️ Huntflow: Принудительно установлены светлые цвета при загрузке');
+    }
+    
+    // Обновляем иконку
+    updateThemeIcon(theme);
+    
+    // Добавляем обработчик клика на кнопку переключения темы
+    const themeToggle = document.getElementById('themeToggle');
+    console.log('🔘 Huntflow: Кнопка переключения темы найдена:', themeToggle);
+    if (themeToggle) {
+        // Удаляем старые обработчики, если они есть
+        themeToggle.removeEventListener('click', toggleTheme);
+        // Добавляем новый обработчик
+        themeToggle.addEventListener('click', toggleTheme);
+        console.log('✅ Huntflow: Обработчик клика добавлен');
+    } else {
+        console.error('❌ Huntflow: Кнопка переключения темы не найдена!');
+    }
+    
+    // Слушаем изменения системной темы
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+        if (!localStorage.getItem('theme')) {
+            const newTheme = e.matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+    });
+    
+    console.log('✅ Huntflow: Инициализация переключателя темы завершена');
+    
+    // Глобальная функция для тестирования
+    window.testThemeToggle = function() {
+        console.log('🧪 Huntflow: Тестируем переключение темы...');
+        toggleTheme();
+    };
+});
+</script>
+{% endblock %}
+
+
+

@@ -490,46 +490,6 @@ class CalendarEventSearchForm(forms.Form):
     
 
 
-class DriveFileSearchForm(forms.Form):
-    """Форма для поиска файлов Google Drive"""
-    
-    search = forms.CharField(
-        max_length=100,
-        required=False,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Поиск по названию файла...'
-        }),
-        label='Поиск'
-    )
-    
-    
-    
-    is_shared = forms.ChoiceField(
-        choices=[
-            ('', 'Все'),
-            ('true', 'С общим доступом'),
-            ('false', 'Без общего доступа'),
-        ],
-        required=False,
-        widget=forms.Select(attrs={
-            'class': 'form-select'
-        }),
-        label='Общий доступ'
-    )
-    
-    shared_with_me = forms.ChoiceField(
-        choices=[
-            ('', 'Все'),
-            ('true', 'Поделились со мной'),
-            ('false', 'Мои файлы'),
-        ],
-        required=False,
-        widget=forms.Select(attrs={
-            'class': 'form-select'
-        }),
-        label='Владелец'
-    )
 
 
 class HRScreeningForm(forms.ModelForm):

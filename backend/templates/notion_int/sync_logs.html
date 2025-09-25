@@ -1,4 +1,4 @@
-{% extends 'notion_int/base.html' %}
+{% extends 'common/base.html' %}
 {% load static %}
 
 {% block title %}Логи синхронизации Notion{% endblock %}
@@ -191,10 +191,8 @@
 </style>
 {% endblock %}
 
-{% block header_title %}Логи синхронизации{% endblock %}
-{% block header_subtitle %}История синхронизации с Notion{% endblock %}
 
-{% block notion_content %}
+{% block content %}
 <div class="container-fluid">
     <!-- Заголовок -->
     <div class="row mb-4">

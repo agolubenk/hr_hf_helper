@@ -1,0 +1,400 @@
+{% extends 'common/base.html' %}
+
+{% block title %}Huntflow Dashboard - HR Helper{% endblock %}
+{% block page_title %}Дашборд Huntflow{% endblock %}
+
+
+{% block content %}
+{% if not huntflow_configured %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                <h4>Huntflow не настроен</h4>
+                <p class="text-muted">
+                    Для работы с Huntflow необходимо настроить API ключи и URL в профиле пользователя.
+                </p>
+                <a href="{% url 'admin:accounts_user_change' user.id %}" class="btn btn-primary">
+                    <i class="fas fa-cog me-1"></i>
+                    Настроить Huntflow
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+    {% if not connection_test %}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-times-circle fa-3x text-danger mb-3"></i>
+                    <h4>Ошибка подключения</h4>
+                    <p class="text-muted">
+                        Не удалось подключиться к Huntflow API. Проверьте настройки подключения.
+                    </p>
+                    <button type="button" class="btn btn-primary" onclick="testConnection()">
+                        <i class="fas fa-plug me-1"></i>
+                        Повторить тест
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Connection Status -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-check-circle fa-2x text-success"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="card-title mb-1">Подключение активно</h6>
+                            <p class="card-text text-muted mb-0">
+                                Система: <strong>{{ active_system }}</strong><br>
+                                URL: <code>{{ base_url }}</code>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-building fa-2x text-primary"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="card-title mb-1">Организации</h6>
+                            <p class="card-text text-muted mb-0">
+                                Доступно: <strong>{{ accounts|length }}</strong> организаций
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Organizations List -->
+    {% if accounts %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-building me-2"></i>
+                        Доступные организации
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for account in accounts %}
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ account.name }}</h6>
+                                    <p class="card-text text-muted small">
+                                        ID: {{ account.id }}<br>
+                                        {% if account.type %}
+                                        Тип: {{ account.type }}
+                                        {% endif %}
+                                    </p>
+                                    <div class="d-grid gap-2">
+                                        <a href="{% url 'huntflow:vacancies_list' account.id %}" 
+                                           class="btn btn-sm btn-primary">
+                                            <i class="fas fa-briefcase me-1"></i>
+                                            Вакансии
+                                        </a>
+                                        <a href="{% url 'huntflow:applicants_list' account.id %}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-users me-1"></i>
+                                            Кандидаты
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-info-circle fa-3x text-info mb-3"></i>
+                    <h4>Организации не найдены</h4>
+                    <p class="text-muted">
+                        В вашем аккаунте Huntflow не найдено доступных организаций.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-bolt me-2"></i>
+                        Быстрые действия
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <button class="btn btn-outline-primary w-100" onclick="testConnection()">
+                                <i class="fas fa-plug me-2"></i>
+                                Тест API
+                            </button>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'admin:accounts_user_change' user.id %}" 
+                               class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-cog me-2"></i>
+                                Настройки
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'admin:index' %}" 
+                               class="btn btn-outline-info w-100">
+                                <i class="fas fa-tachometer-alt me-2"></i>
+                                Админ панель
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <button class="btn btn-outline-success w-100" onclick="refreshData()">
+                                <i class="fas fa-sync-alt me-2"></i>
+                                Обновить
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function testConnection() {
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Тестирование...';
+    btn.disabled = true;
+    
+    $.ajax({
+        url: '{% url "huntflow:test_connection_ajax" %}',
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()
+        },
+        success: function(response) {
+            if (response.success) {
+                showAlert('success', 'Подключение успешно!');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showAlert('danger', 'Ошибка подключения: ' + response.message);
+            }
+        },
+        error: function() {
+            showAlert('danger', 'Ошибка при тестировании подключения');
+        },
+        complete: function() {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    });
+}
+
+function refreshData() {
+    location.reload();
+}
+
+function showAlert(type, message) {
+    const alertHtml = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    $('.messages').append(alertHtml);
+    
+    // Автоматически скрыть через 5 секунд
+    setTimeout(() => {
+        $('.alert').fadeOut();
+    }, 5000);
+}
+
+// Добавляем CSRF токен для AJAX запросов
+$(document).ready(function() {
+    $('body').append('<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">');
+});
+// Переключатель темы для Huntflow
+// Функция для переключения темы
+function toggleTheme() {
+    console.log('🔄 Huntflow: Переключение темы...');
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    console.log('📊 Huntflow: Текущая тема:', currentTheme);
+    console.log('🎯 Huntflow: Новая тема:', newTheme);
+    
+    // Устанавливаем новую тему
+    html.setAttribute('data-theme', newTheme);
+    console.log('✅ Huntflow: Атрибут data-theme установлен:', html.getAttribute('data-theme'));
+    
+    // Принудительно обновляем CSS переменные
+    const root = document.documentElement;
+    if (newTheme === 'dark') {
+        root.style.setProperty('--color-background', '#0d1117');
+        root.style.setProperty('--color-surface', '#161b22');
+        root.style.setProperty('--color-text', 'var(--color-luna-400)');
+        root.style.setProperty('--color-primary', 'var(--color-pink-400)');
+        console.log('🌙 Huntflow: Принудительно установлены темные цвета');
+    } else {
+        root.style.setProperty('--color-background', '#ffffff');
+        root.style.setProperty('--color-surface', '#ffffff');
+        root.style.setProperty('--color-text', '#13343b');
+        root.style.setProperty('--color-primary', 'var(--color-lime-500)');
+        console.log('☀️ Huntflow: Принудительно установлены светлые цвета');
+    }
+    
+    // Сохраняем в localStorage
+    localStorage.setItem('theme', newTheme);
+    console.log('💾 Huntflow: Тема сохранена в localStorage:', localStorage.getItem('theme'));
+    
+    // Обновляем иконку
+    updateThemeIcon(newTheme);
+    
+    // Показываем уведомление
+    showThemeNotification(newTheme);
+}
+
+// Функция для обновления иконки темы
+function updateThemeIcon(theme) {
+    const themeIcon = document.getElementById('themeIcon');
+    if (themeIcon) {
+        if (theme === 'dark') {
+            themeIcon.className = 'fas fa-moon';
+        } else {
+            themeIcon.className = 'fas fa-sun';
+        }
+        console.log('🎨 Huntflow: Иконка обновлена для темы:', theme);
+    }
+}
+
+// Функция для показа уведомления о смене темы
+function showThemeNotification(theme) {
+    const themeName = theme === 'dark' ? 'Тёмная' : 'Светлая';
+    
+    // Создаем уведомление
+    const notification = document.createElement('div');
+    notification.className = 'alert alert-info alert-dismissible fade show position-fixed';
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 200px;';
+    
+    notification.innerHTML = `
+        <i class="fas fa-${theme === 'dark' ? 'moon' : 'sun'} me-2"></i>
+        Переключено на ${themeName} тему
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    // Добавляем на страницу
+    document.body.appendChild(notification);
+    
+    // Автоматически удаляем через 3 секунды
+    setTimeout(function() {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 3000);
+}
+
+// Инициализация темы при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Huntflow: Инициализация переключателя темы...');
+    
+    // Получаем сохраненную тему или используем системную
+    const savedTheme = localStorage.getItem('theme');
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    const theme = savedTheme || systemTheme;
+    
+    console.log('💾 Huntflow: Сохраненная тема:', savedTheme);
+    console.log('🖥️ Huntflow: Системная тема:', systemTheme);
+    console.log('🎯 Huntflow: Выбранная тема:', theme);
+    
+    // Устанавливаем тему
+    document.documentElement.setAttribute('data-theme', theme);
+    console.log('✅ Huntflow: Атрибут data-theme установлен при загрузке:', document.documentElement.getAttribute('data-theme'));
+    
+    // Принудительно обновляем CSS переменные при загрузке
+    const root = document.documentElement;
+    if (theme === 'dark') {
+        root.style.setProperty('--color-background', '#0d1117');
+        root.style.setProperty('--color-surface', '#161b22');
+        root.style.setProperty('--color-text', 'var(--color-luna-400)');
+        root.style.setProperty('--color-primary', 'var(--color-pink-400)');
+        console.log('🌙 Huntflow: Принудительно установлены темные цвета при загрузке');
+    } else {
+        root.style.setProperty('--color-background', '#ffffff');
+        root.style.setProperty('--color-surface', '#ffffff');
+        root.style.setProperty('--color-text', '#13343b');
+        root.style.setProperty('--color-primary', 'var(--color-lime-500)');
+        console.log('☀️ Huntflow: Принудительно установлены светлые цвета при загрузке');
+    }
+    
+    // Обновляем иконку
+    updateThemeIcon(theme);
+    
+    // Добавляем обработчик клика на кнопку переключения темы
+    const themeToggle = document.getElementById('themeToggle');
+    console.log('🔘 Huntflow: Кнопка переключения темы найдена:', themeToggle);
+    if (themeToggle) {
+        // Удаляем старые обработчики, если они есть
+        themeToggle.removeEventListener('click', toggleTheme);
+        // Добавляем новый обработчик
+        themeToggle.addEventListener('click', toggleTheme);
+        console.log('✅ Huntflow: Обработчик клика добавлен');
+    } else {
+        console.error('❌ Huntflow: Кнопка переключения темы не найдена!');
+    }
+    
+    // Слушаем изменения системной темы
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+        if (!localStorage.getItem('theme')) {
+            const newTheme = e.matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+    });
+    
+    console.log('✅ Huntflow: Инициализация переключателя темы завершена');
+    
+    // Глобальная функция для тестирования
+    window.testThemeToggle = function() {
+        console.log('🧪 Huntflow: Тестируем переключение темы...');
+        toggleTheme();
+    };
+});
+</script>
+{% endblock %}
+

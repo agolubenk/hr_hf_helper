@@ -33,8 +33,89 @@
                     </div>
                     
                     <!-- Иерархическое меню -->
-                    <div class="text-white-50 small mb-2">{% simple_sidebar_test %}</div>
-                    {% common_sidebar_menu %}
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.namespace == 'huntflow' %}active{% endif %}" 
+                               href="{% url 'huntflow:dashboard' %}">
+                                <i class="fas fa-users me-2"></i>
+                                Huntflow
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.namespace == 'google_oauth' %}active{% endif %}" 
+                               href="{% url 'google_oauth:dashboard' %}">
+                                <i class="fab fa-google me-2"></i>
+                                Google OAuth
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.namespace == 'gemini' %}active{% endif %}" 
+                               href="{% url 'gemini:dashboard' %}">
+                                <i class="fas fa-robot me-2"></i>
+                                Gemini AI
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.namespace == 'finance' %}active{% endif %}" 
+                               href="{% url 'finance:dashboard' %}">
+                                <i class="fas fa-dollar-sign me-2"></i>
+                                Финансы
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.namespace == 'vacancies' %}active{% endif %}" 
+                               href="{% url 'vacancies:dashboard' %}">
+                                <i class="fas fa-briefcase me-2"></i>
+                                Вакансии
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.namespace == 'interviewers' %}active{% endif %}" 
+                               href="{% url 'interviewers:dashboard' %}">
+                                <i class="fas fa-user-tie me-2"></i>
+                                Интервьюеры
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.namespace == 'clickup_int' %}active{% endif %}" 
+                               href="{% url 'clickup_int:dashboard' %}">
+                                <i class="fas fa-tasks me-2"></i>
+                                ClickUp
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.namespace == 'notion_int' %}active{% endif %}" 
+                               href="{% url 'notion_int:dashboard' %}">
+                                <i class="fas fa-sticky-note me-2"></i>
+                                Notion
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.namespace == 'telegram' %}active{% endif %}" 
+                               href="{% url 'telegram:dashboard' %}">
+                                <i class="fab fa-telegram me-2"></i>
+                                Telegram
+                            </a>
+                        </li>
+                    </ul>
+
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                        <span>Настройки</span>
+                    </h6>
+                    <ul class="nav flex-column mb-2">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'accounts:profile' %}">
+                                <i class="fas fa-user me-2"></i>
+                                Профиль
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'accounts:integrations' %}">
+                                <i class="fas fa-plug me-2"></i>
+                                Интеграции
+                            </a>
+                        </li>
+                    </ul>
             </div>
             </nav>
             
@@ -96,7 +177,7 @@
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
-    {% block extra_js %}
+    <!-- Основные скрипты для всех страниц -->
     <script>
         // Общие функции для всех приложений
         function showLoading(element) {
@@ -154,10 +235,10 @@
             });
         });
         
-        // Переключатель темы
+        // ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ - теперь работает везде:
         // Функция для переключения темы
         function toggleTheme() {
-            console.log('🔄 Переключение темы...');
+            console.log('🎨 Переключение темы...');
             const html = document.documentElement;
             const currentTheme = html.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -319,6 +400,8 @@
         });
     </script>
 
+    <!-- Дополнительные скрипты для конкретных страниц -->
+    {% block extra_js %}
     {% endblock %}
 </body>
 </html>
