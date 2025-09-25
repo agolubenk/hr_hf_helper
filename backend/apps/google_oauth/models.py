@@ -709,8 +709,10 @@ class Invite(models.Model):
             calendar_success = self._create_calendar_event()
             print(f"🔍 Результат создания календарного события: {calendar_success}")
             
-            # Обновляем статус кандидата на Tech Screening
-            self._update_candidate_status_to_tech_screening()
+            # Обновляем статус на Tech Screening при создании инвайта со scorecard
+            if calendar_success:
+                tech_screening_success = self.update_candidate_status_to_tech_screening()
+                print(f"[TECH_SCREENING_UPDATE] Статус обновлен: {tech_screening_success}")
             
             return True, f"Структура создана: {folder_path}. Scorecard скопирован и готов к обработке."
             
@@ -773,6 +775,11 @@ class Invite(models.Model):
             print("🔍 Создаем календарное событие (заглушку)...")
             calendar_success = self._create_calendar_event_stub()
             print(f"🔍 Результат создания календарного события (заглушка): {calendar_success}")
+            
+            # Обновляем статус на Tech Screening при создании инвайта со scorecard (заглушка)
+            if calendar_success:
+                tech_screening_success = self.update_candidate_status_to_tech_screening()
+                print(f"[TECH_SCREENING_UPDATE] Статус обновлен (заглушка): {tech_screening_success}")
             
             return True, f"Структура подготовлена (заглушка): {folder_path}. Требуется настройка Google OAuth для создания реальных файлов."
             
@@ -1458,6 +1465,51 @@ class Invite(models.Model):
             print(f"❌ Ошибка создания заглушки календарного события: {e}")
             return False
     
+    def update_candidate_status_to_tech_screening(self):
+        """Обновление статуса кандидата на Tech Screening в Huntflow"""
+        try:
+            from apps.huntflow.services import HuntflowService
+            from apps.vacancies.models import Vacancy
+            from datetime import datetime, timezone, timedelta
+            import re
+
+            print(f"[TECH_SCREENING] Обновляем статус кандидата {self.candidate_id}")
+
+            # Получаем account_id пользователя
+            account_id = self.get_user_account_id()
+            if not account_id:
+                print("[TECH_SCREENING] Не удалось получить account_id")
+                return False
+
+            # ID статуса Tech Screening (нужно получить через Huntflow API или настройки)
+            # TODO: Получить актуальный ID статуса Tech Screening через API
+            tech_screening_status_id = 3459  # Замените на актуальный ID
+
+            # Формируем комментарий в формате "Четверг, 25 сентября⋅11:00–11:45"
+            comment = self.get_formatted_interview_datetime()
+            print(f"[TECH_SCREENING] Кандидат: {self.candidate_id} -> Tech Screening")
+            print(f"[TECH_SCREENING] Комментарий: {comment}")
+
+            service = HuntflowService(self.user)
+            result = service.update_applicant_status(
+                account_id=account_id,
+                applicant_id=int(self.candidate_id),
+                status_id=tech_screening_status_id,
+                comment=comment,
+                vacancy_id=int(self.vacancy_id) if self.vacancy_id else None
+            )
+
+            if result:
+                print(f"[TECH_SCREENING] Успешно обновлен статус на Tech Screening")
+                return True
+            else:
+                print(f"[TECH_SCREENING] Ошибка при обновлении статуса")
+                return False
+
+        except Exception as e:
+            print(f"[TECH_SCREENING] Исключение: {str(e)}")
+            return False
+
     def _update_candidate_status_to_tech_screening(self):
         """Обновляет статус кандидата на Tech Screening и добавляет комментарий с датой/временем"""
         try:

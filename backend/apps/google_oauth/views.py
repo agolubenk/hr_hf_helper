@@ -22,99 +22,91 @@ from .services import (
 
 
 def determine_action_type_from_text(text):
-    """
-    Определяет тип действия на основе текста сообщения
-    """
+    """Определение типа действия из текста"""
     if not text:
-        return 'hr_screening'
+        return "hrscreening"
     
-    # Паттерны для поиска дат, дней недели и времени
     import re
     
-    # Паттерны дат
+    # Паттерны для дат
     date_patterns = [
-        r'\d{4}-\d{2}-\d{2}',  # 2025-09-15
-        r'\d{2}\.\d{2}\.\d{4}',  # 15.09.2025
-        r'\d{2}/\d{2}/\d{4}',   # 15/09/2025
+        r'(\d{4}-\d{1,2}-\d{1,2})',  # 2025-09-15
+        r'(\d{2}\.\d{2}\.\d{4})',    # 15.09.2025
+        r'(\d{2}\d{2}\d{4})'         # 15092025
     ]
     
-    # Паттерны времени (более строгие, чтобы не ловить зарплатные цифры)
+    # Паттерны для времени
     time_patterns = [
-        r'\b\d{1,2}:\d{2}\b',  # 14:00, 9:30 (с границами слов)
-        r'\b\d{1,2}:\d{2}:\d{2}\b',  # 14:00:00 (с границами слов)
+        r'(\d{1,2}:\d{2})',          # 14:00, 9:30
+        r'(\d{1,2}\d{2}\d{4})',      # 140000
     ]
     
     # Дни недели
-    weekdays = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье',
-                'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
-                'пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс']
-
-    # Слова-индикаторы встречи/интервью
+    weekdays = [
+        'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье',
+        'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
+        'пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'
+    ]
+    
+    # НОВОЕ: Относительные даты
+    relative_dates = [
+        'сегодня', 'завтра', 'послезавтра', 'вчера', 'позавчера',
+        'сёдня', 'зафтра', 'послезавтра', 'вчира', 'позавчира'
+    ]
+    
+    # НОВОЕ: Времена суток  
+    time_periods = [
+        'утром', 'днем', 'днём', 'вечером', 'ночью',
+        'утра', 'дня', 'вечера', 'ночи', 
+        'с утра', 'в обед', 'обед'
+    ]
+    
+    # Индикаторы встреч
     meeting_indicators = [
-        'встреча', 'интервью', 'собеседование', 'скрининг', 'время', 'дата',
-        'когда', 'встретимся', 'поговорим', 'созвонимся', 'созвон',
-        'встречаемся', 'договоримся', 'назначим', 'планируем',
+        'встреча', 'интервью', 'собеседование', 'созвон', 'звонок',
+        'техническое', 'technical', 'скрининг', 'screening',
+        'инвайт', 'invite', 'приглашение',
         'meeting', 'interview', 'call', 'schedule', 'time', 'date'
     ]
-
-    # Слова-индикаторы HR-скрининга (информация о кандидате)
-    # ИСКЛЮЧАЕМ дни недели - они относятся к инвайтам
+    
+    # HR индикаторы
     hr_indicators = [
-        'опыт', 'стаж', 'работал', 'работаю', 'компания', 'проект',
-        'технологии', 'навыки', 'знаю', 'умею', 'зарплата', 'зарплату',
-        'оклад', 'деньги', 'рублей', 'долларов', 'евро', 'byn', 'usd',
-        'локация', 'место', 'удаленка', 'офис', 'гибрид', 'минск',
-        'возраст', 'лет', 'военник', 'стабильное', 'недель', 'месяцев',
-        'senior', 'junior', 'middle', 'lead', 'head', 'главный', 'ведущий',
-        'сеньор', 'джуниор', 'мидл', 'лид', 'хеда', 'должности',
-        'комфортно', 'ищу', 'стабильное', 'локация', 'текущая', 'идеале'
+        'зарплата', 'заработная', 'оклад', 'salary', 'wage', 'pay',
+        'byn', 'usd', '$', 'руб', 'рублей', 'долларов',
+        'опыт', 'стаж', 'experience', 'работал', 'работала',
+        'senior', 'junior', 'middle', 'lead', 'head', 'trainee',
+        'навыки', 'skills', 'технологии', 'technologies',
+        'образование', 'education', 'университет', 'институт',
+        'резюме', 'cv', 'resume'
     ]
     
-    # Проверяем наличие дат
+    # Проверка условий
     has_date = any(re.search(pattern, text, re.IGNORECASE) for pattern in date_patterns)
-    
-    # Проверяем наличие времени
-    has_time = any(re.search(pattern, text, re.IGNORECASE) for pattern in time_patterns)
-    
-    # Проверяем наличие дней недели
+    has_time = any(re.search(pattern, text, re.IGNORECASE) for pattern in time_patterns)  
     has_weekday = any(day.lower() in text.lower() for day in weekdays)
-    
-    # Проверяем наличие индикаторов встречи
+    # НОВОЕ: Проверка относительных дат и времен суток
+    has_relative_date = any(rel_date in text.lower() for rel_date in relative_dates)
+    has_time_period = any(period in text.lower() for period in time_periods)
     has_meeting_indicators = any(indicator.lower() in text.lower() for indicator in meeting_indicators)
-    
-    # Проверяем наличие индикаторов HR-скрининга (с границами слов для точности)
     has_hr_indicators = any(re.search(r'\b' + re.escape(indicator.lower()) + r'\b', text.lower()) for indicator in hr_indicators)
     
-    # Проверяем длину текста
     text_length = len(text.strip())
     
-    # Улучшенная логика определения с приоритетом HR-индикаторов
-    # ПРИОРИТЕТ 1: Если есть явные индикаторы HR-скрининга - это HR-скрининг (даже если есть время)
+    # ОБНОВЛЕННАЯ ЛОГИКА определения (такая же как в forms.py)
     if has_hr_indicators:
-        return 'hr_screening'
-    
-    # ПРИОРИТЕТ 2: Если есть ключевые слова о кандидате - это HR-скрининг (с границами слов)
-    elif any(re.search(r'\b' + re.escape(keyword.lower()) + r'\b', text.lower()) for keyword in ['от', 'комфортно', 'готов', 'опыт', 'работаю', 'технологии', 'middle', 'senior', 'junior', 'хеда', 'сеньор', 'возраст', 'военник', 'стабильное', 'недель', 'локация', 'минск', 'гибрид', 'ищу', 'стабильное', 'должности', 'текущая', 'идеале']):
-        return 'hr_screening'
-    
-    # ПРИОРИТЕТ 3: Если есть явные временные указания (дата/время/день недели) - это инвайт
-    elif has_date or has_time or has_weekday:
-        return 'invite'
-    
-    # ПРИОРИТЕТ 4: Если есть индикаторы встречи И нет индикаторов HR-скрининга - это инвайт
+        return "hrscreening"  # 1. HR-индикаторы - HR-скрининг
+    elif any(re.search(r'\b' + re.escape(keyword.lower()) + r'\b', text.lower()) 
+             for keyword in ['senior', 'junior', 'middle', 'lead', 'head', 'trainee']):
+        return "hrscreening"  # 2. Ключевые слова уровней - HR-скрининг
+    # ОБНОВЛЕНО: добавлены has_relative_date и has_time_period
+    elif (has_date or has_time or has_weekday or has_relative_date or has_time_period):
+        return "invite"       # 3. Временные указания - инвайт
     elif has_meeting_indicators and not has_hr_indicators:
-        return 'invite'
-    
-    # ПРИОРИТЕТ 5: Если текст длинный и нет явных индикаторов - по умолчанию HR-скрининг
-    elif text_length > 100:
-        return 'hr_screening'
-    
-    # По умолчанию HR-скрининг
+        return "invite"       # 4. Индикаторы встреч без HR - инвайт
+    elif text_length < 100:
+        return "hrscreening"  # 5. Короткий текст - HR-скрининг
     else:
-        return 'hr_screening'
-    
-    # ВАЖНО: Никогда не возвращаем 'both' - это создает и HR-скрининг, и инвайт одновременно!
-    # HR-скрининг и инвайт должны создаваться отдельно
+        return "hrscreening"  # 6. По умолчанию - HR-скрининг
 
 User = get_user_model()
 
