@@ -208,12 +208,20 @@ SIDEBAR_MENU = {
 }
 
 def is_menu_active(request, menu_config):
-    """Проверяет, активен ли пункт меню - ТОЛЬКО точное совпадение URL"""
+    """Проверяет, активен ли пункт меню - точное совпадение или начало пути"""
     try:
         # Проверка точного совпадения URL
         try:
             menu_url = reverse(menu_config['url'])
             if request.path == menu_url:
+                return True
+        except NoReverseMatch:
+            pass
+            
+        # Проверка по началу пути для вложенных страниц
+        try:
+            menu_url = reverse(menu_config['url'])
+            if request.path.startswith(menu_url.rstrip('/')):
                 return True
         except NoReverseMatch:
             pass
@@ -246,8 +254,8 @@ def render_menu_item(request, key, item, level=0):
     
     # CSS классы
     nav_classes = ['nav-link']
-    # Добавляем active только для действительно активного элемента, не для родительских
-    if is_active and not has_active_child:
+    # Добавляем active для активного элемента ИЛИ если есть активный дочерний элемент
+    if is_active or has_active_child:
         nav_classes.append('active')
     if has_submenu:
         nav_classes.append('sidebar-toggle')
