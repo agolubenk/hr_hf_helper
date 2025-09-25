@@ -2050,8 +2050,8 @@ def invite_create_combined(request):
 
 @login_required
 @require_POST
-def get_gemini_time_analysis(request, pk):
-    """API для получения анализа времени от Gemini"""
+def get_parser_time_analysis(request, pk):
+    """API для получения анализа времени от парсера"""
     try:
         invite = get_object_or_404(Invite, pk=pk, user=request.user)
         
@@ -2064,7 +2064,7 @@ def get_gemini_time_analysis(request, pk):
             })
         
         # Если нет, анализируем время
-        success, message = invite.analyze_time_with_gemini()
+        success, message = invite.analyze_time_with_parser()
         
         if success:
             return JsonResponse({

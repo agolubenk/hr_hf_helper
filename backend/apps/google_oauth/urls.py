@@ -43,7 +43,7 @@ urlpatterns = [
     path('invites/<int:pk>/delete/', views.invite_delete, name='invite_delete'),
     path('invites/<int:pk>/regenerate-scorecard/', views.invite_regenerate_scorecard, name='invite_regenerate_scorecard'),
     path('invites/<int:pk>/invitation-text/', views.get_invitation_text, name='get_invitation_text'),
-    path('invites/<int:pk>/gemini-time-analysis/', views.get_gemini_time_analysis, name='get_gemini_time_analysis'),
+    path('invites/<int:pk>/parser-time-analysis/', views.get_parser_time_analysis, name='get_parser_time_analysis'),
     
     # Настройки структуры папок
     path('invites/settings/', views.scorecard_path_settings, name='scorecard_path_settings'),

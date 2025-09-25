@@ -263,23 +263,23 @@ class InviteCombinedForm(forms.ModelForm):
             )
         
         print(f"✅ CLEAN_COMBINED_DATA: URL извлечен: {candidate_url}")
-        print(f"✅ CLEAN_COMBINED_DATA: Весь текст сохранен для Gemini: '{combined_data}'")
+        print(f"✅ CLEAN_COMBINED_DATA: Весь текст сохранен для парсера: '{combined_data}'")
 
-        # Сохраняем только URL в скрытое поле, весь текст остается для Gemini
+        # Сохраняем только URL в скрытое поле, весь текст остается для парсера
         self.cleaned_data['candidate_url'] = candidate_url
 
         return combined_data
     
     def clean(self):
-        """Очистка формы - только извлекаем URL, дату обрабатывает Gemini"""
+        """Очистка формы - только извлекаем URL, дату обрабатывает парсер"""
         cleaned_data = super().clean()
         
         print(f"🔍 COMBINED_FORM_CLEAN: Начинаем очистку формы")
         print(f"🔍 COMBINED_FORM_CLEAN: cleaned_data keys: {list(cleaned_data.keys())}")
         print(f"🔍 COMBINED_FORM_CLEAN: combined_data: {cleaned_data.get('combined_data', 'НЕТ')}")
         
-        # URL уже извлечен в clean_combined_data, дату обработает Gemini
-        print(f"🔍 COMBINED_FORM_CLEAN: URL извлечен, дату обработает Gemini AI")
+        # URL уже извлечен в clean_combined_data, дату обработает парсер
+        print(f"🔍 COMBINED_FORM_CLEAN: URL извлечен, дату обработает парсер")
         print(f"🔍 COMBINED_FORM_CLEAN: Финальные cleaned_data: {cleaned_data}")
         return cleaned_data
     
@@ -331,17 +331,17 @@ class InviteCombinedForm(forms.ModelForm):
                     print(f"⚠️ COMBINED_FORM_SAVE: Huntflow API недоступен для вакансии: {e}")
                     # Продолжаем работу без данных вакансии
                 
-                # Анализируем время с помощью Gemini AI (это определит дату интервью)
-                print(f"🤖 COMBINED_FORM_SAVE: Анализируем время с помощью Gemini AI...")
-                success, message = invite.analyze_time_with_gemini()
+                # Анализируем время с помощью собственного парсера (это определит дату интервью)
+                print(f"🤖 COMBINED_FORM_SAVE: Анализируем время с помощью парсера...")
+                success, message = invite.analyze_time_with_parser()
                 if not success:
-                    print(f"❌ COMBINED_FORM_SAVE: Ошибка при анализе времени с Gemini: {message}")
+                    print(f"❌ COMBINED_FORM_SAVE: Ошибка при анализе времени с парсером: {message}")
                     
                     # Более понятные сообщения об ошибках для пользователя
-                    if "не смог найти подходящее время" in message:
+                    if "не смог найти подходящее время" in message or "не смог определить дату/время" in message:
                         user_message = "Не удалось найти подходящее время для встречи в доступных слотах календаря. Пожалуйста, проверьте доступность или попробуйте позже."
                     elif "не настроен в профиле" in message:
-                        user_message = "API ключ Gemini не настроен. Обратитесь к администратору."
+                        user_message = "Настройки парсера не настроены. Обратитесь к администратору."
                     elif "нет исходных данных" in message:
                         user_message = "Недостаточно данных для анализа времени. Проверьте заполнение формы."
                     else:
@@ -349,8 +349,8 @@ class InviteCombinedForm(forms.ModelForm):
                     
                     raise forms.ValidationError(user_message)
                 else:
-                    print(f"✅ COMBINED_FORM_SAVE: Время проанализировано с помощью Gemini AI")
-                    # Парсим дату из ответа Gemini
+                    print(f"✅ COMBINED_FORM_SAVE: Время проанализировано с помощью парсера")
+                    # Парсим дату из ответа парсера
                     if invite.gemini_suggested_datetime:
                         try:
                             from datetime import datetime
@@ -359,13 +359,13 @@ class InviteCombinedForm(forms.ModelForm):
                             # Парсим дату в формате DD.MM.YYYY HH:MM
                             parsed_datetime = datetime.strptime(invite.gemini_suggested_datetime, '%d.%m.%Y %H:%M')
                             invite.interview_datetime = minsk_tz.localize(parsed_datetime)
-                            print(f"✅ COMBINED_FORM_SAVE: Дата интервью установлена из Gemini: {invite.interview_datetime}")
+                            print(f"✅ COMBINED_FORM_SAVE: Дата интервью установлена из парсера: {invite.interview_datetime}")
                         except Exception as e:
-                            print(f"❌ COMBINED_FORM_SAVE: Ошибка парсинга даты от Gemini: {e}")
-                            raise forms.ValidationError(f'Ошибка парсинга даты от Gemini: {e}')
+                            print(f"❌ COMBINED_FORM_SAVE: Ошибка парсинга даты от парсера: {e}")
+                            raise forms.ValidationError(f'Ошибка парсинга даты от парсера: {e}')
                     else:
-                        print(f"❌ COMBINED_FORM_SAVE: Gemini не вернул время")
-                        raise forms.ValidationError('Gemini не вернул время для интервью')
+                        print(f"❌ COMBINED_FORM_SAVE: Парсер не вернул время")
+                        raise forms.ValidationError('Парсер не вернул время для интервью')
                 
                 # Создаем структуру в Google Drive (с улучшенной обработкой ошибок)
                 print(f"🔍 COMBINED_FORM_SAVE: Создаем структуру Google Drive...")
@@ -626,7 +626,7 @@ class HRScreeningForm(forms.ModelForm):
                 
                 hr_screening.save()  # Сохраняем промежуточные данные
                 
-                # Анализируем данные с помощью Gemini AI
+                # Анализируем данные с помощью Gemini AI (HR-скрининг остается с Gemini)
                 print(f"🤖 HR_SCREENING_FORM_SAVE: Анализируем данные с помощью Gemini AI...")
                 
                 success, message = hr_screening.analyze_with_gemini()

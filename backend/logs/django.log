@@ -2277,3 +2277,71 @@ DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick
 DEBUG template_tag: menu_items count = 11
 Watching for file changes with StatReloader
 [24/Sep/2025 18:59:19] "GET /google-oauth/chat/?vacancy_id=10 HTTP/1.1" 200 127145
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 24, 2025 - 18:58:42
+Django version 5.2.6, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-09-25T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: SM Screening | ЧЕРЕПАН РОМАН в 2025-09-25T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кравчук Илья в 2025-09-25T13:00:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org77198","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]
+DEBUG template_tag: full_url_name = google_oauth:chat_workflow
+DEBUG template_tag: accounts = {'items': [{'id': 695, 'name': 'Softnetix', 'nick': 'org77198', 'member_type': 'owner', 'production_calendar': 3}]}
+DEBUG template_tag: menu_items count = 11
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/manage.py", line 22, in <module>
+    main()
+    ~~~~^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/core/management/__init__.py", line 442, in execute_from_command_line
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/core/management/__init__.py", line 436, in execute
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/core/management/base.py", line 416, in run_from_argv
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/core/management/commands/runserver.py", line 69, in execute
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/core/management/base.py", line 460, in execute
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/core/management/commands/runserver.py", line 110, in handle
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/core/management/commands/runserver.py", line 117, in run
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/utils/autoreload.py", line 672, in run_with_reloader
+  File "/Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/utils/autoreload.py", line 273, in restart_with_reloader
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/subprocess.py", line 554, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/subprocess.py", line 1857, in _execute_child
+    self._posix_spawn(args, executable, env, restore_signals, close_fds,
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                      p2cread, p2cwrite,
+                      ^^^^^^^^^^^^^^^^^^
+                      c2pread, c2pwrite,
+                      ^^^^^^^^^^^^^^^^^^
+                      errread, errwrite)
+                      ^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/subprocess.py", line 1801, in _posix_spawn
+    self.pid = os.posix_spawn(executable, args, env, **kwargs)
+               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/agolubenko/hrhelper/backend/venv/bin/python'

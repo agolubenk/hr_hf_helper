@@ -151,12 +151,16 @@ class InviteViewSet(viewsets.ModelViewSet):
         return Response({'invitation_text': text})
     
     @action(detail=True, methods=['post'])
-    def analyze_time_with_gemini(self, request, pk=None):
-        """Анализ времени с помощью Gemini AI"""
+    def analyze_time_with_parser(self, request, pk=None):
+        """Анализ времени с помощью собственного парсера"""
         invite = self.get_object()
         try:
-            analysis = invite.analyze_time_with_gemini()
-            return Response({'analysis': analysis})
+            success, message = invite.analyze_time_with_parser()
+            return Response({
+                'success': success, 
+                'message': message,
+                'suggested_datetime': invite.gemini_suggested_datetime if success else None
+            })
         except Exception as e:
             return Response(
                 {'error': str(e)}, 

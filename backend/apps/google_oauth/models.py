@@ -1889,6 +1889,123 @@ class Invite(models.Model):
         except Exception as e:
             return False, f"Ошибка анализа времени с Gemini: {str(e)}"
     
+    def analyze_time_with_parser(self):
+        """
+        Анализ времени с помощью собственного парсера вместо Gemini AI
+        Возвращает (success: bool, message: str)
+        """
+        try:
+            # Импорт парсера
+            from .datetime_parser import parse_datetime_from_text
+            from datetime import datetime
+            import pytz
+
+            print(f"[PARSER DEBUG] Анализируем текст пользователя {self.user.username}")
+
+            # Проверяем наличие исходных данных
+            if not self.original_form_data:
+                return False, "Отсутствуют исходные данные для анализа"
+
+            # Очищаем текст от URL
+            text_without_url = self._remove_url_from_text(self.original_form_data)
+            print(f"[PARSER DEBUG] Текст для анализа: {text_without_url[:100]}...")
+
+            # Используем собственный парсер вместо Gemini AI
+            parsed_datetime, error_message = parse_datetime_from_text(
+                text_without_url, 
+                timezone_name='Europe/Minsk'
+            )
+
+            if parsed_datetime:
+                # Форматируем результат в нужном формате DD.MM.YYYY HH:MM
+                self.gemini_suggested_datetime = parsed_datetime.strftime("%d.%m.%Y %H:%M")
+                print(f"[PARSER SUCCESS] Определена дата/время: {self.gemini_suggested_datetime}")
+                return True, "Дата и время успешно определены с помощью парсера"
+            else:
+                print(f"[PARSER DEBUG] Парсер не смог определить время, пробуем fallback")
+                # Пытаемся найти fallback время из календаря
+                fallback_time = self._get_fallback_time_from_calendar()
+                if fallback_time:
+                    self.gemini_suggested_datetime = fallback_time
+                    print(f"[PARSER FALLBACK] Использовано время: {fallback_time}")
+                    return True, "Использовано резервное время из календаря"
+                else:
+                    return False, f"Парсер не смог определить дату/время: {error_message}"
+
+        except Exception as e:
+            print(f"[PARSER ERROR] {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return False, f"Ошибка парсера: {str(e)}"
+
+    def _get_fallback_time_from_calendar(self):
+        """
+        Получение резервного времени из календарных слотов
+        """
+        try:
+            from apps.google_oauth.services import GoogleOAuthService, GoogleCalendarService
+            from datetime import datetime, timedelta
+            import pytz
+
+            print("[FALLBACK DEBUG] Получаем события календаря...")
+
+            # Получаем события календаря
+            oauth_service = GoogleOAuthService(self.user)
+            calendar_service = GoogleCalendarService(oauth_service)
+            events_data = calendar_service.get_events(days_ahead=15)
+
+            if not events_data:
+                print("[FALLBACK DEBUG] Нет событий в календаре")
+                return None
+
+            # Вычисляем доступные слоты
+            time_slots = self._calculate_time_slots(events_data)
+            print(f"[FALLBACK DEBUG] Найдено слотов: {len(time_slots)}")
+
+            if not time_slots:
+                return None
+
+            # Берем первый доступный слот
+            minsk_tz = pytz.timezone('Europe/Minsk')
+            current_date = datetime.now(minsk_tz)
+
+            for i in range(14):  # Проверяем 2 недели вперед
+                check_date = current_date + timedelta(days=i)
+                if check_date.weekday() < 5:  # Только будни
+                    date_str = check_date.strftime("%d.%m.%Y")
+                    if date_str in time_slots and time_slots[date_str] != "—":
+                        # Находим первое доступное время
+                        available_slots = self._parse_available_slots(time_slots[date_str])
+                        if available_slots:
+                            fallback_time = f"{date_str} {available_slots[0]}"
+                            print(f"[FALLBACK SUCCESS] Найден слот: {fallback_time}")
+                            return fallback_time
+
+            return None
+
+        except Exception as e:
+            print(f"[FALLBACK ERROR] {str(e)}")
+            return None
+
+    def _parse_available_slots(self, slots_text):
+        """
+        Парсинг доступных временных слотов из текста
+        """
+        import re
+
+        if not slots_text or slots_text == "—":
+            return []
+
+        # Ищем время в формате HH:MM
+        time_matches = re.findall(r'(\d{1,2}:\d{2})', slots_text)
+
+        # Ищем время в формате HHMM или диапазоны HH-HH
+        if not time_matches:
+            hour_matches = re.findall(r'(\d{1,2})(?=\s*[-–]|\s*$)', slots_text)
+            time_matches = [f"{hour}:00" for hour in hour_matches if 8 <= int(hour) <= 18]
+
+        return time_matches[:3]  # Возвращаем максимум 3 слота
+    
     def _remove_url_from_text(self, text):
         """Убирает URL из текста, оставляя только текст с временем"""
         import re
