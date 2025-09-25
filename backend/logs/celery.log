@@ -7340,3 +7340,43 @@
 [2025-09-25 15:07:50,079: ERROR/ForkPoolWorker-1] Ошибка при сборе вакансий hh.ru: Could not find a suitable TLS CA certificate bundle, invalid path: /Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/certifi/cacert.pem
 [2025-09-25 15:07:50,083: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[7971cee5-40f0-4f88-8ca4-218229856347] received
 [2025-09-25 15:07:50,088: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[7971cee5-40f0-4f88-8ca4-218229856347] retry: Retry in 240s
+[2025-09-25 15:09:38,732: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[2a8bde33-16aa-4ada-9237-30628de5b3c3] received
+[2025-09-25 15:09:38,851: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-25 15:09:38,873: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[2a8bde33-16aa-4ada-9237-30628de5b3c3] succeeded in 0.10500562499510124s: {'processed': 0}
+[2025-09-25 15:09:56,047: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[eba0028e-4a5a-4d52-b24e-d350b8053487] received
+[2025-09-25 15:09:56,073: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-25 15:09:56,075: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[eba0028e-4a5a-4d52-b24e-d350b8053487] succeeded in 0.022951249993639067s: {'processed': 0}
+[2025-09-25 15:11:33,019: WARNING/ForkPoolWorker-1] /Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1671: RuntimeWarning: DateTimeField HHVacancyTemp.created_at received a naive datetime (2025-09-25 13:11:33.014882) while time zone support is active.
+  warnings.warn(
+
+[2025-09-25 15:11:33,025: INFO/ForkPoolWorker-1] Нет данных о последнем сборе - начинаем сбор
+[2025-09-25 15:11:33,025: INFO/ForkPoolWorker-1] 🎯 Будем искать по 37 ключевым словам
+[2025-09-25 15:11:33,025: INFO/ForkPoolWorker-1] 📍 Профессиональные роли: 9, Локации: 2
+[2025-09-25 15:11:33,025: INFO/ForkPoolWorker-1] 🔍 Ищем по ключевому слову: 'java'
+[2025-09-25 15:11:33,026: INFO/ForkPoolWorker-1]   📍 Локация: belarus (16)
+[2025-09-25 15:11:33,026: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-25 15:11:33,042: ERROR/ForkPoolWorker-1] Ошибка при сборе вакансий hh.ru: Could not find a suitable TLS CA certificate bundle, invalid path: /Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/certifi/cacert.pem
+[2025-09-25 15:11:33,049: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[fbd657f9-0027-4805-ae17-8b6f43d413d8] succeeded in 0.05336104199523106s: {'success': False, 'message': 'Could not find a suitable TLS CA certificate bundle, invalid path: /Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/certifi/cacert.pem'}
+[2025-09-25 15:11:50,107: WARNING/ForkPoolWorker-1] /Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1671: RuntimeWarning: DateTimeField HHVacancyTemp.created_at received a naive datetime (2025-09-25 13:11:50.106192) while time zone support is active.
+  warnings.warn(
+
+[2025-09-25 15:11:50,112: INFO/ForkPoolWorker-1] Нет данных о последнем сборе - начинаем сбор
+[2025-09-25 15:11:50,112: INFO/ForkPoolWorker-1] 🎯 Будем искать по 37 ключевым словам
+[2025-09-25 15:11:50,112: INFO/ForkPoolWorker-1] 📍 Профессиональные роли: 9, Локации: 2
+[2025-09-25 15:11:50,112: INFO/ForkPoolWorker-1] 🔍 Ищем по ключевому слову: 'java'
+[2025-09-25 15:11:50,113: INFO/ForkPoolWorker-1]   📍 Локация: belarus (16)
+[2025-09-25 15:11:50,113: INFO/ForkPoolWorker-1]     👤 Роль: programmer (96)
+[2025-09-25 15:11:50,114: ERROR/ForkPoolWorker-1] Ошибка при сборе вакансий hh.ru: Could not find a suitable TLS CA certificate bundle, invalid path: /Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/certifi/cacert.pem
+[2025-09-25 15:11:50,116: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[7971cee5-40f0-4f88-8ca4-218229856347] succeeded in 0.0286223340081051s: {'success': False, 'message': 'Could not find a suitable TLS CA certificate bundle, invalid path: /Users/agolubenko/hrhelper/backend/venv/lib/python3.13/site-packages/certifi/cacert.pem'}
+[2025-09-25 15:14:38,855: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[132f3e36-24e0-4e06-9749-cd8a64fc7af0] received
+[2025-09-25 15:14:38,913: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-25 15:14:38,961: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[132f3e36-24e0-4e06-9749-cd8a64fc7af0] succeeded in 0.09369279199745506s: {'processed': 0}
+[2025-09-25 15:14:56,068: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[583e1201-40f2-4077-ac19-a26b7aee9edd] received
+[2025-09-25 15:14:56,095: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-25 15:14:56,096: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[583e1201-40f2-4077-ac19-a26b7aee9edd] succeeded in 0.019693915994139388s: {'processed': 0}
+[2025-09-25 15:19:38,807: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[2f4a05df-5323-4a95-828c-d6239795fb53] received
+[2025-09-25 15:19:38,827: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-25 15:19:38,829: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[2f4a05df-5323-4a95-828c-d6239795fb53] succeeded in 0.01927545797661878s: {'processed': 0}
+[2025-09-25 15:19:56,057: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[4e2ce98f-af7f-4698-971d-df9e9f38d361] received
+[2025-09-25 15:19:56,079: INFO/ForkPoolWorker-1] Отправлено 0 вакансий на AI анализ
+[2025-09-25 15:19:56,082: INFO/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[4e2ce98f-af7f-4698-971d-df9e9f38d361] succeeded in 0.021485415985807776s: {'processed': 0}

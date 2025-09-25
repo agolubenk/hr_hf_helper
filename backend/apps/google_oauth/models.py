@@ -711,8 +711,14 @@ class Invite(models.Model):
             
             # Обновляем статус на Tech Screening при создании инвайта со scorecard
             if calendar_success:
-                tech_screening_success = self.update_candidate_status_to_tech_screening()
-                print(f"[TECH_SCREENING_UPDATE] Статус обновлен: {tech_screening_success}")
+                print(f"[TECH_SCREENING_UPDATE] Календарное событие создано успешно, обновляем статус...")
+                try:
+                    tech_screening_success = self.update_candidate_status_to_tech_screening()
+                    print(f"[TECH_SCREENING_UPDATE] Статус обновлен: {tech_screening_success}")
+                except Exception as e:
+                    print(f"[TECH_SCREENING_UPDATE] Ошибка при обновлении статуса: {str(e)}")
+            else:
+                print(f"[TECH_SCREENING_UPDATE] Календарное событие НЕ создано, пропускаем обновление статуса")
             
             return True, f"Структура создана: {folder_path}. Scorecard скопирован и готов к обработке."
             
@@ -1468,29 +1474,54 @@ class Invite(models.Model):
     def update_candidate_status_to_tech_screening(self):
         """Обновление статуса кандидата на Tech Screening в Huntflow"""
         try:
+            print(f"[TECH_SCREENING] Начинаем обновление статуса кандидата {self.candidate_id}")
+            
             from apps.huntflow.services import HuntflowService
             from apps.vacancies.models import Vacancy
             from datetime import datetime, timezone, timedelta
             import re
 
-            print(f"[TECH_SCREENING] Обновляем статус кандидата {self.candidate_id}")
+            print(f"[TECH_SCREENING] Импорты выполнены успешно")
 
-            # Получаем account_id пользователя
-            account_id = self.get_user_account_id()
-            if not account_id:
+            # Получаем account_id из Huntflow API
+            service = HuntflowService(self.user)
+            accounts = service.get_accounts()
+            if not accounts or 'items' not in accounts or len(accounts['items']) == 0:
                 print("[TECH_SCREENING] Не удалось получить account_id")
                 return False
+            
+            account_id = accounts['items'][0]['id']
+            print(f"[TECH_SCREENING] Получен account_id: {account_id}")
 
-            # ID статуса Tech Screening (нужно получить через Huntflow API или настройки)
-            # TODO: Получить актуальный ID статуса Tech Screening через API
-            tech_screening_status_id = 3459  # Замените на актуальный ID
+            # Получаем ID статуса Tech Screening через API
+            tech_screening_status_id = None
+            
+            # Получаем список статусов вакансий
+            print(f"[TECH_SCREENING] Запрашиваем статусы вакансий...")
+            statuses = service.get_vacancy_statuses(account_id)
+            print(f"[TECH_SCREENING] Получены статусы: {statuses}")
+            
+            if statuses and 'items' in statuses:
+                print(f"[TECH_SCREENING] Ищем статус Tech Screening среди {len(statuses['items'])} статусов")
+                for status in statuses['items']:
+                    status_name = status.get('name', '')
+                    print(f"[TECH_SCREENING] Проверяем статус: '{status_name}'")
+                    if status_name.lower() == 'tech screening':
+                        tech_screening_status_id = status.get('id')
+                        print(f"🔍 TECH_SCREENING: Найден статус Tech Screening с ID {tech_screening_status_id}")
+                        break
+            
+            if not tech_screening_status_id:
+                print(f"⚠️ TECH_SCREENING: Статус Tech Screening не найден, используем fallback ID")
+                tech_screening_status_id = 3459  # Fallback ID
 
             # Формируем комментарий в формате "Четверг, 25 сентября⋅11:00–11:45"
             comment = self.get_formatted_interview_datetime()
             print(f"[TECH_SCREENING] Кандидат: {self.candidate_id} -> Tech Screening")
             print(f"[TECH_SCREENING] Комментарий: {comment}")
+            print(f"[TECH_SCREENING] Используем статус ID: {tech_screening_status_id}")
 
-            service = HuntflowService(self.user)
+            print(f"[TECH_SCREENING] Вызываем update_applicant_status...")
             result = service.update_applicant_status(
                 account_id=account_id,
                 applicant_id=int(self.candidate_id),
@@ -1498,6 +1529,7 @@ class Invite(models.Model):
                 comment=comment,
                 vacancy_id=int(self.vacancy_id) if self.vacancy_id else None
             )
+            print(f"[TECH_SCREENING] Результат update_applicant_status: {result}")
 
             if result:
                 print(f"[TECH_SCREENING] Успешно обновлен статус на Tech Screening")
@@ -1508,6 +1540,8 @@ class Invite(models.Model):
 
         except Exception as e:
             print(f"[TECH_SCREENING] Исключение: {str(e)}")
+            import traceback
+            print(f"[TECH_SCREENING] Traceback: {traceback.format_exc()}")
             return False
 
     def _update_candidate_status_to_tech_screening(self):
