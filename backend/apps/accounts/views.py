@@ -437,7 +437,7 @@ def test_notion_api(request):
 
 
 def account_login(request):
-    """Простая страница входа"""
+    """Универсальная страница входа (HTML формы)"""
     if request.user.is_authenticated:
         return redirect('/huntflow/')
     
@@ -459,10 +459,98 @@ def account_login(request):
 
 
 def account_logout(request):
-    """Выход из системы"""
+    """Универсальный выход из системы (HTML)"""
     logout(request)
     messages.success(request, 'Вы успешно вышли из системы!')
     return redirect('/huntflow/')
+
+
+@csrf_exempt
+def unified_login(request):
+    """Универсальная функция входа (поддерживает HTML и JSON)"""
+    if request.user.is_authenticated:
+        if request.content_type == 'application/json':
+            return JsonResponse({'success': True, 'message': 'Уже авторизован'})
+        return redirect('/huntflow/')
+    
+    if request.method == 'POST':
+        # Определяем тип запроса
+        if request.content_type == 'application/json':
+            # JSON API запрос
+            try:
+                data = json.loads(request.body)
+                username = data.get('username')
+                password = data.get('password')
+            except json.JSONDecodeError:
+                return JsonResponse({'error': 'Неверный JSON'}, status=400)
+        else:
+            # HTML форма
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+        
+        if not username or not password:
+            if request.content_type == 'application/json':
+                return JsonResponse(
+                    {'error': 'Имя пользователя и пароль обязательны'}, 
+                    status=400
+                )
+            else:
+                messages.error(request, 'Имя пользователя и пароль обязательны.')
+                return render(request, 'accounts/login.html')
+        
+        from django.contrib.auth import authenticate
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                if request.content_type == 'application/json':
+                    from .serializers import UserSerializer
+                    serializer = UserSerializer(user)
+                    return JsonResponse({
+                        'success': True,
+                        'message': 'Вход выполнен успешно',
+                        'user': serializer.data
+                    })
+                else:
+                    messages.success(request, 'Вы успешно вошли в систему!')
+                    return redirect('/huntflow/')
+            else:
+                if request.content_type == 'application/json':
+                    return JsonResponse(
+                        {'error': 'Аккаунт деактивирован'}, 
+                        status=400
+                    )
+                else:
+                    messages.error(request, 'Аккаунт деактивирован.')
+        else:
+            if request.content_type == 'application/json':
+                return JsonResponse(
+                    {'error': 'Неверное имя пользователя или пароль'}, 
+                    status=401
+                )
+            else:
+                messages.error(request, 'Неверное имя пользователя или пароль.')
+    
+    # GET запрос - показываем форму входа
+    if request.content_type == 'application/json':
+        return JsonResponse({'error': 'Метод не поддерживается'}, status=405)
+    return render(request, 'accounts/login.html')
+
+
+@csrf_exempt
+def unified_logout(request):
+    """Универсальная функция выхода (поддерживает HTML и JSON)"""
+    logout(request)
+    
+    if request.content_type == 'application/json':
+        return JsonResponse({
+            'success': True,
+            'message': 'Выход выполнен успешно'
+        })
+    else:
+        messages.success(request, 'Вы успешно вышли из системы!')
+        return redirect('/huntflow/')
 
 
 def google_oauth_demo(request):

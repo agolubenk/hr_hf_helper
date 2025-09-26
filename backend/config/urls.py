@@ -11,8 +11,8 @@ urlpatterns = [
     # API endpoints
     path('', include('config.api_urls')),
     
-    # Simple API endpoints (без CSRF)
-    path('simple-api/', include('apps.accounts.urls_simple')),
+    # Simple API endpoints (без CSRF) - теперь в основном urls.py
+    # path('simple-api/', include('apps.accounts.urls_simple')),  # Удалено - объединено в accounts/urls.py
     
     # Django admin
     path('admin/', admin.site.urls),
