@@ -841,7 +841,8 @@ select.form-control {
     --hr-border: var(--color-border);
     --hr-hover-bg: var(--color-secondary);
     --hr-sidebar-bg: var(--color-primary);
-    --hr-gradient: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+    --hr-gradient: linear-gradient(135deg, var(--color-lime-500) 0%, var(--color-water-500) 100%);
+    --hr-gradient-hover: linear-gradient(135deg, var(--color-lime-600) 0%, var(--color-water-600) 100%);
     --hr-success: var(--color-success);
     --hr-warning: var(--color-warning);
     --hr-danger: var(--color-error);
@@ -1307,6 +1308,21 @@ a:hover {
     color: var(--color-btn-primary-text);
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     border: none;
+    transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.card:hover .card-header {
+    background: var(--hr-gradient-hover);
+}
+
+/* Цвет текста в заголовках карточек для тёмной темы */
+[data-theme="dark"] .card-title {
+    color: var(--color-luna-400);
+}
+
+/* Переопределение text-muted для тёмной темы */
+[data-theme="dark"] .text-muted {
+    color: var(--color-gray-300) !important;
 }
 
 .card-title {
@@ -2062,7 +2078,7 @@ a:hover {
   --color-background: #1a1a1a;
   --color-surface: #2a2a2a;
   --color-text: #ffffff;
-  --color-text-secondary: #a0a0a0;
+  --color-text-secondary: var(--color-gray-300);
   --color-primary: var(--color-lime-400); /* Светлый лайм для темной темы */
   --color-primary-hover: var(--color-lime-500);
   --color-primary-active: var(--color-lime-600);
@@ -2084,6 +2100,8 @@ a:hover {
   --hr-primary: var(--color-lime-400);
   --hr-secondary: var(--color-water-400);
   --hr-accent: var(--color-pink-400);
+  --hr-gradient: linear-gradient(135deg, var(--color-lime-600) 0%, var(--color-pink-500) 100%);
+  --hr-gradient-hover: linear-gradient(135deg, var(--color-lime-700) 0%, var(--color-pink-600) 100%);
   --hr-success: var(--color-water-400);
   --hr-warning: var(--color-orange-400);
   --hr-error: var(--color-red-500);

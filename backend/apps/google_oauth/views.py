@@ -459,6 +459,47 @@ def calendar_view(request):
     return render(request, 'google_oauth/calendar.html', context)
 
 
+@login_required
+def drive_view(request):
+    """Просмотр Google Drive"""
+    oauth_service = GoogleOAuthService(request.user)
+    oauth_account = oauth_service.get_oauth_account()
+    
+    if not oauth_account or not oauth_account.has_scope('https://www.googleapis.com/auth/drive'):
+        messages.error(request, 'Нет доступа к Google Drive')
+        return redirect('accounts:profile')
+    
+    # Получаем файлы из кэша через API
+    drive_service = GoogleDriveService(oauth_service)
+    files_data = drive_service.get_files(max_results=50)
+    
+    # Преобразуем файлы в нужный формат
+    files = []
+    for file_data in files_data:
+        try:
+            modified_time = datetime.fromisoformat(file_data['modifiedTime'].replace('Z', '+00:00'))
+            files.append({
+                'id': file_data['id'],
+                'name': file_data['name'],
+                'mime_type': file_data['mimeType'],
+                'size': int(file_data.get('size', 0)) if file_data.get('size') else None,
+                'modified_time': modified_time,
+                'web_view_link': file_data.get('webViewLink', ''),
+                'web_content_link': file_data.get('webContentLink', ''),
+            })
+        except Exception as e:
+            print(f"Ошибка обработки файла {file_data.get('id', 'unknown')}: {e}")
+            continue
+    
+    # Сортируем файлы по времени изменения
+    files.sort(key=lambda x: x['modified_time'], reverse=True)
+    
+    context = {
+        'oauth_account': oauth_account,
+        'files': files,
+    }
+    
+    return render(request, 'google_oauth/drive.html', context)
 
 
 @login_required
@@ -1013,6 +1054,108 @@ def calendar_events(request):
     return render(request, 'google_oauth/calendar_events.html', context)
 
 
+@login_required
+def drive_files(request):
+    """Список файлов Google Drive"""
+    user = request.user
+    
+    # Проверяем OAuth аккаунт
+    oauth_service = GoogleOAuthService(user)
+    integration = oauth_service.get_oauth_account()
+    
+    # Временно отключаем проверку токена для диагностики
+    if not integration:
+        messages.warning(request, 'Необходимо подключить Google аккаунт для просмотра файлов Drive.')
+        return redirect('google_oauth:dashboard')
+    
+    # Проверяем токен, но не перенаправляем, если он истек
+    if not integration.is_token_valid():
+        print(f"🔍 DEBUG DRIVE: Token expired, but continuing anyway for debugging")
+        messages.warning(request, 'Токен Google истек. Рекомендуется переподключить аккаунт.')
+    
+    # Получаем файлы из кэша через API
+    drive_service = GoogleDriveService(oauth_service)
+    files_data = drive_service.get_files(max_results=100)
+    
+    # Преобразуем данные API в формат для шаблона
+    files = []
+    for file_data in files_data:
+        try:
+            # Парсим даты
+            created_time = datetime.fromisoformat(file_data['createdTime'].replace('Z', '+00:00'))
+            modified_time = datetime.fromisoformat(file_data['modifiedTime'].replace('Z', '+00:00'))
+            
+            # Создаем объект файла для шаблона
+            file_size = int(file_data.get('size', 0)) if file_data.get('size') else None
+            file_mime_type = file_data['mimeType']
+            
+            file_obj = {
+                'id': file_data['id'],
+                'name': file_data['name'],
+                'mime_type': file_mime_type,
+                'size': file_size,
+                'created_time': created_time,
+                'modified_time': modified_time,
+                'web_view_link': file_data.get('webViewLink', ''),
+                'web_content_link': file_data.get('webContentLink', ''),
+                'parents': file_data.get('parents', []),
+                'is_folder': file_mime_type == 'application/vnd.google-apps.folder',
+                'is_shared': False,  # Пока не реализовано в API
+                'get_size_display': lambda: format_file_size(file_size),
+                'get_file_type_display': lambda: get_file_type_display(file_mime_type),
+            }
+            files.append(file_obj)
+        except Exception as e:
+            print(f"Ошибка обработки файла {file_data.get('id', 'unknown')}: {e}")
+            continue
+    
+    # Сортируем файлы по времени изменения
+    files.sort(key=lambda x: x['modified_time'], reverse=True)
+    
+    # Поиск и фильтрация
+    from .forms import DriveFileSearchForm
+    search_form = DriveFileSearchForm(request.GET)
+    if search_form.is_valid():
+        search = search_form.cleaned_data.get('search')
+        is_shared = search_form.cleaned_data.get('is_shared')
+        shared_with_me = search_form.cleaned_data.get('shared_with_me')
+        
+        # Фильтруем файлы в памяти
+        filtered_files = []
+        for file_obj in files:
+            # Поиск по названию
+            if search:
+                if search.lower() not in file_obj['name'].lower():
+                    continue
+            
+            # Фильтр по общему доступу (пока не реализовано)
+            if is_shared == 'true' and not file_obj['is_shared']:
+                continue
+            elif is_shared == 'false' and file_obj['is_shared']:
+                continue
+            
+            # Фильтр по "поделились со мной" (пока не реализовано)
+            if shared_with_me == 'true' and not file_obj.get('shared_with_me', False):
+                continue
+            elif shared_with_me == 'false' and file_obj.get('shared_with_me', False):
+                continue
+            
+            filtered_files.append(file_obj)
+        
+        files = filtered_files
+    
+    # Пагинация
+    paginator = Paginator(files, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'page_obj': page_obj,
+        'search_form': search_form,
+        'integration': integration,
+    }
+    
+    return render(request, 'google_oauth/drive_files.html', context)
 
 
 @login_required
@@ -1934,6 +2077,179 @@ def get_parser_time_analysis(request, pk):
         })
 
 
+# Views для HR-скрининга
+@login_required
+def hr_screening_list(request):
+    """Список HR-скринингов"""
+    hr_screenings = HRScreening.objects.filter(user=request.user).order_by('-created_at')
+    
+    # Пагинация
+    paginator = Paginator(hr_screenings, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'page_obj': page_obj,
+        'hr_screenings': page_obj,
+    }
+    
+    return render(request, 'google_oauth/hr_screening_list.html', context)
+
+
+@login_required
+def hr_screening_create(request):
+    """Создание нового HR-скрининга"""
+    if request.method == 'POST':
+        form = HRScreeningForm(request.POST, user=request.user)
+        if form.is_valid():
+            try:
+                hr_screening = form.save()
+                messages.success(request, 'HR-скрининг успешно создан и обработан!')
+                return redirect('google_oauth:hr_screening_detail', pk=hr_screening.pk)
+            except Exception as e:
+                messages.error(request, f'Ошибка при создании HR-скрининга: {str(e)}')
+    else:
+        form = HRScreeningForm(user=request.user)
+    
+    context = {
+        'form': form,
+        'title': 'Создать HR-скрининг'
+    }
+    
+    return render(request, 'google_oauth/hr_screening_form.html', context)
+
+
+@login_required
+def hr_screening_detail(request, pk):
+    """Детали HR-скрининга"""
+    hr_screening = get_object_or_404(HRScreening, pk=pk, user=request.user)
+    
+    # Парсим анализ от Gemini
+    parsed_analysis = hr_screening.get_parsed_analysis()
+    
+    # Получаем информацию о поле "Уровень" из Huntflow
+    level_field_info = None
+    if hr_screening.determined_grade:
+        try:
+            fields_schema_success, fields_schema = hr_screening.get_candidate_fields_schema()
+            if fields_schema_success and fields_schema:
+                # Ищем поле "Уровень" в схеме
+                for field_id, field_data in fields_schema.items():
+                    if field_data.get('title') == 'Уровень':
+                        # Получаем список доступных значений
+                        values = field_data.get('values', [])
+                        determined_grade = hr_screening.determined_grade
+                        
+                        # Ищем правильное значение из вариантов
+                        selected_value = None
+                        selected_index = None
+                        if determined_grade and values:
+                            grade_name_lower = determined_grade.lower()
+                            
+                            # Ищем точное совпадение
+                            for index, value in enumerate(values):
+                                if value.lower() == grade_name_lower:
+                                    selected_value = value
+                                    selected_index = index
+                                    break
+                            
+                            # Если точного совпадения нет, ищем частичное
+                            if not selected_value:
+                                for index, value in enumerate(values):
+                                    if grade_name_lower in value.lower() or value.lower() in grade_name_lower:
+                                        selected_value = value
+                                        selected_index = index
+                                        break
+                        
+                        level_field_info = {
+                            'field_key': field_id,  # Используем field_id вместо search_field
+                            'field_title': field_data.get('title', 'Уровень'),
+                            'field_id': field_id,
+                            'search_field': field_data.get('search_field', 'string_field_1'),
+                            'selected_value': selected_value,  # Выбранное значение из вариантов
+                            'selected_index': selected_index,  # Индекс выбранного значения
+                            'available_values': values  # Все доступные варианты
+                        }
+                        break
+        except Exception as e:
+            print(f"Ошибка при получении информации о поле уровня: {e}")
+    
+    # Получаем информацию о поле "money" из Huntflow
+    money_field_info = None
+    if hr_screening.extracted_salary:
+        try:
+            fields_schema_success, fields_schema = hr_screening.get_candidate_fields_schema()
+            if fields_schema_success and fields_schema:
+                # Ищем поле "money" в схеме
+                for field_id, field_data in fields_schema.items():
+                    if field_data.get('title') == 'Зарплата' or field_id == 'money':
+                        money_field_info = {
+                            'field_key': field_id,  # Используем field_id вместо 'money'
+                            'field_title': field_data.get('title', 'Зарплата'),
+                            'field_id': field_id,
+                            'search_field': 'money'
+                        }
+                        break
+        except Exception as e:
+            print(f"Ошибка при получении информации о поле зарплаты: {e}")
+    
+    # Получаем реальный account_id пользователя
+    account_id = hr_screening._get_user_account_id()
+    
+    context = {
+        'hr_screening': hr_screening,
+        'parsed_analysis': parsed_analysis,
+        'level_field_info': level_field_info,
+        'money_field_info': money_field_info,
+        'account_id': account_id,
+    }
+    
+    return render(request, 'google_oauth/hr_screening_detail.html', context)
+
+
+@login_required
+def hr_screening_delete(request, pk):
+    """Удаление HR-скрининга"""
+    hr_screening = get_object_or_404(HRScreening, pk=pk, user=request.user)
+    
+    if request.method == 'POST':
+        hr_screening.delete()
+        messages.success(request, 'HR-скрининг успешно удален!')
+        return redirect('hr_screening_list')
+    
+    context = {
+        'hr_screening': hr_screening,
+    }
+    
+    return render(request, 'google_oauth/hr_screening_confirm_delete.html', context)
+
+
+@login_required
+@require_POST
+def hr_screening_retry_analysis(request, pk):
+    """Повторный анализ HR-скрининга с помощью Gemini"""
+    hr_screening = get_object_or_404(HRScreening, pk=pk, user=request.user)
+    
+    try:
+        success, message = hr_screening.analyze_with_gemini()
+        
+        if success:
+            return JsonResponse({
+                'success': True,
+                'message': 'Анализ успешно выполнен',
+                'analysis': hr_screening.gemini_analysis
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'error': message
+            })
+            
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Ошибка анализа: {str(e)}'
+        })
 
 
 @login_required

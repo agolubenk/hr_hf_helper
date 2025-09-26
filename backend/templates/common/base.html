@@ -97,7 +97,7 @@
         </div>
 
                 <!-- Messages -->
-    {% if messages %}
+    {% if messages and not request.resolver_match.url_name == 'chat_workflow' and not request.resolver_match.url_name == 'chat_workflow_session' %}
         <div class="messages">
             {% for message in messages %}
             <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -387,9 +387,22 @@
             }, 3000);
         }
 
+        // Функция для очистки всех тостов
+        function clearAllToasts() {
+            const existingToasts = document.querySelectorAll('.toast-notification');
+            existingToasts.forEach(toast => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            });
+        }
+
         // Инициализация темы при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Инициализация переключателя темы...');
+            
+            // Очищаем все старые тосты при загрузке страницы
+            clearAllToasts();
             
             // Получаем сохраненную тему или используем системную
             const savedTheme = localStorage.getItem('theme');
