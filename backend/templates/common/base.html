@@ -16,60 +16,7 @@
     <!-- HR Helper Custom CSS -->
     <link href="{% static 'css/hrhelper.css' %}" rel="stylesheet">
     
-    <!-- Стили для многоуровневого сайдбара -->
-    <style>
-    /* Стили для многоуровневого сайдбара */
-    .sidebar .nav-item.has-submenu > .nav-link {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .sidebar .nav-item.has-submenu .submenu-arrow {
-        transition: transform 0.2s ease;
-        font-size: 0.8em;
-    }
-
-    .sidebar .nav-item.has-submenu .nav-link[aria-expanded="true"] .submenu-arrow {
-        transform: rotate(180deg);
-    }
-
-    /* Стили для вложенных пунктов */
-    .sidebar .nav-item .nav-item .nav-link {
-        padding-left: 2rem;
-        font-size: 0.9em;
-        border-left: 2px solid transparent;
-        border-radius: 6px;
-        margin: 2px 0;
-    }
-
-    .sidebar .nav-item .nav-item .nav-link:hover {
-        border-left-color: rgba(255, 255, 255, 0.3);
-        background: rgba(255, 255, 255, 0.05);
-    }
-
-    /* Стили для глубокой вложенности (3 уровня) */
-    .sidebar .nav-item .nav-item .nav-item .nav-link {
-        padding-left: 3rem;
-        font-size: 0.85em;
-    }
-
-    /* Анимации для collapse */
-    .collapse {
-        transition: height 0.25s ease;
-    }
-
-    /* Responsive адаптация для мобильных */
-    @media (max-width: 768px) {
-        .sidebar .nav-item .nav-item .nav-link {
-            padding-left: 1.5rem;
-        }
-        
-        .sidebar .nav-item .nav-item .nav-item .nav-link {
-            padding-left: 2.5rem;
-        }
-    }
-    </style>
+    <!-- Стили для многоуровневого сайдбара теперь включены в hrhelper.css -->
     
         {% block extra_css %}{% endblock %}
 </head>
