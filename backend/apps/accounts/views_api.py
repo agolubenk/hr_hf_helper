@@ -1,15 +1,14 @@
 from rest_framework import viewsets, status, permissions
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth.models import Group
-from django.contrib.auth import authenticate, login
-from django.db.models import Q
 from .models import User
-from .serializers import (
+from .logic.serializers import (
     UserSerializer, UserCreateSerializer, UserProfileSerializer,
-    UserChangePasswordSerializer, UserSettingsSerializer, GroupSerializer
+    UserChangePasswordSerializer, UserSettingsSerializer, GroupSerializer,
+    UserStatsSerializer
 )
+from .logic.user_service import UserService
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -89,31 +88,20 @@ class UserViewSet(viewsets.ModelViewSet):
         user = self.get_object()
         group_ids = request.data.get('group_ids', [])
         
-        try:
-            groups = Group.objects.filter(id__in=group_ids)
-            user.groups.set(groups)
-            return Response({'message': 'Группы успешно назначены'})
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        # Используем сервисный слой для назначения групп
+        success, message = UserService.assign_groups_to_user(user, group_ids)
+        
+        if success:
+            return Response({'message': message})
+        else:
+            return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=False, methods=['get'], url_path='stats')
     def stats(self, request):
         """Статистика пользователей"""
-        total_users = User.objects.count()
-        active_users = User.objects.filter(is_active=True).count()
-        staff_users = User.objects.filter(is_staff=True).count()
-        
-        # Статистика по группам
-        groups_stats = {}
-        for group in Group.objects.all():
-            groups_stats[group.name] = User.objects.filter(groups=group).count()
-        
-        return Response({
-            'total_users': total_users,
-            'active_users': active_users,
-            'staff_users': staff_users,
-            'groups_stats': groups_stats
-        })
+        # Используем сервисный слой для получения статистики
+        stats_data = UserService.get_user_stats()
+        return Response(stats_data)
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
@@ -126,66 +114,7 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     ordering = ['name']
 
 
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-
-from django.http import JsonResponse
-import json
-
-@csrf_exempt
-def api_login(request):
-    """API endpoint для входа в систему"""
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Метод не поддерживается'}, status=405)
-    
-    try:
-        data = json.loads(request.body)
-        username = data.get('username')
-        password = data.get('password')
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'Неверный JSON'}, status=400)
-    
-    if not username or not password:
-        return JsonResponse(
-            {'error': 'Имя пользователя и пароль обязательны'}, 
-            status=400
-        )
-    
-    user = authenticate(request, username=username, password=password)
-    
-    if user is not None:
-        if user.is_active:
-            login(request, user)
-            serializer = UserSerializer(user)
-            return JsonResponse({
-                'success': True,
-                'message': 'Вход выполнен успешно',
-                'user': serializer.data
-            }, status=200)
-        else:
-            return JsonResponse(
-                {'error': 'Аккаунт деактивирован'}, 
-                status=400
-            )
-    else:
-        return JsonResponse(
-            {'error': 'Неверное имя пользователя или пароль'}, 
-            status=401
-        )
-
-
-@csrf_exempt
-def api_logout(request):
-    """API endpoint для выхода из системы"""
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Метод не поддерживается'}, status=405)
-    
-    if not request.user.is_authenticated:
-        return JsonResponse({'error': 'Пользователь не авторизован'}, status=401)
-    
-    from django.contrib.auth import logout
-    logout(request)
-    return JsonResponse({
-        'success': True,
-        'message': 'Выход выполнен успешно'
-    }, status=200)
+# Дублированные функции api_login и api_logout удалены
+# Теперь используются универсальные функции из views.py:
+# - unified_api_view + login_api_handler
+# - unified_api_view + logout_api_handler

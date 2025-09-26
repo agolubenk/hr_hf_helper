@@ -360,8 +360,8 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 SOCIALACCOUNT_QUERY_EMAIL = True
 
 # Адаптеры для allauth
-ACCOUNT_ADAPTER = 'apps.accounts.adapters.CustomAccountAdapter'
-SOCIALACCOUNT_ADAPTER = 'apps.accounts.adapters.CustomSocialAccountAdapter'
+ACCOUNT_ADAPTER = 'apps.accounts.logic.auth_adapters.CustomAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'apps.accounts.logic.auth_adapters.CustomSocialAccountAdapter'
 
 CORS_ALLOW_CREDENTIALS = True
 

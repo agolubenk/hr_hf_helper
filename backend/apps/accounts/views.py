@@ -1,244 +1,167 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseNotAllowed
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
 import json
-import urllib.parse
-import secrets
 
 from .models import User
 from .forms import ProfileEditForm, IntegrationSettingsForm
+from .logic.user_service import UserService
 
 
-def google_oauth_redirect(request):
-    """Прямой переход на Google OAuth"""
-    # Параметры для Google OAuth
-    client_id = '968014303116-vtqq5f39tkaningitmj3dbq25snnmdgp.apps.googleusercontent.com'
-    redirect_uri = f"{request.scheme}://{request.get_host()}/profile/google-oauth-callback/"
-    
-    # Генерируем state для безопасности
-    state = secrets.token_urlsafe(32)
-    request.session['oauth_state'] = state
-    
-    # Параметры OAuth
-    params = {
-        'client_id': client_id,
-        'redirect_uri': redirect_uri,
-        'response_type': 'code',
-        'scope': 'openid email profile',
-        'state': state,
-        'access_type': 'online',
-        'prompt': 'select_account'
-    }
-    
-    # Формируем URL для Google OAuth
-    google_oauth_url = 'https://accounts.google.com/o/oauth2/v2/auth'
-    query_string = urllib.parse.urlencode(params)
-    full_url = f"{google_oauth_url}?{query_string}"
-    
-    return redirect(full_url)
+# =============================================================================
+# УНИВЕРСАЛЬНЫЕ ФУНКЦИИ
+# =============================================================================
+
+def unified_template_view(request, template_name, context=None):
+    """
+    Универсальная функция для рендеринга HTML-шаблонов.
+    - template_name: строка, путь к шаблону
+    - context: словарь с данными для шаблона
+    """
+    if context is None:
+        context = {}
+    return render(request, template_name, context)
 
 
-def google_oauth_callback(request):
-    """Обработка callback от Google OAuth"""
-    import requests
-    from django.contrib.auth import login
-    from django.contrib.auth import get_user_model
-    import logging
-    
-    User = get_user_model()
-    
-    logger = logging.getLogger(__name__)
-    
-    # Получаем код авторизации
-    code = request.GET.get('code')
-    state = request.GET.get('state')
-    
-    logger.info(f"Google OAuth callback: code={code[:20] if code else None}..., state={state}")
-    
-    # Проверяем state
-    session_state = request.session.get('oauth_state')
-    logger.info(f"Session state: {session_state}")
-    
-    if state != session_state:
-        logger.error(f"State mismatch: received={state}, expected={session_state}")
-        messages.error(request, 'Ошибка безопасности OAuth')
-        return redirect('account_login')
-    
-    if not code:
-        logger.error("No authorization code received")
-        messages.error(request, 'Код авторизации не получен')
-        return redirect('account_login')
+@csrf_exempt
+def unified_api_view(request, handler_func):
+    """
+    Универсальная функция для обработки JSON-запросов.
+    - handler_func: функция, которая принимает словарь data и request, возвращает словарь response_data
+    """
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
     
     try:
-        # Обмениваем код на токен
-        token_url = 'https://oauth2.googleapis.com/token'
-        redirect_uri = f"{request.scheme}://{request.get_host()}/profile/google-oauth-callback/"
-        
-        token_data = {
-            'client_id': '968014303116-vtqq5f39tkaningitmj3dbq25snnmdgp.apps.googleusercontent.com',
-            'client_secret': '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',
-            'code': code,
-            'grant_type': 'authorization_code',
-            'redirect_uri': redirect_uri
-        }
-        
-        logger.info(f"Exchanging code for token with redirect_uri: {redirect_uri}")
-        
-        token_response = requests.post(token_url, data=token_data)
-        token_json = token_response.json()
-        
-        logger.info(f"Token response status: {token_response.status_code}")
-        logger.info(f"Token response: {token_json}")
-        
-        if 'access_token' not in token_json:
-            logger.error(f"No access token in response: {token_json}")
-            messages.error(request, f'Ошибка получения токена от Google: {token_json.get("error_description", "Unknown error")}')
-            return redirect('account_login')
-        
-        access_token = token_json['access_token']
-        
-        # Получаем информацию о пользователе
-        user_info_url = 'https://www.googleapis.com/oauth2/v2/userinfo'
-        headers = {'Authorization': f'Bearer {access_token}'}
-        user_response = requests.get(user_info_url, headers=headers)
-        user_info = user_response.json()
-        
-        logger.info(f"User info response: {user_info}")
-        
-        if 'email' not in user_info:
-            logger.error(f"No email in user info: {user_info}")
-            messages.error(request, 'Не удалось получить информацию о пользователе')
-            return redirect('account_login')
-        
-        # Создаем или находим пользователя
-        email = user_info['email']
-        first_name = user_info.get('given_name', '')
-        last_name = user_info.get('family_name', '')
-        
-        logger.info(f"Processing user: {email}, {first_name} {last_name}")
-        
-        try:
-            # Пытаемся найти пользователя по email
-            user = User.objects.get(email=email)
-            logger.info(f"Found existing user: {user.username}")
-        except User.DoesNotExist:
-            # Создаем нового пользователя
-            username = email.split('@')[0]  # Используем часть email как username
-            
-            # Проверяем, что username уникален
-            original_username = username
-            counter = 1
-            while User.objects.filter(username=username).exists():
-                username = f"{original_username}{counter}"
-                counter += 1
-            
-            user = User.objects.create_user(
-                username=username,
-                email=email,
-                first_name=first_name,
-                last_name=last_name
-            )
-            logger.info(f"Created new user: {username}")
-            messages.success(request, f'Добро пожаловать, {first_name}!')
+        data = json.loads(request.body.decode('utf-8'))
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    
+    # Вызов пользовательского обработчика
+    response_data = handler_func(data, request)
+    return JsonResponse(response_data)
+
+
+# =============================================================================
+# ФУНКЦИИ-ОБРАБОТЧИКИ ДЛЯ API
+# =============================================================================
+
+def login_api_handler(data, request):
+    """Обработчик API для входа в систему"""
+    username = data.get('username')
+    password = data.get('password')
+    
+    if not username or not password:
+        return {'error': 'Имя пользователя и пароль обязательны'}
+    
+    from django.contrib.auth import authenticate
+    user = authenticate(request, username=username, password=password)
+    
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+            from .logic.serializers import UserSerializer
+            serializer = UserSerializer(user)
+            return {
+                'success': True,
+                'message': 'Вход выполнен успешно',
+                'user': serializer.data
+            }
         else:
-            messages.success(request, f'Добро пожаловать обратно, {user.first_name or user.username}!')
-        
-        # Авторизуем пользователя с указанием backend
-        from django.conf import settings
-        backend = settings.AUTHENTICATION_BACKENDS[0]  # Используем первый backend
-        login(request, user, backend=backend)
-        logger.info(f"User {user.username} logged in successfully with backend {backend}")
-        
-        # Очищаем state из сессии
-        if 'oauth_state' in request.session:
-            del request.session['oauth_state']
-        
-        # Перенаправляем на главную страницу
-        return redirect('huntflow:dashboard')
-        
-    except Exception as e:
-        logger.error(f"OAuth error: {str(e)}", exc_info=True)
-        messages.error(request, f'Ошибка авторизации: {str(e)}')
-        return redirect('account_login')
+            return {'error': 'Аккаунт деактивирован'}
+    else:
+        return {'error': 'Неверное имя пользователя или пароль'}
 
 
-@login_required
-def profile_view(request):
-    """Объединенный дашборд профиля и Google OAuth"""
-    user = request.user
+def logout_api_handler(data, request):
+    """Обработчик API для выхода из системы"""
+    logout(request)
+    return {
+        'success': True,
+        'message': 'Выход выполнен успешно'
+    }
+
+
+def test_gemini_api_handler(data, request):
+    """Обработчик API для тестирования Gemini API"""
+    api_key = data.get('api_key')
+    if not api_key:
+        return {'success': False, 'message': 'API ключ не указан'}
     
-    # Получаем информацию о социальных аккаунтах
-    social_accounts = []
-    if hasattr(user, 'socialaccount_set'):
-        for account in user.socialaccount_set.all():
-            social_accounts.append({
-                'provider': account.provider,
-                'uid': account.uid,
-                'extra_data': account.extra_data,
-                'date_joined': account.date_joined,
-            })
+    # Здесь можно добавить реальную проверку API ключа
+    if len(api_key) < 10:
+        return {'success': False, 'message': 'API ключ слишком короткий'}
+    
+    return {'success': True, 'message': 'API ключ валиден'}
+
+
+def test_huntflow_api_handler(data, request):
+    """Обработчик API для тестирования Huntflow API"""
+    api_key = data.get('api_key')
+    api_url = data.get('api_url')
+    system = data.get('system', 'sandbox')
+    
+    if not api_key or not api_url:
+        return {'success': False, 'message': 'API ключ и URL обязательны'}
+    
+    if len(api_key) < 10:
+        return {'success': False, 'message': 'API ключ слишком короткий'}
+    
+    return {'success': True, 'message': f'Huntflow {system} API ключ валиден'}
+
+
+def test_clickup_api_handler(data, request):
+    """Обработчик API для тестирования ClickUp API"""
+    api_key = data.get('api_key')
+    if not api_key:
+        return {'success': False, 'message': 'API ключ не указан'}
+    
+    if len(api_key) < 10:
+        return {'success': False, 'message': 'API ключ слишком короткий'}
+    
+    return {'success': True, 'message': 'ClickUp API ключ валиден'}
+
+
+def test_notion_api_handler(data, request):
+    """Обработчик API для тестирования Notion API"""
+    api_key = data.get('api_key')
+    if not api_key:
+        return {'success': False, 'message': 'Integration Token не указан'}
+    
+    if len(api_key) < 20:
+        return {'success': False, 'message': 'Integration Token слишком короткий'}
+    
+    if not api_key.startswith('secret_'):
+        return {'success': False, 'message': 'Integration Token должен начинаться с "secret_"'}
+    
+    return {'success': True, 'message': 'Notion Integration Token валиден'}
+
+
+# =============================================================================
+# ФУНКЦИИ-ОБРАБОТЧИКИ ДЛЯ ШАБЛОНОВ
+# =============================================================================
+
+def profile_template_handler(request):
+    """Обработчик для страницы профиля"""
+    # Используем сервисный слой для получения данных профиля
+    context = UserService.get_user_profile_data(request.user)
+    return unified_template_view(request, 'profile/profile.html', context)
+
+
+def profile_edit_template_handler(request):
+    """Обработчик для страницы редактирования профиля"""
+    user = request.user
     
     # Получаем информацию о Google OAuth аккаунте
     oauth_account = None
     is_google_oauth_connected = False
-    is_google_social_connected = any(acc['provider'] == 'google' for acc in social_accounts)
-    
     try:
         from apps.google_oauth.models import GoogleOAuthAccount
         oauth_account = GoogleOAuthAccount.objects.get(user=user)
-        # Аккаунт считается подключенным, если он существует в БД (даже если токен истек)
-        is_google_oauth_connected = oauth_account is not None
-        token_valid = oauth_account.is_token_valid() if oauth_account else False
-    except:
-        token_valid = False
-    
-    # Получаем статистику Google сервисов
-    google_stats = {
-        'calendar_events': 0,
-        'drive_files': 0,
-        'sheets': 0,
-    }
-    
-    if oauth_account:
-        try:
-            from apps.google_oauth.models import GoogleCalendarEvent, GoogleDriveFile, GoogleSheet
-            google_stats['calendar_events'] = GoogleCalendarEvent.objects.filter(google_account=oauth_account).count()
-            google_stats['drive_files'] = GoogleDriveFile.objects.filter(google_account=oauth_account).count()
-            google_stats['sheets'] = GoogleSheet.objects.filter(google_account=oauth_account).count()
-        except:
-            pass
-    
-    context = {
-        'user': user,
-        'social_accounts': social_accounts,
-        'is_google_connected': any(acc['provider'] == 'google' for acc in social_accounts),
-        'is_google_social_connected': is_google_social_connected,
-        'oauth_account': oauth_account,
-        'is_google_oauth_connected': is_google_oauth_connected,
-        'token_valid': token_valid,
-        'google_stats': google_stats,
-    }
-    
-    return render(request, 'profile/profile.html', context)
-
-
-@login_required
-def profile_edit(request):
-    """Редактирование профиля пользователя"""
-    user = request.user
-    
-    # Получаем информацию о Google OAuth аккаунте
-    oauth_account = None
-    is_google_oauth_connected = False
-    try:
-        from apps.google_oauth.models import GoogleOAuthAccount
-        oauth_account = GoogleOAuthAccount.objects.get(user=user)
-        # Аккаунт считается подключенным, если он существует в БД (даже если токен истек)
         is_google_oauth_connected = oauth_account is not None
         token_valid = oauth_account.is_token_valid() if oauth_account else False
     except:
@@ -260,12 +183,11 @@ def profile_edit(request):
         'token_valid': token_valid,
     }
     
-    return render(request, 'profile/profile_edit.html', context)
+    return unified_template_view(request, 'profile/profile_edit.html', context)
 
 
-@login_required
-def profile_settings(request):
-    """Настройки профиля"""
+def profile_settings_template_handler(request):
+    """Обработчик для страницы настроек профиля"""
     if request.method == 'POST':
         form = IntegrationSettingsForm(request.POST, instance=request.user)
         if form.is_valid():
@@ -275,302 +197,50 @@ def profile_settings(request):
     else:
         form = IntegrationSettingsForm(instance=request.user)
     
-    return render(request, 'profile/profile_settings.html', {'form': form})
+    context = {'form': form}
+    return unified_template_view(request, 'profile/profile_settings.html', context)
 
 
-@login_required
-def integrations_view(request):
-    """Управление интеграциями"""
-    user = request.user
-    
-    # Проверяем статус интеграций
-    integrations_status = {
-        'huntflow': {
-            'name': 'Huntflow',
-            'enabled': bool(user.huntflow_sandbox_api_key or user.huntflow_prod_api_key),
-            'sandbox_configured': bool(user.huntflow_sandbox_api_key),
-            'prod_configured': bool(user.huntflow_prod_api_key),
-            'active_system': user.active_system,
-        },
-        'gemini': {
-            'name': 'Gemini AI',
-            'enabled': bool(user.gemini_api_key),
-            'configured': bool(user.gemini_api_key),
-        },
-        'clickup': {
-            'name': 'ClickUp',
-            'enabled': bool(user.clickup_api_key),
-            'configured': bool(user.clickup_api_key),
-        },
-        'telegram': {
-            'name': 'Telegram',
-            'enabled': bool(user.telegram_username),
-            'configured': bool(user.telegram_username),
-        },
-        'notion': {
-            'name': 'Notion',
-            'enabled': bool(user.notion_integration_token),
-            'configured': bool(user.notion_integration_token),
-        }
-    }
+def integrations_template_handler(request):
+    """Обработчик для страницы интеграций"""
+    # Используем сервисный слой для получения статуса интеграций
+    integrations_status = UserService.get_integrations_status(request.user)
     
     context = {
-        'user': user,
+        'user': request.user,
         'integrations': integrations_status,
     }
     
-    return render(request, 'profile/integrations.html', context)
+    return unified_template_view(request, 'profile/integrations.html', context)
 
 
-@login_required
-def api_keys_view(request):
-    """Управление API ключами"""
+def api_keys_template_handler(request):
+    """Обработчик для страницы API ключей"""
     user = request.user
     
     if request.method == 'POST':
-        # Обновляем API ключи
-        user.gemini_api_key = request.POST.get('gemini_api_key', '')
-        user.clickup_api_key = request.POST.get('clickup_api_key', '')
-        user.notion_integration_token = request.POST.get('notion_integration_token', '')
-        user.huntflow_sandbox_api_key = request.POST.get('huntflow_sandbox_api_key', '')
-        user.huntflow_prod_api_key = request.POST.get('huntflow_prod_api_key', '')
-        user.huntflow_sandbox_url = request.POST.get('huntflow_sandbox_url', '')
-        user.huntflow_prod_url = request.POST.get('huntflow_prod_url', '')
-        user.active_system = request.POST.get('active_system', 'sandbox')
-        user.save()
+        # Используем сервисный слой для обновления API ключей
+        data = {
+            'gemini_api_key': request.POST.get('gemini_api_key', ''),
+            'clickup_api_key': request.POST.get('clickup_api_key', ''),
+            'notion_integration_token': request.POST.get('notion_integration_token', ''),
+            'huntflow_sandbox_api_key': request.POST.get('huntflow_sandbox_api_key', ''),
+            'huntflow_prod_api_key': request.POST.get('huntflow_prod_api_key', ''),
+            'huntflow_sandbox_url': request.POST.get('huntflow_sandbox_url', ''),
+            'huntflow_prod_url': request.POST.get('huntflow_prod_url', ''),
+            'active_system': request.POST.get('active_system', 'sandbox'),
+        }
         
+        UserService.update_user_api_keys(user, data)
         messages.success(request, 'API ключи успешно обновлены!')
         return redirect('accounts:api_keys')
     
-    context = {
-        'user': user,
-    }
-    
-    return render(request, 'profile/api_keys.html', context)
+    context = {'user': user}
+    return unified_template_view(request, 'profile/api_keys.html', context)
 
 
-@login_required
-@require_POST
-def test_gemini_api(request):
-    """Тестирование Gemini API ключа"""
-    try:
-        api_key = request.POST.get('api_key')
-        if not api_key:
-            return JsonResponse({'success': False, 'message': 'API ключ не указан'})
-        
-        # Здесь можно добавить реальную проверку API ключа
-        # Пока просто проверяем, что ключ не пустой
-        if len(api_key) < 10:
-            return JsonResponse({'success': False, 'message': 'API ключ слишком короткий'})
-        
-        return JsonResponse({'success': True, 'message': 'API ключ валиден'})
-        
-    except Exception as e:
-        return JsonResponse({'success': False, 'message': f'Ошибка: {str(e)}'})
-
-
-@login_required
-@require_POST
-def test_huntflow_api(request):
-    """Тестирование Huntflow API ключа"""
-    try:
-        api_key = request.POST.get('api_key')
-        api_url = request.POST.get('api_url')
-        system = request.POST.get('system', 'sandbox')
-        
-        if not api_key or not api_url:
-            return JsonResponse({'success': False, 'message': 'API ключ и URL обязательны'})
-        
-        # Здесь можно добавить реальную проверку API ключа
-        # Пока просто проверяем, что ключ не пустой
-        if len(api_key) < 10:
-            return JsonResponse({'success': False, 'message': 'API ключ слишком короткий'})
-        
-        return JsonResponse({'success': True, 'message': f'Huntflow {system} API ключ валиден'})
-        
-    except Exception as e:
-        return JsonResponse({'success': False, 'message': f'Ошибка: {str(e)}'})
-
-
-@login_required
-@require_POST
-def test_clickup_api(request):
-    """Тестирование ClickUp API ключа"""
-    try:
-        api_key = request.POST.get('api_key')
-        if not api_key:
-            return JsonResponse({'success': False, 'message': 'API ключ не указан'})
-        
-        # Здесь можно добавить реальную проверку API ключа
-        # Пока просто проверяем, что ключ не пустой
-        if len(api_key) < 10:
-            return JsonResponse({'success': False, 'message': 'API ключ слишком короткий'})
-        
-        return JsonResponse({'success': True, 'message': 'ClickUp API ключ валиден'})
-        
-    except Exception as e:
-        return JsonResponse({'success': False, 'message': f'Ошибка: {str(e)}'})
-
-
-@login_required
-@require_POST
-def test_notion_api(request):
-    """Тестирование Notion Integration Token"""
-    try:
-        api_key = request.POST.get('api_key')
-        if not api_key:
-            return JsonResponse({'success': False, 'message': 'Integration Token не указан'})
-        
-        # Здесь можно добавить реальную проверку Notion API
-        # Пока просто проверяем, что токен не пустой и имеет правильный формат
-        if len(api_key) < 20:
-            return JsonResponse({'success': False, 'message': 'Integration Token слишком короткий'})
-        
-        # Проверяем, что токен начинается с правильного префикса
-        if not api_key.startswith('secret_'):
-            return JsonResponse({'success': False, 'message': 'Integration Token должен начинаться с "secret_"'})
-        
-        return JsonResponse({'success': True, 'message': 'Notion Integration Token валиден'})
-        
-    except Exception as e:
-        return JsonResponse({'success': False, 'message': f'Ошибка: {str(e)}'})
-
-
-def account_login(request):
-    """Универсальная страница входа (HTML формы)"""
-    if request.user.is_authenticated:
-        return redirect('/huntflow/')
-    
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        
-        from django.contrib.auth import authenticate
-        user = authenticate(request, username=username, password=password)
-        
-        if user is not None:
-            login(request, user)
-            messages.success(request, 'Вы успешно вошли в систему!')
-            return redirect('/huntflow/')
-        else:
-            messages.error(request, 'Неверное имя пользователя или пароль.')
-    
-    return render(request, 'accounts/login.html')
-
-
-def account_logout(request):
-    """Универсальный выход из системы (HTML)"""
-    logout(request)
-    messages.success(request, 'Вы успешно вышли из системы!')
-    return redirect('/huntflow/')
-
-
-@csrf_exempt
-def unified_login(request):
-    """Универсальная функция входа (поддерживает HTML и JSON)"""
-    if request.user.is_authenticated:
-        if request.content_type == 'application/json':
-            return JsonResponse({'success': True, 'message': 'Уже авторизован'})
-        return redirect('/huntflow/')
-    
-    if request.method == 'POST':
-        # Определяем тип запроса
-        if request.content_type == 'application/json':
-            # JSON API запрос
-            try:
-                data = json.loads(request.body)
-                username = data.get('username')
-                password = data.get('password')
-            except json.JSONDecodeError:
-                return JsonResponse({'error': 'Неверный JSON'}, status=400)
-        else:
-            # HTML форма
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-        
-        if not username or not password:
-            if request.content_type == 'application/json':
-                return JsonResponse(
-                    {'error': 'Имя пользователя и пароль обязательны'}, 
-                    status=400
-                )
-            else:
-                messages.error(request, 'Имя пользователя и пароль обязательны.')
-                return render(request, 'accounts/login.html')
-        
-        from django.contrib.auth import authenticate
-        user = authenticate(request, username=username, password=password)
-        
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                if request.content_type == 'application/json':
-                    from .serializers import UserSerializer
-                    serializer = UserSerializer(user)
-                    return JsonResponse({
-                        'success': True,
-                        'message': 'Вход выполнен успешно',
-                        'user': serializer.data
-                    })
-                else:
-                    messages.success(request, 'Вы успешно вошли в систему!')
-                    return redirect('/huntflow/')
-            else:
-                if request.content_type == 'application/json':
-                    return JsonResponse(
-                        {'error': 'Аккаунт деактивирован'}, 
-                        status=400
-                    )
-                else:
-                    messages.error(request, 'Аккаунт деактивирован.')
-        else:
-            if request.content_type == 'application/json':
-                return JsonResponse(
-                    {'error': 'Неверное имя пользователя или пароль'}, 
-                    status=401
-                )
-            else:
-                messages.error(request, 'Неверное имя пользователя или пароль.')
-    
-    # GET запрос - показываем форму входа
-    if request.content_type == 'application/json':
-        return JsonResponse({'error': 'Метод не поддерживается'}, status=405)
-    return render(request, 'accounts/login.html')
-
-
-@csrf_exempt
-def unified_logout(request):
-    """Универсальная функция выхода (поддерживает HTML и JSON)"""
-    logout(request)
-    
-    if request.content_type == 'application/json':
-        return JsonResponse({
-            'success': True,
-            'message': 'Выход выполнен успешно'
-        })
-    else:
-        messages.success(request, 'Вы успешно вышли из системы!')
-        return redirect('/huntflow/')
-
-
-def google_oauth_demo(request):
-    """Демонстрация Google OAuth"""
-    return render(request, 'account/google_oauth_demo.html')
-
-
-def google_oauth_test(request):
-    """Тестовая страница для Google OAuth"""
-    return render(request, 'account/google_oauth_test.html')
-
-
-def oauth_debug(request):
-    """Диагностическая страница для Google OAuth"""
-    return render(request, 'account/oauth_debug.html')
-
-
-@login_required
-def components_view(request):
-    """Страница демонстрации компонентов UI"""
+def components_template_handler(request):
+    """Обработчик для страницы демонстрации компонентов"""
     from .forms import ProfileEditForm, IntegrationSettingsForm, ApiKeysForm
     
     # Создаем экземпляры форм для демонстрации
@@ -642,4 +312,161 @@ def components_view(request):
         'demo_google_stats': demo_google_stats,
     }
     
-    return render(request, 'temp/components.html', context)
+    return unified_template_view(request, 'temp/components.html', context)
+
+
+# =============================================================================
+# ОСНОВНЫЕ VIEW-ФУНКЦИИ
+# =============================================================================
+
+def google_oauth_redirect(request):
+    """Прямой переход на Google OAuth"""
+    from .logic.oauth_service import GoogleOAuthService
+    auth_url = GoogleOAuthService.get_authorization_url(request)
+    return redirect(auth_url)
+
+
+def google_oauth_callback(request):
+    """Обработка callback от Google OAuth"""
+    from .logic.oauth_service import GoogleOAuthService
+    
+    result = GoogleOAuthService.handle_oauth_callback(request)
+    
+    if result['success']:
+        messages.success(request, result['message'])
+        return redirect('huntflow:dashboard')
+    else:
+        messages.error(request, result['error'])
+        return redirect('account_login')
+
+
+# Старая функция profile_view удалена - заменена на profile_template_handler
+
+
+# Старые функции удалены - заменены на template handlers:
+# - profile_edit -> profile_edit_template_handler
+# - profile_settings -> profile_settings_template_handler  
+# - integrations_view -> integrations_template_handler
+
+
+# Старая функция api_keys_view удалена - заменена на api_keys_template_handler
+
+
+# Дублированные функции тестирования API удалены
+# Теперь используются универсальные API handlers:
+# - test_gemini_api_handler
+# - test_huntflow_api_handler  
+# - test_clickup_api_handler
+# - test_notion_api_handler
+
+
+# Дублированные функции account_login и account_logout удалены
+# Теперь используются универсальные функции:
+# - unified_login (поддерживает HTML и JSON)
+# - unified_logout (поддерживает HTML и JSON)
+
+
+@csrf_exempt
+def unified_login(request):
+    """Универсальная функция входа (поддерживает HTML и JSON)"""
+    if request.user.is_authenticated:
+        if request.content_type == 'application/json':
+            return JsonResponse({'success': True, 'message': 'Уже авторизован'})
+        return redirect('/huntflow/')
+    
+    if request.method == 'POST':
+        # Определяем тип запроса
+        if request.content_type == 'application/json':
+            # JSON API запрос
+            try:
+                data = json.loads(request.body)
+                username = data.get('username')
+                password = data.get('password')
+            except json.JSONDecodeError:
+                return JsonResponse({'error': 'Неверный JSON'}, status=400)
+        else:
+            # HTML форма
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+        
+        if not username or not password:
+            if request.content_type == 'application/json':
+                return JsonResponse(
+                    {'error': 'Имя пользователя и пароль обязательны'}, 
+                    status=400
+                )
+            else:
+                messages.error(request, 'Имя пользователя и пароль обязательны.')
+                return render(request, 'accounts/login.html')
+        
+        from django.contrib.auth import authenticate
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                if request.content_type == 'application/json':
+                    from .logic.serializers import UserSerializer
+                    serializer = UserSerializer(user)
+                    return JsonResponse({
+                        'success': True,
+                        'message': 'Вход выполнен успешно',
+                        'user': serializer.data
+                    })
+                else:
+                    messages.success(request, 'Вы успешно вошли в систему!')
+                    return redirect('/huntflow/')
+            else:
+                if request.content_type == 'application/json':
+                    return JsonResponse(
+                        {'error': 'Аккаунт деактивирован'}, 
+                        status=400
+                    )
+                else:
+                    messages.error(request, 'Аккаунт деактивирован.')
+        else:
+            if request.content_type == 'application/json':
+                return JsonResponse(
+                    {'error': 'Неверное имя пользователя или пароль'}, 
+                    status=401
+                )
+            else:
+                messages.error(request, 'Неверное имя пользователя или пароль.')
+    
+    # GET запрос - показываем форму входа
+    if request.content_type == 'application/json':
+        return JsonResponse({'error': 'Метод не поддерживается'}, status=405)
+    return render(request, 'accounts/login.html')
+
+
+@csrf_exempt
+def unified_logout(request):
+    """Универсальная функция выхода (поддерживает HTML и JSON)"""
+    logout(request)
+    
+    if request.content_type == 'application/json':
+        return JsonResponse({
+            'success': True,
+            'message': 'Выход выполнен успешно'
+        })
+    else:
+        messages.success(request, 'Вы успешно вышли из системы!')
+        return redirect('/huntflow/')
+
+
+def google_oauth_demo(request):
+    """Демонстрация Google OAuth"""
+    return render(request, 'account/google_oauth_demo.html')
+
+
+def google_oauth_test(request):
+    """Тестовая страница для Google OAuth"""
+    return render(request, 'account/google_oauth_test.html')
+
+
+def oauth_debug(request):
+    """Диагностическая страница для Google OAuth"""
+    return render(request, 'account/oauth_debug.html')
+
+
+# Старая функция components_view удалена - заменена на components_template_handler

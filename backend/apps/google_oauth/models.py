@@ -48,7 +48,10 @@ class GoogleOAuthAccount(models.Model):
         # Если token_expires_at - строка, конвертируем в datetime
         if isinstance(self.token_expires_at, str):
             try:
-                self.token_expires_at = timezone.datetime.fromisoformat(self.token_expires_at.replace('Z', '+00:00'))
+                parsed_time = timezone.datetime.fromisoformat(self.token_expires_at.replace('Z', '+00:00'))
+                # Сохраняем преобразованное время
+                self.token_expires_at = parsed_time
+                self.save(update_fields=['token_expires_at'])
             except:
                 return False
         

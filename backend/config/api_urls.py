@@ -2,9 +2,8 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 # Импорт ViewSets
-from apps.accounts.views_api_test import TestUserViewSet
-from apps.accounts.views_api import GroupViewSet
-from apps.accounts.views_simple import simple_api_login, simple_api_logout
+from apps.accounts.views_api import UserViewSet, GroupViewSet
+from apps.accounts.views import unified_api_view, login_api_handler, logout_api_handler
 from apps.finance.views_api import (
     GradeViewSet, CurrencyRateViewSet, PLNTaxViewSet,
     SalaryRangeViewSet, BenchmarkViewSet, BenchmarkSettingsViewSet,
@@ -38,7 +37,7 @@ router = DefaultRouter()
 
 # Регистрация ViewSets
 # Accounts
-router.register(r'accounts/users', TestUserViewSet, basename='user')
+router.register(r'accounts/users', UserViewSet, basename='user')
 router.register(r'accounts/groups', GroupViewSet, basename='group')
 
 # Finance
@@ -111,8 +110,8 @@ urlpatterns = [
     
     # API аутентификация
     path('auth/', include('rest_framework.urls')),
-    path('auth/login/', simple_api_login, name='api_login'),
-    path('auth/logout/', simple_api_logout, name='api_logout'),
+    path('auth/login/', lambda r: unified_api_view(r, login_api_handler), name='api_login'),
+    path('auth/logout/', lambda r: unified_api_view(r, logout_api_handler), name='api_logout'),
     
     # API health check
     path('health/', include('apps.common.urls_api')),

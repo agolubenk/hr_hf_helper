@@ -1,6 +1,11 @@
+"""
+Сериализаторы для API с использованием сервисного слоя
+Объединяет логику из serializers.py с сервисными методами
+"""
 from rest_framework import serializers
 from django.contrib.auth.models import Group
-from .models import User
+from ..models import User
+from .user_service import UserService
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -45,23 +50,18 @@ class UserSerializer(serializers.ModelSerializer):
         }
     
     def get_groups_display(self, obj):
-        """Возвращает список названий групп"""
         return [group.name for group in obj.groups.all()]
     
     def get_is_admin(self, obj):
-        """Возвращает статус администратора"""
         return obj.is_admin
     
     def get_is_recruiter(self, obj):
-        """Возвращает статус рекрутера"""
         return obj.is_recruiter
     
     def get_is_interviewer(self, obj):
-        """Возвращает статус интервьюера"""
         return obj.is_interviewer
     
     def get_is_observer(self, obj):
-        """Возвращает статус наблюдателя"""
         return obj.is_observer
     
     def create(self, validated_data):
@@ -108,13 +108,13 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return attrs
     
     def create(self, validated_data):
-        """Создание пользователя"""
+        """Создание пользователя с использованием сервисного слоя"""
         validated_data.pop('password_confirm')
         password = validated_data.pop('password')
-        user = User.objects.create(**validated_data)
-        user.set_password(password)
-        user.save()
-        return user
+        validated_data['password'] = password
+        
+        # Используем сервисный слой для создания пользователя
+        return UserService.create_user_with_observer_role(validated_data)
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -138,7 +138,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'username', 'date_joined', 'last_login']
     
     def get_groups_display(self, obj):
-        """Возвращает список названий групп"""
         return [group.name for group in obj.groups.all()]
 
 
@@ -170,7 +169,7 @@ class UserChangePasswordSerializer(serializers.Serializer):
 
 
 class UserSettingsSerializer(serializers.ModelSerializer):
-    """Сериализатор для настроек пользователя"""
+    """Сериализатор для настроек пользователя с использованием сервисного слоя"""
     
     class Meta:
         model = User
@@ -183,8 +182,18 @@ class UserSettingsSerializer(serializers.ModelSerializer):
         ]
     
     def update(self, instance, validated_data):
-        """Обновление настроек пользователя"""
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-        return instance
+        """Обновление настроек пользователя с использованием сервисного слоя"""
+        return UserService.update_user_api_keys(instance, validated_data)
+
+
+class UserStatsSerializer(serializers.Serializer):
+    """Сериализатор для статистики пользователей"""
+    total_users = serializers.IntegerField()
+    active_users = serializers.IntegerField()
+    staff_users = serializers.IntegerField()
+    groups_stats = serializers.DictField()
+    
+    @classmethod
+    def get_stats(cls):
+        """Получение статистики через сервисный слой"""
+        return UserService.get_user_stats()

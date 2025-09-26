@@ -1,8 +1,14 @@
+"""
+Адаптеры для аутентификации и социальных аккаунтов
+Объединяет логику из adapters.py с использованием сервисного слоя
+"""
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib import messages
+
+from .user_service import UserService
 
 User = get_user_model()
 
@@ -25,7 +31,7 @@ class CustomAccountAdapter(DefaultAccountAdapter):
 
 
 class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
-    """Адаптер для социальных аккаунтов"""
+    """Адаптер для социальных аккаунтов с использованием сервисного слоя"""
     
     def pre_social_login(self, request, sociallogin):
         """
@@ -34,16 +40,18 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
         user = sociallogin.user
         if user.email:
             try:
-                # Ищем существующего пользователя по email
-                existing_user = User.objects.get(email=user.email)
-                print(f"🔍 OAUTH: Найден существующий пользователь: {existing_user.username} ({existing_user.email})")
+                # Используем сервисный слой для связывания аккаунтов
+                existing_user = UserService.link_social_account_to_existing_user(sociallogin, user.email)
                 
-                # Связываем социальный аккаунт с существующим пользователем
-                sociallogin.connect(request, existing_user)
-                print(f"✅ OAUTH: Социальный аккаунт связан с существующим пользователем")
+                if existing_user:
+                    print(f"🔍 OAUTH: Найден существующий пользователь: {existing_user.username} ({existing_user.email})")
+                    print(f"✅ OAUTH: Социальный аккаунт связан с существующим пользователем")
+                else:
+                    print(f"🔍 OAUTH: Пользователь с email {user.email} не найден, будет создан новый")
+                    
+            except Exception as e:
+                print(f"❌ OAUTH: Ошибка при связывании аккаунта: {e}")
                 
-            except User.DoesNotExist:
-                print(f"🔍 OAUTH: Пользователь с email {user.email} не найден, будет создан новый")
         return sociallogin
 
     def populate_user(self, request, sociallogin, data):
@@ -75,13 +83,12 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
                 user.full_name = f"{user.first_name} {user.last_name}"
             
             # Даем права наблюдателя новым пользователям
-            try:
-                observer_group = Group.objects.get(name='Наблюдатели')
-                user.groups.add(observer_group)
-                user.is_observer_active = True
+            from .role_service import RoleService
+            success, message = RoleService.assign_role_to_user(user, 'Наблюдатели')
+            if success:
                 print(f"✅ OAUTH: Новому пользователю {user.username} назначены права наблюдателя")
-            except Group.DoesNotExist:
-                print(f"⚠️ OAUTH: Группа 'Наблюдатели' не найдена")
+            else:
+                print(f"⚠️ OAUTH: Не удалось назначить права наблюдателя: {message}")
             
             user.save()
             print(f"✅ OAUTH: Создан новый пользователь: {user.username} ({user.email})")

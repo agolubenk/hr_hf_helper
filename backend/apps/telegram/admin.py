@@ -34,7 +34,10 @@ class TelegramUserAdmin(admin.ModelAdmin):
     )
     
     def has_delete_permission(self, request, obj=None):
-        # Запрещаем удаление авторизованных пользователей
+        # Разрешаем удаление только суперпользователям
+        if request.user.is_superuser:
+            return True
+        # Для обычных пользователей запрещаем удаление авторизованных TelegramUser
         if obj and obj.is_authorized:
             return False
         return super().has_delete_permission(request, obj)

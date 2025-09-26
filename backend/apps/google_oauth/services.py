@@ -191,6 +191,22 @@ class GoogleOAuthService:
         oauth_account.token_expires_at = timezone.now() + timedelta(seconds=3600)
         oauth_account.save()
     
+    def refresh_token(self):
+        """Публичный метод для обновления токена доступа"""
+        oauth_account = self.get_oauth_account()
+        if not oauth_account:
+            return False
+        
+        if not oauth_account.refresh_token:
+            return False
+        
+        try:
+            self._refresh_token(oauth_account)
+            return True
+        except Exception as e:
+            print(f"Ошибка при обновлении токена: {e}")
+            return False
+    
     def revoke_access(self):
         """Отозвать доступ к Google аккаунту"""
         oauth_account = self.get_oauth_account()

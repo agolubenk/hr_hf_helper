@@ -3,6 +3,9 @@
 
 
 {% block content %}
+<!-- Контейнер для уведомлений -->
+<div id="notifications-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
 <div class="row">
     <div class="col-lg-8">
         <div class="card clickup-card mb-4">
@@ -431,6 +434,47 @@ document.addEventListener('DOMContentLoaded', function() {
         loadLists(spaceId, folderId);
     });
 });
+
+// Функция для показа уведомлений
+function showNotification(message, type = 'info') {
+    const container = document.getElementById('notifications-container');
+    if (!container) {
+        // Создаем контейнер для уведомлений, если его нет
+        const newContainer = document.createElement('div');
+        newContainer.id = 'notifications-container';
+        newContainer.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999;';
+        document.body.appendChild(newContainer);
+        return showNotification(message, type); // Рекурсивный вызов
+    }
+    
+    const notification = document.createElement('div');
+    
+    const alertClass = type === 'success' ? 'alert-success' : 
+                      type === 'error' ? 'alert-danger' : 
+                      type === 'warning' ? 'alert-warning' : 'alert-info';
+    
+    notification.className = `alert ${alertClass} alert-dismissible fade show`;
+    notification.style.cssText = 'min-width: 300px; margin-bottom: 10px;';
+    
+    const icon = type === 'success' ? 'check-circle' : 
+                 type === 'error' ? 'times-circle' : 
+                 type === 'warning' ? 'exclamation-triangle' : 'info-circle';
+    
+    notification.innerHTML = `
+        <i class="fas fa-${icon} me-2"></i>
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    
+    container.appendChild(notification);
+    
+    // Автоматически удаляем уведомление через 5 секунд
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
 
 // Тема инициализируется в базовом шаблоне
 </script>
