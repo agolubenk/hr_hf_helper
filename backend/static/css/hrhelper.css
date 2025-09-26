@@ -1434,25 +1434,7 @@ a:hover {
    ============================================================================= */
 
 /* === ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ === */
-.theme-toggle {
-    position: relative;
-    transition: all 0.3s ease;
-    border: 2px solid var(--hr-border);
-    background: var(--hr-card-bg);
-    color: var(--hr-text);
-}
-
-.theme-toggle:hover {
-    background: var(--hr-hover-bg);
-    border-color: var(--hr-primary);
-    color: var(--hr-primary);
-    transform: scale(1.05);
-}
-
-.theme-toggle:focus {
-    box-shadow: var(--focus-ring);
-    outline: none;
-}
+/* Стили перенесены в конец файла для лучшей организации */
 
 /* === ТОКЕНФИЛД === */
 .tokenfield-container {
@@ -2006,6 +1988,41 @@ a:hover {
 }
 
 /* =============================================================================
+   ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ - СПЕЦИАЛЬНЫЕ СТИЛИ
+   ============================================================================= */
+
+/* Стили для кнопки переключения темы */
+.theme-toggle {
+    position: relative;
+    transition: all 0.3s ease;
+  border: 2px solid var(--hr-border);
+  background: var(--hr-card-bg);
+  color: var(--hr-text);
+}
+
+.theme-toggle:hover {
+  background: var(--hr-hover-bg);
+    border-color: var(--hr-primary);
+    color: var(--hr-primary);
+    transform: scale(1.05);
+}
+
+.theme-toggle:focus {
+    box-shadow: var(--focus-ring);
+    outline: none;
+}
+
+/* Иконка солнца - оранжевая для светлой темы */
+.fa-sun {
+    color: var(--color-orange-500) !important;
+}
+
+/* Иконка луны - серая для темной темы */
+.fa-moon {
+    color: var(--color-gray-300) !important;
+}
+
+/* =============================================================================
    ТЕМНАЯ ТЕМА
    ============================================================================= */
 
@@ -2040,6 +2057,45 @@ a:hover {
   --hr-warning: var(--color-orange-400);
   --hr-error: var(--color-red-500);
   --hr-info: var(--color-lime-400);
+}
+
+/* Переопределения для кнопки темы в темной теме */
+[data-theme="dark"] .theme-toggle {
+    background: transparent;
+    border-color: var(--color-pink-500);
+    color: var(--color-pink-500);
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+    background: var(--color-pink-500);
+    border-color: var(--color-pink-500);
+    color: white;
+}
+
+/* Переопределения для кнопки пользователя в темной теме */
+[data-theme="dark"] .btn-outline-primary {
+    background: transparent;
+    border-color: var(--color-pink-600);
+    color: var(--color-pink-600);
+}
+
+[data-theme="dark"] .btn-outline-primary:hover {
+    background: var(--color-pink-600);
+    border-color: var(--color-pink-600);
+    color: white;
+}
+
+/* Переопределения для кнопки выхода в темной теме */
+[data-theme="dark"] .btn-outline-danger {
+    background: transparent;
+    border-color: var(--color-red-500);
+    color: white;
+}
+
+[data-theme="dark"] .btn-outline-danger:hover {
+    background: var(--color-red-500);
+    border-color: var(--color-red-500);
+    color: white;
 }
 
 /* =============================================================================
