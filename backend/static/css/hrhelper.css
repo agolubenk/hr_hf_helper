@@ -1877,8 +1877,8 @@ a:hover {
     .sidebar .nav-item .nav-item .nav-item .nav-link {
         padding-left: 2rem;
         font-size: var(--font-size-xs);
-    }
-    
+}
+
     .session-item {
         padding: var(--space-8);
         margin-bottom: var(--space-8);
@@ -1926,6 +1926,17 @@ a:hover {
     }
 }
 
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
 @keyframes spin {
     to {
         transform: rotate(360deg);
@@ -1955,7 +1966,27 @@ a:hover {
 }
 
     .alert.position-fixed {
-        animation: slideInRight 0.3s ease-out;
+        animation: slideInLeft 0.3s ease-out;
+    }
+    
+    /* Стили для стека тостов */
+    .toast-notification {
+        transition: all 0.3s ease !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+        margin-bottom: 10px;
+        background: rgba(255, 255, 255, 0.25) !important;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        color: var(--color-text) !important;
+        max-width: 280px;
+        width: 280px;
+    }
+    
+    /* Стили для кнопки закрытия в тостах */
+    .toast-notification .btn-close {
+        margin-left: 3px !important;
     }
 }
 
@@ -2096,6 +2127,13 @@ a:hover {
     background: var(--color-red-500);
     border-color: var(--color-red-500);
     color: white;
+}
+
+/* Стили для тостов в темной теме */
+[data-theme="dark"] .toast-notification {
+    background: rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white !important;
 }
 
 /* =============================================================================

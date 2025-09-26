@@ -322,8 +322,8 @@
             
             // Создаем уведомление
             const notification = document.createElement('div');
-            notification.className = 'alert alert-info alert-dismissible fade show position-fixed';
-            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 200px;';
+            notification.className = 'alert alert-info alert-dismissible fade show position-fixed toast-notification';
+            notification.style.cssText = 'bottom: 20px; left: 20px; z-index: 9999; transition: all 0.3s ease;';
             
             notification.innerHTML = `
                 <i class="fas fa-${theme === 'dark' ? 'moon' : 'sun'} me-2"></i>
@@ -331,13 +331,58 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             `;
             
-            // Добавляем на страницу
+            // Добавляем обработчик для кнопки закрытия
+            const closeButton = notification.querySelector('.btn-close');
+            closeButton.addEventListener('click', function() {
+                // Удаляем тост
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                    
+                    // Пересчитываем позиции оставшихся тостов на основе их реальной высоты
+                    const remainingToasts = document.querySelectorAll('.toast-notification');
+                    let currentBottom = 20;
+                    remainingToasts.forEach((toast) => {
+                        toast.style.bottom = `${currentBottom}px`;
+                        const toastHeight = toast.offsetHeight;
+                        const margin = 10; // отступ между тостами
+                        currentBottom += toastHeight + margin;
+                    });
+                }
+            });
+            
+            // Подсчитываем существующие тосты
+            const existingToasts = document.querySelectorAll('.toast-notification');
+            
+            // Добавляем на страницу сначала
             document.body.appendChild(notification);
+            
+            // Позиционируем новый тост в самом низу
+            notification.style.bottom = '20px';
+            
+            // Поднимаем все существующие тосты вверх на основе их реальной высоты
+            let currentBottom = 20;
+            existingToasts.forEach((toast) => {
+                const toastHeight = toast.offsetHeight;
+                const margin = 10; // отступ между тостами
+                currentBottom += toastHeight + margin;
+                toast.style.bottom = `${currentBottom}px`;
+            });
             
             // Автоматически удаляем через 3 секунды
             setTimeout(function() {
                 if (notification.parentNode) {
+                    // Удаляем тост
                     notification.parentNode.removeChild(notification);
+                    
+                    // Пересчитываем позиции оставшихся тостов на основе их реальной высоты
+                    const remainingToasts = document.querySelectorAll('.toast-notification');
+                    let currentBottom = 20;
+                    remainingToasts.forEach((toast) => {
+                        toast.style.bottom = `${currentBottom}px`;
+                        const toastHeight = toast.offsetHeight;
+                        const margin = 10; // отступ между тостами
+                        currentBottom += toastHeight + margin;
+                    });
                 }
             }, 3000);
         }
