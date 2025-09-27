@@ -10,6 +10,7 @@ from django.db.models import Count, Avg, Min, Max, Case, When
 from io import StringIO
 import json
 from .models import Grade, CurrencyRate, PLNTax, SalaryRange, Benchmark, BenchmarkType, BenchmarkSettings, DataSource, VacancyField, HHVacancyTemp
+from .logic.tax_service import TaxService
 
 
 @login_required
@@ -228,7 +229,7 @@ def dashboard(request):
     # Пример расчета налогов для демонстрации
     from decimal import Decimal
     example_net = Decimal('5000.00')
-    example_breakdown = PLNTax.get_tax_breakdown(PLNTax.calculate_gross_from_net(example_net))
+    example_breakdown = TaxService.get_tax_breakdown(TaxService.calculate_gross_from_net(example_net, "PLN"), "PLN")
     
     context = {
         'grades': grades,
@@ -455,7 +456,7 @@ def calculate_pln_taxes(request):
         
         if calculation_type == 'gross':
             # Рассчитываем net из gross
-            breakdown = PLNTax.get_tax_breakdown(amount)
+            breakdown = TaxService.get_tax_breakdown(amount, "PLN")
             result = {
                 'gross_amount': float(breakdown['gross_amount']),
                 'net_amount': float(breakdown['net_amount']),
@@ -464,8 +465,8 @@ def calculate_pln_taxes(request):
             }
         else:
             # Рассчитываем gross из net
-            gross_amount = PLNTax.calculate_gross_from_net(amount)
-            breakdown = PLNTax.get_tax_breakdown(gross_amount)
+            gross_amount = TaxService.calculate_gross_from_net(amount, "PLN")
+            breakdown = TaxService.get_tax_breakdown(gross_amount, "PLN")
             result = {
                 'gross_amount': float(breakdown['gross_amount']),
                 'net_amount': float(breakdown['net_amount']),
@@ -492,8 +493,8 @@ def pln_taxes_dashboard(request):
     # Пример расчета для демонстрации
     from decimal import Decimal
     example_net = Decimal('5000.00')
-    example_gross = PLNTax.calculate_gross_from_net(example_net)
-    example_breakdown = PLNTax.get_tax_breakdown(example_gross)
+    example_gross = TaxService.calculate_gross_from_net(example_net, "PLN")
+    example_breakdown = TaxService.get_tax_breakdown(example_gross, "PLN")
     
     context = {
         'pln_taxes': pln_taxes,

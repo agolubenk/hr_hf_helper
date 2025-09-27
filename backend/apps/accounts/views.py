@@ -16,14 +16,26 @@ from .logic.user_service import UserService
 # УНИВЕРСАЛЬНЫЕ ФУНКЦИИ
 # =============================================================================
 
-def unified_template_view(request, template_name, context=None):
+def unified_template_view(request, template_name, handler_func=None, context=None):
     """
     Универсальная функция для рендеринга HTML-шаблонов.
     - template_name: строка, путь к шаблону
-    - context: словарь с данными для шаблона
+    - handler_func: функция-обработчик для подготовки контекста (опционально)
+    - context: словарь с данными для шаблона (опционально)
     """
     if context is None:
         context = {}
+    
+    # Если передан handler_func, вызываем его для подготовки контекста
+    if handler_func:
+        try:
+            handler_context = handler_func(request)
+            if isinstance(handler_context, dict):
+                context.update(handler_context)
+        except Exception as e:
+            # Если handler_func выдает ошибку, добавляем сообщение об ошибке
+            context['error'] = f'Ошибка обработки: {str(e)}'
+    
     return render(request, template_name, context)
 
 

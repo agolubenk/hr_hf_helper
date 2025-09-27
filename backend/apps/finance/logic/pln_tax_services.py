@@ -1,5 +1,6 @@
 from decimal import Decimal
 from typing import Dict, Any
+from .tax_service import TaxService
 
 
 class PLNTaxCalculationService:
@@ -22,7 +23,7 @@ class PLNTaxCalculationService:
         Returns:
             Словарь с детальным расчетом
         """
-        from .models import PLNTax, CurrencyRate
+        from ..models import PLNTax, CurrencyRate
         
         result = {
             'net_amount_pln': net_amount_pln,
@@ -34,11 +35,11 @@ class PLNTaxCalculationService:
         }
         
         # Рассчитываем gross сумму в PLN
-        gross_amount_pln = PLNTax.calculate_gross_from_net(net_amount_pln)
+        gross_amount_pln = TaxService.calculate_gross_from_net(net_amount_pln, "PLN")
         result['gross_amount_pln'] = gross_amount_pln
         
         # Получаем детализацию налогов
-        breakdown = PLNTax.get_tax_breakdown(gross_amount_pln)
+        breakdown = TaxService.get_tax_breakdown(gross_amount_pln, "PLN")
         result['total_tax_amount_pln'] = breakdown['total_tax_amount']
         result['tax_breakdown'] = breakdown['taxes']
         
@@ -91,7 +92,7 @@ class PLNTaxCalculationService:
     @staticmethod
     def get_tax_summary() -> Dict[str, Any]:
         """Возвращает сводку по налогам PLN"""
-        from .models import PLNTax
+        from ..models import PLNTax
         
         active_taxes = PLNTax.objects.filter(is_active=True)
         total_rate = sum(tax.rate_decimal for tax in active_taxes)

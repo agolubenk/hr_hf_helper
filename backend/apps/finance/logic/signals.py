@@ -1,6 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import CurrencyRate, SalaryRange, PLNTax
+from ..models import CurrencyRate, SalaryRange, PLNTax
+from .salary_service import SalaryService
 
 
 @receiver(post_save, sender=CurrencyRate)
@@ -14,7 +15,7 @@ def update_salary_ranges_on_currency_change(sender, instance, **kwargs):
         
         for salary_range in salary_ranges:
             try:
-                salary_range.update_currency_amounts()
+                SalaryService.update_salary_range_currency_amounts(salary_range)
             except Exception as e:
                 # Логируем ошибку, но не прерываем процесс
                 print(f"Ошибка при пересчете зарплатной вилки {salary_range.id}: {e}")
@@ -30,7 +31,7 @@ def update_salary_ranges_on_tax_change(sender, instance, **kwargs):
     
     for salary_range in salary_ranges:
         try:
-            salary_range.update_currency_amounts()
+            SalaryService.update_salary_range_currency_amounts(salary_range)
         except Exception as e:
             # Логируем ошибку, но не прерываем процесс
             print(f"Ошибка при пересчете зарплатной вилки {salary_range.id} после изменения налогов: {e}")

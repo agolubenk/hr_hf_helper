@@ -7,4 +7,4 @@ class FinanceConfig(AppConfig):
     verbose_name = 'Финансы и грейды'
     
     def ready(self):
-        import apps.finance.signals
+        import apps.finance.logic.signals

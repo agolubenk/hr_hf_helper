@@ -2,20 +2,22 @@
 
 ## 🎯 Обзор
 
-Данный документ содержит полную документацию по работе приложения `accounts`, включая рабочие процессы, взаимодействия, связи с другими приложениями и архитектурные решения.
+Данный документ содержит обновленную полную документацию по работе приложения `accounts`, включая рабочие процессы, взаимодействия, связи с другими приложениями, архитектурные решения, JSON API интеграции и современные особенности системы.
 
 ---
 
 ## 📋 Содержание
 
 1. [Рабочие процессы](#рабочие-процессы)
-2. [Взаимодействия с другими приложениями](#взаимодействия-с-другими-приложениями)
-3. [Архитектурные решения](#архитектурные-решения)
-4. [Безопасность](#безопасность)
-5. [Производительность](#производительность)
-6. [Мониторинг и логирование](#мониторинг-и-логирование)
-7. [Развертывание](#развертывание)
-8. [Troubleshooting](#troubleshooting)
+2. [JSON API рабочие процессы](#json-api-рабочие-процессы)
+3. [Взаимодействия с другими приложениями](#взаимодействия-с-другими-приложениями)
+4. [Архитектурные решения](#архитектурные-решения)
+5. [Сервисный слой](#сервисный-слой)
+6. [Безопасность](#безопасность)
+7. [Производительность](#производительность)
+8. [Мониторинг и логирование](#мониторинг-и-логирование)
+9. [Развертывание](#развертывание)
+10. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -186,6 +188,125 @@ graph TD
 5. Сохраняет данные в локальной БД
 6. Обновляет статус интеграции
 7. Уведомляет пользователя о результате
+
+---
+
+## 🔌 JSON API рабочие процессы
+
+### 1. Аутентификация через JSON API
+
+#### 1.1 Вход в систему
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant V as View
+    participant S as Service
+    participant D as Database
+    
+    C->>V: POST /accounts/api/login/
+    V->>S: login_api_handler()
+    S->>D: authenticate(username, password)
+    D-->>S: User object or None
+    alt Authentication Success
+        S->>V: Success response
+        V->>C: JSON success + user data
+    else Authentication Failed
+        S->>V: Error response
+        V->>C: JSON error message
+    end
+```
+
+**Процесс:**
+1. Клиент отправляет POST запрос с учетными данными
+2. `unified_api_view` обрабатывает запрос
+3. Вызывается `login_api_handler()`
+4. Система аутентифицирует пользователя
+5. Возвращается JSON ответ с результатом
+
+#### 1.2 Тестирование API ключей
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant V as View
+    participant S as Service
+    participant E as External API
+    
+    C->>V: POST /accounts/api/test-gemini/
+    V->>S: test_gemini_api_handler()
+    S->>E: Test API request
+    E-->>S: API response
+    S->>V: Processed result
+    V->>C: JSON response
+```
+
+**Процесс:**
+1. Клиент отправляет API ключ для тестирования
+2. Система делает тестовый запрос к внешнему API
+3. Обрабатывает ответ от API
+4. Возвращает JSON с результатом тестирования
+
+### 2. REST API рабочие процессы
+
+#### 2.1 Создание пользователя через REST API
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant V as UserViewSet
+    participant S as UserService
+    participant D as Database
+    
+    C->>V: POST /api/users/
+    V->>S: create_user_with_observer_role()
+    S->>D: Create User object
+    D-->>S: User created
+    S->>V: User data
+    V->>C: JSON response (201 Created)
+```
+
+#### 2.2 Назначение ролей через REST API
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant V as UserViewSet
+    participant S as RoleService
+    participant D as Database
+    
+    C->>V: POST /api/users/1/assign-groups/
+    V->>S: assign_role_to_user()
+    S->>D: Add user to group
+    D-->>S: Success
+    S->>V: Success response
+    V->>C: JSON confirmation
+```
+
+### 3. Универсальные функции
+
+#### 3.1 Универсальная обработка шаблонов
+```mermaid
+graph TD
+    A[Request] --> B[unified_template_view]
+    B --> C{handler_func provided?}
+    C -->|Yes| D[Call handler_func]
+    C -->|No| E[Use default context]
+    D --> F[Prepare context]
+    E --> F
+    F --> G[Render template]
+    G --> H[Return HTML response]
+```
+
+#### 3.2 Универсальная обработка API
+```mermaid
+graph TD
+    A[Request] --> B[unified_api_view]
+    B --> C{Method = POST?}
+    C -->|No| D[405 Method Not Allowed]
+    C -->|Yes| E[Parse JSON]
+    E --> F{Valid JSON?}
+    F -->|No| G[400 Bad Request]
+    F -->|Yes| H[Call handler_func]
+    H --> I[Process data]
+    I --> J[Return JSON response]
+```
 
 ---
 
@@ -411,9 +532,18 @@ logic/
 #### Реализация:
 ```python
 # Универсальная функция для шаблонов
-def unified_template_view(request, template_name, context=None):
+def unified_template_view(request, template_name, handler_func=None, context=None):
     if context is None:
         context = {}
+    
+    if handler_func:
+        try:
+            handler_context = handler_func(request)
+            if isinstance(handler_context, dict):
+                context.update(handler_context)
+        except Exception as e:
+            context['error'] = f'Ошибка обработки: {str(e)}'
+    
     return render(request, template_name, context)
 
 # Универсальная функция для API
@@ -479,6 +609,104 @@ class RoleService:
     @staticmethod
     def validate_role_permissions():
         # Валидация прав ролей
+        pass
+```
+
+---
+
+## ⚙️ Сервисный слой
+
+### 1. UserService
+
+#### Основные методы:
+```python
+class UserService:
+    @staticmethod
+    def get_user_profile_data(user):
+        """Получение данных профиля пользователя"""
+        return {
+            'user': user,
+            'integrations_status': UserService.get_integrations_status(user),
+            'roles': [group.name for group in user.groups.all()],
+            'permissions': user.get_all_permissions()
+        }
+    
+    @staticmethod
+    def update_user_api_keys(user, data):
+        """Обновление API ключей пользователя"""
+        for field in ['gemini_api_key', 'clickup_api_key', 'notion_integration_token',
+                     'huntflow_prod_api_key', 'huntflow_sandbox_api_key']:
+            if field in data:
+                setattr(user, field, data[field])
+        user.save()
+    
+    @staticmethod
+    def get_user_stats():
+        """Статистика пользователей"""
+        return {
+            'total_users': User.objects.count(),
+            'active_users': User.objects.filter(is_active=True).count(),
+            'staff_users': User.objects.filter(is_staff=True).count(),
+            'groups_stats': {
+                group.name: group.user_set.count()
+                for group in Group.objects.all()
+            }
+        }
+```
+
+### 2. RoleService
+
+#### Основные методы:
+```python
+class RoleService:
+    ROLE_NAMES = ["Администраторы", "Наблюдатели", "Рекрутеры", "Интервьюеры"]
+    
+    @staticmethod
+    def assign_role_to_user(user, role_name):
+        """Назначение роли пользователю"""
+        try:
+            group = Group.objects.get(name=role_name)
+            user.groups.add(group)
+            return True
+        except Group.DoesNotExist:
+            return False
+    
+    @staticmethod
+    def create_roles_and_permissions():
+        """Создание ролей и назначение прав"""
+        for role_name in RoleService.ROLE_NAMES:
+            group, created = Group.objects.get_or_create(name=role_name)
+            if created:
+                # Назначение прав в зависимости от роли
+                if role_name in ["Администраторы", "Рекрутеры"]:
+                    # Все права
+                    permissions = Permission.objects.all()
+                else:
+                    # Только просмотр
+                    permissions = Permission.objects.filter(codename__startswith='view_')
+                
+                group.permissions.set(permissions)
+```
+
+### 3. GoogleOAuthService
+
+#### Основные методы:
+```python
+class GoogleOAuthService:
+    @staticmethod
+    def get_authorization_url(request):
+        """Получение URL авторизации Google OAuth"""
+        # Генерация state parameter
+        # Создание URL авторизации
+        pass
+    
+    @staticmethod
+    def handle_oauth_callback(request):
+        """Обработка callback от Google OAuth"""
+        # Проверка state parameter
+        # Обмен кода на токен
+        # Получение данных пользователя
+        # Создание/обновление пользователя
         pass
 ```
 
@@ -743,6 +971,11 @@ python manage.py create_user admin admin@example.com --role "Администр�
 python manage.py shell
 >>> from django.conf import settings
 >>> print(settings.SOCIALACCOUNT_PROVIDERS)
+
+# Очистка сессии
+python manage.py shell
+>>> from django.contrib.sessions.models import Session
+>>> Session.objects.all().delete()
 ```
 
 #### API ключи не работают:
@@ -821,11 +1054,22 @@ tar -xzf files_backup.tar.gz
 5. **Отличной производительностью** и масштабируемостью
 6. **Полным мониторингом** и логированием
 7. **Простой развертыванием** и поддержкой
+8. **JSON API интеграцией** для современных приложений
+9. **Универсальными функциями** для гибкости
+10. **Comprehensive документацией** для всех типов пользователей
+
+### 🆕 Новые возможности:
+- **JSON API спецификация** - полная интеграция с современными приложениями
+- **Универсальные функции** - DRY принцип и консистентность
+- **Сервисный слой** - четкое разделение бизнес-логики
+- **REST API** - полная CRUD функциональность
+- **Обновленная документация** - с учетом всех изменений
 
 Система готова к production использованию и легко адаптируется под новые требования.
 
 ---
 
 **Дата обновления:** 2024-01-20  
-**Версия:** 1.0.0  
-**Статус:** Production Ready ✅
+**Версия:** 2.0.0  
+**Статус:** Production Ready ✅  
+**Новая документация:** Complete ✅

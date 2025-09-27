@@ -112,96 +112,6 @@ class PLNTax(models.Model):
         """Возвращает ставку как десятичное число (например, 0.20 для 20%)"""
         return self.rate / 100
 
-    @classmethod
-    def calculate_gross_from_net(cls, net_amount: Decimal) -> Decimal:
-        """
-        Рассчитывает gross сумму из net суммы с учетом всех активных налогов.
-        
-        Args:
-            net_amount: Net сумма в PLN
-            
-        Returns:
-            Gross сумма в PLN
-        """
-        active_taxes = cls.objects.filter(is_active=True)
-        
-        if not active_taxes.exists():
-            return net_amount
-        
-        # Суммируем все налоговые ставки
-        total_tax_rate = sum(tax.rate_decimal for tax in active_taxes)
-        
-        # Gross = Net / (1 - общая_налоговая_ставка)
-        if total_tax_rate >= 1:
-            # Если общая ставка >= 100%, возвращаем net сумму
-            return net_amount
-        
-        gross_amount = net_amount / (1 - total_tax_rate)
-        return gross_amount.quantize(Decimal('0.01'))
-
-    @classmethod
-    def calculate_net_from_gross(cls, gross_amount: Decimal) -> Decimal:
-        """
-        Рассчитывает net сумму из gross суммы с учетом всех активных налогов.
-        
-        Args:
-            gross_amount: Gross сумма в PLN
-            
-        Returns:
-            Net сумма в PLN
-        """
-        active_taxes = cls.objects.filter(is_active=True)
-        
-        if not active_taxes.exists():
-            return gross_amount
-        
-        # Суммируем все налоговые ставки
-        total_tax_rate = sum(tax.rate_decimal for tax in active_taxes)
-        
-        # Net = Gross * (1 - общая_налоговая_ставка)
-        net_amount = gross_amount * (1 - total_tax_rate)
-        return net_amount.quantize(Decimal('0.01'))
-
-
-    @classmethod
-    def get_tax_breakdown(cls, gross_amount: Decimal) -> dict:
-        """
-        Возвращает детализацию налогов по gross сумме.
-        
-        Args:
-            gross_amount: Gross сумма в PLN
-            
-        Returns:
-            Словарь с детализацией налогов
-        """
-        active_taxes = cls.objects.filter(is_active=True)
-        breakdown = {
-            'gross_amount': gross_amount,
-            'net_amount': Decimal('0'),
-            'total_tax_amount': Decimal('0'),
-            'taxes': []
-        }
-        
-        if not active_taxes.exists():
-            breakdown['net_amount'] = gross_amount
-            return breakdown
-        
-        total_tax_amount = Decimal('0')
-        
-        for tax in active_taxes:
-            tax_amount = gross_amount * tax.rate_decimal
-            total_tax_amount += tax_amount
-            
-            breakdown['taxes'].append({
-                'name': tax.name,
-                'rate': tax.rate,
-                'amount': tax_amount.quantize(Decimal('0.01'))
-            })
-        
-        breakdown['total_tax_amount'] = total_tax_amount.quantize(Decimal('0.01'))
-        breakdown['net_amount'] = (gross_amount - total_tax_amount).quantize(Decimal('0.01'))
-        
-        return breakdown
 
 
 class SalaryRange(models.Model):
@@ -320,67 +230,17 @@ class SalaryRange(models.Model):
         self.clean()
         
         # Всегда пересчитываем курсы валют при сохранении
-        self._calculate_byn_amounts()
-        self._calculate_pln_amounts()
+        from .logic.salary_service import SalaryService
+        min_byn, max_byn = SalaryService.calculate_byn_amounts(self.salary_min_usd, self.salary_max_usd)
+        min_pln, max_pln = SalaryService.calculate_pln_amounts(self.salary_min_usd, self.salary_max_usd)
+        
+        self.salary_min_byn = min_byn
+        self.salary_max_byn = max_byn
+        self.salary_min_pln = min_pln
+        self.salary_max_pln = max_pln
         
         super().save(*args, **kwargs)
     
-    def _calculate_byn_amounts(self):
-        """Рассчитывает суммы в BYN на основе USD и курса валют"""
-        try:
-            usd_rate = CurrencyRate.objects.get(code='USD')
-            
-            if self.salary_min_usd:
-                self.salary_min_byn = self.salary_min_usd * usd_rate.rate
-            
-            if self.salary_max_usd:
-                self.salary_max_byn = self.salary_max_usd * usd_rate.rate
-                
-        except CurrencyRate.DoesNotExist:
-            # Если курс USD не найден, оставляем поля пустыми
-            pass
-    
-    def _calculate_pln_amounts(self):
-        """Рассчитывает суммы в PLN на основе USD и курса валют с учетом налогов"""
-        try:
-            usd_rate = CurrencyRate.objects.get(code='USD')
-            pln_rate = CurrencyRate.objects.get(code='PLN')
-            
-            # Получаем суммарную налоговую ставку
-            active_taxes = PLNTax.objects.filter(is_active=True)
-            total_tax_rate = sum(tax.rate_decimal for tax in active_taxes)
-            
-            if self.salary_min_usd:
-                # USD -> BYN -> PLN (с учетом налогов)
-                byn_amount = self.salary_min_usd * usd_rate.rate
-                pln_gross = byn_amount / pln_rate.rate
-                
-                # Применяем налоговую формулу: PLN = Gross / (1 - суммарные_налоги)
-                if total_tax_rate > 0 and total_tax_rate < 1:
-                    self.salary_min_pln = pln_gross / (1 - total_tax_rate)
-                else:
-                    self.salary_min_pln = pln_gross
-            
-            if self.salary_max_usd:
-                # USD -> BYN -> PLN (с учетом налогов)
-                byn_amount = self.salary_max_usd * usd_rate.rate
-                pln_gross = byn_amount / pln_rate.rate
-                
-                # Применяем налоговую формулу: PLN = Gross / (1 - суммарные_налоги)
-                if total_tax_rate > 0 and total_tax_rate < 1:
-                    self.salary_max_pln = pln_gross / (1 - total_tax_rate)
-                else:
-                    self.salary_max_pln = pln_gross
-                
-        except CurrencyRate.DoesNotExist:
-            # Если курсы валют не найдены, оставляем поля пустыми
-            pass
-    
-    def update_currency_amounts(self):
-        """Обновляет суммы в других валютах на основе текущих курсов"""
-        self._calculate_byn_amounts()
-        self._calculate_pln_amounts()
-        self.save(update_fields=['salary_min_byn', 'salary_max_byn', 'salary_min_pln', 'salary_max_pln'])
     
     @property
     def salary_range_usd(self):
@@ -404,8 +264,9 @@ class SalaryRange(models.Model):
     @classmethod
     def update_all_currency_amounts(cls):
         """Обновляет суммы в других валютах для всех зарплатных вилок"""
+        from .logic.salary_service import SalaryService
         for salary_range in cls.objects.all():
-            salary_range.update_currency_amounts()
+            SalaryService.update_salary_range_currency_amounts(salary_range)
 
 
 class Domain(models.TextChoices):

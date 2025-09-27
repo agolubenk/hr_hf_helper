@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from django.db.models import Count, Avg, Min, Max
 from decimal import Decimal
 from .models import Grade, CurrencyRate, PLNTax, SalaryRange, Benchmark, BenchmarkSettings, Domain
-from .serializers import (
+from .logic.tax_service import TaxService
+from .logic.serializers import (
     GradeSerializer, CurrencyRateSerializer, PLNTaxSerializer, 
     SalaryRangeSerializer, BenchmarkSerializer, BenchmarkSettingsSerializer,
     SalaryCalculationSerializer, TaxCalculationSerializer
@@ -60,8 +61,8 @@ class CurrencyRateViewSet(viewsets.ModelViewSet):
     def update_rates(self, request):
         """Обновление курсов валют"""
         try:
-            from .services import update_currency_rates
-            update_currency_rates()
+            from .logic.currency_service import CurrencyService
+            CurrencyService.update_currency_rates()
             return Response({'message': 'Курсы валют успешно обновлены'})
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -90,12 +91,12 @@ class PLNTaxViewSet(viewsets.ModelViewSet):
         serializer = TaxCalculationSerializer(data=request.data)
         if serializer.is_valid():
             net_amount = serializer.validated_data['gross_amount']
-            gross_amount = PLNTax.calculate_gross_from_net(net_amount)
+            gross_amount = TaxService.calculate_gross_from_net(net_amount, "PLN")
             
             return Response({
                 'net_amount': float(net_amount),
                 'gross_amount': float(gross_amount),
-                'breakdown': PLNTax.get_tax_breakdown(gross_amount)
+                'breakdown': TaxService.get_tax_breakdown(gross_amount, "PLN")
             })
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -105,12 +106,12 @@ class PLNTaxViewSet(viewsets.ModelViewSet):
         serializer = TaxCalculationSerializer(data=request.data)
         if serializer.is_valid():
             gross_amount = serializer.validated_data['gross_amount']
-            net_amount = PLNTax.calculate_net_from_gross(gross_amount)
+            net_amount = TaxService.calculate_net_from_gross(gross_amount, "PLN")
             
             return Response({
                 'gross_amount': float(gross_amount),
                 'net_amount': float(net_amount),
-                'breakdown': PLNTax.get_tax_breakdown(gross_amount)
+                'breakdown': TaxService.get_tax_breakdown(gross_amount, "PLN")
             })
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -256,7 +257,7 @@ class SalaryCalculationViewSet(viewsets.ViewSet):
                         total_tax_rate = sum(tax.rate_decimal for tax in active_taxes)
                         gross_amount = converted_amount / (1 - total_tax_rate)
                         result['gross_amount'] = float(gross_amount)
-                        result['tax_breakdown'] = PLNTax.get_tax_breakdown(gross_amount)
+                        result['tax_breakdown'] = TaxService.get_tax_breakdown(gross_amount, "PLN")
                 
                 return Response(result)
                 

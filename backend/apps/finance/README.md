@@ -338,7 +338,7 @@ if Grade.objects.filter(name='Senior').exists():
 ### Работа с налогами PLN
 ```python
 from apps.finance.models import PLNTax
-from apps.finance.pln_tax_services import PLNTaxCalculationService
+from apps.finance.logic.pln_tax_services import PLNTaxCalculationService
 from decimal import Decimal
 
 # Расчет gross из net суммы

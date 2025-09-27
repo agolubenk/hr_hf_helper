@@ -7,7 +7,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 
 from .models import Benchmark, BenchmarkSettings, Grade, BenchmarkType, HHVacancyTemp
-from .services import HHVacancyService
+from .logic.services import HHVacancyService
 from apps.vacancies.models import Vacancy
 import time
 
