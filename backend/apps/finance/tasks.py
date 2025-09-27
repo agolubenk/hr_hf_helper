@@ -538,7 +538,7 @@ def analyze_hh_vacancy_with_ai(vacancy_data: dict):
         api_key = default_user.gemini_api_key
         
         # Создаем сервис Gemini
-        from apps.gemini.services import GeminiService
+        from apps.gemini.logic.services import GeminiService
         gemini_service = GeminiService(api_key)
         
         # Отправляем запрос в Gemini

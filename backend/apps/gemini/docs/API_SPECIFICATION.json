@@ -1,0 +1,784 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Gemini App API",
+    "description": "Полная спецификация API для приложения gemini",
+    "version": "1.0.0",
+    "contact": {
+      "name": "HR Helper Team"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "Development server"
+    }
+  ],
+  "paths": {
+    "/api/v1/gemini/chat-sessions/": {
+      "get": {
+        "summary": "Список сессий чата",
+        "tags": ["Chat Sessions"],
+        "security": [{"SessionAuth": []}],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {"type": "integer", "default": 1}
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "ordering",
+            "in": "query",
+            "schema": {"type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список сессий чата",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {"type": "integer"},
+                    "next": {"type": "string", "nullable": true},
+                    "previous": {"type": "string", "nullable": true},
+                    "results": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/ChatSession"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Создание сессии чата",
+        "tags": ["Chat Sessions"],
+        "security": [{"SessionAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title"],
+                "properties": {
+                  "title": {"type": "string", "maxLength": 200}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Сессия чата создана",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/ChatSession"}
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка валидации",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/ValidationError"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gemini/chat-sessions/{id}/": {
+      "get": {
+        "summary": "Получение сессии чата",
+        "tags": ["Chat Sessions"],
+        "security": [{"SessionAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Данные сессии чата",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/ChatSessionDetail"}
+              }
+            }
+          },
+          "404": {
+            "description": "Сессия чата не найдена"
+          }
+        }
+      },
+      "put": {
+        "summary": "Обновление сессии чата",
+        "tags": ["Chat Sessions"],
+        "security": [{"SessionAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {"type": "string", "maxLength": 200},
+                  "is_active": {"type": "boolean"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Сессия чата обновлена",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/ChatSession"}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Удаление сессии чата",
+        "tags": ["Chat Sessions"],
+        "security": [{"SessionAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Сессия чата удалена"
+          }
+        }
+      }
+    },
+    "/api/v1/gemini/chat-sessions/{id}/send_message/": {
+      "post": {
+        "summary": "Отправка сообщения в сессию",
+        "tags": ["Chat Sessions"],
+        "security": [{"SessionAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["content"],
+                "properties": {
+                  "content": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Сообщение отправлено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user_message": {"$ref": "#/components/schemas/ChatMessage"},
+                    "assistant_message": {"$ref": "#/components/schemas/ChatMessage"}
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка отправки сообщения",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gemini/chat-sessions/{id}/messages/": {
+      "get": {
+        "summary": "Получение сообщений сессии",
+        "tags": ["Chat Sessions"],
+        "security": [{"SessionAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список сообщений сессии",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/ChatMessage"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gemini/chat-sessions/{id}/clear_history/": {
+      "post": {
+        "summary": "Очистка истории сообщений",
+        "tags": ["Chat Sessions"],
+        "security": [{"SessionAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "История очищена",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {"type": "string", "enum": ["history_cleared"]}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gemini/chat-sessions/my_sessions/": {
+      "get": {
+        "summary": "Мои сессии",
+        "tags": ["Chat Sessions"],
+        "security": [{"SessionAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Сессии текущего пользователя",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/ChatSession"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gemini/chat-sessions/stats/": {
+      "get": {
+        "summary": "Статистика сессий",
+        "tags": ["Chat Sessions"],
+        "security": [{"SessionAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Статистика сессий чата",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/ChatSessionStats"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gemini/chat-messages/": {
+      "get": {
+        "summary": "Список сообщений",
+        "tags": ["Chat Messages"],
+        "security": [{"SessionAuth": []}],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {"type": "integer", "default": 1}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список сообщений",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {"type": "integer"},
+                    "next": {"type": "string", "nullable": true},
+                    "previous": {"type": "string", "nullable": true},
+                    "results": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/ChatMessage"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gemini/chat-messages/{id}/": {
+      "get": {
+        "summary": "Получение сообщения",
+        "tags": ["Chat Messages"],
+        "security": [{"SessionAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Данные сообщения",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/ChatMessage"}
+              }
+            }
+          },
+          "404": {
+            "description": "Сообщение не найдено"
+          }
+        }
+      }
+    },
+    "/api/v1/gemini/chat-messages/recent/": {
+      "get": {
+        "summary": "Последние сообщения",
+        "tags": ["Chat Messages"],
+        "security": [{"SessionAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Последние сообщения",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/ChatMessage"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gemini/api/analyze_text/": {
+      "post": {
+        "summary": "Анализ текста",
+        "tags": ["Gemini API"],
+        "security": [{"SessionAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/GeminiApiRequest"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Анализ текста выполнен",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/GeminiApiResponse"}
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка анализа",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gemini/api/generate_response/": {
+      "post": {
+        "summary": "Генерация ответа",
+        "tags": ["Gemini API"],
+        "security": [{"SessionAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/GeminiApiRequest"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ответ сгенерирован",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/GeminiApiResponse"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gemini/api/stats/": {
+      "get": {
+        "summary": "Статистика API",
+        "tags": ["Gemini API"],
+        "security": [{"SessionAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Статистика использования API",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/GeminiApiStats"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gemini/send-message/": {
+      "post": {
+        "summary": "Отправка сообщения (JSON API)",
+        "tags": ["JSON API"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["session_id", "message"],
+                "properties": {
+                  "session_id": {"type": "integer"},
+                  "message": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Сообщение отправлено",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/SendMessageResponse"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gemini/test-api-key/": {
+      "post": {
+        "summary": "Тестирование API ключа (JSON API)",
+        "tags": ["JSON API"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["api_key"],
+                "properties": {
+                  "api_key": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Результат тестирования",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/ApiKeyTestResponse"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gemini/sessions/{session_id}/update-title/": {
+      "post": {
+        "summary": "Обновление названия сессии (JSON API)",
+        "tags": ["JSON API"],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title"],
+                "properties": {
+                  "title": {"type": "string", "minLength": 1, "maxLength": 200}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Название обновлено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean"},
+                    "title": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "SessionAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "sessionid"
+      }
+    },
+    "schemas": {
+      "ChatSession": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "readOnly": true},
+          "user": {"type": "integer", "readOnly": true},
+          "user_username": {"type": "string", "readOnly": true},
+          "title": {"type": "string", "maxLength": 200},
+          "is_active": {"type": "boolean", "default": true},
+          "messages_count": {"type": "integer", "readOnly": true},
+          "last_message": {
+            "type": "object",
+            "nullable": true,
+            "readOnly": true,
+            "properties": {
+              "id": {"type": "integer"},
+              "role": {"type": "string"},
+              "content": {"type": "string"},
+              "timestamp": {"type": "string", "format": "date-time"}
+            }
+          },
+          "created_at": {"type": "string", "format": "date-time", "readOnly": true},
+          "updated_at": {"type": "string", "format": "date-time", "readOnly": true}
+        },
+        "required": ["title"]
+      },
+      "ChatSessionDetail": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "readOnly": true},
+          "user": {"type": "integer", "readOnly": true},
+          "user_username": {"type": "string", "readOnly": true},
+          "title": {"type": "string", "maxLength": 200},
+          "is_active": {"type": "boolean", "default": true},
+          "messages": {
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/ChatMessage"},
+            "readOnly": true
+          },
+          "created_at": {"type": "string", "format": "date-time", "readOnly": true},
+          "updated_at": {"type": "string", "format": "date-time", "readOnly": true}
+        }
+      },
+      "ChatMessage": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "readOnly": true},
+          "session": {"type": "integer"},
+          "role": {
+            "type": "string",
+            "enum": ["user", "assistant", "system"]
+          },
+          "content": {"type": "string"},
+          "timestamp": {"type": "string", "format": "date-time", "readOnly": true},
+          "tokens_used": {"type": "integer", "nullable": true},
+          "response_time": {"type": "number", "nullable": true}
+        },
+        "required": ["role", "content"]
+      },
+      "ChatSessionStats": {
+        "type": "object",
+        "properties": {
+          "total_sessions": {"type": "integer"},
+          "active_sessions": {"type": "integer"},
+          "total_messages": {"type": "integer"},
+          "total_tokens": {"type": "integer"},
+          "average_messages_per_session": {"type": "number"},
+          "average_tokens_per_message": {"type": "number"},
+          "recent_sessions": {
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/ChatSession"}
+          }
+        }
+      },
+      "GeminiApiRequest": {
+        "type": "object",
+        "required": ["prompt"],
+        "properties": {
+          "prompt": {"type": "string", "maxLength": 4000},
+          "session_id": {"type": "integer"},
+          "max_tokens": {"type": "integer", "default": 1000, "minimum": 1, "maximum": 4000},
+          "temperature": {"type": "number", "default": 0.7, "minimum": 0.0, "maximum": 1.0},
+          "save_to_session": {"type": "boolean", "default": true}
+        }
+      },
+      "GeminiApiResponse": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean"},
+          "response": {"type": "string"},
+          "tokens_used": {"type": "integer"},
+          "response_time": {"type": "number"},
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "usage_metadata": {"type": "object"},
+              "finish_reason": {"type": "string"},
+              "safety_ratings": {"type": "array"}
+            }
+          }
+        }
+      },
+      "GeminiApiStats": {
+        "type": "object",
+        "properties": {
+          "total_sessions": {"type": "integer"},
+          "total_messages": {"type": "integer"},
+          "total_tokens": {"type": "integer"},
+          "average_messages_per_session": {"type": "number"},
+          "average_tokens_per_message": {"type": "number"},
+          "recent_sessions": {
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/ChatSession"}
+          }
+        }
+      },
+      "SendMessageResponse": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean"},
+          "response": {"type": "string"},
+          "user_message_id": {"type": "integer"},
+          "assistant_message_id": {"type": "integer"},
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "response_time": {"type": "number"},
+              "usage_metadata": {"type": "object"},
+              "finish_reason": {"type": "string"},
+              "safety_ratings": {"type": "array"}
+            }
+          }
+        }
+      },
+      "ApiKeyTestResponse": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean"},
+          "message": {"type": "string"},
+          "error": {"type": "string"}
+        }
+      },
+      "ValidationError": {
+        "type": "object",
+        "properties": {
+          "field_name": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Chat Sessions",
+      "description": "Управление сессиями чата"
+    },
+    {
+      "name": "Chat Messages",
+      "description": "Управление сообщениями чата"
+    },
+    {
+      "name": "Gemini API",
+      "description": "Работа с Gemini AI API"
+    },
+    {
+      "name": "JSON API",
+      "description": "JSON API для AJAX операций"
+    }
+  ]
+}

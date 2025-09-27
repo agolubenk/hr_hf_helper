@@ -1721,7 +1721,7 @@ class Invite(models.Model):
         Анализирует время встречи с помощью Gemini AI на основе исходного текста и слотов календаря
         """
         try:
-            from apps.gemini.services import GeminiService
+            from apps.gemini.logic.services import GeminiService
             from apps.vacancies.models import Vacancy
             from apps.google_oauth.services import GoogleCalendarService, GoogleOAuthService
             import json
@@ -3037,7 +3037,7 @@ class HRScreening(models.Model):
     def analyze_with_gemini(self):
         """Анализирует данные с помощью Gemini AI"""
         try:
-            from apps.gemini.services import GeminiService
+            from apps.gemini.logic.services import GeminiService
             
             # Проверяем, есть ли API ключ у пользователя
             if not self.user.gemini_api_key:

@@ -279,7 +279,7 @@ print(f"Ошибка: {error}")
 ```bash
 # Тест API ключа
 python manage.py shell
->>> from apps.gemini.services import GeminiService
+>>> from apps.gemini.logic.services import GeminiService
 >>> service = GeminiService("your-api-key")
 >>> success, message = service.test_connection()
 >>> print(f"Подключение: {success}, Сообщение: {message}")

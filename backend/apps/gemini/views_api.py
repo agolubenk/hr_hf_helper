@@ -5,13 +5,16 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 
 from .models import ChatSession, ChatMessage
-from .serializers import (
+from .logic.serializers import (
     ChatSessionSerializer, ChatSessionDetailSerializer, 
     ChatSessionCreateSerializer, ChatMessageSerializer,
     ChatMessageCreateSerializer, GeminiApiRequestSerializer,
     GeminiStatsSerializer
 )
-from .services import GeminiService
+from .logic.services import GeminiService
+from .logic.message_handlers import MessageApiHandler
+from .logic.api_handlers import ApiKeyApiHandler
+from .logic.stats_handlers import StatsApiHandler
 
 User = get_user_model()
 
@@ -43,33 +46,27 @@ class ChatSessionViewSet(viewsets.ModelViewSet):
         
         if serializer.is_valid():
             try:
-                gemini_service = GeminiService()
-                
-                # Создаем сообщение пользователя
-                user_message = ChatMessage.objects.create(
-                    session=session,
-                    role='user',
-                    content=serializer.validated_data['content']
+                # Используем общий обработчик для отправки сообщения
+                result = MessageApiHandler.send_message_viewset_handler(
+                    session, 
+                    serializer.validated_data['content'], 
+                    request.user
                 )
                 
-                # Получаем ответ от Gemini
-                response = gemini_service.send_message(
-                    session, serializer.validated_data['content']
-                )
-                
-                # Создаем сообщение ассистента
-                assistant_message = ChatMessage.objects.create(
-                    session=session,
-                    role='assistant',
-                    content=response['content'],
-                    tokens_used=response.get('tokens_used', 0),
-                    response_time=response.get('response_time', 0)
-                )
-                
-                return Response({
-                    'user_message': ChatMessageSerializer(user_message).data,
-                    'assistant_message': ChatMessageSerializer(assistant_message).data
-                })
+                if result['success']:
+                    # Получаем созданные сообщения для сериализации
+                    user_message = ChatMessage.objects.get(id=result['user_message_id'])
+                    assistant_message = ChatMessage.objects.get(id=result['assistant_message_id'])
+                    
+                    return Response({
+                        'user_message': ChatMessageSerializer(user_message).data,
+                        'assistant_message': ChatMessageSerializer(assistant_message).data
+                    })
+                else:
+                    return Response(
+                        {'error': result['error']}, 
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
             except Exception as e:
                 return Response(
                     {'error': str(e)}, 
@@ -104,21 +101,14 @@ class ChatSessionViewSet(viewsets.ModelViewSet):
     def stats(self, request):
         """Получить статистику чатов"""
         try:
-            sessions = self.get_queryset()
-            total_sessions = sessions.count()
-            total_messages = ChatMessage.objects.filter(session__in=sessions).count()
-            total_tokens = sum(
-                ChatMessage.objects.filter(session__in=sessions)
-                .values_list('tokens_used', flat=True)
-            )
+            # Используем общий обработчик для получения статистики
+            stats = StatsApiHandler.get_stats_handler({}, request)
             
-            stats = {
-                'total_sessions': total_sessions,
-                'total_messages': total_messages,
-                'total_tokens': total_tokens,
-                'average_messages_per_session': total_messages / total_sessions if total_sessions > 0 else 0,
-                'average_tokens_per_session': total_tokens / total_sessions if total_sessions > 0 else 0,
-            }
+            if 'error' in stats:
+                return Response(
+                    {'error': stats['error']}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
             
             return Response(stats)
         except Exception as e:
@@ -194,24 +184,14 @@ class GeminiApiViewSet(viewsets.ViewSet):
     def stats(self, request):
         """Получить статистику использования Gemini API"""
         try:
-            sessions = ChatSession.objects.filter(user=request.user)
-            total_sessions = sessions.count()
-            total_messages = ChatMessage.objects.filter(session__in=sessions).count()
-            total_tokens = sum(
-                ChatMessage.objects.filter(session__in=sessions)
-                .values_list('tokens_used', flat=True)
-            )
+            # Используем общий обработчик для получения статистики
+            stats = StatsApiHandler.get_stats_handler({}, request)
             
-            stats = {
-                'total_sessions': total_sessions,
-                'total_messages': total_messages,
-                'total_tokens': total_tokens,
-                'average_messages_per_session': total_messages / total_sessions if total_sessions > 0 else 0,
-                'average_tokens_per_message': total_tokens / total_messages if total_messages > 0 else 0,
-                'recent_sessions': ChatSessionSerializer(
-                    sessions.order_by('-created_at')[:5], many=True
-                ).data
-            }
+            if 'error' in stats:
+                return Response(
+                    {'error': stats['error']}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
             
             return Response(stats)
         except Exception as e:

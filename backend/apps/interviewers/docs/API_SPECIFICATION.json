@@ -1,0 +1,1339 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Interviewers API",
+    "description": "API для управления интервьюерами и правилами привлечения",
+    "version": "1.0.0",
+    "contact": {
+      "name": "HR Helper API Support",
+      "email": "support@hrhelper.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "Development server"
+    },
+    {
+      "url": "https://api.hrhelper.com",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "TokenAuth": []
+    }
+  ],
+  "paths": {
+    "/api/interviewers/": {
+      "get": {
+        "tags": ["Interviewers"],
+        "summary": "Список интервьюеров",
+        "description": "Получение списка всех интервьюеров с поддержкой пагинации, фильтрации и поиска",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Номер страницы",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "Размер страницы",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Поиск по имени, фамилии, email",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "is_active",
+            "in": "query",
+            "description": "Фильтр по активности",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "ordering",
+            "in": "query",
+            "description": "Сортировка",
+            "schema": {
+              "type": "string",
+              "enum": ["last_name", "-last_name", "first_name", "-first_name", "email", "-email", "created_at", "-created_at"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список интервьюеров",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "description": "Общее количество интервьюеров"
+                    },
+                    "next": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "URL следующей страницы"
+                    },
+                    "previous": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "URL предыдущей страницы"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Interviewer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Interviewers"],
+        "summary": "Создание интервьюера",
+        "description": "Создание нового интервьюера",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InterviewerCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Интервьюер создан",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Interviewer"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/interviewers/{id}/": {
+      "get": {
+        "tags": ["Interviewers"],
+        "summary": "Детали интервьюера",
+        "description": "Получение детальной информации об интервьюере",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID интервьюера",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Детали интервьюера",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Interviewer"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Interviewers"],
+        "summary": "Полное обновление интервьюера",
+        "description": "Полное обновление всех полей интервьюера",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID интервьюера",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InterviewerCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Интервьюер обновлен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Interviewer"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Interviewers"],
+        "summary": "Частичное обновление интервьюера",
+        "description": "Частичное обновление полей интервьюера",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID интервьюера",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InterviewerUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Интервьюер обновлен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Interviewer"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Interviewers"],
+        "summary": "Удаление интервьюера",
+        "description": "Удаление интервьюера",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID интервьюера",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Интервьюер удален"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/interviewers/{id}/toggle-active/": {
+      "post": {
+        "tags": ["Interviewers"],
+        "summary": "Переключение активности",
+        "description": "Переключение статуса активности интервьюера",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID интервьюера",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Статус активности изменен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Interviewer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка при изменении статуса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/interviewers/active/": {
+      "get": {
+        "tags": ["Interviewers"],
+        "summary": "Активные интервьюеры",
+        "description": "Получение списка только активных интервьюеров",
+        "responses": {
+          "200": {
+            "description": "Список активных интервьюеров",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InterviewerList"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/interviewers/with-calendar/": {
+      "get": {
+        "tags": ["Interviewers"],
+        "summary": "Интервьюеры с календарем",
+        "description": "Получение интервьюеров с настроенным календарем",
+        "responses": {
+          "200": {
+            "description": "Список интервьюеров с календарем",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InterviewerList"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/interviewers/stats/": {
+      "get": {
+        "tags": ["Interviewers"],
+        "summary": "Статистика интервьюеров",
+        "description": "Получение статистики по интервьюерам",
+        "responses": {
+          "200": {
+            "description": "Статистика интервьюеров",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InterviewerStats"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/interviewers/search/": {
+      "get": {
+        "tags": ["Interviewers"],
+        "summary": "Поиск интервьюеров",
+        "description": "Поиск интервьюеров с фильтрацией",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Поисковый запрос",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "is_active",
+            "in": "query",
+            "description": "Фильтр по активности",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "has_calendar",
+            "in": "query",
+            "description": "Фильтр по наличию календаря",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Результаты поиска",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InterviewerList"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/interview-rules/": {
+      "get": {
+        "tags": ["Interview Rules"],
+        "summary": "Список правил",
+        "description": "Получение списка всех правил привлечения интервьюеров",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Номер страницы",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "Размер страницы",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Поиск по названию, описанию",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "is_active",
+            "in": "query",
+            "description": "Фильтр по активности",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "min_grade",
+            "in": "query",
+            "description": "Фильтр по минимальному грейду",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список правил",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    },
+                    "next": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "previous": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/InterviewRule"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Interview Rules"],
+        "summary": "Создание правила",
+        "description": "Создание нового правила привлечения интервьюеров",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InterviewRuleCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Правило создано",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InterviewRule"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/interview-rules/{id}/": {
+      "get": {
+        "tags": ["Interview Rules"],
+        "summary": "Детали правила",
+        "description": "Получение детальной информации о правиле",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID правила",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Детали правила",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InterviewRule"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Interview Rules"],
+        "summary": "Полное обновление правила",
+        "description": "Полное обновление всех полей правила",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID правила",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InterviewRuleCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Правило обновлено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InterviewRule"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Interview Rules"],
+        "summary": "Частичное обновление правила",
+        "description": "Частичное обновление полей правила",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID правила",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InterviewRuleUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Правило обновлено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InterviewRule"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Interview Rules"],
+        "summary": "Удаление правила",
+        "description": "Удаление правила",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID правила",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Правило удалено"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/interview-rules/{id}/activate/": {
+      "post": {
+        "tags": ["Interview Rules"],
+        "summary": "Активация правила",
+        "description": "Активация правила (деактивация всех остальных)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID правила",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Правило активировано",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InterviewRule"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка при активации",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/interview-rules/active/": {
+      "get": {
+        "tags": ["Interview Rules"],
+        "summary": "Активное правило",
+        "description": "Получение активного правила",
+        "responses": {
+          "200": {
+            "description": "Активное правило",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InterviewRule"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Нет активного правила",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/interview-rules/{id}/check-grade/": {
+      "post": {
+        "tags": ["Interview Rules"],
+        "summary": "Проверка грейда",
+        "description": "Проверка, подходит ли грейд для правила",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID правила",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "grade_id": {
+                    "type": "integer",
+                    "description": "ID грейда для проверки"
+                  }
+                },
+                "required": ["grade_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Результат проверки",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "grade_name": {
+                      "type": "string"
+                    },
+                    "rule_name": {
+                      "type": "string"
+                    },
+                    "is_in_range": {
+                      "type": "boolean"
+                    },
+                    "grade_range": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка валидации",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Грейд не найден",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/interview-rules/stats/": {
+      "get": {
+        "tags": ["Interview Rules"],
+        "summary": "Статистика правил",
+        "description": "Получение статистики по правилам",
+        "responses": {
+          "200": {
+            "description": "Статистика правил",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total_rules": {
+                      "type": "integer"
+                    },
+                    "active_rules": {
+                      "type": "integer"
+                    },
+                    "inactive_rules": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "TokenAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Token"
+      }
+    },
+    "schemas": {
+      "Interviewer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "first_name": {
+            "type": "string",
+            "maxLength": 50,
+            "description": "Имя"
+          },
+          "last_name": {
+            "type": "string",
+            "maxLength": 50,
+            "description": "Фамилия"
+          },
+          "middle_name": {
+            "type": "string",
+            "maxLength": 50,
+            "description": "Отчество"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email адрес"
+          },
+          "calendar_link": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "Ссылка на календарь"
+          },
+          "is_active": {
+            "type": "boolean",
+            "description": "Активен ли интервьюер"
+          },
+          "full_name": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Полное имя"
+          },
+          "short_name": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Краткое имя"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": ["first_name", "last_name", "email"]
+      },
+      "InterviewerCreate": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "maxLength": 50,
+            "description": "Имя"
+          },
+          "last_name": {
+            "type": "string",
+            "maxLength": 50,
+            "description": "Фамилия"
+          },
+          "middle_name": {
+            "type": "string",
+            "maxLength": 50,
+            "description": "Отчество"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email адрес"
+          },
+          "calendar_link": {
+            "type": "string",
+            "format": "uri",
+            "description": "Ссылка на календарь"
+          },
+          "is_active": {
+            "type": "boolean",
+            "description": "Активен ли интервьюер"
+          }
+        },
+        "required": ["first_name", "last_name", "email"]
+      },
+      "InterviewerUpdate": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "last_name": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "middle_name": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "calendar_link": {
+            "type": "string",
+            "format": "uri"
+          },
+          "is_active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "InterviewerList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "full_name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "is_active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "InterviewerStats": {
+        "type": "object",
+        "properties": {
+          "total_interviewers": {
+            "type": "integer"
+          },
+          "active_interviewers": {
+            "type": "integer"
+          },
+          "inactive_interviewers": {
+            "type": "integer"
+          },
+          "interviewers_with_calendar": {
+            "type": "integer"
+          },
+          "recent_interviewers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InterviewerList"
+            }
+          }
+        }
+      },
+      "InterviewRule": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "Название правила"
+          },
+          "description": {
+            "type": "string",
+            "description": "Описание правила"
+          },
+          "daily_limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "description": "Лимит в день"
+          },
+          "weekly_limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "description": "Лимит в неделю"
+          },
+          "min_grade": {
+            "type": "integer",
+            "description": "ID минимального грейда"
+          },
+          "min_grade_name": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Название минимального грейда"
+          },
+          "max_grade": {
+            "type": "integer",
+            "description": "ID максимального грейда"
+          },
+          "max_grade_name": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Название максимального грейда"
+          },
+          "grade_range": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Диапазон грейдов"
+          },
+          "is_active": {
+            "type": "boolean",
+            "description": "Активно ли правило"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": ["name", "daily_limit", "weekly_limit", "min_grade", "max_grade"]
+      },
+      "InterviewRuleCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string"
+          },
+          "daily_limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "weekly_limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200
+          },
+          "min_grade": {
+            "type": "integer"
+          },
+          "max_grade": {
+            "type": "integer"
+          },
+          "is_active": {
+            "type": "boolean"
+          }
+        },
+        "required": ["name", "daily_limit", "weekly_limit", "min_grade", "max_grade"]
+      },
+      "InterviewRuleUpdate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string"
+          },
+          "daily_limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "weekly_limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200
+          },
+          "min_grade": {
+            "type": "integer"
+          },
+          "max_grade": {
+            "type": "integer"
+          },
+          "is_active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Описание ошибки"
+          },
+          "details": {
+            "type": "object",
+            "description": "Дополнительные детали ошибки"
+          },
+          "code": {
+            "type": "string",
+            "description": "Код ошибки"
+          }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Неверный запрос",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "field_name": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Не авторизован",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Ресурс не найден",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Interviewers",
+      "description": "Управление интервьюерами"
+    },
+    {
+      "name": "Interview Rules",
+      "description": "Управление правилами привлечения интервьюеров"
+    }
+  ]
+}

@@ -10,7 +10,10 @@ import json
 import logging
 
 from .models import ChatSession, ChatMessage
-from .services import GeminiService
+from .logic.services import GeminiService
+from .logic.message_handlers import MessageApiHandler
+from .logic.api_handlers import ApiKeyApiHandler
+from .logic.stats_handlers import StatsApiHandler
 
 logger = logging.getLogger(__name__)
 
@@ -21,20 +24,13 @@ def gemini_dashboard(request):
     Главная страница Gemini AI
     """
     try:
-        # Получаем API ключ пользователя
-        has_api_key = bool(request.user.gemini_api_key)
+        # Используем общий обработчик для получения контекста
+        context = StatsApiHandler.get_dashboard_handler({}, request)
         
-        # Получаем активные сессии чата
-        chat_sessions = ChatSession.objects.filter(
-            user=request.user, 
-            is_active=True
-        ).order_by('-updated_at')[:10]
-        
-        context = {
-            'has_api_key': has_api_key,
-            'chat_sessions': chat_sessions,
-            'api_key_configured': has_api_key,
-        }
+        if 'error' in context:
+            logger.error(f"Ошибка в gemini_dashboard: {context['error']}")
+            messages.error(request, f'Ошибка при загрузке страницы: {context["error"]}')
+            return render(request, 'gemini/dashboard.html', {'has_api_key': False})
         
         return render(request, 'gemini/dashboard.html', context)
         
@@ -156,74 +152,11 @@ def send_message(request):
     """
     try:
         data = json.loads(request.body)
-        session_id = data.get('session_id')
-        message = data.get('message', '').strip()
         
-        if not session_id or not message:
-            return JsonResponse({
-                'success': False,
-                'error': 'Неверные параметры запроса'
-            })
+        # Используем общий обработчик для отправки сообщения
+        result = MessageApiHandler.send_message_api_handler(data, request)
         
-        # Получаем сессию
-        chat_session = get_object_or_404(ChatSession, id=session_id, user=request.user)
-        
-        # Получаем API ключ
-        if not request.user.gemini_api_key:
-            return JsonResponse({
-                'success': False,
-                'error': 'API ключ не настроен'
-            })
-        
-        # Сохраняем сообщение пользователя
-        user_message = ChatMessage.objects.create(
-            session=chat_session,
-            role='user',
-            content=message
-        )
-        
-        # Получаем историю сообщений для контекста
-        history_messages = ChatMessage.objects.filter(
-            session=chat_session
-        ).order_by('timestamp')[:20]  # Последние 20 сообщений
-        
-        history = []
-        for msg in history_messages:
-            history.append({
-                'role': msg.role,
-                'content': msg.content
-            })
-        
-        # Отправляем запрос к Gemini
-        gemini_service = GeminiService(request.user.gemini_api_key)
-        success, response, metadata = gemini_service.generate_content(message, history)
-        
-        if success:
-            # Сохраняем ответ ассистента
-            assistant_message = ChatMessage.objects.create(
-                session=chat_session,
-                role='assistant',
-                content=response,
-                tokens_used=metadata.get('usage_metadata', {}).get('totalTokenCount'),
-                response_time=metadata.get('response_time')
-            )
-            
-            # Обновляем время последнего обновления сессии
-            chat_session.updated_at = timezone.now()
-            chat_session.save()
-            
-            return JsonResponse({
-                'success': True,
-                'response': response,
-                'user_message_id': user_message.id,
-                'assistant_message_id': assistant_message.id,
-                'metadata': metadata
-            })
-        else:
-            return JsonResponse({
-                'success': False,
-                'error': response
-            })
+        return JsonResponse(result)
             
     except json.JSONDecodeError:
         return JsonResponse({
@@ -264,21 +197,11 @@ def test_api_key(request):
     """
     try:
         data = json.loads(request.body)
-        api_key = data.get('api_key', '').strip()
         
-        if not api_key:
-            return JsonResponse({
-                'success': False,
-                'error': 'API ключ не может быть пустым'
-            })
+        # Используем общий обработчик для тестирования API ключа
+        result = ApiKeyApiHandler.test_api_key_handler(data, request)
         
-        gemini_service = GeminiService(api_key)
-        success, message = gemini_service.test_connection()
-        
-        return JsonResponse({
-            'success': success,
-            'message': message
-        })
+        return JsonResponse(result)
         
     except json.JSONDecodeError:
         return JsonResponse({

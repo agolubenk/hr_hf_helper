@@ -3,10 +3,12 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Count, Q
 from .models import Interviewer, InterviewRule
-from .serializers import (
+from .logic.serializers import (
     InterviewerSerializer, InterviewerCreateSerializer, InterviewerListSerializer,
     InterviewRuleSerializer, InterviewRuleCreateSerializer, InterviewerStatsSerializer
 )
+from .logic.interviewers_handlers import InterviewerApiHandler
+from .logic.rules_handlers import RuleApiHandler
 
 
 class InterviewerViewSet(viewsets.ModelViewSet):
@@ -30,86 +32,88 @@ class InterviewerViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'], url_path='toggle-active')
     def toggle_active(self, request, pk=None):
         """Переключение активности интервьюера"""
-        interviewer = self.get_object()
-        interviewer.is_active = not interviewer.is_active
-        interviewer.save()
+        # Используем общий обработчик для переключения активности
+        result = InterviewerApiHandler.toggle_active_handler({'pk': pk}, request)
         
-        serializer = InterviewerSerializer(interviewer)
-        return Response(serializer.data)
+        if result['success']:
+            interviewer = self.get_object()
+            serializer = InterviewerSerializer(interviewer)
+            return Response(serializer.data)
+        else:
+            return Response(
+                {'error': result['message']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
     
     @action(detail=False, methods=['get'], url_path='active')
     def active(self, request):
         """Получение только активных интервьюеров"""
-        active_interviewers = self.get_queryset().filter(is_active=True)
-        serializer = InterviewerListSerializer(active_interviewers, many=True)
-        return Response(serializer.data)
+        # Используем общий обработчик для получения активных интервьюеров
+        result = InterviewerApiHandler.get_active_handler({}, request)
+        
+        if result['success']:
+            serializer = InterviewerListSerializer(result['interviewers'], many=True)
+            return Response(serializer.data)
+        else:
+            return Response(
+                {'error': result['message']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
     
     @action(detail=False, methods=['get'], url_path='with-calendar')
     def with_calendar(self, request):
         """Получение интервьюеров с настроенным календарем"""
-        interviewers_with_calendar = self.get_queryset().filter(
-            is_active=True,
-            calendar_link__isnull=False
-        ).exclude(calendar_link='')
+        # Используем общий обработчик для получения интервьюеров с календарем
+        result = InterviewerApiHandler.get_with_calendar_handler({}, request)
         
-        serializer = InterviewerListSerializer(interviewers_with_calendar, many=True)
-        return Response(serializer.data)
+        if result['success']:
+            serializer = InterviewerListSerializer(result['interviewers'], many=True)
+            return Response(serializer.data)
+        else:
+            return Response(
+                {'error': result['message']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
     
     @action(detail=False, methods=['get'], url_path='stats')
     def stats(self, request):
         """Статистика по интервьюерам"""
-        total_interviewers = Interviewer.objects.count()
-        active_interviewers = Interviewer.objects.filter(is_active=True).count()
-        inactive_interviewers = total_interviewers - active_interviewers
-        interviewers_with_calendar = Interviewer.objects.filter(
-            is_active=True,
-            calendar_link__isnull=False
-        ).exclude(calendar_link='').count()
+        # Используем общий обработчик для получения статистики
+        result = InterviewerApiHandler.get_stats_handler({}, request)
         
-        # Последние добавленные интервьюеры
-        recent_interviewers = Interviewer.objects.order_by('-created_at')[:5]
-        recent_serializer = InterviewerListSerializer(recent_interviewers, many=True)
-        
-        return Response({
-            'total_interviewers': total_interviewers,
-            'active_interviewers': active_interviewers,
-            'inactive_interviewers': inactive_interviewers,
-            'interviewers_with_calendar': interviewers_with_calendar,
-            'recent_interviewers': recent_serializer.data
-        })
+        if result['success']:
+            recent_serializer = InterviewerListSerializer(result['recent_interviewers'], many=True)
+            return Response({
+                'total_interviewers': result['total_interviewers'],
+                'active_interviewers': result['active_interviewers'],
+                'inactive_interviewers': result['inactive_interviewers'],
+                'interviewers_with_calendar': result['interviewers_with_calendar'],
+                'recent_interviewers': recent_serializer.data
+            })
+        else:
+            return Response(
+                {'error': result['message']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
     
     @action(detail=False, methods=['get'], url_path='search')
     def search(self, request):
         """Поиск интервьюеров"""
-        query = request.query_params.get('q', '')
-        is_active = request.query_params.get('is_active')
-        has_calendar = request.query_params.get('has_calendar')
+        # Используем общий обработчик для поиска интервьюеров
+        result = InterviewerApiHandler.search_handler({
+            'q': request.query_params.get('q', ''),
+            'is_active': request.query_params.get('is_active'),
+            'has_calendar': request.query_params.get('has_calendar')
+        }, request)
         
-        queryset = self.get_queryset()
-        
-        if query:
-            queryset = queryset.filter(
-                Q(first_name__icontains=query) |
-                Q(last_name__icontains=query) |
-                Q(middle_name__icontains=query) |
-                Q(email__icontains=query)
+        if result['success']:
+            serializer = InterviewerListSerializer(result['interviewers'], many=True)
+            return Response(serializer.data)
+        else:
+            return Response(
+                {'error': result['message']},
+                status=status.HTTP_400_BAD_REQUEST
             )
-        
-        if is_active is not None:
-            queryset = queryset.filter(is_active=is_active.lower() == 'true')
-        
-        if has_calendar is not None:
-            if has_calendar.lower() == 'true':
-                queryset = queryset.filter(
-                    calendar_link__isnull=False
-                ).exclude(calendar_link='')
-            else:
-                queryset = queryset.filter(
-                    Q(calendar_link__isnull=True) | Q(calendar_link='')
-                )
-        
-        serializer = InterviewerListSerializer(queryset, many=True)
-        return Response(serializer.data)
 
 
 class InterviewRuleViewSet(viewsets.ModelViewSet):
@@ -131,53 +135,65 @@ class InterviewRuleViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'], url_path='activate')
     def activate(self, request, pk=None):
         """Активация правила (деактивация всех остальных)"""
-        rule = self.get_object()
-        InterviewRule.activate_rule(rule.id)
+        # Используем общий обработчик для активации правила
+        result = RuleApiHandler.activate_handler({'pk': pk}, request)
         
-        serializer = InterviewRuleSerializer(rule)
-        return Response(serializer.data)
+        if result['success']:
+            rule = self.get_object()
+            serializer = InterviewRuleSerializer(rule)
+            return Response(serializer.data)
+        else:
+            return Response(
+                {'error': result['message']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
     
     @action(detail=False, methods=['get'], url_path='active')
     def active(self, request):
         """Получение активного правила"""
-        active_rule = InterviewRule.get_active_rule()
-        if active_rule:
-            serializer = InterviewRuleSerializer(active_rule)
+        # Используем общий обработчик для получения активного правила
+        result = RuleApiHandler.get_active_handler({}, request)
+        
+        if result['success']:
+            serializer = InterviewRuleSerializer(result['rule'])
             return Response(serializer.data)
-        return Response({'message': 'Нет активного правила'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(
+                {'message': result['message']},
+                status=status.HTTP_404_NOT_FOUND
+            )
     
     @action(detail=True, methods=['post'], url_path='check-grade')
     def check_grade(self, request, pk=None):
         """Проверка, подходит ли грейд для правила"""
-        rule = self.get_object()
-        grade_id = request.data.get('grade_id')
+        # Используем общий обработчик для проверки грейда
+        result = RuleApiHandler.check_grade_handler({
+            'pk': pk,
+            'grade_id': request.data.get('grade_id')
+        }, request)
         
-        if not grade_id:
-            return Response({'error': 'grade_id обязателен'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        try:
-            from apps.finance.models import Grade
-            grade = Grade.objects.get(id=grade_id)
-            is_in_range = rule.is_grade_in_range(grade)
-            
-            return Response({
-                'grade_name': grade.name,
-                'rule_name': rule.name,
-                'is_in_range': is_in_range,
-                'grade_range': rule.get_grade_range()
-            })
-        except Grade.DoesNotExist:
-            return Response({'error': 'Грейд не найден'}, status=status.HTTP_404_NOT_FOUND)
+        if result['success']:
+            return Response(result)
+        else:
+            return Response(
+                {'error': result['message']},
+                status=status.HTTP_400_BAD_REQUEST if 'grade_id' in result['message'] else status.HTTP_404_NOT_FOUND
+            )
     
     @action(detail=False, methods=['get'], url_path='stats')
     def stats(self, request):
         """Статистика по правилам"""
-        total_rules = InterviewRule.objects.count()
-        active_rules = InterviewRule.objects.filter(is_active=True).count()
-        inactive_rules = total_rules - active_rules
+        # Используем общий обработчик для получения статистики
+        result = RuleApiHandler.get_stats_handler({}, request)
         
-        return Response({
-            'total_rules': total_rules,
-            'active_rules': active_rules,
-            'inactive_rules': inactive_rules
-        })
+        if result['success']:
+            return Response({
+                'total_rules': result['total_rules'],
+                'active_rules': result['active_rules'],
+                'inactive_rules': result['inactive_rules']
+            })
+        else:
+            return Response(
+                {'error': result['message']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
