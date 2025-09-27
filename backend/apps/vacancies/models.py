@@ -97,6 +97,14 @@ class Vacancy(models.Model):
         default=45
     )
     
+    available_grades = models.ManyToManyField(
+        Grade,
+        related_name='available_vacancies',
+        verbose_name='Доступные грейды',
+        help_text='Грейды, доступные для данной вакансии',
+        blank=True
+    )
+    
     interviewers = models.ManyToManyField(
         'interviewers.Interviewer',
         related_name='vacancies',

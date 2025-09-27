@@ -9,37 +9,27 @@ from django.views.decorators.http import require_POST
 from .models import Vacancy, SalaryRange
 from .forms import VacancyForm, VacancySearchForm, SalaryRangeForm, SalaryRangeSearchForm
 from apps.finance.models import Grade
+from .logic.vacancy_handlers import VacancyHandler
+from .logic.salary_range_handlers import SalaryRangeHandler
+from .logic.response_handlers import ResponseHandler
 
 
 @login_required
 def dashboard(request):
     """Дашборд локальных данных по вакансиям"""
-    total_vacancies = Vacancy.objects.count()
-    active_vacancies = Vacancy.objects.filter(is_active=True).count()
-    inactive_vacancies = Vacancy.objects.filter(is_active=False).count()
+    # Получаем статистику по вакансиям
+    vacancy_stats = VacancyHandler.calculate_stats(request.user)
+    
+    # Получаем статистику по зарплатным вилкам
+    salary_range_stats = SalaryRangeHandler.calculate_stats()
+    
+    # Общее количество грейдов
     total_grades = Grade.objects.count()
     
-    # Статистика по зарплатным вилкам
-    total_salary_ranges = SalaryRange.objects.count()
-    active_salary_ranges = SalaryRange.objects.filter(is_active=True).count()
-    inactive_salary_ranges = SalaryRange.objects.filter(is_active=False).count()
-    
-    # Последние добавленные вакансии
-    recent_vacancies = Vacancy.objects.select_related('recruiter').prefetch_related('interviewers').order_by('-created_at')[:5]
-    
-    # Последние добавленные зарплатные вилки
-    recent_salary_ranges = SalaryRange.objects.select_related('grade', 'vacancy').order_by('-created_at')[:5]
-    
     context = {
-        'total_vacancies': total_vacancies,
-        'active_vacancies': active_vacancies,
-        'inactive_vacancies': inactive_vacancies,
+        **vacancy_stats,
+        **salary_range_stats,
         'total_grades': total_grades,
-        'total_salary_ranges': total_salary_ranges,
-        'active_salary_ranges': active_salary_ranges,
-        'inactive_salary_ranges': inactive_salary_ranges,
-        'recent_vacancies': recent_vacancies,
-        'recent_salary_ranges': recent_salary_ranges,
     }
     
     return render(request, 'vacancies/dashboard.html', context)
@@ -54,39 +44,28 @@ def vacancy_list(request):
     recruiter_filter = request.GET.get('recruiter', '')
     status_filter = request.GET.get('is_active', '')
     
-    # Базовый queryset
-    vacancies = Vacancy.objects.select_related('recruiter').prefetch_related('interviewers').all()
-    
-    # Применяем фильтры
-    if search_query:
-        vacancies = vacancies.filter(
-            Q(name__icontains=search_query) |
-            Q(external_id__icontains=search_query)
-        )
-    
-    if recruiter_filter:
-        vacancies = vacancies.filter(recruiter_id=recruiter_filter)
-    
-    if status_filter == 'true':
-        vacancies = vacancies.filter(is_active=True)
-    elif status_filter == 'false':
-        vacancies = vacancies.filter(is_active=False)
+    # Используем обработчик поиска
+    search_params = {
+        'query': search_query,
+        'recruiter_id': recruiter_filter,
+        'is_active': status_filter,
+        'user': request.user
+    }
+    vacancies = VacancyHandler.search_logic(search_params)
     
     # Пагинация
     paginator = Paginator(vacancies, 10)  # 10 вакансий на страницу
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
-    context = {
-        'page_obj': page_obj,
-        'search_form': search_form,
-        'search_query': search_query,
-        'recruiter_filter': recruiter_filter,
-        'status_filter': status_filter,
-        'total_count': vacancies.count(),
-        'active_count': vacancies.filter(is_active=True).count(),
-        'inactive_count': vacancies.filter(is_active=False).count(),
-    }
+    context = ResponseHandler.pagination_context(
+        page_obj,
+        search_form,
+        original_queryset=vacancies,
+        search_query=search_query,
+        recruiter_filter=recruiter_filter,
+        status_filter=status_filter
+    )
     
     return render(request, 'vacancies/vacancy_list.html', context)
 
@@ -97,7 +76,7 @@ def vacancy_detail(request, pk):
     vacancy = get_object_or_404(Vacancy, pk=pk)
     
     # Получаем все активные зарплатные вилки для данной вакансии
-    salary_ranges = SalaryRange.objects.filter(vacancy=vacancy, is_active=True).select_related('grade', 'vacancy').order_by('grade__name')
+    salary_ranges = SalaryRangeHandler.get_salary_ranges_for_vacancy(pk)
     
     context = {
         'vacancy': vacancy,
@@ -120,7 +99,7 @@ def vacancy_create(request):
         form = VacancyForm()
     
     # Получаем все активные зарплатные вилки
-    salary_ranges = SalaryRange.objects.filter(is_active=True).select_related('grade', 'vacancy').order_by('grade__name')
+    salary_ranges = SalaryRangeHandler.get_active_salary_ranges()
     
     context = {
         'form': form,
@@ -147,7 +126,7 @@ def vacancy_edit(request, pk):
         form = VacancyForm(instance=vacancy)
     
     # Получаем все активные зарплатные вилки
-    salary_ranges = SalaryRange.objects.filter(is_active=True).select_related('grade', 'vacancy').order_by('grade__name')
+    salary_ranges = SalaryRangeHandler.get_active_salary_ranges()
     
     context = {
         'form': form,
@@ -180,25 +159,15 @@ def vacancy_delete(request, pk):
 @require_POST
 def vacancy_toggle_active(request, pk):
     """Переключение статуса активности вакансии"""
-    vacancy = get_object_or_404(Vacancy, pk=pk)
+    result = VacancyHandler.toggle_active_logic(pk, request)
     
-    try:
-        vacancy.is_active = not vacancy.is_active
-        vacancy.save()
-        
-        status = 'активирована' if vacancy.is_active else 'деактивирована'
-        messages.success(request, f'Вакансия "{vacancy.name}" {status}!')
-        
-        return JsonResponse({
-            'success': True,
-            'is_active': vacancy.is_active,
-            'message': f'Вакансия {status}'
-        })
-    except Exception as e:
-        return JsonResponse({
-            'success': False,
-            'message': f'Ошибка: {str(e)}'
-        })
+    if result['success']:
+        return ResponseHandler.success_response(
+            {'is_active': result['is_active']},
+            result['message']
+        )
+    else:
+        return ResponseHandler.error_response(result['message'])
 
 
 # Представления для зарплатных вилок
@@ -213,43 +182,29 @@ def salary_ranges_list(request):
     grade_filter = request.GET.get('grade', '')
     status_filter = request.GET.get('is_active', '')
     
-    # Базовый queryset
-    salary_ranges = SalaryRange.objects.select_related('grade', 'vacancy').all()
-    
-    # Применяем фильтры
-    if search_query:
-        salary_ranges = salary_ranges.filter(
-            Q(grade__name__icontains=search_query) |
-            Q(vacancy__name__icontains=search_query)
-        )
-    
-    if vacancy_filter:
-        salary_ranges = salary_ranges.filter(vacancy_id=vacancy_filter)
-    
-    if grade_filter:
-        salary_ranges = salary_ranges.filter(grade_id=grade_filter)
-    
-    if status_filter == 'true':
-        salary_ranges = salary_ranges.filter(is_active=True)
-    elif status_filter == 'false':
-        salary_ranges = salary_ranges.filter(is_active=False)
+    # Используем обработчик поиска
+    search_params = {
+        'query': search_query,
+        'vacancy_id': vacancy_filter,
+        'grade_id': grade_filter,
+        'is_active': status_filter
+    }
+    salary_ranges = SalaryRangeHandler.search_logic(search_params)
     
     # Пагинация
     paginator = Paginator(salary_ranges, 10)  # 10 вилок на страницу
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
-    context = {
-        'page_obj': page_obj,
-        'search_form': search_form,
-        'search_query': search_query,
-        'vacancy_filter': vacancy_filter,
-        'grade_filter': grade_filter,
-        'status_filter': status_filter,
-        'total_count': salary_ranges.count(),
-        'active_count': salary_ranges.filter(is_active=True).count(),
-        'inactive_count': salary_ranges.filter(is_active=False).count(),
-    }
+    context = ResponseHandler.pagination_context(
+        page_obj,
+        search_form,
+        original_queryset=salary_ranges,
+        search_query=search_query,
+        vacancy_filter=vacancy_filter,
+        grade_filter=grade_filter,
+        status_filter=status_filter
+    )
     
     return render(request, 'vacancies/salary_ranges_list.html', context)
 
@@ -331,22 +286,12 @@ def salary_range_delete(request, pk):
 @require_POST
 def salary_range_toggle_active(request, pk):
     """Переключение статуса активности зарплатной вилки"""
-    salary_range = get_object_or_404(SalaryRange, pk=pk)
+    result = SalaryRangeHandler.toggle_active_logic(pk, request)
     
-    try:
-        salary_range.is_active = not salary_range.is_active
-        salary_range.save()
-        
-        status = 'активирована' if salary_range.is_active else 'деактивирована'
-        messages.success(request, f'Зарплатная вилка для грейда "{salary_range.grade.name}" {status}!')
-        
-        return JsonResponse({
-            'success': True,
-            'is_active': salary_range.is_active,
-            'message': f'Зарплатная вилка {status}'
-        })
-    except Exception as e:
-        return JsonResponse({
-            'success': False,
-            'message': f'Ошибка: {str(e)}'
-        })
+    if result['success']:
+        return ResponseHandler.success_response(
+            {'is_active': result['is_active']},
+            result['message']
+        )
+    else:
+        return ResponseHandler.error_response(result['message'])

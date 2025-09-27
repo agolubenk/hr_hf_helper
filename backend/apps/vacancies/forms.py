@@ -15,7 +15,8 @@ class VacancyForm(forms.ModelForm):
             'name', 'external_id', 'recruiter', 'invite_title', 'invite_text',
             'scorecard_title', 'scorecard_link', 'questions_belarus', 'questions_poland',
             'vacancy_link_belarus', 'vacancy_link_poland',
-            'candidate_update_prompt', 'invite_prompt', 'screening_duration', 'interviewers', 'is_active'
+            'candidate_update_prompt', 'invite_prompt', 'screening_duration', 
+            'available_grades', 'interviewers', 'is_active'
         ]
         widgets = {
             'name': forms.TextInput(attrs={
@@ -80,6 +81,9 @@ class VacancyForm(forms.ModelForm):
                 'max': '480',
                 'placeholder': 'Длительность в минутах'
             }),
+            'available_grades': forms.CheckboxSelectMultiple(attrs={
+                'class': 'form-check-input'
+            }),
             'interviewers': forms.CheckboxSelectMultiple(attrs={
                 'class': 'form-check-input'
             }),
@@ -102,6 +106,7 @@ class VacancyForm(forms.ModelForm):
             'candidate_update_prompt': 'Промпт для обновления кандидата',
             'invite_prompt': 'Промпт для инвайта',
             'screening_duration': 'Длительность скринингов',
+            'available_grades': 'Доступные грейды',
             'interviewers': 'Интервьюеры',
             'is_active': 'Активна'
         }
@@ -120,6 +125,7 @@ class VacancyForm(forms.ModelForm):
             'candidate_update_prompt': 'Промпт для обновления информации о кандидате',
             'invite_prompt': 'Промпт для создания приглашения кандидату',
             'screening_duration': 'Длительность скринингов в минутах (по умолчанию 45 минут)',
+            'available_grades': 'Грейды, доступные для данной вакансии',
             'interviewers': 'Интервьюеры, привязанные к вакансии',
             'is_active': 'Активна ли вакансия'
         }
@@ -129,6 +135,10 @@ class VacancyForm(forms.ModelForm):
         
         # Ограничиваем выбор рекрутеров только группой "Рекрутер"
         self.fields['recruiter'].queryset = User.objects.filter(groups__name='Рекрутер')
+        
+        # Ограничиваем выбор только активными грейдами
+        from apps.finance.models import Grade
+        self.fields['available_grades'].queryset = Grade.objects.filter(is_active=True)
         
         # Ограничиваем выбор только активными интервьюерами
         self.fields['interviewers'].queryset = Interviewer.objects.filter(is_active=True)
