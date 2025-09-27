@@ -1,0 +1,642 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Interviewers API",
+    "version": "1.0.0",
+    "description": "API endpoints for managing interviewers and interview rules in the HR Helper system."
+  },
+  "servers": [
+    {
+      "url": "/api/v1/interviewers/"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "List all interviewers",
+        "description": "Retrieve a paginated list of all interviewers with optional filtering and search.",
+        "parameters": [
+          {
+            "name": "is_active",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Filter by active status"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search by first name, last name, or email"
+          },
+          {
+            "name": "ordering",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["last_name", "-last_name", "first_name", "-first_name", "email", "-email", "created_at", "-created_at"]
+            },
+            "description": "Order results by field"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Page number for pagination"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of interviewers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {"type": "integer"},
+                    "next": {"type": "string", "nullable": true},
+                    "previous": {"type": "string", "nullable": true},
+                    "results": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/Interviewer"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new interviewer",
+        "description": "Create a new interviewer with the specified parameters.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/InterviewerCreate"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Interviewer created successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Interviewer"}
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/{id}/": {
+      "get": {
+        "summary": "Retrieve a specific interviewer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Interviewer details",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Interviewer"}
+              }
+            }
+          },
+          "404": {"description": "Interviewer not found"}
+        }
+      },
+      "put": {
+        "summary": "Update an interviewer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/InterviewerCreate"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Interviewer updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Interviewer"}
+              }
+            }
+          },
+          "400": {"description": "Validation error"},
+          "404": {"description": "Interviewer not found"}
+        }
+      },
+      "patch": {
+        "summary": "Partially update an interviewer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/InterviewerCreate"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Interviewer partially updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Interviewer"}
+              }
+            }
+          },
+          "400": {"description": "Validation error"},
+          "404": {"description": "Interviewer not found"}
+        }
+      },
+      "delete": {
+        "summary": "Delete an interviewer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "204": {"description": "Interviewer deleted successfully"},
+          "404": {"description": "Interviewer not found"}
+        }
+      }
+    },
+    "/{id}/toggle-active/": {
+      "post": {
+        "summary": "Toggle interviewer active status",
+        "description": "Toggle the active status of an interviewer.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Interviewer status toggled successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Interviewer"}
+              }
+            }
+          },
+          "404": {"description": "Interviewer not found"}
+        }
+      }
+    },
+    "/stats/": {
+      "get": {
+        "summary": "Get interviewer statistics",
+        "description": "Retrieve statistics about interviewers.",
+        "responses": {
+          "200": {
+            "description": "Interviewer statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total_interviewers": {"type": "integer"},
+                    "active_interviewers": {"type": "integer"},
+                    "inactive_interviewers": {"type": "integer"},
+                    "interviewers_with_calendar": {"type": "integer"},
+                    "interviewers_without_calendar": {"type": "integer"},
+                    "recent_interviewers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {"type": "integer"},
+                          "full_name": {"type": "string"},
+                          "email": {"type": "string"},
+                          "is_active": {"type": "boolean"},
+                          "created_at": {"type": "string", "format": "date-time"}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rules/": {
+      "get": {
+        "summary": "List all interview rules",
+        "description": "Retrieve a paginated list of all interview rules with optional filtering.",
+        "parameters": [
+          {
+            "name": "is_active",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Filter by active status"
+          },
+          {
+            "name": "min_grade",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by minimum grade ID"
+          },
+          {
+            "name": "max_grade",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by maximum grade ID"
+          },
+          {
+            "name": "ordering",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["name", "-name", "min_grade", "-min_grade", "daily_limit", "-daily_limit"]
+            },
+            "description": "Order results by field"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Page number for pagination"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of interview rules",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {"type": "integer"},
+                    "next": {"type": "string", "nullable": true},
+                    "previous": {"type": "string", "nullable": true},
+                    "results": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/InterviewRule"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new interview rule",
+        "description": "Create a new interview rule with the specified parameters.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/InterviewRuleCreate"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Interview rule created successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/InterviewRule"}
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/rules/{id}/": {
+      "get": {
+        "summary": "Retrieve a specific interview rule",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Interview rule details",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/InterviewRule"}
+              }
+            }
+          },
+          "404": {"description": "Interview rule not found"}
+        }
+      },
+      "put": {
+        "summary": "Update an interview rule",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/InterviewRuleCreate"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Interview rule updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/InterviewRule"}
+              }
+            }
+          },
+          "400": {"description": "Validation error"},
+          "404": {"description": "Interview rule not found"}
+        }
+      },
+      "patch": {
+        "summary": "Partially update an interview rule",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/InterviewRuleCreate"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Interview rule partially updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/InterviewRule"}
+              }
+            }
+          },
+          "400": {"description": "Validation error"},
+          "404": {"description": "Interview rule not found"}
+        }
+      },
+      "delete": {
+        "summary": "Delete an interview rule",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "204": {"description": "Interview rule deleted successfully"},
+          "404": {"description": "Interview rule not found"}
+        }
+      }
+    },
+    "/rules/{id}/activate/": {
+      "post": {
+        "summary": "Activate an interview rule",
+        "description": "Activate an interview rule and deactivate all other rules.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Interview rule activated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {"type": "string"},
+                    "rule": {
+                      "type": "object",
+                      "properties": {
+                        "id": {"type": "integer"},
+                        "name": {"type": "string"},
+                        "is_active": {"type": "boolean"}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {"description": "Interview rule not found"}
+        }
+      }
+    },
+    "/rules/active/": {
+      "get": {
+        "summary": "Get active interview rule",
+        "description": "Retrieve the currently active interview rule.",
+        "responses": {
+          "200": {
+            "description": "Active interview rule",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/InterviewRule"}
+              }
+            }
+          },
+          "404": {
+            "description": "No active rule found"
+          }
+        }
+      }
+    },
+    "/rules/{id}/check-grade/": {
+      "get": {
+        "summary": "Check if grade is in rule range",
+        "description": "Check if a specific grade falls within the rule's grade range.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          },
+          {
+            "name": "grade_id",
+            "in": "query",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Grade range check result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "rule_id": {"type": "integer"},
+                    "grade_id": {"type": "integer"},
+                    "grade_name": {"type": "string"},
+                    "in_range": {"type": "boolean"},
+                    "grade_range": {"type": "string"}
+                  }
+                }
+              }
+            }
+          },
+          "404": {"description": "Interview rule or grade not found"}
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Interviewer": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "readOnly": true},
+          "first_name": {"type": "string", "maxLength": 100},
+          "last_name": {"type": "string", "maxLength": 100},
+          "middle_name": {"type": "string", "maxLength": 100},
+          "email": {"type": "string", "format": "email"},
+          "calendar_link": {"type": "string", "format": "uri"},
+          "is_active": {"type": "boolean", "default": true},
+          "full_name": {"type": "string", "readOnly": true},
+          "short_name": {"type": "string", "readOnly": true},
+          "created_at": {"type": "string", "format": "date-time", "readOnly": true},
+          "updated_at": {"type": "string", "format": "date-time", "readOnly": true}
+        },
+        "required": ["first_name", "last_name", "email"]
+      },
+      "InterviewerCreate": {
+        "type": "object",
+        "properties": {
+          "first_name": {"type": "string", "maxLength": 100},
+          "last_name": {"type": "string", "maxLength": 100},
+          "middle_name": {"type": "string", "maxLength": 100},
+          "email": {"type": "string", "format": "email"},
+          "calendar_link": {"type": "string", "format": "uri"},
+          "is_active": {"type": "boolean", "default": true}
+        },
+        "required": ["first_name", "last_name", "email"]
+      },
+      "InterviewRule": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "readOnly": true},
+          "name": {"type": "string", "maxLength": 200},
+          "description": {"type": "string"},
+          "daily_limit": {"type": "integer", "minimum": 1, "maximum": 50},
+          "weekly_limit": {"type": "integer", "minimum": 1, "maximum": 200},
+          "min_grade": {"type": "integer"},
+          "min_grade_name": {"type": "string", "readOnly": true},
+          "max_grade": {"type": "integer"},
+          "max_grade_name": {"type": "string", "readOnly": true},
+          "is_active": {"type": "boolean", "default": true},
+          "grade_range": {"type": "string", "readOnly": true},
+          "created_at": {"type": "string", "format": "date-time", "readOnly": true},
+          "updated_at": {"type": "string", "format": "date-time", "readOnly": true}
+        },
+        "required": ["name", "daily_limit", "weekly_limit", "min_grade", "max_grade"]
+      },
+      "InterviewRuleCreate": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string", "maxLength": 200},
+          "description": {"type": "string"},
+          "daily_limit": {"type": "integer", "minimum": 1, "maximum": 50},
+          "weekly_limit": {"type": "integer", "minimum": 1, "maximum": 200},
+          "min_grade": {"type": "integer"},
+          "max_grade": {"type": "integer"},
+          "is_active": {"type": "boolean", "default": true}
+        },
+        "required": ["name", "daily_limit", "weekly_limit", "min_grade", "max_grade"]
+      }
+    },
+    "securitySchemes": {
+      "TokenAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Token"
+      },
+      "SessionAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "sessionid"
+      }
+    }
+  },
+  "security": [
+    {"TokenAuth": []},
+    {"SessionAuth": []}
+  ]
+}

@@ -1,0 +1,667 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Accounts API",
+    "description": "API для управления пользователями и аутентификации",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/api/v1",
+      "description": "Development server"
+    }
+  ],
+  "security": [
+    {
+      "SessionAuthentication": [],
+      "BasicAuthentication": []
+    }
+  ],
+  "paths": {
+    "/users/": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Получение списка пользователей",
+        "description": "Возвращает список пользователей с пагинацией и фильтрацией",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Номер страницы",
+            "schema": {"type": "integer", "default": 1}
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "Размер страницы",
+            "schema": {"type": "integer", "default": 20}
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Поиск по имени, email, username",
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "is_active",
+            "in": "query",
+            "description": "Фильтр по статусу активности",
+            "schema": {"type": "boolean"}
+          },
+          {
+            "name": "is_staff",
+            "in": "query",
+            "description": "Фильтр по статусу персонала",
+            "schema": {"type": "boolean"}
+          },
+          {
+            "name": "groups",
+            "in": "query",
+            "description": "Фильтр по группам",
+            "schema": {"type": "array", "items": {"type": "integer"}}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список пользователей",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {"type": "integer"},
+                    "next": {"type": "string", "nullable": true},
+                    "previous": {"type": "string", "nullable": true},
+                    "results": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/User"}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/UnauthorizedError"},
+          "403": {"$ref": "#/components/responses/ForbiddenError"}
+        }
+      },
+      "post": {
+        "tags": ["Users"],
+        "summary": "Создание пользователя",
+        "description": "Создает нового пользователя в системе",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/UserCreate"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Пользователь создан",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/User"}
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequestError"},
+          "401": {"$ref": "#/components/responses/UnauthorizedError"},
+          "403": {"$ref": "#/components/responses/ForbiddenError"}
+        }
+      }
+    },
+    "/users/{id}/": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Получение пользователя по ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Информация о пользователе",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/User"}
+              }
+            }
+          },
+          "404": {"$ref": "#/components/responses/NotFoundError"}
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Полное обновление пользователя",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/UserUpdate"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Пользователь обновлен",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/User"}
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequestError"},
+          "404": {"$ref": "#/components/responses/NotFoundError"}
+        }
+      },
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Частичное обновление пользователя",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/UserPartialUpdate"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Пользователь обновлен",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/User"}
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequestError"},
+          "404": {"$ref": "#/components/responses/NotFoundError"}
+        }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Удаление пользователя",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "204": {"description": "Пользователь удален"},
+          "404": {"$ref": "#/components/responses/NotFoundError"}
+        }
+      }
+    },
+    "/users/profile/": {
+      "get": {
+        "tags": ["Profile"],
+        "summary": "Получение профиля текущего пользователя",
+        "responses": {
+          "200": {
+            "description": "Профиль пользователя",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/UserProfile"}
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/UnauthorizedError"}
+        }
+      },
+      "put": {
+        "tags": ["Profile"],
+        "summary": "Обновление профиля текущего пользователя",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/UserProfileUpdate"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Профиль обновлен",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/UserProfile"}
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequestError"}
+        }
+      }
+    },
+    "/users/change-password/": {
+      "post": {
+        "tags": ["Profile"],
+        "summary": "Смена пароля",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["old_password", "new_password"],
+                "properties": {
+                  "old_password": {"type": "string"},
+                  "new_password": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Пароль изменен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {"type": "string"}
+                  }
+                }
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequestError"}
+        }
+      }
+    },
+    "/users/settings/": {
+      "get": {
+        "tags": ["Settings"],
+        "summary": "Получение настроек пользователя",
+        "responses": {
+          "200": {
+            "description": "Настройки пользователя",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/UserSettings"}
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Settings"],
+        "summary": "Обновление настроек пользователя",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/UserSettingsUpdate"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Настройки обновлены",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/UserSettings"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}/assign-groups/": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Назначение групп пользователю",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["group_ids"],
+                "properties": {
+                  "group_ids": {
+                    "type": "array",
+                    "items": {"type": "integer"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Группы назначены",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/User"}
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequestError"}
+        }
+      }
+    },
+    "/users/stats/": {
+      "get": {
+        "tags": ["Statistics"],
+        "summary": "Статистика пользователей",
+        "responses": {
+          "200": {
+            "description": "Статистика пользователей",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total_users": {"type": "integer"},
+                    "active_users": {"type": "integer"},
+                    "admin_users": {"type": "integer"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/groups/": {
+      "get": {
+        "tags": ["Groups"],
+        "summary": "Получение списка групп",
+        "responses": {
+          "200": {
+            "description": "Список групп",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/Group"}
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "username": {"type": "string"},
+          "email": {"type": "string", "format": "email"},
+          "first_name": {"type": "string"},
+          "last_name": {"type": "string"},
+          "full_name": {"type": "string"},
+          "telegram_username": {"type": "string"},
+          "groups": {
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/Group"}
+          },
+          "groups_display": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "gemini_api_key": {"type": "string"},
+          "clickup_api_key": {"type": "string"},
+          "notion_integration_token": {"type": "string"},
+          "huntflow_prod_url": {"type": "string", "format": "uri"},
+          "huntflow_prod_api_key": {"type": "string"},
+          "huntflow_sandbox_url": {"type": "string", "format": "uri"},
+          "huntflow_sandbox_api_key": {"type": "string"},
+          "active_system": {"type": "string", "enum": ["prod", "sandbox"]},
+          "interviewer_calendar_url": {"type": "string", "format": "uri"},
+          "is_observer_active": {"type": "boolean"},
+          "is_active": {"type": "boolean"},
+          "is_staff": {"type": "boolean"},
+          "is_superuser": {"type": "boolean"},
+          "is_admin": {"type": "boolean"},
+          "is_recruiter": {"type": "boolean"},
+          "is_interviewer": {"type": "boolean"},
+          "is_observer": {"type": "boolean"},
+          "date_joined": {"type": "string", "format": "date-time"},
+          "last_login": {"type": "string", "format": "date-time", "nullable": true}
+        }
+      },
+      "UserCreate": {
+        "type": "object",
+        "required": ["username", "email", "password", "password_confirm"],
+        "properties": {
+          "username": {"type": "string"},
+          "email": {"type": "string", "format": "email"},
+          "password": {"type": "string"},
+          "password_confirm": {"type": "string"},
+          "first_name": {"type": "string"},
+          "last_name": {"type": "string"},
+          "full_name": {"type": "string"},
+          "telegram_username": {"type": "string"}
+        }
+      },
+      "UserUpdate": {
+        "type": "object",
+        "properties": {
+          "username": {"type": "string"},
+          "email": {"type": "string", "format": "email"},
+          "first_name": {"type": "string"},
+          "last_name": {"type": "string"},
+          "full_name": {"type": "string"},
+          "telegram_username": {"type": "string"},
+          "gemini_api_key": {"type": "string"},
+          "clickup_api_key": {"type": "string"},
+          "notion_integration_token": {"type": "string"},
+          "huntflow_prod_url": {"type": "string", "format": "uri"},
+          "huntflow_prod_api_key": {"type": "string"},
+          "huntflow_sandbox_url": {"type": "string", "format": "uri"},
+          "huntflow_sandbox_api_key": {"type": "string"},
+          "active_system": {"type": "string", "enum": ["prod", "sandbox"]},
+          "interviewer_calendar_url": {"type": "string", "format": "uri"},
+          "is_observer_active": {"type": "boolean"},
+          "is_active": {"type": "boolean"},
+          "is_staff": {"type": "boolean"},
+          "is_superuser": {"type": "boolean"}
+        }
+      },
+      "UserPartialUpdate": {
+        "type": "object",
+        "properties": {
+          "username": {"type": "string"},
+          "email": {"type": "string", "format": "email"},
+          "first_name": {"type": "string"},
+          "last_name": {"type": "string"},
+          "full_name": {"type": "string"},
+          "telegram_username": {"type": "string"},
+          "gemini_api_key": {"type": "string"},
+          "clickup_api_key": {"type": "string"},
+          "notion_integration_token": {"type": "string"},
+          "huntflow_prod_url": {"type": "string", "format": "uri"},
+          "huntflow_prod_api_key": {"type": "string"},
+          "huntflow_sandbox_url": {"type": "string", "format": "uri"},
+          "huntflow_sandbox_api_key": {"type": "string"},
+          "active_system": {"type": "string", "enum": ["prod", "sandbox"]},
+          "interviewer_calendar_url": {"type": "string", "format": "uri"},
+          "is_observer_active": {"type": "boolean"},
+          "is_active": {"type": "boolean"},
+          "is_staff": {"type": "boolean"},
+          "is_superuser": {"type": "boolean"}
+        }
+      },
+      "UserProfile": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "username": {"type": "string"},
+          "email": {"type": "string", "format": "email"},
+          "first_name": {"type": "string"},
+          "last_name": {"type": "string"},
+          "full_name": {"type": "string"},
+          "telegram_username": {"type": "string"},
+          "groups_display": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "active_system": {"type": "string", "enum": ["prod", "sandbox"]},
+          "interviewer_calendar_url": {"type": "string", "format": "uri"},
+          "is_observer_active": {"type": "boolean"},
+          "is_active": {"type": "boolean"},
+          "is_staff": {"type": "boolean"},
+          "is_admin": {"type": "boolean"},
+          "is_recruiter": {"type": "boolean"},
+          "is_interviewer": {"type": "boolean"},
+          "is_observer": {"type": "boolean"},
+          "date_joined": {"type": "string", "format": "date-time"},
+          "last_login": {"type": "string", "format": "date-time", "nullable": true}
+        }
+      },
+      "UserProfileUpdate": {
+        "type": "object",
+        "properties": {
+          "email": {"type": "string", "format": "email"},
+          "first_name": {"type": "string"},
+          "last_name": {"type": "string"},
+          "full_name": {"type": "string"},
+          "telegram_username": {"type": "string"},
+          "active_system": {"type": "string", "enum": ["prod", "sandbox"]},
+          "interviewer_calendar_url": {"type": "string", "format": "uri"},
+          "is_observer_active": {"type": "boolean"}
+        }
+      },
+      "UserSettings": {
+        "type": "object",
+        "properties": {
+          "active_system": {"type": "string", "enum": ["prod", "sandbox"]},
+          "interviewer_calendar_url": {"type": "string", "format": "uri"},
+          "is_observer_active": {"type": "boolean"}
+        }
+      },
+      "UserSettingsUpdate": {
+        "type": "object",
+        "properties": {
+          "active_system": {"type": "string", "enum": ["prod", "sandbox"]},
+          "interviewer_calendar_url": {"type": "string", "format": "uri"},
+          "is_observer_active": {"type": "boolean"}
+        }
+      },
+      "Group": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "name": {"type": "string"},
+          "permissions": {
+            "type": "array",
+            "items": {"type": "object"}
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "detail": {"type": "string"},
+          "code": {"type": "string"},
+          "field": {"type": "string"}
+        }
+      }
+    },
+    "responses": {
+      "BadRequestError": {
+        "description": "Ошибка валидации",
+        "content": {
+          "application/json": {
+            "schema": {"$ref": "#/components/schemas/Error"}
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "description": "Не авторизован",
+        "content": {
+          "application/json": {
+            "schema": {"$ref": "#/components/schemas/Error"}
+          }
+        }
+      },
+      "ForbiddenError": {
+        "description": "Доступ запрещен",
+        "content": {
+          "application/json": {
+            "schema": {"$ref": "#/components/schemas/Error"}
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Ресурс не найден",
+        "content": {
+          "application/json": {
+            "schema": {"$ref": "#/components/schemas/Error"}
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "SessionAuthentication": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "sessionid"
+      },
+      "BasicAuthentication": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Users",
+      "description": "Операции с пользователями"
+    },
+    {
+      "name": "Profile",
+      "description": "Управление профилем пользователя"
+    },
+    {
+      "name": "Settings",
+      "description": "Настройки пользователя"
+    },
+    {
+      "name": "Groups",
+      "description": "Управление группами пользователей"
+    },
+    {
+      "name": "Statistics",
+      "description": "Статистика пользователей"
+    }
+  ]
+}

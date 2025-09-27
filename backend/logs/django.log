@@ -5098,3 +5098,20 @@ Starting development server at http://127.0.0.1:8000/
 Quit the server with CONTROL-C.
 
 Watching for file changes with StatReloader
+[27/Sep/2025 05:29:53] "GET /vacancies/1/ HTTP/1.1" 200 103191
+[27/Sep/2025 05:29:53] "GET /static/css/hrhelper.css HTTP/1.1" 200 63418
+WARNING Not Found: /favicon.ico
+Not Found: /favicon.ico
+[27/Sep/2025 05:29:58] "GET /favicon.ico HTTP/1.1" 404 3708
+[27/Sep/2025 05:30:16] "GET /vacancies/1/ HTTP/1.1" 200 103191
+[27/Sep/2025 05:30:16] "GET /static/css/hrhelper.css HTTP/1.1" 200 63418
+[27/Sep/2025 05:30:25] "GET /google-oauth/chat/ HTTP/1.1" 200 135994
+WARNING Not Found: /favicon.ico
+Not Found: /favicon.ico
+[27/Sep/2025 05:30:25] "GET /favicon.ico HTTP/1.1" 404 3708
+[27/Sep/2025 18:18:57] "GET /clickup/tasks/ HTTP/1.1" 200 102045
+[27/Sep/2025 18:18:57] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+Не удалось распарсить дату: 1672731338041 (ошибка: month must be in 1..12)
+Не удалось распарсить дату: 1672839749779 (ошибка: month must be in 1..12)
+Не удалось распарсить дату: 1672731376626 (ошибка: month must be in 1..12)
+[27/Sep/2025 18:19:08] "GET /clickup/task/861m5ppxf/ HTTP/1.1" 200 58780

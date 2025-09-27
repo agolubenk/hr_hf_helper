@@ -1,0 +1,475 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Vacancies API",
+    "version": "1.0.0",
+    "description": "API endpoints for managing local vacancy data, including invite settings, scorecards, interview questions, and salary ranges."
+  },
+  "servers": [
+    {
+      "url": "/api/v1/vacancies/"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "List all vacancies",
+        "description": "Retrieve a paginated list of all vacancies with optional filtering and search.",
+        "parameters": [
+          {
+            "name": "recruiter",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by recruiter ID"
+          },
+          {
+            "name": "is_active",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Filter by active status"
+          },
+          {
+            "name": "available_grades",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by available grade ID"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search by name, external_id, invite_title, or scorecard_title"
+          },
+          {
+            "name": "ordering",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["name", "-name", "created_at", "-created_at", "updated_at", "-updated_at"]
+            },
+            "description": "Order results by field"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Page number for pagination"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of vacancies",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {"type": "integer"},
+                    "next": {"type": "string", "nullable": true},
+                    "previous": {"type": "string", "nullable": true},
+                    "results": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/VacancyList"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new vacancy",
+        "description": "Create a new vacancy with the specified parameters.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/VacancyCreate"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Vacancy created successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Vacancy"}
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/{id}/": {
+      "get": {
+        "summary": "Retrieve a specific vacancy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vacancy details",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Vacancy"}
+              }
+            }
+          },
+          "404": {"description": "Vacancy not found"}
+        }
+      },
+      "put": {
+        "summary": "Update a vacancy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/VacancyCreate"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Vacancy updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Vacancy"}
+              }
+            }
+          },
+          "400": {"description": "Validation error"},
+          "404": {"description": "Vacancy not found"}
+        }
+      },
+      "patch": {
+        "summary": "Partially update a vacancy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/VacancyCreate"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Vacancy partially updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Vacancy"}
+              }
+            }
+          },
+          "400": {"description": "Validation error"},
+          "404": {"description": "Vacancy not found"}
+        }
+      },
+      "delete": {
+        "summary": "Delete a vacancy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "204": {"description": "Vacancy deleted successfully"},
+          "404": {"description": "Vacancy not found"}
+        }
+      }
+    },
+    "/my-vacancies/": {
+      "get": {
+        "summary": "Get current user's vacancies",
+        "description": "Retrieve all vacancies assigned to the current user.",
+        "responses": {
+          "200": {
+            "description": "List of user's vacancies",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/VacancyList"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{id}/toggle-active/": {
+      "post": {
+        "summary": "Toggle vacancy active status",
+        "description": "Toggle the active status of a vacancy.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vacancy status toggled successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Vacancy"}
+              }
+            }
+          },
+          "404": {"description": "Vacancy not found"}
+        }
+      }
+    },
+    "/{id}/assign-grades/": {
+      "post": {
+        "summary": "Assign grades to vacancy",
+        "description": "Assign specific grades to a vacancy.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "grade_ids": {
+                    "type": "array",
+                    "items": {"type": "integer"}
+                  }
+                },
+                "required": ["grade_ids"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Grades assigned successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Vacancy"}
+              }
+            }
+          },
+          "400": {"description": "Validation error"},
+          "404": {"description": "Vacancy not found"}
+        }
+      }
+    },
+    "/stats/": {
+      "get": {
+        "summary": "Get vacancy statistics",
+        "description": "Retrieve statistics about vacancies.",
+        "responses": {
+          "200": {
+            "description": "Vacancy statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total_vacancies": {"type": "integer"},
+                    "active_vacancies": {"type": "integer"},
+                    "inactive_vacancies": {"type": "integer"},
+                    "vacancies_by_recruiter": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "total": {"type": "integer"},
+                          "active": {"type": "integer"}
+                        }
+                      }
+                    },
+                    "vacancies_by_grade": {
+                      "type": "object",
+                      "additionalProperties": {"type": "integer"}
+                    },
+                    "recent_vacancies": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/VacancyList"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/search/": {
+      "get": {
+        "summary": "Search vacancies with advanced parameters",
+        "description": "Search vacancies with extended filtering options.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {"type": "string"},
+            "description": "Search query"
+          },
+          {
+            "name": "grade_id",
+            "in": "query",
+            "schema": {"type": "integer"},
+            "description": "Filter by grade ID"
+          },
+          {
+            "name": "recruiter_id",
+            "in": "query",
+            "schema": {"type": "integer"},
+            "description": "Filter by recruiter ID"
+          },
+          {
+            "name": "is_active",
+            "in": "query",
+            "schema": {"type": "boolean"},
+            "description": "Filter by active status"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {"type": "integer"},
+            "description": "Page number for pagination"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {"type": "integer"},
+                    "next": {"type": "string", "nullable": true},
+                    "previous": {"type": "string", "nullable": true},
+                    "results": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/VacancyList"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Vacancy": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "readOnly": true},
+          "name": {"type": "string", "maxLength": 200},
+          "external_id": {"type": "string", "maxLength": 100},
+          "recruiter": {"type": "integer"},
+          "recruiter_name": {"type": "string", "readOnly": true},
+          "recruiter_username": {"type": "string", "readOnly": true},
+          "invite_title": {"type": "string", "maxLength": 200},
+          "invite_text": {"type": "string"},
+          "scorecard_title": {"type": "string", "maxLength": 200},
+          "scorecard_text": {"type": "string"},
+          "available_grades": {"type": "array", "items": {"type": "integer"}},
+          "available_grades_names": {"type": "array", "items": {"type": "string"}, "readOnly": true},
+          "is_active": {"type": "boolean", "default": true},
+          "created_at": {"type": "string", "format": "date-time", "readOnly": true},
+          "updated_at": {"type": "string", "format": "date-time", "readOnly": true}
+        },
+        "required": ["name", "external_id", "recruiter", "invite_title", "invite_text", "scorecard_title"]
+      },
+      "VacancyCreate": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string", "maxLength": 200},
+          "external_id": {"type": "string", "maxLength": 100},
+          "recruiter": {"type": "integer"},
+          "invite_title": {"type": "string", "maxLength": 200},
+          "invite_text": {"type": "string"},
+          "scorecard_title": {"type": "string", "maxLength": 200},
+          "scorecard_text": {"type": "string"},
+          "available_grades": {"type": "array", "items": {"type": "integer"}},
+          "is_active": {"type": "boolean", "default": true}
+        },
+        "required": ["name", "external_id", "recruiter", "invite_title", "invite_text", "scorecard_title"]
+      },
+      "VacancyList": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "readOnly": true},
+          "name": {"type": "string", "maxLength": 200},
+          "external_id": {"type": "string", "maxLength": 100},
+          "recruiter_name": {"type": "string", "readOnly": true},
+          "available_grades_count": {"type": "integer", "readOnly": true},
+          "is_active": {"type": "boolean", "default": true},
+          "created_at": {"type": "string", "format": "date-time", "readOnly": true}
+        }
+      }
+    },
+    "securitySchemes": {
+      "TokenAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Token"
+      },
+      "SessionAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "sessionid"
+      }
+    }
+  },
+  "security": [
+    {"TokenAuth": []},
+    {"SessionAuth": []}
+  ]
+}
