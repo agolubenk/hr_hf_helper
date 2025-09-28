@@ -7,7 +7,45 @@ User = get_user_model()
 
 
 class VacancyForm(forms.ModelForm):
-    """Форма для создания и редактирования вакансий"""
+    """
+    Форма для создания и редактирования вакансий
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - name: название вакансии (обязательно)
+    - external_id: внешний ID вакансии (обязательно)
+    - recruiter: ответственный рекрутер (обязательно)
+    - invite_title: заголовок приглашений (обязательно)
+    - invite_text: текст приглашений (обязательно)
+    - scorecard_title: заголовок скоркарда (обязательно)
+    - scorecard_link: ссылка на скоркард
+    - questions_belarus, questions_poland: вопросы для интервью
+    - vacancy_link_belarus, vacancy_link_poland: ссылки на вакансии
+    - candidate_update_prompt, invite_prompt: промпты для AI
+    - screening_duration: длительность скринингов
+    - available_grades: доступные грейды
+    - interviewers: интервьюеры
+    - is_active: статус активности
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - Vacancy модель из apps.vacancies.models
+    - User.objects: рекрутеры из группы 'Рекрутер'
+    - Grade.objects: все грейды
+    - Interviewer.objects: активные интервьюеры
+    
+    ОБРАБОТКА:
+    - Валидация обязательных полей
+    - Настройка виджетов для UI
+    - Ограничение выбора рекрутеров и интервьюеров
+    - Настройка лейблов и подсказок
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Django форма для создания/редактирования вакансий
+    
+    СВЯЗИ:
+    - Использует: Vacancy модель, User.objects, Grade.objects, Interviewer.objects
+    - Передает: Django форма
+    - Может вызываться из: Vacancy views
+    """
     
     class Meta:
         model = Vacancy
@@ -136,9 +174,9 @@ class VacancyForm(forms.ModelForm):
         # Ограничиваем выбор рекрутеров только группой "Рекрутер"
         self.fields['recruiter'].queryset = User.objects.filter(groups__name='Рекрутер')
         
-        # Ограничиваем выбор только активными грейдами
+        # Ограничиваем выбор только активными грейдами (все грейды активны по умолчанию)
         from apps.finance.models import Grade
-        self.fields['available_grades'].queryset = Grade.objects.filter(is_active=True)
+        self.fields['available_grades'].queryset = Grade.objects.all()
         
         # Ограничиваем выбор только активными интервьюерами
         self.fields['interviewers'].queryset = Interviewer.objects.filter(is_active=True)
@@ -153,7 +191,30 @@ class VacancyForm(forms.ModelForm):
 
 
 class VacancySearchForm(forms.Form):
-    """Форма для поиска вакансий"""
+    """
+    Форма для поиска вакансий
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - search: поисковый запрос (опционально)
+    - recruiter: фильтр по рекрутеру (опционально)
+    - is_active: фильтр по статусу активности (опционально)
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - User.objects: рекрутеры из группы 'Рекрутер'
+    
+    ОБРАБОТКА:
+    - Настройка полей поиска и фильтрации
+    - Ограничение выбора рекрутеров
+    - Настройка виджетов для UI
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Django форма для поиска вакансий
+    
+    СВЯЗИ:
+    - Использует: User.objects
+    - Передает: Django форма
+    - Может вызываться из: Vacancy views
+    """
     
     search = forms.CharField(
         max_length=100,
@@ -194,7 +255,34 @@ class VacancySearchForm(forms.Form):
 
 
 class SalaryRangeForm(forms.ModelForm):
-    """Форма для создания и редактирования зарплатных вилок"""
+    """
+    Форма для создания и редактирования зарплатных вилок
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - vacancy: вакансия (обязательно)
+    - grade: грейд (обязательно)
+    - salary_min_usd: минимальная зарплата в USD (обязательно)
+    - salary_max_usd: максимальная зарплата в USD (обязательно)
+    - is_active: статус активности
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - SalaryRange модель из apps.vacancies.models
+    - Vacancy.objects: активные вакансии
+    
+    ОБРАБОТКА:
+    - Валидация обязательных полей
+    - Проверка корректности зарплатной вилки (min <= max)
+    - Настройка виджетов для UI
+    - Ограничение выбора активными вакансиями
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Django форма для создания/редактирования зарплатных вилок
+    
+    СВЯЗИ:
+    - Использует: SalaryRange модель, Vacancy.objects
+    - Передает: Django форма
+    - Может вызываться из: SalaryRange views
+    """
     
     class Meta:
         model = SalaryRange
@@ -263,7 +351,32 @@ class SalaryRangeForm(forms.ModelForm):
 
 
 class SalaryRangeSearchForm(forms.Form):
-    """Форма для поиска зарплатных вилок"""
+    """
+    Форма для поиска зарплатных вилок
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - search: поисковый запрос (опционально)
+    - vacancy: фильтр по вакансии (опционально)
+    - grade: фильтр по грейду (опционально)
+    - is_active: фильтр по статусу активности (опционально)
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - Vacancy.objects: активные вакансии
+    - Grade.objects: все грейды
+    
+    ОБРАБОТКА:
+    - Настройка полей поиска и фильтрации
+    - Ограничение выбора активными вакансиями
+    - Настройка виджетов для UI
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Django форма для поиска зарплатных вилок
+    
+    СВЯЗИ:
+    - Использует: Vacancy.objects, Grade.objects
+    - Передает: Django форма
+    - Может вызываться из: SalaryRange views
+    """
     
     search = forms.CharField(
         max_length=100,

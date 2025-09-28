@@ -6,84 +6,92 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
-from .models import Vacancy, SalaryRange
+from .models import Vacancy
+from apps.finance.models import SalaryRange
 from .forms import VacancyForm, VacancySearchForm, SalaryRangeForm, SalaryRangeSearchForm
 from apps.finance.models import Grade
-from .logic.vacancy_handlers import VacancyHandler
-from .logic.salary_range_handlers import SalaryRangeHandler
-from .logic.response_handlers import ResponseHandler
+# from .logic.vacancy_handlers import VacancyHandler  # УДАЛЕНО - логика перенесена в logic/candidate/
+# from .logic.salary_range_handlers import SalaryRangeHandler  # УДАЛЕНО - логика перенесена в finance/views_modules/
+# from .logic.response_handlers import ResponseHandler  # УДАЛЕНО - заменен на logic/base/response_handler.py
+
+# Импорты новых модулей
+from logic.candidate.vacancy_management import (
+    vacancy_list, vacancy_detail, vacancy_create, 
+    vacancy_update, vacancy_delete, vacancy_duplicate
+)
+from logic.base.response_handler import UnifiedResponseHandler
 
 
 @login_required
 def dashboard(request):
-    """Дашборд локальных данных по вакансиям"""
-    # Получаем статистику по вакансиям
-    vacancy_stats = VacancyHandler.calculate_stats(request.user)
+    """
+    Дашборд локальных данных по вакансиям
     
-    # Получаем статистику по зарплатным вилкам
-    salary_range_stats = SalaryRangeHandler.calculate_stats()
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь
     
-    # Общее количество грейдов
-    total_grades = Grade.objects.count()
+    ИСТОЧНИКИ ДАННЫХ:
+    - logic.candidate.vacancy_management.vacancy_dashboard
     
-    context = {
-        **vacancy_stats,
-        **salary_range_stats,
-        'total_grades': total_grades,
-    }
+    ОБРАБОТКА:
+    - Делегирование обработки в logic модуль
+    - Получение статистики по вакансиям пользователя
     
-    return render(request, 'vacancies/dashboard.html', context)
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Результат выполнения vacancy_dashboard()
+    
+    СВЯЗИ:
+    - Использует: logic.candidate.vacancy_management.vacancy_dashboard
+    - Передает: request объект
+    - Может вызываться из: vacancies/ URL patterns
+    """
+    # Используем новую логику из logic модуля
+    from logic.candidate.vacancy_management import vacancy_dashboard
+    return vacancy_dashboard(request)
 
 
 @login_required
 def vacancy_list(request):
-    """Список вакансий"""
+    """
+    Список вакансий
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.GET: search, recruiter, is_active (параметры фильтрации)
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - VacancySearchForm для валидации параметров поиска
+    - logic.candidate.vacancy_management.vacancy_list для обработки
+    
+    ОБРАБОТКА:
+    - Получение параметров поиска из GET запроса
+    - Делегирование обработки в logic модуль
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Результат выполнения logic_vacancy_list()
+    
+    СВЯЗИ:
+    - Использует: VacancySearchForm, logic.candidate.vacancy_management.vacancy_list
+    - Передает: request объект с параметрами фильтрации
+    - Может вызываться из: vacancies/ URL patterns
+    """
     # Получаем параметры поиска
     search_form = VacancySearchForm(request.GET)
     search_query = request.GET.get('search', '')
     recruiter_filter = request.GET.get('recruiter', '')
     status_filter = request.GET.get('is_active', '')
     
-    # Используем обработчик поиска
-    search_params = {
-        'query': search_query,
-        'recruiter_id': recruiter_filter,
-        'is_active': status_filter,
-        'user': request.user
-    }
-    vacancies = VacancyHandler.search_logic(search_params)
-    
-    # Пагинация
-    paginator = Paginator(vacancies, 10)  # 10 вакансий на страницу
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    
-    context = ResponseHandler.pagination_context(
-        page_obj,
-        search_form,
-        original_queryset=vacancies,
-        search_query=search_query,
-        recruiter_filter=recruiter_filter,
-        status_filter=status_filter
-    )
-    
-    return render(request, 'vacancies/vacancy_list.html', context)
+    # Используем новую логику из logic модуля
+    from logic.candidate.vacancy_management import vacancy_list as logic_vacancy_list
+    return logic_vacancy_list(request)
 
 
 @login_required
 def vacancy_detail(request, pk):
     """Детальная информация о вакансии"""
-    vacancy = get_object_or_404(Vacancy, pk=pk)
-    
-    # Получаем все активные зарплатные вилки для данной вакансии
-    salary_ranges = SalaryRangeHandler.get_salary_ranges_for_vacancy(pk)
-    
-    context = {
-        'vacancy': vacancy,
-        'salary_ranges': salary_ranges,
-    }
-    
-    return render(request, 'vacancies/vacancy_detail.html', context)
+    # Используем новую логику из logic модуля
+    from logic.candidate.vacancy_management import vacancy_detail as logic_vacancy_detail
+    return logic_vacancy_detail(request, pk)
 
 
 @login_required
@@ -99,7 +107,8 @@ def vacancy_create(request):
         form = VacancyForm()
     
     # Получаем все активные зарплатные вилки
-    salary_ranges = SalaryRangeHandler.get_active_salary_ranges()
+    from apps.finance.models import SalaryRange
+    salary_ranges = SalaryRange.objects.filter(is_active=True).order_by('grade__name')
     
     context = {
         'form': form,
@@ -126,7 +135,8 @@ def vacancy_edit(request, pk):
         form = VacancyForm(instance=vacancy)
     
     # Получаем все активные зарплатные вилки
-    salary_ranges = SalaryRangeHandler.get_active_salary_ranges()
+    from apps.finance.models import SalaryRange
+    salary_ranges = SalaryRange.objects.filter(is_active=True).order_by('grade__name')
     
     context = {
         'form': form,
@@ -189,22 +199,45 @@ def salary_ranges_list(request):
         'grade_id': grade_filter,
         'is_active': status_filter
     }
-    salary_ranges = SalaryRangeHandler.search_logic(search_params)
+    # Получаем зарплатные вилки с фильтрацией
+    from apps.finance.models import SalaryRange
+    salary_ranges = SalaryRange.objects.all()
+    
+    # Применяем фильтры
+    if search_query:
+        salary_ranges = salary_ranges.filter(
+            Q(vacancy__name__icontains=search_query) |
+            Q(grade__name__icontains=search_query)
+        )
+    
+    if vacancy_filter:
+        salary_ranges = salary_ranges.filter(vacancy_id=vacancy_filter)
+    
+    if grade_filter:
+        salary_ranges = salary_ranges.filter(grade_id=grade_filter)
+    
+    if status_filter and status_filter != '':
+        if status_filter == 'true':
+            salary_ranges = salary_ranges.filter(is_active=True)
+        elif status_filter == 'false':
+            salary_ranges = salary_ranges.filter(is_active=False)
+    
+    salary_ranges = salary_ranges.order_by('-created_at')
     
     # Пагинация
     paginator = Paginator(salary_ranges, 10)  # 10 вилок на страницу
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
-    context = ResponseHandler.pagination_context(
-        page_obj,
-        search_form,
-        original_queryset=salary_ranges,
-        search_query=search_query,
-        vacancy_filter=vacancy_filter,
-        grade_filter=grade_filter,
-        status_filter=status_filter
-    )
+    context = {
+        'page_obj': page_obj,
+        'search_form': search_form,
+        'search_query': search_query,
+        'vacancy_filter': vacancy_filter,
+        'grade_filter': grade_filter,
+        'status_filter': status_filter,
+        'total_count': salary_ranges.count()
+    }
     
     return render(request, 'vacancies/salary_ranges_list.html', context)
 

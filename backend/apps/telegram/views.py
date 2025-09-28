@@ -1,3 +1,12 @@
+# Импорты из новых модулей
+from logic.integration.telegram.telegram_service import (
+    TelegramAuthView, telegram_dashboard, telegram_auth_sync,
+    telegram_logout, telegram_settings, telegram_auth_attempts,
+    telegram_webhook, telegram_test_connection
+)
+from logic.base.response_handler import UnifiedResponseHandler
+
+# Старые импорты (для совместимости)
 import json
 import base64
 import logging
@@ -21,7 +30,30 @@ User = get_user_model()
 
 
 class TelegramAuthView(View):
-    """Основное представление для авторизации Telegram"""
+    """
+    Основное представление для авторизации Telegram
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - TelegramUser.objects: пользователи Telegram
+    - AuthAttempt.objects: попытки авторизации
+    
+    ОБРАБОТКА:
+    - Получение или создание TelegramUser
+    - Проверка авторизации
+    - Отображение страницы авторизации
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с данными авторизации
+    - render: HTML страница 'telegram/auth.html'
+    
+    СВЯЗИ:
+    - Использует: TelegramUser, AuthAttempt модели
+    - Передает данные в: telegram/auth.html
+    - Может вызываться из: telegram/ URL patterns
+    """
     
     @method_decorator(login_required)
     def get(self, request):
@@ -436,7 +468,30 @@ def reset_telegram_auth(request):
 
 
 class TelegramDashboardView(View):
-    """Дашборд Telegram"""
+    """
+    Дашборд Telegram
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - TelegramUser.objects: пользователи Telegram
+    - AuthAttempt.objects: попытки авторизации
+    
+    ОБРАБОТКА:
+    - Получение данных Telegram пользователя
+    - Проверка авторизации
+    - Отображение дашборда
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с данными дашборда
+    - render: HTML страница 'telegram/dashboard.html'
+    
+    СВЯЗИ:
+    - Использует: TelegramUser, AuthAttempt модели
+    - Передает данные в: telegram/dashboard.html
+    - Может вызываться из: telegram/ URL patterns
+    """
     
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):

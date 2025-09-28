@@ -6,7 +6,32 @@ User = get_user_model()
 
 
 class NotionSettingsForm(forms.ModelForm):
-    """Форма для настроек Notion"""
+    """
+    Форма для настроек Notion интеграции
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - database_id: ID базы данных Notion (обязательно)
+    - auto_sync: автоматическая синхронизация
+    - sync_interval: интервал синхронизации в минутах
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - NotionSettings модель из apps.notion_int.models
+    - Notion API для получения списков баз данных
+    
+    ОБРАБОТКА:
+    - Валидация обязательных полей
+    - Настройка виджетов для UI
+    - Настройка лейблов и подсказок
+    - Динамическое заполнение выборов через Notion API
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Django форма для настройки Notion интеграции
+    
+    СВЯЗИ:
+    - Использует: NotionSettings модель, Notion API
+    - Передает: Django форма
+    - Может вызываться из: Notion Integration views
+    """
     
     # Явно определяем поля как ChoiceField
     database_id = forms.ChoiceField(choices=[], required=False, widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_database_id'}))

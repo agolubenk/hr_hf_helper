@@ -1,3 +1,11 @@
+# Импорты из новых модулей
+from logic.integration.notion.notion_service import (
+    settings, dashboard, pages_list, page_detail,
+    test_connection, sync_pages, sync_logs, bulk_import, bulk_import_status
+)
+from logic.base.response_handler import UnifiedResponseHandler
+
+# Старые импорты (для совместимости)
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -27,7 +35,30 @@ except ImportError:
 
 @login_required
 def settings(request):
-    """Страница настроек Notion"""
+    """
+    Страница настроек Notion
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - NotionSettings.objects: настройки пользователя
+    - NotionSettingsForm: форма настроек
+    
+    ОБРАБОТКА:
+    - Получение или создание настроек пользователя
+    - Проверка очистки настроек из-за изменения integration токена
+    - Создание формы настроек
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с формой настроек
+    - render: HTML страница 'notion_int/settings.html'
+    
+    СВЯЗИ:
+    - Использует: NotionSettings модель, NotionSettingsForm
+    - Передает данные в: notion_int/settings.html
+    - Может вызываться из: notion_int/ URL patterns
+    """
     user = request.user
     
     try:
@@ -180,7 +211,32 @@ def get_databases(request):
 
 @login_required
 def dashboard(request):
-    """Главная страница интеграции с Notion"""
+    """
+    Главная страница интеграции с Notion
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - NotionSettings.objects: настройки пользователя
+    - NotionPage.objects: страницы пользователя
+    - NotionSyncLog.objects: логи синхронизации
+    
+    ОБРАБОТКА:
+    - Получение настроек пользователя
+    - Проверка конфигурации интеграции
+    - Подсчет статистики (количество страниц, логов)
+    - Получение последних логов синхронизации
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с настройками, статистикой и логами
+    - render: HTML страница 'notion_int/dashboard.html'
+    
+    СВЯЗИ:
+    - Использует: NotionSettings, NotionPage, NotionSyncLog модели
+    - Передает данные в: notion_int/dashboard.html
+    - Может вызываться из: notion_int/ URL patterns
+    """
     user = request.user
     
     # Получаем настройки пользователя
@@ -215,7 +271,31 @@ def dashboard(request):
 
 @login_required
 def pages_list(request):
-    """Список страниц Notion"""
+    """
+    Список страниц Notion
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь
+    - request.GET: параметры фильтрации и поиска
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - NotionPage.objects: страницы пользователя
+    - NotionSettings.objects: настройки пользователя
+    
+    ОБРАБОТКА:
+    - Получение страниц пользователя
+    - Применение фильтров и поиска
+    - Пагинация результатов
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь со страницами и пагинацией
+    - render: HTML страница 'notion_int/pages_list.html'
+    
+    СВЯЗИ:
+    - Использует: NotionPage, NotionSettings модели
+    - Передает данные в: notion_int/pages_list.html
+    - Может вызываться из: notion_int/ URL patterns
+    """
     user = request.user
     
     # Проверяем настройки

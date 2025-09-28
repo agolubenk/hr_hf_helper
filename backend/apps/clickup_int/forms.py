@@ -6,7 +6,35 @@ User = get_user_model()
 
 
 class ClickUpSettingsForm(forms.ModelForm):
-    """Форма для настроек ClickUp"""
+    """
+    Форма для настроек ClickUp интеграции
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - team_id: ID команды/рабочей области (обязательно)
+    - space_id: ID пространства (обязательно)
+    - folder_id: ID папки (опционально)
+    - list_id: ID списка задач (обязательно)
+    - auto_sync: автоматическая синхронизация
+    - sync_interval: интервал синхронизации в минутах
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - ClickUpSettings модель из apps.clickup_int.models
+    - ClickUp API для получения списков команд, пространств, папок и списков
+    
+    ОБРАБОТКА:
+    - Валидация обязательных полей
+    - Настройка виджетов для UI
+    - Настройка лейблов и подсказок
+    - Динамическое заполнение выборов через ClickUp API
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Django форма для настройки ClickUp интеграции
+    
+    СВЯЗИ:
+    - Использует: ClickUpSettings модель, ClickUp API
+    - Передает: Django форма
+    - Может вызываться из: ClickUp Integration views
+    """
     
     # Явно определяем поля как ChoiceField
     team_id = forms.ChoiceField(choices=[], required=False, widget=forms.Select(attrs={'class': 'form-select', 'id': 'id_team_id'}))

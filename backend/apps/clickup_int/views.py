@@ -1,3 +1,11 @@
+# Импорты из новых модулей
+from logic.integration.clickup.clickup_service import (
+    dashboard, settings, tasks_list, task_detail,
+    test_connection, sync_tasks, sync_logs, bulk_import, bulk_import_status
+)
+from logic.base.response_handler import UnifiedResponseHandler
+
+# Старые импорты (для совместимости)
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -27,7 +35,32 @@ except ImportError:
 
 @login_required
 def dashboard(request):
-    """Главная страница интеграции с ClickUp"""
+    """
+    Главная страница интеграции с ClickUp
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - ClickUpSettings.objects: настройки пользователя
+    - ClickUpTask.objects: задачи пользователя
+    - ClickUpSyncLog.objects: логи синхронизации
+    
+    ОБРАБОТКА:
+    - Получение настроек пользователя
+    - Проверка конфигурации интеграции
+    - Подсчет статистики (количество задач, логов)
+    - Получение последних логов синхронизации
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с настройками, статистикой и логами
+    - render: HTML страница 'clickup_int/dashboard.html'
+    
+    СВЯЗИ:
+    - Использует: ClickUpSettings, ClickUpTask, ClickUpSyncLog модели
+    - Передает данные в: clickup_int/dashboard.html
+    - Может вызываться из: clickup_int/ URL patterns
+    """
     user = request.user
     
     # Получаем настройки пользователя
@@ -58,7 +91,31 @@ def dashboard(request):
 
 @login_required
 def settings_view(request):
-    """Страница настроек ClickUp"""
+    """
+    Настройки интеграции с ClickUp
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь
+    - request.POST: данные формы настроек (team_id, space_id, list_id, custom_fields)
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - ClickUpSettings.objects: настройки пользователя
+    - ClickUpSettingsForm: форма настроек
+    
+    ОБРАБОТКА:
+    - Получение или создание настроек пользователя
+    - Обработка POST запроса для сохранения настроек
+    - Валидация формы настроек
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с формой настроек
+    - render: HTML страница 'clickup_int/settings.html'
+    
+    СВЯЗИ:
+    - Использует: ClickUpSettings модель, ClickUpSettingsForm
+    - Передает данные в: clickup_int/settings.html
+    - Может вызываться из: clickup_int/ URL patterns
+    """
     user = request.user
     
     try:
@@ -99,7 +156,31 @@ def settings_view(request):
 @login_required
 @require_POST
 def test_connection(request):
-    """API для тестирования подключения к ClickUp"""
+    """
+    Тестирование подключения к ClickUp
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь
+    - request.POST: данные формы тестирования (api_key, team_id)
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - ClickUpService: сервис для работы с ClickUp API
+    - ClickUpTestConnectionForm: форма тестирования
+    
+    ОБРАБОТКА:
+    - Создание ClickUpService с тестовыми параметрами
+    - Тестирование подключения к ClickUp API
+    - Проверка доступности команд и пространств
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с результатами тестирования
+    - render: HTML страница 'clickup_int/test_connection.html'
+    
+    СВЯЗИ:
+    - Использует: ClickUpService, ClickUpTestConnectionForm
+    - Передает данные в: clickup_int/test_connection.html
+    - Может вызываться из: clickup_int/ URL patterns
+    """
     try:
         user = request.user
         
@@ -417,8 +498,14 @@ def task_detail(request, task_id):
         accounts_data = huntflow_service.get_accounts()
         if accounts_data and 'items' in accounts_data:
             huntflow_accounts = accounts_data['items']
+            print(f"✅ Huntflow аккаунты получены: {len(huntflow_accounts)}")
+            for account in huntflow_accounts:
+                print(f"  - ID: {account.get('id')}, Name: {account.get('name')}")
+        else:
+            print(f"❌ Huntflow аккаунты не получены: {accounts_data}")
     except Exception as e:
         logger.warning(f"Не удалось получить данные Huntflow аккаунтов: {e}")
+        print(f"❌ Ошибка получения Huntflow аккаунтов: {e}")
     
     context = {
         'task': task,

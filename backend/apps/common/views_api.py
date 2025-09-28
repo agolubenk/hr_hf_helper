@@ -7,11 +7,39 @@ from django.utils import timezone
 import redis
 from django.conf import settings
 
+# Импорты новых модулей
+from logic.utilities.common_api import api_status
+from logic.base.response_handler import UnifiedResponseHandler
+
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def health_check(request):
-    """Проверка здоровья API"""
+    """
+    Проверка здоровья API
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request: HTTP запрос
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - Django database connection
+    - Redis connection
+    - Django cache
+    
+    ОБРАБОТКА:
+    - Проверка подключения к базе данных
+    - Проверка подключения к Redis
+    - Проверка работы кэша
+    - Формирование статуса здоровья системы
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Response с данными о состоянии системы
+    
+    СВЯЗИ:
+    - Использует: Django database, Redis, cache
+    - Передает: DRF Response
+    - Может вызываться из: DRF API endpoints
+    """
     health_status = {
         'status': 'healthy',
         'timestamp': timezone.now().isoformat(),

@@ -202,6 +202,25 @@
                                 <small class="text-muted">{{ vacancy.external_id }}</small>
                                 <br>
                                 <small class="text-muted">Рекрутер: {{ vacancy.recruiter.get_full_name }}</small>
+                                
+                                <!-- Зарплатные вилки -->
+                                {% if vacancy.salary_ranges.all %}
+                                    <div class="mt-1">
+                                        {% for salary_range in vacancy.salary_ranges.all|slice:":2" %}
+                                            <span class="badge bg-info me-1" style="font-size: 0.7em;">
+                                                {{ salary_range.grade.name }}: {{ salary_range.get_salary_display }}
+                                            </span>
+                                        {% endfor %}
+                                        {% if vacancy.salary_ranges.count > 2 %}
+                                            <small class="text-muted">+{{ vacancy.salary_ranges.count|add:"-2" }} еще</small>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    <small class="text-warning">
+                                        <i class="fas fa-exclamation-triangle me-1"></i>
+                                        Нет зарплатных вилок
+                                    </small>
+                                {% endif %}
                             </div>
                             <div class="flex-shrink-0">
                                 {% if vacancy.is_active %}

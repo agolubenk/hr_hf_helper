@@ -1,0 +1,219 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block title %}Авторизация Telegram{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/telegram.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="fab fa-telegram-plane"></i> Авторизация Telegram</h4>
+            </div>
+            <div class="card-body">
+                {% if is_authorized %}
+                    <!-- Уже авторизован -->
+                    <div class="alert alert-success">
+                        <h5><i class="fas fa-check-circle"></i> Авторизация успешна!</h5>
+                        <p class="mb-0">Вы авторизованы как: <strong>{{ user_info.first_name }}</strong> (@{{ user_info.username }})</p>
+                        <hr>
+                        <a href="{% url 'telegram:dashboard' %}" class="btn btn-primary">
+                            <i class="fas fa-tachometer-alt"></i> Панель управления
+                        </a>
+                        <button class="btn btn-outline-danger" onclick="resetAuth()">
+                            <i class="fas fa-sign-out-alt"></i> Сбросить авторизацию
+                        </button>
+                    </div>
+                {% else %}
+                    <!-- Не авторизован -->
+                    <div id="step-initial">
+                        <p class="text-muted">Для продолжения работы необходимо авторизоваться в Telegram через QR-код.</p>
+                        <button class="btn btn-primary btn-lg" onclick="generateQR()">
+                            <i class="fas fa-qrcode"></i> Создать QR-код
+                        </button>
+                    </div>
+
+                    <!-- QR-код -->
+                    <div id="qr-container" class="d-none">
+                        <div class="text-center mb-3">
+                            <div id="qr-code-display" class="p-3 border rounded bg-light">
+                                <img id="qr-image" src="" alt="QR код" class="img-fluid" style="max-width: 300px;">
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info text-center">
+                            <h6><i class="fas fa-mobile-alt"></i> Инструкция:</h6>
+                            <ol class="text-start">
+                                <li>Откройте Telegram на телефоне</li>
+                                <li>Перейдите в <strong>Настройки → Устройства</strong></li>
+                                <li>Нажмите <strong>"Подключить устройство"</strong></li>
+                                <li>Отсканируйте QR-код камерой</li>
+                            </ol>
+                        </div>
+                        
+                        <div id="status-display" class="alert alert-info text-center">
+                            <i class="fas fa-info-circle"></i> Нажмите "Создать QR-код" для начала авторизации
+                        </div>
+                        
+                        <div class="text-center">
+                            <button class="btn btn-outline-secondary" onclick="recreateQR()">
+                                <i class="fas fa-sync-alt"></i> Обновить QR-код
+                            </button>
+                            <button class="btn btn-outline-danger" onclick="cancelAuth()">
+                                <i class="fas fa-times"></i> Отмена
+                            </button>
+                        </div>
+                        
+                        <!-- Кнопка для ручного перехода к 2FA -->
+                        <div class="text-center mt-3">
+                            <button class="btn btn-warning" onclick="show2FA()">
+                                <i class="fas fa-shield-alt"></i> Нужна 2FA?
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 2FA -->
+                    <div id="tfa-container" class="d-none">
+                        <div class="alert alert-success">
+                            <h5><i class="fas fa-shield-alt"></i> Двухфакторная аутентификация</h5>
+                            <p><i class="fas fa-check-circle"></i> QR-код успешно отсканирован!</p>
+                            <p>У вас включена двухфакторная аутентификация. Введите пароль:</p>
+                        </div>
+                        
+                        <form id="tfa-form" onsubmit="submit2FA(event)">
+                            <div class="mb-3">
+                                <label for="tfa-password" class="form-label">Пароль 2FA:</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    <input type="password" class="form-control" id="tfa-password" 
+                                           placeholder="Введите пароль" required>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-sign-in-alt"></i> Подтвердить
+                                </button>
+                                <button type="button" class="btn btn-outline-info" onclick="showQR()">
+                                    <i class="fas fa-qrcode"></i> Назад к QR-коду
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="cancelAuth()">
+                                    <i class="fas fa-arrow-left"></i> Отмена
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Успешная авторизация -->
+                    <div id="success-container" class="d-none">
+                        <div class="alert alert-success text-center">
+                            <h4><i class="fas fa-check-circle"></i> Авторизация успешна!</h4>
+                            <p id="user-info-display" class="mb-3"></p>
+                            <button class="btn btn-primary" onclick="location.reload()">
+                                <i class="fas fa-refresh"></i> Обновить страницу
+                            </button>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- История попыток авторизации -->
+        {% if auth_attempts %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5><i class="fas fa-history"></i> История авторизаций</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Тип</th>
+                                <th>Статус</th>
+                                <th>Время</th>
+                                <th>Ошибка</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for attempt in auth_attempts %}
+                            <tr>
+                                <td>
+                                    {% if attempt.attempt_type == 'qr' %}
+                                        <i class="fas fa-qrcode"></i> QR
+                                    {% elif attempt.attempt_type == '2fa' %}
+                                        <i class="fas fa-shield-alt"></i> 2FA
+                                    {% else %}
+                                        <i class="fas fa-phone"></i> Phone
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if attempt.status == 'success' %}
+                                        <span class="badge bg-success">Успешно</span>
+                                    {% elif attempt.status == 'failed' %}
+                                        <span class="badge bg-danger">Ошибка</span>
+                                    {% elif attempt.status == 'pending' %}
+                                        <span class="badge bg-warning">Ожидание</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Таймаут</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ attempt.created_at|date:"d.m.Y H:i" }}</td>
+                                <td>
+                                    {% if attempt.error_message %}
+                                        <small class="text-muted">{{ attempt.error_message|truncatechars:50 }}</small>
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Модальное окно для ошибок -->
+<div class="modal fade" id="errorModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle"></i> Ошибка
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="error-message">Произошла ошибка</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Глобальные переменные для JavaScript
+window.TELEGRAM_AUTH = {
+    urls: {
+        generateQR: "{% url 'telegram:generate_qr' %}",
+        checkAuth: "{% url 'telegram:check_auth' %}",
+        handle2FA: "{% url 'telegram:handle_2fa' %}",
+        recreateQR: "{% url 'telegram:recreate_qr' %}",
+        resetAuth: "{% url 'telegram:reset_auth' %}"
+    },
+    csrf_token: "{{ csrf_token }}"
+};
+</script>
+
+<!-- Подключаем JavaScript для Telegram авторизации -->
+<script src="{% static 'js/telegram_auth.js' %}"></script>
+{% endblock %}

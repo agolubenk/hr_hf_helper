@@ -1,5 +1,6 @@
 import os
 import json
+import logging
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.utils import timezone
@@ -11,6 +12,8 @@ from googleapiclient.errors import HttpError
 
 from .models import GoogleOAuthAccount
 from .cache_service import GoogleAPICache
+
+logger = logging.getLogger(__name__)
 
 
 class GoogleOAuthService:
@@ -157,7 +160,12 @@ class GoogleOAuthService:
         
         # Проверяем, нужно ли обновить токен
         if oauth_account.needs_refresh() and oauth_account.refresh_token:
-            self._refresh_token(oauth_account)
+            try:
+                self._refresh_token(oauth_account)
+                logger.info(f"✅ Токен автоматически обновлен для пользователя: {self.user.username}")
+            except Exception as e:
+                logger.error(f"❌ Ошибка при автоматическом обновлении токена для {self.user.username}: {e}")
+                # Продолжаем с текущим токеном, возможно он еще валиден
         
         # Создаем credentials
         self.credentials = Credentials(

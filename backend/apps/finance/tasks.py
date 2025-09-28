@@ -7,7 +7,8 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 
 from .models import Benchmark, BenchmarkSettings, Grade, BenchmarkType, HHVacancyTemp
-from .logic.services import HHVacancyService
+# Импорт HHVacancyService временно отключен
+# from .logic.services import HHVacancyService
 from apps.vacancies.models import Vacancy
 import time
 
@@ -18,11 +19,26 @@ def _is_valid_vacancy(vacancy_item: dict) -> bool:
     """
     Проверяет, соответствует ли вакансия нашим критериям
     
-    Args:
-        vacancy_item: Данные вакансии из hh.ru API
-        
-    Returns:
-        bool: True если вакансия подходит, False если нет
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - vacancy_item: словарь с данными вакансии из hh.ru API
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - hh.ru API: данные вакансии (area, professional_roles, salary, name)
+    
+    ОБРАБОТКА:
+    - Проверка локации (только Беларусь и Польша)
+    - Исключение российских городов
+    - Проверка профессиональных ролей (только IT)
+    - Фильтрация по названию (исключение не-IT)
+    - Проверка наличия зарплаты и минимальных порогов
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - bool: True если вакансия подходит, False если нет
+    
+    СВЯЗИ:
+    - Использует: hh.ru API данные
+    - Передает: результат валидации в fetch_hh_vacancies_task
+    - Может вызываться из: fetch_hh_vacancies_task
     """
     # Проверяем локацию
     area = vacancy_item.get('area', {})
@@ -101,14 +117,26 @@ def _should_fetch_vacancies() -> bool:
     """
     Определяет, нужно ли собирать вакансии на основе умной логики
     
-    Правила:
-    1. Если есть необработанные вакансии - НЕ собираем
-    2. Если последний сбор был менее 20 минут назад и принес 0 вакансий - НЕ собираем
-    3. Если последний сбор был более 20 минут назад - собираем
-    4. Если последний сбор принес вакансии - собираем через 20 минут
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - Нет параметров (использует глобальные данные)
     
-    Returns:
-        bool: True если нужно собирать, False если пропустить
+    ИСТОЧНИКИ ДАННЫХ:
+    - HHVacancyTemp.objects: необработанные вакансии
+    - HHVacancyTemp.objects: последние сборы вакансий
+    
+    ОБРАБОТКА:
+    - Проверка наличия необработанных вакансий
+    - Анализ времени последнего сбора
+    - Проверка результативности последнего сбора
+    - Применение умной логики (20 минут интервал)
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - bool: True если нужно собирать, False если пропустить
+    
+    СВЯЗИ:
+    - Использует: HHVacancyTemp.objects
+    - Передает: результат в fetch_hh_vacancies_task
+    - Может вызываться из: fetch_hh_vacancies_task
     """
     from datetime import datetime, timedelta
     
@@ -158,8 +186,24 @@ def analyze_hh_vacancies_automatic(self):
     """
     Автоматический анализ вакансий с hh.ru используя фиксированные конфигурации
     
-    Returns:
-        Словарь с результатами анализа
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - self: Celery task объект для retry логики
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - Временно отключена (возвращает сообщение об отключении)
+    
+    ОБРАБОТКА:
+    - Проверка статуса задачи (временно отключена)
+    - Логирование информации о статусе
+    - Обработка ошибок с retry механизмом
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Словарь с результатами анализа (временно отключена)
+    
+    СВЯЗИ:
+    - Использует: Celery shared_task декоратор
+    - Передает: результат выполнения задачи
+    - Может вызываться из: Celery worker, cron jobs
     """
     try:
         logger.info("Задача analyze_hh_vacancies_automatic временно отключена")
@@ -190,12 +234,28 @@ def analyze_hh_vacancies_batch(self, vacancy_grade_pairs: list, search_queries: 
     """
     Массовый анализ вакансий с hh.ru
     
-    Args:
-        vacancy_grade_pairs: Список кортежей (vacancy_id, grade_id)
-        search_queries: Словарь с поисковыми запросами {vacancy_id: query}
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - self: Celery task объект для retry логики
+    - vacancy_grade_pairs: список кортежей (vacancy_id, grade_id)
+    - search_queries: словарь с поисковыми запросами {vacancy_id: query}
     
-    Returns:
-        Словарь с результатами массового анализа
+    ИСТОЧНИКИ ДАННЫХ:
+    - vacancy_grade_pairs: пары вакансия-грейд для анализа
+    - search_queries: поисковые запросы для каждой вакансии
+    
+    ОБРАБОТКА:
+    - Обработка каждой пары вакансия-грейд
+    - Запуск анализа для каждой пары
+    - Сбор статистики по всем анализам
+    - Обработка ошибок с retry механизмом
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Словарь с результатами массового анализа
+    
+    СВЯЗИ:
+    - Использует: Celery shared_task декоратор
+    - Передает: результат выполнения задачи
+    - Может вызываться из: Celery worker, cron jobs
     """
     try:
         logger.info(f"Начинаем массовый анализ hh.ru для {len(vacancy_grade_pairs)} пар вакансия-грейд")
@@ -258,6 +318,27 @@ def analyze_hh_vacancies_batch(self, vacancy_grade_pairs: list, search_queries: 
 def cleanup_old_benchmarks():
     """
     Очистка старых бенчмарков (старше определенного периода)
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - Нет параметров (использует настройки)
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - BenchmarkSettings.load(): настройки периода хранения
+    - Benchmark.objects: старые неактивные бенчмарки
+    
+    ОБРАБОТКА:
+    - Получение настроек периода хранения
+    - Вычисление даты отсечения (удвоенный период)
+    - Поиск старых неактивных бенчмарков
+    - Удаление найденных записей
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Словарь с результатами очистки
+    
+    СВЯЗИ:
+    - Использует: BenchmarkSettings, Benchmark.objects
+    - Передает: результат выполнения задачи
+    - Может вызываться из: Celery worker, cron jobs
     """
     try:
         settings = BenchmarkSettings.load()
@@ -289,6 +370,27 @@ def cleanup_old_benchmarks():
 def generate_benchmark_statistics():
     """
     Генерация статистики по бенчмаркам
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - Нет параметров (использует все активные бенчмарки)
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - Benchmark.objects: все активные бенчмарки
+    - Django ORM агрегации: Avg, Count, Min, Max
+    
+    ОБРАБОТКА:
+    - Статистика по типам бенчмарков
+    - Статистика по грейдам
+    - Статистика по локациям
+    - Подсчет общего количества бенчмарков
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Словарь с детальной статистикой по бенчмаркам
+    
+    СВЯЗИ:
+    - Использует: Benchmark.objects, Django ORM агрегации
+    - Передает: результат выполнения задачи
+    - Может вызываться из: Celery worker, cron jobs
     """
     try:
         from django.db.models import Avg, Count, Min, Max
@@ -340,7 +442,36 @@ def generate_benchmark_statistics():
 
 @shared_task(bind=True, max_retries=3)
 def fetch_hh_vacancies_task(self):
-    """Задача сбора вакансий с hh.ru с умной логикой"""
+    """Временно отключена из-за отсутствия HHVacancyService"""
+    return {"success": False, "message": "Задача временно отключена"}
+    
+def _fetch_hh_vacancies_task_disabled(self):
+    """
+    Задача сбора вакансий с hh.ru с умной логикой
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - self: Celery task объект для retry логики
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - hh.ru API через HHVacancyService
+    - BenchmarkSettings для конфигурации
+    - HH_PROFESSIONAL_ROLES, HH_LOCATIONS, ALL_KEYWORDS константы
+    
+    ОБРАБОТКА:
+    - Проверка активности канала hh.ru
+    - Умная логика определения необходимости сбора
+    - Поиск по ключевым словам, локациям и ролям
+    - Фильтрация и дедупликация вакансий
+    - Сохранение в HHVacancyTemp
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Словарь с результатами сбора и количеством найденных вакансий
+    
+    СВЯЗИ:
+    - Использует: HHVacancyService, BenchmarkSettings, HHVacancyTemp
+    - Передает: результат сбора в Celery
+    - Может вызываться из: Celery worker, cron jobs
+    """
     try:
         from .management.commands.hh_search_constants import HH_PROFESSIONAL_ROLES, HH_LOCATIONS, ALL_KEYWORDS
         from datetime import datetime, timedelta
@@ -355,7 +486,7 @@ def fetch_hh_vacancies_task(self):
             logger.info("Пропускаем сбор вакансий - очередь еще не обработана или недавно собирали")
             return {"success": True, "message": "Сбор пропущен по умной логике", "fetched": 0}
         
-        hh_service = HHVacancyService()
+        # hh_service = HHVacancyService()  # Временно отключено
         total_fetched = 0
         
         # Получаем все профессиональные роли и локации
@@ -438,7 +569,30 @@ def fetch_hh_vacancies_task(self):
 
 @shared_task
 def process_hh_queue_with_limit():
-    """Обработка очереди hh.ru с лимитом задач в сутки"""
+    """
+    Обработка очереди hh.ru с лимитом задач в сутки
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - Нет параметров (использует настройки и очередь)
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - BenchmarkSettings.load(): максимальное количество задач в день
+    - HHVacancyTemp.objects: необработанные вакансии
+    
+    ОБРАБОТКА:
+    - Проверка дневного лимита задач
+    - Получение необработанных вакансий в рамках лимита
+    - Предобработка данных через HHVacancyService
+    - Отправка на AI анализ
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Словарь с количеством обработанных вакансий
+    
+    СВЯЗИ:
+    - Использует: BenchmarkSettings, HHVacancyTemp, HHVacancyService
+    - Передает: вакансии на AI анализ
+    - Может вызываться из: fetch_hh_vacancies_task
+    """
     from datetime import date
     
     settings = BenchmarkSettings.load()
@@ -492,7 +646,33 @@ def process_hh_queue_with_limit():
 
 @shared_task
 def analyze_hh_vacancy_with_ai(vacancy_data: dict):
-    """AI анализ вакансии с hh.ru"""
+    """
+    AI анализ вакансии с hh.ru
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - vacancy_data: словарь с данными вакансии (hh_id, vacancy_text, preprocessed_salary, raw_data)
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - vacancy_data: данные вакансии для анализа
+    - User.objects: пользователи с Gemini API ключами
+    - GeminiService: сервис для работы с Gemini API
+    
+    ОБРАБОТКА:
+    - Рандомная задержка для соблюдения лимитов API
+    - Получение списка вакансий и грейдов для унификации
+    - Создание улучшенного промпта
+    - Отправка запроса в Gemini API
+    - Парсинг JSON ответа
+    - Сохранение результата через save_hh_analysis_result
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Нет прямого возврата (сохраняет результат в БД)
+    
+    СВЯЗИ:
+    - Использует: GeminiService, User.objects, Grade.objects
+    - Передает: результат в save_hh_analysis_result
+    - Может вызываться из: process_hh_queue_with_limit
+    """
     try:
         import json
         import time
@@ -505,7 +685,7 @@ def analyze_hh_vacancy_with_ai(vacancy_data: dict):
         settings = BenchmarkSettings.load()
         
         # Получаем список наших вакансий для унификации
-        hh_service = HHVacancyService()
+        # hh_service = HHVacancyService()  # Временно отключено
         our_vacancies_list = hh_service.get_our_vacancies_list()
         our_vacancies_text = "\n".join([f"- {vacancy}" for vacancy in our_vacancies_list])
         
@@ -579,7 +759,29 @@ def analyze_hh_vacancy_with_ai(vacancy_data: dict):
 
 
 def _find_best_vacancy_match(ai_vacancy_name: str):
-    """Находит лучшее соответствие вакансии из наших данных"""
+    """
+    Находит лучшее соответствие вакансии из наших данных
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - ai_vacancy_name: строка с названием вакансии от AI
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - Vacancy.objects: все активные вакансии из базы данных
+    
+    ОБРАБОТКА:
+    - Точное совпадение по названию
+    - Умное сопоставление по сходству (SequenceMatcher)
+    - Дополнительная проверка по ключевым словам
+    - Комбинированный скор схожести
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Vacancy объект или None если соответствие не найдено
+    
+    СВЯЗИ:
+    - Использует: Vacancy.objects, SequenceMatcher
+    - Передает: найденную вакансию в save_hh_analysis_result
+    - Может вызываться из: save_hh_analysis_result
+    """
     from apps.vacancies.models import Vacancy
     from difflib import SequenceMatcher
     
@@ -625,7 +827,29 @@ def _find_best_vacancy_match(ai_vacancy_name: str):
 
 
 def _find_best_grade_match(ai_grade_name: str):
-    """Находит лучшее соответствие грейда из наших данных"""
+    """
+    Находит лучшее соответствие грейда из наших данных
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - ai_grade_name: строка с названием грейда от AI
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - Grade.objects: все грейды из базы данных
+    - grade_mapping: словарь с синонимами грейдов
+    
+    ОБРАБОТКА:
+    - Точное совпадение по названию
+    - Нормализация грейдов через синонимы
+    - Поиск по маппингу синонимов
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Grade объект или None если соответствие не найдено
+    
+    СВЯЗИ:
+    - Использует: Grade.objects, grade_mapping
+    - Передает: найденный грейд в save_hh_analysis_result
+    - Может вызываться из: save_hh_analysis_result
+    """
     from .models import Grade
     from difflib import SequenceMatcher
     
@@ -667,7 +891,33 @@ def _find_best_grade_match(ai_grade_name: str):
 
 
 def get_enhanced_ai_prompt(benchmark_data, our_vacancies_text, our_grades_text):
-    """Возвращает улучшенный промпт для ИИ анализа"""
+    """
+    Возвращает улучшенный промпт для ИИ анализа
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - benchmark_data: данные вакансии для анализа
+    - our_vacancies_text: список наших вакансий
+    - our_grades_text: список наших грейдов
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - benchmark_data: обработанные данные вакансии
+    - our_vacancies_text: вакансии из нашей базы
+    - our_grades_text: грейды из нашей базы
+    
+    ОБРАБОТКА:
+    - Формирование структурированного промпта для AI
+    - Добавление правил сопоставления вакансий и грейдов
+    - Указание формата ответа (JSON)
+    - Добавление критических требований
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Строка с полным промптом для AI анализа
+    
+    СВЯЗИ:
+    - Использует: входные данные для формирования промпта
+    - Передает: промпт в analyze_hh_vacancy_with_ai
+    - Может вызываться из: analyze_hh_vacancy_with_ai
+    """
     return f"""Ты - эксперт по анализу рынка труда и зарплат в IT-сфере. Проанализируй предоставленную ВАКАНСИЮ и верни структурированные данные.
 
 ⚠️ КРИТИЧЕСКИ ВАЖНО: 
@@ -748,7 +998,33 @@ def get_enhanced_ai_prompt(benchmark_data, our_vacancies_text, our_grades_text):
 Отвечай ТОЛЬКО JSON, без дополнительных комментариев."""
 @shared_task
 def save_hh_analysis_result(ai_response: dict, vacancy_data: dict):
-    """Сохраняет результат AI анализа в Benchmark с умным сопоставлением"""
+    """
+    Сохраняет результат AI анализа в Benchmark с умным сопоставлением
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - ai_response: словарь с ответом AI анализа
+    - vacancy_data: словарь с данными вакансии
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - ai_response: структурированные данные от AI
+    - vacancy_data: исходные данные вакансии
+    - Benchmark, HHVacancyTemp, BenchmarkType, Grade, Domain модели
+    
+    ОБРАБОТКА:
+    - Извлечение structured_benchmarks из AI ответа
+    - Умное сопоставление вакансий и грейдов
+    - Проверка валидности данных
+    - Создание Benchmark записей
+    - Помечание временной вакансии как обработанной
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Нет прямого возврата (сохраняет в БД)
+    
+    СВЯЗИ:
+    - Использует: Benchmark, HHVacancyTemp, Grade, Vacancy модели
+    - Передает: результат в БД (Benchmark записи)
+    - Может вызываться из: analyze_hh_vacancy_with_ai
+    """
     from .models import HHVacancyTemp, BenchmarkType, Grade, Domain
     from apps.vacancies.models import Vacancy
     

@@ -1232,9 +1232,16 @@ class HuntflowService:
             # Убираем пустые поля
             applicant_data = {k: v for k, v in applicant_data.items() if v is not None and v != ''}
             
-            # Если указана вакансия, добавляем её
+            # Сохраняем vacancy_id для отдельной привязки после создания кандидата
+            target_vacancy_id = None
             if vacancy_id and vacancy_id != '':
-                applicant_data['vacancy'] = vacancy_id
+                target_vacancy_id = int(vacancy_id) if isinstance(vacancy_id, str) and vacancy_id.isdigit() else vacancy_id
+                print(f"🔍 Сохраняем vacancy_id для отдельной привязки: {target_vacancy_id}")
+            else:
+                print(f"⚠️ Вакансия не указана: vacancy_id='{vacancy_id}'")
+            
+            # НЕ добавляем vacancy в данные создания кандидата, так как это может не работать
+            # Будем привязывать отдельным запросом после создания
             
             # Сохраняем информацию об исполнителе для добавления тега после создания кандидата
             assignee_info = None
@@ -1255,6 +1262,7 @@ class HuntflowService:
             
             print(f"📤 Финальные данные кандидата: {applicant_data}")
             print(f"📝 External источник: {applicant_data.get('externals', [{}])[0].get('data', {}).get('body', '')[:100]}...")
+            print(f"🔗 Вакансия в финальных данных: {applicant_data.get('vacancy', 'НЕ УКАЗАНА')}")
             
             # Создаем кандидата
             print(f"🔍 Отправляем запрос на создание кандидата с данными: {applicant_data}")
@@ -1265,14 +1273,33 @@ class HuntflowService:
                 print(f"✅ Кандидат успешно создан: {result}")
                 applicant_id = result.get('id')
                 
-                # Добавляем тег с исполнителем, если есть
-                if assignee_info and applicant_id:
-                    print(f"🏷️ Добавляем тег для исполнителя: {assignee_info}")
-                    tag_added = self._add_tag_to_applicant(account_id, applicant_id, assignee_info)
-                    if tag_added:
-                        print(f"✅ Тег добавлен к кандидату")
+                # Привязываем кандидата к вакансии, если указана
+                if applicant_id and target_vacancy_id:
+                    print(f"🔗 Привязываем кандидата {applicant_id} к вакансии {target_vacancy_id}")
+                    binding_result = self._bind_applicant_to_vacancy(account_id, applicant_id, target_vacancy_id)
+                    if binding_result:
+                        print(f"✅ Кандидат успешно привязан к вакансии")
                     else:
-                        print(f"❌ Не удалось добавить тег к кандидату")
+                        print(f"❌ Не удалось привязать кандидата к вакансии")
+                
+                # Добавляем теги
+                if applicant_id:
+                    # Добавляем метку clickup-new
+                    print(f"🏷️ Добавляем метку clickup-new")
+                    clickup_tag_added = self._add_tag_to_applicant(account_id, applicant_id, "clickup-new")
+                    if clickup_tag_added:
+                        print(f"✅ Метка clickup-new добавлена к кандидату")
+                    else:
+                        print(f"❌ Не удалось добавить метку clickup-new к кандидату")
+                    
+                    # Добавляем тег с исполнителем, если есть
+                    if assignee_info:
+                        print(f"🏷️ Добавляем тег для исполнителя: {assignee_info}")
+                        tag_added = self._add_tag_to_applicant(account_id, applicant_id, assignee_info)
+                        if tag_added:
+                            print(f"✅ Тег исполнителя добавлен к кандидату")
+                        else:
+                            print(f"❌ Не удалось добавить тег исполнителя к кандидату")
                 
                 # Добавляем комментарий с объединенными данными, если есть
                 if combined_notes and applicant_id:
@@ -1561,6 +1588,11 @@ class HuntflowService:
                         print(f"✅ Найден частичный тег: {tag_name} (ID: {tag['id']})")
                         return tag['id']
                 
+                # Если это тег clickup-new, пытаемся создать его
+                if assignee_name == "clickup-new":
+                    print(f"🔍 Тег clickup-new не найден, создаем его...")
+                    return self._create_tag(account_id, "clickup-new", "#FF6B35")  # Оранжевый цвет для ClickUp
+                
                 print(f"❌ Тег для исполнителя '{assignee_name}' не найден")
                 return None
             else:
@@ -1570,6 +1602,103 @@ class HuntflowService:
         except Exception as e:
             print(f"❌ Ошибка при поиске тега: {e}")
             return None
+    
+    def _create_tag(self, account_id: int, tag_name: str, color: str = "#007BFF") -> Optional[int]:
+        """
+        Создает новый тег в Huntflow
+        
+        Args:
+            account_id: ID организации
+            tag_name: Название тега
+            color: Цвет тега в формате HEX
+            
+        Returns:
+            ID созданного тега или None
+        """
+        try:
+            print(f"🔍 Создаем тег: {tag_name} (цвет: {color})")
+            
+            tag_data = {
+                'name': tag_name,
+                'color': color
+            }
+            
+            result = self._make_request('POST', f"/accounts/{account_id}/tags", json=tag_data)
+            
+            if result and 'id' in result:
+                print(f"✅ Тег {tag_name} создан с ID: {result['id']}")
+                return result['id']
+            else:
+                print(f"❌ Не удалось создать тег {tag_name}")
+                return None
+                
+        except Exception as e:
+            print(f"❌ Ошибка при создании тега {tag_name}: {e}")
+            return None
+    
+    def _bind_applicant_to_vacancy(self, account_id: int, applicant_id: int, vacancy_id: int) -> bool:
+        """
+        Привязывает кандидата к вакансии
+        
+        Args:
+            account_id: ID организации
+            applicant_id: ID кандидата
+            vacancy_id: ID вакансии
+            
+        Returns:
+            True если привязка успешна, False иначе
+        """
+        try:
+            print(f"🔗 Привязываем кандидата {applicant_id} к вакансии {vacancy_id}")
+            
+            # Сначала получаем информацию о вакансии для получения статуса по умолчанию
+            vacancy_data = self.get_vacancy(account_id, vacancy_id)
+            if not vacancy_data:
+                print(f"❌ Не удалось получить данные вакансии {vacancy_id}")
+                return False
+            
+            # Получаем статусы вакансии
+            statuses = self.get_vacancy_statuses(account_id)
+            if not statuses or 'items' not in statuses:
+                print(f"❌ Не удалось получить статусы вакансии")
+                return False
+            
+            # Находим статус по умолчанию (обычно первый в списке)
+            default_status = None
+            for status in statuses['items']:
+                if status.get('order', 0) == 1 or status.get('name', '').lower() in ['новая', 'new', 'отклик', 'response']:
+                    default_status = status['id']
+                    break
+            
+            if not default_status and statuses['items']:
+                default_status = statuses['items'][0]['id']  # Берем первый статус
+            
+            if not default_status:
+                print(f"❌ Не удалось найти статус по умолчанию для вакансии")
+                return False
+            
+            print(f"🎯 Используем статус {default_status} для привязки к вакансии")
+            
+            # Привязываем кандидата к вакансии с статусом
+            endpoint = f"/accounts/{account_id}/applicants/{applicant_id}/vacancy"
+            data = {
+                'vacancy': vacancy_id,
+                'status': default_status,
+                'comment': 'Автоматически добавлен из ClickUp'
+            }
+            
+            result = self._make_request('POST', endpoint, json=data)
+            
+            if result:
+                print(f"✅ Кандидат {applicant_id} успешно привязан к вакансии {vacancy_id} со статусом {default_status}")
+                return True
+            else:
+                print(f"❌ Не удалось привязать кандидата к вакансии")
+                return False
+                
+        except Exception as e:
+            print(f"❌ Ошибка при привязке кандидата к вакансии: {e}")
+            return False
     
     def _add_tag_to_applicant(self, account_id: int, applicant_id: int, assignee_name: str) -> bool:
         """

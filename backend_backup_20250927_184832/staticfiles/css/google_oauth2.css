@@ -1,0 +1,738 @@
+/* =============================================================================
+   GOOGLE OAUTH APPLICATION STYLES
+   Стили для приложения Google OAuth
+   ============================================================================= */
+
+/* =============================================================================
+   G-DATA AUTOMATION STYLES
+   ============================================================================= */
+
+.vacancy-selector {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.vacancy-selector h3 {
+    color: white;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.vacancy-selector .form-select {
+    border: none;
+    border-radius: 10px;
+    padding: 12px 15px;
+    font-size: 16px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.vacancy-info {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-left: 5px solid #667eea;
+}
+
+.automation-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.automation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.automation-card h5 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.icon-calendar { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+.icon-drive { background: linear-gradient(135deg, #f093fb, #f5576c); color: white; }
+.icon-sheets { background: linear-gradient(135deg, #4facfe, #00f2fe); color: white; }
+.icon-ai { background: linear-gradient(135deg, #43e97b, #38f9d7); color: white; }
+
+.btn-automation {
+    border-radius: 10px;
+    padding: 12px 25px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-automation:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.copy-buttons {
+    margin-top: 15px;
+}
+
+.copy-section {
+    margin-bottom: 10px;
+}
+
+.btn-copy {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.btn-copy-belarus {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+}
+
+.btn-copy-poland {
+    background: linear-gradient(135deg, #4834d4, #686de0);
+    color: white;
+}
+
+.btn-copy-current-week {
+    background: linear-gradient(135deg, #00b894, #00cec9);
+    color: white;
+}
+
+.btn-copy-next-week {
+    background: linear-gradient(135deg, #0984e3, #74b9ff);
+    color: white;
+}
+
+.btn-copy-all-slots {
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    color: white;
+}
+
+.btn-refresh-slots {
+    background: linear-gradient(135deg, #17a2b8, #138496);
+    color: white;
+}
+
+.btn-refresh-slots:disabled {
+    background: linear-gradient(135deg, #6c757d, #495057);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-refresh-slots.refreshing .fa-sync-alt {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.btn-copy:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn-copy:active {
+    transform: scale(0.95);
+}
+
+.btn-copy[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.copy-tooltip {
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.btn-copy:hover .copy-tooltip {
+    opacity: 1;
+}
+
+.copy-success {
+    background: linear-gradient(135deg, #00b894, #00cec9) !important;
+}
+
+/* Стили для карточек слотов */
+.slot-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.slot-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-color: #007bff;
+}
+
+.week-section h6 {
+    font-weight: 600;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 8px;
+}
+
+.week-section.current-week h6 {
+    border-bottom-color: #007bff;
+}
+
+.week-section.next-week h6 {
+    border-bottom-color: #17a2b8;
+}
+
+/* Стили для кнопок сворачивания */
+.btn-collapse {
+    transition: all 0.3s ease;
+    border: none;
+    background: transparent;
+    padding: 0.25rem 0.5rem;
+}
+
+.btn-collapse:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 0.25rem;
+}
+
+.btn-collapse i {
+    transition: transform 0.3s ease;
+}
+
+.btn-collapse[aria-expanded="false"] i {
+    transform: rotate(0deg);
+}
+
+.btn-collapse[aria-expanded="true"] i {
+    transform: rotate(180deg);
+}
+
+/* Стили для заголовков с кнопками */
+h5, h6 {
+    position: relative;
+    padding-right: 40px; /* Место для кнопки */
+}
+
+.btn-collapse {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+
+/* =============================================================================
+   CALENDAR STYLES
+   ============================================================================= */
+
+.calendar-day {
+    transition: background-color 0.2s ease;
+}
+
+.calendar-day:hover {
+    background-color: #f8f9fa;
+}
+
+.event-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+
+.events-container::-webkit-scrollbar {
+    width: 4px;
+}
+
+.events-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 2px;
+}
+
+.events-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 2px;
+}
+
+.events-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Стили для модального окна */
+.modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.text-break {
+    word-break: break-all;
+    word-wrap: break-word;
+}
+
+/* Обрезаем длинные ссылки */
+.modal-body a {
+    max-width: 100%;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* =============================================================================
+   CALENDAR EVENTS STYLES
+   ============================================================================= */
+
+/* Стили календаря как в calendar.html */
+.calendar-day {
+    transition: background-color 0.2s ease;
+    height: 120px;
+    vertical-align: top;
+    position: relative;
+}
+
+.calendar-day:hover {
+    background-color: #f8f9fa;
+}
+
+.event-item {
+    margin-bottom: 4px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-left: 3px solid;
+}
+
+.event-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.events-container {
+    max-height: 80px;
+    overflow-y: auto;
+    padding: 4px;
+}
+
+.events-container::-webkit-scrollbar {
+    width: 4px;
+}
+
+.events-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 2px;
+}
+
+.events-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 2px;
+}
+
+.events-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Улучшенные табы */
+.nav-tabs .nav-link {
+    border: none;
+    border-radius: 8px 8px 0 0;
+    margin-right: 5px;
+    padding: 12px 20px;
+    font-weight: 600;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+
+.nav-tabs .nav-link.active {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+}
+
+.nav-tabs .nav-link:hover:not(.active) {
+    background: #f8f9fa;
+    color: #495057;
+    transform: translateY(-2px);
+}
+
+/* Стили для карточек слотов */
+.slot-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.slot-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: #007bff;
+}
+
+.slot-card .card-body {
+    padding: 1rem;
+}
+
+.slot-card .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.slot-card .text-primary {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Стили для секций недель */
+.week-section {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 2rem;
+    border: 1px solid #e9ecef;
+    margin-bottom: 3rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.week-section.current-week {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e8f5e8 100%);
+    border-color: #28a745;
+    border-width: 2px;
+}
+
+.week-section.next-week {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+    border-color: #007bff;
+    border-width: 2px;
+}
+
+.week-header {
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.week-header h5 {
+    font-weight: 600;
+    color: #495057;
+    font-size: 1.1rem;
+}
+
+/* Отступы для всей вкладки слотов */
+#slots {
+    padding: 1.5rem;
+}
+
+/* Выравнивание кнопок копирования */
+.week-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 40px; /* Фиксированная высота для всех заголовков */
+}
+
+.week-header .btn {
+    flex-shrink: 0;
+    min-width: 40px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/* Выравнивание кнопки в заголовке слотов */
+.slots-container > .d-flex {
+    align-items: center;
+    min-height: 40px; /* Такая же высота как у week-header */
+}
+
+.slots-container > .d-flex .btn {
+    flex-shrink: 0;
+    min-width: 40px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/* Дополнительное выравнивание для всех кнопок копирования */
+#slots .btn[title*="Копировать"] {
+    position: relative;
+    top: 0;
+    vertical-align: middle;
+}
+
+/* Универсальное выравнивание всех заголовков */
+.slots-container > .d-flex,
+.week-section .week-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    min-height: 40px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+/* Универсальное выравнивание всех кнопок копирования */
+.slots-container .btn,
+.week-section .btn {
+    height: 32px !important;
+    min-width: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+}
+
+/* Отступы для карточек слотов */
+.week-section .row {
+    margin: 0;
+    padding: 0 1rem;
+}
+
+.week-section .col-md-4,
+.week-section .col-lg-2 {
+    padding: 0 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Адаптивная ширина карточек слотов */
+.week-section .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.week-section .col-md-4,
+.week-section .col-lg-2 {
+    flex: 1;
+    min-width: 0;
+    max-width: none;
+}
+
+/* Если карточек 2 и менее - ограничиваем ширину */
+.week-section .row:has(.col-md-4:nth-child(1):last-child),
+.week-section .row:has(.col-md-4:nth-child(2):last-child) {
+    justify-content: center;
+}
+
+.week-section .row:has(.col-md-4:nth-child(1):last-child) .col-md-4,
+.week-section .row:has(.col-md-4:nth-child(2):last-child) .col-md-4 {
+    max-width: 380px;
+    flex: 0 0 auto;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .slots-container {
+        padding: 1rem;
+    }
+    
+    #slots {
+        padding: 1rem;
+    }
+    
+    .week-section {
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .week-section .row {
+        margin: 0;
+        padding: 0 0.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+    
+    .week-section .col-md-4,
+    .week-section .col-lg-2 {
+        padding: 0 0.25rem;
+        margin-bottom: 1rem;
+        flex: 1;
+        min-width: 0;
+    }
+    
+    /* На мобильных устройствах ограничиваем ширину карточек */
+    .week-section .col-md-4 {
+        max-width: 300px;
+        flex: 0 0 auto;
+    }
+    
+    .slot-card .card-body {
+        padding: 0.75rem;
+    }
+    
+    .week-header {
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .week-header h5 {
+        font-size: 1rem;
+    }
+}
+
+/* Карточка с календарем */
+.card {
+    border: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 2px solid #dee2e6;
+    padding: 20px;
+}
+
+.card-body {
+    padding: 0;
+}
+
+/* Анимации */
+.calendar-container {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =============================================================================
+   SCORECARD PATH SETTINGS STYLES
+   ============================================================================= */
+
+.pattern-item {
+    cursor: grab;
+    transition: all 0.2s ease;
+}
+
+.pattern-item:active {
+    cursor: grabbing;
+}
+
+.pattern-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#folder-structure {
+    transition: border-color 0.3s ease;
+    min-height: 300px;
+}
+
+#folder-structure.border-primary {
+    border-color: #0d6efd !important;
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.structure-item {
+    transition: all 0.3s ease;
+    cursor: move;
+}
+
+.structure-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.structure-item.border-primary {
+    border-color: #0d6efd !important;
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.structure-item-content {
+    position: relative;
+}
+
+.structure-item-content::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    width: 15px;
+    height: 1px;
+    background-color: #dee2e6;
+    transform: translateY(-50%);
+}
+
+.structure-item:first-child .structure-item-content::before {
+    display: none;
+}
+
+.drag-handle {
+    cursor: grab;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+.badge {
+    font-size: 0.75em;
+}
+
+/* Анимация для drag&drop */
+.structure-item.dragging {
+    opacity: 0.5;
+    transform: rotate(5deg);
+}
+
+/* Подсветка зоны сброса */
+#folder-structure.drag-over {
+    border-color: #28a745 !important;
+    background-color: rgba(40, 167, 69, 0.05);
+}

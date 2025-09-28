@@ -1,0 +1,287 @@
+{% extends 'common/base.html' %}
+
+{% block title %}Список вакансий - HR Helper{% endblock %}
+{% block page_title %}Список вакансий{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- Фильтры и поиск -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-search me-2"></i>
+                    Поиск и фильтры
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        {{ search_form.search }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ search_form.recruiter }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ search_form.is_active }}
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search me-1"></i>
+                            Поиск
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title">{{ total_count }}</h4>
+                                <p class="card-text">Всего вакансий</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-briefcase fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title">{{ active_count }}</h4>
+                                <p class="card-text">Активных</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-check-circle fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title">{{ inactive_count }}</h4>
+                                <p class="card-text">Неактивных</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-pause-circle fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Список вакансий -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-list me-2"></i>
+                    Вакансии
+                </h5>
+                <a href="{% url 'vacancies:vacancy_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>
+                    Добавить вакансию
+                </a>
+            </div>
+            <div class="card-body">
+                {% if page_obj %}
+                    <div class="row">
+                        {% for vacancy in page_obj %}
+                            <div class="col-lg-6 col-xl-4 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <h6 class="card-title mb-0">
+                                                <a href="{% url 'vacancies:vacancy_detail' vacancy.pk %}" class="text-decoration-none">
+                                                    {{ vacancy.name }}
+                                                </a>
+                                            </h6>
+                                            {% if vacancy.is_active %}
+                                                <span class="badge bg-success">Активна</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Неактивна</span>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-hashtag me-1"></i>
+                                                {{ vacancy.external_id }}
+                                            </small>
+                                        </p>
+                                        
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-user me-1"></i>
+                                                {{ vacancy.recruiter.get_full_name }}
+                                            </small>
+                                        </p>
+                                        
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-users me-1"></i>
+                                                {{ vacancy.get_interviewers_count }} интервьюеров
+                                            </small>
+                                        </p>
+                                        
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar me-1"></i>
+                                                {{ vacancy.created_at|date:"d.m.Y" }}
+                                            </small>
+                                        </p>
+                                    </div>
+                                    <div class="card-footer bg-transparent">
+                                        <div class="btn-group w-100" role="group">
+                                            <a href="{% url 'vacancies:vacancy_detail' vacancy.pk %}" class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'vacancies:vacancy_edit' vacancy.pk %}" class="btn btn-outline-warning btn-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-outline-{% if vacancy.is_active %}warning{% else %}success{% endif %} btn-sm toggle-active" 
+                                                    data-url="{% url 'vacancies:vacancy_toggle_active' vacancy.pk %}" 
+                                                    data-vacancy-name="{{ vacancy.name }}">
+                                                {% if vacancy.is_active %}
+                                                    <i class="fas fa-pause"></i>
+                                                {% else %}
+                                                    <i class="fas fa-play"></i>
+                                                {% endif %}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Пагинация -->
+                    {% if page_obj.has_other_pages %}
+                        <nav aria-label="Навигация по страницам">
+                            <ul class="pagination justify-content-center">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if recruiter_filter %}&recruiter={{ recruiter_filter }}{% endif %}{% if status_filter %}&is_active={{ status_filter }}{% endif %}">Первая</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if recruiter_filter %}&recruiter={{ recruiter_filter }}{% endif %}{% if status_filter %}&is_active={{ status_filter }}{% endif %}">Предыдущая</a>
+                                    </li>
+                                {% endif %}
+
+                                <li class="page-item active">
+                                    <span class="page-link">
+                                        Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+                                    </span>
+                                </li>
+
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if recruiter_filter %}&recruiter={{ recruiter_filter }}{% endif %}{% if status_filter %}&is_active={{ status_filter }}{% endif %}">Следующая</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if recruiter_filter %}&recruiter={{ recruiter_filter }}{% endif %}{% if status_filter %}&is_active={{ status_filter }}{% endif %}">Последняя</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-briefcase fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Вакансии не найдены</h5>
+                        <p class="text-muted">
+                            {% if search_query or recruiter_filter or status_filter %}
+                                Попробуйте изменить параметры поиска
+                            {% else %}
+                                <a href="{% url 'vacancies:vacancy_create' %}" class="btn btn-primary">
+                                    <i class="fas fa-plus me-1"></i>
+                                    Создать первую вакансию
+                                </a>
+                            {% endif %}
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Скрытый CSRF токен для AJAX запросов -->
+{% csrf_token %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Функция для получения CSRF токена
+    function getCSRFToken() {
+        const token = document.querySelector('[name=csrfmiddlewaretoken]');
+        return token ? token.value : '';
+    }
+
+    // Обработка переключения статуса активности
+    document.querySelectorAll('.toggle-active').forEach(button => {
+        button.addEventListener('click', function() {
+            const url = this.dataset.url;
+            const vacancyName = this.dataset.vacancyName;
+            const action = this.querySelector('i').classList.contains('fa-pause') ? 'деактивировать' : 'активировать';
+            
+            if (confirm(`Вы уверены, что хотите ${action} вакансию "${vacancyName}"?`)) {
+                // Показываем индикатор загрузки
+                const originalHTML = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                this.disabled = true;
+                
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken(),
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Показываем успешное сообщение
+                        this.innerHTML = '<i class="fas fa-check"></i>';
+                        this.classList.remove('btn-outline-warning', 'btn-outline-success');
+                        this.classList.add('btn-success');
+                        
+                        // Перезагружаем страницу через небольшую задержку
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        throw new Error(data.message || 'Неизвестная ошибка');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Ошибка: ' + error.message);
+                    
+                    // Восстанавливаем кнопку
+                    this.innerHTML = originalHTML;
+                    this.disabled = false;
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

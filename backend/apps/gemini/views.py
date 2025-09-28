@@ -10,10 +10,8 @@ import json
 import logging
 
 from .models import ChatSession, ChatMessage
-from .logic.services import GeminiService
-from .logic.message_handlers import MessageApiHandler
-from .logic.api_handlers import ApiKeyApiHandler
-from .logic.stats_handlers import StatsApiHandler
+from logic.ai_analysis.gemini_services import GeminiService
+from logic.ai_analysis.gemini_handlers import MessageApiHandler, ApiKeyApiHandler, StatsApiHandler
 
 logger = logging.getLogger(__name__)
 
@@ -21,29 +19,87 @@ logger = logging.getLogger(__name__)
 @login_required
 def gemini_dashboard(request):
     """
-    Главная страница Gemini AI
+    Главная страница Gemini AI - перенаправляет на последний чат или создает новый
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь с gemini_api_key
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - request.user.gemini_api_key: API ключ пользователя
+    - ChatSession.objects: активные чаты пользователя
+    
+    ОБРАБОТКА:
+    - Проверка наличия API ключа у пользователя
+    - Поиск последнего активного чата пользователя
+    - Перенаправление на существующий чат или создание нового
+    - Обработка ошибок с логированием
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - redirect: на последний чат или новый чат
+    - messages: предупреждения об отсутствии API ключа
+    - render: fallback дашборд при ошибках
+    
+    СВЯЗИ:
+    - Использует: ChatSession.objects, logging
+    - Передает: redirect на gemini:chat_session
+    - Может вызываться из: gemini/ URL patterns
     """
     try:
-        # Используем общий обработчик для получения контекста
-        context = StatsApiHandler.get_dashboard_handler({}, request)
+        # Проверяем API ключ пользователя
+        if not request.user.gemini_api_key:
+            logger.warning(f"API ключ не настроен для пользователя {request.user.username}")
+            messages.warning(request, 'Сначала настройте API ключ Gemini')
+            return redirect('gemini:settings')
         
-        if 'error' in context:
-            logger.error(f"Ошибка в gemini_dashboard: {context['error']}")
-            messages.error(request, f'Ошибка при загрузке страницы: {context["error"]}')
-            return render(request, 'gemini/dashboard.html', {'has_api_key': False})
+        # Ищем последний активный чат пользователя
+        last_session = ChatSession.objects.filter(
+            user=request.user, 
+            is_active=True
+        ).order_by('-updated_at').first()
         
-        return render(request, 'gemini/dashboard.html', context)
+        if last_session:
+            logger.info(f"Перенаправляем на последний чат: {last_session.id}")
+            return redirect('gemini:chat_session', session_id=last_session.id)
+        else:
+            # Если нет чатов, создаем новый
+            logger.info("Нет активных чатов, создаем новый")
+            return redirect('gemini:chat_session')
         
     except Exception as e:
         logger.error(f"Ошибка в gemini_dashboard: {str(e)}")
         messages.error(request, f'Ошибка при загрузке страницы: {str(e)}')
-        return render(request, 'gemini/dashboard.html', {'has_api_key': False})
+        # В случае ошибки показываем дашборд
+        return render(request, 'gemini/dashboard.html', {'has_api_key': bool(request.user.gemini_api_key)})
 
 
 @login_required
 def chat_session(request, session_id=None):
     """
     Страница чата с Gemini
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - session_id: ID сессии чата (опционально)
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - request.user.gemini_api_key: API ключ пользователя
+    - ChatSession.objects: сессии чатов пользователя
+    - ChatMessage.objects: сообщения в чате
+    
+    ОБРАБОТКА:
+    - Проверка API ключа пользователя
+    - Получение или создание сессии чата
+    - Получение сообщений из чата
+    - Создание контекста для отображения чата
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с данными чата и сообщениями
+    - render: HTML страница 'gemini/chat.html'
+    
+    СВЯЗИ:
+    - Использует: ChatSession.objects, ChatMessage.objects, logging
+    - Передает данные в: gemini/chat.html
+    - Может вызываться из: gemini/ URL patterns
     """
     try:
         logger.info(f"chat_session вызван с session_id: {session_id}")

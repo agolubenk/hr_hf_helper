@@ -1,0 +1,505 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block title %}Telegram Dashboard{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/telegram.css' %}" rel="stylesheet">
+<style>
+    .chat-container {
+        height: 600px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .chat-list {
+        height: 100%;
+        overflow-y: auto;
+        background: #f8f9fa;
+    }
+    
+    .chat-item {
+        padding: 12px 16px;
+        border-bottom: 1px solid #e9ecef;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    
+    .chat-item:hover {
+        background-color: #e9ecef;
+    }
+    
+    .chat-item.active {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .chat-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #6c757d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        margin-right: 12px;
+    }
+    
+    .chat-info {
+        flex: 1;
+    }
+    
+    .chat-name {
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+    
+    .chat-last-message {
+        font-size: 0.9em;
+        color: #6c757d;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .chat-time {
+        font-size: 0.8em;
+        color: #6c757d;
+    }
+    
+    .messages-container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .messages-header {
+        padding: 16px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        font-weight: 600;
+    }
+    
+    .messages-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px;
+        background: #ffffff;
+    }
+    
+    .message {
+        margin-bottom: 16px;
+        display: flex;
+        align-items: flex-start;
+    }
+    
+    .message.outgoing {
+        flex-direction: row-reverse;
+    }
+    
+    .message-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #6c757d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.8em;
+        margin: 0 8px;
+    }
+    
+    .message-content {
+        max-width: 70%;
+        background: #f8f9fa;
+        padding: 8px 12px;
+        border-radius: 12px;
+        position: relative;
+    }
+    
+    .message.outgoing .message-content {
+        background: #007bff;
+        color: white;
+    }
+    
+    .message-time {
+        font-size: 0.7em;
+        color: #6c757d;
+        margin-top: 4px;
+    }
+    
+    .message.outgoing .message-time {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .loading {
+        text-align: center;
+        padding: 20px;
+        color: #6c757d;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #6c757d;
+    }
+    
+    .empty-state i {
+        font-size: 3em;
+        margin-bottom: 16px;
+        opacity: 0.5;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fab fa-telegram-plane"></i> Telegram Dashboard</h2>
+                <div>
+                    <button class="btn btn-outline-primary" onclick="refreshChats()">
+                        <i class="fas fa-sync-alt"></i> Обновить
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="location.href='{% url 'telegram:auth' %}'">
+                        <i class="fas fa-cog"></i> Настройки
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if telegram_user.is_authorized %}
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-comments"></i> Чаты</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="chat-container">
+                        <div class="chat-list" id="chat-list">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i> Загрузка чатов...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-comment-dots"></i> Сообщения</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="chat-container">
+                        <div class="messages-container" id="messages-container">
+                            <div class="empty-state">
+                                <i class="fas fa-comment-slash"></i>
+                                <h5>Выберите чат</h5>
+                                <p>Выберите чат из списка слева, чтобы просмотреть сообщения</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-user"></i> Информация о пользователе</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Имя:</strong></td>
+                                    <td>{{ telegram_user.first_name|default:"—" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Фамилия:</strong></td>
+                                    <td>{{ telegram_user.last_name|default:"—" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Username:</strong></td>
+                                    <td>@{{ telegram_user.username|default:"—" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Telegram ID:</strong></td>
+                                    <td>{{ telegram_user.telegram_id|default:"—" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Телефон:</strong></td>
+                                    <td>{{ telegram_user.phone|default:"—" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Авторизован:</strong></td>
+                                    <td>
+                                        {% if telegram_user.is_authorized %}
+                                            <span class="badge badge-success">Да</span>
+                                        {% else %}
+                                            <span class="badge badge-danger">Нет</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Дата авторизации:</strong></td>
+                                    <td>{{ telegram_user.auth_date|date:"d.m.Y H:i"|default:"—" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Последняя активность:</strong></td>
+                                    <td>{{ telegram_user.last_activity|date:"d.m.Y H:i"|default:"—" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% else %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                    <h4>Telegram не авторизован</h4>
+                    <p class="text-muted">Для просмотра чатов и сообщений необходимо авторизоваться в Telegram</p>
+                    <a href="{% url 'telegram:auth' %}" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Авторизоваться
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+let currentChatId = null;
+let chats = [];
+
+// Загружаем чаты при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    if ({{ telegram_user.is_authorized|yesno:"true,false" }}) {
+        loadChats();
+    }
+});
+
+async function loadChats() {
+    try {
+        console.log('Загружаем чаты...');
+        
+        const response = await fetch('/telegram/api/chats/', {
+            method: 'GET',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        });
+        
+        const data = await response.json();
+        console.log('Chats response:', data);
+        
+        if (data.success) {
+            chats = data.chats;
+            renderChats();
+        } else {
+            showError('Ошибка загрузки чатов: ' + data.error);
+        }
+        
+    } catch (error) {
+        console.error('Ошибка загрузки чатов:', error);
+        showError('Ошибка: ' + error.message);
+    }
+}
+
+function renderChats() {
+    const chatList = document.getElementById('chat-list');
+    
+    if (chats.length === 0) {
+        chatList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-comment-slash"></i>
+                <h5>Нет чатов</h5>
+                <p>Чаты не найдены</p>
+            </div>
+        `;
+        return;
+    }
+    
+    chatList.innerHTML = chats.map(chat => `
+        <div class="chat-item" onclick="selectChat('${chat.id}')">
+            <div class="d-flex align-items-center">
+                <div class="chat-avatar">
+                    ${getChatInitials(chat.title)}
+                </div>
+                <div class="chat-info">
+                    <div class="chat-name">${escapeHtml(chat.title)}</div>
+                    <div class="chat-last-message">${escapeHtml(chat.last_message || 'Нет сообщений')}</div>
+                </div>
+                <div class="chat-time">
+                    ${formatTime(chat.last_message_date)}
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function selectChat(chatId) {
+    currentChatId = chatId;
+    
+    // Обновляем активный чат
+    document.querySelectorAll('.chat-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+    
+    // Загружаем сообщения
+    await loadMessages(chatId);
+}
+
+async function loadMessages(chatId) {
+    try {
+        console.log('Загружаем сообщения для чата:', chatId);
+        
+        const messagesContainer = document.getElementById('messages-container');
+        messagesContainer.innerHTML = `
+            <div class="messages-header">
+                <i class="fas fa-spinner fa-spin"></i> Загрузка сообщений...
+            </div>
+            <div class="messages-list"></div>
+        `;
+        
+        const response = await fetch(`/telegram/api/messages/${chatId}/`, {
+            method: 'GET',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        });
+        
+        const data = await response.json();
+        console.log('Messages response:', data);
+        
+        if (data.success) {
+            renderMessages(data.messages, data.chat_title);
+        } else {
+            showError('Ошибка загрузки сообщений: ' + data.error);
+        }
+        
+    } catch (error) {
+        console.error('Ошибка загрузки сообщений:', error);
+        showError('Ошибка: ' + error.message);
+    }
+}
+
+function renderMessages(messages, chatTitle) {
+    const messagesContainer = document.getElementById('messages-container');
+    
+    messagesContainer.innerHTML = `
+        <div class="messages-header">
+            ${escapeHtml(chatTitle)}
+        </div>
+        <div class="messages-list">
+            ${messages.length === 0 ? `
+                <div class="empty-state">
+                    <i class="fas fa-comment-slash"></i>
+                    <h5>Нет сообщений</h5>
+                    <p>В этом чате пока нет сообщений</p>
+                </div>
+            ` : messages.map(message => `
+                <div class="message ${message.is_outgoing ? 'outgoing' : 'incoming'}">
+                    <div class="message-avatar">
+                        ${message.is_outgoing ? 'Вы' : getChatInitials(chatTitle)}
+                    </div>
+                    <div class="message-content">
+                        <div>${escapeHtml(message.text || 'Медиа сообщение')}</div>
+                        <div class="message-time">${formatDateTime(message.date)}</div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function refreshChats() {
+    loadChats();
+}
+
+function getChatInitials(title) {
+    if (!title) return '?';
+    const words = title.split(' ');
+    if (words.length >= 2) {
+        return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    return title[0].toUpperCase();
+}
+
+function formatTime(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = now - date;
+    
+    if (diff < 24 * 60 * 60 * 1000) {
+        return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    } else {
+        return date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+    }
+}
+
+function formatDateTime(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleString('ru-RU', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function showError(message) {
+    console.error('Ошибка:', message);
+    alert('Ошибка: ' + message);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,1351 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Telegram API",
+    "version": "1.0.0",
+    "description": "API endpoints for Telegram integration, chat management, messaging, automation, and logging in the HR Helper system."
+  },
+  "servers": [
+    {
+      "url": "/api/v1/telegram/"
+    }
+  ],
+  "paths": {
+    "/chats/": {
+      "get": {
+        "summary": "List Telegram Chats",
+        "description": "Retrieve a paginated list of Telegram chats with optional filtering and search.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search query for chat title or username"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["private", "group", "supergroup", "channel"]
+            },
+            "description": "Filter by chat type"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A paginated list of Telegram chats.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TelegramChat"
+                      }
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "next": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "previous": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chats/{chat_id}/": {
+      "get": {
+        "summary": "Retrieve a Telegram Chat",
+        "description": "Retrieve detailed information about a specific Telegram chat by ID.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "chat_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the Telegram chat."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number for pagination of messages"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Details of the Telegram chat with messages.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TelegramChatDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Chat not found."
+          }
+        }
+      }
+    },
+    "/contacts/": {
+      "get": {
+        "summary": "List Telegram Contacts",
+        "description": "Retrieve a paginated list of Telegram contacts with optional search.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search query for contact name, username, or phone"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A paginated list of Telegram contacts.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TelegramContact"
+                      }
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "next": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "previous": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/automation/": {
+      "get": {
+        "summary": "List Telegram Automations",
+        "description": "Retrieve a list of Telegram automation rules for the authenticated user.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of Telegram automation rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TelegramAutomation"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Telegram Automation",
+        "description": "Create a new Telegram automation rule.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelegramAutomationCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Automation rule created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TelegramAutomation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid automation data."
+          }
+        }
+      }
+    },
+    "/automation/{id}/": {
+      "get": {
+        "summary": "Retrieve Telegram Automation",
+        "description": "Retrieve details of a specific Telegram automation rule by ID.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the automation rule."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Details of the automation rule.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TelegramAutomation"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Automation rule not found."
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Telegram Automation",
+        "description": "Update details of a specific Telegram automation rule by ID.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the automation rule."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelegramAutomationUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Automation rule updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TelegramAutomation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid automation data."
+          },
+          "404": {
+            "description": "Automation rule not found."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Telegram Automation",
+        "description": "Delete a specific Telegram automation rule by ID.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the automation rule."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Automation rule deleted successfully."
+          },
+          "404": {
+            "description": "Automation rule not found."
+          }
+        }
+      }
+    },
+    "/sessions/": {
+      "get": {
+        "summary": "List Telegram Sessions",
+        "description": "Retrieve a list of Telegram sessions.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of Telegram sessions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TelegramSession"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bots/": {
+      "get": {
+        "summary": "List Telegram Bots",
+        "description": "Retrieve a list of Telegram bots.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of Telegram bots.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TelegramBot"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Telegram Bot",
+        "description": "Create a new Telegram bot.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelegramBotCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Bot created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TelegramBot"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid bot data."
+          }
+        }
+      }
+    },
+    "/bots/{id}/": {
+      "get": {
+        "summary": "Retrieve Telegram Bot",
+        "description": "Retrieve details of a specific Telegram bot by ID.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the bot."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Details of the bot.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TelegramBot"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bot not found."
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Telegram Bot",
+        "description": "Update details of a specific Telegram bot by ID.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the bot."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelegramBotUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bot updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TelegramBot"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid bot data."
+          },
+          "404": {
+            "description": "Bot not found."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Telegram Bot",
+        "description": "Delete a specific Telegram bot by ID.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the bot."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Bot deleted successfully."
+          },
+          "404": {
+            "description": "Bot not found."
+          }
+        }
+      }
+    },
+    "/send-message/": {
+      "post": {
+        "summary": "Send Telegram Message",
+        "description": "Send a message to a Telegram chat.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelegramSendMessageRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Message sent successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["success", "error"]
+                    },
+                    "message_id": {
+                      "type": "string",
+                      "description": "ID of the sent message"
+                    },
+                    "error": {
+                      "type": "string",
+                      "description": "Error message if failed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid message data."
+          }
+        }
+      }
+    },
+    "/logs/": {
+      "get": {
+        "summary": "List Telegram Logs",
+        "description": "Retrieve a paginated list of Telegram logs with optional filtering.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "action",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by log action"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["success", "error", "warning"]
+            },
+            "description": "Filter by log status"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Page number for pagination"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A paginated list of Telegram logs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TelegramLog"
+                      }
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "next": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "previous": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stats/": {
+      "get": {
+        "summary": "Get Telegram Statistics",
+        "description": "Retrieve statistics about Telegram integration.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Telegram statistics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TelegramStats"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TelegramChat": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "chat_id": {
+            "type": "integer",
+            "description": "Unique ID of the chat in Telegram"
+          },
+          "title": {
+            "type": "string",
+            "description": "Chat title"
+          },
+          "chat_type": {
+            "type": "string",
+            "enum": ["private", "group", "supergroup", "channel"],
+            "description": "Type of the chat"
+          },
+          "username": {
+            "type": "string",
+            "nullable": true,
+            "description": "Chat username"
+          },
+          "is_active": {
+            "type": "boolean",
+            "description": "Whether the chat is active"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": ["chat_id", "title", "chat_type"]
+      },
+      "TelegramChatDetail": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TelegramChat"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "messages": {
+                "type": "array",
+                "description": "Recent messages in the chat",
+                "items": {
+                  "$ref": "#/components/schemas/TelegramMessage"
+                }
+              },
+              "message_count": {
+                "type": "integer",
+                "description": "Total number of messages in the chat"
+              }
+            }
+          }
+        ]
+      },
+      "TelegramMessage": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "message_id": {
+            "type": "integer",
+            "description": "ID of the message in Telegram"
+          },
+          "chat": {
+            "type": "integer",
+            "description": "ID of the chat"
+          },
+          "chat_title": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Title of the chat"
+          },
+          "sender_id": {
+            "type": "integer",
+            "description": "ID of the sender"
+          },
+          "sender_username": {
+            "type": "string",
+            "nullable": true,
+            "description": "Username of the sender"
+          },
+          "sender_first_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "First name of the sender"
+          },
+          "sender_last_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Last name of the sender"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true,
+            "description": "Message text"
+          },
+          "message_type": {
+            "type": "string",
+            "enum": ["text", "photo", "video", "document", "voice", "sticker", "other"],
+            "description": "Type of the message"
+          },
+          "is_reply": {
+            "type": "boolean",
+            "description": "Whether the message is a reply"
+          },
+          "reply_to_message_id": {
+            "type": "integer",
+            "nullable": true,
+            "description": "ID of the message being replied to"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date when the message was sent"
+          },
+          "is_read": {
+            "type": "boolean",
+            "description": "Whether the message has been read"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": ["message_id", "chat", "sender_id", "message_type", "date"]
+      },
+      "TelegramContact": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "user_id": {
+            "type": "integer",
+            "description": "Unique ID of the user in Telegram"
+          },
+          "username": {
+            "type": "string",
+            "nullable": true,
+            "description": "Username of the user"
+          },
+          "first_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "First name of the user"
+          },
+          "last_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Last name of the user"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true,
+            "description": "Phone number of the user"
+          },
+          "is_bot": {
+            "type": "boolean",
+            "description": "Whether the user is a bot"
+          },
+          "is_verified": {
+            "type": "boolean",
+            "description": "Whether the user is verified"
+          },
+          "is_premium": {
+            "type": "boolean",
+            "description": "Whether the user has Premium subscription"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": ["user_id"]
+      },
+      "TelegramSession": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the session"
+          },
+          "phone_number": {
+            "type": "string",
+            "description": "Phone number for the session"
+          },
+          "is_active": {
+            "type": "boolean",
+            "description": "Whether the session is active"
+          },
+          "is_authorized": {
+            "type": "boolean",
+            "description": "Whether the session is authorized"
+          },
+          "last_activity": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Time of last activity"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": ["name", "phone_number"]
+      },
+      "TelegramBot": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the bot"
+          },
+          "token": {
+            "type": "string",
+            "writeOnly": true,
+            "description": "Bot token"
+          },
+          "username": {
+            "type": "string",
+            "nullable": true,
+            "description": "Username of the bot"
+          },
+          "is_active": {
+            "type": "boolean",
+            "description": "Whether the bot is active"
+          },
+          "webhook_url": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "Webhook URL for the bot"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": ["name", "token"]
+      },
+      "TelegramBotCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the bot"
+          },
+          "token": {
+            "type": "string",
+            "description": "Bot token"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username of the bot"
+          },
+          "is_active": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether the bot is active"
+          },
+          "webhook_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook URL for the bot"
+          }
+        },
+        "required": ["name", "token"]
+      },
+      "TelegramBotUpdate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the bot"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username of the bot"
+          },
+          "is_active": {
+            "type": "boolean",
+            "description": "Whether the bot is active"
+          },
+          "webhook_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook URL for the bot"
+          }
+        }
+      },
+      "TelegramAutomation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the automation rule"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "Description of the automation rule"
+          },
+          "trigger_keywords": {
+            "type": "array",
+            "description": "Keywords that trigger the automation",
+            "items": {
+              "type": "string"
+            }
+          },
+          "response_text": {
+            "type": "string",
+            "description": "Text of the automatic response"
+          },
+          "target_chats": {
+            "type": "array",
+            "description": "IDs of target chats",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "target_chats_titles": {
+            "type": "array",
+            "readOnly": true,
+            "description": "Titles of target chats",
+            "items": {
+              "type": "string"
+            }
+          },
+          "is_active": {
+            "type": "boolean",
+            "description": "Whether the automation rule is active"
+          },
+          "created_by": {
+            "type": "integer",
+            "description": "ID of the user who created the rule"
+          },
+          "created_by_username": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Username of the user who created the rule"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": ["name", "trigger_keywords", "response_text", "is_active"]
+      },
+      "TelegramAutomationCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the automation rule"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the automation rule"
+          },
+          "trigger_keywords": {
+            "type": "array",
+            "description": "Keywords that trigger the automation",
+            "items": {
+              "type": "string"
+            }
+          },
+          "response_text": {
+            "type": "string",
+            "description": "Text of the automatic response"
+          },
+          "target_chats": {
+            "type": "array",
+            "description": "IDs of target chats",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "is_active": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether the automation rule is active"
+          }
+        },
+        "required": ["name", "trigger_keywords", "response_text"]
+      },
+      "TelegramAutomationUpdate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the automation rule"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the automation rule"
+          },
+          "trigger_keywords": {
+            "type": "array",
+            "description": "Keywords that trigger the automation",
+            "items": {
+              "type": "string"
+            }
+          },
+          "response_text": {
+            "type": "string",
+            "description": "Text of the automatic response"
+          },
+          "target_chats": {
+            "type": "array",
+            "description": "IDs of target chats",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "is_active": {
+            "type": "boolean",
+            "description": "Whether the automation rule is active"
+          }
+        }
+      },
+      "TelegramLog": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "action": {
+            "type": "string",
+            "description": "Action that was performed"
+          },
+          "details": {
+            "type": "object",
+            "description": "Details of the action in JSON format"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["success", "error", "warning"],
+            "description": "Status of the action"
+          },
+          "error_message": {
+            "type": "string",
+            "nullable": true,
+            "description": "Error message if the action failed"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": ["action", "status"]
+      },
+      "TelegramSendMessageRequest": {
+        "type": "object",
+        "properties": {
+          "chat_id": {
+            "type": "string",
+            "description": "ID of the chat to send message to"
+          },
+          "message": {
+            "type": "string",
+            "description": "Text of the message to send"
+          }
+        },
+        "required": ["chat_id", "message"]
+      },
+      "TelegramStats": {
+        "type": "object",
+        "properties": {
+          "total_chats": {
+            "type": "integer",
+            "description": "Total number of chats"
+          },
+          "active_chats": {
+            "type": "integer",
+            "description": "Number of active chats"
+          },
+          "total_messages": {
+            "type": "integer",
+            "description": "Total number of messages"
+          },
+          "total_contacts": {
+            "type": "integer",
+            "description": "Total number of contacts"
+          },
+          "total_bots": {
+            "type": "integer",
+            "description": "Total number of bots"
+          },
+          "active_bots": {
+            "type": "integer",
+            "description": "Number of active bots"
+          },
+          "total_automations": {
+            "type": "integer",
+            "description": "Total number of automation rules"
+          },
+          "active_automations": {
+            "type": "integer",
+            "description": "Number of active automation rules"
+          },
+          "recent_logs": {
+            "type": "array",
+            "description": "Recent log entries",
+            "items": {
+              "$ref": "#/components/schemas/TelegramLog"
+            }
+          },
+          "messages_by_type": {
+            "type": "object",
+            "description": "Count of messages by type",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          },
+          "chats_by_type": {
+            "type": "object",
+            "description": "Count of chats by type",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          }
+        },
+        "required": ["total_chats", "total_messages", "total_contacts", "total_bots", "total_automations"]
+      }
+    },
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "sessionid"
+      },
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  }
+}

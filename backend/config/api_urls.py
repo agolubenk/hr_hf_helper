@@ -11,25 +11,23 @@ from apps.finance.views_api import (
 )
 from apps.vacancies.views_api import VacancyViewSet
 from apps.interviewers.views_api import InterviewerViewSet, InterviewRuleViewSet
-from apps.huntflow.views_api import HuntflowCacheViewSet, HuntflowLogViewSet, HuntflowApiViewSet
+from apps.huntflow.views_api import HuntflowCacheViewSet, HuntflowLogViewSet, HuntflowApiRequestViewSet
 from apps.google_oauth.views_api import (
     GoogleOAuthAccountViewSet, SyncSettingsViewSet, ScorecardPathSettingsViewSet,
     SlotsSettingsViewSet, InviteViewSet, HRScreeningViewSet, QuestionTemplateViewSet,
-    GoogleOAuthViewSet, GoogleCalendarViewSet, GoogleDriveViewSet, GoogleSheetsViewSet
+    GoogleSyncViewSet
 )
 from apps.gemini.views_api import ChatSessionViewSet, ChatMessageViewSet, GeminiApiViewSet
 from apps.notion_int.views_api import (
     NotionSettingsViewSet, NotionPageViewSet, NotionSyncLogViewSet,
-    NotionBulkImportViewSet, NotionApiViewSet
+    NotionBulkImportViewSet
 )
 from apps.telegram.views_api import (
-    TelegramChatViewSet, TelegramContactViewSet,
-    TelegramSessionViewSet, TelegramBotViewSet, TelegramAutomationViewSet,
-    TelegramLogViewSet, TelegramApiViewSet
+    TelegramUserViewSet, AuthAttemptViewSet, TelegramWebhookViewSet
 )
 from apps.clickup_int.views_api import (
     ClickUpSettingsViewSet, ClickUpTaskViewSet, ClickUpSyncLogViewSet,
-    ClickUpBulkImportViewSet, ClickUpApiViewSet
+    ClickUpBulkImportViewSet
 )
 
 # Создание роутера
@@ -59,7 +57,7 @@ router.register(r'interviewers/interview-rules', InterviewRuleViewSet, basename=
 # Huntflow
 router.register(r'huntflow/cache', HuntflowCacheViewSet, basename='huntflow-cache')
 router.register(r'huntflow/logs', HuntflowLogViewSet, basename='huntflow-log')
-router.register(r'huntflow/api', HuntflowApiViewSet, basename='huntflow-api')
+router.register(r'huntflow/api', HuntflowApiRequestViewSet, basename='huntflow-api')
 
 # Google OAuth
 router.register(r'google-oauth/accounts', GoogleOAuthAccountViewSet, basename='google-oauth-account')
@@ -69,10 +67,7 @@ router.register(r'google-oauth/slots-settings', SlotsSettingsViewSet, basename='
 router.register(r'google-oauth/invites', InviteViewSet, basename='invite')
 router.register(r'google-oauth/hr-screening', HRScreeningViewSet, basename='hr-screening')
 router.register(r'google-oauth/question-templates', QuestionTemplateViewSet, basename='question-template')
-router.register(r'google-oauth/oauth', GoogleOAuthViewSet, basename='google-oauth')
-router.register(r'google-oauth/calendar', GoogleCalendarViewSet, basename='google-calendar')
-router.register(r'google-oauth/drive', GoogleDriveViewSet, basename='google-drive')
-router.register(r'google-oauth/sheets', GoogleSheetsViewSet, basename='google-sheets')
+router.register(r'google-oauth/sync', GoogleSyncViewSet, basename='google-sync')
 
 # Gemini
 router.register(r'gemini/chat-sessions', ChatSessionViewSet, basename='chat-session')
@@ -84,24 +79,18 @@ router.register(r'notion/settings', NotionSettingsViewSet, basename='notion-sett
 router.register(r'notion/pages', NotionPageViewSet, basename='notion-page')
 router.register(r'notion/sync-logs', NotionSyncLogViewSet, basename='notion-sync-log')
 router.register(r'notion/bulk-imports', NotionBulkImportViewSet, basename='notion-bulk-import')
-router.register(r'notion/api', NotionApiViewSet, basename='notion-api')
+# router.register(r'notion/api', NotionApiViewSet, basename='notion-api')  # УДАЛЕНО - NotionApiViewSet не существует
 
 # Telegram
-router.register(r'telegram/chats', TelegramChatViewSet, basename='telegram-chat')
-# router.register(r'telegram/messages', TelegramMessageViewSet, basename='telegram-message')  # Временно отключено
-router.register(r'telegram/contacts', TelegramContactViewSet, basename='telegram-contact')
-router.register(r'telegram/sessions', TelegramSessionViewSet, basename='telegram-session')
-router.register(r'telegram/bots', TelegramBotViewSet, basename='telegram-bot')
-router.register(r'telegram/automations', TelegramAutomationViewSet, basename='telegram-automation')
-router.register(r'telegram/logs', TelegramLogViewSet, basename='telegram-log')
-router.register(r'telegram/api', TelegramApiViewSet, basename='telegram-api')
+router.register(r'telegram/users', TelegramUserViewSet, basename='telegram-user')
+router.register(r'telegram/auth-attempts', AuthAttemptViewSet, basename='telegram-auth-attempt')
+router.register(r'telegram/webhook', TelegramWebhookViewSet, basename='telegram-webhook')
 
 # ClickUp Integration
 router.register(r'clickup/settings', ClickUpSettingsViewSet, basename='clickup-settings')
 router.register(r'clickup/tasks', ClickUpTaskViewSet, basename='clickup-task')
 router.register(r'clickup/sync-logs', ClickUpSyncLogViewSet, basename='clickup-sync-log')
 router.register(r'clickup/bulk-imports', ClickUpBulkImportViewSet, basename='clickup-bulk-import')
-router.register(r'clickup/api', ClickUpApiViewSet, basename='clickup-api')
 
 # URL patterns для API
 urlpatterns = [

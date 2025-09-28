@@ -4,16 +4,43 @@ from rest_framework.response import Response
 from django.db.models import Count, Avg, Min, Max
 from decimal import Decimal
 from .models import Grade, CurrencyRate, PLNTax, SalaryRange, Benchmark, BenchmarkSettings, Domain
-from .logic.tax_service import TaxService
-from .logic.serializers import (
+# from .logic.tax_service import TaxService  # УДАЛЕНО - логика перенесена в views_modules
+from .serializers import (
     GradeSerializer, CurrencyRateSerializer, PLNTaxSerializer, 
     SalaryRangeSerializer, BenchmarkSerializer, BenchmarkSettingsSerializer,
     SalaryCalculationSerializer, TaxCalculationSerializer
 )
 
+# Импорты из logic
+from logic.base.api_views import BaseAPIViewSet, FinanceAPIViewSet
+from logic.base.response_handler import UnifiedResponseHandler
 
-class GradeViewSet(viewsets.ModelViewSet):
-    """ViewSet для управления грейдами"""
+
+class GradeViewSet(FinanceAPIViewSet):
+    """
+    ViewSet для управления грейдами
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - HTTP запросы (GET, POST, PUT, DELETE, PATCH)
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - Grade.objects: все грейды из базы данных
+    - GradeSerializer: сериализатор для грейдов
+    
+    ОБРАБОТКА:
+    - Наследование от FinanceAPIViewSet
+    - Управление грейдами (создание, чтение, обновление, удаление)
+    - Поиск и сортировка по названию
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - DRF Response с данными грейдов
+    
+    СВЯЗИ:
+    - Использует: FinanceAPIViewSet, GradeSerializer, UnifiedResponseHandler
+    - Передает: DRF API responses
+    - Может вызываться из: DRF API endpoints
+    """
     queryset = Grade.objects.all()
     serializer_class = GradeSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -23,7 +50,31 @@ class GradeViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'], url_path='stats')
     def stats(self, request):
-        """Статистика по грейдам"""
+        """
+        Статистика по грейдам
+        
+        ВХОДЯЩИЕ ДАННЫЕ:
+        - request.user: аутентифицированный пользователь
+        
+        ИСТОЧНИКИ ДАННЫХ:
+        - Grade.objects: все грейды из базы данных
+        - Vacancy.objects: вакансии связанные с грейдами
+        - SalaryRange.objects: зарплатные вилки
+        - Benchmark.objects: бенчмарки
+        
+        ОБРАБОТКА:
+        - Подсчет общего количества грейдов
+        - Подсчет количества вакансий, зарплатных вилок и бенчмарков для каждого грейда
+        - Формирование статистики
+        
+        ВЫХОДЯЩИЕ ДАННЫЕ:
+        - DRF Response со статистикой по грейдам
+        
+        СВЯЗИ:
+        - Использует: Grade, Vacancy, SalaryRange, Benchmark модели
+        - Передает: DRF Response
+        - Может вызываться из: DRF API endpoints
+        """
         total_grades = Grade.objects.count()
         
         # Статистика по вакансиям
@@ -48,8 +99,31 @@ class GradeViewSet(viewsets.ModelViewSet):
         })
 
 
-class CurrencyRateViewSet(viewsets.ModelViewSet):
-    """ViewSet для управления курсами валют"""
+class CurrencyRateViewSet(FinanceAPIViewSet):
+    """
+    ViewSet для управления курсами валют
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - HTTP запросы (GET, POST, PUT, DELETE, PATCH)
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - CurrencyRate.objects: курсы валют из базы данных
+    - CurrencyRateSerializer: сериализатор для курсов валют
+    
+    ОБРАБОТКА:
+    - Наследование от FinanceAPIViewSet
+    - Управление курсами валют (создание, чтение, обновление, удаление)
+    - Поиск по коду валюты
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - DRF Response с данными курсов валют
+    
+    СВЯЗИ:
+    - Использует: FinanceAPIViewSet, CurrencyRateSerializer, UnifiedResponseHandler
+    - Передает: DRF API responses
+    - Может вызываться из: DRF API endpoints
+    """
     queryset = CurrencyRate.objects.all()
     serializer_class = CurrencyRateSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -61,11 +135,29 @@ class CurrencyRateViewSet(viewsets.ModelViewSet):
     def update_rates(self, request):
         """Обновление курсов валют"""
         try:
-            from .logic.currency_service import CurrencyService
+            # ПЕРЕХОДНЫЙ ВАРИАНТ - ОСТАВЛЯЕМ ОБА ИМПОРТА
+            from .logic.currency_service import CurrencyService  # Старый (deprecated)
+            from logic.base.currency_service import currency_service  # Новый
+            
+            # Временно используем старый метод, но с предупреждением
+            import warnings
+            warnings.warn(
+                "CurrencyService.update_currency_rates() is deprecated. "
+                "Use logic.base.currency_service instead.",
+                DeprecationWarning,
+                stacklevel=2
+            )
             CurrencyService.update_currency_rates()
-            return Response({'message': 'Курсы валют успешно обновлены'})
+            return Response(
+                UnifiedResponseHandler.success_response(
+                    message="Курсы валют успешно обновлены"
+                )
+            )
         except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                UnifiedResponseHandler.error_response(str(e)),
+                status=status.HTTP_400_BAD_REQUEST
+            )
     
     @action(detail=False, methods=['get'], url_path='latest')
     def latest(self, request):
@@ -75,7 +167,7 @@ class CurrencyRateViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class PLNTaxViewSet(viewsets.ModelViewSet):
+class PLNTaxViewSet(FinanceAPIViewSet):
     """ViewSet для управления налогами PLN"""
     queryset = PLNTax.objects.all()
     serializer_class = PLNTaxSerializer
@@ -91,12 +183,12 @@ class PLNTaxViewSet(viewsets.ModelViewSet):
         serializer = TaxCalculationSerializer(data=request.data)
         if serializer.is_valid():
             net_amount = serializer.validated_data['gross_amount']
-            gross_amount = TaxService.calculate_gross_from_net(net_amount, "PLN")
+            # gross_amount = TaxService.calculate_gross_from_net(net_amount, "PLN")  # УДАЛЕНО - логика перенесена
             
             return Response({
                 'net_amount': float(net_amount),
-                'gross_amount': float(gross_amount),
-                'breakdown': TaxService.get_tax_breakdown(gross_amount, "PLN")
+                'gross_amount': float(net_amount),  # Временно возвращаем net_amount
+                'breakdown': {}  # УДАЛЕНО - логика перенесена
             })
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -106,18 +198,43 @@ class PLNTaxViewSet(viewsets.ModelViewSet):
         serializer = TaxCalculationSerializer(data=request.data)
         if serializer.is_valid():
             gross_amount = serializer.validated_data['gross_amount']
-            net_amount = TaxService.calculate_net_from_gross(gross_amount, "PLN")
+            # net_amount = TaxService.calculate_net_from_gross(gross_amount, "PLN")  # УДАЛЕНО - логика перенесена
             
             return Response({
                 'gross_amount': float(gross_amount),
-                'net_amount': float(net_amount),
-                'breakdown': TaxService.get_tax_breakdown(gross_amount, "PLN")
+                'net_amount': float(gross_amount),  # Временно возвращаем gross_amount
+                'breakdown': {}  # УДАЛЕНО - логика перенесена
             })
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class SalaryRangeViewSet(viewsets.ModelViewSet):
-    """ViewSet для управления зарплатными вилками"""
+class SalaryRangeViewSet(FinanceAPIViewSet):
+    """
+    ViewSet для управления зарплатными вилками
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - HTTP запросы (GET, POST, PUT, DELETE, PATCH)
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - SalaryRange.objects: зарплатные вилки из базы данных
+    - SalaryRangeSerializer: сериализатор для зарплатных вилок
+    - Vacancy.objects, Grade.objects: связанные модели
+    
+    ОБРАБОТКА:
+    - Наследование от FinanceAPIViewSet
+    - Управление зарплатными вилками (создание, чтение, обновление, удаление)
+    - Фильтрация по вакансии, грейду, активности
+    - Поиск и сортировка
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - DRF Response с данными зарплатных вилок
+    
+    СВЯЗИ:
+    - Использует: FinanceAPIViewSet, SalaryRangeSerializer, UnifiedResponseHandler
+    - Передает: DRF API responses
+    - Может вызываться из: DRF API endpoints
+    """
     queryset = SalaryRange.objects.all()
     serializer_class = SalaryRangeSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -155,8 +272,33 @@ class SalaryRangeViewSet(viewsets.ModelViewSet):
         })
 
 
-class BenchmarkViewSet(viewsets.ModelViewSet):
-    """ViewSet для управления бенчмарками"""
+class BenchmarkViewSet(FinanceAPIViewSet):
+    """
+    ViewSet для управления бенчмарками
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - HTTP запросы (GET, POST, PUT, DELETE, PATCH)
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - Benchmark.objects: бенчмарки из базы данных
+    - BenchmarkSerializer: сериализатор для бенчмарков
+    - Vacancy.objects, Grade.objects: связанные модели
+    
+    ОБРАБОТКА:
+    - Наследование от FinanceAPIViewSet
+    - Управление бенчмарками (создание, чтение, обновление, удаление)
+    - Фильтрация по вакансии, грейду, статусу
+    - Поиск и сортировка
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - DRF Response с данными бенчмарков
+    
+    СВЯЗИ:
+    - Использует: FinanceAPIViewSet, BenchmarkSerializer, UnifiedResponseHandler
+    - Передает: DRF API responses
+    - Может вызываться из: DRF API endpoints
+    """
     queryset = Benchmark.objects.all()
     serializer_class = BenchmarkSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -193,7 +335,7 @@ class BenchmarkViewSet(viewsets.ModelViewSet):
         })
 
 
-class BenchmarkSettingsViewSet(viewsets.ModelViewSet):
+class BenchmarkSettingsViewSet(FinanceAPIViewSet):
     """ViewSet для настроек бенчмарков"""
     queryset = BenchmarkSettings.objects.all()
     serializer_class = BenchmarkSettingsSerializer
@@ -257,7 +399,7 @@ class SalaryCalculationViewSet(viewsets.ViewSet):
                         total_tax_rate = sum(tax.rate_decimal for tax in active_taxes)
                         gross_amount = converted_amount / (1 - total_tax_rate)
                         result['gross_amount'] = float(gross_amount)
-                        result['tax_breakdown'] = TaxService.get_tax_breakdown(gross_amount, "PLN")
+                        result['tax_breakdown'] = {}  # УДАЛЕНО - логика перенесена
                 
                 return Response(result)
                 

@@ -1,0 +1,19 @@
+/* Общий контейнер для фонового спрайта */
+.error-404 {
+    width: 500px;      /* ширина одной половины изображения */
+    height: 500px;     /* высота изображения */
+    background-image: url('img/404.jpg');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+  }
+  
+  /* Светлая тема: показываем левую половину */
+  body.light-theme .error-404 {
+    background-position: left center;
+  }
+  
+  /* Тёмная тема: показываем правую половину */
+  body.dark-theme .error-404 {
+    background-position: right center;
+  }
+  

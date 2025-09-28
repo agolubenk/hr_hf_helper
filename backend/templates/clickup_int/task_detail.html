@@ -382,6 +382,37 @@
 
 {% block extra_js %}
 <script>
+// Функция для отображения уведомлений
+function showNotification(message, type = 'info') {
+    // Создаем элемент уведомления
+    const alertClass = {
+        'success': 'alert-success',
+        'error': 'alert-danger', 
+        'warning': 'alert-warning',
+        'info': 'alert-info'
+    }[type] || 'alert-info';
+    
+    const alertId = 'notification-' + Date.now();
+    const alertHtml = `
+        <div id="${alertId}" class="alert ${alertClass} alert-dismissible fade show position-fixed" 
+             style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+    
+    // Добавляем уведомление в body
+    document.body.insertAdjacentHTML('beforeend', alertHtml);
+    
+    // Автоматически скрываем через 5 секунд
+    setTimeout(() => {
+        const alertElement = document.getElementById(alertId);
+        if (alertElement) {
+            alertElement.remove();
+        }
+    }, 5000);
+}
+
 // Функция копирования информации о задаче
 function copyTaskInfo() {
     const taskInfo = `Задача: {{ task.name }}
@@ -402,9 +433,14 @@ ID: #{{ task.task_id }}
 
 // Функция для переноса в Huntflow
 function transferToHuntflow() {
+    console.log('🚀 transferToHuntflow() вызвана');
+    
     // Проверяем, есть ли данные для переноса (PDF, LinkedIn или rabota.by)
     const attachments = {{ attachments|length|default:0 }};
     const customFields = {{ task.get_custom_fields_display|length|default:0 }};
+    
+    console.log('📎 Количество вложений:', attachments);
+    console.log('📋 Количество custom fields:', customFields);
     
     // Проверяем, есть ли хотя бы одно поле с данными
     let hasValidField = false;
@@ -414,6 +450,8 @@ function transferToHuntflow() {
         {% endif %}
     {% endfor %}
     
+    console.log('✅ Есть валидные поля:', hasValidField);
+    
     if (attachments === 0 && !hasValidField) {
         showNotification('У этой задачи нет PDF файлов, LinkedIn или rabota.by ссылок для переноса', 'warning');
         return;
@@ -421,17 +459,52 @@ function transferToHuntflow() {
     
     // Автоматически выбираем организацию, если она одна
     const accountSelect = document.getElementById('huntflowAccount');
+    console.log('🏢 Элемент huntflowAccount:', accountSelect);
+    
+    if (!accountSelect) {
+        console.error('❌ Элемент huntflowAccount не найден!');
+        return;
+    }
+    
     const accounts = accountSelect.querySelectorAll('option[value]');
+    console.log('📋 Найдено опций организаций:', accounts.length);
     
     if (accounts.length === 1) {
         // Если организация одна, автоматически выбираем её
-        accountSelect.value = accounts[0].value;
-        // Загружаем вакансии для выбранной организации
-        loadHuntflowVacancies();
+        const accountValue = accounts[0].value;
+        console.log('🎯 Автоматически выбираем организацию:', accountValue);
+        accountSelect.value = accountValue;
+        
+        // Загружаем вакансии для выбранной организации с небольшой задержкой
+        setTimeout(() => {
+            console.log('⏰ Запускаем загрузку вакансий через 100ms');
+            loadHuntflowVacancies();
+        }, 100);
+    } else {
+        console.log('⚠️ Организаций больше одной или нет, пропускаем автовыбор');
     }
     
     // Показываем модальное окно выбора вакансии
-    $('#huntflowModal').modal('show');
+    console.log('📱 Показываем модальное окно');
+    const modal = $('#huntflowModal');
+    console.log('🔍 Найденное модальное окно:', modal.length);
+    
+    if (modal.length === 0) {
+        console.error('❌ Модальное окно huntflowModal не найдено!');
+        return;
+    }
+    
+    modal.modal('show');
+    
+    // Дополнительно вызываем загрузку вакансий после показа модального окна
+    modal.on('shown.bs.modal', function () {
+        console.log('📱 Модальное окно показано, проверяем загрузку вакансий');
+        const accountId = $('#huntflowAccount').val();
+        if (accountId) {
+            console.log('🔄 Дополнительный вызов loadHuntflowVacancies()');
+            loadHuntflowVacancies();
+        }
+    });
 }
 
 // Функция для подтверждения переноса
@@ -465,16 +538,21 @@ function confirmTransfer() {
     }
     
     // Отправляем запрос
+    const requestData = {
+        account_id: accountId,
+        vacancy_id: vacancyId
+    };
+    
+    console.log('📤 Отправляем данные:', requestData);
+    console.log('🔍 Типы данных: account_id =', typeof accountId, ', vacancy_id =', typeof vacancyId);
+    
     fetch('{% url "clickup_int:transfer_to_huntflow" task.task_id %}', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         },
-        body: JSON.stringify({
-            account_id: accountId,
-            vacancy_id: vacancyId
-        })
+        body: JSON.stringify(requestData)
     })
     .then(response => response.json())
     .then(data => {
@@ -528,7 +606,10 @@ function confirmTransfer() {
 
 // Функция для загрузки вакансий при выборе организации
 function loadHuntflowVacancies() {
+    console.log('🚀 loadHuntflowVacancies() вызвана');
     const accountId = $('#huntflowAccount').val();
+    console.log('🔍 Загружаем вакансии для account_id:', accountId);
+    
     if (!accountId) {
         $('#huntflowVacancy').empty().append('<option value="">Выберите вакансию</option>');
         return;
@@ -537,22 +618,57 @@ function loadHuntflowVacancies() {
     $('#huntflowVacancy').empty().append('<option value="">Загружаем...</option>');
     
     fetch(`/huntflow/accounts/${accountId}/vacancies/ajax/`)
-    .then(response => response.json())
+    .then(response => {
+        console.log('📥 Ответ сервера:', response.status, response.statusText);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+    })
     .then(data => {
+        console.log('📋 Данные вакансий:', data);
         $('#huntflowVacancy').empty();
-        if (data.success && data.vacancies && data.vacancies.length > 0) {
+        
+        if (data.success && data.data && data.data.items && data.data.items.length > 0) {
             $('#huntflowVacancy').append('<option value="">Выберите вакансию (не обязательно)</option>');
-            data.vacancies.forEach(vacancy => {
+            data.data.items.forEach(vacancy => {
+                console.log(`  - Вакансия: ID ${vacancy.id}, Position: ${vacancy.position}`);
                 $('#huntflowVacancy').append(`<option value="${vacancy.id}">${vacancy.position}</option>`);
             });
+            console.log(`✅ Загружено ${data.data.items.length} вакансий`);
         } else {
+            console.log('⚠️ Вакансии не найдены или структура данных неверная');
             $('#huntflowVacancy').append('<option value="">Нет доступных вакансий (можно перенести без привязки)</option>');
         }
     })
     .catch(error => {
+        console.error('❌ Ошибка загрузки вакансий:', error);
         $('#huntflowVacancy').empty().append('<option value="">Ошибка загрузки (можно перенести без привязки)</option>');
     });
 }
+// Проверяем инициализацию при загрузке страницы
+$(document).ready(function() {
+    console.log('📄 Страница ClickUp задачи загружена');
+    
+    // Проверяем наличие элементов
+    const accountSelect = document.getElementById('huntflowAccount');
+    const vacancySelect = document.getElementById('huntflowVacancy');
+    const modal = $('#huntflowModal');
+    
+    console.log('🔍 Проверка элементов:');
+    console.log('  - huntflowAccount:', accountSelect ? 'найден' : 'НЕ НАЙДЕН');
+    console.log('  - huntflowVacancy:', vacancySelect ? 'найден' : 'НЕ НАЙДЕН');
+    console.log('  - huntflowModal:', modal.length > 0 ? 'найден' : 'НЕ НАЙДЕН');
+    
+    if (accountSelect) {
+        const options = accountSelect.querySelectorAll('option[value]');
+        console.log('  - Опций организаций:', options.length);
+        options.forEach((option, index) => {
+            console.log(`    ${index + 1}. ${option.value}: ${option.textContent}`);
+        });
+    }
+});
+
 // Тема инициализируется в базовом шаблоне
 </script>
 

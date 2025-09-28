@@ -1,188 +1,359 @@
+"""Сериализаторы для Google OAuth приложения"""
 from rest_framework import serializers
 from .models import (
     GoogleOAuthAccount, SyncSettings, ScorecardPathSettings, 
     SlotsSettings, Invite, HRScreening, QuestionTemplate
 )
-from apps.accounts.models import User
 
 
 class GoogleOAuthAccountSerializer(serializers.ModelSerializer):
-    """Сериализатор для Google OAuth аккаунтов"""
-    user_username = serializers.CharField(source='user.username', read_only=True)
+    """
+    Сериализатор для Google OAuth аккаунта
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - google_id: ID аккаунта Google
+    - email: email аккаунта
+    - name: имя пользователя
+    - picture_url: URL аватара
+    - scopes: области доступа
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - GoogleOAuthAccount модель из apps.google_oauth.models
+    
+    ОБРАБОТКА:
+    - Сериализация полей аккаунта Google
+    - Вычисляемые поля: is_token_valid, needs_refresh, available_services
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON объект с данными Google OAuth аккаунта
+    
+    СВЯЗИ:
+    - Использует: GoogleOAuthAccount модель
+    - Передает данные в: DRF API responses
+    - Может вызываться из: Google OAuth API viewsets
+    """
     is_token_valid = serializers.SerializerMethodField()
-
+    needs_refresh = serializers.SerializerMethodField()
+    available_services = serializers.SerializerMethodField()
+    
     class Meta:
         model = GoogleOAuthAccount
         fields = [
-            'id', 'user', 'user_username', 'google_id', 'email', 'name',
-            'picture_url', 'scopes', 'is_token_valid', 'created_at',
-            'updated_at', 'last_sync_at'
+            'id', 'google_id', 'email', 'name', 'picture_url',
+            'scopes', 'created_at', 'updated_at', 'last_sync_at',
+            'is_token_valid', 'needs_refresh', 'available_services'
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at', 'is_token_valid']
-        extra_kwargs = {
-            'access_token': {'write_only': True},
-            'refresh_token': {'write_only': True},
-            'token_expires_at': {'write_only': True},
-        }
-
+        read_only_fields = [
+            'id', 'google_id', 'email', 'name', 'picture_url',
+            'scopes', 'created_at', 'updated_at', 'last_sync_at'
+        ]
+    
     def get_is_token_valid(self, obj):
         """Проверяет, действителен ли токен"""
         return obj.is_token_valid()
+    
+    def get_needs_refresh(self, obj):
+        """Проверяет, нужно ли обновить токен"""
+        return obj.needs_refresh()
+    
+    def get_available_services(self, obj):
+        """Получить доступные Google сервисы"""
+        return obj.get_available_services()
 
 
 class SyncSettingsSerializer(serializers.ModelSerializer):
-    """Сериализатор для настроек синхронизации"""
-    user_username = serializers.CharField(source='user.username', read_only=True)
-
+    """
+    Сериализатор для настроек синхронизации
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - auto_sync: автоматическая синхронизация
+    - sync_interval: интервал синхронизации
+    - sync_calendar, sync_drive, sync_sheets: настройки синхронизации сервисов
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - SyncSettings модель из apps.google_oauth.models
+    
+    ОБРАБОТКА:
+    - Сериализация настроек синхронизации
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON объект с настройками синхронизации
+    
+    СВЯЗИ:
+    - Использует: SyncSettings модель
+    - Передает данные в: DRF API responses
+    - Может вызываться из: Google OAuth API viewsets
+    """
+    
     class Meta:
         model = SyncSettings
         fields = [
-            'id', 'user', 'user_username', 'auto_sync_calendar', 'auto_sync_drive',
-            'sync_interval', 'max_events', 'max_files', 'created_at', 'updated_at'
+            'id', 'auto_sync', 'sync_interval', 'last_sync',
+            'sync_calendar', 'sync_drive', 'sync_sheets',
+            'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
 
 
 class ScorecardPathSettingsSerializer(serializers.ModelSerializer):
-    """Сериализатор для настроек структуры папок scorecard"""
-    user_username = serializers.CharField(source='user.username', read_only=True)
-    path_preview = serializers.SerializerMethodField()
-
+    """Сериализатор для настроек путей scorecard"""
+    
     class Meta:
         model = ScorecardPathSettings
         fields = [
-            'id', 'user', 'user_username', 'folder_structure', 'path_preview',
-            'created_at', 'updated_at'
+            'id', 'scorecard_path', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at', 'path_preview']
-
-    def get_path_preview(self, obj):
-        """Возвращает предварительный просмотр пути"""
-        return obj.generate_path_preview()
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 
 class SlotsSettingsSerializer(serializers.ModelSerializer):
-    """Сериализатор для настроек слотов календаря"""
-    user_username = serializers.CharField(source='user.username', read_only=True)
-
+    """Сериализатор для настроек слотов"""
+    
     class Meta:
         model = SlotsSettings
         fields = [
-            'id', 'user', 'user_username', 'current_week_prefix', 'next_week_prefix',
-            'all_slots_prefix', 'separator_text', 'created_at', 'updated_at'
+            'id', 'default_duration', 'working_hours_start', 
+            'working_hours_end', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    
+    def validate_working_hours_start(self, value):
+        """Валидация времени начала рабочего дня"""
+        if not value:
+            return value
+        
+        try:
+            from datetime import datetime
+            datetime.strptime(value, '%H:%M')
+        except ValueError:
+            raise serializers.ValidationError("Время должно быть в формате HH:MM")
+        
+        return value
+    
+    def validate_working_hours_end(self, value):
+        """Валидация времени окончания рабочего дня"""
+        if not value:
+            return value
+        
+        try:
+            from datetime import datetime
+            datetime.strptime(value, '%H:%M')
+        except ValueError:
+            raise serializers.ValidationError("Время должно быть в формате HH:MM")
+        
+        return value
+    
+    def validate(self, attrs):
+        """Валидация настроек слотов"""
+        start_time = attrs.get('working_hours_start')
+        end_time = attrs.get('working_hours_end')
+        
+        if start_time and end_time:
+            from datetime import datetime
+            start = datetime.strptime(start_time, '%H:%M')
+            end = datetime.strptime(end_time, '%H:%M')
+            
+            if start >= end:
+                raise serializers.ValidationError(
+                    "Время начала должно быть раньше времени окончания"
+                )
+        
+        return attrs
 
 
 class InviteSerializer(serializers.ModelSerializer):
-    """Сериализатор для инвайтов на интервью"""
-    user_username = serializers.CharField(source='user.username', read_only=True)
-
+    """
+    Сериализатор для приглашений
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - candidate_email: email кандидата
+    - candidate_name: имя кандидата
+    - vacancy: ID вакансии
+    - scheduled_time: время проведения
+    - status: статус приглашения
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - Invite модель из apps.google_oauth.models
+    - Vacancy модель для связанных данных
+    
+    ОБРАБОТКА:
+    - Сериализация полей приглашения
+    - Вычисляемые поля: vacancy_name, formatted_time
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON объект с данными приглашения
+    
+    СВЯЗИ:
+    - Использует: Invite модель, Vacancy модель
+    - Передает данные в: DRF API responses
+    - Может вызываться из: Google OAuth API viewsets
+    """
+    
     class Meta:
         model = Invite
         fields = [
-            'id', 'user', 'user_username', 'candidate_url', 'candidate_name',
-            'vacancy_title', 'interview_datetime', 'status',
-            'google_calendar_event_id', 'google_calendar_event_url',
-            'google_meet_url', 'google_drive_folder_id', 'google_drive_file_id',
-            'google_drive_file_url', 'gemini_suggested_datetime',
-            'original_form_data', 'created_at', 'updated_at'
+            'id', 'candidate_name', 'candidate_email', 'interview_date',
+            'interview_time', 'interview_type', 'interviewer_name',
+            'meeting_link', 'calendar_event_id', 'calendar_event_url',
+            'google_meet_url', 'status', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at']
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        read_only_fields = [
+            'id', 'calendar_event_id', 'calendar_event_url',
+            'google_meet_url', 'created_at', 'updated_at'
+        ]
+    
+    def validate_interview_date(self, value):
+        """Валидация даты интервью"""
+        from django.utils import timezone
+        if value and value < timezone.now().date():
+            raise serializers.ValidationError("Дата интервью не может быть в прошлом")
+        return value
 
 
 class HRScreeningSerializer(serializers.ModelSerializer):
-    """Сериализатор для HR-скринингов"""
-    user_username = serializers.CharField(source='user.username', read_only=True)
-
+    """
+    Сериализатор для HR-скринингов
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - candidate_name: имя кандидата
+    - candidate_email: email кандидата
+    - vacancy: ID вакансии
+    - screening_date: дата скрининга
+    - notes: заметки по скринингу
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HRScreening модель из apps.google_oauth.models
+    - Vacancy модель для связанных данных
+    
+    ОБРАБОТКА:
+    - Сериализация полей HR-скрининга
+    - Вычисляемые поля: vacancy_name, formatted_date
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON объект с данными HR-скрининга
+    
+    СВЯЗИ:
+    - Использует: HRScreening модель, Vacancy модель
+    - Передает данные в: DRF API responses
+    - Может вызываться из: Google OAuth API viewsets
+    """
+    
     class Meta:
         model = HRScreening
         fields = [
-            'id', 'user', 'user_username', 'candidate_name', 'vacancy_name',
-            'resume_text', 'gemini_analysis', 'created_at', 'updated_at'
+            'id', 'candidate_name', 'candidate_email', 'interview_date',
+            'interview_time', 'interviewer_name', 'meeting_link',
+            'score', 'comments', 'recommendation', 'next_steps',
+            'determined_grade', 'huntflow_grade_id', 'chatsession_id',
+            'status', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    
+    def validate_score(self, value):
+        """Валидация оценки"""
+        if value is not None and (value < 0 or value > 10):
+            raise serializers.ValidationError("Оценка должна быть от 0 до 10")
+        return value
 
 
 class QuestionTemplateSerializer(serializers.ModelSerializer):
     """Сериализатор для шаблонов вопросов"""
-    user_username = serializers.CharField(source='user.username', read_only=True)
-
+    
     class Meta:
         model = QuestionTemplate
         fields = [
-            'id', 'user', 'user_username', 'name', 'questions', 'is_active',
-            'created_at', 'updated_at'
+            'id', 'name', 'category', 'questions', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    
+    def validate_questions(self, value):
+        """Валидация списка вопросов"""
+        if not isinstance(value, list):
+            raise serializers.ValidationError("Вопросы должны быть списком")
+        
+        if len(value) == 0:
+            raise serializers.ValidationError("Список вопросов не может быть пустым")
+        
+        for question in value:
+            if not isinstance(question, str) or not question.strip():
+                raise serializers.ValidationError("Все вопросы должны быть непустыми строками")
+        
+        return value
 
 
 class GoogleOAuthCallbackSerializer(serializers.Serializer):
-    """Сериализатор для callback Google OAuth"""
-    authorization_response = serializers.CharField(required=True)
-    state = serializers.CharField(required=False)
+    """Сериализатор для OAuth callback"""
+    code = serializers.CharField(max_length=500)
+    state = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    error = serializers.CharField(max_length=200, required=False, allow_blank=True)
 
 
 class GoogleSyncRequestSerializer(serializers.Serializer):
-    """Сериализатор для запроса синхронизации Google сервисов"""
-    service = serializers.ChoiceField(
-        choices=['calendar', 'drive', 'sheets'],
-        required=True
+    """Сериализатор для запроса синхронизации"""
+    sync_type = serializers.ChoiceField(
+        choices=[
+            ('all', 'Все данные'),
+            ('calendar', 'Календарь'),
+            ('drive', 'Drive'),
+            ('sheets', 'Sheets')
+        ],
+        default='all'
     )
 
 
 class GoogleCalendarEventSerializer(serializers.Serializer):
-    """Сериализатор для событий Google Calendar (временный)"""
+    """Сериализатор для событий Google Calendar"""
     id = serializers.CharField()
     summary = serializers.CharField()
+    description = serializers.CharField(allow_blank=True)
     start = serializers.DictField()
     end = serializers.DictField()
-    description = serializers.CharField(required=False)
-    location = serializers.CharField(required=False)
     attendees = serializers.ListField(required=False)
+    location = serializers.CharField(allow_blank=True)
+    htmlLink = serializers.URLField(allow_blank=True)
+    created = serializers.DateTimeField()
+    updated = serializers.DateTimeField()
 
 
 class GoogleDriveFileSerializer(serializers.Serializer):
-    """Сериализатор для файлов Google Drive (временный)"""
+    """Сериализатор для файлов Google Drive"""
     id = serializers.CharField()
     name = serializers.CharField()
     mimeType = serializers.CharField()
-    size = serializers.CharField(required=False)
-    createdTime = serializers.CharField()
-    modifiedTime = serializers.CharField()
-    webViewLink = serializers.CharField(required=False)
+    size = serializers.CharField(allow_blank=True)
+    createdTime = serializers.DateTimeField()
+    modifiedTime = serializers.DateTimeField()
+    webViewLink = serializers.URLField(allow_blank=True)
+    webContentLink = serializers.URLField(allow_blank=True)
 
 
 class GoogleSheetSerializer(serializers.Serializer):
-    """Сериализатор для Google Sheets (временный)"""
+    """Сериализатор для Google Sheets"""
     id = serializers.CharField()
     name = serializers.CharField()
-    createdTime = serializers.CharField()
-    modifiedTime = serializers.CharField()
-    webViewLink = serializers.CharField(required=False)
+    createdTime = serializers.DateTimeField()
+    modifiedTime = serializers.DateTimeField()
+    webViewLink = serializers.URLField(allow_blank=True)
 
 
 class GoogleStatsSerializer(serializers.Serializer):
-    """Сериализатор для статистики Google интеграции"""
-    oauth_accounts = serializers.IntegerField()
-    invites = serializers.IntegerField()
-    hr_screenings = serializers.IntegerField()
-    question_templates = serializers.IntegerField()
+    """Сериализатор для статистики Google сервисов"""
+    calendar_events = serializers.IntegerField()
+    drive_files = serializers.IntegerField()
+    sheets = serializers.IntegerField()
+    last_sync = serializers.DateTimeField(allow_null=True)
+    connected_at = serializers.DateTimeField()
+    scopes = serializers.ListField()
+
+
+class GoogleAIAnalysisSerializer(serializers.Serializer):
+    """Сериализатор для AI анализа Google данных"""
+    text = serializers.CharField(max_length=10000)
+    analysis_type = serializers.ChoiceField(
+        choices=[
+            ('hrscreening', 'HR скрининг'),
+            ('interview_scheduling', 'Планирование интервью'),
+            ('general', 'Общий анализ')
+        ],
+        default='hrscreening'
+    )

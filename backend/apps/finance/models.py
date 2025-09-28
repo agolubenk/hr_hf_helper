@@ -230,7 +230,7 @@ class SalaryRange(models.Model):
         self.clean()
         
         # Всегда пересчитываем курсы валют при сохранении
-        from .logic.salary_service import SalaryService
+        from logic.finance.salary_service import SalaryService
         min_byn, max_byn = SalaryService.calculate_byn_amounts(self.salary_min_usd, self.salary_max_usd)
         min_pln, max_pln = SalaryService.calculate_pln_amounts(self.salary_min_usd, self.salary_max_usd)
         

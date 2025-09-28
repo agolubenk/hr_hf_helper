@@ -371,6 +371,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    // Обработка редактирования зарплатной вилки
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.edit-salary-range')) {
+            const button = e.target.closest('.edit-salary-range');
+            const salaryRangeId = button.getAttribute('data-salary-range-id');
+            
+            // Переходим на страницу редактирования
+            window.location.href = `{% url "finance:salary_range_edit" 0 %}`.replace('0', salaryRangeId);
+        }
+    });
+    
     // Обработка удаления зарплатной вилки
     document.addEventListener('click', function(e) {
         if (e.target.closest('.delete-salary-range')) {

@@ -581,17 +581,31 @@ class Invite(models.Model):
                 self.vacancy_title = f"Вакансия {self.vacancy_id}"
                 return True, "Информация о вакансии получена (заглушка - API ключи не настроены)"
             
-            # Проверяем, что account_id соответствует доступным аккаунтам
-            # Получаем реальный account_id пользователя
+            # Получаем реальный account_id пользователя для fallback
             user_account_id = self._get_user_account_id()
-            if account_id != int(user_account_id):
-                self.vacancy_title = f"Вакансия {self.vacancy_id}"
-                return True, f"Информация о вакансии получена (заглушка - аккаунт {account_id} недоступен, используйте org{user_account_id})"
+            # Убираем проверку на соответствие account_id - нам не важно, какой там ID, главное получить данные
             
             # Пытаемся получить реальную информацию из Huntflow API
             try:
                 service = HuntflowService(self.user)
-                vacancy_info = service.get_vacancy(account_id, int(self.vacancy_id))
+                vacancy_info = None
+                
+                # Сначала пробуем с переданным account_id
+                try:
+                    vacancy_info = service.get_vacancy(account_id, int(self.vacancy_id))
+                    print(f"🔍 Попытка получить вакансию {self.vacancy_id} из аккаунта {account_id}")
+                except Exception as e:
+                    print(f"🔍 Не удалось получить вакансию из аккаунта {account_id}: {e}")
+                    vacancy_info = None
+                
+                # Если не получилось, пробуем с user_account_id
+                if not vacancy_info and user_account_id != account_id:
+                    try:
+                        vacancy_info = service.get_vacancy(int(user_account_id), int(self.vacancy_id))
+                        print(f"🔍 Fallback: получена вакансия {self.vacancy_id} из аккаунта {user_account_id}")
+                    except Exception as e:
+                        print(f"🔍 Fallback тоже не сработал для аккаунта {user_account_id}: {e}")
+                        vacancy_info = None
                 
                 if vacancy_info:
                     # Извлекаем название вакансии

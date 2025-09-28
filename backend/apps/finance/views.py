@@ -10,12 +10,60 @@ from django.db.models import Count, Avg, Min, Max, Case, When
 from io import StringIO
 import json
 from .models import Grade, CurrencyRate, PLNTax, SalaryRange, Benchmark, BenchmarkType, BenchmarkSettings, DataSource, VacancyField, HHVacancyTemp
-from .logic.tax_service import TaxService
+from apps.vacancies.models import Vacancy
+# from logic.finance.tax_service import TaxService  # УДАЛЕНО - логика перенесена в views_modules
+
+# Импорты из новых модулей
+from .views_modules.dashboard_views import benchmarks_dashboard, dashboard, pln_taxes_dashboard, hh_analysis_dashboard, ai_analysis_dashboard
+from .views_modules.currency_views import update_currency_rates
+from .views_modules.grade_views import add_grade, delete_grade
+from .views_modules.tax_views import add_pln_tax, update_pln_tax, delete_pln_tax, calculate_pln_taxes
+from .views_modules.salary_views import (
+    salary_ranges_list, salary_range_detail, salary_range_create, 
+    salary_range_update, salary_range_delete, update_salary_currency_amounts
+)
+from .views_modules.benchmark_views import (
+    benchmark_list, benchmark_detail, benchmark_create, 
+    benchmark_update, benchmark_delete, benchmark_ai_analysis
+)
+from .views_modules.analysis_views import (
+    finance_dashboard_analysis, salary_trends_analysis, 
+    benchmark_comparison_analysis, custom_finance_analysis
+)
+
+# Импорты из logic
+from logic.base.response_handler import UnifiedResponseHandler
+from logic.base.view_adapters import finance_view_adapter, legacy_view_adapter
 
 
 @login_required
 def benchmarks_dashboard(request):
-    """Отдельный дашборд для бенчмарков с аналитикой и статистикой"""
+    """
+    Отдельный дашборд для бенчмарков с аналитикой и статистикой
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.GET: grade_filter, vacancy_filter, location_filter (списки ID для фильтрации)
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - Benchmark.objects: все бенчмарки из базы данных
+    - Grade.objects: грейды для фильтрации
+    - Vacancy.objects: вакансии для фильтрации
+    
+    ОБРАБОТКА:
+    - Фильтрация бенчмарков по грейдам, вакансиям, локациям
+    - Расчет статистики (средние, минимальные, максимальные зарплаты)
+    - Группировка по грейдам и типам
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с отфильтрованными данными и статистикой
+    - render: HTML страница 'finance/benchmarks_dashboard.html'
+    
+    СВЯЗИ:
+    - Использует: logic.base.response_handler.UnifiedResponseHandler
+    - Передает данные в: finance/benchmarks_dashboard.html
+    - Может вызываться из: finance/ URL patterns
+    """
     from decimal import Decimal
     from django.db.models import Count, Avg, Min, Max, Case, When
     from django.db import models
@@ -217,7 +265,35 @@ def benchmarks_dashboard(request):
 
 @login_required
 def dashboard(request):
-    """Дашборд с грейдами, курсами валют, зарплатными вилками и налогами PLN"""
+    """
+    Дашборд с грейдами, курсами валют, зарплатными вилками и налогами PLN
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - Grade.objects: все грейды из базы данных
+    - CurrencyRate.objects: курсы валют USD, PLN
+    - SalaryRange.objects: активные зарплатные вилки
+    - PLNTax.objects: налоги PLN
+    
+    ОБРАБОТКА:
+    - Получение всех грейдов, отсортированных по имени
+    - Получение курсов валют USD и PLN
+    - Получение активных зарплатных вилок с связанными данными
+    - Получение налогов PLN
+    - Расчет статистики (количество активных вилок)
+    - Создание примера расчета налогов (временно статический)
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с данными для дашборда
+    - render: HTML страница 'finance/dashboard.html'
+    
+    СВЯЗИ:
+    - Использует: Grade, CurrencyRate, SalaryRange, PLNTax модели
+    - Передает данные в: finance/dashboard.html
+    - Может вызываться из: finance/ URL patterns
+    """
     grades = Grade.objects.all().order_by('name')
     currency_rates = CurrencyRate.objects.all().order_by('code')
     pln_taxes = PLNTax.objects.filter(is_active=True).order_by('name')
@@ -227,9 +303,31 @@ def dashboard(request):
     active_salary_ranges_count = salary_ranges.count()
     
     # Пример расчета налогов для демонстрации
+    from logic.finance.tax_service import TaxService
     from decimal import Decimal
-    example_net = Decimal('5000.00')
-    example_breakdown = TaxService.get_tax_breakdown(TaxService.calculate_gross_from_net(example_net, "PLN"), "PLN")
+    
+    try:
+        example_net = Decimal('5000.00')
+        example_gross = TaxService.calculate_gross_from_net(example_net, "PLN")
+        example_breakdown = TaxService.get_tax_breakdown(example_gross, "PLN")
+        
+        example_calculation = {
+            'net_amount': example_net,
+            'gross_amount': example_gross,
+            'breakdown': example_breakdown
+        }
+    except Exception as e:
+        # Fallback если есть ошибка
+        example_calculation = {
+            'net_amount': Decimal('5000.00'),
+            'gross_amount': Decimal('5000.00'),
+            'breakdown': {
+                'gross_amount': Decimal('5000.00'),
+                'net_amount': Decimal('5000.00'),
+                'total_tax_amount': Decimal('0'),
+                'taxes': []
+            }
+        }
     
     context = {
         'grades': grades,
@@ -237,31 +335,52 @@ def dashboard(request):
         'pln_taxes': pln_taxes,
         'salary_ranges': salary_ranges,
         'active_salary_ranges_count': active_salary_ranges_count,
-        'example_calculation': {
-            'net_amount': example_net,
-            'breakdown': example_breakdown
-        }
+        'example_calculation': example_calculation
     }
     return render(request, 'finance/dashboard.html', context)
 
 
 @login_required
 def update_currency_rates(request):
-    """Обновляет курсы валют из НБРБ"""
+    """
+    Обновляет курсы валют из НБРБ используя UnifiedCurrencyService
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - UnifiedCurrencyService: сервис для работы с валютами
+    - NBRB API: API Национального банка Беларуси
+    
+    ОБРАБОТКА:
+    - Вызов метода update_currency_rates_in_db() из UnifiedCurrencyService
+    - Обработка результата обновления
+    - Установка соответствующих сообщений (success/warning/error)
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - messages.success/warning/error: сообщения о результате
+    - redirect: перенаправление на finance:dashboard
+    
+    СВЯЗИ:
+    - Использует: UnifiedCurrencyService, NBRB API
+    - Передает: HTTP redirect
+    - Может вызываться из: finance/ URL patterns
+    """
     try:
-        # Захватываем вывод команды
-        out = StringIO()
-        call_command('update_nbrb_rates', stdout=out, stderr=out)
+        # Импортируем сервис валют
+        from logic.base.currency_service import currency_service
         
-        # Показываем результат
-        output = out.getvalue()
-        if "🎉 Обновление курсов завершено успешно!" in output:
-            messages.success(request, "Курсы валют успешно обновлены из НБРБ!")
+        # Используем существующую архитектуру - новый метод
+        result = currency_service.update_currency_rates_in_db()
+        updated_count = result.get('updated_count', 0)
+        
+        if updated_count > 0:
+            messages.success(request, f'Курсы валют успешно обновлены из НБРБ ({updated_count} валют)')
         else:
-            messages.warning(request, f"Курсы обновлены с предупреждениями")
+            messages.warning(request, 'Не удалось обновить ни одного курса валют')
             
     except Exception as e:
-        messages.error(request, f"Ошибка при обновлении курсов: {e}")
+        messages.error(request, f'Ошибка при обновлении курсов: {str(e)}')
     
     return redirect('finance:dashboard')
 
@@ -270,7 +389,30 @@ def update_currency_rates(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def add_grade(request):
-    """Добавляет новый грейд"""
+    """
+    Добавляет новый грейд
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.body: JSON с полем name
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - JSON данные из request.body
+    
+    ОБРАБОТКА:
+    - Парсинг JSON данных
+    - Валидация имени грейда
+    - Проверка существования грейда
+    - Создание нового Grade объекта
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON ответ с результатом операции
+    
+    СВЯЗИ:
+    - Использует: Grade.objects.create()
+    - Передает: JSON ответ
+    - Может вызываться из: AJAX запросы
+    """
     try:
         data = json.loads(request.body)
         grade_name = data.get('name', '').strip()
@@ -304,7 +446,31 @@ def add_grade(request):
 @csrf_exempt
 @require_http_methods(["DELETE"])
 def delete_grade(request, grade_id):
-    """Удаляет грейд"""
+    """
+    Удаляет грейд
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - grade_id: ID грейда для удаления
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - URL параметр grade_id
+    - Grade.objects, Benchmark.objects для проверки связей
+    
+    ОБРАБОТКА:
+    - Получение грейда по ID
+    - Проверка связей с бенчмарками
+    - Удаление грейда если нет связей
+    - Обработка ошибок
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON ответ с результатом операции
+    
+    СВЯЗИ:
+    - Использует: Grade.objects, Benchmark.objects
+    - Передает: JSON ответ
+    - Может вызываться из: AJAX запросы
+    """
     try:
         grade = get_object_or_404(Grade, id=grade_id)
         grade_name = grade.name
@@ -327,7 +493,30 @@ def delete_grade(request, grade_id):
 @csrf_exempt
 @require_http_methods(["POST"])
 def add_pln_tax(request):
-    """Добавляет новый налог PLN"""
+    """
+    Добавляет новый налог PLN
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.body: JSON с полями name, rate, description
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - JSON данные из request.body
+    
+    ОБРАБОТКА:
+    - Парсинг JSON данных
+    - Валидация полей налога
+    - Проверка существования налога
+    - Создание нового PLNTax объекта
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON ответ с результатом операции
+    
+    СВЯЗИ:
+    - Использует: PLNTax.objects.create()
+    - Передает: JSON ответ
+    - Может вызываться из: AJAX запросы
+    """
     try:
         data = json.loads(request.body)
         name = data.get('name', '').strip()
@@ -375,7 +564,32 @@ def add_pln_tax(request):
 @csrf_exempt
 @require_http_methods(["PUT"])
 def update_pln_tax(request, tax_id):
-    """Обновляет налог PLN"""
+    """
+    Обновляет налог PLN
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - tax_id: ID налога для обновления
+    - request.body: JSON с полями name, rate, description
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - URL параметр tax_id
+    - JSON данные из request.body
+    
+    ОБРАБОТКА:
+    - Получение налога по ID
+    - Парсинг JSON данных
+    - Валидация полей
+    - Обновление PLNTax объекта
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON ответ с результатом операции
+    
+    СВЯЗИ:
+    - Использует: PLNTax.objects.get(), PLNTax.save()
+    - Передает: JSON ответ
+    - Может вызываться из: AJAX запросы
+    """
     try:
         tax = get_object_or_404(PLNTax, id=tax_id)
         data = json.loads(request.body)
@@ -422,7 +636,29 @@ def update_pln_tax(request, tax_id):
 @csrf_exempt
 @require_http_methods(["DELETE"])
 def delete_pln_tax(request, tax_id):
-    """Удаляет налог PLN"""
+    """
+    Удаляет налог PLN
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - tax_id: ID налога для удаления
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - URL параметр tax_id
+    
+    ОБРАБОТКА:
+    - Получение налога по ID
+    - Удаление PLNTax объекта
+    - Обработка ошибок
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON ответ с результатом операции
+    
+    СВЯЗИ:
+    - Использует: PLNTax.objects.get(), PLNTax.delete()
+    - Передает: JSON ответ
+    - Может вызываться из: AJAX запросы
+    """
     try:
         tax = get_object_or_404(PLNTax, id=tax_id)
         tax_name = tax.name
@@ -440,7 +676,31 @@ def delete_pln_tax(request, tax_id):
 @login_required
 @require_http_methods(["GET"])
 def calculate_pln_taxes(request):
-    """Рассчитывает налоги PLN для заданной суммы"""
+    """
+    Рассчитывает налоги PLN для заданной суммы
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.GET: amount (сумма), type (gross/net)
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - GET параметры amount и type
+    - PLNTax.objects: активные налоги
+    
+    ОБРАБОТКА:
+    - Получение параметров из GET запроса
+    - Получение активных налогов
+    - Расчет налогов для указанной суммы
+    - Формирование результата расчета
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON ответ с результатами расчета налогов
+    
+    СВЯЗИ:
+    - Использует: PLNTax.objects, расчеты налогов
+    - Передает: JSON ответ
+    - Может вызываться из: AJAX запросы
+    """
     try:
         amount = request.GET.get('amount')
         calculation_type = request.GET.get('type', 'gross')  # gross или net
@@ -456,6 +716,7 @@ def calculate_pln_taxes(request):
         
         if calculation_type == 'gross':
             # Рассчитываем net из gross
+            from logic.finance.tax_service import TaxService
             breakdown = TaxService.get_tax_breakdown(amount, "PLN")
             result = {
                 'gross_amount': float(breakdown['gross_amount']),
@@ -465,6 +726,7 @@ def calculate_pln_taxes(request):
             }
         else:
             # Рассчитываем gross из net
+            from logic.finance.tax_service import TaxService
             gross_amount = TaxService.calculate_gross_from_net(amount, "PLN")
             breakdown = TaxService.get_tax_breakdown(gross_amount, "PLN")
             result = {
@@ -485,25 +747,64 @@ def calculate_pln_taxes(request):
 
 @login_required
 def pln_taxes_dashboard(request):
-    """Дашборд для управления налогами PLN"""
+    """
+    Дашборд для управления налогами PLN
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - PLNTax.objects: все налоги PLN
+    
+    ОБРАБОТКА:
+    - Получение всех налогов PLN
+    - Создание контекста для дашборда
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с данными налогов
+    - render: HTML страница 'finance/pln_taxes_dashboard.html'
+    
+    СВЯЗИ:
+    - Использует: PLNTax.objects
+    - Передает данные в: finance/pln_taxes_dashboard.html
+    - Может вызываться из: finance/ URL patterns
+    """
     pln_taxes = PLNTax.objects.all().order_by('name')
     active_taxes = PLNTax.objects.filter(is_active=True)
     inactive_taxes = PLNTax.objects.filter(is_active=False)
     
     # Пример расчета для демонстрации
+    from logic.finance.tax_service import TaxService
     from decimal import Decimal
-    example_net = Decimal('5000.00')
-    example_gross = TaxService.calculate_gross_from_net(example_net, "PLN")
-    example_breakdown = TaxService.get_tax_breakdown(example_gross, "PLN")
+    
+    try:
+        example_net = Decimal('5000.00')
+        example_gross = TaxService.calculate_gross_from_net(example_net, "PLN")
+        example_breakdown = TaxService.get_tax_breakdown(example_gross, "PLN")
+        
+        example_calculation = {
+            'net_amount': example_net,
+            'gross_amount': example_gross,
+            'breakdown': example_breakdown
+        }
+    except Exception as e:
+        # Fallback если есть ошибка
+        example_calculation = {
+            'net_amount': Decimal('5000.00'),
+            'gross_amount': Decimal('5000.00'),
+            'breakdown': {
+                'gross_amount': Decimal('5000.00'),
+                'net_amount': Decimal('5000.00'),
+                'total_tax_amount': Decimal('0'),
+                'taxes': []
+            }
+        }
     
     context = {
         'pln_taxes': pln_taxes,
         'active_taxes_count': active_taxes.count(),
         'inactive_taxes_count': inactive_taxes.count(),
-        'example_calculation': {
-            'net_amount': example_net,
-            'breakdown': example_breakdown
-        }
+        'example_calculation': example_calculation
     }
     
     return render(request, 'finance/pln_taxes_dashboard.html', context)
@@ -513,7 +814,32 @@ def pln_taxes_dashboard(request):
 
 @login_required
 def salary_ranges_list(request):
-    """Список зарплатных вилок"""
+    """
+    Список зарплатных вилок
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.GET: search, status_filter (параметры фильтрации)
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - SalaryRange.objects: все зарплатные вилки
+    - SalaryRangeSearchForm: для валидации параметров поиска
+    
+    ОБРАБОТКА:
+    - Получение параметров поиска из GET запроса
+    - Применение фильтров по поиску и статусу
+    - Пагинация результатов (10 вилок на страницу)
+    - Подсчет статистики
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с отфильтрованными вилками и пагинацией
+    - render: HTML страница 'finance/salary_ranges_list.html'
+    
+    СВЯЗИ:
+    - Использует: SalaryRange.objects, SalaryRangeSearchForm
+    - Передает данные в: finance/salary_ranges_list.html
+    - Может вызываться из: finance/ URL patterns
+    """
     from django.core.paginator import Paginator
     from django.db.models import Q
     
@@ -572,7 +898,29 @@ def salary_ranges_list(request):
 
 @login_required
 def salary_range_detail(request, pk):
-    """Детальная информация о зарплатной вилке"""
+    """
+    Детальная информация о зарплатной вилке
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - pk: ID зарплатной вилки
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - SalaryRange.objects: конкретная зарплатная вилка по ID
+    
+    ОБРАБОТКА:
+    - Получение зарплатной вилки по ID (404 если не найдена)
+    - Создание контекста для детального просмотра
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с данными зарплатной вилки
+    - render: HTML страница 'finance/salary_range_detail.html'
+    
+    СВЯЗИ:
+    - Использует: SalaryRange.objects.get(), get_object_or_404()
+    - Передает данные в: finance/salary_range_detail.html
+    - Может вызываться из: finance/ URL patterns
+    """
     salary_range = get_object_or_404(SalaryRange, pk=pk)
     
     context = {
@@ -586,7 +934,31 @@ def salary_range_detail(request, pk):
 @csrf_exempt
 @require_http_methods(["POST"])
 def salary_range_create(request):
-    """Создание новой зарплатной вилки"""
+    """
+    Создание новой зарплатной вилки
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.body: JSON с данными зарплатной вилки
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - JSON данные из request.body
+    - Grade.objects, Vacancy.objects для валидации связей
+    
+    ОБРАБОТКА:
+    - Парсинг JSON данных
+    - Валидация связанных объектов
+    - Создание нового SalaryRange объекта
+    - Обработка ошибок
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON ответ с результатом операции
+    
+    СВЯЗИ:
+    - Использует: SalaryRange.objects.create(), Grade.objects, Vacancy.objects
+    - Передает: JSON ответ
+    - Может вызываться из: AJAX запросы
+    """
     try:
         data = json.loads(request.body)
         
@@ -645,7 +1017,33 @@ def salary_range_create(request):
 @csrf_exempt
 @require_http_methods(["PUT"])
 def salary_range_update(request, pk):
-    """Обновление зарплатной вилки"""
+    """
+    Обновление зарплатной вилки
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - pk: ID зарплатной вилки для обновления
+    - request.body: JSON с обновленными данными
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - URL параметр pk
+    - JSON данные из request.body
+    - Grade.objects, Vacancy.objects для валидации связей
+    
+    ОБРАБОТКА:
+    - Получение зарплатной вилки по ID
+    - Парсинг JSON данных
+    - Валидация связанных объектов
+    - Обновление SalaryRange объекта
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON ответ с результатом операции
+    
+    СВЯЗИ:
+    - Использует: SalaryRange.objects.get(), Grade.objects, Vacancy.objects
+    - Передает: JSON ответ
+    - Может вызываться из: AJAX запросы
+    """
     try:
         salary_range = get_object_or_404(SalaryRange, pk=pk)
         data = json.loads(request.body)
@@ -697,10 +1095,78 @@ def salary_range_update(request, pk):
 
 
 @login_required
+def salary_range_edit(request, pk):
+    """
+    Страница редактирования зарплатной вилки
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - pk: ID зарплатной вилки для редактирования
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - URL параметр pk
+    - SalaryRange, Vacancy, Grade модели
+    
+    ОБРАБОТКА:
+    - Получение зарплатной вилки по ID
+    - Получение списка вакансий и грейдов
+    - Подготовка контекста для шаблона
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - HTML страница с формой редактирования
+    
+    СВЯЗИ:
+    - Использует: SalaryRange, Vacancy, Grade модели
+    - Передает: context в salary_range_edit.html
+    - Может вызываться из: GET запросы
+    """
+    try:
+        salary_range = get_object_or_404(SalaryRange, pk=pk)
+        
+        # Получаем списки для выпадающих меню
+        vacancies = Vacancy.objects.filter(is_active=True).order_by('name')
+        grades = Grade.objects.all().order_by('name')
+        
+        context = {
+            'salary_range': salary_range,
+            'vacancies': vacancies,
+            'grades': grades,
+        }
+        
+        return render(request, 'finance/salary_range_edit.html', context)
+        
+    except Exception as e:
+        messages.error(request, f'Ошибка при загрузке зарплатной вилки: {str(e)}')
+        return redirect('finance:salary_ranges_list')
+
+
+@login_required
 @csrf_exempt
 @require_http_methods(["DELETE"])
 def salary_range_delete(request, pk):
-    """Удаление зарплатной вилки"""
+    """
+    Удаление зарплатной вилки
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - pk: ID зарплатной вилки для удаления
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - URL параметр pk
+    
+    ОБРАБОТКА:
+    - Получение зарплатной вилки по ID
+    - Удаление SalaryRange объекта
+    - Обработка ошибок
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON ответ с результатом операции
+    
+    СВЯЗИ:
+    - Использует: SalaryRange.objects.get(), SalaryRange.delete()
+    - Передает: JSON ответ
+    - Может вызываться из: AJAX запросы
+    """
     try:
         salary_range = get_object_or_404(SalaryRange, pk=pk)
         salary_range_name = f"{salary_range.vacancy.name} - {salary_range.grade.name}"
@@ -719,7 +1185,30 @@ def salary_range_delete(request, pk):
 @csrf_exempt
 @require_http_methods(["POST"])
 def update_salary_currency_amounts(request):
-    """Обновляет суммы в других валютах для всех зарплатных вилок"""
+    """
+    Обновляет суммы в других валютах для всех зарплатных вилок
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - SalaryRange.objects: все зарплатные вилки
+    - CurrencyRate.objects: актуальные курсы валют
+    
+    ОБРАБОТКА:
+    - Получение всех зарплатных вилок
+    - Получение актуальных курсов валют
+    - Пересчет сумм в разных валютах
+    - Обновление записей в базе данных
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON ответ с результатом операции
+    
+    СВЯЗИ:
+    - Использует: SalaryRange.objects, CurrencyRate.objects
+    - Передает: JSON ответ
+    - Может вызываться из: AJAX запросы
+    """
     try:
         SalaryRange.update_all_currency_amounts()
         return JsonResponse({
@@ -734,7 +1223,32 @@ def update_salary_currency_amounts(request):
 
 @login_required
 def benchmarks_list(request):
-    """Список бенчмарков"""
+    """
+    Список бенчмарков
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.GET: search, type_filter, grade_filter, location_filter (параметры фильтрации)
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - Benchmark.objects: все бенчмарки
+    - Grade.objects, Vacancy.objects для фильтрации
+    
+    ОБРАБОТКА:
+    - Получение параметров фильтрации из GET запроса
+    - Применение фильтров по поиску, типу, грейду, локации
+    - Пагинация результатов (10 бенчмарков на страницу)
+    - Подсчет статистики
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с отфильтрованными бенчмарками и пагинацией
+    - render: HTML страница 'finance/benchmarks_list.html'
+    
+    СВЯЗИ:
+    - Использует: Benchmark.objects, Grade.objects, Vacancy.objects
+    - Передает данные в: finance/benchmarks_list.html
+    - Может вызываться из: finance/ URL patterns
+    """
     from django.core.paginator import Paginator
     from django.db.models import Q
     
@@ -812,7 +1326,29 @@ def benchmarks_list(request):
 
 @login_required
 def benchmark_detail(request, pk):
-    """Детальная информация о бенчмарке"""
+    """
+    Детальная информация о бенчмарке
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - pk: ID бенчмарка
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - Benchmark.objects: конкретный бенчмарк по ID
+    
+    ОБРАБОТКА:
+    - Получение бенчмарка по ID (404 если не найден)
+    - Создание контекста для детального просмотра
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с данными бенчмарка
+    - render: HTML страница 'finance/benchmark_detail.html'
+    
+    СВЯЗИ:
+    - Использует: Benchmark.objects.get(), get_object_or_404()
+    - Передает данные в: finance/benchmark_detail.html
+    - Может вызываться из: finance/ URL patterns
+    """
     benchmark = get_object_or_404(Benchmark, pk=pk)
     
     context = {
@@ -826,7 +1362,31 @@ def benchmark_detail(request, pk):
 @csrf_exempt
 @require_http_methods(["POST"])
 def benchmark_create(request):
-    """Создание нового бенчмарка"""
+    """
+    Создание нового бенчмарка
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.body: JSON с данными бенчмарка
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - JSON данные из request.body
+    - Grade.objects, Vacancy.objects для валидации связей
+    
+    ОБРАБОТКА:
+    - Парсинг JSON данных
+    - Валидация связанных объектов
+    - Создание нового Benchmark объекта
+    - Обработка ошибок
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON ответ с результатом операции
+    
+    СВЯЗИ:
+    - Использует: Benchmark.objects.create(), Grade.objects, Vacancy.objects
+    - Передает: JSON ответ
+    - Может вызываться из: AJAX запросы
+    """
     try:
         data = json.loads(request.body)
         
@@ -910,7 +1470,33 @@ def benchmark_create(request):
 @csrf_exempt
 @require_http_methods(["PUT"])
 def benchmark_update(request, pk):
-    """Обновление бенчмарка"""
+    """
+    Обновление бенчмарка
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - pk: ID бенчмарка для обновления
+    - request.body: JSON с обновленными данными
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - URL параметр pk
+    - JSON данные из request.body
+    - Grade.objects, Vacancy.objects для валидации связей
+    
+    ОБРАБОТКА:
+    - Получение бенчмарка по ID
+    - Парсинг JSON данных
+    - Валидация связанных объектов
+    - Обновление Benchmark объекта
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON ответ с результатом операции
+    
+    СВЯЗИ:
+    - Использует: Benchmark.objects.get(), Grade.objects, Vacancy.objects
+    - Передает: JSON ответ
+    - Может вызываться из: AJAX запросы
+    """
     try:
         benchmark = get_object_or_404(Benchmark, pk=pk)
         data = json.loads(request.body)
@@ -993,7 +1579,29 @@ def benchmark_update(request, pk):
 @csrf_exempt
 @require_http_methods(["DELETE"])
 def benchmark_delete(request, pk):
-    """Удаление бенчмарка"""
+    """
+    Удаление бенчмарка
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - pk: ID бенчмарка для удаления
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - URL параметр pk
+    
+    ОБРАБОТКА:
+    - Получение бенчмарка по ID
+    - Удаление Benchmark объекта
+    - Обработка ошибок
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON ответ с результатом операции
+    
+    СВЯЗИ:
+    - Использует: Benchmark.objects.get(), Benchmark.delete()
+    - Передает: JSON ответ
+    - Может вызываться из: AJAX запросы
+    """
     try:
         benchmark = get_object_or_404(Benchmark, pk=pk)
         benchmark_name = f"{benchmark.get_type_display()} - {benchmark.vacancy.name} ({benchmark.grade.name})"
@@ -1010,7 +1618,33 @@ def benchmark_delete(request, pk):
 
 @login_required
 def benchmark_edit(request, pk):
-    """Страница редактирования бенчмарка"""
+    """
+    Страница редактирования бенчмарка
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - pk: ID бенчмарка для редактирования
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - URL параметр pk
+    - Benchmark.objects, Grade.objects, Vacancy.objects
+    
+    ОБРАБОТКА:
+    - Обработка GET запроса (отображение формы редактирования)
+    - Обработка POST запроса (сохранение изменений)
+    - Валидация данных формы
+    - Обновление Benchmark объекта
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с формой и связанными объектами
+    - render: HTML страница 'finance/benchmark_edit.html'
+    - redirect: на детальный просмотр при успешном сохранении
+    
+    СВЯЗИ:
+    - Использует: BenchmarkForm, Grade.objects, Vacancy.objects
+    - Передает данные в: finance/benchmark_edit.html
+    - Может вызываться из: finance/ URL patterns
+    """
     benchmark = get_object_or_404(Benchmark, pk=pk)
     
     if request.method == 'POST':
@@ -1073,7 +1707,33 @@ def benchmark_edit(request, pk):
 
 @login_required
 def benchmark_settings(request):
-    """Страница настроек бенчмарков"""
+    """
+    Страница настроек бенчмарков
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.POST: данные формы настроек
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - POST данные формы
+    - BenchmarkSettings.load(): текущие настройки
+    
+    ОБРАБОТКА:
+    - Обработка GET запроса (отображение формы настроек)
+    - Обработка POST запроса (сохранение настроек)
+    - Валидация данных формы
+    - Обновление настроек бенчмарков
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с формой и текущими настройками
+    - render: HTML страница 'finance/benchmark_settings.html'
+    - redirect: на дашборд при успешном сохранении
+    
+    СВЯЗИ:
+    - Использует: BenchmarkSettingsForm, BenchmarkSettings
+    - Передает данные в: finance/benchmark_settings.html
+    - Может вызываться из: finance/ URL patterns
+    """
     settings_obj = BenchmarkSettings.load()
     
     if request.method == 'POST':
@@ -1120,7 +1780,32 @@ def benchmark_settings(request):
 
 @login_required
 def hh_analysis_dashboard(request):
-    """Дашборд для анализа hh.ru"""
+    """
+    Дашборд для анализа hh.ru
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - Benchmark.objects: бенчмарки из hh.ru
+    - HHVacancyTemp.objects: временные вакансии
+    - BenchmarkSettings.load(): настройки анализа
+    
+    ОБРАБОТКА:
+    - Получение статистики по бенчмаркам
+    - Получение статистики по временным вакансиям
+    - Получение настроек анализа
+    - Создание контекста для дашборда
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с данными анализа
+    - render: HTML страница 'finance/hh_analysis_dashboard.html'
+    
+    СВЯЗИ:
+    - Использует: Benchmark.objects, HHVacancyTemp.objects, BenchmarkSettings
+    - Передает данные в: finance/hh_analysis_dashboard.html
+    - Может вызываться из: finance/ URL patterns
+    """
     from apps.vacancies.models import Vacancy
     
     # Получаем активные вакансии и грейды
@@ -1154,7 +1839,31 @@ def hh_analysis_dashboard(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def start_hh_analysis(request):
-    """Запуск анализа hh.ru"""
+    """
+    Запуск анализа hh.ru
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.body: JSON с параметрами анализа
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - JSON данные из request.body
+    - Celery задачи для асинхронного анализа
+    
+    ОБРАБОТКА:
+    - Парсинг JSON данных
+    - Валидация параметров анализа
+    - Запуск Celery задачи анализа
+    - Возврат ID задачи для отслеживания
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON ответ с ID задачи и статусом
+    
+    СВЯЗИ:
+    - Использует: Celery задачи, analyze_hh_vacancies_automatic
+    - Передает: JSON ответ
+    - Может вызываться из: AJAX запросы
+    """
     try:
         data = json.loads(request.body)
         
@@ -1209,7 +1918,31 @@ def start_hh_analysis(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def start_batch_hh_analysis(request):
-    """Запуск массового анализа hh.ru"""
+    """
+    Запуск массового анализа hh.ru
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.body: JSON с параметрами массового анализа
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - JSON данные из request.body
+    - Celery задачи для асинхронного массового анализа
+    
+    ОБРАБОТКА:
+    - Парсинг JSON данных
+    - Валидация параметров массового анализа
+    - Запуск Celery задачи массового анализа
+    - Возврат ID задачи для отслеживания
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON ответ с ID задачи и статусом
+    
+    СВЯЗИ:
+    - Использует: Celery задачи, analyze_hh_vacancies_batch
+    - Передает: JSON ответ
+    - Может вызываться из: AJAX запросы
+    """
     try:
         data = json.loads(request.body)
         
@@ -1266,7 +1999,32 @@ def start_batch_hh_analysis(request):
 
 @login_required
 def ai_analysis_dashboard(request):
-    """Дашборд для ИИ анализа"""
+    """
+    Дашборд для ИИ анализа
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - Benchmark.objects: бенчмарки из AI анализа
+    - HHVacancyTemp.objects: временные вакансии
+    - BenchmarkSettings.load(): настройки AI анализа
+    
+    ОБРАБОТКА:
+    - Получение статистики по AI бенчмаркам
+    - Получение статистики по временным вакансиям
+    - Получение настроек AI анализа
+    - Создание контекста для дашборда
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с данными AI анализа
+    - render: HTML страница 'finance/ai_analysis_dashboard.html'
+    
+    СВЯЗИ:
+    - Использует: Benchmark.objects, HHVacancyTemp.objects, BenchmarkSettings
+    - Передает данные в: finance/ai_analysis_dashboard.html
+    - Может вызываться из: finance/ URL patterns
+    """
     from .ai_analyzer import AIBenchmarkAnalyzer
     
     analyzer = AIBenchmarkAnalyzer()
@@ -1303,7 +2061,31 @@ def ai_analysis_dashboard(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def run_ai_analysis(request):
-    """Запуск ИИ анализа бенчмарков"""
+    """
+    Запуск ИИ анализа бенчмарков
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.body: JSON с параметрами AI анализа
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - JSON данные из request.body
+    - AIBenchmarkAnalyzer для анализа
+    
+    ОБРАБОТКА:
+    - Парсинг JSON данных
+    - Валидация параметров AI анализа
+    - Запуск AI анализа
+    - Возврат результата анализа
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON ответ с результатом AI анализа
+    
+    СВЯЗИ:
+    - Использует: AIBenchmarkAnalyzer
+    - Передает: JSON ответ
+    - Может вызываться из: AJAX запросы
+    """
     try:
         data = json.loads(request.body)
         
@@ -1345,7 +2127,31 @@ def run_ai_analysis(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def update_ai_prompt(request):
-    """Обновление промпта для ИИ анализа"""
+    """
+    Обновление промпта для ИИ анализа
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.body: JSON с новым промптом
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - JSON данные из request.body
+    - BenchmarkSettings для сохранения промпта
+    
+    ОБРАБОТКА:
+    - Парсинг JSON данных
+    - Валидация нового промпта
+    - Сохранение промпта в настройках
+    - Возврат результата операции
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON ответ с результатом операции
+    
+    СВЯЗИ:
+    - Использует: BenchmarkSettings
+    - Передает: JSON ответ
+    - Может вызываться из: AJAX запросы
+    """
     try:
         data = json.loads(request.body)
         
@@ -1388,7 +2194,30 @@ def update_ai_prompt(request):
 
 @login_required
 def task_status(request, task_id):
-    """Проверка статуса задачи"""
+    """
+    Проверка статуса задачи
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - task_id: ID задачи для проверки статуса
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - URL параметр task_id
+    - Celery для получения статуса задачи
+    
+    ОБРАБОТКА:
+    - Получение статуса задачи по ID
+    - Формирование ответа со статусом
+    - Обработка ошибок
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON ответ со статусом задачи
+    
+    СВЯЗИ:
+    - Использует: Celery AsyncResult
+    - Передает: JSON ответ
+    - Может вызываться из: AJAX запросы
+    """
     try:
         from celery.result import AsyncResult
         
@@ -1431,7 +2260,33 @@ def task_status(request, task_id):
 
 @login_required
 def benchmarks_settings(request):
-    """Страница настроек бенчмарков с управлением hh.ru"""
+    """
+    Страница настроек бенчмарков с управлением hh.ru
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.POST: данные формы настроек
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - POST данные формы
+    - BenchmarkSettings.load(): текущие настройки
+    
+    ОБРАБОТКА:
+    - Обработка GET запроса (отображение формы настроек)
+    - Обработка POST запроса (сохранение настроек)
+    - Валидация данных формы
+    - Обновление настроек бенчмарков
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с формой и текущими настройками
+    - render: HTML страница 'finance/benchmarks_settings.html'
+    - redirect: на дашборд при успешном сохранении
+    
+    СВЯЗИ:
+    - Использует: BenchmarkSettingsForm, BenchmarkSettings
+    - Передает данные в: finance/benchmarks_settings.html
+    - Может вызываться из: finance/ URL patterns
+    """
     settings = BenchmarkSettings.load()
     
     if request.method == 'POST':
@@ -1475,7 +2330,27 @@ def benchmarks_settings(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def start_hh_collection_manual(request):
-    """Ручной запуск сбора вакансий с hh.ru"""
+    """
+    Ручной запуск сбора вакансий с hh.ru
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - Celery задачи для сбора вакансий
+    
+    ОБРАБОТКА:
+    - Запуск Celery задачи сбора вакансий
+    - Возврат ID задачи для отслеживания
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON ответ с ID задачи и статусом
+    
+    СВЯЗИ:
+    - Использует: Celery задачи, fetch_hh_vacancies_task
+    - Передает: JSON ответ
+    - Может вызываться из: AJAX запросы
+    """
     try:
         from .tasks import fetch_hh_vacancies_task
         

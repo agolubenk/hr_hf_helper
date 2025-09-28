@@ -66,6 +66,21 @@ app.conf.beat_schedule = {
         'kwargs': {'user_id': 1},  # TODO: Настроить для всех пользователей
     },
     
+    # Google OAuth задачи
+    'refresh-google-oauth-tokens': {
+        'task': 'apps.google_oauth.tasks.refresh_google_oauth_tokens',
+        'schedule': 1800.0,  # Каждые 30 минут
+    },
+    # ОТКЛЮЧЕНО: Автоматическое удаление OAuth аккаунтов
+    # 'cleanup-expired-oauth-accounts': {
+    #     'task': 'apps.google_oauth.tasks.cleanup_expired_oauth_accounts',
+    #     'schedule': 86400.0,  # Каждый день
+    # },
+    'validate-oauth-tokens': {
+        'task': 'apps.google_oauth.tasks.validate_oauth_tokens',
+        'schedule': 3600.0,  # Каждый час
+    },
+    
     # ClickUp задачи (работают по требованию через веб-интерфейс)
     # Массовый импорт и синхронизация запускаются вручную через UI
     # Это правильно, так как эти операции требуют пользовательского вмешательства

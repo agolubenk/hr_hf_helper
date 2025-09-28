@@ -20,6 +20,7 @@ urlpatterns = [
     path('salary-ranges/', views.salary_ranges_list, name='salary_ranges_list'),
     path('salary-ranges/create/', views.salary_range_create, name='salary_range_create'),
     path('salary-ranges/<int:pk>/', views.salary_range_detail, name='salary_range_detail'),
+    path('salary-ranges/<int:pk>/edit/', views.salary_range_edit, name='salary_range_edit'),
     path('salary-ranges/<int:pk>/update/', views.salary_range_update, name='salary_range_update'),
     path('salary-ranges/<int:pk>/delete/', views.salary_range_delete, name='salary_range_delete'),
     path('salary-ranges/update-currency/', views.update_salary_currency_amounts, name='update_salary_currency_amounts'),

@@ -1,3 +1,13 @@
+# Импорты из новых модулей
+from logic.candidate.interviewer_management import (
+    interviewer_list, interviewer_detail, interviewer_create,
+    interviewer_edit, interviewer_delete, interviewer_toggle_active,
+    interview_rule_list, interview_rule_detail, interview_rule_create,
+    interview_rule_edit, interview_rule_delete
+)
+from logic.base.response_handler import UnifiedResponseHandler
+
+# Старые импорты (для совместимости)
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -8,15 +18,39 @@ from django.views.decorators.http import require_POST
 
 from .models import Interviewer, InterviewRule
 from .forms import InterviewerForm, InterviewerSearchForm, InterviewRuleForm, InterviewRuleSearchForm
-from .logic.services import InterviewerCalendarService
 from .logic.interviewers_handlers import InterviewerHandler
 from .logic.rules_handlers import RuleHandler
-from .logic.calendar_handlers import CalendarHandler
 
 
 @login_required
 def interviewer_list(request):
-    """Список интервьюеров"""
+    """
+    Список интервьюеров
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.GET: search, is_active (параметры фильтрации)
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - Interviewer.objects: все интервьюеры из базы данных
+    - InterviewerSearchForm: для валидации параметров поиска
+    - InterviewerHandler: для логики поиска и фильтрации
+    
+    ОБРАБОТКА:
+    - Получение параметров поиска из GET запроса
+    - Применение фильтров через InterviewerHandler
+    - Пагинация результатов (10 интервьюеров на страницу)
+    - Подсчет статистики (общее количество, активные, неактивные)
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с отфильтрованными интервьюерами и пагинацией
+    - render: HTML страница 'interviewers/interviewer_list.html'
+    
+    СВЯЗИ:
+    - Использует: Interviewer.objects, InterviewerSearchForm, InterviewerHandler
+    - Передает данные в: interviewers/interviewer_list.html
+    - Может вызываться из: interviewers/ URL patterns
+    """
     # Получаем параметры поиска
     search_form = InterviewerSearchForm(request.GET)
     search_query = request.GET.get('search', '')
@@ -49,7 +83,29 @@ def interviewer_list(request):
 
 @login_required
 def interviewer_detail(request, pk):
-    """Детальная информация об интервьюере"""
+    """
+    Детальная информация об интервьюере
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - pk: ID интервьюера
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - Interviewer.objects: конкретный интервьюер по ID
+    
+    ОБРАБОТКА:
+    - Получение интервьюера по ID (404 если не найден)
+    - Создание контекста для детального просмотра
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с данными интервьюера
+    - render: HTML страница 'interviewers/interviewer_detail.html'
+    
+    СВЯЗИ:
+    - Использует: Interviewer.objects.get(), get_object_or_404()
+    - Передает данные в: interviewers/interviewer_detail.html
+    - Может вызываться из: interviewers/ URL patterns
+    """
     interviewer = get_object_or_404(Interviewer, pk=pk)
     
     context = {

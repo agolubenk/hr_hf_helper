@@ -4,7 +4,32 @@ from .models import User, SystemChoice
 
 
 class ProfileEditForm(UserChangeForm):
-    """Форма редактирования профиля пользователя"""
+    """
+    Форма редактирования профиля пользователя
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - first_name: имя пользователя
+    - last_name: фамилия пользователя
+    - full_name: полное имя пользователя
+    - email: электронная почта
+    - telegram_username: имя пользователя в Telegram
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - User модель из apps.accounts.models
+    
+    ОБРАБОТКА:
+    - Настройка полей для редактирования профиля
+    - Удаление поля пароля из формы
+    - Настройка виджетов для UI
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Django форма для редактирования профиля
+    
+    СВЯЗИ:
+    - Использует: User модель
+    - Передает: Django форма
+    - Может вызываться из: Account views
+    """
     
     class Meta:
         model = User
@@ -46,7 +71,33 @@ class ProfileEditForm(UserChangeForm):
 
 
 class IntegrationSettingsForm(forms.ModelForm):
-    """Форма настроек интеграций"""
+    """
+    Форма настроек интеграций
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - gemini_api_key: API ключ для Gemini
+    - huntflow_prod_url: URL продакшн Huntflow
+    - huntflow_sandbox_url: URL сэндбокс Huntflow
+    - clickup_api_key: API ключ для ClickUp
+    - notion_api_key: API ключ для Notion
+    - telegram_bot_token: токен Telegram бота
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - User модель из apps.accounts.models
+    
+    ОБРАБОТКА:
+    - Настройка полей для интеграций
+    - Валидация API ключей
+    - Настройка виджетов для UI
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Django форма для настроек интеграций
+    
+    СВЯЗИ:
+    - Использует: User модель
+    - Передает: Django форма
+    - Может вызываться из: Account views
+    """
     
     class Meta:
         model = User

@@ -1,3 +1,12 @@
+# Импорты из новых модулей
+from logic.integration.huntflow.huntflow_service import (
+    huntflow_dashboard, vacancies_list, candidates_list,
+    huntflow_settings, huntflow_sync, huntflow_test_connection,
+    huntflow_clear_cache
+)
+from logic.base.response_handler import UnifiedResponseHandler
+
+# Старые импорты (для совместимости)
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -13,12 +22,27 @@ def get_correct_account_id(user, fallback_account_id=None):
     """
     Получает правильный account_id пользователя из Huntflow API
     
-    Args:
-        user: Пользователь
-        fallback_account_id: Fallback account_id если не удалось получить из API
-        
-    Returns:
-        Правильный account_id
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - user: пользователь Django
+    - fallback_account_id: резервный account_id если не удалось получить из API
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HuntflowService: сервис для работы с Huntflow API
+    - Huntflow API: получение списка аккаунтов пользователя
+    
+    ОБРАБОТКА:
+    - Создание HuntflowService для пользователя
+    - Получение списка аккаунтов из API
+    - Извлечение первого доступного account_id
+    - Обработка ошибок с fallback значением
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - account_id: правильный ID аккаунта для работы с Huntflow API
+    
+    СВЯЗИ:
+    - Использует: HuntflowService, Huntflow API
+    - Передает: account_id для использования в других функциях
+    - Может вызываться из: huntflow views, services
     """
     try:
         huntflow_service = HuntflowService(user)
@@ -41,6 +65,27 @@ def get_correct_account_id(user, fallback_account_id=None):
 def huntflow_dashboard(request):
     """
     Главная страница интеграции с Huntflow
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь с настройками Huntflow
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - request.user.huntflow_prod_url, request.user.huntflow_sandbox_url
+    - HuntflowService для получения данных из API
+    
+    ОБРАБОТКА:
+    - Проверка настройки Huntflow у пользователя
+    - Получение статистики из Huntflow API
+    - Обработка ошибок и отображение соответствующих сообщений
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с данными Huntflow и статистикой
+    - render: HTML страница 'huntflow/dashboard.html'
+    
+    СВЯЗИ:
+    - Использует: HuntflowService, messages
+    - Передает данные в: huntflow/dashboard.html
+    - Может вызываться из: huntflow/ URL patterns
     """
     try:
         # Проверяем, настроен ли Huntflow у пользователя
@@ -93,6 +138,30 @@ def huntflow_dashboard(request):
 def vacancies_list(request, account_id):
     """
     Список вакансий для организации
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации
+    - request.GET: page, count, state (параметры фильтрации)
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HuntflowService: сервис для работы с Huntflow API
+    - Huntflow API: получение списка вакансий и статусов
+    
+    ОБРАБОТКА:
+    - Получение правильного account_id через get_correct_account_id
+    - Фильтрация вакансий по статусу
+    - Получение статусов для фильтрации
+    - Получение информации об организации
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с вакансиями, статусами и информацией об организации
+    - render: HTML страница 'huntflow/vacancies_list.html'
+    
+    СВЯЗИ:
+    - Использует: HuntflowService, get_correct_account_id
+    - Передает данные в: huntflow/vacancies_list.html
+    - Может вызываться из: huntflow/ URL patterns
     """
     try:
         # Получаем правильный account_id
@@ -147,6 +216,30 @@ def vacancies_list(request, account_id):
 def vacancy_detail(request, account_id, vacancy_id):
     """
     Детальная информация о вакансии
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации
+    - vacancy_id: ID вакансии
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HuntflowService: сервис для работы с Huntflow API
+    - Huntflow API: получение информации о вакансии и дополнительных полей
+    
+    ОБРАБОТКА:
+    - Получение правильного account_id через get_correct_account_id
+    - Получение информации о вакансии
+    - Получение дополнительных полей вакансии
+    - Получение информации об организации
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с данными вакансии и дополнительными полями
+    - render: HTML страница 'huntflow/vacancy_detail.html'
+    
+    СВЯЗИ:
+    - Использует: HuntflowService, get_correct_account_id
+    - Передает данные в: huntflow/vacancy_detail.html
+    - Может вызываться из: huntflow/ URL patterns
     """
     try:
         # Получаем правильный account_id
@@ -193,6 +286,30 @@ def vacancy_detail(request, account_id, vacancy_id):
 def applicants_list(request, account_id):
     """
     Список кандидатов для организации
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации
+    - request.GET: page, count, status, vacancy (параметры фильтрации)
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HuntflowService: сервис для работы с Huntflow API
+    - Huntflow API: получение списка кандидатов, статусов и вакансий
+    
+    ОБРАБОТКА:
+    - Получение правильного account_id через get_correct_account_id
+    - Фильтрация кандидатов по статусу и вакансии
+    - Получение статусов и вакансий для фильтрации
+    - Обогащение данных кандидатов информацией о статусах и вакансиях
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с кандидатами, статусами и вакансиями
+    - render: HTML страница 'huntflow/applicants_list.html'
+    
+    СВЯЗИ:
+    - Использует: HuntflowService, get_correct_account_id
+    - Передает данные в: huntflow/applicants_list.html
+    - Может вызываться из: huntflow/ URL patterns
     """
     try:
         # Получаем правильный account_id
@@ -275,6 +392,32 @@ def applicants_list(request, account_id):
 def applicant_detail(request, account_id, applicant_id):
     """
     Детальная информация о кандидате
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации
+    - applicant_id: ID кандидата
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HuntflowService: сервис для работы с Huntflow API
+    - Huntflow API: получение информации о кандидате, анкете, логах, статусах, вакансиях и метках
+    
+    ОБРАБОТКА:
+    - Получение правильного account_id через get_correct_account_id
+    - Получение информации о кандидате и его анкете
+    - Получение схемы анкеты
+    - Получение логов кандидата для поиска комментариев
+    - Обогащение данных кандидата информацией о статусах, вакансиях и метках
+    - Обработка логов для отображения истории изменений
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с данными кандидата, анкетой, логами и комментариями
+    - render: HTML страница 'huntflow/applicant_detail.html'
+    
+    СВЯЗИ:
+    - Использует: HuntflowService, get_correct_account_id
+    - Передает данные в: huntflow/applicant_detail.html
+    - Может вызываться из: huntflow/ URL patterns
     """
     try:
         # Получаем правильный account_id
@@ -467,6 +610,7 @@ def applicant_detail(request, account_id, applicant_id):
             'comments_count': comments_count
         }
         
+        
         # print(f"DEBUG: Финальные данные кандидата для отображения: {applicant}")
         # print(f"DEBUG: Количество логов: {len(applicant_logs_processed)}")
         # print(f"DEBUG: Количество комментариев: {comments_count}")
@@ -482,6 +626,35 @@ def applicant_detail(request, account_id, applicant_id):
 def applicant_edit(request, account_id, applicant_id):
     """
     Редактирование кандидата
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации
+    - applicant_id: ID кандидата
+    - request.user: аутентифицированный пользователь
+    - request.POST: данные для обновления кандидата (first_name, last_name, email, phone, tags, status_id, status_comment, questionary_*)
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HuntflowService: сервис для работы с Huntflow API
+    - Huntflow API: получение и обновление информации о кандидате
+    
+    ОБРАБОТКА:
+    - Получение правильного account_id через get_correct_account_id
+    - Получение текущих данных кандидата
+    - Обработка POST запроса для обновления данных
+    - Обновление основных полей кандидата
+    - Обновление меток кандидата
+    - Обновление анкеты кандидата
+    - Обновление статуса кандидата с комментарием
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с данными кандидата для редактирования
+    - render: HTML страница 'huntflow/applicant_edit.html'
+    - redirect: на страницу детальной информации о кандидате после успешного обновления
+    
+    СВЯЗИ:
+    - Использует: HuntflowService, get_correct_account_id
+    - Передает данные в: huntflow/applicant_edit.html
+    - Может вызываться из: huntflow/ URL patterns
     """
     try:
         # Получаем правильный account_id
@@ -581,6 +754,17 @@ def applicant_edit(request, account_id, applicant_id):
                     'value': field_value,
                     'type': 'unknown',
                     'required': False
+                }
+        elif questionary_schema:
+            # Если есть схема, но нет данных анкеты, создаем пустые поля
+            for field_key, field_info in questionary_schema.items():
+                enriched_questionary[field_key] = {
+                    'title': field_info.get('title', field_key),
+                    'value': None,
+                    'type': field_info.get('type', 'unknown'),
+                    'required': field_info.get('required', False),
+                    'options': field_info.get('options', field_info.get('choices', field_info.get('values', []))),
+                    'schema': field_info
                 }
         
         if request.method == 'POST':
@@ -784,6 +968,24 @@ def applicant_edit(request, account_id, applicant_id):
 def test_connection_ajax(request):
     """
     AJAX endpoint для тестирования подключения к Huntflow
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HuntflowService: сервис для работы с Huntflow API
+    
+    ОБРАБОТКА:
+    - Создание HuntflowService для пользователя
+    - Тестирование подключения к Huntflow API
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JsonResponse с результатом тестирования подключения
+    
+    СВЯЗИ:
+    - Использует: HuntflowService
+    - Передает: JsonResponse
+    - Может вызываться из: AJAX запросы
     """
     try:
         huntflow_service = HuntflowService(request.user)
@@ -806,6 +1008,30 @@ def test_connection_ajax(request):
 def create_comment_ajax(request, account_id, applicant_id):
     """
     AJAX endpoint для создания комментария к кандидату
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации
+    - applicant_id: ID кандидата
+    - request.POST: comment (текст комментария)
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - HuntflowService: сервис для работы с Huntflow API
+    - Huntflow API: получение информации о кандидате и создание комментария
+    
+    ОБРАБОТКА:
+    - Валидация текста комментария
+    - Получение информации о кандидате
+    - Извлечение текущей вакансии и статуса из данных кандидата
+    - Создание комментария с привязкой к вакансии и статусу
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JsonResponse с результатом создания комментария
+    
+    СВЯЗИ:
+    - Использует: HuntflowService
+    - Передает: JsonResponse
+    - Может вызываться из: AJAX запросы
     """
     try:
         huntflow_service = HuntflowService(request.user)
@@ -870,6 +1096,27 @@ def create_comment_ajax(request, account_id, applicant_id):
 def get_vacancies_ajax(request, account_id):
     """
     AJAX endpoint для получения вакансий
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации
+    - request.GET: page, count, state (параметры фильтрации)
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HuntflowService: сервис для работы с Huntflow API
+    - Huntflow API: получение списка вакансий
+    
+    ОБРАБОТКА:
+    - Получение параметров фильтрации из GET запроса
+    - Получение списка вакансий через HuntflowService
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JsonResponse с данными вакансий
+    
+    СВЯЗИ:
+    - Использует: HuntflowService
+    - Передает: JsonResponse
+    - Может вызываться из: AJAX запросы
     """
     try:
         huntflow_service = HuntflowService(request.user)
@@ -904,6 +1151,27 @@ def get_vacancies_ajax(request, account_id):
 def get_applicants_ajax(request, account_id):
     """
     AJAX endpoint для получения кандидатов
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации
+    - request.GET: page, count, status, vacancy (параметры фильтрации)
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HuntflowService: сервис для работы с Huntflow API
+    - Huntflow API: получение списка кандидатов
+    
+    ОБРАБОТКА:
+    - Получение параметров фильтрации из GET запроса
+    - Получение списка кандидатов через HuntflowService
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JsonResponse с данными кандидатов
+    
+    СВЯЗИ:
+    - Использует: HuntflowService
+    - Передает: JsonResponse
+    - Может вызываться из: AJAX запросы
     """
     try:
         huntflow_service = HuntflowService(request.user)

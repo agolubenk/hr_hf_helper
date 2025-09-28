@@ -74,6 +74,9 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
         """
         Создаем нового пользователя с правами наблюдателя при первом входе через Google
         """
+        # Проверяем, является ли пользователь новым
+        is_new_user = sociallogin.is_new
+        
         user = super().save_user(request, sociallogin, form)
         
         # Автоматически заполняем данные из Google
@@ -82,21 +85,31 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
             if not user.full_name and user.first_name and user.last_name:
                 user.full_name = f"{user.first_name} {user.last_name}"
             
-            # Даем права наблюдателя новым пользователям
-            from .role_service import RoleService
-            success, message = RoleService.assign_role_to_user(user, 'Наблюдатели')
-            if success:
-                print(f"✅ OAUTH: Новому пользователю {user.username} назначены права наблюдателя")
+            # Даем права наблюдателя ТОЛЬКО новым пользователям
+            if is_new_user:
+                from .role_service import RoleService
+                success, message = RoleService.assign_role_to_user(user, 'Наблюдатели')
+                if success:
+                    print(f"✅ OAUTH: Новому пользователю {user.username} назначены права наблюдателя")
+                else:
+                    print(f"⚠️ OAUTH: Не удалось назначить права наблюдателя: {message}")
+                
+                print(f"✅ OAUTH: Создан новый пользователь: {user.username} ({user.email})")
+                
+                # Добавляем сообщение для нового пользователя
+                messages.success(request, 
+                    f"Добро пожаловать, {user.full_name or user.username}! "
+                    f"Ваш Google аккаунт успешно подключен. Вам назначены права наблюдателя."
+                )
             else:
-                print(f"⚠️ OAUTH: Не удалось назначить права наблюдателя: {message}")
+                print(f"✅ OAUTH: Существующий пользователь {user.username} авторизован через Google")
+                
+                # Добавляем сообщение для существующего пользователя
+                messages.success(request, 
+                    f"Добро пожаловать обратно, {user.full_name or user.username}! "
+                    f"Ваш Google аккаунт успешно подключен."
+                )
             
             user.save()
-            print(f"✅ OAUTH: Создан новый пользователь: {user.username} ({user.email})")
-            
-            # Добавляем сообщение для пользователя
-            messages.success(request, 
-                f"Добро пожаловать, {user.full_name or user.username}! "
-                f"Ваш Google аккаунт успешно подключен. Вам назначены права наблюдателя."
-            )
         
         return user

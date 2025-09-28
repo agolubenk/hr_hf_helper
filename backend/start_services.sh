@@ -93,9 +93,9 @@ print_success "Redis работает!"
 
 # Проверяем миграции
 print_status "Проверка миграций базы данных..."
-python manage.py migrate --check >/dev/null 2>&1 || {
+python3 manage.py migrate --check >/dev/null 2>&1 || {
     print_warning "Применяем миграции..."
-    python manage.py migrate
+    python3 manage.py migrate
 }
 
 # Останавливаем старые процессы
@@ -127,7 +127,7 @@ print_success "Celery Worker запущен (PID: $CELERY_PID)!"
 
 # Запускаем Django сервер
 print_status "Запуск Django сервера..."
-nohup python manage.py runserver 8000 > logs/django.log 2>&1 &
+nohup python3 manage.py runserver 8000 > logs/django.log 2>&1 &
 DJANGO_PID=$!
 echo $DJANGO_PID > logs/django.pid
 

@@ -4,7 +4,6 @@ from django.urls import path
 from django.contrib import messages
 from django.utils.html import format_html
 from .models import Grade, CurrencyRate, PLNTax, SalaryRange, Benchmark, BenchmarkSettings, DataSource, VacancyField, Domain, HHVacancyTemp
-from .logic.tax_service import TaxService
 
 
 @admin.register(Grade)
@@ -147,7 +146,7 @@ class PLNTaxAdmin(admin.ModelAdmin):
         # Пример расчета для демонстрации
         from decimal import Decimal
         example_gross = Decimal('10000.00')
-        breakdown = TaxService.get_tax_breakdown(example_gross, "PLN")
+        breakdown = PLNTax.get_tax_breakdown(example_gross)
         
         extra_context['example_calculation'] = {
             'gross_amount': example_gross,

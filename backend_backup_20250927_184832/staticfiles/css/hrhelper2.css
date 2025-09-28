@@ -1,0 +1,555 @@
+/* =============================================================================
+   HR HELPER - ОСНОВНЫЕ СТИЛИ
+   Система управления HR процессами
+   ============================================================================= */
+
+/* === БАЗОВЫЕ СТИЛИ === */
+.sidebar {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.sidebar .nav-link {
+    color: rgba(255,255,255,0.8);
+    border-radius: 8px;
+    margin: 2px 0;
+    transition: all 0.3s ease;
+}
+
+.sidebar .nav-link:hover {
+    color: white;
+    background-color: rgba(255,255,255,0.1);
+    transform: translateX(5px);
+}
+
+.sidebar .nav-link.active {
+    background-color: rgba(255,255,255,0.2);
+    color: white;
+}
+
+/* === СТИЛИ ДЛЯ ИЕРАРХИЧЕСКОГО МЕНЮ === */
+.sidebar .nav-item.ms-3 {
+    margin-left: 1rem !important;
+}
+
+.sidebar .nav-item.ms-4 {
+    margin-left: 2rem !important;
+}
+
+.sidebar .nav-item.ms-5 {
+    margin-left: 3rem !important;
+}
+
+/* === УЛУЧШЕННЫЕ СТИЛИ ДЛЯ АКТИВНЫХ ЭЛЕМЕНТОВ === */
+.sidebar .nav-link.active {
+    background-color: rgba(255,255,255,0.25);
+    color: white;
+    font-weight: 500;
+}
+
+/* === СТИЛИ ДЛЯ ЗАГОЛОВКОВ РАЗДЕЛОВ === */
+.sidebar .nav-link.text-white-50 {
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* === СТИЛИ ДЛЯ СВОРАЧИВАЕМОГО МЕНЮ === */
+.menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.menu-arrow {
+    transition: transform 0.3s ease;
+}
+
+.menu-toggle[aria-expanded="true"] .menu-arrow {
+    transform: rotate(180deg);
+}
+
+.collapse {
+    transition: height 0.3s ease;
+}
+
+.collapse.show {
+    display: block;
+}
+
+/* === ОСНОВНОЙ КОНТЕНТ === */
+.main-content {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+/* === КАРТОЧКИ === */
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* === СТАТУСНЫЕ БЕЙДЖИ === */
+.status-badge {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+}
+
+/* === КНОПКИ HUNTFLOW === */
+.btn-huntflow {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    border-radius: 25px;
+    padding: 0.5rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-huntflow:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+/* === КНОПКИ GEMINI === */
+.btn-gemini {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    border-radius: 25px;
+    padding: 0.5rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-gemini:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+/* === СТИЛИ ДЛЯ КНОПКИ ПОЛЬЗОВАТЕЛЯ В НАВБАРЕ === */
+.btn-outline-primary {
+    border-color: #667eea;
+    color: #667eea;
+    font-weight: 500;
+}
+
+.btn-outline-primary:hover {
+    background-color: #667eea;
+    border-color: #667eea;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+}
+
+/* === СТИЛИ ДЛЯ ХЛЕБНЫХ КРОШЕК === */
+.breadcrumb {
+    background-color: transparent;
+    padding: 0.5rem 0;
+    margin-bottom: 0;
+}
+
+.breadcrumb-item {
+    font-size: 0.9rem;
+}
+
+.breadcrumb-item a {
+    color: #6c757d;
+    transition: color 0.3s ease;
+}
+
+.breadcrumb-item a:hover {
+    color: #495057;
+}
+
+.breadcrumb-item.active {
+    color: #495057;
+    font-weight: 500;
+}
+
+.breadcrumb-item i {
+    font-size: 0.8rem;
+}
+
+/* === СТИЛИ ДЛЯ ЧАТА GEMINI === */
+.chat-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.chat-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.chat-messages {
+    height: 500px;
+    overflow-y: auto;
+    padding: 1rem;
+    background: #f8f9fa;
+}
+
+.message {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: flex-start;
+}
+
+.message.user {
+    justify-content: flex-end;
+}
+
+.message.assistant {
+    justify-content: flex-start;
+}
+
+.message-content {
+    max-width: 70%;
+    padding: 0.75rem 1rem;
+    border-radius: 18px;
+    word-wrap: break-word;
+}
+
+.message.user .message-content {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-bottom-right-radius: 5px;
+}
+
+.message.assistant .message-content {
+    background: white;
+    color: #333;
+    border: 1px solid #e9ecef;
+    border-bottom-left-radius: 5px;
+}
+
+.message-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 0.5rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.message.user .message-avatar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.message.assistant .message-avatar {
+    background: #28a745;
+    color: white;
+}
+
+.chat-input {
+    padding: 1rem;
+    background: white;
+    border-top: 1px solid #e9ecef;
+}
+
+.input-group {
+    position: relative;
+}
+
+.form-control {
+    border-radius: 25px;
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.btn-send {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-send:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    color: white;
+}
+
+.btn-send:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+.typing-indicator {
+    display: none;
+    padding: 0.75rem 1rem;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.typing-indicator.show {
+    display: block;
+}
+
+/* === СТИЛИ ДЛЯ СЕССИЙ === */
+.session-item {
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.session-item:hover {
+    background: #f8f9fa;
+    border-color: #e9ecef;
+}
+
+.session-item.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.session-title {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.session-date {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+/* === КНОПКА НОВОГО ЧАТА === */
+.btn-new-chat {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    width: 100%;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-new-chat:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* === СТАТУС API КЛЮЧА === */
+.api-key-status {
+    padding: 0.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.api-key-status.configured {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.api-key-status.not-configured {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* === СПИННЕР ЗАГРУЗКИ === */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* === СКРЫТИЕ X ИКОНОК В СООБЩЕНИЯХ === */
+.message .fa-times,
+.message .fa-x,
+.message .close,
+.message .delete,
+.message [class*="close"],
+.message [class*="delete"],
+.message [class*="remove"],
+.message [class*="dismiss"],
+.message [class*="cancel"] {
+    display: none !important;
+}
+
+/* === СКРЫТИЕ ПСЕВДОЭЛЕМЕНТОВ С X СИМВОЛОМ === */
+.message::after {
+    display: none !important;
+}
+
+.message::before {
+    display: none !important;
+}
+
+/* === СКРЫТИЕ ЭЛЕМЕНТОВ С ТЕКСТОМ X === */
+.message *:contains("×"),
+.message *:contains("✕"),
+.message *:contains("X") {
+    display: none !important;
+}
+
+/* === СКРЫТИЕ ЭЛЕМЕНТОВ С ОПРЕДЕЛЕННЫМИ АТРИБУТАМИ === */
+.message [data-dismiss],
+.message [data-close],
+.message [data-delete] {
+    display: none !important;
+}
+
+/* === СКРЫТИЕ DJANGO MESSAGES НА СТРАНИЦАХ GEMINI === */
+.messages,
+.alert {
+    display: none !important;
+}
+
+/* === АДАПТИВНОСТЬ === */
+@media (max-width: 768px) {
+    .sidebar {
+        min-height: auto;
+    }
+    
+    .main-content {
+        padding: 1rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .btn-huntflow,
+    .btn-gemini {
+        padding: 0.4rem 1rem;
+        font-size: 0.85rem;
+    }
+    
+    .chat-messages {
+        height: 300px;
+    }
+    
+    .message-content {
+        max-width: 85%;
+    }
+}
+
+/* === ДОПОЛНИТЕЛЬНЫЕ УТИЛИТЫ === */
+.text-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.shadow-soft {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-medium {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.shadow-strong {
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* === АНИМАЦИИ === */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.3s ease-out;
+}
+
+@keyframes slideInLeft {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+.slide-in-right {
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+/* === СОСТОЯНИЯ ФОКУСА ДЛЯ ДОСТУПНОСТИ === */
+*:focus-visible {
+    outline: 3px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* === ВЫСОКИЙ КОНТРАСТ === */
+@media (prefers-contrast: high) {
+    .card {
+        border: 3px solid #000;
+    }
+    
+    .btn-huntflow,
+    .btn-gemini {
+        border: 3px solid #000;
+    }
+    
+    .form-control {
+        border-width: 3px;
+    }
+}
+
+/* === УМЕНЬШЕННАЯ АНИМАЦИЯ === */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

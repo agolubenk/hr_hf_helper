@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify({
                 session_id: sessionId,
-                message: message
+                content: message
             })
         })
         .then(response => response.json())

@@ -4,4 +4,4 @@
 
 cd "$(dirname "$0")"
 source venv/bin/activate
-python manage.py update_nbrb_rates >> logs/nbrb_update.log 2>&1
+python3 manage.py update_nbrb_rates >> logs/nbrb_update.log 2>&1

@@ -1,0 +1,25 @@
+                <hr>
+                <h6>Статус кандидата:</h6>
+                <p><strong>applicant.status_info:</strong> {{ applicant.status_info|default:"НЕТ" }}</p>
+                {% if applicant.status_info %}
+                    <p><strong>applicant.status_info.description:</strong> {{ applicant.status_info.description|default:"НЕТ" }}</p>
+                {% endif %}
+                
+                <hr>
+                <h6>Логи кандидата:</h6>
+                <p><strong>applicant_logs:</strong> {{ applicant_logs|default:"НЕТ" }}</p>
+                {% if applicant_logs %}
+                    <p><strong>applicant_logs.items:</strong> {{ applicant_logs.items|default:"НЕТ" }}</p>
+                    {% if applicant_logs.items %}
+                        <p><strong>Количество логов:</strong> {{ applicant_logs.items|length }}</p>
+                        {% for log in applicant_logs.items %}
+                            <div class="border p-2 mb-2">
+                                <p><strong>Тип:</strong> {{ log.type|default:"НЕТ" }}</p>
+                                <p><strong>Комментарий:</strong> {{ log.comment|default:"НЕТ" }}</p>
+                                <p><strong>Дата:</strong> {{ log.created|default:"НЕТ" }}</p>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+                
+                {% if questionary %}
