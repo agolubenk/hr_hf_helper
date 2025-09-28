@@ -146,10 +146,10 @@ window.copyQuestions = function(country) {
 
 // Функция показа уведомлений
 function showNotification(message, type = 'info') {
-    // Создаем элемент уведомления
+    // Создаем элемент уведомления с правильными стилями
     const notification = document.createElement('div');
-    notification.className = `alert alert-${type === 'success' ? 'success' : type === 'warning' ? 'warning' : type === 'error' ? 'danger' : 'info'} alert-dismissible fade show position-fixed`;
-    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.className = `toast-notification alert alert-${type === 'success' ? 'success' : type === 'warning' ? 'warning' : type === 'error' ? 'danger' : 'info'} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'bottom: 20px; left: 20px; z-index: 9999; max-width: 280px; width: 280px;';
     
     notification.innerHTML = `
         <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : type === 'error' ? 'times-circle' : 'info-circle'} me-2"></i>
@@ -157,12 +157,57 @@ function showNotification(message, type = 'info') {
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     `;
     
+    // Получаем все существующие тосты
+    const existingToasts = document.querySelectorAll('.toast-notification');
+    let currentBottom = 20;
+    
+    // Сдвигаем существующие тосты вверх
+    existingToasts.forEach((toast) => {
+        const toastHeight = toast.offsetHeight;
+        const margin = 10;
+        currentBottom += toastHeight + margin;
+        toast.style.bottom = `${currentBottom}px`;
+    });
+    
+    // Устанавливаем позицию для нового тоста
+    notification.style.bottom = `${currentBottom}px`;
+    
     // Добавляем на страницу
     document.body.appendChild(notification);
+    
+    // Обработчик для кнопки закрытия
+    const closeBtn = notification.querySelector('.btn-close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            // Пересчитываем позиции оставшихся тостов
+            const remainingToasts = document.querySelectorAll('.toast-notification');
+            let newBottom = 20;
+            remainingToasts.forEach((toast) => {
+                if (toast !== notification) {
+                    const toastHeight = toast.offsetHeight;
+                    const margin = 10;
+                    newBottom += toastHeight + margin;
+                    toast.style.bottom = `${newBottom}px`;
+                }
+            });
+        });
+    }
     
     // Автоматически удаляем через 5 секунд
     setTimeout(function() {
         if (notification.parentNode) {
+            // Пересчитываем позиции оставшихся тостов
+            const remainingToasts = document.querySelectorAll('.toast-notification');
+            let newBottom = 20;
+            remainingToasts.forEach((toast) => {
+                if (toast !== notification) {
+                    const toastHeight = toast.offsetHeight;
+                    const margin = 10;
+                    newBottom += toastHeight + margin;
+                    toast.style.bottom = `${newBottom}px`;
+                }
+            });
+            
             notification.parentNode.removeChild(notification);
         }
     }, 5000);
