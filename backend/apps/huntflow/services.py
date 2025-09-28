@@ -822,24 +822,27 @@ class HuntflowService:
         Returns:
             Результат обновления или None
         """
-        # Сначала получаем текущую анкету кандидата
-        current_questionary = self.get_applicant_questionary(account_id, applicant_id)
-        if not current_questionary:
-            print(f"❌ Не удалось получить анкету кандидата {applicant_id}")
+        # Получаем схему анкеты для поиска поля Scorecard
+        questionary_schema = self.get_applicant_questionary_schema(account_id)
+        if not questionary_schema:
+            print(f"❌ Не удалось получить схему анкеты для организации {account_id}")
             return None
         
-        # Ищем поле Scorecard в анкете
+        # Ищем поле Scorecard в схеме анкеты
         scorecard_field_id = None
-        for field_id, value in current_questionary.items():
-            # Ищем поле, которое может содержать ссылки или пустое
-            if value is None or (isinstance(value, str) and ('scorecard' in value.lower() or 'http' in value.lower() or value == '')):
+        for field_id, field_info in questionary_schema.items():
+            field_title = field_info.get('title', '').lower()
+            field_type = field_info.get('type', '')
+            
+            # Ищем поле с названием "scorecard" или "scorecard" в названии
+            if 'scorecard' in field_title or (field_type == 'url' and 'scorecard' in field_title):
                 scorecard_field_id = field_id
-                print(f"🔍 Найдено поле Scorecard: {field_id} = {value}")
+                print(f"🔍 Найдено поле Scorecard в схеме: {field_id} = {field_info.get('title')} (тип: {field_type})")
                 break
         
         if not scorecard_field_id:
-            print(f"❌ Не найдено поле Scorecard в анкете кандидата {applicant_id}")
-            print(f"📋 Доступные поля: {list(current_questionary.keys())}")
+            print(f"❌ Не найдено поле Scorecard в схеме анкеты для организации {account_id}")
+            print(f"📋 Доступные поля в схеме: {[(k, v.get('title', '')) for k, v in questionary_schema.items()]}")
             return None
         
         # Обновляем поле Scorecard со ссылкой

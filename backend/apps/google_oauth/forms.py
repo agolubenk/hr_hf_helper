@@ -748,7 +748,7 @@ class CombinedForm(forms.Form):
         # Индикаторы встреч и интервью
         meeting_indicators = [
             'встреча', 'интервью', 'собеседование', 'созвон', 'звонок',
-            'техническое', 'technical', 'скрининг', 'screening',
+            'техническое', 'technical',
             'инвайт', 'invite', 'приглашение',
             'meeting', 'interview', 'call', 'schedule', 'time', 'date'
         ]

@@ -84,7 +84,7 @@ def determine_action_type_from_text(text):
     # Индикаторы встреч
     meeting_indicators = [
         'встреча', 'интервью', 'собеседование', 'созвон', 'звонок',
-        'техническое', 'technical', 'скрининг', 'screening',
+        'техническое', 'technical',
         'инвайт', 'invite', 'приглашение',
         'meeting', 'interview', 'call', 'schedule', 'time', 'date'
     ]
