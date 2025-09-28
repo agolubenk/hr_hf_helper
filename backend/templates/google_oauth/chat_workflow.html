@@ -366,12 +366,29 @@
                                 <form method="post" id="chat-form">
                                     {% csrf_token %}
                                     <input type="hidden" name="session_id" value="{{ chat_session.id }}">
-                                    <div class="input-group">
-                                        {{ form.message }}
-                                        <button type="submit" class="btn btn-primary" id="send-btn">
-                                            <i class="fas fa-paper-plane"></i>
-                                        </button>
+                                    
+                                    <!-- Обёртка поля ввода -->
+                                    <div class="chat-input-wrapper">
+                                        <!-- Отображение выбранной метки (скрыто по умолчанию) -->
+                                        <span id="selectedTag"
+                                              class="tag-label badge bg-primary me-2"
+                                              style="display:none; font-weight:bold;">
+                                        </span>
+
+                                        <div class="input-group">
+                                            {{ form.message }}
+                                            <button type="submit" class="btn btn-primary" id="send-btn">
+                                                <i class="fas fa-paper-plane"></i>
+                                            </button>
+                                        </div>
+                                        
+                                        <!-- Скрытое поле для передачи типа действия -->
+                                        <input type="hidden"
+                                               id="actionType"
+                                               name="action_type"
+                                               value="hrscreening">
                                     </div>
+                                    
                                     {% if form.message.errors %}
                                         <div class="alert alert-danger small mt-2">
                                             {% for error in form.message.errors %}
@@ -1686,4 +1703,11 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                 }
             });
             </script>
+            
+            <!-- Подключение скрипта автоматических меток -->
+            <script>
+                // Передаем sessionId из контекста шаблона в глобальный scope
+                window.sessionId = {{ chat_session.id }};
+            </script>
+            <script src="{% static 'js/chat_actions.js' %}"></script>
             {% endblock %}

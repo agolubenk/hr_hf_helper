@@ -1320,11 +1320,6 @@ a:hover {
     color: var(--color-luna-400);
 }
 
-/* Переопределение text-muted для тёмной темы */
-[data-theme="dark"] .text-muted {
-    color: var(--color-gray-300) !important;
-}
-
 .card-title {
     color: var(--color-btn-primary-text);
     font-weight: var(--font-weight-semibold);
@@ -2206,6 +2201,19 @@ a:hover {
     .session-item:hover {
         transform: none !important;
     }
+}
+
+/* =============================================================================
+   СТИЛИ ДЛЯ ЛОГОТИПА HR HELPER В САЙДБАРЕ
+   ============================================================================= */
+
+.hrhelper-logo-adaptive {
+    background-image: url('../img/logo-dark.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 /* =============================================================================

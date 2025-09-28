@@ -8,7 +8,7 @@ register = template.Library()
 SIDEBAR_MENU = {
     'chat_helper': {
         'title': 'Главная',
-        'icon': 'fas fa-home',
+        'icon': 'hrhelper-logo',
         'url': 'google_oauth:chat_workflow',
         'submenu': {}
     },
@@ -273,7 +273,7 @@ def render_menu_item(request, key, item, level=0):
            {'data-bs-toggle="collapse"' if has_submenu else ''}
            {'data-bs-target="#' + submenu_id + '"' if has_submenu else ''}
            {'aria-expanded="' + ('true' if should_expand else 'false') + '"' if has_submenu else ''}>
-            <i class="{item['icon']} me-2"></i>
+            {f'<div class="hrhelper-logo-adaptive" style="width: 38px; height: 38px; margin-top: -12px; margin-left: -11px; margin-bottom: -12px; margin-right: -4px;"></div>' if item['icon'] == 'hrhelper-logo' else f'<i class="{item["icon"]} me-2"></i>'}
             {item['title']}
             {'<i class="fas fa-chevron-down submenu-arrow ms-auto"></i>' if has_submenu else ''}
         </a>'''

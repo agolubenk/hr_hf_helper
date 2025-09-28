@@ -16,6 +16,9 @@
     <!-- HR Helper Custom CSS -->
     <link href="{% static 'css/hrhelper.css' %}" rel="stylesheet">
     
+    <!-- Адаптивный favicon -->
+    <link id="favicon" rel="icon" type="image/png" href="{% static 'img/logo-dark.png' %}">
+    
     <!-- Стили для многоуровневого сайдбара теперь включены в hrhelper.css -->
     
         {% block extra_css %}{% endblock %}
@@ -24,6 +27,7 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
+            {% if not request.resolver_match.url_name == 'account_login' and not request.resolver_match.url_name == 'signup' and not request.resolver_match.url_name == 'password_reset' %}
             <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="position-sticky pt-3">
                     <div class="text-center mb-4">
@@ -60,13 +64,18 @@
                     </ul>
             </div>
             </nav>
+            {% endif %}
             
             <!-- Main content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <main class="{% if request.resolver_match.url_name == 'account_login' or request.resolver_match.url_name == 'signup' or request.resolver_match.url_name == 'password_reset' %}col-12{% else %}col-md-9 ms-sm-auto col-lg-10{% endif %} px-md-4 main-content">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    {% if not request.resolver_match.url_name == 'account_login' and not request.resolver_match.url_name == 'signup' and not request.resolver_match.url_name == 'password_reset' %}
                     <h1 class="h2">
                         {% block page_title %}HR Helper{% endblock %}
                     </h1>
+                    {% else %}
+                    <div></div>
+                    {% endif %}
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <!-- Переключатель темы -->
                         <div class="btn-group me-3" role="group">
@@ -257,6 +266,22 @@
         });
         
         // ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ - теперь работает везде:
+        
+        // Функция для обновления favicon в зависимости от темы
+        function updateFavicon(theme) {
+            const favicon = document.getElementById('favicon');
+            if (favicon) {
+                // Используем отдельные файлы для каждой темы
+                if (theme === 'dark') {
+                    // Темная тема: используем светлый логотип
+                    favicon.href = '{% static "img/logo-light.png" %}';
+                } else {
+                    // Светлая тема: используем темный логотип
+                    favicon.href = '{% static "img/logo-dark.png" %}';
+                }
+            }
+        }
+        
         // Функция для переключения темы
         function toggleTheme() {
             console.log('🎨 Переключение темы...');
@@ -298,6 +323,9 @@
             
             // Обновляем иконку
             updateThemeIcon(newTheme);
+            
+            // Обновляем favicon
+            updateFavicon(newTheme);
             
             // Показываем уведомление
             showThemeNotification(newTheme);
@@ -441,6 +469,9 @@
             // Обновляем иконку
             updateThemeIcon(theme);
             
+            // Обновляем favicon
+            updateFavicon(theme);
+            
             // Добавляем обработчик клика на кнопку переключения темы
             const themeToggle = document.getElementById('themeToggle');
             console.log('🔘 Кнопка переключения темы найдена:', themeToggle);
@@ -466,6 +497,7 @@
                     const newTheme = e.matches ? 'dark' : 'light';
                     document.documentElement.setAttribute('data-theme', newTheme);
                     updateThemeIcon(newTheme);
+                    updateFavicon(newTheme);
                 }
             });
             
