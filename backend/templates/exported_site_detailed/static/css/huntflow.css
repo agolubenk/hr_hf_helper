@@ -1,0 +1,993 @@
+/* Все основные переменные наследуются из hrhelper.css */
+
+/* Основные переменные темной темы наследуются из hrhelper.css */
+
+/* Data attribute for manual theme switching - removed duplicate block */
+
+/* Light mode colors are defined in :root above */
+
+/* Базовые стили наследуются из hrhelper.css */
+
+/* Стили компонентов наследуются из hrhelper.css */
+
+/* Все базовые стили наследуются из hrhelper.css */
+/* =============================================================================
+   HUNTFLOW APP - HR HELPER THEMED STYLES
+   Updated to use Perplexity Design System
+   ============================================================================= */
+
+/* === ПЕРЕМЕННЫЕ ТЕМЫ === */
+:root {
+    /* Map Huntflow colors to design system */
+    --huntflow-primary: var(--color-primary);
+    --huntflow-secondary: var(--color-text-secondary);
+    --huntflow-accent: var(--color-primary-hover);
+    --huntflow-accent-water: var(--color-secondary);
+    
+    --huntflow-bg: var(--color-background);
+    --huntflow-card-bg: var(--color-surface);
+    --huntflow-text: var(--color-text);
+    --huntflow-text-muted: var(--color-text-secondary);
+    --huntflow-text-medium: var(--color-text);
+    
+    --huntflow-border: var(--color-border);
+    --huntflow-border-light: var(--color-card-border);
+    --huntflow-hover-bg: var(--color-secondary);
+    --huntflow-selected-bg: var(--color-secondary-hover);
+    --huntflow-tertiary-bg: var(--color-secondary);
+    
+    --huntflow-shadow: rgba(var(--color-slate-900-rgb), 0.1);
+    --huntflow-shadow-hover: rgba(var(--color-slate-900-rgb), 0.15);
+    --huntflow-shadow-strong: rgba(var(--color-slate-900-rgb), 0.2);
+    
+    --huntflow-gradient: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+    --huntflow-gradient-hover: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary-active) 100%);
+    
+    --huntflow-success: var(--color-success);
+    --huntflow-success-bg: rgba(var(--color-success-rgb), 0.1);
+    --huntflow-warning: var(--color-warning);
+    --huntflow-warning-bg: rgba(var(--color-warning-rgb), 0.1);
+    --huntflow-danger: var(--color-error);
+    --huntflow-danger-bg: rgba(var(--color-error-rgb), 0.1);
+    --huntflow-info: var(--color-info);
+    --huntflow-info-bg: rgba(var(--color-info-rgb), 0.1);
+    
+    --accent-primary: var(--huntflow-primary);
+    --accent-secondary: var(--huntflow-secondary);
+    --card-bg: var(--huntflow-card-bg);
+    --text-primary: var(--huntflow-text);
+    --text-muted: var(--huntflow-text-muted);
+    --bg-tertiary: var(--huntflow-tertiary-bg);
+    --bg-secondary: var(--huntflow-hover-bg);
+    --border-color: var(--huntflow-border);
+}
+
+[data-theme="dark"] {
+    --huntflow-primary: var(--color-primary);
+    --huntflow-secondary: var(--color-text-secondary);
+    --huntflow-accent: var(--color-primary-hover);
+    --huntflow-accent-water: var(--color-secondary);
+    
+    --huntflow-bg: var(--color-background);
+    --huntflow-card-bg: var(--color-surface);
+    --huntflow-text: var(--color-text);
+    --huntflow-text-muted: var(--color-text-secondary);
+    --huntflow-text-medium: var(--color-text);
+    
+    --huntflow-border: var(--color-border);
+    --huntflow-border-light: var(--color-card-border);
+    --huntflow-hover-bg: var(--color-secondary);
+    --huntflow-selected-bg: var(--color-secondary-hover);
+    --huntflow-tertiary-bg: var(--color-secondary);
+    
+    --huntflow-shadow: rgba(var(--color-pink-400-rgb), 0.1);
+    --huntflow-shadow-hover: rgba(var(--color-pink-400-rgb), 0.2);
+    --huntflow-shadow-strong: rgba(var(--color-pink-400-rgb), 0.3);
+    
+    --huntflow-gradient: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+    --huntflow-gradient-hover: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary-active) 100%);
+    
+    --huntflow-success: var(--color-success);
+    --huntflow-success-bg: rgba(var(--color-success-rgb), 0.15);
+    --huntflow-warning: var(--color-warning);
+    --huntflow-warning-bg: rgba(var(--color-warning-rgb), 0.15);
+    --huntflow-danger: var(--color-error);
+    --huntflow-danger-bg: rgba(var(--color-error-rgb), 0.15);
+    --huntflow-info: var(--color-info);
+    --huntflow-info-bg: rgba(var(--color-info-rgb), 0.1);
+    
+    --accent-primary: var(--huntflow-primary);
+    --accent-secondary: var(--huntflow-secondary);
+    --card-bg: var(--huntflow-card-bg);
+    --text-primary: var(--huntflow-text);
+    --text-muted: var(--huntflow-text-muted);
+    --bg-tertiary: var(--huntflow-tertiary-bg);
+    --bg-secondary: var(--huntflow-hover-bg);
+    --border-color: var(--huntflow-border);
+}
+
+/* === ДОПОЛНИТЕЛЬНЫЕ СТИЛИ ДЛЯ HUNTFLOW === */
+.huntflow-logo {
+    background: var(--huntflow-gradient);
+}
+
+/* === СТИЛИ ДЛЯ ТАБЛИЦ HUNTFLOW === */
+.huntflow-table {
+    background-color: var(--huntflow-card-bg);
+    color: var(--huntflow-text);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--huntflow-border-light);
+}
+
+.huntflow-table .table {
+    background-color: var(--huntflow-card-bg);
+    color: var(--huntflow-text);
+    margin-bottom: 0;
+}
+
+.huntflow-table .table th {
+    background-color: var(--huntflow-tertiary-bg);
+    border-color: var(--huntflow-border);
+    color: var(--huntflow-text);
+    font-weight: var(--font-weight-semibold);
+    padding: var(--space-16);
+    border: none;
+    font-size: var(--font-size-sm);
+}
+
+.huntflow-table .table td {
+    border-color: var(--huntflow-border);
+    padding: var(--space-12) var(--space-16);
+    vertical-align: middle;
+    background-color: var(--huntflow-card-bg);
+    color: var(--huntflow-text);
+    font-size: var(--font-size-base);
+}
+
+.huntflow-table .table-striped tbody tr:nth-of-type(odd) {
+    background-color: var(--huntflow-tertiary-bg);
+}
+
+.huntflow-table .table-striped tbody tr:nth-of-type(odd) td {
+    background-color: var(--huntflow-tertiary-bg);
+}
+
+.huntflow-table .table tbody tr:hover {
+    background-color: var(--huntflow-selected-bg);
+    transition: background-color var(--duration-normal) var(--ease-standard);
+}
+
+.huntflow-table .table tbody tr:hover td {
+    background-color: var(--huntflow-selected-bg);
+}
+
+/* === СТИЛИ ДЛЯ СТАТУСОВ HUNTFLOW === */
+.huntflow-badge {
+    background-color: var(--huntflow-primary);
+    color: var(--color-btn-primary-text);
+    padding: var(--space-6) var(--space-12);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-tight);
+}
+
+.huntflow-badge.bg-primary {
+    background: var(--huntflow-gradient);
+}
+
+.huntflow-badge.bg-info {
+    background: linear-gradient(135deg, var(--huntflow-secondary) 0%, var(--huntflow-accent-water) 100%);
+}
+
+.huntflow-badge.bg-success {
+    background: linear-gradient(135deg, var(--huntflow-success) 0%, var(--color-success) 100%);
+}
+
+.huntflow-badge.bg-warning {
+    background: linear-gradient(135deg, var(--huntflow-warning) 0%, var(--color-warning) 100%);
+    color: var(--huntflow-text);
+}
+
+.huntflow-badge.bg-danger {
+    background: linear-gradient(135deg, var(--huntflow-danger) 0%, var(--color-error) 100%);
+}
+
+/* === СТИЛИ ДЛЯ ПАГИНАЦИИ HUNTFLOW === */
+.huntflow-pagination .pagination {
+    margin-bottom: 0;
+}
+
+.huntflow-pagination .pagination .page-link {
+    background-color: var(--huntflow-card-bg);
+    border-color: var(--huntflow-border);
+    color: var(--huntflow-text);
+    padding: var(--space-8) var(--space-12);
+    margin: 0 var(--space-2);
+    border-radius: var(--radius-base);
+    transition: all var(--duration-normal) var(--ease-standard);
+    font-size: var(--font-size-sm);
+}
+
+.huntflow-pagination .pagination .page-link:hover {
+    background-color: var(--huntflow-hover-bg);
+    border-color: var(--huntflow-primary);
+    color: var(--huntflow-primary);
+    transform: translateY(-1px);
+}
+
+.huntflow-pagination .pagination .page-item.active .page-link {
+    background-color: var(--huntflow-primary);
+    border-color: var(--huntflow-primary);
+    color: var(--color-btn-primary-text);
+}
+
+.huntflow-pagination .pagination .page-item.disabled .page-link {
+    background-color: var(--huntflow-hover-bg);
+    border-color: var(--huntflow-border);
+    color: var(--huntflow-text-muted);
+    opacity: 0.6;
+}
+
+/* === СТИЛИ ДЛЯ КАРТОЧЕК HUNTFLOW === */
+.huntflow-card {
+    border: 1px solid var(--huntflow-border-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    background: var(--huntflow-card-bg);
+    transition: all var(--duration-normal) var(--ease-standard);
+    color: var(--huntflow-text);
+}
+
+.huntflow-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--huntflow-primary);
+}
+
+.huntflow-card .card-header {
+    background: var(--huntflow-gradient);
+    color: var(--color-btn-primary-text);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border: none;
+    padding: var(--space-16) var(--space-24);
+}
+
+.huntflow-card .card-title {
+    color: var(--color-btn-primary-text);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: 0;
+    font-size: var(--font-size-lg);
+}
+
+.huntflow-card .card-body {
+    padding: var(--space-24);
+    background: var(--huntflow-card-bg);
+    color: var(--huntflow-text);
+}
+
+/* === СТИЛИ ДЛЯ ФОРМ HUNTFLOW === */
+.huntflow-form .form-control {
+    border: 1px solid var(--huntflow-border);
+    border-radius: var(--radius-base);
+    padding: var(--space-12) var(--space-16);
+    transition: all var(--duration-normal) var(--ease-standard);
+    font-size: var(--font-size-base);
+    background-color: var(--huntflow-card-bg);
+    color: var(--huntflow-text);
+    font-family: var(--font-family-base);
+}
+
+.huntflow-form .form-control::placeholder {
+    color: var(--huntflow-text-muted);
+    opacity: 1;
+}
+
+.huntflow-form .form-control:focus {
+    border-color: var(--huntflow-primary);
+    box-shadow: var(--focus-ring);
+    background-color: var(--huntflow-card-bg);
+    outline: none;
+}
+
+.huntflow-form .form-label {
+    color: var(--huntflow-text);
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--space-12);
+    font-size: var(--font-size-sm);
+}
+
+.huntflow-form .form-text {
+    color: var(--huntflow-text-muted);
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-8);
+}
+
+.huntflow-form .form-select {
+    border: 1px solid var(--huntflow-border);
+    border-radius: var(--radius-base);
+    padding: var(--space-12) var(--space-16);
+    transition: all var(--duration-normal) var(--ease-standard);
+    background-color: var(--huntflow-card-bg);
+    color: var(--huntflow-text);
+    font-size: var(--font-size-base);
+}
+
+.huntflow-form .form-select:focus {
+    border-color: var(--huntflow-primary);
+    box-shadow: var(--focus-ring);
+    outline: none;
+}
+
+/* === СТИЛИ ДЛЯ КНОПОК HUNTFLOW === */
+.huntflow-btn {
+    border-radius: var(--radius-base);
+    padding: var(--space-12) var(--space-24);
+    font-weight: var(--font-weight-medium);
+    transition: all var(--duration-normal) var(--ease-standard);
+    border: none;
+    font-size: var(--font-size-base);
+    font-family: var(--font-family-base);
+}
+
+.huntflow-btn-primary {
+    background: var(--huntflow-gradient);
+    color: var(--color-btn-primary-text);
+}
+
+.huntflow-btn-primary:hover {
+    background: var(--huntflow-gradient-hover);
+    transform: translateY(-1px);
+    color: var(--color-btn-primary-text);
+    box-shadow: var(--shadow-sm);
+}
+
+.huntflow-btn-outline-primary {
+    background: transparent;
+    color: var(--huntflow-primary);
+    border: 1px solid var(--huntflow-primary);
+}
+
+.huntflow-btn-outline-primary:hover {
+    background: var(--huntflow-primary);
+    color: var(--color-btn-primary-text);
+    transform: translateY(-1px);
+}
+
+.huntflow-btn-outline-warning {
+    background: transparent;
+    color: var(--huntflow-warning);
+    border: 1px solid var(--huntflow-warning);
+}
+
+.huntflow-btn-outline-warning:hover {
+    background: var(--huntflow-warning);
+    color: var(--color-btn-primary-text);
+    transform: translateY(-1px);
+}
+
+.huntflow-btn-outline-info {
+    background: transparent;
+    color: var(--huntflow-secondary);
+    border: 1px solid var(--huntflow-secondary);
+}
+
+.huntflow-btn-outline-info:hover {
+    background: var(--huntflow-secondary);
+    color: var(--color-btn-primary-text);
+    transform: translateY(-1px);
+}
+
+/* === СТИЛИ ДЛЯ АНКЕТЫ КАНДИДАТА === */
+.questionary-field {
+    transition: all var(--duration-fast) var(--ease-standard);
+    padding: var(--space-8);
+    border-radius: var(--radius-base);
+    margin-bottom: var(--space-8);
+    color: var(--huntflow-text);
+}
+
+.questionary-field:hover {
+    background-color: var(--huntflow-hover-bg);
+    border-radius: var(--radius-base);
+    padding: var(--space-8);
+    margin: calc(-1 * var(--space-8));
+}
+
+.questionary-title {
+    color: var(--huntflow-text-medium);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-4);
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-tight);
+}
+
+.questionary-value {
+    color: var(--huntflow-text);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+    word-break: break-word;
+}
+
+.questionary-section {
+    background: var(--huntflow-tertiary-bg);
+    border-radius: var(--radius-md);
+    padding: var(--space-16);
+    margin-bottom: var(--space-16);
+    border-left: var(--space-4) solid var(--huntflow-primary);
+}
+
+.questionary-section h6 {
+    color: var(--huntflow-primary);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-16);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-tight);
+    font-size: var(--font-size-sm);
+}
+
+/* === СТИЛИ ДЛЯ ИНФОРМАЦИИ О КАНДИДАТЕ === */
+.applicant-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-16);
+    margin-bottom: var(--space-24);
+}
+
+.applicant-info-item {
+    background: var(--huntflow-tertiary-bg);
+    border-radius: var(--radius-base);
+    padding: var(--space-16);
+    border-left: var(--space-4) solid var(--huntflow-primary);
+    transition: all var(--duration-normal) var(--ease-standard);
+    color: var(--huntflow-text);
+}
+
+.applicant-info-item:hover {
+    background: var(--huntflow-hover-bg);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.applicant-info-label {
+    color: var(--huntflow-text-muted);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-tight);
+    margin-bottom: var(--space-4);
+}
+
+.applicant-info-value {
+    color: var(--huntflow-text);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+}
+
+/* === СТИЛИ ДЛЯ ФАЙЛОВ И ВЛОЖЕНИЙ === */
+.huntflow-file-item {
+    display: flex;
+    align-items: center;
+    padding: var(--space-12);
+    background: var(--huntflow-tertiary-bg);
+    border-radius: var(--radius-base);
+    margin-bottom: var(--space-8);
+    transition: all var(--duration-normal) var(--ease-standard);
+    border: 1px solid var(--huntflow-border-light);
+    color: var(--huntflow-text);
+}
+
+.huntflow-file-item:hover {
+    background: var(--huntflow-hover-bg);
+    transform: translateX(var(--space-4));
+    box-shadow: var(--shadow-sm);
+    border-color: var(--huntflow-primary);
+}
+
+.huntflow-file-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--huntflow-gradient);
+    border-radius: var(--radius-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-btn-primary-text);
+    margin-right: var(--space-16);
+    font-size: var(--font-size-lg);
+}
+
+.huntflow-file-info {
+    flex-grow: 1;
+}
+
+.huntflow-file-name {
+    font-weight: var(--font-weight-semibold);
+    color: var(--huntflow-text);
+    margin-bottom: var(--space-4);
+    font-size: var(--font-size-base);
+}
+
+.huntflow-file-meta {
+    font-size: var(--font-size-xs);
+    color: var(--huntflow-text-muted);
+}
+
+.huntflow-file-actions {
+    display: flex;
+    gap: var(--space-8);
+}
+
+/* === СТИЛИ ДЛЯ КОММЕНТАРИЕВ === */
+.huntflow-comment {
+    background: var(--huntflow-tertiary-bg);
+    border-radius: var(--radius-md);
+    padding: var(--space-16);
+    margin-bottom: var(--space-16);
+    border-left: var(--space-4) solid var(--huntflow-primary);
+    transition: all var(--duration-normal) var(--ease-standard);
+    color: var(--huntflow-text);
+}
+
+.huntflow-comment:hover {
+    background: var(--huntflow-hover-bg);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.huntflow-comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-12);
+}
+
+.huntflow-comment-author {
+    font-weight: var(--font-weight-semibold);
+    color: var(--huntflow-primary);
+    font-size: var(--font-size-base);
+}
+
+.huntflow-comment-date {
+    font-size: var(--font-size-xs);
+    color: var(--huntflow-text-muted);
+}
+
+.huntflow-comment-content {
+    color: var(--huntflow-text);
+    line-height: var(--line-height-normal);
+    font-size: var(--font-size-base);
+}
+
+/* === СТИЛИ ДЛЯ СТАТИСТИКИ === */
+.huntflow-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-16);
+    margin-bottom: var(--space-24);
+}
+
+.huntflow-stat-card {
+    background: var(--huntflow-gradient);
+    color: var(--color-btn-primary-text);
+    border-radius: var(--radius-md);
+    padding: var(--space-24);
+    text-align: center;
+    transition: all var(--duration-normal) var(--ease-standard);
+    border: 1px solid var(--huntflow-primary);
+}
+
+.huntflow-stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+    background: var(--huntflow-gradient-hover);
+}
+
+.huntflow-stat-number {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--space-8);
+}
+
+.huntflow-stat-label {
+    font-size: var(--font-size-sm);
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-tight);
+}
+
+/* === СТИЛИ ДЛЯ ФИЛЬТРОВ === */
+.huntflow-filters {
+    background: var(--huntflow-tertiary-bg);
+    border-radius: var(--radius-md);
+    padding: var(--space-16);
+    margin-bottom: var(--space-24);
+    border: 1px solid var(--huntflow-border-light);
+    color: var(--huntflow-text);
+}
+
+.huntflow-filters .form-control,
+.huntflow-filters .form-select {
+    border: 1px solid var(--huntflow-border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-8) var(--space-12);
+    font-size: var(--font-size-sm);
+    background-color: var(--huntflow-card-bg);
+    color: var(--huntflow-text);
+}
+
+.huntflow-filters .form-control::placeholder {
+    color: var(--huntflow-text-muted);
+    opacity: 1;
+}
+
+.huntflow-filters .form-control:focus,
+.huntflow-filters .form-select:focus {
+    border-color: var(--huntflow-primary);
+    box-shadow: var(--focus-ring);
+    outline: none;
+}
+
+/* === СТИЛИ ДЛЯ ПОЛЯ МЕТОК (TOKENFIELD) === */
+.tokenfield-container {
+    position: relative;
+    border: 1px solid var(--huntflow-border);
+    border-radius: var(--radius-base);
+    background-color: var(--huntflow-card-bg);
+    min-height: 40px;
+    padding: var(--space-8);
+    transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.tokenfield-container:focus-within {
+    border-color: var(--huntflow-primary);
+    box-shadow: var(--focus-ring);
+}
+
+.selected-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-6);
+    min-height: 24px;
+}
+
+.tag-token {
+    display: inline-flex;
+    align-items: center;
+    background: var(--huntflow-gradient);
+    color: var(--color-btn-primary-text);
+    border-radius: var(--radius-full);
+    padding: var(--space-4) var(--space-8);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    transition: all var(--duration-normal) var(--ease-standard);
+    animation: tagSlideIn 0.3s ease-out;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tag-token.removing {
+    animation: tagSlideOut 0.3s ease-in forwards;
+}
+
+.tag-token .badge {
+    background-color: inherit !important;
+    color: inherit !important;
+    padding: var(--space-4) var(--space-8);
+    margin: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tag-token .btn-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: var(--color-btn-primary-text);
+    font-size: var(--font-size-xs);
+    margin-left: var(--space-6);
+    padding: 0;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    transition: all var(--duration-fast) var(--ease-standard);
+    opacity: 0.8;
+    backdrop-filter: blur(5px);
+}
+
+.tag-token .btn-close:hover {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.tag-token .btn-close::before {
+    content: '×';
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+}
+
+.tag-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--huntflow-text);
+    font-size: var(--font-size-sm);
+    padding: var(--space-4) var(--space-8);
+    min-width: 200px;
+    flex: 1;
+    font-family: var(--font-family-base);
+}
+
+.tag-input::placeholder {
+    color: var(--huntflow-text-muted);
+}
+
+.tag-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--huntflow-card-bg);
+    border: 1px solid var(--huntflow-border);
+    border-top: none;
+    border-radius: 0 0 var(--radius-base) var(--radius-base);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: var(--shadow-md);
+    color: var(--huntflow-text);
+}
+
+.tag-option {
+    padding: var(--space-8) var(--space-12);
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-standard);
+    border-bottom: 1px solid var(--huntflow-border);
+    color: var(--huntflow-text);
+    font-size: var(--font-size-sm);
+}
+
+.tag-option:last-child {
+    border-bottom: none;
+}
+
+.tag-option:hover {
+    background-color: var(--huntflow-hover-bg);
+}
+
+.tag-option .badge {
+    font-size: var(--font-size-xs);
+    padding: var(--space-4) var(--space-8);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Стили для счетчика символов */
+.maxlength-feedback {
+    font-size: var(--font-size-xs);
+    margin-top: var(--space-4);
+    text-align: right;
+}
+
+.maxlength-feedback.success {
+    color: var(--huntflow-success);
+}
+
+.maxlength-feedback.warning {
+    color: var(--huntflow-warning);
+}
+
+.maxlength-feedback.danger {
+    color: var(--huntflow-danger);
+}
+
+/* === АДАПТИВНОСТЬ === */
+@media (max-width: 768px) {
+    .huntflow-card {
+        margin-bottom: var(--space-16);
+    }
+    
+    .huntflow-card .card-body {
+        padding: var(--space-16);
+    }
+    
+    .applicant-info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .huntflow-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .huntflow-file-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .huntflow-file-icon {
+        margin-right: 0;
+        margin-bottom: var(--space-8);
+    }
+    
+    .huntflow-comment-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-4);
+    }
+    
+    .huntflow-btn {
+        padding: var(--space-8) var(--space-16);
+        font-size: var(--font-size-sm);
+    }
+}
+
+/* Mobile responsive breakpoint */
+@media (max-width: 480px) {
+    .huntflow-card {
+        border-radius: var(--radius-base);
+        margin-bottom: var(--space-12);
+    }
+    
+    .huntflow-card .card-body {
+        padding: var(--space-12);
+    }
+    
+    .huntflow-card .card-header {
+        padding: var(--space-12) var(--space-16);
+        border-radius: var(--radius-base) var(--radius-base) 0 0;
+    }
+    
+    .huntflow-table .table th,
+    .huntflow-table .table td {
+        padding: var(--space-8);
+        font-size: var(--font-size-sm);
+    }
+    
+    .huntflow-stats-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-12);
+    }
+    
+    .huntflow-stat-card {
+        padding: var(--space-16);
+    }
+    
+    .huntflow-stat-number {
+        font-size: var(--font-size-3xl);
+    }
+    
+    .applicant-info-item {
+        padding: var(--space-12);
+    }
+    
+    .questionary-section {
+        padding: var(--space-12);
+        margin-bottom: var(--space-12);
+    }
+    
+    .huntflow-comment {
+        padding: var(--space-12);
+        margin-bottom: var(--space-12);
+    }
+    
+    .huntflow-filters {
+        padding: var(--space-12);
+        margin-bottom: var(--space-16);
+    }
+    
+    .huntflow-btn {
+        padding: var(--space-6) var(--space-12);
+        font-size: var(--font-size-xs);
+        border-radius: var(--radius-sm);
+    }
+    
+    .huntflow-badge {
+        padding: var(--space-4) var(--space-8);
+        font-size: 10px;
+    }
+    
+    .tag-input {
+        min-width: 120px;
+        font-size: var(--font-size-xs);
+    }
+    
+    .tokenfield-container {
+        min-height: 36px;
+        padding: var(--space-6);
+    }
+}
+
+/* === АНИМАЦИИ === */
+@keyframes huntflowFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(var(--space-20));
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes tagSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8) translateY(calc(-1 * var(--space-10)));
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes tagSlideOut {
+    from {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.8) translateY(calc(-1 * var(--space-10)));
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .huntflow-card {
+        animation: huntflowFadeIn 0.6s ease-out;
+    }
+
+    .applicant-info-item {
+        animation: huntflowFadeIn 0.6s ease-out;
+        animation-delay: 0.1s;
+        animation-fill-mode: both;
+    }
+
+    .huntflow-file-item {
+        animation: huntflowFadeIn 0.6s ease-out;
+        animation-delay: 0.2s;
+        animation-fill-mode: both;
+    }
+
+    .huntflow-comment {
+        animation: huntflowFadeIn 0.6s ease-out;
+        animation-delay: 0.3s;
+        animation-fill-mode: both;
+    }
+}
+
+/* === ДОПОЛНИТЕЛЬНЫЕ УТИЛИТЫ === */
+.huntflow-text-gradient {
+    background: var(--huntflow-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: var(--huntflow-primary); /* Fallback */
+}
+
+.huntflow-bg-gradient {
+    background: var(--huntflow-gradient);
+}
+
+.huntflow-shadow-soft {
+    box-shadow: var(--shadow-sm);
+}
+
+.huntflow-shadow-medium {
+    box-shadow: var(--shadow-md);
+}
+
+.huntflow-shadow-strong {
+    box-shadow: var(--shadow-lg);
+}

@@ -1,0 +1,1483 @@
+
+
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="kPMOg99Eom2F70qylpJKJAz9yQr3EmSz6UbqH3oLaFRZ3DyiMrLWYdeiExE0naQP">
+    <title>Дашборд - Локальные данные по вакансиям - HR Helper</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- HR Helper Custom CSS -->
+    <link href="static/css/hrhelper.css" rel="stylesheet">
+    
+    <!-- Адаптивный favicon -->
+    <link id="favicon" rel="icon" type="image/png" href="static/img/logo-dark.png">
+    
+    <!-- Стили для многоуровневого сайдбара теперь включены в hrhelper.css -->
+    
+        
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4 class="text-white">
+                            <i class="fas fa-sync-alt me-2"></i>
+                HR Helper
+                        </h4>
+                        <p class="text-white-50 small">Система управления HR</p>
+                    </div>
+                    
+                    <!-- Динамичное многоуровневое меню -->
+                    <ul class="nav flex-column">
+    <li class="nav-item  ">
+        <a class="nav-link" 
+           href="/google-oauth/chat/"
+           
+           
+           >
+            <div class="hrhelper-logo-adaptive" style="width: 38px; height: 38px; margin-top: -12px; margin-left: -11px; margin-bottom: -12px; margin-right: -4px;"></div>
+            Главная
+            
+        </a></li>
+    <li class="nav-item  ">
+        <a class="nav-link" 
+           href="/huntflow/"
+           
+           
+           >
+            <i class="fas fa-users me-2"></i>
+            Huntflow
+            
+        </a></li>
+    <li class="nav-item  has-submenu">
+        <a class="nav-link sidebar-toggle" 
+           href="/google-oauth/"
+           data-bs-toggle="collapse"
+           data-bs-target="#google_oauth-submenu-0"
+           aria-expanded="false">
+            <i class="fab fa-google me-2"></i>
+            Google OAuth
+            <i class="fas fa-chevron-down submenu-arrow ms-auto"></i>
+        </a>
+        <div class="collapse " id="google_oauth-submenu-0">
+            <ul class="nav flex-column">
+    <li class="nav-item ms-1 ">
+        <a class="nav-link" 
+           href="/google-oauth/calendar/"
+           
+           
+           >
+            <i class="fas fa-calendar me-2"></i>
+            Календарь
+            
+        </a></li>
+    <li class="nav-item ms-1 has-submenu">
+        <a class="nav-link sidebar-toggle" 
+           href="/google-oauth/invites/"
+           data-bs-toggle="collapse"
+           data-bs-target="#invites-submenu-1"
+           aria-expanded="false">
+            <i class="fas fa-envelope me-2"></i>
+            Инвайты
+            <i class="fas fa-chevron-down submenu-arrow ms-auto"></i>
+        </a>
+        <div class="collapse " id="invites-submenu-1">
+            <ul class="nav flex-column">
+    <li class="nav-item ms-2 ">
+        <a class="nav-link" 
+           href="/google-oauth/invites/list/"
+           
+           
+           >
+            <i class="fas fa-list me-2"></i>
+            Список инвайтов
+            
+        </a></li>
+    <li class="nav-item ms-2 ">
+        <a class="nav-link" 
+           href="/google-oauth/invites/create/"
+           
+           
+           >
+            <i class="fas fa-plus me-2"></i>
+            Создать инвайт
+            
+        </a></li>
+            </ul>
+        </div></li>
+            </ul>
+        </div></li>
+    <li class="nav-item  ">
+        <a class="nav-link" 
+           href="/gemini/"
+           
+           
+           >
+            <i class="fas fa-robot me-2"></i>
+            Gemini AI
+            
+        </a></li>
+    <li class="nav-item  has-submenu">
+        <a class="nav-link active sidebar-toggle" 
+           href="/vacancies/"
+           data-bs-toggle="collapse"
+           data-bs-target="#vacancies_finance-submenu-0"
+           aria-expanded="true">
+            <i class="fas fa-briefcase me-2"></i>
+            Вакансии и финансы
+            <i class="fas fa-chevron-down submenu-arrow ms-auto"></i>
+        </a>
+        <div class="collapse show" id="vacancies_finance-submenu-0">
+            <ul class="nav flex-column">
+    <li class="nav-item ms-1 ">
+        <a class="nav-link active" 
+           href="/vacancies/"
+           
+           
+           >
+            <i class="fas fa-tachometer-alt me-2"></i>
+            Дашборд
+            
+        </a></li>
+    <li class="nav-item ms-1 ">
+        <a class="nav-link" 
+           href="/vacancies/list/"
+           
+           
+           >
+            <i class="fas fa-list me-2"></i>
+            Вакансии
+            
+        </a></li>
+    <li class="nav-item ms-1 ">
+        <a class="nav-link" 
+           href="/vacancies/salary-ranges/"
+           
+           
+           >
+            <i class="fas fa-money-bill-wave me-2"></i>
+            Зарплатные вилки
+            
+        </a></li>
+    <li class="nav-item ms-1 ">
+        <a class="nav-link" 
+           href="/finance/"
+           
+           
+           >
+            <i class="fas fa-chart-line me-2"></i>
+            Грейды, налоги и курсы
+            
+        </a></li>
+    <li class="nav-item ms-1 has-submenu">
+        <a class="nav-link sidebar-toggle" 
+           href="/finance/benchmarks/"
+           data-bs-toggle="collapse"
+           data-bs-target="#benchmarks-submenu-1"
+           aria-expanded="false">
+            <i class="fas fa-chart-bar me-2"></i>
+            Бенчмарки
+            <i class="fas fa-chevron-down submenu-arrow ms-auto"></i>
+        </a>
+        <div class="collapse " id="benchmarks-submenu-1">
+            <ul class="nav flex-column">
+    <li class="nav-item ms-2 ">
+        <a class="nav-link" 
+           href="/finance/benchmarks/"
+           
+           
+           >
+            <i class="fas fa-tachometer-alt me-2"></i>
+            Dashboard
+            
+        </a></li>
+    <li class="nav-item ms-2 ">
+        <a class="nav-link" 
+           href="/finance/benchmarks/list/"
+           
+           
+           >
+            <i class="fas fa-list me-2"></i>
+            Все бенчмарки
+            
+        </a></li>
+    <li class="nav-item ms-2 ">
+        <a class="nav-link" 
+           href="/finance/benchmarks/settings/"
+           
+           
+           >
+            <i class="fas fa-cog me-2"></i>
+            Настройки
+            
+        </a></li>
+            </ul>
+        </div></li>
+            </ul>
+        </div></li>
+    <li class="nav-item  has-submenu">
+        <a class="nav-link sidebar-toggle" 
+           href="#"
+           data-bs-toggle="collapse"
+           data-bs-target="#interviewers-submenu-0"
+           aria-expanded="false">
+            <i class="fas fa-user-tie me-2"></i>
+            Интервьюеры
+            <i class="fas fa-chevron-down submenu-arrow ms-auto"></i>
+        </a>
+        <div class="collapse " id="interviewers-submenu-0">
+            <ul class="nav flex-column">
+    <li class="nav-item ms-1 ">
+        <a class="nav-link" 
+           href="/interviewers/list/"
+           
+           
+           >
+            <i class="fas fa-users me-2"></i>
+            Интервьюеры
+            
+        </a></li>
+    <li class="nav-item ms-1 ">
+        <a class="nav-link" 
+           href="/interviewers/rules/"
+           
+           
+           >
+            <i class="fas fa-gavel me-2"></i>
+            Правила привлечения
+            
+        </a></li>
+            </ul>
+        </div></li>
+    <li class="nav-item  has-submenu">
+        <a class="nav-link sidebar-toggle" 
+           href="/clickup/"
+           data-bs-toggle="collapse"
+           data-bs-target="#clickup_int-submenu-0"
+           aria-expanded="false">
+            <i class="fas fa-tasks me-2"></i>
+            ClickUp
+            <i class="fas fa-chevron-down submenu-arrow ms-auto"></i>
+        </a>
+        <div class="collapse " id="clickup_int-submenu-0">
+            <ul class="nav flex-column">
+    <li class="nav-item ms-1 ">
+        <a class="nav-link" 
+           href="/clickup/"
+           
+           
+           >
+            <i class="fas fa-tachometer-alt me-2"></i>
+            Главная
+            
+        </a></li>
+    <li class="nav-item ms-1 ">
+        <a class="nav-link" 
+           href="/clickup/tasks/"
+           
+           
+           >
+            <i class="fas fa-list me-2"></i>
+            Списки
+            
+        </a></li>
+    <li class="nav-item ms-1 ">
+        <a class="nav-link" 
+           href="/clickup/bulk-import/"
+           
+           
+           >
+            <i class="fas fa-upload me-2"></i>
+            Импорт
+            
+        </a></li>
+    <li class="nav-item ms-1 ">
+        <a class="nav-link" 
+           href="/clickup/sync-logs/"
+           
+           
+           >
+            <i class="fas fa-history me-2"></i>
+            Логи
+            
+        </a></li>
+    <li class="nav-item ms-1 ">
+        <a class="nav-link" 
+           href="/clickup/settings/"
+           
+           
+           >
+            <i class="fas fa-cog me-2"></i>
+            Настройки
+            
+        </a></li>
+            </ul>
+        </div></li>
+    <li class="nav-item  has-submenu">
+        <a class="nav-link sidebar-toggle" 
+           href="/notion/"
+           data-bs-toggle="collapse"
+           data-bs-target="#notion_int-submenu-0"
+           aria-expanded="false">
+            <i class="fas fa-sticky-note me-2"></i>
+            Notion
+            <i class="fas fa-chevron-down submenu-arrow ms-auto"></i>
+        </a>
+        <div class="collapse " id="notion_int-submenu-0">
+            <ul class="nav flex-column">
+    <li class="nav-item ms-1 ">
+        <a class="nav-link" 
+           href="/notion/"
+           
+           
+           >
+            <i class="fas fa-tachometer-alt me-2"></i>
+            Главная
+            
+        </a></li>
+    <li class="nav-item ms-1 ">
+        <a class="nav-link" 
+           href="/notion/pages/"
+           
+           
+           >
+            <i class="fas fa-list me-2"></i>
+            Списки
+            
+        </a></li>
+    <li class="nav-item ms-1 ">
+        <a class="nav-link" 
+           href="#"
+           
+           
+           >
+            <i class="fas fa-upload me-2"></i>
+            Импорт
+            
+        </a></li>
+    <li class="nav-item ms-1 ">
+        <a class="nav-link" 
+           href="/notion/logs/"
+           
+           
+           >
+            <i class="fas fa-history me-2"></i>
+            Логи
+            
+        </a></li>
+    <li class="nav-item ms-1 ">
+        <a class="nav-link" 
+           href="/notion/settings/"
+           
+           
+           >
+            <i class="fas fa-cog me-2"></i>
+            Настройки
+            
+        </a></li>
+            </ul>
+        </div></li>
+    <li class="nav-item  has-submenu">
+        <a class="nav-link sidebar-toggle" 
+           href="/telegram/dashboard/"
+           data-bs-toggle="collapse"
+           data-bs-target="#telegram-submenu-0"
+           aria-expanded="false">
+            <i class="fab fa-telegram me-2"></i>
+            Telegram
+            <i class="fas fa-chevron-down submenu-arrow ms-auto"></i>
+        </a>
+        <div class="collapse " id="telegram-submenu-0">
+            <ul class="nav flex-column">
+    <li class="nav-item ms-1 ">
+        <a class="nav-link" 
+           href="/telegram/dashboard/"
+           
+           
+           >
+            <i class="fas fa-comments me-2"></i>
+            Чаты
+            
+        </a></li>
+    <li class="nav-item ms-1 ">
+        <a class="nav-link" 
+           href="/telegram/dashboard/"
+           
+           
+           >
+            <i class="fas fa-address-book me-2"></i>
+            Контакты
+            
+        </a></li>
+    <li class="nav-item ms-1 ">
+        <a class="nav-link" 
+           href="/telegram/dashboard/"
+           
+           
+           >
+            <i class="fas fa-robot me-2"></i>
+            Автоматизация
+            
+        </a></li>
+            </ul>
+        </div></li></ul>
+
+                    <hr class="my-4" style="border-color: rgba(255,255,255,0.5); border-width: 1px;">
+                    <ul class="nav flex-column mb-2">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/accounts/">
+                                <i class="fas fa-user me-2"></i>
+                                Профиль
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/accounts/integrations/">
+                                <i class="fas fa-plug me-2"></i>
+                                Интеграции
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/">
+                                <i class="fas fa-cog me-2"></i>
+                                Admin-панель
+                            </a>
+                        </li>
+                    </ul>
+            </div>
+            </nav>
+            
+            
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    
+                    <h1 class="h2">
+                        Дашборд локальных данных по вакансиям
+                    </h1>
+                    
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <!-- Переключатель темы -->
+                        <div class="btn-group me-3" role="group">
+                            <button type="button" class="btn btn-outline-secondary theme-toggle" id="themeToggle" title="Переключить тему">
+                                <i class="fas fa-sun" id="themeIcon"></i>
+                </button>
+            </div>
+            
+                    
+                            <div class="btn-group me-3" role="group">
+                                <a href="/accounts/" class="btn btn-outline-primary">
+                                    <i class="fas fa-user me-1"></i>
+                                    demo@hrhelper.com
+                                </a>
+                                <a href="/accounts/logout/" class="btn btn-outline-danger">
+                                    <i class="fas fa-sign-out-alt me-1"></i>
+                                    Выход
+                                </a>
+                            </div>
+                    
+                        
+            </div>
+        </div>
+
+                <!-- Messages -->
+    
+
+                <!-- Page content -->
+        
+<div class="row">
+    <!-- Статистика -->
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">0</h4>
+                        <p class="card-text">Всего вакансий</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-briefcase fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">0</h4>
+                        <p class="card-text">Активных</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">0</h4>
+                        <p class="card-text">Неактивных</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-pause-circle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">8</h4>
+                        <p class="card-text">Грейдов</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-star fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Статистика по зарплатным вилкам -->
+<div class="row">
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-secondary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">7</h4>
+                        <p class="card-text">Зарплатных вилок</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-money-bill-wave fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">7</h4>
+                        <p class="card-text">Активных вилок</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">0</h4>
+                        <p class="card-text">Неактивных вилок</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-pause-circle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Быстрые действия -->
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-tachometer-alt me-2"></i>
+                    Быстрые действия
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <a href="/vacancies/create/" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-plus me-2"></i>
+                            Добавить вакансию
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="/vacancies/list/" class="btn btn-outline-primary btn-lg w-100">
+                            <i class="fas fa-list me-2"></i>
+                            Список вакансий
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="/vacancies/salary-ranges/create/" class="btn btn-success btn-lg w-100">
+                            <i class="fas fa-plus me-2"></i>
+                            Добавить зарплатную вилку
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="/vacancies/salary-ranges/" class="btn btn-outline-success btn-lg w-100">
+                            <i class="fas fa-money-bill-wave me-2"></i>
+                            Зарплатные вилки
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="/finance/" class="btn btn-outline-info btn-lg w-100">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Грейды и курсы валют
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="/admin/vacancies/vacancy/" class="btn btn-outline-secondary btn-lg w-100">
+                            <i class="fas fa-cog me-2"></i>
+                            Админка
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Последние добавленные -->
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-clock me-2"></i>
+                    Последние вакансии
+                </h5>
+            </div>
+            <div class="card-body">
+                
+                    <p class="text-muted text-center">Нет вакансий</p>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Последние зарплатные вилки -->
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-money-bill-wave me-2"></i>
+                    Последние зарплатные вилки
+                </h5>
+                <a href="/vacancies/salary-ranges/" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-list me-1"></i>
+                    Все вилки
+                </a>
+            </div>
+            <div class="card-body">
+                
+                    <div class="row">
+                        
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-primary">Senior</span>
+                                            
+                                                <span class="badge bg-success">Активна</span>
+                                            
+                                        </div>
+                                        
+                                        <div class="mb-2">
+                                            <small class="text-muted">USD:</small>
+                                            <div class="fw-bold text-primary">
+                                                $2500,00 - $3500,00
+                                            </div>
+                                        </div>
+                                        
+                                        
+                                            <div class="mb-2">
+                                                <small class="text-muted">BYN:</small>
+                                                <div class="fw-bold text-info">
+                                                    7604,75 - 10646,65 BYN
+                                                </div>
+                                            </div>
+                                        
+                                        
+                                        
+                                            <div class="mb-2">
+                                                <small class="text-muted">PLN:</small>
+                                                <div class="fw-bold text-warning">
+                                                    17100,40 - 23940,56 PLN
+                                                </div>
+                                            </div>
+                                        
+                                        
+                                        <div class="mt-2">
+                                            <small class="text-muted">
+                                                Обновлено: 18.09.2025 16:31
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="btn-group w-100" role="group">
+                                            <a href="/vacancies/salary-ranges/7/" 
+                                               class="btn btn-outline-primary btn-sm" title="Просмотр">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="/vacancies/salary-ranges/7/edit/" 
+                                               class="btn btn-outline-warning btn-sm" title="Редактировать">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-primary">Middle+</span>
+                                            
+                                                <span class="badge bg-success">Активна</span>
+                                            
+                                        </div>
+                                        
+                                        <div class="mb-2">
+                                            <small class="text-muted">USD:</small>
+                                            <div class="fw-bold text-primary">
+                                                $1900,00 - $2500,00
+                                            </div>
+                                        </div>
+                                        
+                                        
+                                            <div class="mb-2">
+                                                <small class="text-muted">BYN:</small>
+                                                <div class="fw-bold text-info">
+                                                    5779,61 - 7604,75 BYN
+                                                </div>
+                                            </div>
+                                        
+                                        
+                                        
+                                            <div class="mb-2">
+                                                <small class="text-muted">PLN:</small>
+                                                <div class="fw-bold text-warning">
+                                                    12996,31 - 17100,40 PLN
+                                                </div>
+                                            </div>
+                                        
+                                        
+                                        <div class="mt-2">
+                                            <small class="text-muted">
+                                                Обновлено: 18.09.2025 16:31
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="btn-group w-100" role="group">
+                                            <a href="/vacancies/salary-ranges/6/" 
+                                               class="btn btn-outline-primary btn-sm" title="Просмотр">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="/vacancies/salary-ranges/6/edit/" 
+                                               class="btn btn-outline-warning btn-sm" title="Редактировать">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-primary">Middle</span>
+                                            
+                                                <span class="badge bg-success">Активна</span>
+                                            
+                                        </div>
+                                        
+                                        <div class="mb-2">
+                                            <small class="text-muted">USD:</small>
+                                            <div class="fw-bold text-primary">
+                                                $1500,00 - $1900,00
+                                            </div>
+                                        </div>
+                                        
+                                        
+                                            <div class="mb-2">
+                                                <small class="text-muted">BYN:</small>
+                                                <div class="fw-bold text-info">
+                                                    4562,85 - 5779,61 BYN
+                                                </div>
+                                            </div>
+                                        
+                                        
+                                        
+                                            <div class="mb-2">
+                                                <small class="text-muted">PLN:</small>
+                                                <div class="fw-bold text-warning">
+                                                    10260,24 - 12996,31 PLN
+                                                </div>
+                                            </div>
+                                        
+                                        
+                                        <div class="mt-2">
+                                            <small class="text-muted">
+                                                Обновлено: 18.09.2025 16:31
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="btn-group w-100" role="group">
+                                            <a href="/vacancies/salary-ranges/5/" 
+                                               class="btn btn-outline-primary btn-sm" title="Просмотр">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="/vacancies/salary-ranges/5/edit/" 
+                                               class="btn btn-outline-warning btn-sm" title="Редактировать">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-primary">Junior+</span>
+                                            
+                                                <span class="badge bg-success">Активна</span>
+                                            
+                                        </div>
+                                        
+                                        <div class="mb-2">
+                                            <small class="text-muted">USD:</small>
+                                            <div class="fw-bold text-primary">
+                                                $1500,00 - $3000,00
+                                            </div>
+                                        </div>
+                                        
+                                        
+                                            <div class="mb-2">
+                                                <small class="text-muted">BYN:</small>
+                                                <div class="fw-bold text-info">
+                                                    4562,85 - 9125,70 BYN
+                                                </div>
+                                            </div>
+                                        
+                                        
+                                        
+                                            <div class="mb-2">
+                                                <small class="text-muted">PLN:</small>
+                                                <div class="fw-bold text-warning">
+                                                    10260,24 - 20520,48 PLN
+                                                </div>
+                                            </div>
+                                        
+                                        
+                                        <div class="mt-2">
+                                            <small class="text-muted">
+                                                Обновлено: 18.09.2025 16:31
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="btn-group w-100" role="group">
+                                            <a href="/vacancies/salary-ranges/4/" 
+                                               class="btn btn-outline-primary btn-sm" title="Просмотр">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="/vacancies/salary-ranges/4/edit/" 
+                                               class="btn btn-outline-warning btn-sm" title="Редактировать">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-primary">Junior+</span>
+                                            
+                                                <span class="badge bg-success">Активна</span>
+                                            
+                                        </div>
+                                        
+                                        <div class="mb-2">
+                                            <small class="text-muted">USD:</small>
+                                            <div class="fw-bold text-primary">
+                                                $1000,00 - $1500,00
+                                            </div>
+                                        </div>
+                                        
+                                        
+                                            <div class="mb-2">
+                                                <small class="text-muted">BYN:</small>
+                                                <div class="fw-bold text-info">
+                                                    3041,90 - 4562,85 BYN
+                                                </div>
+                                            </div>
+                                        
+                                        
+                                        
+                                            <div class="mb-2">
+                                                <small class="text-muted">PLN:</small>
+                                                <div class="fw-bold text-warning">
+                                                    6840,16 - 10260,24 PLN
+                                                </div>
+                                            </div>
+                                        
+                                        
+                                        <div class="mt-2">
+                                            <small class="text-muted">
+                                                Обновлено: 18.09.2025 16:31
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="btn-group w-100" role="group">
+                                            <a href="/vacancies/salary-ranges/3/" 
+                                               class="btn btn-outline-primary btn-sm" title="Просмотр">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="/vacancies/salary-ranges/3/edit/" 
+                                               class="btn btn-outline-warning btn-sm" title="Редактировать">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-primary">Junior</span>
+                                            
+                                                <span class="badge bg-success">Активна</span>
+                                            
+                                        </div>
+                                        
+                                        <div class="mb-2">
+                                            <small class="text-muted">USD:</small>
+                                            <div class="fw-bold text-primary">
+                                                $600,00 - $1000,00
+                                            </div>
+                                        </div>
+                                        
+                                        
+                                            <div class="mb-2">
+                                                <small class="text-muted">BYN:</small>
+                                                <div class="fw-bold text-info">
+                                                    1825,14 - 3041,90 BYN
+                                                </div>
+                                            </div>
+                                        
+                                        
+                                        
+                                            <div class="mb-2">
+                                                <small class="text-muted">PLN:</small>
+                                                <div class="fw-bold text-warning">
+                                                    4104,10 - 6840,16 PLN
+                                                </div>
+                                            </div>
+                                        
+                                        
+                                        <div class="mt-2">
+                                            <small class="text-muted">
+                                                Обновлено: 18.09.2025 16:31
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="btn-group w-100" role="group">
+                                            <a href="/vacancies/salary-ranges/2/" 
+                                               class="btn btn-outline-primary btn-sm" title="Просмотр">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="/vacancies/salary-ranges/2/edit/" 
+                                               class="btn btn-outline-warning btn-sm" title="Редактировать">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                    </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Информация о системе -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Информация о системе
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Возможности системы:</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Управление локальными данными по вакансиям</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Зарплатные вилки по грейдам в разных валютах</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Привязка интервьюеров к вакансиям</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Настройка промптов для AI</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Вопросы для интервью по странам</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Интеграция с Scorecard</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Следующие шаги:</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-arrow-right text-primary me-2"></i>Создайте зарплатные вилки для грейдов</li>
+                            <li><i class="fas fa-arrow-right text-primary me-2"></i>Создайте первую вакансию</li>
+                            <li><i class="fas fa-arrow-right text-primary me-2"></i>Настройте интервьюеров</li>
+                            <li><i class="fas fa-arrow-right text-primary me-2"></i>Добавьте вопросы для интервью</li>
+                            <li><i class="fas fa-arrow-right text-primary me-2"></i>Настройте промпты для AI</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Основные скрипты для всех страниц -->
+    <script>
+        // Общие функции для всех приложений
+        function showLoading(element) {
+            element.innerHTML = '<span class="loading-spinner"></span> Загрузка...';
+            element.disabled = true;
+        }
+        
+        function hideLoading(element, originalText) {
+            element.innerHTML = originalText;
+            element.disabled = false;
+        }
+        
+        function showAlert(message, type = 'info') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            const container = document.querySelector('.container-fluid');
+            container.insertBefore(alertDiv, container.firstChild);
+            
+            // Автоматически скрыть через 5 секунд
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+        
+        // Функциональность многоуровневого сайдбара
+        document.addEventListener('DOMContentLoaded', function() {
+            // Проверяем, находимся ли мы на странице "Главная" (чат-помощник)
+            const isMainPage = window.location.pathname.includes('/google-oauth/chat/');
+            
+            // Сначала сворачиваем ВСЕ меню
+            const allCollapseElements = document.querySelectorAll('.sidebar .collapse');
+            allCollapseElements.forEach(element => {
+                element.classList.remove('show');
+                const toggle = document.querySelector(`[data-bs-target="#${element.id}"]`);
+                if (toggle) {
+                    toggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+            
+            // Если мы на главной странице (чат-помощник), не разворачиваем никаких меню
+            if (isMainPage) {
+                // Убираем класс active со всех элементов на главной странице, кроме самой главной
+                const allNavLinks = document.querySelectorAll('.sidebar .nav-link');
+                allNavLinks.forEach(link => {
+                    // Проверяем, не является ли это ссылкой на главную страницу
+                    const href = link.getAttribute('href');
+                    if (href && !href.includes('/google-oauth/chat/')) {
+                        link.classList.remove('active');
+                    }
+                });
+                console.log('🏠 Главная страница: убран класс active со всех элементов, кроме главной');
+                return; // Выходим из функции, оставляя все меню свернутыми
+            }
+            
+            // Находим все активные элементы меню
+            const activeMenuItems = document.querySelectorAll('.sidebar .nav-link.active');
+            
+            // Для каждого активного элемента, разворачиваем только родительские меню
+            activeMenuItems.forEach(function(activeItem) {
+                let currentItem = activeItem.closest('.nav-item');
+                
+                // Поднимаемся по иерархии и разворачиваем только родительские меню
+                while (currentItem) {
+                    const parentToggle = currentItem.querySelector('.sidebar-toggle');
+                    if (parentToggle) {
+                        const targetId = parentToggle.getAttribute('data-bs-target');
+                        const targetElement = document.querySelector(targetId);
+                        
+                        if (targetElement) {
+                            targetElement.classList.add('show');
+                            parentToggle.setAttribute('aria-expanded', 'true');
+                        }
+                    }
+                    
+                    // Переходим к следующему родительскому элементу
+                    currentItem = currentItem.parentElement.closest('.nav-item');
+                }
+            });
+            
+            // Обработка кликов по многоуровневому меню
+            const sidebarToggles = document.querySelectorAll('.sidebar-toggle');
+            
+            sidebarToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(e) {
+                    // Если это ссылка с подменю - предотвратить переход
+                    if (this.dataset.bsToggle === 'collapse') {
+                        e.preventDefault();
+                        
+                        // Определяем уровень текущего элемента
+                        const currentNavItem = this.closest('.nav-item');
+                        const currentLevel = currentNavItem.classList.contains('ms-1') ? 1 : 
+                                           currentNavItem.classList.contains('ms-2') ? 2 : 0;
+                        
+                        // Сворачиваем только меню того же уровня
+                        const allCollapses = document.querySelectorAll('.sidebar .collapse');
+                        allCollapses.forEach(collapse => {
+                            if (collapse.id !== this.dataset.bsTarget.replace('#', '')) {
+                                const collapseToggle = document.querySelector(`[data-bs-target="#${collapse.id}"]`);
+                                if (collapseToggle) {
+                                    const collapseNavItem = collapseToggle.closest('.nav-item');
+                                    const collapseLevel = collapseNavItem.classList.contains('ms-1') ? 1 : 
+                                                        collapseNavItem.classList.contains('ms-2') ? 2 : 0;
+                                    
+                                    // Сворачиваем только если это тот же уровень
+                                    if (collapseLevel === currentLevel) {
+                                        collapse.classList.remove('show');
+                                        collapseToggle.setAttribute('aria-expanded', 'false');
+                                    }
+                                }
+                            }
+                        });
+                        
+                        // Переключаем текущее меню
+                        const targetId = this.dataset.bsTarget.replace('#', '');
+                        const targetElement = document.querySelector(this.dataset.bsTarget);
+                        const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                        
+                        if (isExpanded) {
+                            // Сворачиваем
+                            targetElement.classList.remove('show');
+                            this.setAttribute('aria-expanded', 'false');
+                        } else {
+                            // Разворачиваем
+                            targetElement.classList.add('show');
+                            this.setAttribute('aria-expanded', 'true');
+                        }
+                    }
+                });
+            });
+        });
+        
+        // ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ - теперь работает везде:
+        
+        // Функция для обновления favicon в зависимости от темы
+        function updateFavicon(theme) {
+            const favicon = document.getElementById('favicon');
+            if (favicon) {
+                // Используем отдельные файлы для каждой темы
+                if (theme === 'dark') {
+                    // Темная тема: используем светлый логотип
+                    favicon.href = 'static/img/logo-light.png';
+                } else {
+                    // Светлая тема: используем темный логотип
+                    favicon.href = 'static/img/logo-dark.png';
+                }
+            }
+        }
+        
+        // Функция для переключения темы
+        function toggleTheme() {
+            console.log('🎨 Переключение темы...');
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            console.log('📊 Текущая тема:', currentTheme);
+            console.log('🎯 Новая тема:', newTheme);
+            
+            // Устанавливаем новую тему
+            html.setAttribute('data-theme', newTheme);
+            console.log('✅ Атрибут data-theme установлен:', html.getAttribute('data-theme'));
+            
+            // Проверяем, что атрибут действительно установлен
+            setTimeout(() => {
+                console.log('🔍 Проверка после переключения:', html.getAttribute('data-theme'));
+            }, 100);
+            
+            // Принудительно обновляем CSS переменные
+            const root = document.documentElement;
+            if (newTheme === 'dark') {
+                root.style.setProperty('--color-background', '#0d1117');
+                root.style.setProperty('--color-surface', '#161b22');
+                root.style.setProperty('--color-text', 'var(--color-luna-400)');
+                root.style.setProperty('--color-primary', 'var(--color-pink-400)');
+                console.log('🌙 Принудительно установлены темные цвета');
+            } else {
+                root.style.setProperty('--color-background', '#ffffff');
+                root.style.setProperty('--color-surface', '#ffffff');
+                root.style.setProperty('--color-text', '#13343b');
+                root.style.setProperty('--color-primary', 'var(--color-lime-500)'); // Теперь синий
+                console.log('☀️ Принудительно установлены светлые цвета (лайм теперь синий)');
+            }
+            
+            // Сохраняем в localStorage
+            localStorage.setItem('theme', newTheme);
+            console.log('💾 Тема сохранена в localStorage:', localStorage.getItem('theme'));
+            
+            // Обновляем иконку
+            updateThemeIcon(newTheme);
+            
+            // Обновляем favicon
+            updateFavicon(newTheme);
+            
+            // Показываем уведомление
+            showThemeNotification(newTheme);
+        }
+        
+        // Функция для обновления иконки темы
+        function updateThemeIcon(theme) {
+            const themeIcon = document.getElementById('themeIcon');
+            if (themeIcon) {
+                if (theme === 'dark') {
+                    themeIcon.className = 'fas fa-moon';
+                } else {
+                    themeIcon.className = 'fas fa-sun';
+                }
+                console.log('🎨 Иконка обновлена для темы:', theme);
+            }
+        }
+        
+        // Функция для показа уведомления о смене темы
+        function showThemeNotification(theme) {
+            const themeName = theme === 'dark' ? 'Тёмная' : 'Светлая';
+            
+            // Создаем уведомление
+            const notification = document.createElement('div');
+            notification.className = 'alert alert-info alert-dismissible fade show position-fixed toast-notification';
+            notification.style.cssText = 'bottom: 20px; left: 20px; z-index: 9999; transition: all 0.3s ease;';
+            
+            notification.innerHTML = `
+                <i class="fas fa-${theme === 'dark' ? 'moon' : 'sun'} me-2"></i>
+                Переключено на ${themeName} тему
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            // Добавляем обработчик для кнопки закрытия
+            const closeButton = notification.querySelector('.btn-close');
+            closeButton.addEventListener('click', function() {
+                // Удаляем тост
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                    
+                    // Пересчитываем позиции оставшихся тостов на основе их реальной высоты
+                    const remainingToasts = document.querySelectorAll('.toast-notification');
+                    let currentBottom = 20;
+                    remainingToasts.forEach((toast) => {
+                        toast.style.bottom = `${currentBottom}px`;
+                        const toastHeight = toast.offsetHeight;
+                        const margin = 10; // отступ между тостами
+                        currentBottom += toastHeight + margin;
+                    });
+                }
+            });
+            
+            // Подсчитываем существующие тосты
+            const existingToasts = document.querySelectorAll('.toast-notification');
+            
+            // Добавляем на страницу сначала
+            document.body.appendChild(notification);
+            
+            // Позиционируем новый тост в самом низу
+            notification.style.bottom = '20px';
+            
+            // Поднимаем все существующие тосты вверх на основе их реальной высоты
+            let currentBottom = 20;
+            existingToasts.forEach((toast) => {
+                const toastHeight = toast.offsetHeight;
+                const margin = 10; // отступ между тостами
+                currentBottom += toastHeight + margin;
+                toast.style.bottom = `${currentBottom}px`;
+            });
+            
+            // Автоматически удаляем через 3 секунды
+            setTimeout(function() {
+                if (notification.parentNode) {
+                    // Удаляем тост
+                    notification.parentNode.removeChild(notification);
+                    
+                    // Пересчитываем позиции оставшихся тостов на основе их реальной высоты
+                    const remainingToasts = document.querySelectorAll('.toast-notification');
+                    let currentBottom = 20;
+                    remainingToasts.forEach((toast) => {
+                        toast.style.bottom = `${currentBottom}px`;
+                        const toastHeight = toast.offsetHeight;
+                        const margin = 10; // отступ между тостами
+                        currentBottom += toastHeight + margin;
+                    });
+                }
+            }, 3000);
+        }
+
+        // Функция для очистки всех тостов
+        function clearAllToasts() {
+            const existingToasts = document.querySelectorAll('.toast-notification');
+            existingToasts.forEach(toast => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            });
+        }
+
+        // Инициализация темы при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Инициализация переключателя темы...');
+            
+            // Очищаем все старые тосты при загрузке страницы
+            clearAllToasts();
+            
+            // Получаем сохраненную тему или используем системную
+            const savedTheme = localStorage.getItem('theme');
+            const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            const theme = savedTheme || systemTheme;
+            
+            console.log('💾 Сохраненная тема:', savedTheme);
+            console.log('🖥️ Системная тема:', systemTheme);
+            console.log('🎯 Выбранная тема:', theme);
+            
+            // Устанавливаем тему
+            document.documentElement.setAttribute('data-theme', theme);
+            console.log('✅ Атрибут data-theme установлен при загрузке:', document.documentElement.getAttribute('data-theme'));
+            
+            // Проверяем, что атрибут действительно установлен
+            setTimeout(() => {
+                console.log('🔍 Проверка через 100ms:', document.documentElement.getAttribute('data-theme'));
+            }, 100);
+            
+            // Принудительно обновляем CSS переменные при загрузке
+            const root = document.documentElement;
+            if (theme === 'dark') {
+                root.style.setProperty('--color-background', '#0d1117');
+                root.style.setProperty('--color-surface', '#161b22');
+                root.style.setProperty('--color-text', 'var(--color-luna-400)');
+                root.style.setProperty('--color-primary', 'var(--color-pink-400)');
+                console.log('🌙 Принудительно установлены темные цвета при загрузке');
+            } else {
+                root.style.setProperty('--color-background', '#ffffff');
+                root.style.setProperty('--color-surface', '#ffffff');
+                root.style.setProperty('--color-text', '#13343b');
+                root.style.setProperty('--color-primary', 'var(--color-lime-500)'); // Теперь синий
+                console.log('☀️ Принудительно установлены светлые цвета при загрузке (лайм теперь синий)');
+            }
+            
+            // Обновляем иконку
+            updateThemeIcon(theme);
+            
+            // Обновляем favicon
+            updateFavicon(theme);
+            
+            // Добавляем обработчик клика на кнопку переключения темы
+            const themeToggle = document.getElementById('themeToggle');
+            console.log('🔘 Кнопка переключения темы найдена:', themeToggle);
+            if (themeToggle) {
+                // Удаляем старые обработчики, если они есть
+                themeToggle.removeEventListener('click', toggleTheme);
+                // Добавляем новый обработчик
+                themeToggle.addEventListener('click', toggleTheme);
+                console.log('✅ Обработчик клика добавлен');
+                
+                // Тестируем клик программно
+                console.log('🧪 Тестируем программный клик...');
+                setTimeout(() => {
+                    console.log('🎯 Атрибут data-theme перед тестом:', document.documentElement.getAttribute('data-theme'));
+                }, 500);
+            } else {
+                console.error('❌ Кнопка переключения темы не найдена!');
+            }
+            
+            // Слушаем изменения системной темы
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+                if (!localStorage.getItem('theme')) {
+                    const newTheme = e.matches ? 'dark' : 'light';
+                    document.documentElement.setAttribute('data-theme', newTheme);
+                    updateThemeIcon(newTheme);
+                    updateFavicon(newTheme);
+                }
+            });
+            
+            console.log('✅ Инициализация переключателя темы завершена');
+            
+            // Глобальная функция для тестирования
+            window.testThemeToggle = function() {
+                console.log('🧪 Тестируем переключение темы...');
+                toggleTheme();
+            };
+        });
+    </script>
+
+    <!-- Дополнительные скрипты для конкретных страниц -->
+    
+    
+</body>
+</html>

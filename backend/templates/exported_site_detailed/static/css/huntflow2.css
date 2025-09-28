@@ -1,0 +1,751 @@
+/* =============================================================================
+   HUNTFLOW APP - СТИЛИ
+   Huntflow интеграция и управление кандидатами
+   ============================================================================= */
+
+/* === ДОПОЛНИТЕЛЬНЫЕ СТИЛИ ДЛЯ HUNTFLOW === */
+.huntflow-logo {
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+}
+
+/* === СТИЛИ ДЛЯ ТАБЛИЦ HUNTFLOW === */
+.huntflow-table {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.huntflow-table .table {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    margin-bottom: 0;
+}
+
+.huntflow-table .table th {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+    font-weight: 600;
+    padding: 1rem;
+    border: none;
+}
+
+.huntflow-table .table td {
+    border-color: var(--border-color);
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+}
+
+.huntflow-table .table-striped tbody tr:nth-of-type(odd) {
+    background-color: var(--bg-tertiary);
+}
+
+.huntflow-table .table tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+    transition: background-color 0.3s ease;
+}
+
+/* === СТИЛИ ДЛЯ СТАТУСОВ HUNTFLOW === */
+.huntflow-badge {
+    background-color: var(--accent-primary);
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.huntflow-badge.bg-primary {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+}
+
+.huntflow-badge.bg-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #117a8b 100%);
+}
+
+.huntflow-badge.bg-success {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+}
+
+.huntflow-badge.bg-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+    color: #212529;
+}
+
+.huntflow-badge.bg-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+/* === СТИЛИ ДЛЯ ПАГИНАЦИИ HUNTFLOW === */
+.huntflow-pagination .pagination {
+    margin-bottom: 0;
+}
+
+.huntflow-pagination .pagination .page-link {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+    padding: 0.5rem 0.75rem;
+    margin: 0 2px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.huntflow-pagination .pagination .page-link:hover {
+    background-color: var(--bg-tertiary);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+    transform: translateY(-1px);
+}
+
+.huntflow-pagination .pagination .page-item.active .page-link {
+    background-color: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: white;
+}
+
+.huntflow-pagination .pagination .page-item.disabled .page-link {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-muted);
+    opacity: 0.6;
+}
+
+/* === СТИЛИ ДЛЯ КАРТОЧЕК HUNTFLOW === */
+.huntflow-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.huntflow-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.huntflow-card .card-header {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border-radius: 15px 15px 0 0;
+    border: none;
+    padding: 1rem 1.5rem;
+}
+
+.huntflow-card .card-title {
+    color: white;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.huntflow-card .card-body {
+    padding: 1.5rem;
+}
+
+/* === СТИЛИ ДЛЯ ФОРМ HUNTFLOW === */
+.huntflow-form .form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.huntflow-form .form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.huntflow-form .form-label {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.huntflow-form .form-text {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.huntflow-form .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.huntflow-form .form-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* === СТИЛИ ДЛЯ КНОПОК HUNTFLOW === */
+.huntflow-btn {
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.huntflow-btn-primary {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+}
+
+.huntflow-btn-primary:hover {
+    background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+    transform: translateY(-1px);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.huntflow-btn-outline-primary {
+    background: transparent;
+    color: #007bff;
+    border: 2px solid #007bff;
+}
+
+.huntflow-btn-outline-primary:hover {
+    background: #007bff;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.huntflow-btn-outline-warning {
+    background: transparent;
+    color: #ffc107;
+    border: 2px solid #ffc107;
+}
+
+.huntflow-btn-outline-warning:hover {
+    background: #ffc107;
+    color: #212529;
+    transform: translateY(-1px);
+}
+
+.huntflow-btn-outline-info {
+    background: transparent;
+    color: #17a2b8;
+    border: 2px solid #17a2b8;
+}
+
+.huntflow-btn-outline-info:hover {
+    background: #17a2b8;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* === СТИЛИ ДЛЯ АНКЕТЫ КАНДИДАТА === */
+.questionary-field {
+    transition: all 0.2s ease;
+    padding: 0.5rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.questionary-field:hover {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 8px;
+    margin: -8px;
+}
+
+.questionary-title {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.questionary-value {
+    color: #212529;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.questionary-section {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #007bff;
+}
+
+.questionary-section h6 {
+    color: #007bff;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* === СТИЛИ ДЛЯ ИНФОРМАЦИИ О КАНДИДАТЕ === */
+.applicant-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.applicant-info-item {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    border-left: 4px solid #007bff;
+    transition: all 0.3s ease;
+}
+
+.applicant-info-item:hover {
+    background: #e9ecef;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.applicant-info-label {
+    color: #6c757d;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+}
+
+.applicant-info-value {
+    color: #212529;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* === СТИЛИ ДЛЯ ФАЙЛОВ И ВЛОЖЕНИЙ === */
+.huntflow-file-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.huntflow-file-item:hover {
+    background: #e9ecef;
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.huntflow-file-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-right: 1rem;
+    font-size: 1.2rem;
+}
+
+.huntflow-file-info {
+    flex-grow: 1;
+}
+
+.huntflow-file-name {
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 0.25rem;
+}
+
+.huntflow-file-meta {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.huntflow-file-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* === СТИЛИ ДЛЯ КОММЕНТАРИЕВ === */
+.huntflow-comment {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #007bff;
+    transition: all 0.3s ease;
+}
+
+.huntflow-comment:hover {
+    background: #e9ecef;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.huntflow-comment-header {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.huntflow-comment-author {
+    font-weight: 600;
+    color: #007bff;
+}
+
+.huntflow-comment-date {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.huntflow-comment-content {
+    color: #212529;
+    line-height: 1.5;
+}
+
+/* === СТИЛИ ДЛЯ СТАТИСТИКИ === */
+.huntflow-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.huntflow-stat-card {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.huntflow-stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+}
+
+.huntflow-stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.huntflow-stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* === СТИЛИ ДЛЯ ФИЛЬТРОВ === */
+.huntflow-filters {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e9ecef;
+}
+
+.huntflow-filters .form-control,
+.huntflow-filters .form-select {
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+}
+
+.huntflow-filters .form-control:focus,
+.huntflow-filters .form-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* === АДАПТИВНОСТЬ === */
+@media (max-width: 768px) {
+    .huntflow-card {
+        margin-bottom: 1rem;
+    }
+    
+    .huntflow-card .card-body {
+        padding: 1rem;
+    }
+    
+    .applicant-info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .huntflow-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .huntflow-file-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .huntflow-file-icon {
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+    }
+    
+    .huntflow-comment-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .huntflow-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* === АНИМАЦИИ === */
+@keyframes huntflowFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.huntflow-card {
+    animation: huntflowFadeIn 0.6s ease-out;
+}
+
+.applicant-info-item {
+    animation: huntflowFadeIn 0.6s ease-out;
+    animation-delay: 0.1s;
+    animation-fill-mode: both;
+}
+
+.huntflow-file-item {
+    animation: huntflowFadeIn 0.6s ease-out;
+    animation-delay: 0.2s;
+    animation-fill-mode: both;
+}
+
+.huntflow-comment {
+    animation: huntflowFadeIn 0.6s ease-out;
+    animation-delay: 0.3s;
+    animation-fill-mode: both;
+}
+
+/* === ДОПОЛНИТЕЛЬНЫЕ УТИЛИТЫ === */
+.huntflow-text-gradient {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.huntflow-bg-gradient {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+}
+
+.huntflow-shadow-soft {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.huntflow-shadow-medium {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.huntflow-shadow-strong {
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* === СТИЛИ ДЛЯ ПОЛЯ МЕТОК (TOKENFIELD) === */
+.tokenfield-container {
+    position: relative;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background-color: #fff;
+    min-height: 40px;
+    padding: 8px;
+    transition: all 0.3s ease;
+}
+
+.tokenfield-container:focus-within {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.selected-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    min-height: 24px;
+}
+
+.tag-token {
+    display: inline-flex;
+    align-items: center;
+    background-color: transparent;
+    color: inherit;
+    border-radius: 16px;
+    padding: 4px 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    animation: tagSlideIn 0.3s ease-out;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tag-token.removing {
+    animation: tagSlideOut 0.3s ease-in forwards;
+}
+
+.tag-token .badge {
+    background-color: inherit !important;
+    color: inherit !important;
+    padding: 0.25rem 0.5rem;
+    margin: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tag-token .btn-close {
+    background: rgba(0, 0, 0, 0.1);
+    border: none;
+    color: inherit;
+    font-size: 0.75rem;
+    margin-left: 6px;
+    padding: 0;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    opacity: 0.8;
+    backdrop-filter: blur(5px);
+}
+
+.tag-token .btn-close:hover {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.2);
+    transform: scale(1.1);
+}
+
+.tag-token .btn-close::before {
+    content: '×';
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.tag-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #212529;
+    font-size: 0.875rem;
+    padding: 4px 8px;
+    min-width: 200px;
+    flex: 1;
+}
+
+.tag-input::placeholder {
+    color: #6c757d;
+}
+
+.tag-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tag-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.tag-option:last-child {
+    border-bottom: none;
+}
+
+.tag-option:hover {
+    background-color: #f8f9fa;
+}
+
+.tag-option .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Анимации для тегов */
+@keyframes tagSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes tagSlideOut {
+    from {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.8) translateY(-10px);
+    }
+}
+
+/* Стили для счетчика символов */
+.maxlength-feedback {
+    font-size: 0.75rem;
+    margin-top: 4px;
+    text-align: right;
+}
+
+.maxlength-feedback.success {
+    color: #28a745;
+}
+
+.maxlength-feedback.warning {
+    color: #ffc107;
+}
+
+.maxlength-feedback.danger {
+    color: #dc3545;
+}
