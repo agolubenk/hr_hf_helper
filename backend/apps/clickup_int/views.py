@@ -605,7 +605,7 @@ def sync_logs(request):
 @login_required
 @require_POST
 def transfer_to_huntflow(request, task_id):
-    """Перенос кандидата из ClickUp в Huntflow"""
+    """Перенос кандидата из ClickUp в Huntflow с использованием общей логики"""
     user = request.user
     
     try:
@@ -614,7 +614,7 @@ def transfer_to_huntflow(request, task_id):
         account_id = data.get('account_id')
         vacancy_id = data.get('vacancy_id')
         
-        print(f"🔍 Получены данные из запроса: account_id={account_id}, vacancy_id={vacancy_id}")
+        logger.info(f"Получены данные из запроса: account_id={account_id}, vacancy_id={vacancy_id}")
         
         if not account_id:
             return JsonResponse({
@@ -631,124 +631,29 @@ def transfer_to_huntflow(request, task_id):
         attachments = clickup_service.get_task_attachments(task_id)
         comments = clickup_service.get_task_comments(task_id)
         
-        print(f"🔍 Данные задачи для переноса:")
-        print(f"  - Название: {task.name}")
-        print(f"  - Описание: {task.description[:100] if task.description else 'Нет описания'}...")
-        print(f"  - Комментарии: {len(comments) if comments else 0}")
-        if comments:
-            for i, comment in enumerate(comments[:2]):
-                print(f"    {i+1}. {comment.get('date', 'Нет даты')}: {comment.get('comment', 'Нет текста')[:50]}...")
+        logger.info(f"Данные задачи для переноса: {task.name}")
         
-        # Проверяем, есть ли PDF файлы для парсинга
-        pdf_attachments = [att for att in attachments if att.get('extension', '').lower() == 'pdf']
-        linkedin_url = None
-        rabota_url = None
+        # Подготавливаем данные задачи для общей логики
+        task_data = {
+            'name': task.name,
+            'description': task.description,
+            'status': task.status,
+            'attachments': attachments,
+            'comments': comments,
+            'assignees': task.assignees,
+            'custom_fields': task.get_custom_fields_display()
+        }
         
-        if not pdf_attachments:
-            # Если нет PDF файлов, ищем LinkedIn ссылку в custom fields
-            custom_fields = task.get_custom_fields_display()
-            for field in custom_fields:
-                field_name = field.get('name', '').lower()
-                field_value = field.get('value', '')
-                
-                # Ищем LinkedIn ссылки
-                if field_name in ['linkedin', 'linkedin profile', 'linkedin url']:
-                    linkedin_url = field_value
-                    break
-                
-                # Ищем rabota.by ссылки
-                if field_name in ['rabota', 'rabota.by', 'rabota url', 'resume', 'резюме'] or 'rabota.by' in field_value.lower():
-                    rabota_url = field_value
-                    break
-            
-            # Если не нашли ни LinkedIn, ни rabota.by
-            if not linkedin_url and not rabota_url:
-                return JsonResponse({
-                    'success': False,
-                    'error': 'У задачи нет PDF файлов, LinkedIn или rabota.by ссылок для переноса'
-                })
+        # ИСПОЛЬЗУЕМ ОБЩУЮ ЛОГИКУ вместо дублированного кода
+        from logic.integration.shared.huntflow_operations import HuntflowOperations
         
-        # Переносим в Huntflow
-        from apps.huntflow.services import HuntflowService
-        huntflow_service = HuntflowService(user)
-        
-        parsed_data = None
-        
-        if pdf_attachments:
-            # Обрабатываем PDF файлы
-            # Сортируем по дате (самый старый первый)
-            oldest_attachment = min(pdf_attachments, key=lambda x: x.get('date', 0))
-            
-            # Скачиваем файл
-            import requests
-            file_response = requests.get(oldest_attachment['url'], timeout=30)
-            if file_response.status_code != 200:
-                return JsonResponse({
-                    'success': False,
-                    'error': 'Не удалось скачать файл из ClickUp'
-                })
-            
-            # Загружаем файл в Huntflow с парсингом
-            parsed_data = huntflow_service.upload_file(
-                account_id=account_id,
-                file_data=file_response.content,
-                file_name=oldest_attachment.get('title', 'resume.pdf'),
-                parse_file=True
-            )
-            
-            if not parsed_data:
-                return JsonResponse({
-                    'success': False,
-                    'error': 'Не удалось загрузить файл в Huntflow'
-                })
-        
-        elif linkedin_url:
-            # Обрабатываем LinkedIn ссылку
-            print(f"🔍 Обрабатываем LinkedIn ссылку: {linkedin_url}")
-            
-            # Создаем данные для LinkedIn профиля
-            parsed_data = huntflow_service.create_linkedin_profile_data(
-                linkedin_url=linkedin_url,
-                task_name=task.name,
-                task_description=task.description
-            )
-            
-            if not parsed_data:
-                return JsonResponse({
-                    'success': False,
-                    'error': 'Не удалось обработать LinkedIn профиль'
-                })
-        
-        elif rabota_url:
-            # Обрабатываем rabota.by ссылку
-            print(f"🔍 Обрабатываем rabota.by ссылку: {rabota_url}")
-            
-            # Создаем данные для rabota.by профиля
-            parsed_data = huntflow_service.create_rabota_by_profile_data(
-                rabota_url=rabota_url,
-                task_name=task.name,
-                task_description=task.description
-            )
-            
-            if not parsed_data:
-                return JsonResponse({
-                    'success': False,
-                    'error': 'Не удалось обработать rabota.by профиль'
-                })
-        
-        # Создаем кандидата на основе распарсенных данных
-        print(f"🔍 Создаем кандидата с данными: account_id={account_id}, vacancy_id={vacancy_id}, task_name='{task.name}'")
-        applicant = huntflow_service.create_applicant_from_parsed_data(
+        huntflow_ops = HuntflowOperations(user)
+        applicant = huntflow_ops.create_candidate_from_task_data(
+            task_data=task_data,
             account_id=account_id,
-            parsed_data=parsed_data,
             vacancy_id=vacancy_id,
-            task_name=task.name,
-            task_description=task.description,
-            task_comments=comments,
-            assignees=task.assignees,
-            task_status=task.status
+            source_type='clickup'
         )
-        print(f"🔍 Результат создания кандидата: {applicant}")
         
         if not applicant:
             return JsonResponse({
@@ -756,14 +661,14 @@ def transfer_to_huntflow(request, task_id):
                 'error': 'Не удалось создать кандидата в Huntflow'
             })
         
-        # Проверяем, что applicant содержит данные
+        # Проверяем результат
         if not isinstance(applicant, dict):
             return JsonResponse({
                 'success': False,
                 'error': f'Неожиданный формат ответа от Huntflow: {type(applicant)}'
             })
         
-        # Формируем сообщение в зависимости от того, была ли выбрана вакансия
+        # Формируем сообщение
         applicant_id = applicant.get("id", "неизвестно")
         if vacancy_id:
             message = f'Кандидат успешно перенесен в Huntflow и привязан к вакансии (ID: {applicant_id})'
@@ -775,7 +680,7 @@ def transfer_to_huntflow(request, task_id):
             'message': message,
             'applicant_id': applicant_id
         })
-        
+    
     except json.JSONDecodeError:
         return JsonResponse({
             'success': False,

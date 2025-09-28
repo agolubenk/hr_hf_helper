@@ -544,23 +544,13 @@ def sync_logs(request):
 @login_required
 @require_POST
 def transfer_to_huntflow(request):
-    """API для переноса данных Notion страницы в Huntflow"""
+    """API для переноса данных Notion страницы в Huntflow с использованием общей логики"""
     user = request.user
-    
-    # Импортируем HuntflowService для работы с API
-    try:
-        from apps.huntflow.services import HuntflowService
-    except ImportError as e:
-        logger.error(f"Не удалось импортировать HuntflowService: {e}")
-        return JsonResponse({
-            'success': False,
-            'error': 'Huntflow интеграция не настроена'
-        })
     
     logger.info(f"transfer_to_huntflow вызвана для пользователя {user.id}")
     
     try:
-        # Получаем данные из JSON запроса (как в ClickUp)
+        # Получаем данные из JSON запроса
         import json
         data = json.loads(request.body)
         page_id = data.get('page_id')
@@ -594,141 +584,34 @@ def transfer_to_huntflow(request):
                 'error': 'Страница не найдена'
             })
         
-        # Получаем вложения страницы
-        attachments = page.get_attachments_display()
-        logger.info(f"Найдено вложений: {len(attachments)}")
-        
-        # Проверяем, есть ли PDF файлы для парсинга
-        pdf_attachments = [att for att in attachments if att.get('name', '').lower().endswith('.pdf')]
-        linkedin_url = None
-        rabota_url = None
-        
-        if not pdf_attachments:
-            # Если нет PDF файлов, ищем LinkedIn или rabota.by ссылки в содержимом
-            content = page.content or ''
-            
-            # Ищем LinkedIn ссылки
-            import re
-            linkedin_match = re.search(r'https?://(?:www\.)?linkedin\.com/in/[^\s<>"{}|\\^`\[\]]+', content)
-            if linkedin_match:
-                linkedin_url = linkedin_match.group(0)
-            
-            # Ищем rabota.by ссылки
-            rabota_match = re.search(r'https?://(?:www\.)?rabota\.by/[^\s<>"{}|\\^`\[\]]+', content)
-            if rabota_match:
-                rabota_url = rabota_match.group(0)
-            
-            # Если не нашли ни LinkedIn, ни rabota.by
-            if not linkedin_url and not rabota_url:
-                return JsonResponse({
-                    'success': False,
-                    'error': 'У страницы нет PDF файлов, LinkedIn или rabota.by ссылок для переноса'
-                })
-        
-        # Переносим в Huntflow
-        huntflow_service = HuntflowService(user)
-        
-        parsed_data = None
-        
-        if pdf_attachments:
-            # Обрабатываем PDF файлы
-            # Берем первый PDF файл
-            pdf_attachment = pdf_attachments[0]
-            
-            # Скачиваем файл
-            import requests
-            try:
-                file_response = requests.get(pdf_attachment['url'], timeout=30)
-                if file_response.status_code != 200:
-                    return JsonResponse({
-                        'success': False,
-                        'error': 'Не удалось скачать файл из Notion'
-                    })
-                
-                # Загружаем файл в Huntflow с парсингом
-                parsed_data = huntflow_service.upload_file(
-                    account_id=account_id,
-                    file_data=file_response.content,
-                    file_name=pdf_attachment.get('name', 'resume.pdf'),
-                    parse_file=True
-                )
-                
-                if not parsed_data:
-                    return JsonResponse({
-                        'success': False,
-                        'error': 'Не удалось загрузить файл в Huntflow'
-                    })
-                    
-            except Exception as e:
-                logger.error(f"Ошибка скачивания файла: {e}")
-                return JsonResponse({
-                    'success': False,
-                    'error': f'Ошибка скачивания файла: {str(e)}'
-                })
-        
-        elif linkedin_url:
-            # Обрабатываем LinkedIn ссылку
-            logger.info(f"Обрабатываем LinkedIn ссылку: {linkedin_url}")
-            
-            # Создаем данные для LinkedIn профиля
-            parsed_data = huntflow_service.create_linkedin_profile_data(
-                linkedin_url=linkedin_url,
-                task_name=page.title,
-                task_description=page.content
-            )
-            
-            if not parsed_data:
-                return JsonResponse({
-                    'success': False,
-                    'error': 'Не удалось обработать LinkedIn профиль'
-                })
-        
-        elif rabota_url:
-            # Обрабатываем rabota.by ссылку
-            logger.info(f"Обрабатываем rabota.by ссылку: {rabota_url}")
-            
-            # Создаем данные для rabota.by профиля
-            parsed_data = huntflow_service.create_rabota_by_profile_data(
-                rabota_url=rabota_url,
-                task_name=page.title,
-                task_description=page.content
-            )
-            
-            if not parsed_data:
-                return JsonResponse({
-                    'success': False,
-                    'error': 'Не удалось обработать rabota.by профиль'
-                })
-        
-        # Подготавливаем данные Notion для передачи в HuntflowService
-        notion_data = {
+        # Подготавливаем данные страницы для общей логики
+        page_data = {
             'title': page.title,
+            'name': page.title,  # Alias для совместимости с ClickUp
             'content': page.content,
-            'comments': page.get_comments_display(),
+            'description': page.content,  # Alias для совместимости
             'status': page.status,
-            'priority': page.priority,
-            'assignees': page.get_assignees_display(),
-            'tags': page.get_tags_display(),
-            'custom_properties': page.custom_properties,
             'attachments': page.get_attachments_display(),
+            'comments': page.get_comments_display(),
+            'assignees': page.get_assignees_display(),
+            'custom_properties': page.custom_properties,
+            'tags': page.get_tags_display(),
             'due_date': page.due_date.strftime('%d.%m.%Y %H:%M') if page.due_date else None
         }
         
-        logger.info(f"Данные Notion для передачи: title='{page.title}', content_length={len(page.content) if page.content else 0}, status='{page.status}'")
+        logger.info(f"Данные Notion для передачи: title='{page.title}', content_length={len(page.content) if page.content else 0}")
         
-        # Создаем кандидата на основе распарсенных данных
-        logger.info(f"Создаем кандидата с данными: account_id={account_id}, vacancy_id={vacancy_id}, page_title='{page.title}'")
-        applicant = huntflow_service.create_applicant_from_parsed_data(
+        # ИСПОЛЬЗУЕМ ОБЩУЮ ЛОГИКУ вместо дублированного кода
+        from logic.integration.shared.huntflow_operations import HuntflowOperations
+        
+        huntflow_ops = HuntflowOperations(user)
+        applicant = huntflow_ops.create_candidate_from_task_data(
+            task_data=page_data,
             account_id=account_id,
-            parsed_data=parsed_data,
             vacancy_id=vacancy_id,
-            task_name=page.title,
-            task_description=None,  # Не передаем содержимое как описание ClickUp, оно будет в Notion заметках
-            task_comments=[],  # В Notion нет комментариев как в ClickUp
-            assignees=page.get_assignees_display(),
-            task_status=page.status,
-            notion_data=notion_data
+            source_type='notion'
         )
+        
         logger.info(f"Результат создания кандидата: {applicant}")
         
         if not applicant:
@@ -737,7 +620,7 @@ def transfer_to_huntflow(request):
                 'error': 'Не удалось создать кандидата в Huntflow'
             })
         
-        # Проверяем, что applicant содержит данные
+        # Проверяем результат
         if not isinstance(applicant, dict):
             return JsonResponse({
                 'success': False,

@@ -1,6 +1,7 @@
 import random
 import time
 import logging
+import json
 from celery import shared_task
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -260,7 +261,7 @@ def import_single_task(self, user_id, task_data, bulk_import_id):
                 print(f"❌ Критическая ошибка сохранения задачи {task_id} в БД: {e}")
                 raise
         
-        # Переносим в Huntflow, если есть вложения
+        # Переносим в Huntflow, если есть вложения - ИСПОЛЬЗУЕМ ОБЩУЮ ЛОГИКУ
         huntflow_success = False
         if task.attachments and task.attachments != '[]':
             try:
@@ -269,23 +270,47 @@ def import_single_task(self, user_id, task_data, bulk_import_id):
                 logger.debug(f"📎 Вложения: {task.attachments}")
                 print(f"📎 Вложения: {task.attachments}")
                 
-                # Импортируем сервис Huntflow
-                from apps.huntflow.services import HuntflowService
-                huntflow_service = HuntflowService(user)
+                # ИСПОЛЬЗУЕМ ОБЩУЮ ЛОГИКУ ВМЕСТО ДУБЛИРОВАННОГО КОДА
+                from logic.integration.shared.huntflow_operations import HuntflowOperations
                 
-                # Переносим в Huntflow
-                result = huntflow_service.create_applicant_from_clickup_task(task)
+                huntflow_ops = HuntflowOperations(user)
                 
-                if result and result.get('success'):
-                    huntflow_success = True
-                    applicant_id = result.get('applicant_id', 'unknown')
-                    logger.info(f"✅ Задача {task_id} успешно перенесена в Huntflow (кандидат ID: {applicant_id})")
-                    print(f"✅ Задача {task_id} успешно перенесена в Huntflow (кандидат ID: {applicant_id})")
+                # Получаем первую доступную организацию
+                accounts = huntflow_ops.get_accounts()
+                if not accounts:
+                    logger.warning(f"❌ Не найдено организаций Huntflow для пользователя {user.username}")
+                    print(f"❌ Не найдено организаций Huntflow для пользователя {user.username}")
                 else:
-                    error_msg = result.get('error', 'Неизвестная ошибка') if result else 'Нет результата'
-                    logger.warning(f"❌ Ошибка переноса задачи {task_id} в Huntflow: {error_msg}")
-                    print(f"❌ Ошибка переноса задачи {task_id} в Huntflow: {error_msg}")
+                    account_id = accounts[0]['id']
                     
+                    # Подготавливаем данные задачи
+                    task_data_for_huntflow = {
+                        'name': task.name,
+                        'description': task.description,
+                        'status': task.status,
+                        'attachments': json.loads(task.attachments) if isinstance(task.attachments, str) else task.attachments,
+                        'comments': [],  # Комментарии можно добавить отдельно если нужно
+                        'assignees': json.loads(task.assignees) if isinstance(task.assignees, str) else task.assignees,
+                        'custom_fields': task.custom_fields
+                    }
+                    
+                    # Создаем кандидата через общую логику
+                    applicant = huntflow_ops.create_candidate_from_task_data(
+                        task_data=task_data_for_huntflow,
+                        account_id=account_id,
+                        vacancy_id=None,  # Без привязки к вакансии при массовом импорте
+                        source_type='clickup'
+                    )
+                    
+                    if applicant and isinstance(applicant, dict):
+                        huntflow_success = True
+                        applicant_id = applicant.get('id', 'unknown')
+                        logger.info(f"✅ Задача {task_id} успешно перенесена в Huntflow (кандидат ID: {applicant_id})")
+                        print(f"✅ Задача {task_id} успешно перенесена в Huntflow (кандидат ID: {applicant_id})")
+                    else:
+                        logger.warning(f"❌ Ошибка переноса задачи {task_id} в Huntflow: неожиданный результат")
+                        print(f"❌ Ошибка переноса задачи {task_id} в Huntflow: неожиданный результат")
+                
             except Exception as huntflow_error:
                 logger.error(f"❌ Ошибка переноса в Huntflow: {huntflow_error}")
                 print(f"❌ Ошибка переноса в Huntflow: {huntflow_error}")
