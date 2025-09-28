@@ -464,6 +464,62 @@
                      </a>
                 </div>
             </div>
+            
+            <!-- Инструкция по командам -->
+            <div class="card shadow mt-3">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-keyboard me-2"></i>Команды чата
+                    </h6>
+                </div>
+                <div class="card-body p-3">
+                    <div class="commands-list">
+                        <div class="command-item mb-3">
+                            <div class="command-header">
+                                <span class="command-badge bg-success">/s</span>
+                                <strong class="ms-2">HR-скрининг</strong>
+                            </div>
+                            <p class="command-description mb-0 text-muted small">
+                                Создает HR-скрининг. Вставьте ссылку на кандидата из Huntflow и опишите результаты собеседования.
+                            </p>
+                            <div class="command-example mt-1">
+                                <code class="text-primary small">/s https://huntflow.ru/vacancy/123/candidate/456 Иван Петров прошел собеседование...</code>
+                            </div>
+                        </div>
+                        
+                        <div class="command-item mb-3">
+                            <div class="command-header">
+                                <span class="command-badge bg-warning">/in</span>
+                                <strong class="ms-2">Инвайт</strong>
+                            </div>
+                            <p class="command-description mb-0 text-muted small">
+                                Создает инвайт на техническое интервью. Вставьте ссылку на кандидата и укажите детали встречи.
+                            </p>
+                            <div class="command-example mt-1">
+                                <code class="text-primary small">/in https://huntflow.ru/vacancy/123/candidate/456 Приглашаем на техническое интервью...</code>
+                            </div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command-header">
+                                <span class="command-badge bg-info">/h</span>
+                                <strong class="ms-2">Помощь</strong>
+                            </div>
+                            <p class="command-description mb-0 text-muted small">
+                                Показывает эту справку по командам.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 p-2 bg-light rounded">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            <strong>Совет:</strong> Команды автоматически определяются по первым символам сообщения. 
+                            После ввода команды она исчезнет из текста, но действие будет выполнено.
+                        </small>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -1440,6 +1496,78 @@
      background: linear-gradient(135deg, #00b894, #00cec9) !important;
      border: 2px solid #2c2c2c !important;
      box-shadow: 0 4px 15px rgba(0, 184, 148, 0.6) !important;
+}
+
+/* === СТИЛИ ДЛЯ БЛОКА КОМАНД === */
+.commands-list {
+    font-size: 0.9rem;
+}
+
+.command-item {
+    border-left: 3px solid var(--hr-border, #dee2e6);
+    padding-left: 12px;
+    transition: all 0.2s ease;
+}
+
+.command-item:hover {
+    border-left-color: var(--hr-primary, #007bff);
+    background-color: rgba(0, 123, 255, 0.05);
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin: -8px -12px;
+}
+
+.command-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.command-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.command-description {
+    line-height: 1.4;
+}
+
+.command-example {
+    background-color: var(--hr-surface, #f8f9fa);
+    border: 1px solid var(--hr-border, #dee2e6);
+    border-radius: 4px;
+    padding: 6px 8px;
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+}
+
+.command-example code {
+    background: none;
+    padding: 0;
+    color: var(--hr-primary, #007bff);
+    font-size: 0.8rem;
+}
+
+/* Темная тема для команд */
+[data-theme="dark"] .command-item:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+[data-theme="dark"] .command-example {
+    background-color: var(--color-surface-hover, #374151);
+    border-color: var(--color-border, #4a5568);
+}
+
+[data-theme="dark"] .command-example code {
+    color: var(--color-primary, #3182ce);
 }
 </style>
 
