@@ -27,3 +27,4 @@ def get_google_oauth_views():
         'google_settings': google_settings,
         'determine_action_type_from_text': determine_action_type_from_text,
     }
+

@@ -6,8 +6,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="hfF8g01n1S1TpSyZL9ypqsfSSTpXVsNo7W7EWCwX7v8ec0xKNlHJEnfpA3p9dYjb">
-    <title>HR Helper</title>
+    <meta name="csrf-token" content="sL7WYCSjAHSNJcr42mzcI4PSnKVn9AKFtD0PdwjRAWPiHWEYtTfEFOKqWaSEQFp7">
+    <title>Кандидаты - Huntflow</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -51,7 +51,7 @@
             
         </a></li>
     <li class="nav-item  ">
-        <a class="nav-link" 
+        <a class="nav-link active" 
            href="/huntflow/"
            
            
@@ -325,19 +325,19 @@
             </ul>
         </div></li>
     <li class="nav-item  has-submenu">
-        <a class="nav-link active sidebar-toggle" 
+        <a class="nav-link sidebar-toggle" 
            href="/notion/"
            data-bs-toggle="collapse"
            data-bs-target="#notion_int-submenu-0"
-           aria-expanded="true">
+           aria-expanded="false">
             <i class="fas fa-sticky-note me-2"></i>
             Notion
             <i class="fas fa-chevron-down submenu-arrow ms-auto"></i>
         </a>
-        <div class="collapse show" id="notion_int-submenu-0">
+        <div class="collapse " id="notion_int-submenu-0">
             <ul class="nav flex-column">
     <li class="nav-item ms-1 ">
-        <a class="nav-link active" 
+        <a class="nav-link" 
            href="/notion/"
            
            
@@ -463,7 +463,7 @@
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     
                     <h1 class="h2">
-                        HR Helper
+                        Кандидаты
                     </h1>
                     
                     <div class="btn-toolbar mb-2 mb-md-0">
@@ -492,70 +492,98 @@
 
                 <!-- Messages -->
     
+        <div class="messages">
+            
+            <div class="alert alert-error alert-dismissible fade show" role="alert">
+                Вакансия не найдена
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            
+    </div>
+    
 
                 <!-- Page content -->
         
-<div class="row">
-    <!-- Статус интеграции -->
-    <div class="col-lg-8">
-        <div class="card notion-card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-plug me-2"></i>
-                    Статус интеграции
-                </h5>
-            </div>
+<!-- Filters -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
             <div class="card-body">
-                
-                    <div class="text-center py-4">
-                        <i class="fas fa-exclamation-triangle text-warning mb-3" style="font-size: 3rem;"></i>
-                        <h5>Интеграция не настроена</h5>
-                        <p class="text-muted">Для работы с Notion необходимо настроить интеграцию</p>
-                        <a href="/notion/settings/" class="btn notion-btn">
-                            <i class="fas fa-cog me-1"></i>
-                            Настроить интеграцию
-                        </a>
+                <form method="get" class="row g-3">
+                    <div class="col-md-2">
+                        <label for="status" class="form-label">Статус</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="">Все статусы</option>
+                            
+                        </select>
                     </div>
-                
-            </div>
-        </div>
-    </div>
-    
-    <!-- Статистика -->
-    <div class="col-lg-4">
-        <div class="card notion-card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-chart-bar me-2"></i>
-                    Статистика
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-6 mb-3">
-                        <div class="p-3 bg-light rounded">
-                            <h4 class="text-primary mb-1">0</h4>
-                            <small class="text-muted">Страниц в кэше</small>
+                    <div class="col-md-2">
+                        <label for="vacancy" class="form-label">Вакансия</label>
+                        <select class="form-select" id="vacancy" name="vacancy">
+                            <option value="">Все вакансии</option>
+                            
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="count" class="form-label">Количество</label>
+                        <select class="form-select" id="count" name="count">
+                            <option value="10" >10</option>
+                            <option value="30" selected>30</option>
+                            <option value="50" >50</option>
+                            <option value="100" >100</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="page" class="form-label">Страница</label>
+                        <input type="number" class="form-control" id="page" name="page" 
+                               value="1" min="1">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">&nbsp;</label>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-filter me-1"></i>
+                                Применить
+                            </button>
                         </div>
                     </div>
-                    <div class="col-6 mb-3">
-                        <div class="p-3 bg-light rounded">
-                            <h4 class="text-success mb-1">0</h4>
-                            <small class="text-muted">Синхронизаций</small>
+                    <div class="col-md-2">
+                        <label class="form-label">&nbsp;</label>
+                        <div class="d-grid">
+                            <a href="/huntflow/accounts/1/applicants/" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-1"></i>
+                                Сбросить
+                            </a>
                         </div>
                     </div>
-                </div>
-                
-                
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Последние страницы -->
+<!-- Applicants List -->
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-info-circle fa-3x text-info mb-3"></i>
+                <h4>Кандидаты не найдены</h4>
+                <p class="text-muted">
+                    По заданным критериям кандидаты не найдены.
+                </p>
+                <button type="button" class="btn btn-primary" onclick="refreshApplicants()">
+                    <i class="fas fa-sync-alt me-1"></i>
+                    Обновить
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
-<!-- Логи синхронизации -->
+<!-- Debug Info -->
 
 
     </main>
@@ -953,73 +981,14 @@
     <!-- Дополнительные скрипты для конкретных страниц -->
     
 <script>
-// Функция синхронизации страниц
-function syncPages() {
-    const button = event.target;
-    const hideLoading = showLoading(button, 'Синхронизация...');
-    
-    fetch('/notion/api/sync/', {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-            'Content-Type': 'application/json',
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        hideLoading();
-        
-        if (data.success) {
-            showNotification(data.message, 'success');
-            // Обновляем страницу через 2 секунды
-            setTimeout(() => {
-                window.location.reload();
-            }, 2000);
-        } else {
-            showNotification(data.message, 'error');
-        }
-    })
-    .catch(error => {
-        hideLoading();
-        showNotification('Ошибка синхронизации: ' + error.message, 'error');
-    });
+function refreshApplicants() {
+    location.reload();
 }
 
-// Функция очистки кэша
-function clearCache() {
-    if (!confirm('Вы уверены, что хотите очистить кэш страниц?')) {
-        return;
-    }
-    
-    const button = event.target;
-    const hideLoading = showLoading(button, 'Очистка...');
-    
-    fetch('/notion/api/clear-cache/', {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-            'Content-Type': 'application/json',
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        hideLoading();
-        
-        if (data.success) {
-            showNotification(data.message, 'success');
-            // Обновляем страницу через 2 секунды
-            setTimeout(() => {
-                window.location.reload();
-            }, 2000);
-        } else {
-            showNotification(data.message, 'error');
-        }
-    })
-    .catch(error => {
-        hideLoading();
-        showNotification('Ошибка очистки кэша: ' + error.message, 'error');
-    });
-}
+// Автоматическое обновление каждые 5 минут
+setTimeout(function() {
+    location.reload();
+}, 300000);
 </script>
 
 </body>

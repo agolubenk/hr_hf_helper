@@ -44,3 +44,4 @@ NOTION_API_KEY=your-notion-api-key
 # Безопасность
 SECURE_SSL_REDIRECT=True
 SECURE_HSTS_SECONDS=31536000
+

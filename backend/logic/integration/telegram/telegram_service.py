@@ -329,3 +329,4 @@ def telegram_test_connection(request):
             'success': False,
             'message': f'Ошибка тестирования подключения: {str(e)}'
         })
+

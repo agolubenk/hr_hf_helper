@@ -384,3 +384,4 @@ class DeploymentMonitor:
 # Глобальные экземпляры мониторов
 migration_monitor = MigrationMonitor()
 deployment_monitor = DeploymentMonitor()
+

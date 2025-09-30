@@ -128,3 +128,4 @@ python3 manage.py export_static_site --output-dir exported_site
 
 *Экспорт выполнен: $(date)*
 *Команда: export_static_site*
+

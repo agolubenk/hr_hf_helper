@@ -300,3 +300,4 @@ class InterviewRuleViewSet(BaseAPIViewSet):
         except Exception as e:
             response_data = UnifiedResponseHandler.error_response(str(e))
             return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+

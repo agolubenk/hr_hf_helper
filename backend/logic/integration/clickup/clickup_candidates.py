@@ -403,3 +403,4 @@ class ClickUpCandidateService(BaseAPIClient, BaseCandidateOperations, BaseCommen
             return response.get('success', False)
         except Exception:
             return False
+

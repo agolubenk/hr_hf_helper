@@ -343,3 +343,4 @@ class RuleApiHandler:
             'rules': rules,
             'count': rules.count()
         }
+

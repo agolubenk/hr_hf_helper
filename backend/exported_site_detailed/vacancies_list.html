@@ -6,8 +6,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="Nqj3cbOPhx1l9taQ5QM4RziMyvkKGgeSfnbFVxqtQHn6o0obYd6NZjzx2k1ZDvvu">
-    <title>Huntflow Dashboard - HR Helper</title>
+    <meta name="csrf-token" content="XlRqmLtlfZLBP3Si34ZnGZ38KemwSGdLTT2TNyG5njCN1Oc4cWIgiwa6JONCXa6u">
+    <title>Список вакансий - HR Helper</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -51,7 +51,7 @@
             
         </a></li>
     <li class="nav-item  ">
-        <a class="nav-link active" 
+        <a class="nav-link" 
            href="/huntflow/"
            
            
@@ -129,19 +129,19 @@
             
         </a></li>
     <li class="nav-item  has-submenu">
-        <a class="nav-link sidebar-toggle" 
+        <a class="nav-link active sidebar-toggle" 
            href="/vacancies/"
            data-bs-toggle="collapse"
            data-bs-target="#vacancies_finance-submenu-0"
-           aria-expanded="false">
+           aria-expanded="true">
             <i class="fas fa-briefcase me-2"></i>
             Вакансии и финансы
             <i class="fas fa-chevron-down submenu-arrow ms-auto"></i>
         </a>
-        <div class="collapse " id="vacancies_finance-submenu-0">
+        <div class="collapse show" id="vacancies_finance-submenu-0">
             <ul class="nav flex-column">
     <li class="nav-item ms-1 ">
-        <a class="nav-link" 
+        <a class="nav-link active" 
            href="/vacancies/"
            
            
@@ -151,7 +151,7 @@
             
         </a></li>
     <li class="nav-item ms-1 ">
-        <a class="nav-link" 
+        <a class="nav-link active" 
            href="/vacancies/list/"
            
            
@@ -463,7 +463,7 @@
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     
                     <h1 class="h2">
-                        Дашборд Huntflow
+                        Список вакансий
                     </h1>
                     
                     <div class="btn-toolbar mb-2 mb-md-0">
@@ -492,37 +492,202 @@
 
                 <!-- Messages -->
     
-        <div class="messages">
-            
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                Huntflow не настроен. Обратитесь к администратору.
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            
-    </div>
-    
 
                 <!-- Page content -->
         
+<div class="row">
+    <div class="col-12">
+        <!-- Фильтры и поиск -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-search me-2"></i>
+                    Поиск и фильтры
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <input type="text" name="search" class="form-control" placeholder="Поиск по названию или ID..." maxlength="100" id="id_search">
+                    </div>
+                    <div class="col-md-3">
+                        <select name="recruiter" class="form-select" id="id_recruiter">
+  <option value="" selected>Все рекрутеры</option>
 
-<div class="row justify-content-center">
-    <div class="col-md-8">
+  <option value="1">admin</option>
+
+  <option value="3">andrei.golubenko</option>
+
+  <option value="17">adevandrei</option>
+
+</select>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="is_active" class="form-select" id="id_is_active">
+  <option value="" selected>Все</option>
+
+  <option value="true">Активные</option>
+
+  <option value="false">Неактивные</option>
+
+</select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search me-1"></i>
+                            Поиск
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title"></h4>
+                                <p class="card-text">Всего вакансий</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-briefcase fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title"></h4>
+                                <p class="card-text">Активных</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-check-circle fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="card-title"></h4>
+                                <p class="card-text">Неактивных</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-pause-circle fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Список вакансий -->
         <div class="card">
-            <div class="card-body text-center">
-                <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
-                <h4>Huntflow не настроен</h4>
-                <p class="text-muted">
-                    Для работы с Huntflow необходимо настроить API ключи и URL в профиле пользователя.
-                </p>
-                <a href="/admin/accounts/user/20/change/" class="btn btn-primary">
-                    <i class="fas fa-cog me-1"></i>
-                    Настроить Huntflow
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-list me-2"></i>
+                    Вакансии
+                </h5>
+                <a href="/vacancies/create/" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>
+                    Добавить вакансию
                 </a>
+            </div>
+            <div class="card-body">
+                
+                    <div class="text-center py-5">
+                        <i class="fas fa-briefcase fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Вакансии не найдены</h5>
+                        <p class="text-muted">
+                            
+                                <a href="/vacancies/create/" class="btn btn-primary">
+                                    <i class="fas fa-plus me-1"></i>
+                                    Создать первую вакансию
+                                </a>
+                            
+                        </p>
+                    </div>
+                
             </div>
         </div>
     </div>
 </div>
 
+<!-- Скрытый CSRF токен для AJAX запросов -->
+<input type="hidden" name="csrfmiddlewaretoken" value="XlRqmLtlfZLBP3Si34ZnGZ38KemwSGdLTT2TNyG5njCN1Oc4cWIgiwa6JONCXa6u">
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Функция для получения CSRF токена
+    function getCSRFToken() {
+        const token = document.querySelector('[name=csrfmiddlewaretoken]');
+        return token ? token.value : '';
+    }
+
+    // Обработка переключения статуса активности
+    document.querySelectorAll('.toggle-active').forEach(button => {
+        button.addEventListener('click', function() {
+            const url = this.dataset.url;
+            const vacancyName = this.dataset.vacancyName;
+            const action = this.querySelector('i').classList.contains('fa-pause') ? 'деактивировать' : 'активировать';
+            
+            if (confirm(`Вы уверены, что хотите ${action} вакансию "${vacancyName}"?`)) {
+                // Показываем индикатор загрузки
+                const originalHTML = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                this.disabled = true;
+                
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken(),
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Показываем успешное сообщение
+                        this.innerHTML = '<i class="fas fa-check"></i>';
+                        this.classList.remove('btn-outline-warning', 'btn-outline-success');
+                        this.classList.add('btn-success');
+                        
+                        // Перезагружаем страницу через небольшую задержку
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        throw new Error(data.message || 'Неизвестная ошибка');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Ошибка: ' + error.message);
+                    
+                    // Восстанавливаем кнопку
+                    this.innerHTML = originalHTML;
+                    this.disabled = false;
+                });
+            }
+        });
+    });
+});
+</script>
 
     </main>
         </div>
@@ -918,63 +1083,6 @@
 
     <!-- Дополнительные скрипты для конкретных страниц -->
     
-<script>
-function testConnection() {
-    const btn = event.target;
-    const originalText = btn.innerHTML;
     
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Тестирование...';
-    btn.disabled = true;
-    
-    $.ajax({
-        url: '/huntflow/test-connection/',
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()
-        },
-        success: function(response) {
-            if (response.success) {
-                showAlert('success', 'Подключение успешно!');
-                setTimeout(() => location.reload(), 1500);
-            } else {
-                showAlert('danger', 'Ошибка подключения: ' + response.message);
-            }
-        },
-        error: function() {
-            showAlert('danger', 'Ошибка при тестировании подключения');
-        },
-        complete: function() {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }
-    });
-}
-
-function refreshData() {
-    location.reload();
-}
-
-function showAlert(type, message) {
-    const alertHtml = `
-        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    `;
-    
-    $('.messages').append(alertHtml);
-    
-    // Автоматически скрыть через 5 секунд
-    setTimeout(() => {
-        $('.alert').fadeOut();
-    }, 5000);
-}
-
-// Добавляем CSRF токен для AJAX запросов
-$(document).ready(function() {
-    $('body').append('<input type="hidden" name="csrfmiddlewaretoken" value="Nqj3cbOPhx1l9taQ5QM4RziMyvkKGgeSfnbFVxqtQHn6o0obYd6NZjzx2k1ZDvvu">');
-});
-</script>
-
 </body>
 </html>

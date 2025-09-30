@@ -6,8 +6,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="QtuEPyabFV7oRqDAfgEL3yI1cPuYVglq7w5u2vKbkulhdzJhflQ2JKoWIQv6mvLX">
-    <title>Список вакансий - HR Helper</title>
+    <meta name="csrf-token" content="W8gs20ar3kPFeqfGeAC6gHXIMWKL0zcCbsBpCWbBYHKLTCea2E8JAEjqDz7jdqjR">
+    <title>Настройки Notion</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -22,6 +22,129 @@
     <!-- Стили для многоуровневого сайдбара теперь включены в hrhelper.css -->
     
         
+<style>
+    .settings-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e9ecef;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .btn-save {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 25px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+    
+    .btn-test {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 25px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-test:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        color: white;
+    }
+    
+    .help-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+    
+    .status-indicator {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    
+    .status-connected {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .status-disconnected {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .api-token-info {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .step-number {
+        width: 30px;
+        height: 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 1rem;
+    }
+    
+    .step-content {
+        flex: 1;
+    }
+    
+    .step {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+</style>
+
 </head>
 <body>
     <div class="container-fluid">
@@ -129,19 +252,19 @@
             
         </a></li>
     <li class="nav-item  has-submenu">
-        <a class="nav-link active sidebar-toggle" 
+        <a class="nav-link sidebar-toggle" 
            href="/vacancies/"
            data-bs-toggle="collapse"
            data-bs-target="#vacancies_finance-submenu-0"
-           aria-expanded="true">
+           aria-expanded="false">
             <i class="fas fa-briefcase me-2"></i>
             Вакансии и финансы
             <i class="fas fa-chevron-down submenu-arrow ms-auto"></i>
         </a>
-        <div class="collapse show" id="vacancies_finance-submenu-0">
+        <div class="collapse " id="vacancies_finance-submenu-0">
             <ul class="nav flex-column">
     <li class="nav-item ms-1 ">
-        <a class="nav-link active" 
+        <a class="nav-link" 
            href="/vacancies/"
            
            
@@ -151,7 +274,7 @@
             
         </a></li>
     <li class="nav-item ms-1 ">
-        <a class="nav-link active" 
+        <a class="nav-link" 
            href="/vacancies/list/"
            
            
@@ -325,19 +448,19 @@
             </ul>
         </div></li>
     <li class="nav-item  has-submenu">
-        <a class="nav-link sidebar-toggle" 
+        <a class="nav-link active sidebar-toggle" 
            href="/notion/"
            data-bs-toggle="collapse"
            data-bs-target="#notion_int-submenu-0"
-           aria-expanded="false">
+           aria-expanded="true">
             <i class="fas fa-sticky-note me-2"></i>
             Notion
             <i class="fas fa-chevron-down submenu-arrow ms-auto"></i>
         </a>
-        <div class="collapse " id="notion_int-submenu-0">
+        <div class="collapse show" id="notion_int-submenu-0">
             <ul class="nav flex-column">
     <li class="nav-item ms-1 ">
-        <a class="nav-link" 
+        <a class="nav-link active" 
            href="/notion/"
            
            
@@ -377,7 +500,7 @@
             
         </a></li>
     <li class="nav-item ms-1 ">
-        <a class="nav-link" 
+        <a class="nav-link active" 
            href="/notion/settings/"
            
            
@@ -463,7 +586,7 @@
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     
                     <h1 class="h2">
-                        Список вакансий
+                        HR Helper
                     </h1>
                     
                     <div class="btn-toolbar mb-2 mb-md-0">
@@ -492,202 +615,202 @@
 
                 <!-- Messages -->
     
+        <div class="messages">
+            
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                Необходимо настроить интеграцию с Notion
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            
+    </div>
+    
 
                 <!-- Page content -->
         
-<div class="row">
-    <div class="col-12">
-        <!-- Фильтры и поиск -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-search me-2"></i>
-                    Поиск и фильтры
-                </h5>
+<div class="container-fluid">
+    <!-- Заголовок -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-0">Настройки Notion</h1>
+                    <p class="text-muted mb-0">Настройка интеграции с Notion API</p>
+                </div>
+                <div>
+                    <a href="/notion/" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Назад к дашборду
+                    </a>
+                </div>
             </div>
-            <div class="card-body">
-                <form method="get" class="row g-3">
-                    <div class="col-md-4">
-                        <input type="text" name="search" class="form-control" placeholder="Поиск по названию или ID..." maxlength="100" id="id_search">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Основные настройки -->
+            <div class="settings-card">
+                <h4 class="mb-4">
+                    <i class="fas fa-cog"></i> Основные настройки
+                </h4>
+                
+                <!-- Статус подключения -->
+                <div class="form-group">
+                    <label class="form-label">Статус подключения</label>
+                    <div>
+                        
+                            <span class="status-indicator status-disconnected">
+                                <i class="fas fa-times-circle me-2"></i>
+                                API токен не настроен
+                            </span>
+                        
                     </div>
-                    <div class="col-md-3">
-                        <select name="recruiter" class="form-select" id="id_recruiter">
-  <option value="" selected>Все рекрутеры</option>
+                </div>
 
-  <option value="1">admin</option>
+                <!-- API токен -->
+                <div class="api-token-info">
+                    <h6 class="mb-2">
+                        <i class="fas fa-key"></i> API токен Notion
+                    </h6>
+                    
+                        <p class="mb-2 text-danger">
+                            <i class="fas fa-times"></i> Токен не настроен
+                        </p>
+                        <p class="mb-0 small text-muted">
+                            Перейдите в <a href="/accounts/">профиль</a> для настройки API токена
+                        </p>
+                    
+                </div>
 
-  <option value="3">andrei.golubenko</option>
-
-  <option value="17">adevandrei</option>
+                <form method="post" id="settingsForm">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="W8gs20ar3kPFeqfGeAC6gHXIMWKL0zcCbsBpCWbBYHKLTCea2E8JAEjqDz7jdqjR">
+                    
+                    <!-- ID базы данных -->
+                    <div class="form-group">
+                        <label for="id_database_id" class="form-label">
+                            Database id
+                        </label>
+                        <select name="database_id" class="form-select" id="id_database_id">
+  <option value="" selected>Integration токен не настроен</option>
 
 </select>
+                        
+                        
                     </div>
-                    <div class="col-md-3">
-                        <select name="is_active" class="form-select" id="id_is_active">
-  <option value="" selected>Все</option>
 
-  <option value="true">Активные</option>
-
-  <option value="false">Неактивные</option>
-
-</select>
+                    <!-- Автосинхронизация -->
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input type="checkbox" name="auto_sync" class="form-check-input" aria-describedby="id_auto_sync_helptext" id="id_auto_sync" checked>
+                            <label class="form-check-label" for="id_auto_sync">
+                                Автоматическая синхронизация
+                            </label>
+                        </div>
+                        
+                            <div class="help-text">Автоматически синхронизировать страницы с указанным интервалом.</div>
+                        
                     </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-search me-1"></i>
-                            Поиск
+
+                    <!-- Интервал синхронизации -->
+                    <div class="form-group">
+                        <label for="id_sync_interval" class="form-label">
+                            Интервал синхронизации (минуты)
+                        </label>
+                        <input type="number" name="sync_interval" value="30" class="form-control" min="0" max="1440" required aria-describedby="id_sync_interval_helptext" id="id_sync_interval">
+                        
+                            <div class="help-text">Интервал автоматической синхронизации в минутах (от 1 до 1440).</div>
+                        
+                        
+                    </div>
+
+                    <!-- Кнопки -->
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-save">
+                            <i class="fas fa-save"></i> Сохранить настройки
+                        </button>
+                        <button type="button" class="btn btn-test" onclick="testConnection()">
+                            <i class="fas fa-plug"></i> Тестировать подключение
                         </button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- Статистика -->
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="card bg-primary text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h4 class="card-title"></h4>
-                                <p class="card-text">Всего вакансий</p>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-briefcase fa-2x"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card bg-success text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h4 class="card-title"></h4>
-                                <p class="card-text">Активных</p>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-check-circle fa-2x"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card bg-warning text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h4 class="card-title"></h4>
-                                <p class="card-text">Неактивных</p>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-pause-circle fa-2x"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Список вакансий -->
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-list me-2"></i>
-                    Вакансии
+        <div class="col-lg-4">
+            <!-- Инструкция -->
+            <div class="settings-card">
+                <h5 class="mb-4">
+                    <i class="fas fa-info-circle"></i> Инструкция по настройке
                 </h5>
-                <a href="/vacancies/create/" class="btn btn-primary">
-                    <i class="fas fa-plus me-1"></i>
-                    Добавить вакансию
-                </a>
-            </div>
-            <div class="card-body">
                 
-                    <div class="text-center py-5">
-                        <i class="fas fa-briefcase fa-3x text-muted mb-3"></i>
-                        <h5 class="text-muted">Вакансии не найдены</h5>
-                        <p class="text-muted">
-                            
-                                <a href="/vacancies/create/" class="btn btn-primary">
-                                    <i class="fas fa-plus me-1"></i>
-                                    Создать первую вакансию
-                                </a>
-                            
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h6>Создайте интеграцию в Notion</h6>
+                        <p class="small text-muted mb-0">
+                            Перейдите в <a href="https://www.notion.so/my-integrations" target="_blank">Notion Integrations</a> 
+                            и создайте новую интеграцию
                         </p>
                     </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h6>Скопируйте API токен</h6>
+                        <p class="small text-muted mb-0">
+                            Скопируйте Internal Integration Token и вставьте в 
+                            <a href="/accounts/">профиль пользователя</a>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h6>Добавьте интеграцию к базе данных</h6>
+                        <p class="small text-muted mb-0">
+                            В Notion откройте нужную базу данных, нажмите "Share" 
+                            и добавьте вашу интеграцию
+                        </p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h6>Скопируйте ID базы данных</h6>
+                        <p class="small text-muted mb-0">
+                            Из URL базы данных скопируйте ID (32-символьная строка) 
+                            и вставьте в поле выше
+                        </p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h6>Протестируйте подключение</h6>
+                        <p class="small text-muted mb-0">
+                            Нажмите "Тестировать подключение" для проверки настроек
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Дополнительная информация -->
+            <div class="settings-card">
+                <h6 class="mb-3">
+                    <i class="fas fa-lightbulb"></i> Полезная информация
+                </h6>
                 
+                <div class="small text-muted">
+                    <p><strong>ID базы данных:</strong> Находится в URL страницы базы данных Notion</p>
+                    <p><strong>Пример:</strong> https://notion.so/your-workspace/32-символьный-id?v=...</p>
+                    <p><strong>Права доступа:</strong> Интеграция должна иметь доступ к чтению базы данных</p>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Скрытый CSRF токен для AJAX запросов -->
-<input type="hidden" name="csrfmiddlewaretoken" value="QtuEPyabFV7oRqDAfgEL3yI1cPuYVglq7w5u2vKbkulhdzJhflQ2JKoWIQv6mvLX">
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Функция для получения CSRF токена
-    function getCSRFToken() {
-        const token = document.querySelector('[name=csrfmiddlewaretoken]');
-        return token ? token.value : '';
-    }
-
-    // Обработка переключения статуса активности
-    document.querySelectorAll('.toggle-active').forEach(button => {
-        button.addEventListener('click', function() {
-            const url = this.dataset.url;
-            const vacancyName = this.dataset.vacancyName;
-            const action = this.querySelector('i').classList.contains('fa-pause') ? 'деактивировать' : 'активировать';
-            
-            if (confirm(`Вы уверены, что хотите ${action} вакансию "${vacancyName}"?`)) {
-                // Показываем индикатор загрузки
-                const originalHTML = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                this.disabled = true;
-                
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': getCSRFToken(),
-                        'Content-Type': 'application/json',
-                    },
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        // Показываем успешное сообщение
-                        this.innerHTML = '<i class="fas fa-check"></i>';
-                        this.classList.remove('btn-outline-warning', 'btn-outline-success');
-                        this.classList.add('btn-success');
-                        
-                        // Перезагружаем страницу через небольшую задержку
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
-                    } else {
-                        throw new Error(data.message || 'Неизвестная ошибка');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Ошибка: ' + error.message);
-                    
-                    // Восстанавливаем кнопку
-                    this.innerHTML = originalHTML;
-                    this.disabled = false;
-                });
-            }
-        });
-    });
-});
-</script>
 
     </main>
         </div>
@@ -1083,6 +1206,96 @@ document.addEventListener('DOMContentLoaded', function() {
 
     <!-- Дополнительные скрипты для конкретных страниц -->
     
+<script>
+document.getElementById('settingsForm').addEventListener('submit', function(e) {
+    e.preventDefault();
     
+    const formData = new FormData(this);
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Сохранение...';
+    submitBtn.disabled = true;
+    
+    fetch('/notion/settings/save/', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': 'W8gs20ar3kPFeqfGeAC6gHXIMWKL0zcCbsBpCWbBYHKLTCea2E8JAEjqDz7jdqjR',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('success', data.message);
+        } else {
+            showAlert('error', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('error', 'Ошибка сохранения настроек');
+    })
+    .finally(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    });
+});
+
+function testConnection() {
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Тестирование...';
+    btn.disabled = true;
+    
+    fetch('/notion/settings/test/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': 'W8gs20ar3kPFeqfGeAC6gHXIMWKL0zcCbsBpCWbBYHKLTCea2E8JAEjqDz7jdqjR',
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('success', data.message);
+        } else {
+            showAlert('error', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('error', 'Ошибка тестирования подключения');
+    })
+    .finally(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    });
+}
+
+function showAlert(type, message) {
+    const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+    const alertHtml = `
+        <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    // Вставляем алерт в начало контейнера
+    const container = document.querySelector('.container-fluid');
+    container.insertAdjacentHTML('afterbegin', alertHtml);
+    
+    // Автоматически скрываем через 5 секунд
+    setTimeout(() => {
+        const alert = container.querySelector('.alert');
+        if (alert) {
+            alert.remove();
+        }
+    }, 5000);
+}
+</script>
+
 </body>
 </html>

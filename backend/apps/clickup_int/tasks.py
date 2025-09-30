@@ -136,34 +136,28 @@ def bulk_import_clickup_tasks(self, user_id, bulk_import_id):
         print(f"🚀 [WORKER] Начинаем планирование {len(all_tasks)} задач...", flush=True)
         logger.info(f"🚀 [WORKER] Начинаем планирование {len(all_tasks)} задач...")
         
+        # Отправляем все задачи с задержками через apply_async с countdown
         for i, task_data in enumerate(all_tasks):
             try:
                 task_id = task_data.get('id', f'task_{i+1}')
-                print(f"⏳ [WORKER] Отправляем задачу {i+1}/{len(all_tasks)} (ID: {task_id}) в очередь...")
-                print(f"⏳ [WORKER] Отправляем задачу {i+1}/{len(all_tasks)} (ID: {task_id}) в очередь...", flush=True)
-                logger.info(f"⏳ [WORKER] Отправляем задачу {i+1}/{len(all_tasks)} (ID: {task_id}) в очередь...")
+                print(f"⏳ [WORKER] Планируем задачу {i+1}/{len(all_tasks)} (ID: {task_id})...")
+                print(f"⏳ [WORKER] Планируем задачу {i+1}/{len(all_tasks)} (ID: {task_id})...", flush=True)
+                logger.info(f"⏳ [WORKER] Планируем задачу {i+1}/{len(all_tasks)} (ID: {task_id})...")
                 
-                # Отправляем задачу в очередь БЕЗ задержки - она выполнится сразу
+                # Отправляем задачу с задержкой через countdown (не блокируем worker)
+                delay_seconds = i * 8  # Каждая задача через 8 секунд после предыдущей
                 result = import_single_task.apply_async(
-                    args=[user_id, task_data, bulk_import_id]
+                    args=[user_id, task_data, bulk_import_id],
+                    countdown=delay_seconds
                 )
-                print(f"✅ [WORKER] Задача {i+1} отправлена в очередь с ID: {result.id}")
-                print(f"✅ [WORKER] Задача {i+1} отправлена в очередь с ID: {result.id}", flush=True)
-                logger.info(f"✅ [WORKER] Задача {i+1} отправлена в очередь с ID: {result.id}")
-                
-                # Задержка между отправкой задач (кроме последней)
-                if i < len(all_tasks) - 1:
-                    delay = 8  # Фиксированная задержка 8 секунд
-                    print(f"⏸️ [WORKER] Ждем {delay} секунд перед отправкой следующей задачи...")
-                    print(f"⏸️ [WORKER] Ждем {delay} секунд перед отправкой следующей задачи...", flush=True)
-                    logger.info(f"⏸️ [WORKER] Ждем {delay} секунд перед отправкой следующей задачи...")
-                    import time
-                    time.sleep(delay)
+                print(f"✅ [WORKER] Задача {i+1} запланирована на {delay_seconds}с с ID: {result.id}")
+                print(f"✅ [WORKER] Задача {i+1} запланирована на {delay_seconds}с с ID: {result.id}", flush=True)
+                logger.info(f"✅ [WORKER] Задача {i+1} запланирована на {delay_seconds}с с ID: {result.id}")
                 
             except Exception as e:
-                print(f"❌ [WORKER] Ошибка при отправке задачи {i+1}: {e}")
-                print(f"❌ [WORKER] Ошибка при отправке задачи {i+1}: {e}", flush=True)
-                logger.error(f"❌ [WORKER] Ошибка при отправке задачи {i+1}: {e}")
+                print(f"❌ [WORKER] Ошибка при планировании задачи {i+1}: {e}")
+                print(f"❌ [WORKER] Ошибка при планировании задачи {i+1}: {e}", flush=True)
+                logger.error(f"❌ [WORKER] Ошибка при планировании задачи {i+1}: {e}")
                 bulk_import.failed_tasks += 1
                 bulk_import.failed_task_ids.append(task_data.get('id', f'task_{i+1}'))
                 bulk_import.save()

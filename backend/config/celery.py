@@ -87,11 +87,12 @@ app.conf.beat_schedule = {
 }
 
 # Настройки маршрутизации задач для ClickUp
-app.conf.task_routes = {
-    'apps.clickup_int.tasks.bulk_import_clickup_tasks': {'queue': 'clickup_import'},
-    'apps.clickup_int.tasks.import_single_task': {'queue': 'clickup_import'},
-    'apps.clickup_int.tasks.retry_failed_tasks': {'queue': 'clickup_import'},
-}
+# ОТКЛЮЧЕНО: Используем стандартную очередь celery для упрощения
+# app.conf.task_routes = {
+#     'apps.clickup_int.tasks.bulk_import_clickup_tasks': {'queue': 'clickup_import'},
+#     'apps.clickup_int.tasks.import_single_task': {'queue': 'clickup_import'},
+#     'apps.clickup_int.tasks.retry_failed_tasks': {'queue': 'clickup_import'},
+# }
 
 app.conf.timezone = 'UTC'
 

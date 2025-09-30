@@ -6,8 +6,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="rj1o5Pkd4GqlrGuFp0ySU0SeNQe89feVtOqh4ddeDCXJgSXqve2j48DrTF0YJIMm">
-    <title>Bondarenko Aleksei - HR Helper</title>
+    <meta name="csrf-token" content="xNjZUTnbr9RJUl8Fzgg2gCjsKEe5YS0gLRRCj52h597THIspsvblr5GTTFwAjOvs">
+    <title>Вакансии - Huntflow</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -51,7 +51,7 @@
             
         </a></li>
     <li class="nav-item  ">
-        <a class="nav-link" 
+        <a class="nav-link active" 
            href="/huntflow/"
            
            
@@ -463,7 +463,7 @@
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     
                     <h1 class="h2">
-                        Bondarenko Aleksei
+                        Вакансии
                     </h1>
                     
                     <div class="btn-toolbar mb-2 mb-md-0">
@@ -495,184 +495,71 @@
 
                 <!-- Page content -->
         
-<div class="row">
-    <div class="col-lg-8">
+<!-- Filters -->
+<div class="row mb-4">
+    <div class="col-12">
         <div class="card">
-            <div class="card-header">
-                <div class="row align-items-center">
-                    <div class="col">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-user me-2"></i>
-                            Информация об интервьюере
-                        </h5>
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-3">
+                        <label for="state" class="form-label">Статус</label>
+                        <select class="form-select" id="state" name="state">
+                            <option value="">Все статусы</option>
+                            
+                        </select>
                     </div>
-                    <div class="col-auto">
-                        <div class="btn-group" role="group">
-                            <a href="/interviewers/1/edit/" class="btn btn-warning">
-                                <i class="fas fa-edit me-2"></i>
-                                Редактировать
-                            </a>
-                            <button class="btn btn-success toggle-active"
-                                    data-pk="1"
-                                    data-active="true">
-                                
-                                    <i class="fas fa-check me-2"></i>
-                                    Активен
-                                
+                    <div class="col-md-3">
+                        <label for="count" class="form-label">Количество</label>
+                        <select class="form-select" id="count" name="count">
+                            <option value="10" >10</option>
+                            <option value="30" selected>30</option>
+                            <option value="50" >50</option>
+                            <option value="100" >100</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="page" class="form-label">Страница</label>
+                        <input type="number" class="form-control" id="page" name="page" 
+                               value="1" min="1">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">&nbsp;</label>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-filter me-1"></i>
+                                Применить
                             </button>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4 text-center mb-4">
-                        <div class="avatar-lg bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                            <span class="display-4">AB</span>
-                        </div>
-                        <h4 class="mb-1">Bondarenko Aleksei</h4>
-                        <p class="text-muted mb-0">Aleksei</p>
-                    </div>
-                    
-                    <div class="col-md-8">
-                        <div class="row">
-                            <div class="col-sm-6 mb-3">
-                                <label class="form-label fw-bold">Имя:</label>
-                                <p class="mb-0">Aleksei</p>
-                            </div>
-                            <div class="col-sm-6 mb-3">
-                                <label class="form-label fw-bold">Фамилия:</label>
-                                <p class="mb-0">Bondarenko</p>
-                            </div>
-                            
-                            <div class="col-sm-6 mb-3">
-                                <label class="form-label fw-bold">Email:</label>
-                                <p class="mb-0">
-                                    <a href="mailto:aleksei.bondarenko@softnetix.io" class="text-decoration-none">
-                                        aleksei.bondarenko@softnetix.io
-                                    </a>
-                                </p>
-                            </div>
-                            <div class="col-sm-6 mb-3">
-                                <label class="form-label fw-bold">Статус:</label>
-                                <p class="mb-0">
-                                    
-                                        <span class="badge bg-success">
-                                            <i class="fas fa-check me-1"></i>
-                                            Активен
-                                        </span>
-                                    
-                                </p>
-                            </div>
-                            <div class="col-sm-6 mb-3">
-                                <label class="form-label fw-bold">Дата создания:</label>
-                                <p class="mb-0">05.09.2025 16:04</p>
-                            </div>
-                            
-                                <div class="col-sm-6 mb-3">
-                                    <label class="form-label fw-bold">Последнее обновление:</label>
-                                    <p class="mb-0">05.09.2025 23:45</p>
-                                </div>
-                            
-                        </div>
-                    </div>
-                </div>
-                
-                
-                    <hr>
-                    <div class="row">
-                        <div class="col-12">
-                            <label class="form-label fw-bold">Ссылка на календарь:</label>
-                            <p class="mb-3">
-                                <a href="https://calendar.google.com/calendar/embed?src=aleksei.bondarenko@softnetix.io" target="_blank" class="btn btn-info">
-                                    <i class="fas fa-calendar me-2"></i>
-                                    Открыть календарь
-                                </a>
-                            </p>
-                            <div class="input-group">
-                                <input type="text" class="form-control" value="https://calendar.google.com/calendar/embed?src=aleksei.bondarenko@softnetix.io" readonly>
-                                <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('https://calendar.google.com/calendar/embed?src=aleksei.bondarenko@softnetix.io')">
-                                    <i class="fas fa-copy"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                
+                </form>
             </div>
         </div>
     </div>
-    
-    <div class="col-lg-4">
-        <!-- Действия -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h6 class="card-title mb-0">
-                    <i class="fas fa-cogs me-2"></i>
-                    Действия
-                </h6>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="/interviewers/1/edit/" class="btn btn-warning">
-                        <i class="fas fa-edit me-2"></i>
-                        Редактировать
-                    </a>
-                    <a href="mailto:aleksei.bondarenko@softnetix.io" class="btn btn-outline-primary">
-                        <i class="fas fa-envelope me-2"></i>
-                        Написать email
-                    </a>
-                    
-                        <a href="https://calendar.google.com/calendar/embed?src=aleksei.bondarenko@softnetix.io" target="_blank" class="btn btn-outline-info">
-                            <i class="fas fa-calendar me-2"></i>
-                            Записаться на интервью
-                        </a>
-                    
-                    <button class="btn btn-outline-danger delete-interviewer" 
-                            data-pk="1" 
-                            data-name="Bondarenko Aleksei">
-                        <i class="fas fa-trash me-2"></i>
-                        Удалить
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Статистика -->
+</div>
+
+<!-- Vacancies List -->
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
         <div class="card">
-            <div class="card-header">
-                <h6 class="card-title mb-0">
-                    <i class="fas fa-chart-bar me-2"></i>
-                    Статистика
-                </h6>
-            </div>
-            <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-6">
-                        <h4 class="text-primary mb-1">1</h4>
-                        <small class="text-muted">Интервью</small>
-                    </div>
-                    <div class="col-6">
-                        <h4 class="text-success mb-1">0</h4>
-                        <small class="text-muted">Завершено</small>
-                    </div>
-                </div>
+            <div class="card-body text-center">
+                <i class="fas fa-info-circle fa-3x text-info mb-3"></i>
+                <h4>Вакансии не найдены</h4>
+                <p class="text-muted">
+                    По заданным критериям вакансии не найдены.
+                </p>
+                <button type="button" class="btn btn-primary" onclick="refreshVacancies()">
+                    <i class="fas fa-sync-alt me-1"></i>
+                    Обновить
+                </button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Кнопка "Назад" -->
-<div class="row mt-4">
-    <div class="col-12">
-        <a href="/interviewers/list/" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-2"></i>
-            Назад к списку интервьюеров
-        </a>
-    </div>
-</div>
 
-<!-- Скрытый CSRF токен для AJAX запросов -->
-<input type="hidden" name="csrfmiddlewaretoken" value="rj1o5Pkd4GqlrGuFp0ySU0SeNQe89feVtOqh4ddeDCXJgSXqve2j48DrTF0YJIMm">
+<!-- Debug Info -->
+
 
     </main>
         </div>
@@ -1069,148 +956,14 @@
     <!-- Дополнительные скрипты для конкретных страниц -->
     
 <script>
-// Переключение статуса активности
-document.querySelectorAll('.toggle-active').forEach(button => {
-    button.addEventListener('click', function() {
-        const pk = this.dataset.pk;
-        const isActive = this.dataset.active === 'true';
-        
-        fetch(`/interviewers/${pk}/toggle-active/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Обновляем кнопку
-                this.dataset.active = data.is_active ? 'true' : 'false';
-                if (data.is_active) {
-                    this.className = 'btn btn-success toggle-active';
-                    this.innerHTML = '<i class="fas fa-check me-2"></i>Активен';
-                } else {
-                    this.className = 'btn btn-secondary toggle-active';
-                    this.innerHTML = '<i class="fas fa-times me-2"></i>Неактивен';
-                }
-                
-                // Обновляем статус в информации
-                const statusBadge = document.querySelector('.badge');
-                if (data.is_active) {
-                    statusBadge.className = 'badge bg-success';
-                    statusBadge.innerHTML = '<i class="fas fa-check me-1"></i>Активен';
-                } else {
-                    statusBadge.className = 'badge bg-secondary';
-                    statusBadge.innerHTML = '<i class="fas fa-times me-1"></i>Неактивен';
-                }
-                
-                // Показываем сообщение
-                showAlert('success', data.message);
-            } else {
-                showAlert('danger', data.message);
-            }
-        })
-        .catch(error => {
-            showAlert('danger', 'Ошибка при изменении статуса');
-        });
-    });
-});
-
-// Удаление интервьюера
-document.querySelectorAll('.delete-interviewer').forEach(button => {
-    button.addEventListener('click', function() {
-        const pk = this.dataset.pk;
-        const name = this.dataset.name;
-        
-        if (confirm(`Вы уверены, что хотите удалить интервьюера "${name}"?`)) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/interviewers/${pk}/delete/`;
-            
-            const csrfToken = document.createElement('input');
-            csrfToken.type = 'hidden';
-            csrfToken.name = 'csrfmiddlewaretoken';
-            csrfToken.value = document.querySelector('[name=csrfmiddlewaretoken]').value;
-            
-            form.appendChild(csrfToken);
-            document.body.appendChild(form);
-            form.submit();
-        }
-    });
-});
-
-// Копирование ссылки в буфер обмена
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(function() {
-        showAlert('success', 'Ссылка скопирована в буфер обмена');
-    }, function(err) {
-        showAlert('danger', 'Ошибка при копировании');
-    });
+function refreshVacancies() {
+    location.reload();
 }
 
-// Автозаполнение календаря
-document.querySelectorAll('.auto-fill-calendar').forEach(button => {
-    button.addEventListener('click', function() {
-        const interviewerId = this.dataset.interviewerId;
-        
-        // Показываем индикатор загрузки
-        const originalText = this.innerHTML;
-        this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Поиск календаря...';
-        this.disabled = true;
-        
-        fetch('/interviewers/auto-fill-calendar/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-            },
-            body: JSON.stringify({
-                interviewer_id: interviewerId
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showAlert('success', data.message);
-                // Перезагружаем страницу через небольшую задержку
-                setTimeout(() => {
-                    location.reload();
-                }, 1000);
-            } else {
-                showAlert('danger', data.error);
-                // Восстанавливаем кнопку
-                this.innerHTML = originalText;
-                this.disabled = false;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showAlert('danger', 'Ошибка при автозаполнении календаря');
-            // Восстанавливаем кнопку
-            this.innerHTML = originalText;
-            this.disabled = false;
-        });
-    });
-});
-
-// Функция для показа уведомлений
-function showAlert(type, message) {
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-    alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    
-    const container = document.querySelector('.container-fluid');
-    container.insertBefore(alertDiv, container.firstChild);
-    
-    // Автоматически скрываем через 5 секунд
-    setTimeout(() => {
-        alertDiv.remove();
-    }, 5000);
-}
+// Автоматическое обновление каждые 5 минут
+setTimeout(function() {
+    location.reload();
+}, 300000);
 </script>
 
 </body>

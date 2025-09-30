@@ -165,3 +165,4 @@ start_server.bat   # Windows
 
 *Детальный экспорт выполнен: $(date)*
 *Команда: export_static_site (улучшенная версия)*
+

@@ -288,3 +288,4 @@ class UserService:
                 
         except Exception as e:
             return False, f"Ошибка тестирования API ключа: {str(e)}"
+

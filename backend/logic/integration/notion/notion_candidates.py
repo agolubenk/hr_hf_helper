@@ -514,3 +514,4 @@ class NotionCandidateService(BaseAPIClient, BaseCandidateOperations, BaseComment
             return response.get('success', False)
         except Exception:
             return False
+

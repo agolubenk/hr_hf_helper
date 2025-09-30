@@ -25,3 +25,4 @@ def get_gemini_views():
         'test_api_key': test_api_key,
         'update_session_title': update_session_title,
     }
+

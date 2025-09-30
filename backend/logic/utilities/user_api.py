@@ -260,3 +260,4 @@ class GroupViewSet(BaseAPIViewSet):
     search_fields = ['name']
     ordering_fields = ['name']
     ordering = ['name']
+

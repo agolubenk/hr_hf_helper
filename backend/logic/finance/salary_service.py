@@ -173,3 +173,4 @@ class SalaryService:
                     "max_usd": 0
                 }
             }
+

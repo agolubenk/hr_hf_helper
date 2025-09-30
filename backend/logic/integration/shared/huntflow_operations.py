@@ -86,8 +86,13 @@ class HuntflowOperations:
         """Обработка данных задачи ClickUp"""
         attachments = task_data.get('attachments', [])
         
-        # Проверяем PDF файлы
-        pdf_attachments = [att for att in attachments if att.get('extension', '').lower() == 'pdf']
+        # Проверяем PDF файлы по имени или URL
+        pdf_attachments = []
+        for att in attachments:
+            name = att.get('name', '').lower()
+            url = att.get('url', '').lower()
+            if name.endswith('.pdf') or url.endswith('.pdf'):
+                pdf_attachments.append(att)
         
         if pdf_attachments:
             return self._process_pdf_attachment(pdf_attachments[0], account_id)
@@ -160,10 +165,20 @@ class HuntflowOperations:
                 return None
             
             # Загружаем в Huntflow с парсингом
+            file_name = attachment.get('name', attachment.get('title', 'resume.pdf'))
+            if not file_name or file_name == '':
+                # Если имя файла пустое, извлекаем из URL
+                url = attachment.get('url', '')
+                if url:
+                    import os
+                    file_name = os.path.basename(url.split('?')[0])  # Убираем query параметры
+                if not file_name:
+                    file_name = 'resume.pdf'
+            
             parsed_data = self.huntflow_service.upload_file(
                 account_id=account_id,
                 file_data=file_response.content,
-                file_name=attachment.get('name', attachment.get('title', 'resume.pdf')),
+                file_name=file_name,
                 parse_file=True
             )
             
@@ -303,3 +318,4 @@ class HuntflowOperations:
         except Exception as e:
             logger.error(f"Ошибка тестирования подключения: {e}")
             return False
+

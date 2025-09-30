@@ -340,3 +340,4 @@ def google_settings(request):
     except Exception as e:
         messages.error(request, f'Ошибка загрузки настроек: {str(e)}')
         return render(request, 'google_oauth/settings.html', {'error': str(e)})
+

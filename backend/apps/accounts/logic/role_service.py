@@ -154,3 +154,4 @@ class RoleService:
             'valid': len(issues) == 0,
             'issues': issues
         }
+

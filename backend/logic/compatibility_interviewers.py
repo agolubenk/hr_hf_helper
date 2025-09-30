@@ -25,3 +25,4 @@ interview_rule_detail = new_interviewer_views.interview_rule_detail
 interview_rule_create = new_interviewer_views.interview_rule_create
 interview_rule_edit = new_interviewer_views.interview_rule_edit
 interview_rule_delete = new_interviewer_views.interview_rule_delete
+

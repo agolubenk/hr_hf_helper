@@ -50,3 +50,4 @@ class TelegramStatsSerializer(serializers.Serializer):
     failed_attempts = serializers.IntegerField()
     recent_users = TelegramUserSerializer(many=True)
     recent_attempts = AuthAttemptSerializer(many=True)
+

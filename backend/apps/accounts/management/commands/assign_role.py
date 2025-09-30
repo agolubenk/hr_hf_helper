@@ -30,3 +30,4 @@ class Command(BaseCommand):
                 
         except User.DoesNotExist:
             raise CommandError(f"Пользователь '{username}' не найден")
+

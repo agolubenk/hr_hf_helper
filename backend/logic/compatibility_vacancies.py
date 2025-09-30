@@ -38,3 +38,4 @@ def get_vacancy_services():
     return {
         'VacancyIntegrationService': VacancyIntegrationService
     }
+

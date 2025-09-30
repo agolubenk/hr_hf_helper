@@ -56,3 +56,4 @@ class Command(BaseCommand):
                 
         except Exception as e:
             raise CommandError(f"Ошибка при создании пользователя: {str(e)}")
+

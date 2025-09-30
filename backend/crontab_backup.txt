@@ -17,3 +17,4 @@
 0 * * * * cd /path/to/hrhelper/fullstack/backend && ./monitor.sh health >> logs/health_check.log 2>&1
 
 # ВАЖНО: Замените /path/to/hrhelper/fullstack/backend на реальный путь к вашему проекту
+

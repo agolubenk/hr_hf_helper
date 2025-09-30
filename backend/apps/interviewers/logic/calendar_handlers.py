@@ -265,3 +265,4 @@ class CalendarApiHandler:
         """
         interviewer_email = data.get('interviewer_email')
         return CalendarHandler.suggest_calendar_logic(interviewer_email, request.user)
+

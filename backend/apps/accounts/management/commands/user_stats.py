@@ -30,3 +30,4 @@ class Command(BaseCommand):
                 self.stdout.write(f"  - {role_name}: {data['users_count']} пользователей, {data['permissions_count']} прав")
             else:
                 self.stdout.write(self.style.WARNING(f"  - {role_name}: НЕ СУЩЕСТВУЕТ"))
+

@@ -28,3 +28,4 @@ if HAS_OLD_SERVICE:
     CurrencyRateService = OldCurrencyRateService  # Пока оставляем старый
 else:
     CurrencyRateService = None  # Старый сервис недоступен
+

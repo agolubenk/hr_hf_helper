@@ -234,3 +234,4 @@ class InterviewerService(BaseAPIClient):
             'created_at': rule.created_at.isoformat(),
             'updated_at': rule.updated_at.isoformat()
         }
+

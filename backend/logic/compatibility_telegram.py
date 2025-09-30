@@ -21,3 +21,4 @@ telegram_settings = new_telegram_views.telegram_settings
 telegram_auth_attempts = new_telegram_views.telegram_auth_attempts
 telegram_webhook = new_telegram_views.telegram_webhook
 telegram_test_connection = new_telegram_views.telegram_test_connection
+

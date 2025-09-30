@@ -6,8 +6,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="kAWnDxEmz9VjAo516mcxI8di17y9zWfSg0QerH3WiauAE4wOk5mo26416vl1QdLC">
-    <title>Авторизация Telegram</title>
+    <meta name="csrf-token" content="BFGkPh8YzeQfyUMZbnGW2VZWOzBLEqJTNxaU6XraQ8toeesHgojyR7cDZ5E2VItG">
+    <title>Налоги PLN - Финансы</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -22,7 +22,7 @@
     <!-- Стили для многоуровневого сайдбара теперь включены в hrhelper.css -->
     
         
-<link href="static/css/telegram.css" rel="stylesheet">
+<link href="static/css/finance.css" rel="stylesheet">
 
 </head>
 <body>
@@ -131,16 +131,16 @@
             
         </a></li>
     <li class="nav-item  has-submenu">
-        <a class="nav-link sidebar-toggle" 
+        <a class="nav-link active sidebar-toggle" 
            href="/vacancies/"
            data-bs-toggle="collapse"
            data-bs-target="#vacancies_finance-submenu-0"
-           aria-expanded="false">
+           aria-expanded="true">
             <i class="fas fa-briefcase me-2"></i>
             Вакансии и финансы
             <i class="fas fa-chevron-down submenu-arrow ms-auto"></i>
         </a>
-        <div class="collapse " id="vacancies_finance-submenu-0">
+        <div class="collapse show" id="vacancies_finance-submenu-0">
             <ul class="nav flex-column">
     <li class="nav-item ms-1 ">
         <a class="nav-link" 
@@ -173,7 +173,7 @@
             
         </a></li>
     <li class="nav-item ms-1 ">
-        <a class="nav-link" 
+        <a class="nav-link active" 
            href="/finance/"
            
            
@@ -497,147 +497,698 @@
 
                 <!-- Page content -->
         
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h4><i class="fab fa-telegram-plane"></i> Авторизация Telegram</h4>
-            </div>
-            <div class="card-body">
-                
-                    <!-- Не авторизован -->
-                    <div id="step-initial">
-                        <p class="text-muted">Для продолжения работы необходимо авторизоваться в Telegram через QR-код.</p>
-                        <button class="btn btn-primary btn-lg" onclick="generateQR()">
-                            <i class="fas fa-qrcode"></i> Создать QR-код
-                        </button>
-                    </div>
-
-                    <!-- QR-код -->
-                    <div id="qr-container" class="d-none">
-                        <div class="text-center mb-3">
-                            <div id="qr-code-display" class="p-3 border rounded bg-light">
-                                <img id="qr-image" src="" alt="QR код" class="img-fluid" style="max-width: 300px;">
-                            </div>
-                        </div>
-                        
-                        <div class="alert alert-info text-center">
-                            <h6><i class="fas fa-mobile-alt"></i> Инструкция:</h6>
-                            <ol class="text-start">
-                                <li>Откройте Telegram на телефоне</li>
-                                <li>Перейдите в <strong>Настройки → Устройства</strong></li>
-                                <li>Нажмите <strong>"Подключить устройство"</strong></li>
-                                <li>Отсканируйте QR-код камерой</li>
-                            </ol>
-                        </div>
-                        
-                        <div id="status-display" class="alert alert-info text-center">
-                            <i class="fas fa-info-circle"></i> Нажмите "Создать QR-код" для начала авторизации
-                        </div>
-                        
-                        <div class="text-center">
-                            <button class="btn btn-outline-secondary" onclick="recreateQR()">
-                                <i class="fas fa-sync-alt"></i> Обновить QR-код
-                            </button>
-                            <button class="btn btn-outline-danger" onclick="cancelAuth()">
-                                <i class="fas fa-times"></i> Отмена
-                            </button>
-                        </div>
-                        
-                        <!-- Кнопка для ручного перехода к 2FA -->
-                        <div class="text-center mt-3">
-                            <button class="btn btn-warning" onclick="show2FA()">
-                                <i class="fas fa-shield-alt"></i> Нужна 2FA?
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- 2FA -->
-                    <div id="tfa-container" class="d-none">
-                        <div class="alert alert-success">
-                            <h5><i class="fas fa-shield-alt"></i> Двухфакторная аутентификация</h5>
-                            <p><i class="fas fa-check-circle"></i> QR-код успешно отсканирован!</p>
-                            <p>У вас включена двухфакторная аутентификация. Введите пароль:</p>
-                        </div>
-                        
-                        <form id="tfa-form" onsubmit="submit2FA(event)">
-                            <div class="mb-3">
-                                <label for="tfa-password" class="form-label">Пароль 2FA:</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" class="form-control" id="tfa-password" 
-                                           placeholder="Введите пароль" required>
-                                </div>
-                            </div>
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-success">
-                                    <i class="fas fa-sign-in-alt"></i> Подтвердить
-                                </button>
-                                <button type="button" class="btn btn-outline-info" onclick="showQR()">
-                                    <i class="fas fa-qrcode"></i> Назад к QR-коду
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary" onclick="cancelAuth()">
-                                    <i class="fas fa-arrow-left"></i> Отмена
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Успешная авторизация -->
-                    <div id="success-container" class="d-none">
-                        <div class="alert alert-success text-center">
-                            <h4><i class="fas fa-check-circle"></i> Авторизация успешна!</h4>
-                            <p id="user-info-display" class="mb-3"></p>
-                            <button class="btn btn-primary" onclick="location.reload()">
-                                <i class="fas fa-refresh"></i> Обновить страницу
-                            </button>
-                        </div>
-                    </div>
-                
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">
+                    <i class="fas fa-percentage me-2"></i>
+                    Налоги PLN
+                </h1>
+                <div class="btn-group">
+                    <a href="/finance/" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Назад к дашборду
+                    </a>
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addTaxModal">
+                        <i class="fas fa-plus me-2"></i>
+                        Добавить налог
+                    </button>
+                </div>
             </div>
         </div>
+    </div>
 
-        <!-- История попыток авторизации -->
-        
+    <!-- Статистика -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">8</h4>
+                            <p class="card-text">Всего налогов</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-percentage fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">6</h4>
+                            <p class="card-text">Активных</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-check-circle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">8</h4>
+                            <p class="card-text">Всего налогов</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-list fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">2</h4>
+                            <p class="card-text">Неактивных</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-times-circle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Список налогов -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        Список налогов PLN
+                    </h5>
+                </div>
+                <div class="card-body">
+                    
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Название налога</th>
+                                        <th>Ставка</th>
+                                        <th>Статус</th>
+                                        <th>Создано</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                        <tr>
+                                            <td>
+                                                <strong>Кряковый</strong>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold text-primary tax-rate">13,00%</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">
+                                                    Неактивен
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    27.09.2025 01:51
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button type="button" class="btn btn-outline-warning edit-tax" data-tax-id="9" data-tax-name="Кряковый" data-tax-rate="13,00" data-tax-active="False">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-danger delete-tax" data-tax-id="9" data-tax-name="Кряковый">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    
+                                        <tr>
+                                            <td>
+                                                <strong>Медицинское страхование</strong>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold text-primary tax-rate">9,00%</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success">
+                                                    Активен
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    28.09.2025 22:22
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button type="button" class="btn btn-outline-warning edit-tax" data-tax-id="15" data-tax-name="Медицинское страхование" data-tax-rate="9,00" data-tax-active="True">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-danger delete-tax" data-tax-id="15" data-tax-name="Медицинское страхование">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    
+                                        <tr>
+                                            <td>
+                                                <strong>Подоходный налог</strong>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold text-primary tax-rate">17,00%</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success">
+                                                    Активен
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    28.09.2025 22:22
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button type="button" class="btn btn-outline-warning edit-tax" data-tax-id="13" data-tax-name="Подоходный налог" data-tax-rate="17,00" data-tax-active="True">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-danger delete-tax" data-tax-id="13" data-tax-name="Подоходный налог">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    
+                                        <tr>
+                                            <td>
+                                                <strong>Подоходный налог (PIT)</strong>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold text-primary tax-rate">22,50%</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success">
+                                                    Активен
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    18.09.2025 16:44
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button type="button" class="btn btn-outline-warning edit-tax" data-tax-id="5" data-tax-name="Подоходный налог (PIT)" data-tax-rate="22,50" data-tax-active="True">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-danger delete-tax" data-tax-id="5" data-tax-name="Подоходный налог (PIT)">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    
+                                        <tr>
+                                            <td>
+                                                <strong>Социальные взносы</strong>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold text-primary tax-rate">19,48%</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success">
+                                                    Активен
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    28.09.2025 22:22
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button type="button" class="btn btn-outline-warning edit-tax" data-tax-id="14" data-tax-name="Социальные взносы" data-tax-rate="19,48" data-tax-active="True">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-danger delete-tax" data-tax-id="14" data-tax-name="Социальные взносы">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    
+                                        <tr>
+                                            <td>
+                                                <strong>Социальные взносы (ZUS)</strong>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold text-primary tax-rate">20,00%</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">
+                                                    Неактивен
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    18.09.2025 16:44
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button type="button" class="btn btn-outline-warning edit-tax" data-tax-id="6" data-tax-name="Социальные взносы (ZUS)" data-tax-rate="20,00" data-tax-active="False">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-danger delete-tax" data-tax-id="6" data-tax-name="Социальные взносы (ZUS)">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    
+                                        <tr>
+                                            <td>
+                                                <strong>Тестовый налог 2</strong>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold text-primary tax-rate">15,00%</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success">
+                                                    Активен
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    27.09.2025 01:52
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button type="button" class="btn btn-outline-warning edit-tax" data-tax-id="11" data-tax-name="Тестовый налог 2" data-tax-rate="15,00" data-tax-active="True">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-danger delete-tax" data-tax-id="11" data-tax-name="Тестовый налог 2">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    
+                                        <tr>
+                                            <td>
+                                                <strong>Тестовый налог 3</strong>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold text-primary tax-rate">10,00%</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success">
+                                                    Активен
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    27.09.2025 01:52
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button type="button" class="btn btn-outline-warning edit-tax" data-tax-id="12" data-tax-name="Тестовый налог 3" data-tax-rate="10,00" data-tax-active="True">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-danger delete-tax" data-tax-id="12" data-tax-name="Тестовый налог 3">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Пример расчета -->
+    
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-calculator me-2"></i>
+                            Пример расчета налогов
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Исходные данные:</h6>
+                                <p>
+                                    <strong>Net сумма:</strong> <span class="number-value">5000,00</span> PLN
+                                </p>
+                                <p>
+                                    <strong>Gross сумма:</strong> <span class="number-value">71225,07</span> PLN
+                                </p>
+                                <p>
+                                    <strong>Активных налогов:</strong> <span class="number-value">6</span>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Детализация налогов:</h6>
+                                
+                                    <p>
+                                        <strong>Медицинское страхование:</strong> 
+                                        <span class="tax-rate">9,0%</span> = 
+                                        <span class="number-value">6410,26</span> PLN
+                                    </p>
+                                
+                                    <p>
+                                        <strong>Подоходный налог:</strong> 
+                                        <span class="tax-rate">17,0%</span> = 
+                                        <span class="number-value">12108,26</span> PLN
+                                    </p>
+                                
+                                    <p>
+                                        <strong>Подоходный налог (PIT):</strong> 
+                                        <span class="tax-rate">22,5%</span> = 
+                                        <span class="number-value">16025,64</span> PLN
+                                    </p>
+                                
+                                    <p>
+                                        <strong>Социальные взносы:</strong> 
+                                        <span class="tax-rate">19,48%</span> = 
+                                        <span class="number-value">13874,64</span> PLN
+                                    </p>
+                                
+                                    <p>
+                                        <strong>Тестовый налог 2:</strong> 
+                                        <span class="tax-rate">15,0%</span> = 
+                                        <span class="number-value">10683,76</span> PLN
+                                    </p>
+                                
+                                    <p>
+                                        <strong>Тестовый налог 3:</strong> 
+                                        <span class="tax-rate">10,0%</span> = 
+                                        <span class="number-value">7122,51</span> PLN
+                                    </p>
+                                
+                                <hr>
+                                <p>
+                                    <strong>Итого налогов:</strong> <span class="number-value">66225,07</span> PLN
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+</div>
+
+<!-- Модальное окно для добавления налога -->
+<div class="modal fade" id="addTaxModal" tabindex="-1" aria-labelledby="addTaxModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTaxModalLabel">
+                    <i class="fas fa-plus me-2"></i>
+                    Добавить налог PLN
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addTaxForm">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="BFGkPh8YzeQfyUMZbnGW2VZWOzBLEqJTNxaU6XraQ8toeesHgojyR7cDZ5E2VItG">
+                    <div class="mb-3">
+                        <label for="taxName" class="form-label">Название налога *</label>
+                        <input type="text" class="form-control" id="taxName" placeholder="Например: Подоходный налог" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="taxRate" class="form-label">Налоговая ставка (%) *</label>
+                        <input type="number" class="form-control" id="taxRate" step="0.01" min="0" max="100" placeholder="17.00" required>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="taxActive" checked>
+                            <label class="form-check-label" for="taxActive">
+                                Активен
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-success" id="submitTaxForm">
+                    <i class="fas fa-plus me-2"></i>
+                    Создать налог
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Модальное окно для ошибок -->
-<div class="modal fade" id="errorModal" tabindex="-1">
+<!-- Модальное окно для редактирования налога -->
+<div class="modal fade" id="editTaxModal" tabindex="-1" aria-labelledby="editTaxModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">
-                    <i class="fas fa-exclamation-triangle"></i> Ошибка
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTaxModalLabel">
+                    <i class="fas fa-edit me-2"></i>
+                    Редактировать налог PLN
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p id="error-message">Произошла ошибка</p>
+                <form id="editTaxForm">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="BFGkPh8YzeQfyUMZbnGW2VZWOzBLEqJTNxaU6XraQ8toeesHgojyR7cDZ5E2VItG">
+                    <input type="hidden" id="editTaxId">
+                    <div class="mb-3">
+                        <label for="editTaxName" class="form-label">Название налога *</label>
+                        <input type="text" class="form-control" id="editTaxName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editTaxRate" class="form-label">Налоговая ставка (%) *</label>
+                        <input type="number" class="form-control" id="editTaxRate" step="0.01" min="0" max="100" required>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="editTaxActive">
+                            <label class="form-check-label" for="editTaxActive">
+                                Активен
+                            </label>
+                        </div>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-warning" id="submitEditTaxForm">
+                    <i class="fas fa-save me-2"></i>
+                    Сохранить изменения
+                </button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-// Глобальные переменные для JavaScript
-window.TELEGRAM_AUTH = {
-    urls: {
-        generateQR: "/telegram/api/generate-qr/",
-        checkAuth: "/telegram/api/check-auth/",
-        handle2FA: "/telegram/api/handle-2fa/",
-        recreateQR: "/telegram/api/recreate-qr/",
-        resetAuth: "/telegram/api/reset-auth/"
-    },
-    csrf_token: "kAWnDxEmz9VjAo516mcxI8di17y9zWfSg0QerH3WiauAE4wOk5mo26416vl1QdLC"
-};
+document.addEventListener('DOMContentLoaded', function() {
+    // Обработка добавления налога
+    document.getElementById('submitTaxForm').addEventListener('click', function() {
+        const formData = {
+            name: document.getElementById('taxName').value.trim(),
+            rate: parseFloat(document.getElementById('taxRate').value),
+            is_active: document.getElementById('taxActive').checked
+        };
+        
+        if (!formData.name || isNaN(formData.rate)) {
+            showAlert('danger', 'Все поля обязательны для заполнения');
+            return;
+        }
+        
+        if (formData.rate < 0 || formData.rate > 100) {
+            showAlert('danger', 'Налоговая ставка должна быть от 0 до 100%');
+            return;
+        }
+        
+        // Отправляем AJAX запрос
+        fetch('/finance/pln-taxes/add/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert('success', 'Налог успешно создан!');
+                // Закрываем модальное окно
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addTaxModal'));
+                modal.hide();
+                // Перезагружаем страницу
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                showAlert('danger', data.message || 'Ошибка при создании налога');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('danger', 'Ошибка при создании налога');
+        });
+    });
+    
+    // Обработка редактирования налога
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.edit-tax')) {
+            const button = e.target.closest('.edit-tax');
+            const taxId = button.getAttribute('data-tax-id');
+            const taxName = button.getAttribute('data-tax-name');
+            const taxRate = button.getAttribute('data-tax-rate');
+            const taxActive = button.getAttribute('data-tax-active') === 'True';
+            
+            // Заполняем форму редактирования
+            document.getElementById('editTaxId').value = taxId;
+            document.getElementById('editTaxName').value = taxName;
+            document.getElementById('editTaxRate').value = taxRate;
+            document.getElementById('editTaxActive').checked = taxActive;
+            
+            // Показываем модальное окно
+            const editModal = new bootstrap.Modal(document.getElementById('editTaxModal'));
+            editModal.show();
+        }
+    });
+    
+    // Обработка сохранения изменений
+    document.getElementById('submitEditTaxForm').addEventListener('click', function() {
+        const taxId = document.getElementById('editTaxId').value;
+        const formData = {
+            name: document.getElementById('editTaxName').value.trim(),
+            rate: parseFloat(document.getElementById('editTaxRate').value),
+            is_active: document.getElementById('editTaxActive').checked
+        };
+        
+        if (!formData.name || isNaN(formData.rate)) {
+            showAlert('danger', 'Все поля обязательны для заполнения');
+            return;
+        }
+        
+        if (formData.rate < 0 || formData.rate > 100) {
+            showAlert('danger', 'Налоговая ставка должна быть от 0 до 100%');
+            return;
+        }
+        
+        // Отправляем AJAX запрос
+        fetch(`/finance/pln-taxes/0/update/`.replace('0', taxId), {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert('success', 'Налог успешно обновлен!');
+                // Закрываем модальное окно
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editTaxModal'));
+                modal.hide();
+                // Перезагружаем страницу
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                showAlert('danger', data.message || 'Ошибка при обновлении налога');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('danger', 'Ошибка при обновлении налога');
+        });
+    });
+    
+    // Обработка удаления налога
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.delete-tax')) {
+            const button = e.target.closest('.delete-tax');
+            const taxId = button.getAttribute('data-tax-id');
+            const taxName = button.getAttribute('data-tax-name');
+            
+            if (confirm(`Вы уверены, что хотите удалить налог "${taxName}"?`)) {
+                // Отправляем AJAX запрос
+                fetch(`/finance/pln-taxes/0/delete/`.replace('0', taxId), {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert('success', 'Налог успешно удален!');
+                        // Перезагружаем страницу
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        showAlert('danger', data.message || 'Ошибка при удалении налога');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('danger', 'Ошибка при удалении налога');
+                });
+            }
+        }
+    });
+    
+    // Функция для показа уведомлений
+    function showAlert(type, message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        const container = document.querySelector('.container-fluid');
+        container.insertBefore(alertDiv, container.firstChild);
+        
+        // Автоматически скрываем уведомление через 5 секунд
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, 5000);
+    }
+});
 </script>
-
-<!-- Подключаем JavaScript для Telegram авторизации -->
-<script src="static/js/telegram_auth.js"></script>
 
     </main>
         </div>

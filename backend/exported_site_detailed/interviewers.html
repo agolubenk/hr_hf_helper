@@ -6,8 +6,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="O9mJGLSXs3ErzyndjUTeNkpV4TrClVvgF7RTlxHWBqYQbzUT1NPygxYUo2x6eSdY">
-    <title>HR Helper</title>
+    <meta name="csrf-token" content="KlKhX9GEa437WhGXY3JN2O9fANRDkqHL9bU7oemAS9Y6lhUZ7vMb7cHU4M2KvTU0">
+    <title>Дашборд интервьюеров - HR Helper</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -22,8 +22,6 @@
     <!-- Стили для многоуровневого сайдбара теперь включены в hrhelper.css -->
     
         
-<!-- Стили уже подключены в base.html -->
-
 </head>
 <body>
     <div class="container-fluid">
@@ -263,19 +261,19 @@
             </ul>
         </div></li>
     <li class="nav-item  has-submenu">
-        <a class="nav-link active sidebar-toggle" 
+        <a class="nav-link sidebar-toggle" 
            href="/clickup/"
            data-bs-toggle="collapse"
            data-bs-target="#clickup_int-submenu-0"
-           aria-expanded="true">
+           aria-expanded="false">
             <i class="fas fa-tasks me-2"></i>
             ClickUp
             <i class="fas fa-chevron-down submenu-arrow ms-auto"></i>
         </a>
-        <div class="collapse show" id="clickup_int-submenu-0">
+        <div class="collapse " id="clickup_int-submenu-0">
             <ul class="nav flex-column">
     <li class="nav-item ms-1 ">
-        <a class="nav-link active" 
+        <a class="nav-link" 
            href="/clickup/"
            
            
@@ -315,7 +313,7 @@
             
         </a></li>
     <li class="nav-item ms-1 ">
-        <a class="nav-link active" 
+        <a class="nav-link" 
            href="/clickup/settings/"
            
            
@@ -465,7 +463,7 @@
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     
                     <h1 class="h2">
-                        HR Helper
+                        Дашборд интервьюеров
                     </h1>
                     
                     <div class="btn-toolbar mb-2 mb-md-0">
@@ -497,7 +495,7 @@
         <div class="messages">
             
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                Необходимо настроить интеграцию с ClickUp
+                Сначала настройте API ключ Gemini
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
             
@@ -506,204 +504,517 @@
 
                 <!-- Page content -->
         
-<!-- Контейнер для уведомлений -->
-<div id="notifications-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
-
 <div class="row">
-    <div class="col-lg-8">
-        <div class="card clickup-card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-cog me-2"></i>
-                    Настройки интеграции
-                </h5>
-            </div>
+    <!-- Статистика -->
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-primary text-white">
             <div class="card-body">
-                <form method="post" id="settingsForm">
-                    <input type="hidden" name="csrfmiddlewaretoken" value="O9mJGLSXs3ErzyndjUTeNkpV4TrClVvgF7RTlxHWBqYQbzUT1NPygxYUo2x6eSdY">
-                    
-                    <!-- API токен из профиля -->
-                    <div class="mb-4">
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle me-2"></i>
-                            <strong>API токен ClickUp</strong> настраивается в профиле пользователя.
-                            
-                                <span class="text-danger">❌ Не настроен</span>
-                            
-                        </div>
-                        
-                        <div class="mt-2">
-                            <a href="/accounts/api-keys/" class="btn btn-outline-primary btn-sm me-2">
-                                <i class="fas fa-cog me-1"></i>
-                                Настроить API ключ
-                            </a>
-                            <button type="button" class="btn btn-outline-success btn-sm" onclick="testConnection()">
-                                <i class="fas fa-plug me-1"></i>
-                                Тестировать подключение
-                            </button>
-                        </div>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">9</h4>
+                        <p class="card-text">Всего интервьюеров</p>
                     </div>
-                    
-                    <!-- Путь к задачам -->
-                    <div class="mb-4">
-                        <h6 class="text-primary mb-3">
-                            <i class="fas fa-route me-2"></i>
-                            Путь к задачам
-                        </h6>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="id_team_id" class="form-label">
-                                    Team id
-                                </label>
-                                <select name="team_id" class="form-select" id="id_team_id">
-  <option value="" selected>API токен не настроен</option>
-
-</select>
-                                
-                                
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="id_space_id" class="form-label">
-                                    Space id
-                                </label>
-                                <select name="space_id" class="form-select" id="id_space_id" disabled>
-</select>
-                                
-                                
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="id_folder_id" class="form-label">
-                                    Folder id
-                                </label>
-                                <select name="folder_id" class="form-select" id="id_folder_id" disabled>
-</select>
-                                
-                                
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="id_list_id" class="form-label">
-                                    List id
-                                </label>
-                                <select name="list_id" class="form-select" id="id_list_id" disabled>
-</select>
-                                
-                                
-                            </div>
-                        </div>
-                        
-                        <!-- Индикатор загрузки -->
-                        <div id="loadingIndicator" class="text-center" style="display: none;">
-                            <div class="loading-spinner mx-auto mb-2"></div>
-                            <small class="text-muted">Загрузка данных...</small>
-                        </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-users fa-2x"></i>
                     </div>
-                    
-                    <!-- Настройки синхронизации -->
-                    <div class="mb-4">
-                        <h6 class="text-primary mb-3">
-                            <i class="fas fa-sync me-2"></i>
-                            Настройки синхронизации
-                        </h6>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="form-check">
-                                    <input type="checkbox" name="auto_sync" class="form-check-input" aria-describedby="id_auto_sync_helptext" id="id_auto_sync" checked>
-                                    <label class="form-check-label" for="id_auto_sync">
-                                        Автоматическая синхронизация
-                                    </label>
-                                </div>
-                                
-                                    <div class="form-text">Автоматически синхронизировать задачи с указанным интервалом.</div>
-                                
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="id_sync_interval" class="form-label">
-                                    Интервал синхронизации (минуты)
-                                </label>
-                                <input type="number" name="sync_interval" value="30" class="form-control" min="0" max="1440" required aria-describedby="id_sync_interval_helptext" id="id_sync_interval">
-                                
-                                    <div class="form-text">Интервал автоматической синхронизации в минутах (от 1 до 1440).</div>
-                                
-                                
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Кнопки -->
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn clickup-btn">
-                            <i class="fas fa-save me-1"></i>
-                            Сохранить настройки
-                        </button>
-                        <a href="/clickup/" class="btn clickup-btn-outline">
-                            <i class="fas fa-arrow-left me-1"></i>
-                            Назад к дашборду
-                        </a>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
     
-    <!-- Справка -->
-    <div class="col-lg-4">
-        <div class="card clickup-card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-question-circle me-2"></i>
-                    Справка
-                </h5>
-            </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-success text-white">
             <div class="card-body">
-                <h6>Как получить API токен:</h6>
-                <ol class="small">
-                    <li>Войдите в ClickUp</li>
-                    <li>Перейдите в настройки профиля</li>
-                    <li>Найдите раздел "Apps"</li>
-                    <li>Создайте новый API токен</li>
-                    <li>Скопируйте токен (начинается с "pk_")</li>
-                </ol>
-                
-                <h6 class="mt-3">Как найти ID элементов:</h6>
-                <ul class="small">
-                    <li><strong>Команда:</strong> URL содержит /team/</li>
-                    <li><strong>Пространство:</strong> URL содержит /space/</li>
-                    <li><strong>Папка:</strong> URL содержит /folder/</li>
-                    <li><strong>Список:</strong> URL содержит /list/</li>
-                </ul>
-                
-                <div class="alert alert-info mt-3">
-                    <i class="fas fa-info-circle me-2"></i>
-                    <strong>Совет:</strong> Используйте кнопку "Тестировать подключение" для проверки API токена.
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">8</h4>
+                        <p class="card-text">Активных</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-user-check fa-2x"></i>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Статус подключения -->
-        <div class="card clickup-card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-plug me-2"></i>
-                    Статус подключения
-                </h5>
-            </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-warning text-white">
             <div class="card-body">
-                <div id="connectionStatus" class="text-center py-3">
-                    <i class="fas fa-question-circle text-muted mb-2" style="font-size: 2rem;"></i>
-                    <p class="text-muted mb-0">Нажмите "Тестировать подключение" для проверки</p>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">1</h4>
+                        <p class="card-text">Неактивных</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-user-times fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">5</h4>
+                        <p class="card-text">Правил привлечения</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-cogs fa-2x"></i>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Статистика по правилам -->
+<div class="row mb-4">
+    <div class="col-lg-4 col-md-6 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">1</h4>
+                        <p class="card-text">Активных правил</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 col-md-6 mb-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">4</h4>
+                        <p class="card-text">Неактивных правил</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-pause-circle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 col-md-6 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Универсальное правило</h6>
+                        <p class="card-text">Текущее активное правило</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-star fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Быстрые действия -->
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-tachometer-alt me-2"></i>
+                    Быстрые действия
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <a href="/interviewers/create/" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-plus me-2"></i>
+                            Добавить интервьюера
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="/interviewers/list/" class="btn btn-outline-primary btn-lg w-100">
+                            <i class="fas fa-list me-2"></i>
+                            Список интервьюеров
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="/interviewers/rules/create/" class="btn btn-success btn-lg w-100">
+                            <i class="fas fa-cog me-2"></i>
+                            Создать правило
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="/interviewers/rules/" class="btn btn-outline-success btn-lg w-100">
+                            <i class="fas fa-list-alt me-2"></i>
+                            Список правил
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <button class="btn btn-info btn-lg w-100 auto-fill-all-calendars">
+                            <i class="fas fa-magic me-2"></i>
+                            Автозаполнить календари
+                        </button>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="/interviewers/list/" class="btn btn-outline-secondary btn-lg w-100">
+                            <i class="fas fa-cog me-2"></i>
+                            Управление
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Последние добавленные -->
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-clock me-2"></i>
+                    Последние интервьюеры
+                </h5>
+            </div>
+            <div class="card-body">
+                
+                    
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center">
+                                    AK
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1">
+                                    <a href="/interviewers/14/" class="text-decoration-none">
+                                        Koipash Alena
+                                    </a>
+                                </h6>
+                                <small class="text-muted">alena.koipash@softnetix.io</small>
+                            </div>
+                            <div class="flex-shrink-0">
+                                
+                                    <span class="badge bg-secondary">Неактивен</span>
+                                
+                            </div>
+                        </div>
+                    
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center">
+                                    YL
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1">
+                                    <a href="/interviewers/11/" class="text-decoration-none">
+                                        Lebedzeu Yauheni
+                                    </a>
+                                </h6>
+                                <small class="text-muted">yauheni.lebedzeu@softnetix.io</small>
+                            </div>
+                            <div class="flex-shrink-0">
+                                
+                                    <span class="badge bg-success">Активен</span>
+                                
+                            </div>
+                        </div>
+                    
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center">
+                                    YL
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1">
+                                    <a href="/interviewers/10/" class="text-decoration-none">
+                                        Litavar Yahor
+                                    </a>
+                                </h6>
+                                <small class="text-muted">yahor.litavar@softnetix.io</small>
+                            </div>
+                            <div class="flex-shrink-0">
+                                
+                                    <span class="badge bg-success">Активен</span>
+                                
+                            </div>
+                        </div>
+                    
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center">
+                                    ST
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1">
+                                    <a href="/interviewers/9/" class="text-decoration-none">
+                                        Tsukanau Siarhei
+                                    </a>
+                                </h6>
+                                <small class="text-muted">siarhei.tsukanau@softnetix.io</small>
+                            </div>
+                            <div class="flex-shrink-0">
+                                
+                                    <span class="badge bg-success">Активен</span>
+                                
+                            </div>
+                        </div>
+                    
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center">
+                                    YI
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1">
+                                    <a href="/interviewers/8/" class="text-decoration-none">
+                                        Ivanou Yauheni
+                                    </a>
+                                </h6>
+                                <small class="text-muted">yauheni.ivanou@softnetix.io</small>
+                            </div>
+                            <div class="flex-shrink-0">
+                                
+                                    <span class="badge bg-success">Активен</span>
+                                
+                            </div>
+                        </div>
+                    
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Последние правила -->
+<div class="row">
+    <div class="col-lg-12 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-cogs me-2"></i>
+                    Последние правила привлечения
+                </h5>
+            </div>
+            <div class="card-body">
+                
+                    <div class="row">
+                        
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <a href="/interviewers/rules/9/" class="text-decoration-none">
+                                                Тестовое правило
+                                            </a>
+                                        </h6>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-layer-group me-1"></i>
+                                                Junior - Senior
+                                            </small>
+                                        </p>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar-day me-1"></i>
+                                                3/день, 15/неделю
+                                            </small>
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            
+                                                <span class="badge bg-secondary">Неактивно</span>
+                                            
+                                            <small class="text-muted">05.09.2025</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <a href="/interviewers/rules/8/" class="text-decoration-none">
+                                                Универсальное правило
+                                            </a>
+                                        </h6>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-layer-group me-1"></i>
+                                                Junior - Senior
+                                            </small>
+                                        </p>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar-day me-1"></i>
+                                                5/день, 25/неделю
+                                            </small>
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-star me-1"></i>Активно
+                                                </span>
+                                            
+                                            <small class="text-muted">05.09.2025</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <a href="/interviewers/rules/7/" class="text-decoration-none">
+                                                Правило для Senior разработчиков
+                                            </a>
+                                        </h6>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-layer-group me-1"></i>
+                                                Senior - Senior
+                                            </small>
+                                        </p>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar-day me-1"></i>
+                                                2/день, 8/неделю
+                                            </small>
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            
+                                                <span class="badge bg-secondary">Неактивно</span>
+                                            
+                                            <small class="text-muted">05.09.2025</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <a href="/interviewers/rules/6/" class="text-decoration-none">
+                                                Правило для Middle разработчиков
+                                            </a>
+                                        </h6>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-layer-group me-1"></i>
+                                                Middle - Middle+
+                                            </small>
+                                        </p>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar-day me-1"></i>
+                                                4/день, 20/неделю
+                                            </small>
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            
+                                                <span class="badge bg-secondary">Неактивно</span>
+                                            
+                                            <small class="text-muted">05.09.2025</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <a href="/interviewers/rules/5/" class="text-decoration-none">
+                                                Правило для Junior разработчиков
+                                            </a>
+                                        </h6>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-layer-group me-1"></i>
+                                                Junior - Junior+
+                                            </small>
+                                        </p>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar-day me-1"></i>
+                                                3/день, 15/неделю
+                                            </small>
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            
+                                                <span class="badge bg-secondary">Неактивно</span>
+                                            
+                                            <small class="text-muted">05.09.2025</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                    </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Скрытый CSRF токен для AJAX запросов -->
+<input type="hidden" name="csrfmiddlewaretoken" value="KlKhX9GEa437WhGXY3JN2O9fANRDkqHL9bU7oemAS9Y6lhUZ7vMb7cHU4M2KvTU0">
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Автозаполнение всех календарей
+    document.querySelectorAll('.auto-fill-all-calendars').forEach(button => {
+        button.addEventListener('click', function() {
+            if (confirm('Автозаполнить календари для всех интервьюеров?')) {
+                // Показываем индикатор загрузки
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Обработка...';
+                this.disabled = true;
+                
+                fetch('/interviewers/auto-fill-all-calendars/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert('Ошибка: ' + data.error);
+                        // Восстанавливаем кнопку
+                        this.innerHTML = originalText;
+                        this.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Ошибка при автозаполнении календарей');
+                    // Восстанавливаем кнопку
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                });
+            }
+        });
+    });
+});
+</script>
 
     </main>
         </div>
@@ -1099,262 +1410,6 @@
 
     <!-- Дополнительные скрипты для конкретных страниц -->
     
-<script>
-// Функция тестирования подключения
-function testConnection() {
-    const statusDiv = document.getElementById('connectionStatus');
-    statusDiv.innerHTML = `
-        <div class="loading-spinner mx-auto mb-2"></div>
-        <p class="text-muted mb-0">Тестирование подключения...</p>
-    `;
     
-    fetch('/clickup/api/test-connection/', {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-            'Content-Type': 'application/json',
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            statusDiv.innerHTML = `
-                <i class="fas fa-check-circle text-success mb-2" style="font-size: 2rem;"></i>
-                <p class="text-success mb-0">Подключение успешно!</p>
-                <small class="text-muted">Пользователь: ${data.user_info?.user?.username || 'Неизвестно'}</small>
-            `;
-            showNotification(data.message, 'success');
-        } else {
-            statusDiv.innerHTML = `
-                <i class="fas fa-times-circle text-danger mb-2" style="font-size: 2rem;"></i>
-                <p class="text-danger mb-0">Ошибка подключения</p>
-                <small class="text-muted">${data.message}</small>
-            `;
-            showNotification(data.message, 'error');
-        }
-    })
-    .catch(error => {
-        statusDiv.innerHTML = `
-            <i class="fas fa-exclamation-triangle text-warning mb-2" style="font-size: 2rem;"></i>
-            <p class="text-warning mb-0">Ошибка запроса</p>
-            <small class="text-muted">${error.message}</small>
-        `;
-        showNotification('Ошибка тестирования подключения: ' + error.message, 'error');
-    });
-}
-
-// Функция загрузки пространств
-function loadSpaces(teamId) {
-    const spaceSelect = document.getElementById('id_space_id');
-    const folderSelect = document.getElementById('id_folder_id');
-    const listSelect = document.getElementById('id_list_id');
-    const loadingIndicator = document.getElementById('loadingIndicator');
-    
-    if (!teamId) {
-        // Сбрасываем все зависимые поля
-        spaceSelect.innerHTML = '<option value="">Выберите команду...</option>';
-        spaceSelect.disabled = true;
-        folderSelect.innerHTML = '<option value="">Выберите пространство...</option>';
-        folderSelect.disabled = true;
-        listSelect.innerHTML = '<option value="">Выберите папку или пространство...</option>';
-        listSelect.disabled = true;
-        return;
-    }
-    
-    // Если выбрано "Все пространства", пространства уже загружены в форме
-    if (teamId === 'all_spaces') {
-        spaceSelect.disabled = false;
-        folderSelect.innerHTML = '<option value="">Выберите пространство...</option>';
-        folderSelect.disabled = true;
-        listSelect.innerHTML = '<option value="">Выберите папку или пространство...</option>';
-        listSelect.disabled = true;
-        return;
-    }
-    
-    loadingIndicator.style.display = 'block';
-    spaceSelect.disabled = true;
-    folderSelect.disabled = true;
-    listSelect.disabled = true;
-    
-    fetch(`/clickup/api/spaces/?team_id=${teamId}`)
-    .then(response => response.json())
-    .then(data => {
-        loadingIndicator.style.display = 'none';
-        
-        if (data.success) {
-            spaceSelect.innerHTML = '<option value="">Выберите пространство...</option>';
-            data.spaces.forEach(space => {
-                spaceSelect.innerHTML += `<option value="${space.id}">${space.name}</option>`;
-            });
-            spaceSelect.disabled = false;
-        } else {
-            spaceSelect.innerHTML = `<option value="">Ошибка: ${data.message}</option>`;
-            showNotification(data.message, 'error');
-        }
-    })
-    .catch(error => {
-        loadingIndicator.style.display = 'none';
-        spaceSelect.innerHTML = `<option value="">Ошибка загрузки</option>`;
-        showNotification('Ошибка загрузки пространств: ' + error.message, 'error');
-    });
-}
-
-// Функция загрузки папок
-function loadFolders(spaceId) {
-    const folderSelect = document.getElementById('id_folder_id');
-    const listSelect = document.getElementById('id_list_id');
-    const loadingIndicator = document.getElementById('loadingIndicator');
-    
-    if (!spaceId) {
-        folderSelect.innerHTML = '<option value="">Выберите пространство...</option>';
-        folderSelect.disabled = true;
-        listSelect.innerHTML = '<option value="">Выберите папку или пространство...</option>';
-        listSelect.disabled = true;
-        return;
-    }
-    
-    loadingIndicator.style.display = 'block';
-    folderSelect.disabled = true;
-    listSelect.disabled = true;
-    
-    fetch(`/clickup/api/folders/?space_id=${spaceId}`)
-    .then(response => response.json())
-    .then(data => {
-        loadingIndicator.style.display = 'none';
-        
-        if (data.success) {
-            folderSelect.innerHTML = '<option value="">Без папки</option>';
-            data.folders.forEach(folder => {
-                folderSelect.innerHTML += `<option value="${folder.id}">${folder.name}</option>`;
-            });
-            folderSelect.disabled = false;
-            
-            // Загружаем списки для пространства (без папки)
-            loadLists(spaceId, null);
-        } else {
-            folderSelect.innerHTML = `<option value="">Ошибка: ${data.message}</option>`;
-            showNotification(data.message, 'error');
-        }
-    })
-    .catch(error => {
-        loadingIndicator.style.display = 'none';
-        folderSelect.innerHTML = `<option value="">Ошибка загрузки</option>`;
-        showNotification('Ошибка загрузки папок: ' + error.message, 'error');
-    });
-}
-
-// Функция загрузки списков
-function loadLists(spaceId, folderId) {
-    const listSelect = document.getElementById('id_list_id');
-    const loadingIndicator = document.getElementById('loadingIndicator');
-    
-    if (!spaceId && !folderId) {
-        listSelect.innerHTML = '<option value="">Выберите папку или пространство...</option>';
-        listSelect.disabled = true;
-        return;
-    }
-    
-    loadingIndicator.style.display = 'block';
-    listSelect.disabled = true;
-    
-    let url = '';
-    if (folderId) {
-        url = `/clickup/api/lists/?folder_id=${folderId}`;
-    } else {
-        url = `/clickup/api/lists/?space_id=${spaceId}`;
-    }
-    
-    fetch(url)
-    .then(response => response.json())
-    .then(data => {
-        loadingIndicator.style.display = 'none';
-        
-        if (data.success) {
-            listSelect.innerHTML = '<option value="">Выберите список задач...</option>';
-            data.lists.forEach(list => {
-                listSelect.innerHTML += `<option value="${list.id}">${list.name}</option>`;
-            });
-            listSelect.disabled = false;
-        } else {
-            listSelect.innerHTML = `<option value="">Ошибка: ${data.message}</option>`;
-            showNotification(data.message, 'error');
-        }
-    })
-    .catch(error => {
-        loadingIndicator.style.display = 'none';
-        listSelect.innerHTML = `<option value="">Ошибка загрузки</option>`;
-        showNotification('Ошибка загрузки списков: ' + error.message, 'error');
-    });
-}
-
-// Инициализация обработчиков событий
-document.addEventListener('DOMContentLoaded', function() {
-    const teamSelect = document.getElementById('id_team_id');
-    const spaceSelect = document.getElementById('id_space_id');
-    const folderSelect = document.getElementById('id_folder_id');
-    const listSelect = document.getElementById('id_list_id');
-    
-    // Обработчик изменения команды
-    teamSelect.addEventListener('change', function() {
-        loadSpaces(this.value);
-    });
-    
-    // Обработчик изменения пространства
-    spaceSelect.addEventListener('change', function() {
-        loadFolders(this.value);
-    });
-    
-    // Обработчик изменения папки
-    folderSelect.addEventListener('change', function() {
-        const spaceId = spaceSelect.value;
-        const folderId = this.value;
-        loadLists(spaceId, folderId);
-    });
-});
-
-// Функция для показа уведомлений
-function showNotification(message, type = 'info') {
-    const container = document.getElementById('notifications-container');
-    if (!container) {
-        // Создаем контейнер для уведомлений, если его нет
-        const newContainer = document.createElement('div');
-        newContainer.id = 'notifications-container';
-        newContainer.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999;';
-        document.body.appendChild(newContainer);
-        return showNotification(message, type); // Рекурсивный вызов
-    }
-    
-    const notification = document.createElement('div');
-    
-    const alertClass = type === 'success' ? 'alert-success' : 
-                      type === 'error' ? 'alert-danger' : 
-                      type === 'warning' ? 'alert-warning' : 'alert-info';
-    
-    notification.className = `alert ${alertClass} alert-dismissible fade show`;
-    notification.style.cssText = 'min-width: 300px; margin-bottom: 10px;';
-    
-    const icon = type === 'success' ? 'check-circle' : 
-                 type === 'error' ? 'times-circle' : 
-                 type === 'warning' ? 'exclamation-triangle' : 'info-circle';
-    
-    notification.innerHTML = `
-        <i class="fas fa-${icon} me-2"></i>
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    `;
-    
-    container.appendChild(notification);
-    
-    // Автоматически удаляем уведомление через 5 секунд
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.remove();
-        }
-    }, 5000);
-}
-
-// Тема инициализируется в базовом шаблоне
-</script>
-
 </body>
 </html>
