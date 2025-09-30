@@ -16,13 +16,23 @@ class UserAdmin(BaseUserAdmin):
                 "active_system", "telegram_username",
             )
         }),
+        (_("Huntflow Токены"), {
+            "fields": (
+                "huntflow_access_token", 
+                "huntflow_refresh_token",
+                "huntflow_token_expires_at",
+                "huntflow_refresh_expires_at"
+            ),
+            "classes": ("collapse",)
+        }),
         (_("Роли/Профиль"), {
             "fields": ("full_name", "interviewer_calendar_url", "is_observer_active",)
         }),
     )
-    list_display = ("username", "full_name", "email", "active_system", "get_clickup_status", "is_staff")
+    list_display = ("username", "full_name", "email", "active_system", "get_clickup_status", "get_huntflow_token_status", "is_staff")
     list_filter = ("is_staff", "is_superuser", "is_active", "active_system", "date_joined")
     search_fields = ("username", "full_name", "email", "telegram_username")
+    readonly_fields = ('huntflow_token_expires_at', 'huntflow_refresh_expires_at', 'huntflow_token_status')
     
     def get_clickup_status(self, obj):
         """Отображение статуса ClickUp API ключа"""
@@ -32,6 +42,28 @@ class UserAdmin(BaseUserAdmin):
             return "❌ Не настроен"
     get_clickup_status.short_description = "ClickUp API"
     get_clickup_status.admin_order_field = "clickup_api_key"
+    
+    def get_huntflow_token_status(self, obj):
+        """Отображение статуса Huntflow токенов"""
+        if not obj.huntflow_access_token:
+            return "❌ Не настроены"
+        
+        status = "✅ Валидный" if obj.is_huntflow_token_valid else "❌ Истек"
+        refresh_status = "✅ Валидный" if obj.is_huntflow_refresh_valid else "❌ Истек"
+        
+        return f"Access: {status}, Refresh: {refresh_status}"
+    get_huntflow_token_status.short_description = "Huntflow Токены"
+    
+    def huntflow_token_status(self, obj):
+        """Показывает статус токенов в админке"""
+        if not obj.huntflow_access_token:
+            return "Токены не настроены"
+        
+        status = "✅ Валидный" if obj.is_huntflow_token_valid else "❌ Истек"
+        refresh_status = "✅ Валидный" if obj.is_huntflow_refresh_valid else "❌ Истек"
+        
+        return f"Access: {status}, Refresh: {refresh_status}"
+    huntflow_token_status.short_description = "Статус токенов"
     
     def has_delete_permission(self, request, obj=None):
         """Проверка прав на удаление пользователя"""

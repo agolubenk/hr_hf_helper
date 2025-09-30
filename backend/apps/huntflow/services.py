@@ -2,10 +2,14 @@ import requests
 from typing import Dict, Any, List, Optional
 from django.conf import settings
 from apps.google_oauth.cache_service import HuntflowAPICache
+from .token_service import HuntflowTokenService
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class HuntflowService:
-    """Сервис для работы с Huntflow API"""
+    """Сервис для работы с Huntflow API с поддержкой токенной аутентификации"""
     
     def __init__(self, user):
         """
@@ -15,26 +19,46 @@ class HuntflowService:
             user: Пользователь с настройками Huntflow
         """
         self.user = user
-        self.base_url = self._get_base_url()
-        self.api_key = self._get_api_key()
-        self.headers = {
-            'Authorization': f'Bearer {self.api_key}',
-            'Content-Type': 'application/json'
-        }
+        self.token_service = HuntflowTokenService(user)
     
     def _get_base_url(self) -> str:
         """Получает базовый URL для API запросов"""
-        if self.user.active_system == 'PROD':
+        if self.user.active_system == 'prod':
             return self.user.huntflow_prod_url
         else:
             return self.user.huntflow_sandbox_url
     
     def _get_api_key(self) -> str:
-        """Получает API ключ для аутентификации"""
-        if self.user.active_system == 'PROD':
+        """Получает API ключ для аутентификации (fallback для старой системы)"""
+        if self.user.active_system == 'prod':
             return self.user.huntflow_prod_api_key
         else:
             return self.user.huntflow_sandbox_api_key
+    
+    def _get_headers(self):
+        """Получает заголовки для API запросов с валидным токеном"""
+        # Сначала проверяем, есть ли API ключ для текущей системы
+        api_key = self._get_api_key()
+        
+        # Если есть API ключ, используем его (приоритет для стабильности)
+        if api_key:
+            return {
+                'Authorization': f'Bearer {api_key}',
+                'Content-Type': 'application/json'
+            }
+        
+        # Если нет API ключа, пробуем токены
+        if self.user.huntflow_access_token:
+            # Получаем валидный токен
+            access_token = self.token_service.ensure_valid_token()
+            if access_token:
+                return {
+                    'Authorization': f'Bearer {access_token}',
+                    'Content-Type': 'application/json'
+                }
+        
+        # Если ничего не работает, выбрасываем исключение
+        raise Exception("Не настроена аутентификация для текущей системы")
     
     def _extract_name_from_task_title(self, task_name: str) -> Dict[str, str]:
         """
@@ -341,7 +365,7 @@ class HuntflowService:
     
     def _make_request(self, method: str, endpoint: str, **kwargs) -> Optional[Dict[str, Any]]:
         """
-        Выполняет HTTP запрос к Huntflow API
+        Выполняет HTTP запрос к Huntflow API с автоматическим обновлением токенов
         
         Args:
             method: HTTP метод (GET, POST, etc.)
@@ -352,11 +376,16 @@ class HuntflowService:
             Ответ API или None в случае ошибки
         """
         try:
-            # Проверяем, содержит ли base_url уже /v2
-            if self.base_url.endswith('/v2'):
-                url = f"{self.base_url}{endpoint}"
+            # Получаем актуальные заголовки
+            headers = self._get_headers()
+            kwargs['headers'] = headers
+            
+            # Формируем URL
+            base_url = self._get_base_url()
+            if base_url.endswith('/v2'):
+                url = f"{base_url}{endpoint}"
             else:
-                url = f"{self.base_url}/v2{endpoint}"
+                url = f"{base_url}/v2{endpoint}"
                 
             print(f"🔍 API запрос: {method} {url}")
             if 'json' in kwargs:
@@ -371,13 +400,30 @@ class HuntflowService:
             elif 'data' in kwargs:
                 request_data = kwargs['data']
             
+            # Выполняем запрос
             response = requests.request(
                 method=method,
                 url=url,
-                headers=self.headers,
                 timeout=30,
                 **kwargs
             )
+            
+            # Если получили 401 и используем токенную систему, пробуем обновить токен
+            if response.status_code == 401 and self.user.huntflow_access_token:
+                logger.warning("Получен 401, пробуем обновить токен")
+                
+                if self.token_service.refresh_access_token():
+                    # Обновляем заголовки с новым токеном
+                    headers = self._get_headers()
+                    kwargs['headers'] = headers
+                    
+                    # Повторяем запрос
+                    response = requests.request(
+                        method=method,
+                        url=url,
+                        timeout=30,
+                        **kwargs
+                    )
             
             print(f"📥 Ответ API: {response.status_code}")
             print(f"📥 Тело ответа: {response.text[:500]}...")
@@ -385,25 +431,16 @@ class HuntflowService:
             # Логируем запрос в базу данных
             self._log_request(method, endpoint, response.status_code, request_data, response.text)
             
-            if response.status_code == 200:
+            # Обрабатываем ответ
+            if response.status_code in [200, 201]:
                 try:
                     return response.json()
                 except ValueError as e:
                     print(f"❌ Ошибка парсинга JSON: {e}")
                     print(f"📥 Сырой ответ: {response.text}")
                     return None
-            elif response.status_code == 201:
-                try:
-                    return response.json()
-                except ValueError as e:
-                    print(f"❌ Ошибка парсинга JSON (201): {e}")
-                    print(f"📥 Сырой ответ: {response.text}")
-                    return None
-            elif response.status_code == 401:
-                print(f"❌ Ошибка аутентификации Huntflow: {response.text}")
-                return None
             else:
-                print(f"❌ Ошибка Huntflow API {response.status_code}: {response.text}")
+                logger.error(f"Ошибка API: {response.status_code} - {response.text}")
                 return None
                 
         except requests.RequestException as e:
@@ -412,9 +449,7 @@ class HuntflowService:
             self._log_request(method, endpoint, None, request_data, str(e), is_error=True)
             return None
         except Exception as e:
-            print(f"❌ Неожиданная ошибка: {e}")
-            # Логируем ошибку
-            self._log_request(method, endpoint, None, request_data, str(e), is_error=True)
+            logger.error(f"Ошибка запроса: {e}")
             return None
     
     def get_accounts(self) -> Optional[List[Dict[str, Any]]]:
@@ -1028,10 +1063,11 @@ class HuntflowService:
                 headers['X-File-Parse'] = 'true'
             
             # Формируем URL
-            if self.base_url.endswith('/v2'):
-                url = f"{self.base_url}/accounts/{account_id}/upload"
+            base_url = self._get_base_url()
+            if base_url.endswith('/v2'):
+                url = f"{base_url}/accounts/{account_id}/upload"
             else:
-                url = f"{self.base_url}/v2/accounts/{account_id}/upload"
+                url = f"{base_url}/v2/accounts/{account_id}/upload"
             
             print(f"🔍 API запрос: POST {url}")
             print(f"📤 Файл: {file_name} ({len(file_data)} байт)")
@@ -1941,7 +1977,7 @@ class HuntflowService:
             
             # Обновляем основные поля
             if main_fields:
-                url = f"{self.base_url}/v2/accounts/{account_id}/applicants/{candidate_id}"
+                url = f"{self._get_base_url()}/v2/accounts/{account_id}/applicants/{candidate_id}"
                 print(f"🔍 Обновляем основные поля кандидата {candidate_id}")
                 print(f"📤 Данные для обновления: {main_fields}")
                 
@@ -1963,7 +1999,7 @@ class HuntflowService:
             
             # Обновляем дополнительные поля
             if additional_fields:
-                url = f"{self.base_url}/v2/accounts/{account_id}/applicants/{candidate_id}/questionary"
+                url = f"{self._get_base_url()}/v2/accounts/{account_id}/applicants/{candidate_id}/questionary"
                 print(f"🔍 Обновляем дополнительные поля кандидата {candidate_id}")
                 print(f"📤 Данные для обновления: {additional_fields}")
                 

@@ -88,7 +88,7 @@ def huntflow_dashboard(request):
                 'accounts': accounts_list,
                 'accounts_for_menu': {'items': accounts_list},
                 'active_system': request.user.active_system,
-                'base_url': huntflow_service.base_url
+                'base_url': huntflow_service._get_base_url()
             }
         )
         

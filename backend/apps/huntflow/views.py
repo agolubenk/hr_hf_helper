@@ -120,7 +120,7 @@ def huntflow_dashboard(request):
             'accounts': accounts_list,  # Для dashboard.html
             'accounts_for_menu': {'items': accounts_list},  # Для template tag
             'active_system': request.user.active_system,
-            'base_url': huntflow_service.base_url
+            'base_url': huntflow_service._get_base_url()
         }
         
         return render(request, 'huntflow/dashboard.html', context)

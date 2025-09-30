@@ -2,6 +2,8 @@ from __future__ import annotations
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
+from datetime import timedelta
 
 
 class SystemChoice(models.TextChoices):
@@ -44,6 +46,12 @@ class User(AbstractUser):
 
     is_observer_active = models.BooleanField(_("Статус наблюдателя"), default=False)
 
+    # Новые поля для токенной системы Huntflow
+    huntflow_access_token = models.TextField(_("Access token для Huntflow API"), blank=True, help_text="Access token для Huntflow API")
+    huntflow_refresh_token = models.TextField(_("Refresh token для Huntflow API"), blank=True, help_text="Refresh token для Huntflow API")
+    huntflow_token_expires_at = models.DateTimeField(_("Время истечения access token"), null=True, blank=True, help_text="Время истечения access token")
+    huntflow_refresh_expires_at = models.DateTimeField(_("Время истечения refresh token"), null=True, blank=True, help_text="Время истечения refresh token")
+
     class Meta(AbstractUser.Meta):
         swappable = "AUTH_USER_MODEL"
 
@@ -68,3 +76,38 @@ class User(AbstractUser):
     @property
     def is_observer(self) -> bool:
         return self.groups.filter(name="Наблюдатели").exists()
+
+    @property
+    def is_huntflow_token_valid(self):
+        """Проверяет валидность access token"""
+        if not self.huntflow_access_token or not self.huntflow_token_expires_at:
+            return False
+        return timezone.now() < self.huntflow_token_expires_at
+    
+    @property
+    def is_huntflow_refresh_valid(self):
+        """Проверяет валидность refresh token"""
+        if not self.huntflow_refresh_token or not self.huntflow_refresh_expires_at:
+            return False
+        return timezone.now() < self.huntflow_refresh_expires_at
+    
+    def set_huntflow_tokens(self, access_token, refresh_token, expires_in=604800, refresh_expires_in=1209600):
+        """
+        Устанавливает токены Huntflow
+        
+        Args:
+            access_token: Access token
+            refresh_token: Refresh token
+            expires_in: Время жизни access token в секундах (по умолчанию 7 дней)
+            refresh_expires_in: Время жизни refresh token в секундах (по умолчанию 14 дней)
+        """
+        self.huntflow_access_token = access_token
+        self.huntflow_refresh_token = refresh_token
+        self.huntflow_token_expires_at = timezone.now() + timedelta(seconds=expires_in)
+        self.huntflow_refresh_expires_at = timezone.now() + timedelta(seconds=refresh_expires_in)
+        self.save(update_fields=[
+            'huntflow_access_token', 
+            'huntflow_refresh_token', 
+            'huntflow_token_expires_at', 
+            'huntflow_refresh_expires_at'
+        ])

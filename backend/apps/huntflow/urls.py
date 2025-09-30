@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views, views_token
 
 app_name = 'huntflow'
 
@@ -21,4 +21,9 @@ urlpatterns = [
     path('accounts/<int:account_id>/vacancies/ajax/', views.get_vacancies_ajax, name='get_vacancies_ajax'),
     path('accounts/<int:account_id>/applicants/ajax/', views.get_applicants_ajax, name='get_applicants_ajax'),
     path('accounts/<int:account_id>/applicants/<int:applicant_id>/comment/', views.create_comment_ajax, name='create_comment_ajax'),
+    
+    # API для управления токенами
+    path('tokens/api/', views_token.HuntflowTokenAPIView.as_view(), name='huntflow_tokens'),
+    path('tokens/refresh/', views_token.refresh_huntflow_token_view, name='huntflow_refresh_token'),
+    path('tokens/test/', views_token.test_huntflow_connection_view, name='huntflow_test_connection'),
 ]

@@ -18,7 +18,11 @@
                 <div class="integration-card card {% if integration.enabled %}border-success{% else %}border-danger{% endif %} position-relative">
                     <!-- Кнопка настроек в правом верхнем углу -->
                     <a href="{% url 'accounts:api_keys' %}" class="btn btn-sm {% if integration.enabled %}btn-outline-success{% else %}btn-outline-danger{% endif %} position-absolute" style="top: 10px; right: 10px; z-index: 10;" title="Настроить">
-                        <i class="fas fa-cog"></i>
+                        {% if key == 'huntflow' and integration.token_configured %}
+                            <i class="fas fa-key"></i>
+                        {% else %}
+                            <i class="fas fa-cog"></i>
+                        {% endif %}
                     </a>
                     
                     <div class="card-body text-center">
@@ -44,8 +48,23 @@
                         
                         {% if key == 'huntflow' %}
                             <div class="small text-muted mb-3">
-                                <div>Песочница: {% if integration.sandbox_configured %}✅{% else %}❌{% endif %}</div>
-                                <div>Прод: {% if integration.prod_configured %}✅{% else %}❌{% endif %}</div>
+                                {% if integration.token_configured %}
+                                    <div class="mb-2">
+                                        <strong>Токенная система:</strong>
+                                        <span class="badge bg-success ms-1">Активна</span>
+                                    </div>
+                                    <div>Access Token: {% if integration.token_valid %}✅ Валидный{% else %}❌ Истек{% endif %}</div>
+                                    <div>Refresh Token: {% if integration.refresh_valid %}✅ Валидный{% else %}❌ Истек{% endif %}</div>
+                                {% elif integration.api_configured %}
+                                    <div class="mb-2">
+                                        <strong>API ключи:</strong>
+                                        <span class="badge bg-warning ms-1">Устаревший</span>
+                                    </div>
+                                    <div>Песочница: {% if integration.sandbox_configured %}✅{% else %}❌{% endif %}</div>
+                                    <div>Прод: {% if integration.prod_configured %}✅{% else %}❌{% endif %}</div>
+                                {% else %}
+                                    <div class="text-danger">Не настроено</div>
+                                {% endif %}
                                 <div>Активная система: {{ integration.active_system }}</div>
                             </div>
                         {% elif key == 'gemini' %}
@@ -206,20 +225,46 @@
                             </ul>
                         </div>
                         
-                        <h6><i class="fas fa-list-ol me-2"></i>Пошаговая инструкция:</h6>
+                        <div class="alert alert-success mb-3">
+                            <i class="fas fa-star me-2"></i>
+                            <strong>Рекомендуется:</strong> Используйте новую токенную систему для более безопасной и надежной интеграции.
+                        </div>
+                        
+                        <h6><i class="fas fa-list-ol me-2"></i>Пошаговая инструкция (Токенная система):</h6>
                         <ol class="mb-3">
                             <li><strong>Кликнуть "+Add token"</strong> - найдите кнопку в разделе API</li>
                             <li><strong>Ввести название токена</strong> - например, "HR Helper Integration"</li>
                             <li><strong>Кликнуть "Generate the key"</strong> - создайте новый токен</li>
                             <li><strong>Перейти по полученной ссылке в новой вкладке</strong> - откроется страница авторизации</li>
                             <li><strong>Кликнуть "Receive token"</strong> - подтвердите получение токена</li>
-                            <li><strong>Сохранить Access token и Refresh token</strong> - скопируйте оба токена и вставьте в настройки профиля</li>
+                            <li><strong>Скопировать оба токена:</strong>
+                                <ul>
+                                    <li><strong>Access token</strong> - для API запросов (действует 7 дней)</li>
+                                    <li><strong>Refresh token</strong> - для обновления (действует 14 дней)</li>
+                                </ul>
+                            </li>
+                            <li><strong>Перейти в HR Helper → Интеграции → Huntflow → Управление токенами</strong></li>
+                            <li><strong>Вставить оба токена и сохранить</strong></li>
                         </ol>
                         
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle me-2"></i>
-                            <strong>Примечание:</strong> Вам понадобятся оба токена - Access token и Refresh token. Также укажите URL вашего аккаунта Huntflow.
+                            <strong>Преимущества токенной системы:</strong> Автоматическое обновление токенов, повышенная безопасность, надежная работа без перерывов.
                         </div>
+                        
+                        <details class="mt-3">
+                            <summary class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-history me-1"></i>
+                                Старая система API ключей (не рекомендуется)
+                            </summary>
+                            <div class="mt-2 p-3 bg-light rounded">
+                                <p class="small mb-2">Если вы используете старую систему API ключей, перейдите в <strong>Настройки профиля → API ключи</strong> для настройки.</p>
+                                <div class="alert alert-warning small">
+                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                    <strong>Внимание:</strong> API ключи устарели и могут быть отключены в будущем. Рекомендуется перейти на токенную систему.
+                                </div>
+                            </div>
+                        </details>
                     </div>
                 </div>
             </div>

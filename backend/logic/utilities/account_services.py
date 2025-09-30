@@ -90,10 +90,16 @@ class UserService:
         }
         
         # Huntflow
-        huntflow_configured = bool(
+        # Проверяем новую токенную систему
+        huntflow_token_configured = bool(user.huntflow_access_token and user.huntflow_refresh_token)
+        # Проверяем старую систему API ключей
+        huntflow_api_configured = bool(
             (user.huntflow_sandbox_api_key and user.huntflow_sandbox_url) or
             (user.huntflow_prod_api_key and user.huntflow_prod_url)
         )
+        # Общая конфигурация (любая из систем)
+        huntflow_configured = huntflow_token_configured or huntflow_api_configured
+        
         integrations['huntflow'] = {
             'name': 'Huntflow',
             'enabled': True,
@@ -101,6 +107,10 @@ class UserService:
             'prod_configured': bool(user.huntflow_prod_api_key and user.huntflow_prod_url),
             'active_system': user.active_system,
             'configured': huntflow_configured,
+            'token_configured': huntflow_token_configured,
+            'api_configured': huntflow_api_configured,
+            'token_valid': user.is_huntflow_token_valid if huntflow_token_configured else False,
+            'refresh_valid': user.is_huntflow_refresh_valid if huntflow_token_configured else False,
         }
         
         # ClickUp

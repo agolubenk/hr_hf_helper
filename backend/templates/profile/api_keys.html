@@ -52,6 +52,124 @@ function testApiKey(provider, system = null) {
         testButton.innerHTML = '<i class="fas fa-check me-1"></i>Тестировать';
     });
 }
+
+// Функции для работы с токенами Huntflow
+function loadHuntflowTokenStatus() {
+    fetch('{% url "huntflow:huntflow_tokens" %}')
+        .then(response => response.json())
+        .then(data => {
+            const statusDiv = document.getElementById('huntflow-token-status');
+            if (data.success) {
+                const status = data.status;
+                let html = '';
+                
+                if (status.valid) {
+                    html += '<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>✅ Токены валидны</div>';
+                } else {
+                    html += '<div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i>⚠️ Требуется обновление токенов</div>';
+                    if (status.issues.length > 0) {
+                        html += '<ul class="mb-0">';
+                        status.issues.forEach(issue => {
+                            html += `<li>${issue}</li>`;
+                        });
+                        html += '</ul>';
+                    }
+                }
+                
+                if (status.access_expires_at) {
+                    html += `<small class="text-muted">Access token истекает: ${new Date(status.access_expires_at).toLocaleString()}</small><br>`;
+                }
+                if (status.refresh_expires_at) {
+                    html += `<small class="text-muted">Refresh token истекает: ${new Date(status.refresh_expires_at).toLocaleString()}</small>`;
+                }
+                
+                statusDiv.innerHTML = html;
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки статуса:', error);
+        });
+}
+
+function saveHuntflowTokens() {
+    const accessToken = document.getElementById('huntflow_access_token').value;
+    const refreshToken = document.getElementById('huntflow_refresh_token').value;
+    
+    if (!accessToken || !refreshToken) {
+        alert('Необходимо указать оба токена');
+        return;
+    }
+    
+    fetch('{% url "huntflow:huntflow_tokens" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            access_token: accessToken,
+            refresh_token: refreshToken
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Токены успешно сохранены');
+            loadHuntflowTokenStatus();
+            document.getElementById('huntflow_access_token').value = '';
+            document.getElementById('huntflow_refresh_token').value = '';
+        } else {
+            alert('Ошибка: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при сохранении токенов');
+    });
+}
+
+function refreshHuntflowToken() {
+    fetch('{% url "huntflow:huntflow_refresh_token" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Токен успешно обновлен');
+            loadHuntflowTokenStatus();
+        } else {
+            alert('Ошибка обновления токена: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при обновлении токена');
+    });
+}
+
+function testHuntflowConnection() {
+    fetch('{% url "huntflow:huntflow_test_connection" %}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`Подключение успешно!\nПользователь: ${data.user_info.name}\nEmail: ${data.user_info.email}`);
+            } else {
+                alert('Ошибка подключения: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Произошла ошибка при тестировании подключения');
+        });
+}
+
+// Загружаем статус токенов при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    loadHuntflowTokenStatus();
+});
 </script>
 {% endblock %}
 
@@ -209,6 +327,62 @@ function testApiKey(provider, system = null) {
                     <option value="prod" {% if user.active_system == 'prod' %}selected{% endif %}>Продакшн</option>
                 </select>
                 <div class="form-text">Выберите, какую систему использовать по умолчанию</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Huntflow Токены (Новая система) -->
+    <div class="card profile-card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-key me-2"></i>
+                Huntflow Токены
+                <span class="badge bg-success ms-2">Рекомендуется</span>
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info mb-3">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Новая токенная система</strong> обеспечивает автоматическое обновление токенов и повышенную безопасность.
+            </div>
+            
+            <!-- Статус токенов -->
+            <div id="huntflow-token-status" class="mb-3"></div>
+            
+            <!-- Форма для токенов -->
+            <div class="mb-3">
+                <label for="huntflow_access_token" class="form-label">Access Token</label>
+                <textarea class="form-control" id="huntflow_access_token" name="huntflow_access_token" rows="3" 
+                          placeholder="Вставьте access_token полученный из Huntflow"></textarea>
+                <div class="form-text">Access token для API запросов (действует 7 дней)</div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="huntflow_refresh_token" class="form-label">Refresh Token</label>
+                <textarea class="form-control" id="huntflow_refresh_token" name="huntflow_refresh_token" rows="3"
+                          placeholder="Вставьте refresh_token полученный из Huntflow"></textarea>
+                <div class="form-text">Refresh token для обновления access token (действует 14 дней)</div>
+            </div>
+            
+            <div class="d-flex gap-2 mb-3">
+                <button type="button" class="btn btn-outline-primary" onclick="saveHuntflowTokens()">
+                    <i class="fas fa-save me-1"></i>
+                    Сохранить токены
+                </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="refreshHuntflowToken()">
+                    <i class="fas fa-sync me-1"></i>
+                    Обновить токен
+                </button>
+                <button type="button" class="btn btn-outline-info" onclick="testHuntflowConnection()">
+                    <i class="fas fa-plug me-1"></i>
+                    Тест подключения
+                </button>
+            </div>
+            
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Важно:</strong> Получите токены в Huntflow: Настройки → API → Добавить токен. 
+                <a href="{% url 'accounts:integrations' %}" class="alert-link">Подробные инструкции</a>
             </div>
         </div>
     </div>

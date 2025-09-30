@@ -43,3 +43,1009 @@ Quit the server with CONTROL-C.
 [30/Sep/2025 16:57:23] "GET /clickup/api/bulk-import-progress/43/ HTTP/1.1" 200 359
 [30/Sep/2025 16:57:26] "GET /clickup/api/bulk-import-progress/43/ HTTP/1.1" 200 359
 [30/Sep/2025 16:57:31] "GET /clickup/api/bulk-import-progress/43/ HTTP/1.1" 200 359
+[30/Sep/2025 16:57:36] "GET /clickup/api/bulk-import-progress/43/ HTTP/1.1" 200 359
+[30/Sep/2025 16:57:41] "GET /clickup/api/bulk-import-progress/43/ HTTP/1.1" 200 361
+[30/Sep/2025 16:57:46] "GET /clickup/api/bulk-import-progress/43/ HTTP/1.1" 200 361
+[30/Sep/2025 16:57:51] "GET /clickup/api/bulk-import-progress/43/ HTTP/1.1" 200 361
+[30/Sep/2025 16:58:22] "GET /clickup/api/bulk-import-progress/43/ HTTP/1.1" 200 361
+[30/Sep/2025 16:59:22] "GET /clickup/api/bulk-import-progress/43/ HTTP/1.1" 200 361
+[30/Sep/2025 17:00:22] "GET /clickup/api/bulk-import-progress/43/ HTTP/1.1" 200 361
+[30/Sep/2025 17:01:22] "GET /clickup/api/bulk-import-progress/43/ HTTP/1.1" 200 361
+[30/Sep/2025 17:02:22] "GET /clickup/api/bulk-import-progress/43/ HTTP/1.1" 200 361
+[30/Sep/2025 17:03:22] "GET /clickup/api/bulk-import-progress/43/ HTTP/1.1" 200 361
+[30/Sep/2025 17:04:23] "GET /clickup/api/bulk-import-progress/43/ HTTP/1.1" 200 361
+[30/Sep/2025 17:05:22] "GET /clickup/api/bulk-import-progress/43/ HTTP/1.1" 200 394
+[30/Sep/2025 17:07:09] "GET /google-oauth/chat/ HTTP/1.1" 200 177159
+[30/Sep/2025 17:07:09] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[30/Sep/2025 17:07:09] "GET /static/js/chat_actions.js HTTP/1.1" 200 5325
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/models.py changed, reloading.
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 27 событий
+🔍 DEBUG CHAT: Получено 27 событий из API
+🔍 DEBUG CHAT: Передаем 27 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Шемет Владислав в 2025-09-30T17:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Chernyavsky Dmitry в 2025-10-01T03:30:00+03:00
+🔍 DEBUG CHAT: Событие: Recruitment Meeting в 2025-10-01T10:30:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/models.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:09:11
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/models.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:09:16
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:09:25
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:10:00
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:10:05
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:10:13
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:10:39
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:10:51
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/urls.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:11:00
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/urls.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:11:28
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/admin.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:11:35
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/admin.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:11:47
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/threading.py", line 1043, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/threading.py", line 994, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+    ~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/management/commands/runserver.py", line 133, in inner_run
+    self.check(display_num_errors=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/management/base.py", line 556, in check
+    raise SystemCheckError(msg)
+django.core.management.base.SystemCheckError: SystemCheckError: System check identified some issues:
+
+ERRORS:
+<class 'apps.accounts.admin.UserAdmin'>: (admin.E035) The value of 'readonly_fields[2]' is not a callable, an attribute of 'UserAdmin', or an attribute of 'accounts.User'.
+<class 'apps.accounts.admin.UserAdmin'>: (admin.E108) The value of 'list_display[5]' refers to 'get_huntflow_token_status', which is not a callable, an attribute of 'UserAdmin', or an attribute or method on 'accounts.User'.
+
+System check identified 2 issues (0 silenced).
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/admin.py changed, reloading.
+Performing system checks...
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/views_token.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:12:03
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/views_token.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:13:54
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/views_token.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:14:00
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/threading.py", line 1043, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/threading.py", line 994, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+    ~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/management/commands/runserver.py", line 133, in inner_run
+    self.check(display_num_errors=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/management/base.py", line 485, in check
+    all_issues = checks.run_checks(
+        app_configs=app_configs,
+    ...<2 lines>...
+        databases=databases,
+    )
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/registry.py", line 88, in run_checks
+    new_errors = check(app_configs=app_configs, databases=databases)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/urls.py", line 14, in check_url_config
+    return check_resolver(resolver)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/urls.py", line 24, in check_resolver
+    return check_method()
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 494, in check
+    for pattern in self.url_patterns:
+                   ^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/functional.py", line 57, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 715, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/functional.py", line 57, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 708, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/agolubenko/hrhelper/fullstack/backend/config/urls.py", line 30, in <module>
+    path('huntflow/', include('apps.huntflow.urls')),
+                      ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/conf.py", line 38, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/urls.py", line 26, in <module>
+    path('tokens/', views_token.HuntflowTokenManagementView.as_view(), name='huntflow_tokens'),
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'apps.huntflow.views_token' has no attribute 'HuntflowTokenManagementView'. Did you mean: 'huntflow_token_management_page'?
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/urls.py changed, reloading.
+Performing system checks...
+
+Watching for file changes with StatReloader
+ERROR Internal Server Error: /huntflow/tokens/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 61, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 175, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 167, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 966, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 132, in render
+    compiled_parent = self.get_parent(context)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 129, in get_parent
+    return self.find_template(parent, context)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 107, in find_template
+    template, origin = context.template.engine.find_template(
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        template_name,
+        ^^^^^^^^^^^^^^
+        skip=history,
+        ^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/engine.py", line 161, in find_template
+    raise TemplateDoesNotExist(name, tried=tried)
+django.template.exceptions.TemplateDoesNotExist: base.html
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/views_token.py", line 13, in huntflow_token_management_page
+    return render(request, 'huntflow/token_management.html')
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 63, in render
+    reraise(exc, self.backend)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 84, in reraise
+    raise new from exc
+django.template.exceptions.TemplateDoesNotExist: base.html
+Internal Server Error: /huntflow/tokens/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 61, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 175, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 167, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 966, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 132, in render
+    compiled_parent = self.get_parent(context)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 129, in get_parent
+    return self.find_template(parent, context)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 107, in find_template
+    template, origin = context.template.engine.find_template(
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        template_name,
+        ^^^^^^^^^^^^^^
+        skip=history,
+        ^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/engine.py", line 161, in find_template
+    raise TemplateDoesNotExist(name, tried=tried)
+django.template.exceptions.TemplateDoesNotExist: base.html
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/views_token.py", line 13, in huntflow_token_management_page
+    return render(request, 'huntflow/token_management.html')
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 63, in render
+    reraise(exc, self.backend)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 84, in reraise
+    raise new from exc
+django.template.exceptions.TemplateDoesNotExist: base.html
+[30/Sep/2025 17:15:56] "GET /huntflow/tokens/ HTTP/1.1" 500 141451
+WARNING Not Found: /favicon.ico
+Not Found: /favicon.ico
+[30/Sep/2025 17:15:57] "GET /favicon.ico HTTP/1.1" 404 3815
+[30/Sep/2025 17:16:06] "GET /admin/clickup_int/clickuptask/?all=&q= HTTP/1.1" 200 163247
+/Users/agolubenko/hrhelper/fullstack/backend/logic/utilities/account_services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:14:22
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+Watching for file changes with StatReloader
+[30/Sep/2025 17:17:06] "GET /accounts/ HTTP/1.1" 200 49566
+[30/Sep/2025 17:17:06] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[30/Sep/2025 17:17:06] "GET /static/css/profile.css HTTP/1.1" 404 1804
+[30/Sep/2025 17:17:08] "GET /accounts/integrations/ HTTP/1.1" 200 69781
+[30/Sep/2025 17:17:08] "GET /static/css/profile.css HTTP/1.1" 404 1804
+[30/Sep/2025 17:17:17] "GET /accounts/api-keys/ HTTP/1.1" 200 51130
+[30/Sep/2025 17:17:17] "GET /static/css/profile.css HTTP/1.1" 404 1804
+[30/Sep/2025 17:17:27] "GET /accounts/integrations/ HTTP/1.1" 200 69781
+[30/Sep/2025 17:17:27] "GET /static/css/profile.css HTTP/1.1" 404 1804
+[30/Sep/2025 17:17:31] "GET /accounts/api-keys/ HTTP/1.1" 200 51130
+[30/Sep/2025 17:17:31] "GET /static/css/profile.css HTTP/1.1" 404 1804
+[30/Sep/2025 17:17:38] "GET /accounts/settings/ HTTP/1.1" 200 45830
+[30/Sep/2025 17:17:38] "GET /static/css/profile.css HTTP/1.1" 404 1804
+[30/Sep/2025 17:17:41] "GET /accounts/api-keys/ HTTP/1.1" 200 51130
+[30/Sep/2025 17:17:41] "GET /static/css/profile.css HTTP/1.1" 404 1804
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/urls.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:16:15
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+Watching for file changes with StatReloader
+[30/Sep/2025 17:18:04] "GET /accounts/integrations/ HTTP/1.1" 200 69781
+[30/Sep/2025 17:18:04] "GET /static/css/profile.css HTTP/1.1" 404 1804
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/views_token.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:18:03
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+Watching for file changes with StatReloader
+[30/Sep/2025 17:18:27] "GET /accounts/api-keys/ HTTP/1.1" 200 51130
+[30/Sep/2025 17:18:27] "GET /static/css/profile.css HTTP/1.1" 404 1804
+[30/Sep/2025 17:19:59] "GET /accounts/api-keys/ HTTP/1.1" 200 58911
+[30/Sep/2025 17:19:59] "GET /static/css/profile.css HTTP/1.1" 404 1804
+[30/Sep/2025 17:19:59] "GET /huntflow/tokens/api/ HTTP/1.1" 200 374
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/urls.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:18:11
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/urls.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:20:13
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[30/Sep/2025 17:20:37] "POST /huntflow/tokens/api/ HTTP/1.1" 200 166
+[30/Sep/2025 17:20:39] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 404 - {"errors":[{"type":"not_found","title":"error.robot_token.not_found"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:20:41] "GET /huntflow/tokens/test/ HTTP/1.1" 200 170
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 403 - {"errors":[{"type":"access_denied","title":"error.robot_token.refresh_too_early"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:20:50] "POST /accounts/api-keys/ HTTP/1.1" 200 59254
+[30/Sep/2025 17:20:50] "GET /static/css/profile.css HTTP/1.1" 404 1804
+[30/Sep/2025 17:20:50] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 403 - {"errors":[{"type":"access_denied","title":"error.robot_token.refresh_too_early"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:20:54] "GET /huntflow/tokens/test/ HTTP/1.1" 200 170
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 403 - {"errors":[{"type":"access_denied","title":"error.robot_token.refresh_too_early"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 403 - {"errors":[{"type":"access_denied","title":"error.robot_token.refresh_too_early"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:21:06] "GET /huntflow/ HTTP/1.1" 200 40770
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 403 - {"errors":[{"type":"access_denied","title":"error.robot_token.refresh_too_early"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:21:08] "POST /huntflow/test-connection/ HTTP/1.1" 200 136
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 403 - {"errors":[{"type":"access_denied","title":"error.robot_token.refresh_too_early"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:21:11] "GET /accounts/ HTTP/1.1" 200 49554
+[30/Sep/2025 17:21:11] "GET /static/css/profile.css HTTP/1.1" 404 1804
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 403 - {"errors":[{"type":"access_denied","title":"error.robot_token.refresh_too_early"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:21:14] "GET /accounts/integrations/ HTTP/1.1" 200 69822
+[30/Sep/2025 17:21:14] "GET /static/css/profile.css HTTP/1.1" 404 1804
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 403 - {"errors":[{"type":"access_denied","title":"error.robot_token.refresh_too_early"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 403 - {"errors":[{"type":"access_denied","title":"error.robot_token.refresh_too_early"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:21:26] "GET /accounts/api-keys/ HTTP/1.1" 200 58911
+[30/Sep/2025 17:21:26] "GET /static/css/profile.css HTTP/1.1" 404 1804
+[30/Sep/2025 17:21:26] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 403 - {"errors":[{"type":"access_denied","title":"error.robot_token.refresh_too_early"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:21:41] "GET /admin/accounts/user/ HTTP/1.1" 200 33452
+[30/Sep/2025 17:21:41] "GET /static/admin/img/icon-no.svg HTTP/1.1" 304 0
+[30/Sep/2025 17:21:41] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 403 - {"errors":[{"type":"access_denied","title":"error.robot_token.refresh_too_early"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:21:55] "POST /admin/accounts/user/ HTTP/1.1" 200 65645
+[30/Sep/2025 17:21:59] "POST /admin/accounts/user/ HTTP/1.1" 302 0
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 403 - {"errors":[{"type":"access_denied","title":"error.robot_token.refresh_too_early"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:22:00] "GET /admin/accounts/user/ HTTP/1.1" 200 30698
+[30/Sep/2025 17:22:00] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 403 - {"errors":[{"type":"access_denied","title":"error.robot_token.refresh_too_early"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:22:02] "GET /admin/accounts/user/3/change/ HTTP/1.1" 200 80896
+[30/Sep/2025 17:22:02] "GET /static/admin/js/collapse.js HTTP/1.1" 304 0
+[30/Sep/2025 17:22:02] "GET /static/admin/css/forms.css HTTP/1.1" 304 0
+[30/Sep/2025 17:22:02] "GET /static/admin/js/admin/DateTimeShortcuts.js HTTP/1.1" 304 0
+[30/Sep/2025 17:22:02] "GET /static/admin/js/calendar.js HTTP/1.1" 304 0
+[30/Sep/2025 17:22:02] "GET /static/admin/js/SelectFilter2.js HTTP/1.1" 304 0
+[30/Sep/2025 17:22:02] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+[30/Sep/2025 17:22:02] "GET /static/admin/js/SelectBox.js HTTP/1.1" 304 0
+[30/Sep/2025 17:22:02] "GET /static/admin/css/widgets.css HTTP/1.1" 304 0
+[30/Sep/2025 17:22:02] "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 304 0
+[30/Sep/2025 17:22:02] "GET /static/admin/js/change_form.js HTTP/1.1" 304 0
+[30/Sep/2025 17:22:02] "GET /static/admin/img/icon-unknown-alt.svg HTTP/1.1" 304 0
+[30/Sep/2025 17:22:02] "GET /static/admin/img/icon-unknown.svg HTTP/1.1" 304 0
+[30/Sep/2025 17:22:02] "GET /static/admin/img/selector-icons.svg HTTP/1.1" 304 0
+[30/Sep/2025 17:22:02] "GET /static/admin/img/icon-calendar.svg HTTP/1.1" 304 0
+[30/Sep/2025 17:22:02] "GET /static/admin/img/icon-clock.svg HTTP/1.1" 304 0
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 404 - {"errors":[{"type":"not_found","title":"error.robot_token.not_found"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:22:21] "POST /accounts/api-keys/ HTTP/1.1" 200 59254
+[30/Sep/2025 17:22:21] "GET /static/css/profile.css HTTP/1.1" 404 1804
+[30/Sep/2025 17:22:21] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 404 - {"errors":[{"type":"not_found","title":"error.robot_token.not_found"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 404 - {"errors":[{"type":"not_found","title":"error.robot_token.not_found"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:22:23] "GET /huntflow/ HTTP/1.1" 200 40770
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 404 - {"errors":[{"type":"not_found","title":"error.robot_token.not_found"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:22:24] "POST /huntflow/test-connection/ HTTP/1.1" 200 136
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 404 - {"errors":[{"type":"not_found","title":"error.robot_token.not_found"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:22:55] "POST /huntflow/test-connection/ HTTP/1.1" 200 136
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 404 - {"errors":[{"type":"not_found","title":"error.robot_token.not_found"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:22:58] "GET /accounts/ HTTP/1.1" 200 49566
+[30/Sep/2025 17:22:58] "GET /static/css/profile.css HTTP/1.1" 404 1804
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 404 - {"errors":[{"type":"not_found","title":"error.robot_token.not_found"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 404 - {"errors":[{"type":"not_found","title":"error.robot_token.not_found"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:23:03] "GET /accounts/api-keys/ HTTP/1.1" 200 58911
+[30/Sep/2025 17:23:03] "GET /static/css/profile.css HTTP/1.1" 404 1804
+[30/Sep/2025 17:23:03] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:20:16
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/me
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+DEBUG context_processor: accounts_list = []
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/me
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/me
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+❌ Не удалось подключиться к Huntflow API
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+DEBUG context_processor: accounts_list = []
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/me
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+❌ Не удалось подключиться к Huntflow API
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+DEBUG context_processor: accounts_list = []
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+DEBUG context_processor: accounts_list = []
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+DEBUG context_processor: accounts_list = []
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+DEBUG context_processor: accounts_list = []
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+DEBUG context_processor: accounts_list = []
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+DEBUG context_processor: accounts_list = []
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+DEBUG context_processor: accounts_list = []
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+DEBUG context_processor: accounts_list = []
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+DEBUG context_processor: accounts_list = []
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/me
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+❌ Не удалось подключиться к Huntflow API
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+DEBUG context_processor: accounts_list = []
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/me
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+❌ Не удалось подключиться к Huntflow API
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/me
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+❌ Не удалось подключиться к Huntflow API
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+DEBUG context_processor: accounts_list = []
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+DEBUG context_processor: accounts_list = []
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+DEBUG context_processor: accounts_list = []
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:25:04
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:25:42
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:25:52
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:25:57
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:26:01
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/token_service.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:26:06
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/token_service.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:26:11
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:26:18
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:26:44
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 404 - {"errors":[{"type":"not_found","title":"error.robot_token.not_found"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 404 - {"errors":[{"type":"not_found","title":"error.robot_token.not_found"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:27:54] "GET /accounts/api-keys/ HTTP/1.1" 200 58911
+[30/Sep/2025 17:27:54] "GET /static/css/hrhelper.css HTTP/1.1" 200 63725
+[30/Sep/2025 17:27:54] "GET /static/css/profile.css HTTP/1.1" 404 1804
+[30/Sep/2025 17:27:54] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[30/Sep/2025 17:27:54] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+[30/Sep/2025 17:27:54] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 404 - {"errors":[{"type":"not_found","title":"error.robot_token.not_found"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:27:55] "GET /huntflow/tokens/test/ HTTP/1.1" 200 170
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 404 - {"errors":[{"type":"not_found","title":"error.robot_token.not_found"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 404 - {"errors":[{"type":"not_found","title":"error.robot_token.not_found"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:28:07] "GET /huntflow/ HTTP/1.1" 200 40770
+Получен 401, пробуем обновить токен
+Ошибка обновления токена: 404 - {"errors":[{"type":"not_found","title":"error.robot_token.not_found"}]}
+Ошибка API: 401 - {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}
+[30/Sep/2025 17:28:09] "POST /huntflow/test-connection/ HTTP/1.1" 200 136
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:26:55
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+DEBUG context_processor: accounts_list = []
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+DEBUG context_processor: accounts_list = []
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/me
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/me
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+❌ Не удалось подключиться к Huntflow API
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+DEBUG context_processor: accounts_list = []
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/me
+📥 Ответ API: 401
+📥 Тело ответа: {"errors":[{"type":"authorization_error","title":"Authorization Error","detail":"Invalid access token"}]}...
+❌ Не удалось подключиться к Huntflow API
+Watching for file changes with StatReloader
+[30/Sep/2025 17:28:45] "GET /huntflow/ HTTP/1.1" 200 40802
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/token_service.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:28:24
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/me
+📥 Ответ API: 200
+📥 Тело ответа: {"id":694,"name":"andrei.golubenko@softnetix.io","position":null,"email":"andrei.golubenko@softnetix.io","phone":null,"locale":"ru_RU"}...
+✅ Подключение к Huntflow успешно!
+👤 Пользователь: andrei.golubenko@softnetix.io
+📧 Email: andrei.golubenko@softnetix.io
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:28:49
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/logic/integration/huntflow/huntflow_service.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:29:42
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[30/Sep/2025 17:30:12] "GET /huntflow/ HTTP/1.1" 200 45200
+[30/Sep/2025 17:30:17] "GET /accounts/ HTTP/1.1" 200 49566
+[30/Sep/2025 17:30:17] "GET /static/css/profile.css HTTP/1.1" 404 1804
+[30/Sep/2025 17:30:19] "GET /accounts/api-keys/ HTTP/1.1" 200 58911
+[30/Sep/2025 17:30:19] "GET /static/css/profile.css HTTP/1.1" 404 1804
+[30/Sep/2025 17:30:19] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 30, 2025 - 17:29:53
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/me
+📥 Ответ API: 200
+📥 Тело ответа: {"id":694,"name":"andrei.golubenko@softnetix.io","position":null,"email":"andrei.golubenko@softnetix.io","phone":null,"locale":"ru_RU"}...
+✅ Подключение к Huntflow успешно!
+👤 Пользователь: andrei.golubenko@softnetix.io
+📧 Email: andrei.golubenko@softnetix.io
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+💾 Сохранены события календаря в кэш: 27 событий
+🔍 DEBUG CHAT: Получено 27 событий из API
+🔍 DEBUG CHAT: Передаем 27 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Шемет Владислав в 2025-09-30T17:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Chernyavsky Dmitry в 2025-10-01T03:30:00+03:00
+🔍 DEBUG CHAT: Событие: Recruitment Meeting в 2025-10-01T10:30:00+03:00
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+Watching for file changes with StatReloader
+[30/Sep/2025 17:30:25] "POST /accounts/api-keys/ HTTP/1.1" 200 59254
+[30/Sep/2025 17:30:26] "GET /static/css/profile.css HTTP/1.1" 404 1804
+[30/Sep/2025 17:30:26] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+[30/Sep/2025 17:30:28] "GET /huntflow/ HTTP/1.1" 200 45197
+[30/Sep/2025 17:30:32] "GET /huntflow/accounts/291341/vacancies/ HTTP/1.1" 200 66405
+[30/Sep/2025 17:30:57] "GET /clickup/tasks/ HTTP/1.1" 200 104839
+[30/Sep/2025 17:31:03] "GET /clickup/ HTTP/1.1" 200 56457
