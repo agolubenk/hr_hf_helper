@@ -75,6 +75,44 @@
                         </div>
                     </div>
                     
+                    <!-- Выбор вакансии Huntflow -->
+                    {% if huntflow_vacancies %}
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <i class="fas fa-briefcase me-2"></i>
+                                        Выбор вакансии в Huntflow
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="huntflowVacancySelect" class="form-label">
+                                            <i class="fas fa-list me-1"></i>
+                                            Вакансия для привязки кандидатов:
+                                        </label>
+                                        <select id="huntflowVacancySelect" class="form-select">
+                                            <option value="">Без привязки к вакансии</option>
+                                            {% for vacancy in huntflow_vacancies %}
+                                            <option value="{{ vacancy.id }}">
+                                                {{ vacancy.position }} 
+                                                {% if vacancy.company %} - {{ vacancy.company }}{% endif %}
+                                                {% if vacancy.state %} ({{ vacancy.state }}){% endif %}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="form-text">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            Выберите вакансию, к которой будут привязаны импортированные кандидаты
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
                     <div class="text-center mt-4">
                         <button id="startBulkImport" class="btn btn-bulk-import btn-lg">
                             <i class="fas fa-play me-2"></i>
@@ -122,6 +160,9 @@
                             <li><i class="fas fa-check text-success me-2"></i>Вложения и файлы</li>
                             <li><i class="fas fa-check text-success me-2"></i>Дополнительные поля</li>
                             <li><i class="fas fa-check text-success me-2"></i>Статусы и исполнители</li>
+                            {% if huntflow_vacancies %}
+                            <li><i class="fas fa-briefcase text-info me-2"></i>Привязка к выбранной вакансии</li>
+                            {% endif %}
                         </ul>
                     </div>
                     
@@ -281,12 +322,22 @@ document.addEventListener('DOMContentLoaded', function() {
             startButton.disabled = true;
             startButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Запуск...';
             
+            // Получаем выбранную вакансию
+            const vacancySelect = document.getElementById('huntflowVacancySelect');
+            const selectedVacancyId = vacancySelect ? vacancySelect.value : '';
+            
+            // Создаем FormData для отправки POST данных
+            const formData = new FormData();
+            if (selectedVacancyId) {
+                formData.append('huntflow_vacancy_id', selectedVacancyId);
+            }
+            
             fetch('{% url "clickup_int:start_bulk_import" %}', {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': document.querySelector('meta[name=csrf-token]').getAttribute('content'),
-                    'Content-Type': 'application/json',
                 },
+                body: formData,
             })
             .then(response => {
                 console.log('Response status:', response.status);

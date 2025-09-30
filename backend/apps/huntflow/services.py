@@ -1237,9 +1237,13 @@ class HuntflowService:
             
             # Сохраняем vacancy_id для отдельной привязки после создания кандидата
             target_vacancy_id = None
-            if vacancy_id and vacancy_id != '':
-                target_vacancy_id = int(vacancy_id) if isinstance(vacancy_id, str) and vacancy_id.isdigit() else vacancy_id
-                print(f"🔍 Сохраняем vacancy_id для отдельной привязки: {target_vacancy_id}")
+            if vacancy_id and vacancy_id != '' and str(vacancy_id).lower() != 'none':
+                try:
+                    target_vacancy_id = int(vacancy_id) if isinstance(vacancy_id, str) and vacancy_id.isdigit() else vacancy_id
+                    print(f"🔍 Сохраняем vacancy_id для отдельной привязки: {target_vacancy_id}")
+                except (ValueError, TypeError):
+                    print(f"⚠️ Неверный формат vacancy_id: {vacancy_id}")
+                    target_vacancy_id = None
             else:
                 print(f"⚠️ Вакансия не указана: vacancy_id='{vacancy_id}'")
             

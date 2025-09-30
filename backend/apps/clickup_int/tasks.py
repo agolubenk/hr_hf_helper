@@ -289,10 +289,17 @@ def import_single_task(self, user_id, task_data, bulk_import_id):
                     }
                     
                     # Создаем кандидата через общую логику
+                    # Используем выбранную вакансию из массового импорта
+                    vacancy_id = bulk_import.huntflow_vacancy_id
+                    if vacancy_id is None or vacancy_id == '' or str(vacancy_id).lower() == 'none':
+                        vacancy_id = None
+                    
+                    print(f"🎯 [VACANCY] Используем вакансию: {vacancy_id} (тип: {type(vacancy_id)})")
+                    
                     applicant = huntflow_ops.create_candidate_from_task_data(
                         task_data=task_data_for_huntflow,
                         account_id=account_id,
-                        vacancy_id=None,  # Без привязки к вакансии при массовом импорте
+                        vacancy_id=vacancy_id,  # Используем выбранную вакансию
                         source_type='clickup'
                     )
                     

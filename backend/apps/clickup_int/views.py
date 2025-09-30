@@ -707,6 +707,20 @@ def bulk_import_view(request):
         settings = None
         is_configured = False
     
+    # Получаем вакансии из Huntflow
+    huntflow_vacancies = []
+    if user.huntflow_sandbox_api_key or user.huntflow_prod_api_key:
+        try:
+            from logic.integration.shared.huntflow_operations import HuntflowOperations
+            huntflow_ops = HuntflowOperations(user)
+            accounts = huntflow_ops.get_accounts()
+            if accounts:
+                # Берем первую организацию (можно расширить для выбора)
+                account_id = accounts[0]['id']
+                huntflow_vacancies = huntflow_ops.get_vacancies(account_id)
+        except Exception as e:
+            logger.warning(f"Не удалось получить вакансии Huntflow: {e}")
+    
     # Получаем последние массовые импорты
     recent_imports = ClickUpBulkImport.objects.filter(user=user).order_by('-created_at')[:10]
     
@@ -714,6 +728,7 @@ def bulk_import_view(request):
         'settings': settings,
         'is_configured': is_configured,
         'recent_imports': recent_imports,
+        'huntflow_vacancies': huntflow_vacancies,
     }
     
     return render(request, 'clickup_int/bulk_import.html', context)
@@ -743,12 +758,27 @@ def start_bulk_import(request):
     """API для запуска массового импорта"""
     print("🎯 [START] Начинаем массовый импорт")
     print("🎯 [START] Начинаем массовый импорт", flush=True)
-    logger.info("🎯 [START] Начинаем массовый импорт")
+    logger.info("🎯 [START] Начинаем массовый импорта")
     
     user = request.user
     print(f"👤 [START] Пользователь: {user.username}")
     print(f"👤 [START] Пользователь: {user.username}", flush=True)
     logger.info(f"Запуск массового импорта для пользователя {user.username}")
+    
+    # Получаем выбранную вакансию из POST данных
+    huntflow_vacancy_id = request.POST.get('huntflow_vacancy_id')
+    if huntflow_vacancy_id:
+        try:
+            huntflow_vacancy_id = int(huntflow_vacancy_id)
+            print(f"🎯 [START] Выбрана вакансия Huntflow: {huntflow_vacancy_id}")
+            logger.info(f"Выбрана вакансия Huntflow: {huntflow_vacancy_id}")
+        except (ValueError, TypeError):
+            huntflow_vacancy_id = None
+            print("⚠️ [START] Неверный ID вакансии, импорт без привязки к вакансии")
+            logger.warning("Неверный ID вакансии, импорт без привязки к вакансии")
+    else:
+        print("ℹ️ [START] Вакансия не выбрана, импорт без привязки к вакансии")
+        logger.info("Вакансия не выбрана, импорт без привязки к вакансии")
     
     if not CELERY_AVAILABLE:
         print("❌ [START] Celery не доступен")
@@ -778,7 +808,8 @@ def start_bulk_import(request):
         # Создаем запись массового импорта
         bulk_import = ClickUpBulkImport.objects.create(
             user=user,
-            status='running'
+            status='running',
+            huntflow_vacancy_id=huntflow_vacancy_id
         )
         print(f"📝 [START] Создана запись массового импорта с ID {bulk_import.id}")
         print(f"📝 [START] Создана запись массового импорта с ID {bulk_import.id}", flush=True)

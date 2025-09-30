@@ -446,6 +446,14 @@ class ClickUpBulkImport(models.Model):
         verbose_name='ID задачи Celery'
     )
     
+    # Поле для выбранной вакансии в Huntflow
+    huntflow_vacancy_id = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name='ID вакансии в Huntflow',
+        help_text='ID вакансии в Huntflow, к которой будут привязаны импортированные кандидаты'
+    )
+    
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создано')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Обновлено')
     completed_at = models.DateTimeField(null=True, blank=True, verbose_name='Завершено')
