@@ -14,7 +14,7 @@
 
                         <!-- Информация о выбранной вакансии -->
                         {% if selected_vacancy %}
-                        <div class="automation-card mt-1">
+                        <div class="automation-card">
                             <div class="row align-items-center">
                                 <div class="col-12">
                                     <!-- Кнопки копирования вопросов и слотов -->
@@ -103,7 +103,7 @@
                     </div>
                     <div class="col-md-4">
                         <form method="GET" id="vacancyForm">
-                            <select name="vacancy_id" style="margin-top: 40px!important;" class="form-select" onchange="this.form.submit()">
+                            <select name="vacancy_id" class="form-select" onchange="this.form.submit()">
                                 <option value="">-- Выберите вакансию --</option>
                                 {% for vacancy in active_vacancies %}
                                     <option value="{{ vacancy.id }}" 
@@ -180,7 +180,7 @@
                                     <span class="badge bg-secondary ms-2">#{{ chat_session.id }}</span>
                                 </h6>
                                 <div class="chat-title-edit">
-                                    <button type="button" class="btn btn-sm btn-outline-light" onclick="toggleTitleEdit()" title="Редактировать название чата">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="toggleTitleEdit()" title="Редактировать название чата">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                 </div>
@@ -428,47 +428,30 @@
                         </div>
                  <div class="card-body p-0 pt-2">
                      <!-- Список сессий -->
-                     <div class="sessions-list" style="max-height: 400px; overflow-y: auto;">
+                     <div class="sessions-list" style="max-height: 280px; overflow-y: auto;">
                          {% for session in all_sessions %}
                              <div class="session-item mx-2 {% if session.id == chat_session.id %}active{% endif %}">
                                  <a href="{% url 'google_oauth:chat_workflow_session' session.id %}" class="session-link">
-                                     <div class="session-header">
-                                         <div class="session-info">
+                                     <div class="session-content">
+                                         <div class="session-main-info">
+                                             <span class="session-id">#{{ session.id }}</span>
                                              {% if session.title %}
                                                  <span class="session-title">{{ session.title }}</span>
-                                                 <span class="session-id text-muted">#{{ session.id }}</span>
+                                             {% endif %}
+                                         </div>
+                                         <div class="session-date">
+                                             {% if session.last_message_date %}
+                                                 {{ session.last_message_date|date:"d.m.Y H:i" }}
                                              {% else %}
-                                                 <span class="session-id">#{{ session.id }}</span>
+                                                 {{ session.updated_at|date:"d.m.Y H:i" }}
                                              {% endif %}
-                                             <span class="session-date">{{ session.updated_at|date:"d.m.Y H:i" }}</span>
-                            </div>
-                                         <div class="session-status">
-                                             {% if session.id == chat_session.id %}
+                                         </div>
+                                         {% if session.id == chat_session.id %}
+                                             <div class="session-status">
                                                  <i class="fas fa-circle text-primary" style="font-size: 8px;"></i>
-                                             {% endif %}
-                            </div>
-                        </div>
-                                     <div class="session-preview">
-                                         {% if session.messages.last %}
-                                             <span class="session-last-message">
-                                                 {% if session.messages.last.message_type == 'user' %}
-                                                     <i class="fas fa-user me-1 text-muted"></i>
-                                                 {% elif session.messages.last.message_type == 'hr_screening' %}
-                                                     <i class="fas fa-clipboard-list me-1 text-success"></i>
-                                                 {% elif session.messages.last.message_type == 'invite' %}
-                                                     <i class="fas fa-calendar-plus me-1 text-warning"></i>
-                                                 {% else %}
-                                                     <i class="fas fa-robot me-1 text-muted"></i>
-                                                 {% endif %}
-                                                 {{ session.messages.last.content|truncatechars:50 }}
-                                             </span>
-                                         {% else %}
-                                             <span class="session-empty text-muted">
-                                                 <i class="fas fa-comment-slash me-1"></i>
-                                                 Пустой чат
-                                             </span>
+                                             </div>
                                          {% endif %}
-                    </div>
+                                     </div>
                                  </a>
                 </div>
                          {% empty %}
@@ -500,11 +483,8 @@
                                 <span class="command-badge bg-success">/s</span>
                                 <strong class="ms-2">HR-скрининг</strong>
                             </div>
-                            <p class="command-description mb-0 text-muted small">
-                                Создает HR-скрининг. Вставьте ссылку на кандидата из Huntflow и опишите результаты собеседования.
-                            </p>
                             <div class="command-example mt-1">
-                                <code class="text-primary small">/s https://huntflow.ru/vacancy/123/candidate/456 Иван Петров прошел собеседование...</code>
+                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[ответы]</code>
                             </div>
                         </div>
                         
@@ -513,11 +493,8 @@
                                 <span class="command-badge bg-warning">/in</span>
                                 <strong class="ms-2">Инвайт</strong>
                             </div>
-                            <p class="command-description mb-0 text-muted small">
-                                Создает инвайт на техническое интервью. Вставьте ссылку на кандидата и укажите детали встречи.
-                            </p>
                             <div class="command-example mt-1">
-                                <code class="text-primary small">/in https://huntflow.ru/vacancy/123/candidate/456 Приглашаем на техническое интервью...</code>
+                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время]</code>
                             </div>
                         </div>
                     </div>
@@ -829,11 +806,21 @@
     color: white !important;
 }
 
-.card .card-header .badge {
-    font-size: 0.65rem !important;
-    padding: 2px 6px !important;
-    margin-left: 6px !important;
-}
+ .card .card-header .badge {
+     font-size: 0.65rem !important;
+     padding: 2px 6px !important;
+     margin-left: 6px !important;
+ }
+
+ .chat-title-edit {
+     display: flex;
+     align-items: center;
+ }
+
+ .chat-title-edit .btn {
+     padding: 4px 8px;
+     font-size: 0.8rem;
+ }
 
 /* Адаптивность для мобильных - сохраняем пропорциональность */
 @media (max-width: 768px) {
@@ -959,6 +946,8 @@
  .card .session-item {
      border-bottom: 1px solid var(--hr-border, #dee2e6);
      transition: background-color 0.2s ease;
+     margin-bottom: var(--space-8);
+     padding: var(--space-6);
  }
 
  .card .session-item:last-child {
@@ -986,59 +975,49 @@
      color: inherit;
  }
 
- .card .session-header {
+ .card .session-content {
      display: flex;
      justify-content: space-between;
      align-items: center;
-     margin-bottom: 6px;
+     gap: 8px;
  }
 
- .card .session-info {
+ .card .session-main-info {
      display: flex;
      align-items: center;
      gap: 8px;
+     flex: 1;
+     min-width: 0;
  }
 
  .card .session-id {
      font-weight: 600;
      font-size: 0.9rem;
      color: var(--hr-primary, #007bff);
+     white-space: nowrap;
  }
 
  .card .session-title {
-     font-weight: 600;
+     font-weight: 500;
      font-size: 0.9rem;
      color: var(--hr-text, #333);
-     display: block;
-     margin-bottom: 2px;
+     overflow: hidden;
+     text-overflow: ellipsis;
+     white-space: nowrap;
+     flex: 1;
  }
 
  .card .session-date {
      font-size: 0.75rem;
      color: var(--hr-text-muted, #6c757d);
+     white-space: nowrap;
+     margin-left: 8px;
  }
 
  .card .session-status {
      display: flex;
      align-items: center;
- }
-
- .card .session-preview {
-     font-size: 0.8rem;
-     line-height: 1.3;
- }
-
- .card .session-last-message {
-     color: var(--hr-text, #333);
-     display: block;
-     overflow: hidden;
-     text-overflow: ellipsis;
-     white-space: nowrap;
- }
-
- .card .session-empty {
-     font-size: 0.8rem;
-     font-style: italic;
+     margin-left: 8px;
  }
 
  /* Темная тема для списка сессий */
@@ -1048,14 +1027,6 @@
 
  [data-theme="dark"] .card .session-item.active {
      background-color: rgba(0, 123, 255, 0.15);
- }
-
- [data-theme="dark"] .card .session-last-message {
-     color: var(--color-text, #e2e8f0);
- }
-
- [data-theme="dark"] .card .session-empty {
-     color: var(--color-text-muted, #a0aec0);
  }
 
  [data-theme="dark"] .card .session-title {
@@ -1083,10 +1054,7 @@
 
  /* === СТИЛИ ДЛЯ СЕЛЕКТОРА ВАКАНСИИ И СЛОТОВ === */
  .vacancy-selector {
-     background: var(--hr-card-bg, #ffffff);
-     border: 1px solid var(--hr-border, #dee2e6);
      border-radius: 12px;
-     padding: 20px;
      margin-bottom: 20px;
  }
 
@@ -1095,10 +1063,6 @@
      border: 1px solid var(--hr-border, #dee2e6);
      border-radius: 8px;
      padding: 15px;
- }
-
- .copy-buttons {
-     margin-top: 10px;
  }
 
  .btn-copy {
@@ -1196,8 +1160,6 @@
 
  /* Темная тема для новых элементов */
  [data-theme="dark"] .vacancy-selector {
-     background: var(--color-surface, #2d3748);
-     border-color: var(--color-border, #4a5568);
  }
 
  [data-theme="dark"] .automation-card {
