@@ -1358,7 +1358,8 @@ class Invite(models.Model):
                 return None
             
             # Парсим URL кандидата для извлечения параметров
-            # Формат: https://huntflow.ru/my/org#/vacancy/[vacancy_id]/filter/[status]/id/[candidate_id]
+            # Формат prod: https://huntflow.ru/my/{account_nick}#/vacancy/[vacancy_id]/filter/[status]/id/[candidate_id]
+            # Формат sandbox: https://sandbox.huntflow.dev/my/org{account_id}#/vacancy/[vacancy_id]/filter/[status]/id/[candidate_id]
             import re
             
             # Извлекаем vacancy_id и candidate_id из URL
@@ -1369,14 +1370,29 @@ class Invite(models.Model):
                 vacancy_id = vacancy_match.group(1)
                 candidate_id = candidate_match.group(1)
                 
-                # Получаем реальный account_id пользователя
-                account_id = self._get_user_account_id()
+                # Получаем данные аккаунта пользователя из API
+                from apps.huntflow.services import HuntflowService
+                huntflow_service = HuntflowService(self.user)
+                accounts = huntflow_service.get_accounts()
                 
-                # Формируем ссылку с workon вместо статуса
-                huntflow_link = f"https://sandbox.huntflow.dev/my/org{account_id}#/vacancy/{vacancy_id}/filter/workon/id/{candidate_id}"
-                
-                print(f"🔗 Сгенерирована ссылка на Huntflow: {huntflow_link}")
-                return huntflow_link
+                if accounts and 'items' in accounts and accounts['items']:
+                    account_data = accounts['items'][0]
+                    account_id = account_data.get('id')
+                    account_nick = account_data.get('nick', '')
+                    
+                    # Формируем ссылку в зависимости от активной системы
+                    if self.user.active_system == 'prod':
+                        # Для прода используем nickname
+                        huntflow_link = f"https://huntflow.ru/my/{account_nick}#/vacancy/{vacancy_id}/filter/workon/id/{candidate_id}"
+                    else:
+                        # Для sandbox используем account_id
+                        huntflow_link = f"https://sandbox.huntflow.dev/my/org{account_id}#/vacancy/{vacancy_id}/filter/workon/id/{candidate_id}"
+                    
+                    print(f"🔗 Сгенерирована ссылка на Huntflow ({self.user.active_system}): {huntflow_link}")
+                    return huntflow_link
+                else:
+                    print(f"⚠️ Не удалось получить данные аккаунта из API")
+                    return None
             else:
                 print(f"⚠️ Не удалось извлечь параметры из URL кандидата: {self.candidate_url}")
                 return None

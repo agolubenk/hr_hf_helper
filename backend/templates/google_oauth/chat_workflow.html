@@ -11,13 +11,10 @@
             <div class="vacancy-selector">
                 <div class="row align-items-center">
                     <div class="col-md-8">
-                        <h3 class="mb-0">
-                            <i class="fas fa-briefcase me-2"></i>
-                            Выберите вакансию для работы
-                        </h3>
+
                         <!-- Информация о выбранной вакансии -->
                         {% if selected_vacancy %}
-                        <div class="automation-card mt-3">
+                        <div class="automation-card mt-1">
                             <div class="row align-items-center">
                                 <div class="col-12">
                                     <!-- Кнопки копирования вопросов и слотов -->
@@ -487,7 +484,7 @@
                             </div>
                         </div>
                         
-                        <div class="command-item mb-3">
+                        <div class="command-item">
                             <div class="command-header">
                                 <span class="command-badge bg-warning">/in</span>
                                 <strong class="ms-2">Инвайт</strong>
@@ -499,24 +496,6 @@
                                 <code class="text-primary small">/in https://huntflow.ru/vacancy/123/candidate/456 Приглашаем на техническое интервью...</code>
                             </div>
                         </div>
-                        
-                        <div class="command-item">
-                            <div class="command-header">
-                                <span class="command-badge bg-info">/h</span>
-                                <strong class="ms-2">Помощь</strong>
-                            </div>
-                            <p class="command-description mb-0 text-muted small">
-                                Показывает эту справку по командам.
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-3 p-2 bg-light rounded">
-                        <small class="text-muted">
-                            <i class="fas fa-info-circle me-1"></i>
-                            <strong>Совет:</strong> Команды автоматически определяются по первым символам сообщения. 
-                            После ввода команды она исчезнет из текста, но действие будет выполнено.
-                        </small>
                     </div>
                 </div>
             </div>
@@ -527,8 +506,13 @@
 <style>
 /* === ЕДИНООБРАЗИЕ РАЗМЕРОВ ШРИФТОВ === */
 .card .chat-messages {
-    background-color: var(--hr-chat-messages-bg, #f8f9fa);
+    background-color: #ffffff; /* Белый фон для светлой темы */
     padding: 12px !important;
+}
+
+/* Темная тема - черный фон чата */
+[data-theme="dark"] .card .chat-messages {
+    background-color: #000000;
 }
 
 .card .message {

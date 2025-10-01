@@ -644,7 +644,7 @@ def transfer_to_huntflow(request, task_id):
             'custom_fields': task.get_custom_fields_display()
         }
         
-        # ИСПОЛЬЗУЕМ ОБЩУЮ ЛОГИКУ вместо дублированного кода
+        # ИСПОЛЬЗУЕМ ОБЩУЮ ЛОГИКУ для правильной обработки PDF, LinkedIn и ФИО
         from logic.integration.shared.huntflow_operations import HuntflowOperations
         
         huntflow_ops = HuntflowOperations(user)

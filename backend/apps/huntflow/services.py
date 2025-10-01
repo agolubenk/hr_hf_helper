@@ -37,18 +37,8 @@ class HuntflowService:
     
     def _get_headers(self):
         """Получает заголовки для API запросов с валидным токеном"""
-        # Сначала проверяем, есть ли API ключ для текущей системы
-        api_key = self._get_api_key()
-        
-        # Если есть API ключ, используем его (приоритет для стабильности)
-        if api_key:
-            return {
-                'Authorization': f'Bearer {api_key}',
-                'Content-Type': 'application/json'
-            }
-        
-        # Если нет API ключа, пробуем токены
-        if self.user.huntflow_access_token:
+        # Если активная система - prod и есть токены, используем токены
+        if self.user.active_system == 'prod' and self.user.huntflow_access_token:
             # Получаем валидный токен
             access_token = self.token_service.ensure_valid_token()
             if access_token:
@@ -56,6 +46,14 @@ class HuntflowService:
                     'Authorization': f'Bearer {access_token}',
                     'Content-Type': 'application/json'
                 }
+        
+        # Если активная система - sandbox или нет токенов, используем API ключ
+        api_key = self._get_api_key()
+        if api_key:
+            return {
+                'Authorization': f'Bearer {api_key}',
+                'Content-Type': 'application/json'
+            }
         
         # Если ничего не работает, выбрасываем исключение
         raise Exception("Не настроена аутентификация для текущей системы")
@@ -1058,7 +1056,9 @@ class HuntflowService:
             }
             
             # Подготавливаем заголовки
-            headers = {k: v for k, v in self.headers.items() if k.lower() != 'content-type'}
+            headers = self._get_headers()
+            # Убираем Content-Type для multipart/form-data
+            headers = {k: v for k, v in headers.items() if k.lower() != 'content-type'}
             if parse_file:
                 headers['X-File-Parse'] = 'true'
             
@@ -1092,6 +1092,82 @@ class HuntflowService:
             print(f"❌ Ошибка при загрузке файла: {e}")
             return None
     
+    def create_applicant_manual(self, account_id: int, candidate_data: Dict[str, Any], vacancy_id: int = None) -> Optional[Dict[str, Any]]:
+        """
+        Создает кандидата в Huntflow вручную (для фронтенда)
+        
+        Args:
+            account_id: ID организации
+            candidate_data: Данные кандидата (простой словарь)
+            vacancy_id: ID вакансии для привязки (опционально)
+            
+        Returns:
+            Созданный кандидат или None
+        """
+        try:
+            print(f"🔍 Создаем кандидата вручную: {candidate_data}")
+            
+            # Подготавливаем данные кандидата
+            applicant_data = {
+                'first_name': candidate_data.get('first_name', ''),
+                'last_name': candidate_data.get('last_name', ''),
+                'externals': [
+                    {
+                        'auth_type': 'NATIVE',
+                        'data': {
+                            'body': candidate_data.get('resume_text', '')
+                        }
+                    }
+                ]
+            }
+            
+            # Добавляем дополнительные поля если они есть
+            if candidate_data.get('middle_name'):
+                applicant_data['middle_name'] = candidate_data.get('middle_name')
+            
+            if candidate_data.get('email'):
+                applicant_data['email'] = candidate_data.get('email')
+            
+            if candidate_data.get('phone'):
+                applicant_data['phone'] = candidate_data.get('phone')
+            
+            if candidate_data.get('position'):
+                applicant_data['position'] = candidate_data.get('position')
+            
+            if candidate_data.get('company'):
+                applicant_data['company'] = candidate_data.get('company')
+            
+            if candidate_data.get('salary'):
+                applicant_data['money'] = candidate_data.get('salary')
+            
+            print(f"📤 Отправляем данные кандидата: {applicant_data}")
+            
+            # Создаем кандидата
+            result = self._make_request('POST', f'/accounts/{account_id}/applicants', json=applicant_data)
+            
+            if result:
+                print(f"✅ Кандидат создан: {result.get('id')}")
+                
+                # Привязываем к вакансии если указана
+                if vacancy_id:
+                    print(f"🔗 Привязываем к вакансии {vacancy_id}")
+                    vacancy_result = self._bind_applicant_to_vacancy(account_id, result.get('id'), vacancy_id)
+                    if vacancy_result:
+                        print("✅ Кандидат привязан к вакансии")
+                    else:
+                        print("❌ Не удалось привязать к вакансии")
+                
+                return result
+            else:
+                print("❌ Кандидат не создан")
+                return None
+                
+        except Exception as e:
+            print(f"❌ Ошибка создания кандидата: {e}")
+            import traceback
+            traceback.print_exc()
+            return None
+
     def create_applicant_from_parsed_data(self, account_id: int, parsed_data: Dict[str, Any], vacancy_id: int = None, task_name: str = None, task_description: str = None, task_comments: List[Dict[str, Any]] = None, assignees: List[Dict[str, Any]] = None, task_status: str = None, notion_data: Dict[str, Any] = None) -> Optional[Dict[str, Any]]:
         """
         Создает кандидата в Huntflow на основе распарсенных данных
@@ -1634,7 +1710,7 @@ class HuntflowService:
                 # Если это тег clickup-new, пытаемся создать его
                 if assignee_name == "clickup-new":
                     print(f"🔍 Тег clickup-new не найден, создаем его...")
-                    return self._create_tag(account_id, "clickup-new", "#FF6B35")  # Оранжевый цвет для ClickUp
+                    return self._create_tag(account_id, "clickup-new", "FF5733")  # Оранжевый цвет для ClickUp
                 
                 print(f"❌ Тег для исполнителя '{assignee_name}' не найден")
                 return None
@@ -1646,19 +1722,23 @@ class HuntflowService:
             print(f"❌ Ошибка при поиске тега: {e}")
             return None
     
-    def _create_tag(self, account_id: int, tag_name: str, color: str = "#007BFF") -> Optional[int]:
+    def _create_tag(self, account_id: int, tag_name: str, color: str = "007BFF") -> Optional[int]:
         """
         Создает новый тег в Huntflow
         
         Args:
             account_id: ID организации
             tag_name: Название тега
-            color: Цвет тега в формате HEX
+            color: Цвет тега в формате HEX (без символа #)
             
         Returns:
             ID созданного тега или None
         """
         try:
+            # Убираем символ # если он есть
+            if color.startswith('#'):
+                color = color[1:]
+            
             print(f"🔍 Создаем тег: {tag_name} (цвет: {color})")
             
             tag_data = {

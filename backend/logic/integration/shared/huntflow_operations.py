@@ -110,6 +110,14 @@ class HuntflowOperations:
             if ('rabota' in field_name or 'резюме' in field_name or 'rabota.by' in field_value.lower()) and field_value:
                 return self._process_rabota_profile(field_value, task_data)
         
+        # Проверяем LinkedIn ссылки в описании задачи
+        description = task_data.get('description', '')
+        if description:
+            import re
+            linkedin_match = re.search(r'https?://(?:www\.)?linkedin\.com/in/[^\s<>"{}\|\\^`\[\]]+', description)
+            if linkedin_match:
+                return self._process_linkedin_profile(linkedin_match.group(0), task_data)
+        
         return None
     
     def _process_notion_page(self, page_data: Dict[str, Any], account_id: int) -> Optional[Dict[str, Any]]:
