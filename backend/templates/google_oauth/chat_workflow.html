@@ -1007,7 +1007,7 @@
  .card .session-id {
      font-weight: 600;
      font-size: 0.9rem;
-     color: var(--hr-primary, #007bff);
+     color: rgb(112, 153, 112); /* --color-water-500 */
      white-space: nowrap;
  }
 
@@ -1046,6 +1046,11 @@
  [data-theme="dark"] .card .session-title {
      color: var(--color-text, #e2e8f0);
  }
+
+/* Темная тема для session-id */
+[data-theme="dark"] .card .session-id {
+    color: rgb(7, 112, 7); /* Темно-зеленый */
+}
 
 /* Темная тема для ссылок */
 [data-theme="dark"] .card .info-link-compact {
