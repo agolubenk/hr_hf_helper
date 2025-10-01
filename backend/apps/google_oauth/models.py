@@ -3729,6 +3729,7 @@ class ChatSession(models.Model):
     """Модель для хранения сессий чата"""
     
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_sessions')
+    title = models.CharField(max_length=200, blank=True, verbose_name="Название чата")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Обновлено")
     
@@ -3738,7 +3739,9 @@ class ChatSession(models.Model):
         ordering = ['-updated_at']
     
     def __str__(self):
-        return f'Чат {self.id} - {self.user.username} ({self.created_at.strftime("%d.%m.%Y %H:%M")})'
+        if self.title:
+            return f'{self.title} (#{self.id})'
+        return f'Чат #{self.id} - {self.user.username} ({self.created_at.strftime("%d.%m.%Y %H:%M")})'
 
 
 class ChatMessage(models.Model):

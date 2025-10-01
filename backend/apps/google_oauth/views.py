@@ -3049,7 +3049,7 @@ def combined_workflow(request):
 def chat_workflow(request, session_id=None):
     """Чат-воркфлоу для HR-скрининга и инвайтов"""
     from .models import ChatSession, ChatMessage
-    from .forms import ChatForm, HRScreeningForm, InviteCombinedForm
+    from .forms import ChatForm, HRScreeningForm, InviteCombinedForm, ChatSessionTitleForm
 
     # Получаем или создаем сессию чата
     if session_id:
@@ -3069,6 +3069,7 @@ def chat_workflow(request, session_id=None):
     # Получаем все сообщения в этой сессии
     messages = chat_session.messages.all().order_by('created_at')
     form = ChatForm(user=request.user)
+    title_form = ChatSessionTitleForm(instance=chat_session)
 
     if request.method == 'POST':
         # Проверяем, это AJAX запрос с JSON данными
@@ -3326,6 +3327,7 @@ def chat_workflow(request, session_id=None):
     
     context = {
         'form': form,
+        'title_form': title_form,
         'chat_session': chat_session,
         'messages': messages,
         'all_sessions': all_sessions,
@@ -3342,4 +3344,30 @@ def chat_workflow(request, session_id=None):
         print(f"🔍 DEBUG CHAT: Событие: {event['title']} в {event['start']}")
 
     return render(request, 'google_oauth/chat_workflow.html', context)
+
+
+@login_required
+@require_POST
+def update_chat_title(request, session_id):
+    """Обновление названия чат-сессии"""
+    from .models import ChatSession
+    from .forms import ChatSessionTitleForm
+    
+    try:
+        chat_session = ChatSession.objects.get(id=session_id, user=request.user)
+    except ChatSession.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Сессия не найдена'})
+    
+    form = ChatSessionTitleForm(request.POST, instance=chat_session)
+    if form.is_valid():
+        form.save()
+        return JsonResponse({
+            'success': True, 
+            'title': chat_session.title or f'Чат #{chat_session.id}'
+        })
+    else:
+        return JsonResponse({
+            'success': False, 
+            'error': 'Ошибка валидации формы'
+        })
 

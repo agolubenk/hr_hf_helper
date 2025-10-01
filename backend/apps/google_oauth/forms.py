@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
-from .models import SyncSettings, Invite, HRScreening
+from .models import SyncSettings, Invite, HRScreening, ChatSession
 
 
 class SyncSettingsForm(forms.ModelForm):
@@ -857,3 +857,21 @@ class ChatForm(forms.Form):
             raise forms.ValidationError(_('Сообщение не может быть пустым'))
         
         return message
+
+
+class ChatSessionTitleForm(forms.ModelForm):
+    """Форма для редактирования названия чат-сессии"""
+    
+    class Meta:
+        model = ChatSession
+        fields = ['title']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Введите название чата...',
+                'maxlength': 200
+            })
+        }
+        labels = {
+            'title': 'Название чата'
+        }

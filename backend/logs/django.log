@@ -3432,3 +3432,1849 @@ DEBUG: Пробуем эндпоинт /accounts/291341/applicants/74549710/vaca
 🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/applicants/74549710/vacancy
 📤 JSON данные: {'vacancy': 3936868, 'status': 186502, 'comment': 'HR-скрининг завершен. Дополнительная информация: На данный момент занимаюсь изучение Nest js\nMiddle'}[01/Oct/2025 15:10:05] "POST /google-oauth/chat/23/ HTTP/1.1" 302 0
 [01/Oct/2025 15:10:11] "GET /google-oauth/chat/23/ HTTP/1.1" 200 281761
+
+📥 Ответ API: 200
+📥 Тело ответа: {"id":69935402,"changed":"2025-10-01T15:10:05+03:00","vacancy":3936868,"status":186502,"rejection_reason":null}...
+DEBUG: Статус успешно обновлен через /accounts/291341/applicants/74549710/vacancy
+🗑️ Сброшен кэш для кандидата: 74549710
+✅ HR_SCREENING_UPDATE_CANDIDATE: Статус обновлен на HR Screening
+🗑️ HR_SCREENING_UPDATE_CANDIDATE: Кэш очищен для кандидата 74549710
+✅ HR_SCREENING_UPDATE_CANDIDATE: Кандидат успешно обновлен
+✅ HR_SCREENING_FORM_SAVE: Кандидат успешно обновлен в Huntflow: Кандидат успешно обновлен в Huntflow
+✅ HR_SCREENING_FORM_SAVE: HR-скрининг завершен БЕЗ создания инвайта
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 23 событий
+🔍 DEBUG CHAT: Получено 23 событий из API
+🔍 DEBUG CHAT: Передаем 23 событий в шаблон
+🔍 DEBUG CHAT: Событие:  JS Tech Screening | Пластун Ян  в 2025-10-01T15:00:00+03:00
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-02T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Барцевич Андрей в 2025-10-02T11:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 CHAT: Определен тип действия: hrscreening
+🔍 CHAT: Текст сообщения: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186500/id/74551160
+1) 2000$
+2) К офису готов. Живу в Минске.
+3) Смогу полный рабочий день
+4) Нет
+5) Отслужил 4 года назад
+6) Не принципиально, зависит от условий
+7) Окончание контракта
+8) Сразу
+9) Next, Tanstack стек (TanStack Query, TanStack Router)
+10) ± Middle'
+🔍 HR_SCREENING_FORM_SAVE: Начинаем сохранение HR-скрининга...
+🔍 HR_SCREENING_FORM_SAVE: HR-скрининг создан, user: andrei.golubenko
+🔍 HR_SCREENING_FORM_SAVE: Извлекаем URL...
+✅ HR_SCREENING_FORM_SAVE: URL извлечен: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186500/id/74551160
+🔍 HR_SCREENING_FORM_SAVE: Парсим URL...
+✅ HR_SCREENING_FORM_SAVE: URL распарсен успешно
+🔍 HR_SCREENING_FORM_SAVE: Получаем информацию о кандидате...
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Начинаем получение информации о кандидате 74551160
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Используем аккаунт 291341
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Запрашиваем данные кандидата 74551160 из аккаунта 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74551160
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Андрей","last_name":"Грицук","middle_name":"Викторович","money":null,"phone":"+375 (29) 5251893","email":"axa8xa8@gmail.com","skype":null,"position":"Frontend developer (React/Vue","company":null,"photo":null,"id":74551160,"account":291341,"photo_url":null,"birthday":"1997-05-31","created":"2025-10-01T15:29:23+03:00","tags":[],"links":[{"id":69936952,"status":186500,"updated":"2025-10-01T15:29:24+03:00","changed":"2025-10-01T15:29:24+03:00","vacancy":3936868}],"external":[{"id":74...
+💾 Сохранены данные кандидата в кэш: 74551160
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Получены данные кандидата: {'first_name': 'Андрей', 'last_name': 'Грицук', 'middle_name': 'Викторович', 'money': None, 'phone': '+375 (29) 5251893', 'email': 'axa8xa8@gmail.com', 'skype': None, 'position': 'Frontend developer (React/Vue', 'company': None, 'photo': None, 'id': 74551160, 'account': 291341, 'photo_url': None, 'birthday': '1997-05-31', 'created': '2025-10-01T15:29:23+03:00', 'tags': [], 'links': [{'id': 69936952, 'status': 186500, 'updated': '2025-10-01T15:29:24+03:00', 'changed': '2025-10-01T15:29:24+03:00', 'vacancy': 3936868}], 'external': [{'id': 74380070, 'auth_type': 'NATIVE', 'account_source': None, 'updated': '2025-10-01T15:29:23+03:00'}], 'agreement': None, 'doubles': [], 'social': [{'id': 4003076, 'social_type': 'TELEGRAM', 'value': 'dvlluc', 'verified': False, 'verification_date': None}]}
+✅ HR_SCREENING_GET_CANDIDATE_INFO: Информация о кандидате получена: Андрей Грицук
+✅ HR_SCREENING_FORM_SAVE: Информация о кандидате получена
+🔍 HR_SCREENING_FORM_SAVE: Получаем информацию о вакансии...
+🔍 HR_SCREENING_GET_VACANCY_INFO: Начинаем получение информации о вакансии 3936868
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_VACANCY_INFO: Используем аккаунт 291341
+🔍 HR_SCREENING_GET_VACANCY_INFO: Запрашиваем данные вакансии 3936868 из аккаунта 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies/3936868
+📥 Ответ API: 200
+📥 Тело ответа: {"account_division":333519,"account_region":null,"position":"Frontend Engineer","company":null,"money":"600-3500","priority":0,"hidden":false,"state":"OPEN","id":3936868,"created":"2025-03-19T12:01:01+03:00","additional_fields_list":[],"multiple":false,"parent":null,"account_vacancy_status_group":null,"updated":"2025-09-11T14:54:07+03:00","body":"<p><strong>Описание проектов:</strong></p><p>Проект в области спортивной статистики, киберспорта, гемблинга. Кодовая база новая, legacy отсутствует.</p...
+💾 Сохранены данные вакансии в кэш: 3936868
+🔍 HR_SCREENING_GET_VACANCY_INFO: Получены данные вакансии: {'account_division': 333519, 'account_region': None, 'position': 'Frontend Engineer', 'company': None, 'money': '600-3500', 'priority': 0, 'hidden': False, 'state': 'OPEN', 'id': 3936868, 'created': '2025-03-19T12:01:01+03:00', 'additional_fields_list': [], 'multiple': False, 'parent': None, 'account_vacancy_status_group': None, 'updated': '2025-09-11T14:54:07+03:00', 'body': '<p><strong>Описание проектов:</strong></p><p>Проект в области спортивной статистики, киберспорта, гемблинга. Кодовая база новая, legacy отсутствует.</p><p>Разработка проектов идёт на <strong>React</strong>/<strong>Redux</strong> с использование Redux-Epics. Используется GraphqQL, Websocket, RxJS, WebGL.</p><p>Проекты высоконагруженные, требуют внимания к производительности, необходимо обрабатывать и отображать большое количество данных в реальном времени.</p><p>Для CI/CD используется GitLab.</p>', 'requirements': '<p><strong>Что нужно знать/уметь/иметь?</strong></p><ul><li>Опыт коммерческой разработки от 1-ого года;</li><li>JavaScript (ES6), Promise, ES6 Generators;</li><li>Flux архитектуру.</li></ul><p>\u200b\u200b\u200b\u200b\u200b<strong>Преимуществами будут:</strong></p><ul><li>Typescript;</li><li>React, Redux, React-router , Redux-Saga/Redux-Epic (RxJs), Reselect, Webpack/Rollup;</li><li>Глубокое понимание асинхронного программирования (Callback, Event Loop, Promise, Observable);</li><li>Понимание основ функционального программирования;</li><li>WebGL, PixiJS, Babylon.js;</li><li>Опыт в game dev.</li></ul>', 'conditions': '<ul><li>Ежегодные Performance Review и частые пересмотры ЗП.</li><li>Чёткий план карьерного и профессионального роста.</li><li>Комфортный офис в центре Минска (ст.м. Немига).</li><li>Официальное трудоустройство по ТК РБ.</li><li>Полностью оплачиваемые больничные.</li><li>Отпуск 28 дней, возможность брать отпуск по частям.</li><li>Корпоративные курсы английского языка.</li></ul>', 'files': [], 'source': None, 'blocks': []}
+✅ HR_SCREENING_GET_VACANCY_INFO: Информация о вакансии получена: Frontend Engineer
+✅ HR_SCREENING_FORM_SAVE: Информация о вакансии получена
+🤖 HR_SCREENING_FORM_SAVE: Анализируем данные с помощью Gemini AI...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 Получен account_id из API: 291341
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Получаем схему полей кандидата
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Используем аккаунт 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"is_archived":false,"search_field":"string_field_1","account":291341,"search_filter":true,"disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"search_field":"string_field_7","account":291341,"search_filter":true,...
+✅ HR_SCREENING_GET_FIELDS_SCHEMA: Схема полей получена: 13 полей
+🔍 HR_SCREENING_ANALYSIS: Вызываем _extract_salary_and_determine_grade
+✅ Извлечена зарплата: 2000
+✅ Определена валюта: USD
+🔍 HR_SCREENING_GRADE: Определяем грейд для зарплаты 2000 USD
+✅ Найдена подходящая зарплатная вилка: Middle+ (2000 USD)
+✅ Определен грейд: Middle+
+🔍 HR_SCREENING_LEVEL: Получаем ID уровня для грейда 'Middle+'
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_filter":true,"is_archived":false,"disableAutofill":true,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_filter":true,"is_archived":false,"placeholder":"","search_field":...
+✅ Найден точный уровень 'Middle+' в Huntflow (индекс: 3)
+✅ ID уровня в Huntflow: 3
+🔍 HR_SCREENING_LEVEL: ID уровня сохранен, обновление произойдет в update_candidate_in_huntflow
+🔍 HR_SCREENING_ANALYSIS: Метод _extract_salary_and_determine_grade завершен успешно
+✅ HR_SCREENING_FORM_SAVE: Анализ завершен с помощью Gemini AI
+✅ HR_SCREENING_FORM_SAVE: HR-скрининг сохранен с ID: 97
+🔍 HR_SCREENING_FORM_SAVE: Данные кандидата: Андрей Грицук
+🔍 HR_SCREENING_FORM_SAVE: Данные вакансии: Frontend Engineer
+🔍 HR_SCREENING_FORM_SAVE: Анализ Gemini: {
+    "money": {
+        "value": "2000$",
+        "quote": "2000$",
+        "field_key": "money"
+  ...
+🔄 HR_SCREENING_FORM_SAVE: Автоматически обновляем кандидата в Huntflow...
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Начинаем обновление кандидата 74551160
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Используем аккаунт 291341
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Получаем схему полей кандидата
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Используем аккаунт 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","is_archived":false,"account":291341,"disableAutofill":true,"search_filter":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","is_archived":false,"account":291341,"placeholder":"","sea...
+✅ HR_SCREENING_GET_FIELDS_SCHEMA: Схема полей получена: 13 полей
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле money = 2000$
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле CsWOTYehY2IkL3I7myfwM = Да
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле YAMd8vkvLFq5KLmIkiLVf = Да, конечно. |Цитаты [Офис: К офису готов. Живу в Минске.. Полный рабочий день: Смогу полный рабочий день]
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле n-U2tU6G5iBoxSPkXFN7F = Нет
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле S58S9DFqO7w-JzDbF2HJA = Отслужил 4 года назад
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле c8wID33nTMvoCpJmtngyq = Не принципиально, зависит от условий
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле Ew3LqHTK8SL67j2VQ-n6y = Окончание контракта
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле DoOdxUlwbb0nILXQGBDaT = Сразу
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем основные поля
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/74551160
+📤 JSON данные: {'money': '2000$'}
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Андрей","last_name":"Грицук","middle_name":"Викторович","money":"2000$","phone":"+375 (29) 5251893","email":"axa8xa8@gmail.com","skype":null,"position":"Frontend developer (React/Vue","company":null,"photo":null,"id":74551160,"account":291341,"photo_url":null,"birthday":"1997-05-31","created":"2025-10-01T15:29:23+03:00","tags":[],"links":[{"id":69936952,"status":186500,"updated":"2025-10-01T15:29:24+03:00","changed":"2025-10-01T15:29:24+03:00","vacancy":3936868}],"external":[{"id"...
+🗑️ Сброшен кэш для кандидата: 74551160
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74551160
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Андрей","last_name":"Грицук","middle_name":"Викторович","money":"2000$","phone":"+375 (29) 5251893","email":"axa8xa8@gmail.com","skype":null,"position":"Frontend developer (React/Vue","company":null,"photo":null,"id":74551160,"account":291341,"photo_url":null,"birthday":"1997-05-31","created":"2025-10-01T15:29:23+03:00","tags":[],"links":[{"id":69936952,"status":186500,"updated":"2025-10-01T15:29:24+03:00","changed":"2025-10-01T15:29:24+03:00","vacancy":3936868}],"external":[{"id"...
+💾 Обновлены данные кандидата в кэше: 74551160[01/Oct/2025 16:41:34] "POST /google-oauth/chat/23/ HTTP/1.1" 302 0
+
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем дополнительные поля
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/74551160/questionary с данными {'CsWOTYehY2IkL3I7myfwM': 'Да', 'YAMd8vkvLFq5KLmIkiLVf': 'Да, конечно. |Цитаты [Офис: К офису готов. Живу в Минске.. Полный рабочий день: Смогу полный рабочий день]', 'n-U2tU6G5iBoxSPkXFN7F': 'Нет', 'S58S9DFqO7w-JzDbF2HJA': 'Отслужил 4 года назад', 'c8wID33nTMvoCpJmtngyq': 'Не принципиально, зависит от условий', 'Ew3LqHTK8SL67j2VQ-n6y': 'Окончание контракта', 'DoOdxUlwbb0nILXQGBDaT': 'Сразу'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/74551160/questionary
+📤 JSON данные: {'CsWOTYehY2IkL3I7myfwM': 'Да', 'YAMd8vkvLFq5KLmIkiLVf': 'Да, конечно. |Цитаты [Офис: К офису готов. Живу в Минске.. Полный рабочий день: Смогу полный рабочий день]', 'n-U2tU6G5iBoxSPkXFN7F': 'Нет', 'S58S9DFqO7w-JzDbF2HJA': 'Отслужил 4 года назад', 'c8wID33nTMvoCpJmtngyq': 'Не принципиально, зависит от условий', 'Ew3LqHTK8SL67j2VQ-n6y': 'Окончание контракта', 'DoOdxUlwbb0nILXQGBDaT': 'Сразу'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, конечно. |Цитаты [Офис: К офису готов. Живу в Минске.. Полный рабочий день: Смогу полный рабочий день]","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"Отслужил 4 года назад","c8wID33nTMvoCpJmtngyq":"Не принципиально, зависит от условий","Ew3LqHTK8SL67j2VQ-n6y":"Окончание контракта","DoOdxUlwbb0nILXQGBDaT":"Сразу","ICXvQX-WT9eleJW-QlVa9":null,"RMLxfRH9raQtHItMcdeq-":null,"X...
+🗑️ Сброшен кэш для кандидата: 74551160
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем уровень кандидата: 3
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"search_field":"string_field_1","account":291341,"disableAutofill":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"placeholder":"","search_field":"string_field_7","account":291341,"is...
+🔍 HR_SCREENING_LEVEL_UPDATE: Индекс 3 соответствует значению 'Middle+'
+🔍 HR_SCREENING_LEVEL_UPDATE: Обновляем поле kIbah4MN0iHussXm3n2Ar значением 'Middle+'
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/74551160/questionary с данными {'kIbah4MN0iHussXm3n2Ar': 'Middle+'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/74551160/questionary
+📤 JSON данные: {'kIbah4MN0iHussXm3n2Ar': 'Middle+'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle+","oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, конечно. |Цитаты [Офис: К офису готов. Живу в Минске.. Полный рабочий день: Смогу полный рабочий день]","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"Отслужил 4 года назад","c8wID33nTMvoCpJmtngyq":"Не принципиально, зависит от условий","Ew3LqHTK8SL67j2VQ-n6y":"Окончание контракта","DoOdxUlwbb0nILXQGBDaT":"Сразу","ICXvQX-WT9eleJW-QlVa9":null,"RMLxfRH9raQtHItMcdeq-":nu...
+🗑️ Сброшен кэш для кандидата: 74551160
+✅ Уровень кандидата обновлен в Huntflow: Middle+
+✅ HR_SCREENING_UPDATE_CANDIDATE: Уровень кандидата обновлен
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем статус и добавляем комментарий
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies/statuses
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":186500,"type":"user","name":"New","removed":null,"order":1,"stay_duration":null},{"id":187026,"type":"user","name":"Message","removed":null,"order":2,"stay_duration":null},{"id":186501,"type":"user","name":"Contact","removed":null,"order":3,"stay_duration":null},{"id":187027,"type":"user","name":"Portfolio Review","removed":null,"order":4,"stay_duration":null},{"id":186502,"type":"user","name":"HR Screening","removed":null,"order":5,"stay_duration":null},{"id":189774,"type":"user...
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Найден статус HR Screening с ID 186502
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74551160
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Андрей","last_name":"Грицук","middle_name":"Викторович","money":"2000$","phone":"+375 (29) 5251893","email":"axa8xa8@gmail.com","skype":null,"position":"Frontend developer (React/Vue","company":null,"photo":null,"id":74551160,"account":291341,"photo_url":null,"birthday":"1997-05-31","created":"2025-10-01T15:29:23+03:00","tags":[],"links":[{"id":69936952,"status":186500,"updated":"2025-10-01T15:29:24+03:00","changed":"2025-10-01T15:29:24+03:00","vacancy":3936868}],"external":[{"id"...
+DEBUG: Обновляем статус кандидата 74551160 на статус 186502 для вакансии 3936868 с комментарием: HR-скрининг завершен. Дополнительная информация: Next, Tanstack стек (TanStack Query, TanStack Router)
+± Middle
+DEBUG: Пробуем эндпоинт /accounts/291341/applicants/74551160/vacancy с данными {'vacancy': 3936868, 'status': 186502, 'comment': 'HR-скрининг завершен. Дополнительная информация: Next, Tanstack стек (TanStack Query, TanStack Router)\n± Middle'}
+🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/applicants/74551160/vacancy
+📤 JSON данные: {'vacancy': 3936868, 'status': 186502, 'comment': 'HR-скрининг завершен. Дополнительная информация: Next, Tanstack стек (TanStack Query, TanStack Router)\n± Middle'}
+📥 Ответ API: 200
+📥 Тело ответа: {"id":69936952,"changed":"2025-10-01T16:41:34+03:00","vacancy":3936868,"status":186502,"rejection_reason":null}...
+DEBUG: Статус успешно обновлен через /accounts/291341/applicants/74551160/vacancy
+🗑️ Сброшен кэш для кандидата: 74551160
+✅ HR_SCREENING_UPDATE_CANDIDATE: Статус обновлен на HR Screening
+🗑️ HR_SCREENING_UPDATE_CANDIDATE: Кэш очищен для кандидата 74551160
+✅ HR_SCREENING_UPDATE_CANDIDATE: Кандидат успешно обновлен
+✅ HR_SCREENING_FORM_SAVE: Кандидат успешно обновлен в Huntflow: Кандидат успешно обновлен в Huntflow
+✅ HR_SCREENING_FORM_SAVE: HR-скрининг завершен БЕЗ создания инвайта
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko[01/Oct/2025 16:41:39] "GET /google-oauth/chat/23/ HTTP/1.1" 200 288109
+[01/Oct/2025 16:41:39] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[01/Oct/2025 16:41:39] "GET /static/js/chat_actions.js HTTP/1.1" 304 0
+
+💾 Сохранены события календаря в кэш: 22 событий
+🔍 DEBUG CHAT: Получено 22 событий из API
+🔍 DEBUG CHAT: Передаем 22 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-02T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Барцевич Андрей в 2025-10-02T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: Обед в 2025-10-02T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 CHAT: Определен тип действия: invite
+🔍 CHAT: Текст сообщения: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74547428
+ПТ 15'
+🔍 CLEAN_COMBINED_DATA: combined_data = 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74547428
+ПТ 15'
+🔍 CLEAN_COMBINED_DATA: Найдено URLs: ['https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74547428']
+✅ CLEAN_COMBINED_DATA: URL извлечен: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74547428
+✅ CLEAN_COMBINED_DATA: Весь текст сохранен для парсера: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74547428
+ПТ 15'
+🔍 COMBINED_FORM_CLEAN: Начинаем очистку формы
+🔍 COMBINED_FORM_CLEAN: cleaned_data keys: ['candidate_url', 'interview_datetime', 'combined_data']
+🔍 COMBINED_FORM_CLEAN: combined_data: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74547428
+ПТ 15
+🔍 COMBINED_FORM_CLEAN: URL извлечен, дату обработает парсер
+🔍 COMBINED_FORM_CLEAN: Финальные cleaned_data: {'candidate_url': 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74547428', 'interview_datetime': None, 'combined_data': 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74547428\r\nПТ 15'}
+🔍 COMBINED_FORM_SAVE: Начинаем сохранение инвайта...
+🔍 COMBINED_FORM_SAVE: Сохранены исходные данные: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74547428
+ПТ 15...
+🔍 COMBINED_FORM_SAVE: Инвайт создан, user: andrei.golubenko
+🔍 COMBINED_FORM_SAVE: Парсим URL...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 PARSE_URL: Используем первый доступный account_id: 291341
+✅ COMBINED_FORM_SAVE: URL распарсен успешно
+🔍 COMBINED_FORM_SAVE: Получаем информацию о кандидате...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 GET_CANDIDATE_INFO: Автоматически получен account_id: 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74547428
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Andrey","last_name":"Zaytsev","middle_name":null,"money":"900-1200$","phone":"+375291897901","email":"andreyka.zaytsev.2017@mail.ru","skype":null,"position":"Frontend-разработчик","company":"Freelance","photo":null,"id":74547428,"account":291341,"photo_url":null,"birthday":"2003-07-18","created":"2025-07-14T12:03:14+03:00","tags":[],"links":[{"id":69932746,"status":186502,"updated":"2025-10-01T14:37:46+03:00","changed":"2025-10-01T14:37:46+03:00","vacancy":3936868}],"external":[{"...
+💾 Сохранены данные кандидата в кэш: 74547428
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74547428/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior","oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, конечно. |Цитаты [Офис: Да готов к офисному формату работы. На данный момент нахожусь в городе Гродно. Полный рабочий день: Да, рассматриваю фул-тайм))).]","n-U2tU6G5iBoxSPkXFN7F":"Распределения нет.","S58S9DFqO7w-JzDbF2HJA":"Не годен без переосвидетельствования.","c8wID33nTMvoCpJmtngyq":"В планах не было, но не привязан к месту, если политика компании будет требовать релокаци...
+РЕАЛЬНЫЕ ДАННЫЕ: Доступные грейды в системе: ['Head', 'Junior', 'Junior+', 'Lead', 'Middle', 'Middle+', 'Senior', 'Senior+']
+РЕАЛЬНЫЕ ДАННЫЕ: Не удалось получить схему анкеты: HuntflowService.get_applicant_questionary_schema() takes 2 positional arguments but 3 were given
+РЕАЛЬНЫЕ ДАННЫЕ: Найден уровень по значению: Junior (поле: kIbah4MN0iHussXm3n2Ar)
+РЕАЛЬНЫЕ ДАННЫЕ: ✅ Найден уровень в анкете: Junior (поле: kIbah4MN0iHussXm3n2Ar)
+РЕАЛЬНЫЕ ДАННЫЕ: Получена информация о кандидате 74547428
+РЕАЛЬНЫЕ ДАННЫЕ: Имя: Zaytsev Andrey
+РЕАЛЬНЫЕ ДАННЫЕ: Уровень: Junior
+✅ COMBINED_FORM_SAVE: Информация о кандидате получена
+🔍 COMBINED_FORM_SAVE: Получаем информацию о вакансии...
+ЛОКАЛЬНЫЕ ДАННЫЕ: Найдена вакансия в локальной БД: Frontend Engineer (React)
+ЛОКАЛЬНЫЕ ДАННЫЕ: Шаблон scorecard: https://docs.google.com/spreadsheets/d/1Zz61HtsXAWvfHtlTucfJQnJEDCKLwcVRybmT9BHfZqg/edit?gid=1164423222#gid=1164423222
+ЛОКАЛЬНЫЕ ДАННЫЕ: Длительность скринингов: 45 минут
+✅ COMBINED_FORM_SAVE: Информация о вакансии получена
+🤖 COMBINED_FORM_SAVE: Анализируем время с помощью парсера...
+[PARSER DEBUG] Анализируем текст пользователя andrei.golubenko
+[PARSER DEBUG] Текст для анализа: ПТ 15...
+[PARSER SUCCESS] Определена дата/время: 03.10.2025 15:00
+✅ COMBINED_FORM_SAVE: Время проанализировано с помощью парсера
+✅ COMBINED_FORM_SAVE: Дата интервью установлена из парсера: 2025-10-03 15:00:00+03:00
+🔍 COMBINED_FORM_SAVE: Создаем структуру Google Drive...
+ЛОКАЛЬНЫЕ ДАННЫЕ: Используем scorecard из локальной БД: | Scorecard FE
+ЛОКАЛЬНЫЕ ДАННЫЕ: Ссылка на шаблон: https://docs.google.com/spreadsheets/d/1Zz61HtsXAWvfHtlTucfJQnJEDCKLwcVRybmT9BHfZqg/edit?gid=1164423222#gid=1164423222
+🔍 SAMPLE_DATA: Подготавливаем данные для генерации пути папок
+🔍 SAMPLE_DATA: candidate_name = 'Zaytsev Andrey'
+🔍 SAMPLE_DATA: vacancy_title = 'Frontend Engineer (React)'
+🔍 SAMPLE_DATA: interview_datetime = '2025-10-03 15:00:00+03:00'
+🔍 SAMPLE_DATA: Подготовленные данные:
+🔍 SAMPLE_DATA:   date = '03.10.2025'
+🔍 SAMPLE_DATA:   day = '03'
+🔍 SAMPLE_DATA:   week_short_en = 'Fri'
+🔍 SAMPLE_DATA:   week_short_ru = 'ПТ'
+🔍 SAMPLE_DATA:   week_full_en = 'Friday'
+🔍 SAMPLE_DATA:   week_full_ru = 'Пятница'
+🔍 SAMPLE_DATA:   month_num = '10'
+🔍 SAMPLE_DATA:   month_short_ru = 'окт'
+🔍 SAMPLE_DATA:   month_short_en = 'Oct'
+🔍 SAMPLE_DATA:   month_full_ru = 'октябрь'
+🔍 SAMPLE_DATA:   month_full_en = 'October'
+🔍 SAMPLE_DATA:   weekday_short_ru = 'ПТ'
+🔍 SAMPLE_DATA:   weekday_short_en = 'Fri'
+🔍 SAMPLE_DATA:   weekday_full_ru = 'Пятница'
+🔍 SAMPLE_DATA:   weekday_full_en = 'Friday'
+🔍 SAMPLE_DATA:   year_short = '25'
+🔍 SAMPLE_DATA:   year_full = '2025'
+🔍 SAMPLE_DATA:   candidate_first_name = 'Andrey'
+🔍 SAMPLE_DATA:   candidate_last_name = 'Zaytsev'
+🔍 SAMPLE_DATA:   candidate_middle_name = ''
+🔍 SAMPLE_DATA:   candidate_id = '74547428'
+🔍 SAMPLE_DATA:   vacancy_title = 'Frontend Engineer (React)'
+🔍 SAMPLE_DATA:   vacancy_id = '3936868'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=text, value='automations'
+🔍 FOLDER_GEN: Text элемент: 'automations'
+🔍 FOLDER_GEN: Добавлена папка: 'automations'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=vacancy_title, value=''
+🔍 FOLDER_GEN: Обычный элемент vacancy_title: 'Frontend Engineer (React)'
+🔍 FOLDER_GEN: Добавлена папка: 'Frontend Engineer (React)'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=year_full, value=''
+🔍 FOLDER_GEN: Обычный элемент year_full: '2025'
+🔍 FOLDER_GEN: Добавлена папка: '2025'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[month_num] [month_full_ru]'
+🔍 FOLDER_GEN: Mixed элемент: '[month_num] [month_full_ru]' -> '10 октябрь'
+🔍 FOLDER_GEN: Добавлена папка: '10 октябрь'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[day] [month_full_ru] [weekday_short_ru]'
+🔍 FOLDER_GEN: Mixed элемент: '[day] [month_full_ru] [weekday_short_ru]' -> '03 октябрь ПТ'
+🔍 FOLDER_GEN: Добавлена папка: '03 октябрь ПТ'
+НАСТРОЙКИ ПАПОК: Структура папок: automations/Frontend Engineer (React)/2025/10 октябрь/03 октябрь ПТ
+НАСТРОЙКИ ПАПОК: База названия файла: Zaytsev Andrey
+РЕАЛЬНЫЕ ДАННЫЕ: Создана структура папок: automations/Frontend Engineer (React)/2025/10 октябрь/03 октябрь ПТ
+РЕАЛЬНЫЕ ДАННЫЕ: ID папки: 1oAz8r2CKarFbV9qOrnKTKeSo1WDbsMHu
+РЕАЛЬНЫЕ ДАННЫЕ: ID файла: 1Us-LvrusdGRBwLwdT44ud8p6ii2CkmoHPWHynS21veA
+РЕАЛЬНЫЕ ДАННЫЕ: Ссылка: https://docs.google.com/spreadsheets/d/1Us-LvrusdGRBwLwdT44ud8p6ii2CkmoHPWHynS21veA/edit
+РЕАЛЬНЫЕ ДАННЫЕ: Название файла: Zaytsev Andrey | Scorecard FE
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"search_field":"string_field_1","account":291341,"disableAutofill":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"search_field":"string_field_7","account":291341,"placeholder":"","is...
+🔍 Найдено поле Scorecard в схеме: oMvUCpzbKSzzhPLUCwmGW = Scorecard (тип: url)
+📝 Обновляем поле Scorecard oMvUCpzbKSzzhPLUCwmGW со ссылкой: https://docs.google.com/spreadsheets/d/1Us-LvrusdGRBwLwdT44ud8p6ii2CkmoHPWHynS21veA/edit
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/74547428/questionary с данными {'oMvUCpzbKSzzhPLUCwmGW': 'https://docs.google.com/spreadsheets/d/1Us-LvrusdGRBwLwdT44ud8p6ii2CkmoHPWHynS21veA/edit'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/74547428/questionary
+📤 JSON данные: {'oMvUCpzbKSzzhPLUCwmGW': 'https://docs.google.com/spreadsheets/d/1Us-LvrusdGRBwLwdT44ud8p6ii2CkmoHPWHynS21veA/edit'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1Us-LvrusdGRBwLwdT44ud8p6ii2CkmoHPWHynS21veA/edit","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, конечно. |Цитаты [Офис: Да готов к офисному формату работы. На данный момент нахожусь в городе Гродно. Полный рабочий день: Да, рассматриваю фул-тайм))).]","n-U2tU6G5iBoxSPkXFN7F":"Распределения нет.","S58S9DFqO7w-JzDbF2HJA":"Не годен без переосвидетельствования.","c8wID33nTMvoCpJmtngyq":"В п...
+🗑️ Сброшен кэш для кандидата: 74547428
+✅ Поле Scorecard обновлено со ссылкой на scorecard
+✅ Поле 'Scorecard' в Huntflow обновлено со ссылкой на scorecard
+🔍 Создаем календарное событие...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74547428
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Andrey","last_name":"Zaytsev","middle_name":null,"money":"900-1200$","phone":"+375291897901","email":"andreyka.zaytsev.2017@mail.ru","skype":null,"position":"Frontend-разработчик","company":"Freelance","photo":null,"id":74547428,"account":291341,"photo_url":null,"birthday":"2003-07-18","created":"2025-07-14T12:03:14+03:00","tags":[],"links":[{"id":69932746,"status":186502,"updated":"2025-10-01T14:37:46+03:00","changed":"2025-10-01T14:37:46+03:00","vacancy":3936868}],"external":[{"...
+💾 Сохранены данные кандидата в кэш: 74547428
+📧 Найден email кандидата: andreyka.zaytsev.2017@mail.ru
+📅 Сгенерировано название события: JS Tech Screening | Zaytsev Andrey
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 45 минут
+⏱️ Используем длительность скринингов: 45 минут
+📝 Найден телеграм рекрутера: softnetix_talent
+📝 Ссылка на телеграм: https://t.me/softnetix_talent
+📝 Сопроводительный текст: Попрошу быть с камерой. Технический скрининг будет с секцией лайв-кодинга (нужно будет шарить экран)...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔗 Сгенерирована ссылка на Huntflow (prod): https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/74547428
+👥 Добавляем кандидата в участники: andreyka.zaytsev.2017@mail.ru
+🔍 Время с timezone: 2025-10-03 15:00:00+03:00
+🔍 Время начала (UTC): 2025-10-03 12:00:00+00:00
+🔍 Время окончания (UTC): 2025-10-03 12:45:00+00:00
+🔍 Строка времени начала: 2025-10-03T12:00:00
+🔍 Строка времени окончания: 2025-10-03T12:45:00
+📅 Создаем событие: JS Tech Screening | Zaytsev Andrey
+📅 Время начала: 2025-10-03T12:00:00
+📅 Время окончания: 2025-10-03T12:45:00
+📅 Данные события: {'summary': 'JS Tech Screening | Zaytsev Andrey', 'description': 'Попрошу быть с камерой. Технический скрининг будет с секцией лайв-кодинга (нужно будет шарить экран). Если возникнут вопросы - на связи в телеграм https://t.me/softnetix_talent\n\nДля интервьюеров:\nhttps://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/74547428', 'location': '', 'start': {'dateTime': '2025-10-03T12:00:00', 'timeZone': 'UTC'}, 'end': {'dateTime': '2025-10-03T12:45:00', 'timeZone': 'UTC'}, 'attendees': [{'email': 'andreyka.zaytsev.2017@mail.ru'}], 'conferenceData': {'createRequest': {'requestId': 'meet-202510031500', 'conferenceSolutionKey': {'type': 'hangoutsMeet'}}}, 'reminders': {'useDefault': False, 'overrides': [{'method': 'email', 'minutes': 1440}, {'method': 'popup', 'minutes': 10}]}}[01/Oct/2025 16:59:11] "POST /google-oauth/chat/23/ HTTP/1.1" 302 0
+
+✅ Событие создано: JS Tech Screening | Zaytsev Andrey (2025-10-03 15:00:00+03:00 - 2025-10-03 15:45:00+03:00)
+⏱️ Длительность: 45 минут
+🔗 Ссылка на событие: https://www.google.com/calendar/event?eid=MjRiMzE4bHJ1cHNhMXNtc3VvczY4ZjEzYW8gYW5kcmVpLmdvbHViZW5rb0Bzb2Z0bmV0aXguaW8
+🔗 Google Meet ссылка: https://meet.google.com/xwx-ohbi-xwg
+✅ Календарное событие создано: JS Tech Screening | Zaytsev Andrey
+🔗 Ссылка на событие: https://www.google.com/calendar/event?eid=MjRiMzE4bHJ1cHNhMXNtc3VvczY4ZjEzYW8gYW5kcmVpLmdvbHViZW5rb0Bzb2Z0bmV0aXguaW8
+🔍 Результат создания календарного события: True
+[TECH_SCREENING_UPDATE] Календарное событие создано успешно, обновляем статус...
+[TECH_SCREENING] Начинаем обновление статуса кандидата 74547428
+[TECH_SCREENING] Импорты выполнены успешно
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+[TECH_SCREENING] Получен account_id: 291341
+[TECH_SCREENING] Запрашиваем статусы вакансий...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies/statuses
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":186500,"type":"user","name":"New","removed":null,"order":1,"stay_duration":null},{"id":187026,"type":"user","name":"Message","removed":null,"order":2,"stay_duration":null},{"id":186501,"type":"user","name":"Contact","removed":null,"order":3,"stay_duration":null},{"id":187027,"type":"user","name":"Portfolio Review","removed":null,"order":4,"stay_duration":null},{"id":186502,"type":"user","name":"HR Screening","removed":null,"order":5,"stay_duration":null},{"id":189774,"type":"user...
+[TECH_SCREENING] Получены статусы: {'items': [{'id': 186500, 'type': 'user', 'name': 'New', 'removed': None, 'order': 1, 'stay_duration': None}, {'id': 187026, 'type': 'user', 'name': 'Message', 'removed': None, 'order': 2, 'stay_duration': None}, {'id': 186501, 'type': 'user', 'name': 'Contact', 'removed': None, 'order': 3, 'stay_duration': None}, {'id': 187027, 'type': 'user', 'name': 'Portfolio Review', 'removed': None, 'order': 4, 'stay_duration': None}, {'id': 186502, 'type': 'user', 'name': 'HR Screening', 'removed': None, 'order': 5, 'stay_duration': None}, {'id': 189774, 'type': 'user', 'name': 'CV Check by HM', 'removed': None, 'order': 6, 'stay_duration': None}, {'id': 187028, 'type': 'user', 'name': 'Test Task', 'removed': None, 'order': 7, 'stay_duration': None}, {'id': 186503, 'type': 'user', 'name': 'Tech Screening', 'removed': None, 'order': 8, 'stay_duration': None}, {'id': 186504, 'type': 'user', 'name': 'Final Interview', 'removed': None, 'order': 9, 'stay_duration': None}, {'id': 186505, 'type': 'user', 'name': 'Decision', 'removed': None, 'order': 10, 'stay_duration': None}, {'id': 186506, 'type': 'user', 'name': 'Offer', 'removed': None, 'order': 11, 'stay_duration': None}, {'id': 186507, 'type': 'hired', 'name': 'Offer accepted', 'removed': None, 'order': 12, 'stay_duration': None}, {'id': 186508, 'type': 'user', 'name': 'Onboarding', 'removed': None, 'order': 13, 'stay_duration': None}, {'id': 186509, 'type': 'trash', 'name': 'Отказ', 'removed': None, 'order': 9999, 'stay_duration': None}]}
+[TECH_SCREENING] Ищем статус Tech Screening среди 14 статусов
+[TECH_SCREENING] Проверяем статус: 'New'
+[TECH_SCREENING] Проверяем статус: 'Message'
+[TECH_SCREENING] Проверяем статус: 'Contact'
+[TECH_SCREENING] Проверяем статус: 'Portfolio Review'
+[TECH_SCREENING] Проверяем статус: 'HR Screening'
+[TECH_SCREENING] Проверяем статус: 'CV Check by HM'
+[TECH_SCREENING] Проверяем статус: 'Test Task'
+[TECH_SCREENING] Проверяем статус: 'Tech Screening'
+🔍 TECH_SCREENING: Найден статус Tech Screening с ID 186503
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 45 минут
+[TECH_SCREENING] Кандидат: 74547428 -> Tech Screening
+[TECH_SCREENING] Комментарий: Пятница, 3 октября⋅15:00–15:45
+[TECH_SCREENING] Используем статус ID: 186503
+[TECH_SCREENING] Вызываем update_applicant_status...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74547428
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Andrey","last_name":"Zaytsev","middle_name":null,"money":"900-1200$","phone":"+375291897901","email":"andreyka.zaytsev.2017@mail.ru","skype":null,"position":"Frontend-разработчик","company":"Freelance","photo":null,"id":74547428,"account":291341,"photo_url":null,"birthday":"2003-07-18","created":"2025-07-14T12:03:14+03:00","tags":[],"links":[{"id":69932746,"status":186502,"updated":"2025-10-01T14:37:46+03:00","changed":"2025-10-01T14:37:46+03:00","vacancy":3936868}],"external":[{"...
+DEBUG: Обновляем статус кандидата 74547428 на статус 186503 для вакансии 3936868 с комментарием: Пятница, 3 октября⋅15:00–15:45
+DEBUG: Пробуем эндпоинт /accounts/291341/applicants/74547428/vacancy с данными {'vacancy': 3936868, 'status': 186503, 'comment': 'Пятница, 3 октября⋅15:00–15:45'}
+🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/applicants/74547428/vacancy
+📤 JSON данные: {'vacancy': 3936868, 'status': 186503, 'comment': 'Пятница, 3 октября⋅15:00–15:45'}
+📥 Ответ API: 200
+📥 Тело ответа: {"id":69932746,"changed":"2025-10-01T16:59:07+03:00","vacancy":3936868,"status":186503,"rejection_reason":null}...
+DEBUG: Статус успешно обновлен через /accounts/291341/applicants/74547428/vacancy
+🗑️ Сброшен кэш для кандидата: 74547428
+[TECH_SCREENING] Результат update_applicant_status: {'id': 69932746, 'changed': '2025-10-01T16:59:07+03:00', 'vacancy': 3936868, 'status': 186503, 'rejection_reason': None}
+[TECH_SCREENING] Успешно обновлен статус на Tech Screening
+[TECH_SCREENING_UPDATE] Статус обновлен: True
+✅ COMBINED_FORM_SAVE: Структура Google Drive создана
+🔍 COMBINED_FORM_SAVE: Обрабатываем scorecard...
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Junior+
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Middle
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Middle+
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Senior
+РЕАЛЬНЫЕ ДАННЫЕ: Обработка scorecard завершена
+РЕАЛЬНЫЕ ДАННЫЕ: Сохранены листы: all, score, Junior
+РЕАЛЬНЫЕ ДАННЫЕ: Удалены листы: Junior+, Middle, Middle+, Senior
+✅ COMBINED_FORM_SAVE: Scorecard обработан
+✅ COMBINED_FORM_SAVE: Инвайт сохранен с ID: 172
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 23 событий
+🔍 DEBUG CHAT: Получено 23 событий из API
+🔍 DEBUG CHAT: Передаем 23 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-02T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Барцевич Андрей в 2025-10-02T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: Обед в 2025-10-02T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...[01/Oct/2025 16:59:16] "GET /google-oauth/chat/23/ HTTP/1.1" 200 299701
+[01/Oct/2025 16:59:26] "POST /google-oauth/invites/172/invitation-text/ HTTP/1.1" 200 1082
+
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 45 минут
+🔍 CHAT: Определен тип действия: invite
+🔍 CHAT: Текст сообщения: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74547567
+Завтра в 15'
+🔍 CLEAN_COMBINED_DATA: combined_data = 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74547567
+Завтра в 15'
+🔍 CLEAN_COMBINED_DATA: Найдено URLs: ['https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74547567']
+✅ CLEAN_COMBINED_DATA: URL извлечен: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74547567
+✅ CLEAN_COMBINED_DATA: Весь текст сохранен для парсера: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74547567
+Завтра в 15'
+🔍 COMBINED_FORM_CLEAN: Начинаем очистку формы
+🔍 COMBINED_FORM_CLEAN: cleaned_data keys: ['candidate_url', 'interview_datetime', 'combined_data']
+🔍 COMBINED_FORM_CLEAN: combined_data: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74547567
+Завтра в 15
+🔍 COMBINED_FORM_CLEAN: URL извлечен, дату обработает парсер
+🔍 COMBINED_FORM_CLEAN: Финальные cleaned_data: {'candidate_url': 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74547567', 'interview_datetime': None, 'combined_data': 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74547567\r\nЗавтра в 15'}
+🔍 COMBINED_FORM_SAVE: Начинаем сохранение инвайта...
+🔍 COMBINED_FORM_SAVE: Сохранены исходные данные: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74547567
+Завтра в 15...
+🔍 COMBINED_FORM_SAVE: Инвайт создан, user: andrei.golubenko
+🔍 COMBINED_FORM_SAVE: Парсим URL...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 PARSE_URL: Используем первый доступный account_id: 291341
+✅ COMBINED_FORM_SAVE: URL распарсен успешно
+🔍 COMBINED_FORM_SAVE: Получаем информацию о кандидате...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 GET_CANDIDATE_INFO: Автоматически получен account_id: 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74547567
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Владимир","last_name":"Касперович","middle_name":"Александрович","money":"2000$","phone":"+7 (906) 6994989","email":"vladimirkaperovich.frontdev@gmail.com","skype":null,"position":"Frontend-разработчик","company":"Сбер","photo":null,"id":74547567,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/d/f/e/dfeef5ffd3e68fc61a8a173f39acd0db.png?s=Rx3I5CVZCDZLwCi09cvbjQ&e=1761919327","birthday":"1995-05-14","created":"2025-10-01T14:38:19+03:00","tags":[],"links":[{"id":6993...
+💾 Сохранены данные кандидата в кэш: 74547567
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74547567/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle+","oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, конечно. |Цитаты [Офис: да, Минск. Полный рабочий день: да]","n-U2tU6G5iBoxSPkXFN7F":"нет, не студент","S58S9DFqO7w-JzDbF2HJA":"мне 30 лет + не служил из-за здоровья","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"сокращение штата","DoOdxUlwbb0nILXQGBDaT":"вчера","ICXvQX-WT9eleJW-QlVa9":null,"RMLxfRH9raQtHItMcdeq-":null,"X6qYbAqZnb0q1R3VMumbH":null,"bfPBtccRoL5s_7xyLX...
+РЕАЛЬНЫЕ ДАННЫЕ: Доступные грейды в системе: ['Head', 'Junior', 'Junior+', 'Lead', 'Middle', 'Middle+', 'Senior', 'Senior+']
+РЕАЛЬНЫЕ ДАННЫЕ: Не удалось получить схему анкеты: HuntflowService.get_applicant_questionary_schema() takes 2 positional arguments but 3 were given
+РЕАЛЬНЫЕ ДАННЫЕ: Найден уровень по значению: Middle+ (поле: kIbah4MN0iHussXm3n2Ar)
+РЕАЛЬНЫЕ ДАННЫЕ: ✅ Найден уровень в анкете: Middle+ (поле: kIbah4MN0iHussXm3n2Ar)
+РЕАЛЬНЫЕ ДАННЫЕ: Получена информация о кандидате 74547567
+РЕАЛЬНЫЕ ДАННЫЕ: Имя: Касперович Владимир
+РЕАЛЬНЫЕ ДАННЫЕ: Уровень: Middle+
+✅ COMBINED_FORM_SAVE: Информация о кандидате получена
+🔍 COMBINED_FORM_SAVE: Получаем информацию о вакансии...
+ЛОКАЛЬНЫЕ ДАННЫЕ: Найдена вакансия в локальной БД: Frontend Engineer (React)
+ЛОКАЛЬНЫЕ ДАННЫЕ: Шаблон scorecard: https://docs.google.com/spreadsheets/d/1Zz61HtsXAWvfHtlTucfJQnJEDCKLwcVRybmT9BHfZqg/edit?gid=1164423222#gid=1164423222
+ЛОКАЛЬНЫЕ ДАННЫЕ: Длительность скринингов: 45 минут
+✅ COMBINED_FORM_SAVE: Информация о вакансии получена
+🤖 COMBINED_FORM_SAVE: Анализируем время с помощью парсера...
+[PARSER DEBUG] Анализируем текст пользователя andrei.golubenko
+[PARSER DEBUG] Текст для анализа: Завтра в 15...
+[PARSER SUCCESS] Определена дата/время: 02.10.2025 15:00
+✅ COMBINED_FORM_SAVE: Время проанализировано с помощью парсера
+✅ COMBINED_FORM_SAVE: Дата интервью установлена из парсера: 2025-10-02 15:00:00+03:00
+🔍 COMBINED_FORM_SAVE: Создаем структуру Google Drive...
+ЛОКАЛЬНЫЕ ДАННЫЕ: Используем scorecard из локальной БД: | Scorecard FE
+ЛОКАЛЬНЫЕ ДАННЫЕ: Ссылка на шаблон: https://docs.google.com/spreadsheets/d/1Zz61HtsXAWvfHtlTucfJQnJEDCKLwcVRybmT9BHfZqg/edit?gid=1164423222#gid=1164423222
+🔍 SAMPLE_DATA: Подготавливаем данные для генерации пути папок
+🔍 SAMPLE_DATA: candidate_name = 'Касперович Владимир'
+🔍 SAMPLE_DATA: vacancy_title = 'Frontend Engineer (React)'
+🔍 SAMPLE_DATA: interview_datetime = '2025-10-02 15:00:00+03:00'
+🔍 SAMPLE_DATA: Подготовленные данные:
+🔍 SAMPLE_DATA:   date = '02.10.2025'
+🔍 SAMPLE_DATA:   day = '02'
+🔍 SAMPLE_DATA:   week_short_en = 'Thu'
+🔍 SAMPLE_DATA:   week_short_ru = 'ЧТ'
+🔍 SAMPLE_DATA:   week_full_en = 'Thursday'
+🔍 SAMPLE_DATA:   week_full_ru = 'Четверг'
+🔍 SAMPLE_DATA:   month_num = '10'
+🔍 SAMPLE_DATA:   month_short_ru = 'окт'
+🔍 SAMPLE_DATA:   month_short_en = 'Oct'
+🔍 SAMPLE_DATA:   month_full_ru = 'октябрь'
+🔍 SAMPLE_DATA:   month_full_en = 'October'
+🔍 SAMPLE_DATA:   weekday_short_ru = 'ЧТ'
+🔍 SAMPLE_DATA:   weekday_short_en = 'Thu'
+🔍 SAMPLE_DATA:   weekday_full_ru = 'Четверг'
+🔍 SAMPLE_DATA:   weekday_full_en = 'Thursday'
+🔍 SAMPLE_DATA:   year_short = '25'
+🔍 SAMPLE_DATA:   year_full = '2025'
+🔍 SAMPLE_DATA:   candidate_first_name = 'Владимир'
+🔍 SAMPLE_DATA:   candidate_last_name = 'Касперович'
+🔍 SAMPLE_DATA:   candidate_middle_name = ''
+🔍 SAMPLE_DATA:   candidate_id = '74547567'
+🔍 SAMPLE_DATA:   vacancy_title = 'Frontend Engineer (React)'
+🔍 SAMPLE_DATA:   vacancy_id = '3936868'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=text, value='automations'
+🔍 FOLDER_GEN: Text элемент: 'automations'
+🔍 FOLDER_GEN: Добавлена папка: 'automations'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=vacancy_title, value=''
+🔍 FOLDER_GEN: Обычный элемент vacancy_title: 'Frontend Engineer (React)'
+🔍 FOLDER_GEN: Добавлена папка: 'Frontend Engineer (React)'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=year_full, value=''
+🔍 FOLDER_GEN: Обычный элемент year_full: '2025'
+🔍 FOLDER_GEN: Добавлена папка: '2025'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[month_num] [month_full_ru]'
+🔍 FOLDER_GEN: Mixed элемент: '[month_num] [month_full_ru]' -> '10 октябрь'
+🔍 FOLDER_GEN: Добавлена папка: '10 октябрь'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[day] [month_full_ru] [weekday_short_ru]'
+🔍 FOLDER_GEN: Mixed элемент: '[day] [month_full_ru] [weekday_short_ru]' -> '02 октябрь ЧТ'
+🔍 FOLDER_GEN: Добавлена папка: '02 октябрь ЧТ'
+НАСТРОЙКИ ПАПОК: Структура папок: automations/Frontend Engineer (React)/2025/10 октябрь/02 октябрь ЧТ
+НАСТРОЙКИ ПАПОК: База названия файла: Касперович Владимир
+РЕАЛЬНЫЕ ДАННЫЕ: Создана структура папок: automations/Frontend Engineer (React)/2025/10 октябрь/02 октябрь ЧТ
+РЕАЛЬНЫЕ ДАННЫЕ: ID папки: 1Vh18ghqI3e4rEylSHPcqxKOu8AGZwdH-
+РЕАЛЬНЫЕ ДАННЫЕ: ID файла: 1_fXVm7hK18OJj3Rll3XtFTiUKquwJ7JpthFmiJXQP40
+РЕАЛЬНЫЕ ДАННЫЕ: Ссылка: https://docs.google.com/spreadsheets/d/1_fXVm7hK18OJj3Rll3XtFTiUKquwJ7JpthFmiJXQP40/edit
+РЕАЛЬНЫЕ ДАННЫЕ: Название файла: Касперович Владимир | Scorecard FE
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"search_field":"string_field_1","account":291341,"is_archived":false,"disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"search_field":"string_field_7","account":291341,"is_archived":false,...
+🔍 Найдено поле Scorecard в схеме: oMvUCpzbKSzzhPLUCwmGW = Scorecard (тип: url)
+📝 Обновляем поле Scorecard oMvUCpzbKSzzhPLUCwmGW со ссылкой: https://docs.google.com/spreadsheets/d/1_fXVm7hK18OJj3Rll3XtFTiUKquwJ7JpthFmiJXQP40/edit
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/74547567/questionary с данными {'oMvUCpzbKSzzhPLUCwmGW': 'https://docs.google.com/spreadsheets/d/1_fXVm7hK18OJj3Rll3XtFTiUKquwJ7JpthFmiJXQP40/edit'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/74547567/questionary
+📤 JSON данные: {'oMvUCpzbKSzzhPLUCwmGW': 'https://docs.google.com/spreadsheets/d/1_fXVm7hK18OJj3Rll3XtFTiUKquwJ7JpthFmiJXQP40/edit'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1_fXVm7hK18OJj3Rll3XtFTiUKquwJ7JpthFmiJXQP40/edit","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, конечно. |Цитаты [Офис: да, Минск. Полный рабочий день: да]","n-U2tU6G5iBoxSPkXFN7F":"нет, не студент","S58S9DFqO7w-JzDbF2HJA":"мне 30 лет + не служил из-за здоровья","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"сокращение штата","DoOdxUlwbb0nILXQGBDaT":"вчера","ICXvQX-WT9eleJW-QlV...
+🗑️ Сброшен кэш для кандидата: 74547567
+✅ Поле Scorecard обновлено со ссылкой на scorecard
+✅ Поле 'Scorecard' в Huntflow обновлено со ссылкой на scorecard
+🔍 Создаем календарное событие...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74547567
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Владимир","last_name":"Касперович","middle_name":"Александрович","money":"2000$","phone":"+7 (906) 6994989","email":"vladimirkaperovich.frontdev@gmail.com","skype":null,"position":"Frontend-разработчик","company":"Сбер","photo":null,"id":74547567,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/d/f/e/dfeef5ffd3e68fc61a8a173f39acd0db.png?s=QWaeDU0IK50JoJ-qyxOYew&e=1761919335","birthday":"1995-05-14","created":"2025-10-01T14:38:19+03:00","tags":[],"links":[{"id":6993...
+💾 Сохранены данные кандидата в кэш: 74547567
+📧 Найден email кандидата: vladimirkaperovich.frontdev@gmail.com
+📅 Сгенерировано название события: JS Tech Screening | Касперович Владимир
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 45 минут
+⏱️ Используем длительность скринингов: 45 минут
+📝 Найден телеграм рекрутера: softnetix_talent
+📝 Ссылка на телеграм: https://t.me/softnetix_talent
+📝 Сопроводительный текст: Попрошу быть с камерой. Технический скрининг будет с секцией лайв-кодинга (нужно будет шарить экран)...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔗 Сгенерирована ссылка на Huntflow (prod): https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/74547567
+👥 Добавляем кандидата в участники: vladimirkaperovich.frontdev@gmail.com
+🔍 Время с timezone: 2025-10-02 15:00:00+03:00
+🔍 Время начала (UTC): 2025-10-02 12:00:00+00:00
+🔍 Время окончания (UTC): 2025-10-02 12:45:00+00:00
+🔍 Строка времени начала: 2025-10-02T12:00:00
+🔍 Строка времени окончания: 2025-10-02T12:45:00
+📅 Создаем событие: JS Tech Screening | Касперович Владимир
+📅 Время начала: 2025-10-02T12:00:00
+📅 Время окончания: 2025-10-02T12:45:00
+📅 Данные события: {'summary': 'JS Tech Screening | Касперович Владимир', 'description': 'Попрошу быть с камерой. Технический скрининг будет с секцией лайв-кодинга (нужно будет шарить экран). Если возникнут вопросы - на связи в телеграм https://t.me/softnetix_talent\n\nДля интервьюеров:\nhttps://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/74547567', 'location': '', 'start': {'dateTime': '2025-10-02T12:00:00', 'timeZone': 'UTC'}, 'end': {'dateTime': '2025-10-02T12:45:00', 'timeZone': 'UTC'}, 'attendees': [{'email': 'vladimirkaperovich.frontdev@gmail.com'}], 'conferenceData': {'createRequest': {'requestId': 'meet-202510021500', 'conferenceSolutionKey': {'type': 'hangoutsMeet'}}}, 'reminders': {'useDefault': False, 'overrides': [{'method': 'email', 'minutes': 1440}, {'method': 'popup', 'minutes': 10}]}}[01/Oct/2025 17:02:23] "POST /google-oauth/chat/23/ HTTP/1.1" 302 0
+
+✅ Событие создано: JS Tech Screening | Касперович Владимир (2025-10-02 15:00:00+03:00 - 2025-10-02 15:45:00+03:00)
+⏱️ Длительность: 45 минут
+🔗 Ссылка на событие: https://www.google.com/calendar/event?eid=ZHBmYzViZTdlMThqa21pbWxlcDhxMDdyYWcgYW5kcmVpLmdvbHViZW5rb0Bzb2Z0bmV0aXguaW8
+🔗 Google Meet ссылка: https://meet.google.com/nvf-spzh-mim
+✅ Календарное событие создано: JS Tech Screening | Касперович Владимир
+🔗 Ссылка на событие: https://www.google.com/calendar/event?eid=ZHBmYzViZTdlMThqa21pbWxlcDhxMDdyYWcgYW5kcmVpLmdvbHViZW5rb0Bzb2Z0bmV0aXguaW8
+🔍 Результат создания календарного события: True
+[TECH_SCREENING_UPDATE] Календарное событие создано успешно, обновляем статус...
+[TECH_SCREENING] Начинаем обновление статуса кандидата 74547567
+[TECH_SCREENING] Импорты выполнены успешно
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+[TECH_SCREENING] Получен account_id: 291341
+[TECH_SCREENING] Запрашиваем статусы вакансий...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies/statuses
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":186500,"type":"user","name":"New","removed":null,"order":1,"stay_duration":null},{"id":187026,"type":"user","name":"Message","removed":null,"order":2,"stay_duration":null},{"id":186501,"type":"user","name":"Contact","removed":null,"order":3,"stay_duration":null},{"id":187027,"type":"user","name":"Portfolio Review","removed":null,"order":4,"stay_duration":null},{"id":186502,"type":"user","name":"HR Screening","removed":null,"order":5,"stay_duration":null},{"id":189774,"type":"user...
+[TECH_SCREENING] Получены статусы: {'items': [{'id': 186500, 'type': 'user', 'name': 'New', 'removed': None, 'order': 1, 'stay_duration': None}, {'id': 187026, 'type': 'user', 'name': 'Message', 'removed': None, 'order': 2, 'stay_duration': None}, {'id': 186501, 'type': 'user', 'name': 'Contact', 'removed': None, 'order': 3, 'stay_duration': None}, {'id': 187027, 'type': 'user', 'name': 'Portfolio Review', 'removed': None, 'order': 4, 'stay_duration': None}, {'id': 186502, 'type': 'user', 'name': 'HR Screening', 'removed': None, 'order': 5, 'stay_duration': None}, {'id': 189774, 'type': 'user', 'name': 'CV Check by HM', 'removed': None, 'order': 6, 'stay_duration': None}, {'id': 187028, 'type': 'user', 'name': 'Test Task', 'removed': None, 'order': 7, 'stay_duration': None}, {'id': 186503, 'type': 'user', 'name': 'Tech Screening', 'removed': None, 'order': 8, 'stay_duration': None}, {'id': 186504, 'type': 'user', 'name': 'Final Interview', 'removed': None, 'order': 9, 'stay_duration': None}, {'id': 186505, 'type': 'user', 'name': 'Decision', 'removed': None, 'order': 10, 'stay_duration': None}, {'id': 186506, 'type': 'user', 'name': 'Offer', 'removed': None, 'order': 11, 'stay_duration': None}, {'id': 186507, 'type': 'hired', 'name': 'Offer accepted', 'removed': None, 'order': 12, 'stay_duration': None}, {'id': 186508, 'type': 'user', 'name': 'Onboarding', 'removed': None, 'order': 13, 'stay_duration': None}, {'id': 186509, 'type': 'trash', 'name': 'Отказ', 'removed': None, 'order': 9999, 'stay_duration': None}]}
+[TECH_SCREENING] Ищем статус Tech Screening среди 14 статусов
+[TECH_SCREENING] Проверяем статус: 'New'
+[TECH_SCREENING] Проверяем статус: 'Message'
+[TECH_SCREENING] Проверяем статус: 'Contact'
+[TECH_SCREENING] Проверяем статус: 'Portfolio Review'
+[TECH_SCREENING] Проверяем статус: 'HR Screening'
+[TECH_SCREENING] Проверяем статус: 'CV Check by HM'
+[TECH_SCREENING] Проверяем статус: 'Test Task'
+[TECH_SCREENING] Проверяем статус: 'Tech Screening'
+🔍 TECH_SCREENING: Найден статус Tech Screening с ID 186503
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 45 минут
+[TECH_SCREENING] Кандидат: 74547567 -> Tech Screening
+[TECH_SCREENING] Комментарий: Четверг, 2 октября⋅15:00–15:45
+[TECH_SCREENING] Используем статус ID: 186503
+[TECH_SCREENING] Вызываем update_applicant_status...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74547567
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Владимир","last_name":"Касперович","middle_name":"Александрович","money":"2000$","phone":"+7 (906) 6994989","email":"vladimirkaperovich.frontdev@gmail.com","skype":null,"position":"Frontend-разработчик","company":"Сбер","photo":null,"id":74547567,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/d/f/e/dfeef5ffd3e68fc61a8a173f39acd0db.png?s=mNPhF3Nd02bnXZ1xCUKNVQ&e=1761919338","birthday":"1995-05-14","created":"2025-10-01T14:38:19+03:00","tags":[],"links":[{"id":6993...
+DEBUG: Обновляем статус кандидата 74547567 на статус 186503 для вакансии 3936868 с комментарием: Четверг, 2 октября⋅15:00–15:45
+DEBUG: Пробуем эндпоинт /accounts/291341/applicants/74547567/vacancy с данными {'vacancy': 3936868, 'status': 186503, 'comment': 'Четверг, 2 октября⋅15:00–15:45'}
+🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/applicants/74547567/vacancy
+📤 JSON данные: {'vacancy': 3936868, 'status': 186503, 'comment': 'Четверг, 2 октября⋅15:00–15:45'}
+📥 Ответ API: 200
+📥 Тело ответа: {"id":69932910,"changed":"2025-10-01T17:02:18+03:00","vacancy":3936868,"status":186503,"rejection_reason":null}...
+DEBUG: Статус успешно обновлен через /accounts/291341/applicants/74547567/vacancy
+🗑️ Сброшен кэш для кандидата: 74547567
+[TECH_SCREENING] Результат update_applicant_status: {'id': 69932910, 'changed': '2025-10-01T17:02:18+03:00', 'vacancy': 3936868, 'status': 186503, 'rejection_reason': None}
+[TECH_SCREENING] Успешно обновлен статус на Tech Screening
+[TECH_SCREENING_UPDATE] Статус обновлен: True
+✅ COMBINED_FORM_SAVE: Структура Google Drive создана
+🔍 COMBINED_FORM_SAVE: Обрабатываем scorecard...
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Junior
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Junior+
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Middle
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Senior
+РЕАЛЬНЫЕ ДАННЫЕ: Обработка scorecard завершена
+РЕАЛЬНЫЕ ДАННЫЕ: Сохранены листы: all, score, Middle+
+РЕАЛЬНЫЕ ДАННЫЕ: Удалены листы: Junior, Junior+, Middle, Senior
+✅ COMBINED_FORM_SAVE: Scorecard обработан
+✅ COMBINED_FORM_SAVE: Инвайт сохранен с ID: 173
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 24 событий
+🔍 DEBUG CHAT: Получено 24 событий из API
+🔍 DEBUG CHAT: Передаем 24 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-02T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Барцевич Андрей в 2025-10-02T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: Обед в 2025-10-02T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts[01/Oct/2025 17:02:28] "GET /google-oauth/chat/23/ HTTP/1.1" 200 311470
+[01/Oct/2025 17:02:30] "POST /google-oauth/invites/173/invitation-text/ HTTP/1.1" 200 1177
+
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 45 минут
+🔍 CHAT: Определен тип действия: invite
+🔍 CHAT: Текст сообщения: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74549710
+ПТ 16'
+🔍 CLEAN_COMBINED_DATA: combined_data = 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74549710
+ПТ 16'
+🔍 CLEAN_COMBINED_DATA: Найдено URLs: ['https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74549710']
+✅ CLEAN_COMBINED_DATA: URL извлечен: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74549710
+✅ CLEAN_COMBINED_DATA: Весь текст сохранен для парсера: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74549710
+ПТ 16'
+🔍 COMBINED_FORM_CLEAN: Начинаем очистку формы
+🔍 COMBINED_FORM_CLEAN: cleaned_data keys: ['candidate_url', 'interview_datetime', 'combined_data']
+🔍 COMBINED_FORM_CLEAN: combined_data: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74549710
+ПТ 16
+🔍 COMBINED_FORM_CLEAN: URL извлечен, дату обработает парсер
+🔍 COMBINED_FORM_CLEAN: Финальные cleaned_data: {'candidate_url': 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74549710', 'interview_datetime': None, 'combined_data': 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74549710\r\nПТ 16'}
+🔍 COMBINED_FORM_SAVE: Начинаем сохранение инвайта...
+🔍 COMBINED_FORM_SAVE: Сохранены исходные данные: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74549710
+ПТ 16...
+🔍 COMBINED_FORM_SAVE: Инвайт создан, user: andrei.golubenko
+🔍 COMBINED_FORM_SAVE: Парсим URL...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 PARSE_URL: Используем первый доступный account_id: 291341
+✅ COMBINED_FORM_SAVE: URL распарсен успешно
+🔍 COMBINED_FORM_SAVE: Получаем информацию о кандидате...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 GET_CANDIDATE_INFO: Автоматически получен account_id: 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74549710
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Yaroslav","last_name":"Bubnov","middle_name":null,"money":"1600$","phone":"+375291179646","email":"bubnoffya@yandex.by","skype":null,"position":"Frontend developer (React Native)) | October 2024 - To the present","company":null,"photo":null,"id":74549710,"account":291341,"photo_url":null,"birthday":null,"created":"2025-10-01T15:09:23+03:00","tags":[],"links":[{"id":69935402,"status":186502,"updated":"2025-10-01T15:10:05+03:00","changed":"2025-10-01T15:10:05+03:00","vacancy":393686...
+💾 Сохранены данные кандидата в кэш: 74549710
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74549710/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle","oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, конечно. |Цитаты [Офис: при необходимости готов к переезду для работы в офисе. Полный рабочий день: Да могу работать полный день]","n-U2tU6G5iBoxSPkXFN7F":"Сейчас нахожусь на распределении, есть возможность переспределения с этим проблем нету","S58S9DFqO7w-JzDbF2HJA":"Негоден к военной службе в мировой время","c8wID33nTMvoCpJmtngyq":"Есть планы по перезду в Минск","Ew3LqHTK8SL...
+РЕАЛЬНЫЕ ДАННЫЕ: Доступные грейды в системе: ['Head', 'Junior', 'Junior+', 'Lead', 'Middle', 'Middle+', 'Senior', 'Senior+']
+РЕАЛЬНЫЕ ДАННЫЕ: Не удалось получить схему анкеты: HuntflowService.get_applicant_questionary_schema() takes 2 positional arguments but 3 were given
+РЕАЛЬНЫЕ ДАННЫЕ: Найден уровень по значению: Middle (поле: kIbah4MN0iHussXm3n2Ar)
+РЕАЛЬНЫЕ ДАННЫЕ: ✅ Найден уровень в анкете: Middle (поле: kIbah4MN0iHussXm3n2Ar)
+РЕАЛЬНЫЕ ДАННЫЕ: Получена информация о кандидате 74549710
+РЕАЛЬНЫЕ ДАННЫЕ: Имя: Bubnov Yaroslav
+РЕАЛЬНЫЕ ДАННЫЕ: Уровень: Middle
+✅ COMBINED_FORM_SAVE: Информация о кандидате получена
+🔍 COMBINED_FORM_SAVE: Получаем информацию о вакансии...
+ЛОКАЛЬНЫЕ ДАННЫЕ: Найдена вакансия в локальной БД: Frontend Engineer (React)
+ЛОКАЛЬНЫЕ ДАННЫЕ: Шаблон scorecard: https://docs.google.com/spreadsheets/d/1Zz61HtsXAWvfHtlTucfJQnJEDCKLwcVRybmT9BHfZqg/edit?gid=1164423222#gid=1164423222
+ЛОКАЛЬНЫЕ ДАННЫЕ: Длительность скринингов: 45 минут
+✅ COMBINED_FORM_SAVE: Информация о вакансии получена
+🤖 COMBINED_FORM_SAVE: Анализируем время с помощью парсера...
+[PARSER DEBUG] Анализируем текст пользователя andrei.golubenko
+[PARSER DEBUG] Текст для анализа: ПТ 16...
+[PARSER SUCCESS] Определена дата/время: 03.10.2025 16:00
+✅ COMBINED_FORM_SAVE: Время проанализировано с помощью парсера
+✅ COMBINED_FORM_SAVE: Дата интервью установлена из парсера: 2025-10-03 16:00:00+03:00
+🔍 COMBINED_FORM_SAVE: Создаем структуру Google Drive...
+ЛОКАЛЬНЫЕ ДАННЫЕ: Используем scorecard из локальной БД: | Scorecard FE
+ЛОКАЛЬНЫЕ ДАННЫЕ: Ссылка на шаблон: https://docs.google.com/spreadsheets/d/1Zz61HtsXAWvfHtlTucfJQnJEDCKLwcVRybmT9BHfZqg/edit?gid=1164423222#gid=1164423222
+🔍 SAMPLE_DATA: Подготавливаем данные для генерации пути папок
+🔍 SAMPLE_DATA: candidate_name = 'Bubnov Yaroslav'
+🔍 SAMPLE_DATA: vacancy_title = 'Frontend Engineer (React)'
+🔍 SAMPLE_DATA: interview_datetime = '2025-10-03 16:00:00+03:00'
+🔍 SAMPLE_DATA: Подготовленные данные:
+🔍 SAMPLE_DATA:   date = '03.10.2025'
+🔍 SAMPLE_DATA:   day = '03'
+🔍 SAMPLE_DATA:   week_short_en = 'Fri'
+🔍 SAMPLE_DATA:   week_short_ru = 'ПТ'
+🔍 SAMPLE_DATA:   week_full_en = 'Friday'
+🔍 SAMPLE_DATA:   week_full_ru = 'Пятница'
+🔍 SAMPLE_DATA:   month_num = '10'
+🔍 SAMPLE_DATA:   month_short_ru = 'окт'
+🔍 SAMPLE_DATA:   month_short_en = 'Oct'
+🔍 SAMPLE_DATA:   month_full_ru = 'октябрь'
+🔍 SAMPLE_DATA:   month_full_en = 'October'
+🔍 SAMPLE_DATA:   weekday_short_ru = 'ПТ'
+🔍 SAMPLE_DATA:   weekday_short_en = 'Fri'
+🔍 SAMPLE_DATA:   weekday_full_ru = 'Пятница'
+🔍 SAMPLE_DATA:   weekday_full_en = 'Friday'
+🔍 SAMPLE_DATA:   year_short = '25'
+🔍 SAMPLE_DATA:   year_full = '2025'
+🔍 SAMPLE_DATA:   candidate_first_name = 'Yaroslav'
+🔍 SAMPLE_DATA:   candidate_last_name = 'Bubnov'
+🔍 SAMPLE_DATA:   candidate_middle_name = ''
+🔍 SAMPLE_DATA:   candidate_id = '74549710'
+🔍 SAMPLE_DATA:   vacancy_title = 'Frontend Engineer (React)'
+🔍 SAMPLE_DATA:   vacancy_id = '3936868'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=text, value='automations'
+🔍 FOLDER_GEN: Text элемент: 'automations'
+🔍 FOLDER_GEN: Добавлена папка: 'automations'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=vacancy_title, value=''
+🔍 FOLDER_GEN: Обычный элемент vacancy_title: 'Frontend Engineer (React)'
+🔍 FOLDER_GEN: Добавлена папка: 'Frontend Engineer (React)'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=year_full, value=''
+🔍 FOLDER_GEN: Обычный элемент year_full: '2025'
+🔍 FOLDER_GEN: Добавлена папка: '2025'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[month_num] [month_full_ru]'
+🔍 FOLDER_GEN: Mixed элемент: '[month_num] [month_full_ru]' -> '10 октябрь'
+🔍 FOLDER_GEN: Добавлена папка: '10 октябрь'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[day] [month_full_ru] [weekday_short_ru]'
+🔍 FOLDER_GEN: Mixed элемент: '[day] [month_full_ru] [weekday_short_ru]' -> '03 октябрь ПТ'
+🔍 FOLDER_GEN: Добавлена папка: '03 октябрь ПТ'
+НАСТРОЙКИ ПАПОК: Структура папок: automations/Frontend Engineer (React)/2025/10 октябрь/03 октябрь ПТ
+НАСТРОЙКИ ПАПОК: База названия файла: Bubnov Yaroslav
+РЕАЛЬНЫЕ ДАННЫЕ: Создана структура папок: automations/Frontend Engineer (React)/2025/10 октябрь/03 октябрь ПТ
+РЕАЛЬНЫЕ ДАННЫЕ: ID папки: 1oAz8r2CKarFbV9qOrnKTKeSo1WDbsMHu
+РЕАЛЬНЫЕ ДАННЫЕ: ID файла: 125PwFgWscdMMQKSp7m4LK0Q-mGoscST-jDlWDDmrKiE
+РЕАЛЬНЫЕ ДАННЫЕ: Ссылка: https://docs.google.com/spreadsheets/d/125PwFgWscdMMQKSp7m4LK0Q-mGoscST-jDlWDDmrKiE/edit
+РЕАЛЬНЫЕ ДАННЫЕ: Название файла: Bubnov Yaroslav | Scorecard FE
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"search_field":"string_field_1","account":291341,"is_archived":false,"disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"search_field":"string_field_7","account":291341,"is_archived":false,...
+🔍 Найдено поле Scorecard в схеме: oMvUCpzbKSzzhPLUCwmGW = Scorecard (тип: url)
+📝 Обновляем поле Scorecard oMvUCpzbKSzzhPLUCwmGW со ссылкой: https://docs.google.com/spreadsheets/d/125PwFgWscdMMQKSp7m4LK0Q-mGoscST-jDlWDDmrKiE/edit
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/74549710/questionary с данными {'oMvUCpzbKSzzhPLUCwmGW': 'https://docs.google.com/spreadsheets/d/125PwFgWscdMMQKSp7m4LK0Q-mGoscST-jDlWDDmrKiE/edit'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/74549710/questionary
+📤 JSON данные: {'oMvUCpzbKSzzhPLUCwmGW': 'https://docs.google.com/spreadsheets/d/125PwFgWscdMMQKSp7m4LK0Q-mGoscST-jDlWDDmrKiE/edit'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/125PwFgWscdMMQKSp7m4LK0Q-mGoscST-jDlWDDmrKiE/edit","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, конечно. |Цитаты [Офис: при необходимости готов к переезду для работы в офисе. Полный рабочий день: Да могу работать полный день]","n-U2tU6G5iBoxSPkXFN7F":"Сейчас нахожусь на распределении, есть возможность переспределения с этим проблем нету","S58S9DFqO7w-JzDbF2HJA":"Негоден к военной службе...
+🗑️ Сброшен кэш для кандидата: 74549710
+✅ Поле Scorecard обновлено со ссылкой на scorecard
+✅ Поле 'Scorecard' в Huntflow обновлено со ссылкой на scorecard
+🔍 Создаем календарное событие...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74549710
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Yaroslav","last_name":"Bubnov","middle_name":null,"money":"1600$","phone":"+375291179646","email":"bubnoffya@yandex.by","skype":null,"position":"Frontend developer (React Native)) | October 2024 - To the present","company":null,"photo":null,"id":74549710,"account":291341,"photo_url":null,"birthday":null,"created":"2025-10-01T15:09:23+03:00","tags":[],"links":[{"id":69935402,"status":186502,"updated":"2025-10-01T15:10:05+03:00","changed":"2025-10-01T15:10:05+03:00","vacancy":393686...
+💾 Сохранены данные кандидата в кэш: 74549710
+📧 Найден email кандидата: bubnoffya@yandex.by
+📅 Сгенерировано название события: JS Tech Screening | Bubnov Yaroslav
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 45 минут
+⏱️ Используем длительность скринингов: 45 минут
+📝 Найден телеграм рекрутера: softnetix_talent
+📝 Ссылка на телеграм: https://t.me/softnetix_talent
+📝 Сопроводительный текст: Попрошу быть с камерой. Технический скрининг будет с секцией лайв-кодинга (нужно будет шарить экран)...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔗 Сгенерирована ссылка на Huntflow (prod): https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/74549710
+👥 Добавляем кандидата в участники: bubnoffya@yandex.by
+🔍 Время с timezone: 2025-10-03 16:00:00+03:00
+🔍 Время начала (UTC): 2025-10-03 13:00:00+00:00
+🔍 Время окончания (UTC): 2025-10-03 13:45:00+00:00
+🔍 Строка времени начала: 2025-10-03T13:00:00
+🔍 Строка времени окончания: 2025-10-03T13:45:00
+📅 Создаем событие: JS Tech Screening | Bubnov Yaroslav
+📅 Время начала: 2025-10-03T13:00:00
+📅 Время окончания: 2025-10-03T13:45:00
+📅 Данные события: {'summary': 'JS Tech Screening | Bubnov Yaroslav', 'description': 'Попрошу быть с камерой. Технический скрининг будет с секцией лайв-кодинга (нужно будет шарить экран). Если возникнут вопросы - на связи в телеграм https://t.me/softnetix_talent\n\nДля интервьюеров:\nhttps://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/74549710', 'location': '', 'start': {'dateTime': '2025-10-03T13:00:00', 'timeZone': 'UTC'}, 'end': {'dateTime': '2025-10-03T13:45:00', 'timeZone': 'UTC'}, 'attendees': [{'email': 'bubnoffya@yandex.by'}], 'conferenceData': {'createRequest': {'requestId': 'meet-202510031600', 'conferenceSolutionKey': {'type': 'hangoutsMeet'}}}, 'reminders': {'useDefault': False, 'overrides': [{'method': 'email', 'minutes': 1440}, {'method': 'popup', 'minutes': 10}]}}[01/Oct/2025 17:04:56] "POST /google-oauth/chat/23/ HTTP/1.1" 302 0
+
+✅ Событие создано: JS Tech Screening | Bubnov Yaroslav (2025-10-03 16:00:00+03:00 - 2025-10-03 16:45:00+03:00)
+⏱️ Длительность: 45 минут
+🔗 Ссылка на событие: https://www.google.com/calendar/event?eid=djNhZG5tOGMyMmlxMjl2dTBwc3V2OXNpZ2MgYW5kcmVpLmdvbHViZW5rb0Bzb2Z0bmV0aXguaW8
+🔗 Google Meet ссылка: https://meet.google.com/efk-fqrm-mos
+✅ Календарное событие создано: JS Tech Screening | Bubnov Yaroslav
+🔗 Ссылка на событие: https://www.google.com/calendar/event?eid=djNhZG5tOGMyMmlxMjl2dTBwc3V2OXNpZ2MgYW5kcmVpLmdvbHViZW5rb0Bzb2Z0bmV0aXguaW8
+🔍 Результат создания календарного события: True
+[TECH_SCREENING_UPDATE] Календарное событие создано успешно, обновляем статус...
+[TECH_SCREENING] Начинаем обновление статуса кандидата 74549710
+[TECH_SCREENING] Импорты выполнены успешно
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+[TECH_SCREENING] Получен account_id: 291341
+[TECH_SCREENING] Запрашиваем статусы вакансий...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies/statuses
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":186500,"type":"user","name":"New","removed":null,"order":1,"stay_duration":null},{"id":187026,"type":"user","name":"Message","removed":null,"order":2,"stay_duration":null},{"id":186501,"type":"user","name":"Contact","removed":null,"order":3,"stay_duration":null},{"id":187027,"type":"user","name":"Portfolio Review","removed":null,"order":4,"stay_duration":null},{"id":186502,"type":"user","name":"HR Screening","removed":null,"order":5,"stay_duration":null},{"id":189774,"type":"user...
+[TECH_SCREENING] Получены статусы: {'items': [{'id': 186500, 'type': 'user', 'name': 'New', 'removed': None, 'order': 1, 'stay_duration': None}, {'id': 187026, 'type': 'user', 'name': 'Message', 'removed': None, 'order': 2, 'stay_duration': None}, {'id': 186501, 'type': 'user', 'name': 'Contact', 'removed': None, 'order': 3, 'stay_duration': None}, {'id': 187027, 'type': 'user', 'name': 'Portfolio Review', 'removed': None, 'order': 4, 'stay_duration': None}, {'id': 186502, 'type': 'user', 'name': 'HR Screening', 'removed': None, 'order': 5, 'stay_duration': None}, {'id': 189774, 'type': 'user', 'name': 'CV Check by HM', 'removed': None, 'order': 6, 'stay_duration': None}, {'id': 187028, 'type': 'user', 'name': 'Test Task', 'removed': None, 'order': 7, 'stay_duration': None}, {'id': 186503, 'type': 'user', 'name': 'Tech Screening', 'removed': None, 'order': 8, 'stay_duration': None}, {'id': 186504, 'type': 'user', 'name': 'Final Interview', 'removed': None, 'order': 9, 'stay_duration': None}, {'id': 186505, 'type': 'user', 'name': 'Decision', 'removed': None, 'order': 10, 'stay_duration': None}, {'id': 186506, 'type': 'user', 'name': 'Offer', 'removed': None, 'order': 11, 'stay_duration': None}, {'id': 186507, 'type': 'hired', 'name': 'Offer accepted', 'removed': None, 'order': 12, 'stay_duration': None}, {'id': 186508, 'type': 'user', 'name': 'Onboarding', 'removed': None, 'order': 13, 'stay_duration': None}, {'id': 186509, 'type': 'trash', 'name': 'Отказ', 'removed': None, 'order': 9999, 'stay_duration': None}]}
+[TECH_SCREENING] Ищем статус Tech Screening среди 14 статусов
+[TECH_SCREENING] Проверяем статус: 'New'
+[TECH_SCREENING] Проверяем статус: 'Message'
+[TECH_SCREENING] Проверяем статус: 'Contact'
+[TECH_SCREENING] Проверяем статус: 'Portfolio Review'
+[TECH_SCREENING] Проверяем статус: 'HR Screening'
+[TECH_SCREENING] Проверяем статус: 'CV Check by HM'
+[TECH_SCREENING] Проверяем статус: 'Test Task'
+[TECH_SCREENING] Проверяем статус: 'Tech Screening'
+🔍 TECH_SCREENING: Найден статус Tech Screening с ID 186503
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 45 минут
+[TECH_SCREENING] Кандидат: 74549710 -> Tech Screening
+[TECH_SCREENING] Комментарий: Пятница, 3 октября⋅16:00–16:45
+[TECH_SCREENING] Используем статус ID: 186503
+[TECH_SCREENING] Вызываем update_applicant_status...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74549710
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Yaroslav","last_name":"Bubnov","middle_name":null,"money":"1600$","phone":"+375291179646","email":"bubnoffya@yandex.by","skype":null,"position":"Frontend developer (React Native)) | October 2024 - To the present","company":null,"photo":null,"id":74549710,"account":291341,"photo_url":null,"birthday":null,"created":"2025-10-01T15:09:23+03:00","tags":[],"links":[{"id":69935402,"status":186502,"updated":"2025-10-01T15:10:05+03:00","changed":"2025-10-01T15:10:05+03:00","vacancy":393686...
+DEBUG: Обновляем статус кандидата 74549710 на статус 186503 для вакансии 3936868 с комментарием: Пятница, 3 октября⋅16:00–16:45
+DEBUG: Пробуем эндпоинт /accounts/291341/applicants/74549710/vacancy с данными {'vacancy': 3936868, 'status': 186503, 'comment': 'Пятница, 3 октября⋅16:00–16:45'}
+🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/applicants/74549710/vacancy
+📤 JSON данные: {'vacancy': 3936868, 'status': 186503, 'comment': 'Пятница, 3 октября⋅16:00–16:45'}
+📥 Ответ API: 200
+📥 Тело ответа: {"id":69935402,"changed":"2025-10-01T17:04:52+03:00","vacancy":3936868,"status":186503,"rejection_reason":null}...
+DEBUG: Статус успешно обновлен через /accounts/291341/applicants/74549710/vacancy
+🗑️ Сброшен кэш для кандидата: 74549710
+[TECH_SCREENING] Результат update_applicant_status: {'id': 69935402, 'changed': '2025-10-01T17:04:52+03:00', 'vacancy': 3936868, 'status': 186503, 'rejection_reason': None}
+[TECH_SCREENING] Успешно обновлен статус на Tech Screening
+[TECH_SCREENING_UPDATE] Статус обновлен: True
+✅ COMBINED_FORM_SAVE: Структура Google Drive создана
+🔍 COMBINED_FORM_SAVE: Обрабатываем scorecard...
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Junior
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Junior+
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Middle+
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Senior
+РЕАЛЬНЫЕ ДАННЫЕ: Обработка scorecard завершена
+РЕАЛЬНЫЕ ДАННЫЕ: Сохранены листы: all, score, Middle
+РЕАЛЬНЫЕ ДАННЫЕ: Удалены листы: Junior, Junior+, Middle+, Senior
+✅ COMBINED_FORM_SAVE: Scorecard обработан
+✅ COMBINED_FORM_SAVE: Инвайт сохранен с ID: 174
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 24 событий
+🔍 DEBUG CHAT: Получено 24 событий из API
+🔍 DEBUG CHAT: Передаем 24 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-02T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Барцевич Андрей в 2025-10-02T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: Обед в 2025-10-02T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...[01/Oct/2025 17:04:56] "GET /google-oauth/chat/23/ HTTP/1.1" 200 321275
+[01/Oct/2025 17:05:10] "POST /google-oauth/invites/174/invitation-text/ HTTP/1.1" 200 1083
+[01/Oct/2025 17:05:25] "GET /google-oauth/chat/23/ HTTP/1.1" 200 321275
+
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 45 минут
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 24 событий
+🔍 DEBUG CHAT: Получено 24 событий из API
+🔍 DEBUG CHAT: Передаем 24 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-02T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Барцевич Андрей в 2025-10-02T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: Обед в 2025-10-02T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 CHAT: Определен тип действия: invite
+🔍 CHAT: Текст сообщения: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74551160
+ПТ 12'
+🔍 CLEAN_COMBINED_DATA: combined_data = 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74551160
+ПТ 12'
+🔍 CLEAN_COMBINED_DATA: Найдено URLs: ['https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74551160']
+✅ CLEAN_COMBINED_DATA: URL извлечен: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74551160
+✅ CLEAN_COMBINED_DATA: Весь текст сохранен для парсера: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74551160
+ПТ 12'
+🔍 COMBINED_FORM_CLEAN: Начинаем очистку формы
+🔍 COMBINED_FORM_CLEAN: cleaned_data keys: ['candidate_url', 'interview_datetime', 'combined_data']
+🔍 COMBINED_FORM_CLEAN: combined_data: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74551160
+ПТ 12
+🔍 COMBINED_FORM_CLEAN: URL извлечен, дату обработает парсер
+🔍 COMBINED_FORM_CLEAN: Финальные cleaned_data: {'candidate_url': 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74551160', 'interview_datetime': None, 'combined_data': 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74551160\r\nПТ 12'}
+🔍 COMBINED_FORM_SAVE: Начинаем сохранение инвайта...
+🔍 COMBINED_FORM_SAVE: Сохранены исходные данные: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74551160
+ПТ 12...
+🔍 COMBINED_FORM_SAVE: Инвайт создан, user: andrei.golubenko
+🔍 COMBINED_FORM_SAVE: Парсим URL...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 PARSE_URL: Используем первый доступный account_id: 291341
+✅ COMBINED_FORM_SAVE: URL распарсен успешно
+🔍 COMBINED_FORM_SAVE: Получаем информацию о кандидате...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 GET_CANDIDATE_INFO: Автоматически получен account_id: 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74551160
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Андрей","last_name":"Грицук","middle_name":"Викторович","money":"2000$","phone":"+375 (29) 5251893","email":"axa8xa8@gmail.com","skype":null,"position":"Frontend developer (React/Vue","company":null,"photo":null,"id":74551160,"account":291341,"photo_url":null,"birthday":"1997-05-31","created":"2025-10-01T15:29:23+03:00","tags":[],"links":[{"id":69936952,"status":186502,"updated":"2025-10-01T16:41:34+03:00","changed":"2025-10-01T16:41:34+03:00","vacancy":3936868}],"external":[{"id"...
+💾 Сохранены данные кандидата в кэш: 74551160
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74551160/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle+","oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, конечно. |Цитаты [Офис: К офису готов. Живу в Минске.. Полный рабочий день: Смогу полный рабочий день]","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"Отслужил 4 года назад","c8wID33nTMvoCpJmtngyq":"Не принципиально, зависит от условий","Ew3LqHTK8SL67j2VQ-n6y":"Окончание контракта","DoOdxUlwbb0nILXQGBDaT":"Сразу","ICXvQX-WT9eleJW-QlVa9":null,"RMLxfRH9raQtHItMcdeq-":nu...
+РЕАЛЬНЫЕ ДАННЫЕ: Доступные грейды в системе: ['Head', 'Junior', 'Junior+', 'Lead', 'Middle', 'Middle+', 'Senior', 'Senior+']
+РЕАЛЬНЫЕ ДАННЫЕ: Не удалось получить схему анкеты: HuntflowService.get_applicant_questionary_schema() takes 2 positional arguments but 3 were given
+РЕАЛЬНЫЕ ДАННЫЕ: Найден уровень по значению: Middle+ (поле: kIbah4MN0iHussXm3n2Ar)
+РЕАЛЬНЫЕ ДАННЫЕ: ✅ Найден уровень в анкете: Middle+ (поле: kIbah4MN0iHussXm3n2Ar)
+РЕАЛЬНЫЕ ДАННЫЕ: Получена информация о кандидате 74551160
+РЕАЛЬНЫЕ ДАННЫЕ: Имя: Грицук Андрей
+РЕАЛЬНЫЕ ДАННЫЕ: Уровень: Middle+
+✅ COMBINED_FORM_SAVE: Информация о кандидате получена
+🔍 COMBINED_FORM_SAVE: Получаем информацию о вакансии...
+ЛОКАЛЬНЫЕ ДАННЫЕ: Найдена вакансия в локальной БД: Frontend Engineer (React)
+ЛОКАЛЬНЫЕ ДАННЫЕ: Шаблон scorecard: https://docs.google.com/spreadsheets/d/1Zz61HtsXAWvfHtlTucfJQnJEDCKLwcVRybmT9BHfZqg/edit?gid=1164423222#gid=1164423222
+ЛОКАЛЬНЫЕ ДАННЫЕ: Длительность скринингов: 45 минут
+✅ COMBINED_FORM_SAVE: Информация о вакансии получена
+🤖 COMBINED_FORM_SAVE: Анализируем время с помощью парсера...
+[PARSER DEBUG] Анализируем текст пользователя andrei.golubenko
+[PARSER DEBUG] Текст для анализа: ПТ 12...
+[PARSER SUCCESS] Определена дата/время: 03.10.2025 12:00
+✅ COMBINED_FORM_SAVE: Время проанализировано с помощью парсера
+✅ COMBINED_FORM_SAVE: Дата интервью установлена из парсера: 2025-10-03 12:00:00+03:00
+🔍 COMBINED_FORM_SAVE: Создаем структуру Google Drive...
+ЛОКАЛЬНЫЕ ДАННЫЕ: Используем scorecard из локальной БД: | Scorecard FE
+ЛОКАЛЬНЫЕ ДАННЫЕ: Ссылка на шаблон: https://docs.google.com/spreadsheets/d/1Zz61HtsXAWvfHtlTucfJQnJEDCKLwcVRybmT9BHfZqg/edit?gid=1164423222#gid=1164423222
+🔍 SAMPLE_DATA: Подготавливаем данные для генерации пути папок
+🔍 SAMPLE_DATA: candidate_name = 'Грицук Андрей'
+🔍 SAMPLE_DATA: vacancy_title = 'Frontend Engineer (React)'
+🔍 SAMPLE_DATA: interview_datetime = '2025-10-03 12:00:00+03:00'
+🔍 SAMPLE_DATA: Подготовленные данные:
+🔍 SAMPLE_DATA:   date = '03.10.2025'
+🔍 SAMPLE_DATA:   day = '03'
+🔍 SAMPLE_DATA:   week_short_en = 'Fri'
+🔍 SAMPLE_DATA:   week_short_ru = 'ПТ'
+🔍 SAMPLE_DATA:   week_full_en = 'Friday'
+🔍 SAMPLE_DATA:   week_full_ru = 'Пятница'
+🔍 SAMPLE_DATA:   month_num = '10'
+🔍 SAMPLE_DATA:   month_short_ru = 'окт'
+🔍 SAMPLE_DATA:   month_short_en = 'Oct'
+🔍 SAMPLE_DATA:   month_full_ru = 'октябрь'
+🔍 SAMPLE_DATA:   month_full_en = 'October'
+🔍 SAMPLE_DATA:   weekday_short_ru = 'ПТ'
+🔍 SAMPLE_DATA:   weekday_short_en = 'Fri'
+🔍 SAMPLE_DATA:   weekday_full_ru = 'Пятница'
+🔍 SAMPLE_DATA:   weekday_full_en = 'Friday'
+🔍 SAMPLE_DATA:   year_short = '25'
+🔍 SAMPLE_DATA:   year_full = '2025'
+🔍 SAMPLE_DATA:   candidate_first_name = 'Андрей'
+🔍 SAMPLE_DATA:   candidate_last_name = 'Грицук'
+🔍 SAMPLE_DATA:   candidate_middle_name = ''
+🔍 SAMPLE_DATA:   candidate_id = '74551160'
+🔍 SAMPLE_DATA:   vacancy_title = 'Frontend Engineer (React)'
+🔍 SAMPLE_DATA:   vacancy_id = '3936868'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=text, value='automations'
+🔍 FOLDER_GEN: Text элемент: 'automations'
+🔍 FOLDER_GEN: Добавлена папка: 'automations'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=vacancy_title, value=''
+🔍 FOLDER_GEN: Обычный элемент vacancy_title: 'Frontend Engineer (React)'
+🔍 FOLDER_GEN: Добавлена папка: 'Frontend Engineer (React)'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=year_full, value=''
+🔍 FOLDER_GEN: Обычный элемент year_full: '2025'
+🔍 FOLDER_GEN: Добавлена папка: '2025'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[month_num] [month_full_ru]'
+🔍 FOLDER_GEN: Mixed элемент: '[month_num] [month_full_ru]' -> '10 октябрь'
+🔍 FOLDER_GEN: Добавлена папка: '10 октябрь'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[day] [month_full_ru] [weekday_short_ru]'
+🔍 FOLDER_GEN: Mixed элемент: '[day] [month_full_ru] [weekday_short_ru]' -> '03 октябрь ПТ'
+🔍 FOLDER_GEN: Добавлена папка: '03 октябрь ПТ'
+НАСТРОЙКИ ПАПОК: Структура папок: automations/Frontend Engineer (React)/2025/10 октябрь/03 октябрь ПТ
+НАСТРОЙКИ ПАПОК: База названия файла: Грицук Андрей
+РЕАЛЬНЫЕ ДАННЫЕ: Создана структура папок: automations/Frontend Engineer (React)/2025/10 октябрь/03 октябрь ПТ
+РЕАЛЬНЫЕ ДАННЫЕ: ID папки: 1oAz8r2CKarFbV9qOrnKTKeSo1WDbsMHu
+РЕАЛЬНЫЕ ДАННЫЕ: ID файла: 1SRuXW0UK8_4QrJyeDu04ZhVGUwh9PYPi9s3PYxugKW4
+РЕАЛЬНЫЕ ДАННЫЕ: Ссылка: https://docs.google.com/spreadsheets/d/1SRuXW0UK8_4QrJyeDu04ZhVGUwh9PYPi9s3PYxugKW4/edit
+РЕАЛЬНЫЕ ДАННЫЕ: Название файла: Грицук Андрей | Scorecard FE
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"search_field":"string_field_1","account":291341,"disableAutofill":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"placeholder":"","search_field":"string_field_7","account":291341,"is...
+🔍 Найдено поле Scorecard в схеме: oMvUCpzbKSzzhPLUCwmGW = Scorecard (тип: url)
+📝 Обновляем поле Scorecard oMvUCpzbKSzzhPLUCwmGW со ссылкой: https://docs.google.com/spreadsheets/d/1SRuXW0UK8_4QrJyeDu04ZhVGUwh9PYPi9s3PYxugKW4/edit
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/74551160/questionary с данными {'oMvUCpzbKSzzhPLUCwmGW': 'https://docs.google.com/spreadsheets/d/1SRuXW0UK8_4QrJyeDu04ZhVGUwh9PYPi9s3PYxugKW4/edit'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/74551160/questionary
+📤 JSON данные: {'oMvUCpzbKSzzhPLUCwmGW': 'https://docs.google.com/spreadsheets/d/1SRuXW0UK8_4QrJyeDu04ZhVGUwh9PYPi9s3PYxugKW4/edit'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1SRuXW0UK8_4QrJyeDu04ZhVGUwh9PYPi9s3PYxugKW4/edit","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, конечно. |Цитаты [Офис: К офису готов. Живу в Минске.. Полный рабочий день: Смогу полный рабочий день]","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"Отслужил 4 года назад","c8wID33nTMvoCpJmtngyq":"Не принципиально, зависит от условий","Ew3LqHTK8SL67j2VQ-n6y":"Окончание контракта","...
+🗑️ Сброшен кэш для кандидата: 74551160
+✅ Поле Scorecard обновлено со ссылкой на scorecard
+✅ Поле 'Scorecard' в Huntflow обновлено со ссылкой на scorecard
+🔍 Создаем календарное событие...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74551160
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Андрей","last_name":"Грицук","middle_name":"Викторович","money":"2000$","phone":"+375 (29) 5251893","email":"axa8xa8@gmail.com","skype":null,"position":"Frontend developer (React/Vue","company":null,"photo":null,"id":74551160,"account":291341,"photo_url":null,"birthday":"1997-05-31","created":"2025-10-01T15:29:23+03:00","tags":[],"links":[{"id":69936952,"status":186502,"updated":"2025-10-01T16:41:34+03:00","changed":"2025-10-01T16:41:34+03:00","vacancy":3936868}],"external":[{"id"...
+💾 Сохранены данные кандидата в кэш: 74551160
+📧 Найден email кандидата: axa8xa8@gmail.com
+📅 Сгенерировано название события: JS Tech Screening | Грицук Андрей
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 45 минут
+⏱️ Используем длительность скринингов: 45 минут
+📝 Найден телеграм рекрутера: softnetix_talent
+📝 Ссылка на телеграм: https://t.me/softnetix_talent
+📝 Сопроводительный текст: Попрошу быть с камерой. Технический скрининг будет с секцией лайв-кодинга (нужно будет шарить экран)...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔗 Сгенерирована ссылка на Huntflow (prod): https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/74551160
+👥 Добавляем кандидата в участники: axa8xa8@gmail.com
+🔍 Время с timezone: 2025-10-03 12:00:00+03:00
+🔍 Время начала (UTC): 2025-10-03 09:00:00+00:00
+🔍 Время окончания (UTC): 2025-10-03 09:45:00+00:00
+🔍 Строка времени начала: 2025-10-03T09:00:00
+🔍 Строка времени окончания: 2025-10-03T09:45:00
+📅 Создаем событие: JS Tech Screening | Грицук Андрей
+📅 Время начала: 2025-10-03T09:00:00
+📅 Время окончания: 2025-10-03T09:45:00
+📅 Данные события: {'summary': 'JS Tech Screening | Грицук Андрей', 'description': 'Попрошу быть с камерой. Технический скрининг будет с секцией лайв-кодинга (нужно будет шарить экран). Если возникнут вопросы - на связи в телеграм https://t.me/softnetix_talent\n\nДля интервьюеров:\nhttps://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/74551160', 'location': '', 'start': {'dateTime': '2025-10-03T09:00:00', 'timeZone': 'UTC'}, 'end': {'dateTime': '2025-10-03T09:45:00', 'timeZone': 'UTC'}, 'attendees': [{'email': 'axa8xa8@gmail.com'}], 'conferenceData': {'createRequest': {'requestId': 'meet-202510031200', 'conferenceSolutionKey': {'type': 'hangoutsMeet'}}}, 'reminders': {'useDefault': False, 'overrides': [{'method': 'email', 'minutes': 1440}, {'method': 'popup', 'minutes': 10}]}}
+✅ Событие создано: JS Tech Screening | Грицук Андрей (2025-10-03 12:00:00+03:00 - 2025-10-03 12:45:00+03:00)
+⏱️ Длительность: 45 минут
+🔗 Ссылка на событие: https://www.google.com/calendar/event?eid=azRzMmlxMTQ2ZDE4MzgwYWVlOWloNHFyYzAgYW5kcmVpLmdvbHViZW5rb0Bzb2Z0bmV0aXguaW8
+🔗 Google Meet ссылка: https://meet.google.com/pjj-eayw-mqn
+✅ Календарное событие создано: JS Tech Screening | Грицук Андрей
+🔗 Ссылка на событие: https://www.google.com/calendar/event?eid=azRzMmlxMTQ2ZDE4MzgwYWVlOWloNHFyYzAgYW5kcmVpLmdvbHViZW5rb0Bzb2Z0bmV0aXguaW8
+🔍 Результат создания календарного события: True
+[TECH_SCREENING_UPDATE] Календарное событие создано успешно, обновляем статус...
+[TECH_SCREENING] Начинаем обновление статуса кандидата 74551160
+[TECH_SCREENING] Импорты выполнены успешно
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+[TECH_SCREENING] Получен account_id: 291341
+[TECH_SCREENING] Запрашиваем статусы вакансий...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies/statuses
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":186500,"type":"user","name":"New","removed":null,"order":1,"stay_duration":null},{"id":187026,"type":"user","name":"Message","removed":null,"order":2,"stay_duration":null},{"id":186501,"type":"user","name":"Contact","removed":null,"order":3,"stay_duration":null},{"id":187027,"type":"user","name":"Portfolio Review","removed":null,"order":4,"stay_duration":null},{"id":186502,"type":"user","name":"HR Screening","removed":null,"order":5,"stay_duration":null},{"id":189774,"type":"user...
+[TECH_SCREENING] Получены статусы: {'items': [{'id': 186500, 'type': 'user', 'name': 'New', 'removed': None, 'order': 1, 'stay_duration': None}, {'id': 187026, 'type': 'user', 'name': 'Message', 'removed': None, 'order': 2, 'stay_duration': None}, {'id': 186501, 'type': 'user', 'name': 'Contact', 'removed': None, 'order': 3, 'stay_duration': None}, {'id': 187027, 'type': 'user', 'name': 'Portfolio Review', 'removed': None, 'order': 4, 'stay_duration': None}, {'id': 186502, 'type': 'user', 'name': 'HR Screening', 'removed': None, 'order': 5, 'stay_duration': None}, {'id': 189774, 'type': 'user', 'name': 'CV Check by HM', 'removed': None, 'order': 6, 'stay_duration': None}, {'id': 187028, 'type': 'user', 'name': 'Test Task', 'removed': None, 'order': 7, 'stay_duration': None}, {'id': 186503, 'type': 'user', 'name': 'Tech Screening', 'removed': None, 'order': 8, 'stay_duration': None}, {'id': 186504, 'type': 'user', 'name': 'Final Interview', 'removed': None, 'order': 9, 'stay_duration': None}, {'id': 186505, 'type': 'user', 'name': 'Decision', 'removed': None, 'order': 10, 'stay_duration': None}, {'id': 186506, 'type': 'user', 'name': 'Offer', 'removed': None, 'order': 11, 'stay_duration': None}, {'id': 186507, 'type': 'hired', 'name': 'Offer accepted', 'removed': None, 'order': 12, 'stay_duration': None}, {'id': 186508, 'type': 'user', 'name': 'Onboarding', 'removed': None, 'order': 13, 'stay_duration': None}, {'id': 186509, 'type': 'trash', 'name': 'Отказ', 'removed': None, 'order': 9999, 'stay_duration': None}]}
+[TECH_SCREENING] Ищем статус Tech Screening среди 14 статусов
+[TECH_SCREENING] Проверяем статус: 'New'
+[TECH_SCREENING] Проверяем статус: 'Message'
+[TECH_SCREENING] Проверяем статус: 'Contact'
+[TECH_SCREENING] Проверяем статус: 'Portfolio Review'
+[TECH_SCREENING] Проверяем статус: 'HR Screening'
+[TECH_SCREENING] Проверяем статус: 'CV Check by HM'
+[TECH_SCREENING] Проверяем статус: 'Test Task'
+[TECH_SCREENING] Проверяем статус: 'Tech Screening'
+🔍 TECH_SCREENING: Найден статус Tech Screening с ID 186503
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 45 минут
+[TECH_SCREENING] Кандидат: 74551160 -> Tech Screening
+[TECH_SCREENING] Комментарий: Пятница, 3 октября⋅12:00–12:45
+[TECH_SCREENING] Используем статус ID: 186503
+[TECH_SCREENING] Вызываем update_applicant_status...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74551160
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Андрей","last_name":"Грицук","middle_name":"Викторович","money":"2000$","phone":"+375 (29) 5251893","email":"axa8xa8@gmail.com","skype":null,"position":"Frontend developer (React/Vue","company":null,"photo":null,"id":74551160,"account":291341,"photo_url":null,"birthday":"1997-05-31","created":"2025-10-01T15:29:23+03:00","tags":[],"links":[{"id":69936952,"status":186502,"updated":"2025-10-01T16:41:34+03:00","changed":"2025-10-01T16:41:34+03:00","vacancy":3936868}],"external":[{"id"...
+DEBUG: Обновляем статус кандидата 74551160 на статус 186503 для вакансии 3936868 с комментарием: Пятница, 3 октября⋅12:00–12:45
+DEBUG: Пробуем эндпоинт /accounts/291341/applicants/74551160/vacancy с данными {'vacancy': 3936868, 'status': 186503, 'comment': 'Пятница, 3 октября⋅12:00–12:45'}
+🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/applicants/74551160/vacancy
+📤 JSON данные: {'vacancy': 3936868, 'status': 186503, 'comment': 'Пятница, 3 октября⋅12:00–12:45'}
+📥 Ответ API: 200
+📥 Тело ответа: {"id":69936952,"changed":"2025-10-01T17:08:28+03:00","vacancy":3936868,"status":186503,"rejection_reason":null}...
+DEBUG: Статус успешно обновлен через /accounts/291341/applicants/74551160/vacancy
+🗑️ Сброшен кэш для кандидата: 74551160
+[TECH_SCREENING] Результат update_applicant_status: {'id': 69936952, 'changed': '2025-10-01T17:08:28+03:00', 'vacancy': 3936868, 'status': 186503, 'rejection_reason': None}
+[TECH_SCREENING] Успешно обновлен статус на Tech Screening
+[TECH_SCREENING_UPDATE] Статус обновлен: True
+✅ COMBINED_FORM_SAVE: Структура Google Drive создана
+🔍 COMBINED_FORM_SAVE: Обрабатываем scorecard...
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Junior
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Junior+
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Middle
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Senior[01/Oct/2025 17:08:32] "POST /google-oauth/chat/23/ HTTP/1.1" 302 0
+[01/Oct/2025 17:08:38] "GET /google-oauth/chat/23/ HTTP/1.1" 200 334754
+[01/Oct/2025 17:08:40] "POST /google-oauth/invites/175/invitation-text/ HTTP/1.1" 200 1141
+[01/Oct/2025 17:09:45] "GET /google-oauth/chat/23/ HTTP/1.1" 200 334754
+[01/Oct/2025 17:09:50] "GET /google-oauth/chat/23/ HTTP/1.1" 200 334754
+[01/Oct/2025 18:18:53] "GET /google-oauth/chat/23/ HTTP/1.1" 200 335776
+
+РЕАЛЬНЫЕ ДАННЫЕ: Обработка scorecard завершена
+РЕАЛЬНЫЕ ДАННЫЕ: Сохранены листы: all, score, Middle+
+РЕАЛЬНЫЕ ДАННЫЕ: Удалены листы: Junior, Junior+, Middle, Senior
+✅ COMBINED_FORM_SAVE: Scorecard обработан
+✅ COMBINED_FORM_SAVE: Инвайт сохранен с ID: 175
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 26 событий
+🔍 DEBUG CHAT: Получено 26 событий из API
+🔍 DEBUG CHAT: Передаем 26 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-02T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Барцевич Андрей в 2025-10-02T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: Обед в 2025-10-02T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 45 минут
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 26 событий
+🔍 DEBUG CHAT: Получено 26 событий из API
+🔍 DEBUG CHAT: Передаем 26 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-02T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Барцевич Андрей в 2025-10-02T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: Обед в 2025-10-02T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 26 событий
+🔍 DEBUG CHAT: Получено 26 событий из API
+🔍 DEBUG CHAT: Передаем 26 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-02T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Барцевич Андрей в 2025-10-02T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: Обед в 2025-10-02T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 27 событий
+🔍 DEBUG CHAT: Получено 27 событий из API
+🔍 DEBUG CHAT: Передаем 27 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-02T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Барцевич Андрей в 2025-10-02T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: Обед в 2025-10-02T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 CHAT: Определен тип действия: invite
+🔍 CHAT: Текст сообщения: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74548199
+завтра в 17'
+🔍 CLEAN_COMBINED_DATA: combined_data = 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74548199
+завтра в 17'
+🔍 CLEAN_COMBINED_DATA: Найдено URLs: ['https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74548199']
+✅ CLEAN_COMBINED_DATA: URL извлечен: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74548199
+✅ CLEAN_COMBINED_DATA: Весь текст сохранен для парсера: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74548199
+завтра в 17'
+🔍 COMBINED_FORM_CLEAN: Начинаем очистку формы
+🔍 COMBINED_FORM_CLEAN: cleaned_data keys: ['candidate_url', 'interview_datetime', 'combined_data']
+🔍 COMBINED_FORM_CLEAN: combined_data: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74548199
+завтра в 17
+🔍 COMBINED_FORM_CLEAN: URL извлечен, дату обработает парсер
+🔍 COMBINED_FORM_CLEAN: Финальные cleaned_data: {'candidate_url': 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74548199', 'interview_datetime': None, 'combined_data': 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74548199\r\nзавтра в 17'}
+🔍 COMBINED_FORM_SAVE: Начинаем сохранение инвайта...
+🔍 COMBINED_FORM_SAVE: Сохранены исходные данные: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74548199
+завтра в 17...
+🔍 COMBINED_FORM_SAVE: Инвайт создан, user: andrei.golubenko
+🔍 COMBINED_FORM_SAVE: Парсим URL...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 PARSE_URL: Используем первый доступный account_id: 291341
+✅ COMBINED_FORM_SAVE: URL распарсен успешно
+🔍 COMBINED_FORM_SAVE: Получаем информацию о кандидате...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 GET_CANDIDATE_INFO: Автоматически получен account_id: 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74548199
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"VICTOR","last_name":"RUDZKO","middle_name":null,"money":"от 800$ (400-500$ на испытательном сроке)","phone":"+375-29-290-78-33","email":"viktor_red_rudko@mail.ru","skype":null,"position":"Engineer","company":null,"photo":null,"id":74548199,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/2/e/c/2ecc04f720e1255d0b4eca4820242197.png?s=TXK6MjPdeYs7RGE2QqlRiw&e=1761924077","birthday":null,"created":"2025-10-01T14:47:05+03:00","tags":[],"links":[{"id":69933701,"status":1...
+💾 Сохранены данные кандидата в кэш: 74548199
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74548199/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior","oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, конечно. |Цитаты [Офис: офисный формат подходит, живу у метро Пушкинская. Полный рабочий день: да, смогу работать полный рабочий день и даже больше, если понадобится)]","n-U2tU6G5iBoxSPkXFN7F":"нет","S58S9DFqO7w-JzDbF2HJA":"офицер запаса","c8wID33nTMvoCpJmtngyq":"null","Ew3LqHTK8SL67j2VQ-n6y":"приостановка финансирования","DoOdxUlwbb0nILXQGBDaT":"хоть завтра","ICXvQX-WT9eleJW-...
+РЕАЛЬНЫЕ ДАННЫЕ: Доступные грейды в системе: ['Head', 'Junior', 'Junior+', 'Lead', 'Middle', 'Middle+', 'Senior', 'Senior+']
+РЕАЛЬНЫЕ ДАННЫЕ: Не удалось получить схему анкеты: HuntflowService.get_applicant_questionary_schema() takes 2 positional arguments but 3 were given
+РЕАЛЬНЫЕ ДАННЫЕ: Найден уровень по значению: Junior (поле: kIbah4MN0iHussXm3n2Ar)
+РЕАЛЬНЫЕ ДАННЫЕ: ✅ Найден уровень в анкете: Junior (поле: kIbah4MN0iHussXm3n2Ar)
+РЕАЛЬНЫЕ ДАННЫЕ: Получена информация о кандидате 74548199
+РЕАЛЬНЫЕ ДАННЫЕ: Имя: RUDZKO VICTOR
+РЕАЛЬНЫЕ ДАННЫЕ: Уровень: Junior
+✅ COMBINED_FORM_SAVE: Информация о кандидате получена
+🔍 COMBINED_FORM_SAVE: Получаем информацию о вакансии...
+ЛОКАЛЬНЫЕ ДАННЫЕ: Найдена вакансия в локальной БД: Frontend Engineer (React)
+ЛОКАЛЬНЫЕ ДАННЫЕ: Шаблон scorecard: https://docs.google.com/spreadsheets/d/1Zz61HtsXAWvfHtlTucfJQnJEDCKLwcVRybmT9BHfZqg/edit?gid=1164423222#gid=1164423222
+ЛОКАЛЬНЫЕ ДАННЫЕ: Длительность скринингов: 45 минут
+✅ COMBINED_FORM_SAVE: Информация о вакансии получена
+🤖 COMBINED_FORM_SAVE: Анализируем время с помощью парсера...
+[PARSER DEBUG] Анализируем текст пользователя andrei.golubenko
+[PARSER DEBUG] Текст для анализа: завтра в 17...
+[PARSER SUCCESS] Определена дата/время: 02.10.2025 17:00
+✅ COMBINED_FORM_SAVE: Время проанализировано с помощью парсера
+✅ COMBINED_FORM_SAVE: Дата интервью установлена из парсера: 2025-10-02 17:00:00+03:00
+🔍 COMBINED_FORM_SAVE: Создаем структуру Google Drive...
+ЛОКАЛЬНЫЕ ДАННЫЕ: Используем scorecard из локальной БД: | Scorecard FE
+ЛОКАЛЬНЫЕ ДАННЫЕ: Ссылка на шаблон: https://docs.google.com/spreadsheets/d/1Zz61HtsXAWvfHtlTucfJQnJEDCKLwcVRybmT9BHfZqg/edit?gid=1164423222#gid=1164423222
+🔍 SAMPLE_DATA: Подготавливаем данные для генерации пути папок
+🔍 SAMPLE_DATA: candidate_name = 'RUDZKO VICTOR'
+🔍 SAMPLE_DATA: vacancy_title = 'Frontend Engineer (React)'
+🔍 SAMPLE_DATA: interview_datetime = '2025-10-02 17:00:00+03:00'
+🔍 SAMPLE_DATA: Подготовленные данные:
+🔍 SAMPLE_DATA:   date = '02.10.2025'
+🔍 SAMPLE_DATA:   day = '02'
+🔍 SAMPLE_DATA:   week_short_en = 'Thu'
+🔍 SAMPLE_DATA:   week_short_ru = 'ЧТ'
+🔍 SAMPLE_DATA:   week_full_en = 'Thursday'
+🔍 SAMPLE_DATA:   week_full_ru = 'Четверг'
+🔍 SAMPLE_DATA:   month_num = '10'
+🔍 SAMPLE_DATA:   month_short_ru = 'окт'
+🔍 SAMPLE_DATA:   month_short_en = 'Oct'
+🔍 SAMPLE_DATA:   month_full_ru = 'октябрь'
+🔍 SAMPLE_DATA:   month_full_en = 'October'
+🔍 SAMPLE_DATA:   weekday_short_ru = 'ЧТ'
+🔍 SAMPLE_DATA:   weekday_short_en = 'Thu'
+🔍 SAMPLE_DATA:   weekday_full_ru = 'Четверг'
+🔍 SAMPLE_DATA:   weekday_full_en = 'Thursday'
+🔍 SAMPLE_DATA:   year_short = '25'
+🔍 SAMPLE_DATA:   year_full = '2025'
+🔍 SAMPLE_DATA:   candidate_first_name = 'VICTOR'
+🔍 SAMPLE_DATA:   candidate_last_name = 'RUDZKO'
+🔍 SAMPLE_DATA:   candidate_middle_name = ''
+🔍 SAMPLE_DATA:   candidate_id = '74548199'
+🔍 SAMPLE_DATA:   vacancy_title = 'Frontend Engineer (React)'
+🔍 SAMPLE_DATA:   vacancy_id = '3936868'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=text, value='automations'
+🔍 FOLDER_GEN: Text элемент: 'automations'
+🔍 FOLDER_GEN: Добавлена папка: 'automations'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=vacancy_title, value=''
+🔍 FOLDER_GEN: Обычный элемент vacancy_title: 'Frontend Engineer (React)'
+🔍 FOLDER_GEN: Добавлена папка: 'Frontend Engineer (React)'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=year_full, value=''
+🔍 FOLDER_GEN: Обычный элемент year_full: '2025'
+🔍 FOLDER_GEN: Добавлена папка: '2025'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[month_num] [month_full_ru]'
+🔍 FOLDER_GEN: Mixed элемент: '[month_num] [month_full_ru]' -> '10 октябрь'
+🔍 FOLDER_GEN: Добавлена папка: '10 октябрь'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[day] [month_full_ru] [weekday_short_ru]'
+🔍 FOLDER_GEN: Mixed элемент: '[day] [month_full_ru] [weekday_short_ru]' -> '02 октябрь ЧТ'
+🔍 FOLDER_GEN: Добавлена папка: '02 октябрь ЧТ'
+НАСТРОЙКИ ПАПОК: Структура папок: automations/Frontend Engineer (React)/2025/10 октябрь/02 октябрь ЧТ
+НАСТРОЙКИ ПАПОК: База названия файла: RUDZKO VICTOR
+РЕАЛЬНЫЕ ДАННЫЕ: Создана структура папок: automations/Frontend Engineer (React)/2025/10 октябрь/02 октябрь ЧТ
+РЕАЛЬНЫЕ ДАННЫЕ: ID папки: 1Vh18ghqI3e4rEylSHPcqxKOu8AGZwdH-
+РЕАЛЬНЫЕ ДАННЫЕ: ID файла: 1m4loHcD5_CErgN2RNP6ipl0qFY0urIrvqSaRq_eNqJM
+РЕАЛЬНЫЕ ДАННЫЕ: Ссылка: https://docs.google.com/spreadsheets/d/1m4loHcD5_CErgN2RNP6ipl0qFY0urIrvqSaRq_eNqJM/edit
+РЕАЛЬНЫЕ ДАННЫЕ: Название файла: RUDZKO VICTOR | Scorecard FE
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"is_archived":false,"search_field":"string_field_1","account":291341,"search_filter":true,"disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"search_field":"string_field_7","account":291341,"search_filter":true,...
+🔍 Найдено поле Scorecard в схеме: oMvUCpzbKSzzhPLUCwmGW = Scorecard (тип: url)
+📝 Обновляем поле Scorecard oMvUCpzbKSzzhPLUCwmGW со ссылкой: https://docs.google.com/spreadsheets/d/1m4loHcD5_CErgN2RNP6ipl0qFY0urIrvqSaRq_eNqJM/edit
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/74548199/questionary с данными {'oMvUCpzbKSzzhPLUCwmGW': 'https://docs.google.com/spreadsheets/d/1m4loHcD5_CErgN2RNP6ipl0qFY0urIrvqSaRq_eNqJM/edit'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/74548199/questionary
+📤 JSON данные: {'oMvUCpzbKSzzhPLUCwmGW': 'https://docs.google.com/spreadsheets/d/1m4loHcD5_CErgN2RNP6ipl0qFY0urIrvqSaRq_eNqJM/edit'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1m4loHcD5_CErgN2RNP6ipl0qFY0urIrvqSaRq_eNqJM/edit","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, конечно. |Цитаты [Офис: офисный формат подходит, живу у метро Пушкинская. Полный рабочий день: да, смогу работать полный рабочий день и даже больше, если понадобится)]","n-U2tU6G5iBoxSPkXFN7F":"нет","S58S9DFqO7w-JzDbF2HJA":"офицер запаса","c8wID33nTMvoCpJmtngyq":"null","Ew3LqHTK8SL67j2VQ-n6y"...
+🗑️ Сброшен кэш для кандидата: 74548199
+✅ Поле Scorecard обновлено со ссылкой на scorecard
+✅ Поле 'Scorecard' в Huntflow обновлено со ссылкой на scorecard
+🔍 Создаем календарное событие...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74548199
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"VICTOR","last_name":"RUDZKO","middle_name":null,"money":"от 800$ (400-500$ на испытательном сроке)","phone":"+375-29-290-78-33","email":"viktor_red_rudko@mail.ru","skype":null,"position":"Engineer","company":null,"photo":null,"id":74548199,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/2/e/c/2ecc04f720e1255d0b4eca4820242197.png?s=MomjdEbb2pRHxyn80yZ5FA&e=1761924086","birthday":null,"created":"2025-10-01T14:47:05+03:00","tags":[],"links":[{"id":69933701,"status":1...
+💾 Сохранены данные кандидата в кэш: 74548199
+📧 Найден email кандидата: viktor_red_rudko@mail.ru
+📅 Сгенерировано название события: JS Tech Screening | RUDZKO VICTOR
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 45 минут
+⏱️ Используем длительность скринингов: 45 минут
+📝 Найден телеграм рекрутера: softnetix_talent
+📝 Ссылка на телеграм: https://t.me/softnetix_talent
+📝 Сопроводительный текст: Попрошу быть с камерой. Технический скрининг будет с секцией лайв-кодинга (нужно будет шарить экран)...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔗 Сгенерирована ссылка на Huntflow (prod): https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/74548199
+👥 Добавляем кандидата в участники: viktor_red_rudko@mail.ru
+🔍 Время с timezone: 2025-10-02 17:00:00+03:00
+🔍 Время начала (UTC): 2025-10-02 14:00:00+00:00
+🔍 Время окончания (UTC): 2025-10-02 14:45:00+00:00
+🔍 Строка времени начала: 2025-10-02T14:00:00
+🔍 Строка времени окончания: 2025-10-02T14:45:00
+📅 Создаем событие: JS Tech Screening | RUDZKO VICTOR
+📅 Время начала: 2025-10-02T14:00:00
+📅 Время окончания: 2025-10-02T14:45:00
+📅 Данные события: {'summary': 'JS Tech Screening | RUDZKO VICTOR', 'description': 'Попрошу быть с камерой. Технический скрининг будет с секцией лайв-кодинга (нужно будет шарить экран). Если возникнут вопросы - на связи в телеграм https://t.me/softnetix_talent\n\nДля интервьюеров:\nhttps://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/74548199', 'location': '', 'start': {'dateTime': '2025-10-02T14:00:00', 'timeZone': 'UTC'}, 'end': {'dateTime': '2025-10-02T14:45:00', 'timeZone': 'UTC'}, 'attendees': [{'email': 'viktor_red_rudko@mail.ru'}], 'conferenceData': {'createRequest': {'requestId': 'meet-202510021700', 'conferenceSolutionKey': {'type': 'hangoutsMeet'}}}, 'reminders': {'useDefault': False, 'overrides': [{'method': 'email', 'minutes': 1440}, {'method': 'popup', 'minutes': 10}]}}
+✅ Событие создано: JS Tech Screening | RUDZKO VICTOR (2025-10-02 17:00:00+03:00 - 2025-10-02 17:45:00+03:00)
+⏱️ Длительность: 45 минут
+🔗 Ссылка на событие: https://www.google.com/calendar/event?eid=bGQzYzVsOTl1djNmMjJsZGRrZXJnYzc5MGcgYW5kcmVpLmdvbHViZW5rb0Bzb2Z0bmV0aXguaW8
+🔗 Google Meet ссылка: https://meet.google.com/tzf-rhxj-sot
+✅ Календарное событие создано: JS Tech Screening | RUDZKO VICTOR
+🔗 Ссылка на событие: https://www.google.com/calendar/event?eid=bGQzYzVsOTl1djNmMjJsZGRrZXJnYzc5MGcgYW5kcmVpLmdvbHViZW5rb0Bzb2Z0bmV0aXguaW8
+🔍 Результат создания календарного события: True
+[TECH_SCREENING_UPDATE] Календарное событие создано успешно, обновляем статус...
+[TECH_SCREENING] Начинаем обновление статуса кандидата 74548199
+[TECH_SCREENING] Импорты выполнены успешно
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+[TECH_SCREENING] Получен account_id: 291341
+[TECH_SCREENING] Запрашиваем статусы вакансий...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies/statuses
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":186500,"type":"user","name":"New","removed":null,"order":1,"stay_duration":null},{"id":187026,"type":"user","name":"Message","removed":null,"order":2,"stay_duration":null},{"id":186501,"type":"user","name":"Contact","removed":null,"order":3,"stay_duration":null},{"id":187027,"type":"user","name":"Portfolio Review","removed":null,"order":4,"stay_duration":null},{"id":186502,"type":"user","name":"HR Screening","removed":null,"order":5,"stay_duration":null},{"id":189774,"type":"user...
+[TECH_SCREENING] Получены статусы: {'items': [{'id': 186500, 'type': 'user', 'name': 'New', 'removed': None, 'order': 1, 'stay_duration': None}, {'id': 187026, 'type': 'user', 'name': 'Message', 'removed': None, 'order': 2, 'stay_duration': None}, {'id': 186501, 'type': 'user', 'name': 'Contact', 'removed': None, 'order': 3, 'stay_duration': None}, {'id': 187027, 'type': 'user', 'name': 'Portfolio Review', 'removed': None, 'order': 4, 'stay_duration': None}, {'id': 186502, 'type': 'user', 'name': 'HR Screening', 'removed': None, 'order': 5, 'stay_duration': None}, {'id': 189774, 'type': 'user', 'name': 'CV Check by HM', 'removed': None, 'order': 6, 'stay_duration': None}, {'id': 187028, 'type': 'user', 'name': 'Test Task', 'removed': None, 'order': 7, 'stay_duration': None}, {'id': 186503, 'type': 'user', 'name': 'Tech Screening', 'removed': None, 'order': 8, 'stay_duration': None}, {'id': 186504, 'type': 'user', 'name': 'Final Interview', 'removed': None, 'order': 9, 'stay_duration': None}, {'id': 186505, 'type': 'user', 'name': 'Decision', 'removed': None, 'order': 10, 'stay_duration': None}, {'id': 186506, 'type': 'user', 'name': 'Offer', 'removed': None, 'order': 11, 'stay_duration': None}, {'id': 186507, 'type': 'hired', 'name': 'Offer accepted', 'removed': None, 'order': 12, 'stay_duration': None}, {'id': 186508, 'type': 'user', 'name': 'Onboarding', 'removed': None, 'order': 13, 'stay_duration': None}, {'id': 186509, 'type': 'trash', 'name': 'Отказ', 'removed': None, 'order': 9999, 'stay_duration': None}]}[01/Oct/2025 18:21:36] "POST /google-oauth/chat/23/ HTTP/1.1" 302 0
+[01/Oct/2025 18:21:37] "GET /google-oauth/chat/23/ HTTP/1.1" 200 345593
+[01/Oct/2025 18:21:46] "POST /google-oauth/invites/176/invitation-text/ HTTP/1.1" 200 1081
+
+[TECH_SCREENING] Ищем статус Tech Screening среди 14 статусов
+[TECH_SCREENING] Проверяем статус: 'New'
+[TECH_SCREENING] Проверяем статус: 'Message'
+[TECH_SCREENING] Проверяем статус: 'Contact'
+[TECH_SCREENING] Проверяем статус: 'Portfolio Review'
+[TECH_SCREENING] Проверяем статус: 'HR Screening'
+[TECH_SCREENING] Проверяем статус: 'CV Check by HM'
+[TECH_SCREENING] Проверяем статус: 'Test Task'
+[TECH_SCREENING] Проверяем статус: 'Tech Screening'
+🔍 TECH_SCREENING: Найден статус Tech Screening с ID 186503
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 45 минут
+[TECH_SCREENING] Кандидат: 74548199 -> Tech Screening
+[TECH_SCREENING] Комментарий: Четверг, 2 октября⋅17:00–17:45
+[TECH_SCREENING] Используем статус ID: 186503
+[TECH_SCREENING] Вызываем update_applicant_status...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74548199
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"VICTOR","last_name":"RUDZKO","middle_name":null,"money":"от 800$ (400-500$ на испытательном сроке)","phone":"+375-29-290-78-33","email":"viktor_red_rudko@mail.ru","skype":null,"position":"Engineer","company":null,"photo":null,"id":74548199,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/2/e/c/2ecc04f720e1255d0b4eca4820242197.png?s=c4d-0t10Uxy003wf-l4IMQ&e=1761924089","birthday":null,"created":"2025-10-01T14:47:05+03:00","tags":[],"links":[{"id":69933701,"status":1...
+DEBUG: Обновляем статус кандидата 74548199 на статус 186503 для вакансии 3936868 с комментарием: Четверг, 2 октября⋅17:00–17:45
+DEBUG: Пробуем эндпоинт /accounts/291341/applicants/74548199/vacancy с данными {'vacancy': 3936868, 'status': 186503, 'comment': 'Четверг, 2 октября⋅17:00–17:45'}
+🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/applicants/74548199/vacancy
+📤 JSON данные: {'vacancy': 3936868, 'status': 186503, 'comment': 'Четверг, 2 октября⋅17:00–17:45'}
+📥 Ответ API: 200
+📥 Тело ответа: {"id":69933701,"changed":"2025-10-01T18:21:29+03:00","vacancy":3936868,"status":186503,"rejection_reason":null}...
+DEBUG: Статус успешно обновлен через /accounts/291341/applicants/74548199/vacancy
+🗑️ Сброшен кэш для кандидата: 74548199
+[TECH_SCREENING] Результат update_applicant_status: {'id': 69933701, 'changed': '2025-10-01T18:21:29+03:00', 'vacancy': 3936868, 'status': 186503, 'rejection_reason': None}
+[TECH_SCREENING] Успешно обновлен статус на Tech Screening
+[TECH_SCREENING_UPDATE] Статус обновлен: True
+✅ COMBINED_FORM_SAVE: Структура Google Drive создана
+🔍 COMBINED_FORM_SAVE: Обрабатываем scorecard...
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Junior+
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Middle
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Middle+
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Senior
+РЕАЛЬНЫЕ ДАННЫЕ: Обработка scorecard завершена
+РЕАЛЬНЫЕ ДАННЫЕ: Сохранены листы: all, score, Junior
+РЕАЛЬНЫЕ ДАННЫЕ: Удалены листы: Junior+, Middle, Middle+, Senior
+✅ COMBINED_FORM_SAVE: Scorecard обработан
+✅ COMBINED_FORM_SAVE: Инвайт сохранен с ID: 176
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 27 событий
+🔍 DEBUG CHAT: Получено 27 событий из API
+🔍 DEBUG CHAT: Передаем 27 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-02T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Барцевич Андрей в 2025-10-02T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: Обед в 2025-10-02T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 45 минут
+🔍 CHAT: Определен тип действия: invite
+🔍 CHAT: Текст сообщения: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74481426
+ПТ 11'
+🔍 CLEAN_COMBINED_DATA: combined_data = 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74481426
+ПТ 11'
+🔍 CLEAN_COMBINED_DATA: Найдено URLs: ['https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74481426']
+✅ CLEAN_COMBINED_DATA: URL извлечен: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74481426
+✅ CLEAN_COMBINED_DATA: Весь текст сохранен для парсера: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74481426
+ПТ 11'
+🔍 COMBINED_FORM_CLEAN: Начинаем очистку формы
+🔍 COMBINED_FORM_CLEAN: cleaned_data keys: ['candidate_url', 'interview_datetime', 'combined_data']
+🔍 COMBINED_FORM_CLEAN: combined_data: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74481426
+ПТ 11
+🔍 COMBINED_FORM_CLEAN: URL извлечен, дату обработает парсер
+🔍 COMBINED_FORM_CLEAN: Финальные cleaned_data: {'candidate_url': 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74481426', 'interview_datetime': None, 'combined_data': 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74481426\r\nПТ 11'}
+🔍 COMBINED_FORM_SAVE: Начинаем сохранение инвайта...
+🔍 COMBINED_FORM_SAVE: Сохранены исходные данные: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186502/id/74481426
+ПТ 11...
+🔍 COMBINED_FORM_SAVE: Инвайт создан, user: andrei.golubenko
+🔍 COMBINED_FORM_SAVE: Парсим URL...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 PARSE_URL: Используем первый доступный account_id: 291341
+✅ COMBINED_FORM_SAVE: URL распарсен успешно
+🔍 COMBINED_FORM_SAVE: Получаем информацию о кандидате...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 GET_CANDIDATE_INFO: Автоматически получен account_id: 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74481426
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Андрей","last_name":"Ткачук","middle_name":null,"money":"12.000 PLN (2700 долл)","phone":null,"email":"andretku@gmail.com","skype":null,"position":null,"company":null,"photo":null,"id":74481426,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/3/0/3/3039f89024376b9af2cc729caea13e35.png?s=KwyCXvuhiHHmGX-Gqm_gnA&e=1761924539","birthday":null,"created":"2025-09-30T10:51:30+03:00","tags":[],"links":[{"id":69858009,"status":186502,"updated":"2025-10-01T14:32:01+03:00","c...
+💾 Сохранены данные кандидата в кэш: 74481426
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74481426/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, конечно. |Цитаты [Офис: Устраивает. Полный рабочий день: Да, конечно]","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":"У компании закончились деньги). Множество факторов смены работы: невозможность повышения, остался только одним фронтом в команде, нету прогресса.","DoOdxUlwbb0nILXQGBDaT":"Готов выйти на работу в ...
+РЕАЛЬНЫЕ ДАННЫЕ: Доступные грейды в системе: ['Head', 'Junior', 'Junior+', 'Lead', 'Middle', 'Middle+', 'Senior', 'Senior+']
+РЕАЛЬНЫЕ ДАННЫЕ: Не удалось получить схему анкеты: HuntflowService.get_applicant_questionary_schema() takes 2 positional arguments but 3 were given
+РЕАЛЬНЫЕ ДАННЫЕ: Найден уровень по значению: Senior (поле: kIbah4MN0iHussXm3n2Ar)
+РЕАЛЬНЫЕ ДАННЫЕ: ✅ Найден уровень в анкете: Senior (поле: kIbah4MN0iHussXm3n2Ar)
+РЕАЛЬНЫЕ ДАННЫЕ: Получена информация о кандидате 74481426
+РЕАЛЬНЫЕ ДАННЫЕ: Имя: Ткачук Андрей
+РЕАЛЬНЫЕ ДАННЫЕ: Уровень: Senior
+✅ COMBINED_FORM_SAVE: Информация о кандидате получена
+🔍 COMBINED_FORM_SAVE: Получаем информацию о вакансии...
+ЛОКАЛЬНЫЕ ДАННЫЕ: Найдена вакансия в локальной БД: Frontend Engineer (React)
+ЛОКАЛЬНЫЕ ДАННЫЕ: Шаблон scorecard: https://docs.google.com/spreadsheets/d/1Zz61HtsXAWvfHtlTucfJQnJEDCKLwcVRybmT9BHfZqg/edit?gid=1164423222#gid=1164423222
+ЛОКАЛЬНЫЕ ДАННЫЕ: Длительность скринингов: 45 минут
+✅ COMBINED_FORM_SAVE: Информация о вакансии получена
+🤖 COMBINED_FORM_SAVE: Анализируем время с помощью парсера...
+[PARSER DEBUG] Анализируем текст пользователя andrei.golubenko
+[PARSER DEBUG] Текст для анализа: ПТ 11...
+[PARSER SUCCESS] Определена дата/время: 03.10.2025 11:00
+✅ COMBINED_FORM_SAVE: Время проанализировано с помощью парсера
+✅ COMBINED_FORM_SAVE: Дата интервью установлена из парсера: 2025-10-03 11:00:00+03:00
+🔍 COMBINED_FORM_SAVE: Создаем структуру Google Drive...
+ЛОКАЛЬНЫЕ ДАННЫЕ: Используем scorecard из локальной БД: | Scorecard FE
+ЛОКАЛЬНЫЕ ДАННЫЕ: Ссылка на шаблон: https://docs.google.com/spreadsheets/d/1Zz61HtsXAWvfHtlTucfJQnJEDCKLwcVRybmT9BHfZqg/edit?gid=1164423222#gid=1164423222
+🔍 SAMPLE_DATA: Подготавливаем данные для генерации пути папок
+🔍 SAMPLE_DATA: candidate_name = 'Ткачук Андрей'
+🔍 SAMPLE_DATA: vacancy_title = 'Frontend Engineer (React)'
+🔍 SAMPLE_DATA: interview_datetime = '2025-10-03 11:00:00+03:00'
+🔍 SAMPLE_DATA: Подготовленные данные:
+🔍 SAMPLE_DATA:   date = '03.10.2025'
+🔍 SAMPLE_DATA:   day = '03'
+🔍 SAMPLE_DATA:   week_short_en = 'Fri'
+🔍 SAMPLE_DATA:   week_short_ru = 'ПТ'
+🔍 SAMPLE_DATA:   week_full_en = 'Friday'
+🔍 SAMPLE_DATA:   week_full_ru = 'Пятница'
+🔍 SAMPLE_DATA:   month_num = '10'
+🔍 SAMPLE_DATA:   month_short_ru = 'окт'
+🔍 SAMPLE_DATA:   month_short_en = 'Oct'
+🔍 SAMPLE_DATA:   month_full_ru = 'октябрь'
+🔍 SAMPLE_DATA:   month_full_en = 'October'
+🔍 SAMPLE_DATA:   weekday_short_ru = 'ПТ'
+🔍 SAMPLE_DATA:   weekday_short_en = 'Fri'
+🔍 SAMPLE_DATA:   weekday_full_ru = 'Пятница'
+🔍 SAMPLE_DATA:   weekday_full_en = 'Friday'
+🔍 SAMPLE_DATA:   year_short = '25'
+🔍 SAMPLE_DATA:   year_full = '2025'
+🔍 SAMPLE_DATA:   candidate_first_name = 'Андрей'
+🔍 SAMPLE_DATA:   candidate_last_name = 'Ткачук'
+🔍 SAMPLE_DATA:   candidate_middle_name = ''
+🔍 SAMPLE_DATA:   candidate_id = '74481426'
+🔍 SAMPLE_DATA:   vacancy_title = 'Frontend Engineer (React)'
+🔍 SAMPLE_DATA:   vacancy_id = '3936868'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=text, value='automations'
+🔍 FOLDER_GEN: Text элемент: 'automations'
+🔍 FOLDER_GEN: Добавлена папка: 'automations'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=vacancy_title, value=''
+🔍 FOLDER_GEN: Обычный элемент vacancy_title: 'Frontend Engineer (React)'
+🔍 FOLDER_GEN: Добавлена папка: 'Frontend Engineer (React)'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=year_full, value=''
+🔍 FOLDER_GEN: Обычный элемент year_full: '2025'
+🔍 FOLDER_GEN: Добавлена папка: '2025'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[month_num] [month_full_ru]'
+🔍 FOLDER_GEN: Mixed элемент: '[month_num] [month_full_ru]' -> '10 октябрь'
+🔍 FOLDER_GEN: Добавлена папка: '10 октябрь'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[day] [month_full_ru] [weekday_short_ru]'
+🔍 FOLDER_GEN: Mixed элемент: '[day] [month_full_ru] [weekday_short_ru]' -> '03 октябрь ПТ'
+🔍 FOLDER_GEN: Добавлена папка: '03 октябрь ПТ'
+НАСТРОЙКИ ПАПОК: Структура папок: automations/Frontend Engineer (React)/2025/10 октябрь/03 октябрь ПТ
+НАСТРОЙКИ ПАПОК: База названия файла: Ткачук Андрей
+РЕАЛЬНЫЕ ДАННЫЕ: Создана структура папок: automations/Frontend Engineer (React)/2025/10 октябрь/03 октябрь ПТ
+РЕАЛЬНЫЕ ДАННЫЕ: ID папки: 1oAz8r2CKarFbV9qOrnKTKeSo1WDbsMHu
+РЕАЛЬНЫЕ ДАННЫЕ: ID файла: 12zA2XOz0On2-PyJ16HLXtCvjVrNO05BCbqhgRQy-SR8
+РЕАЛЬНЫЕ ДАННЫЕ: Ссылка: https://docs.google.com/spreadsheets/d/12zA2XOz0On2-PyJ16HLXtCvjVrNO05BCbqhgRQy-SR8/edit
+РЕАЛЬНЫЕ ДАННЫЕ: Название файла: Ткачук Андрей | Scorecard FE
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","is_archived":false,"account":291341,"disableAutofill":true,"search_filter":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","is_archived":false,"account":291341,"placeholder":"","sea...
+🔍 Найдено поле Scorecard в схеме: oMvUCpzbKSzzhPLUCwmGW = Scorecard (тип: url)
+📝 Обновляем поле Scorecard oMvUCpzbKSzzhPLUCwmGW со ссылкой: https://docs.google.com/spreadsheets/d/12zA2XOz0On2-PyJ16HLXtCvjVrNO05BCbqhgRQy-SR8/edit
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/74481426/questionary с данными {'oMvUCpzbKSzzhPLUCwmGW': 'https://docs.google.com/spreadsheets/d/12zA2XOz0On2-PyJ16HLXtCvjVrNO05BCbqhgRQy-SR8/edit'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/74481426/questionary
+📤 JSON данные: {'oMvUCpzbKSzzhPLUCwmGW': 'https://docs.google.com/spreadsheets/d/12zA2XOz0On2-PyJ16HLXtCvjVrNO05BCbqhgRQy-SR8/edit'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/12zA2XOz0On2-PyJ16HLXtCvjVrNO05BCbqhgRQy-SR8/edit","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, конечно. |Цитаты [Офис: Устраивает. Полный рабочий день: Да, конечно]","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":"У компании закончились деньги). Множество факторов смены работы: невозможность повышения, остался только одним...
+🗑️ Сброшен кэш для кандидата: 74481426
+✅ Поле Scorecard обновлено со ссылкой на scorecard
+✅ Поле 'Scorecard' в Huntflow обновлено со ссылкой на scorecard
+🔍 Создаем календарное событие...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74481426
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Андрей","last_name":"Ткачук","middle_name":null,"money":"12.000 PLN (2700 долл)","phone":null,"email":"andretku@gmail.com","skype":null,"position":null,"company":null,"photo":null,"id":74481426,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/3/0/3/3039f89024376b9af2cc729caea13e35.png?s=3gMyLzwllsxtG-19s3mmVA&e=1761924548","birthday":null,"created":"2025-09-30T10:51:30+03:00","tags":[],"links":[{"id":69858009,"status":186502,"updated":"2025-10-01T14:32:01+03:00","c...
+💾 Сохранены данные кандидата в кэш: 74481426
+📧 Найден email кандидата: andretku@gmail.com
+📅 Сгенерировано название события: JS Tech Screening | Ткачук Андрей
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 45 минут
+⏱️ Используем длительность скринингов: 45 минут
+📝 Найден телеграм рекрутера: softnetix_talent
+📝 Ссылка на телеграм: https://t.me/softnetix_talent
+📝 Сопроводительный текст: Попрошу быть с камерой. Технический скрининг будет с секцией лайв-кодинга (нужно будет шарить экран)...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔗 Сгенерирована ссылка на Huntflow (prod): https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/74481426
+👥 Добавляем кандидата в участники: andretku@gmail.com
+🔍 Время с timezone: 2025-10-03 11:00:00+03:00
+🔍 Время начала (UTC): 2025-10-03 08:00:00+00:00
+🔍 Время окончания (UTC): 2025-10-03 08:45:00+00:00
+🔍 Строка времени начала: 2025-10-03T08:00:00
+🔍 Строка времени окончания: 2025-10-03T08:45:00
+📅 Создаем событие: JS Tech Screening | Ткачук Андрей
+📅 Время начала: 2025-10-03T08:00:00
+📅 Время окончания: 2025-10-03T08:45:00
+📅 Данные события: {'summary': 'JS Tech Screening | Ткачук Андрей', 'description': 'Попрошу быть с камерой. Технический скрининг будет с секцией лайв-кодинга (нужно будет шарить экран). Если возникнут вопросы - на связи в телеграм https://t.me/softnetix_talent\n\nДля интервьюеров:\nhttps://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/74481426', 'location': '', 'start': {'dateTime': '2025-10-03T08:00:00', 'timeZone': 'UTC'}, 'end': {'dateTime': '2025-10-03T08:45:00', 'timeZone': 'UTC'}, 'attendees': [{'email': 'andretku@gmail.com'}], 'conferenceData': {'createRequest': {'requestId': 'meet-202510031100', 'conferenceSolutionKey': {'type': 'hangoutsMeet'}}}, 'reminders': {'useDefault': False, 'overrides': [{'method': 'email', 'minutes': 1440}, {'method': 'popup', 'minutes': 10}]}}
+✅ Событие создано: JS Tech Screening | Ткачук Андрей (2025-10-03 11:00:00+03:00 - 2025-10-03 11:45:00+03:00)
+⏱️ Длительность: 45 минут
+🔗 Ссылка на событие: https://www.google.com/calendar/event?eid=dGd1MHNoaGs1NmJhYjZucHM5YmU4dTNybzAgYW5kcmVpLmdvbHViZW5rb0Bzb2Z0bmV0aXguaW8
+🔗 Google Meet ссылка: https://meet.google.com/ycc-ftiv-exv
+✅ Календарное событие создано: JS Tech Screening | Ткачук Андрей
+🔗 Ссылка на событие: https://www.google.com/calendar/event?eid=dGd1MHNoaGs1NmJhYjZucHM5YmU4dTNybzAgYW5kcmVpLmdvbHViZW5rb0Bzb2Z0bmV0aXguaW8
+🔍 Результат создания календарного события: True
+[TECH_SCREENING_UPDATE] Календарное событие создано успешно, обновляем статус...
+[TECH_SCREENING] Начинаем обновление статуса кандидата 74481426
+[TECH_SCREENING] Импорты выполнены успешно
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+[TECH_SCREENING] Получен account_id: 291341
+[TECH_SCREENING] Запрашиваем статусы вакансий...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies/statuses
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":186500,"type":"user","name":"New","removed":null,"order":1,"stay_duration":null},{"id":187026,"type":"user","name":"Message","removed":null,"order":2,"stay_duration":null},{"id":186501,"type":"user","name":"Contact","removed":null,"order":3,"stay_duration":null},{"id":187027,"type":"user","name":"Portfolio Review","removed":null,"order":4,"stay_duration":null},{"id":186502,"type":"user","name":"HR Screening","removed":null,"order":5,"stay_duration":null},{"id":189774,"type":"user...
+[TECH_SCREENING] Получены статусы: {'items': [{'id': 186500, 'type': 'user', 'name': 'New', 'removed': None, 'order': 1, 'stay_duration': None}, {'id': 187026, 'type': 'user', 'name': 'Message', 'removed': None, 'order': 2, 'stay_duration': None}, {'id': 186501, 'type': 'user', 'name': 'Contact', 'removed': None, 'order': 3, 'stay_duration': None}, {'id': 187027, 'type': 'user', 'name': 'Portfolio Review', 'removed': None, 'order': 4, 'stay_duration': None}, {'id': 186502, 'type': 'user', 'name': 'HR Screening', 'removed': None, 'order': 5, 'stay_duration': None}, {'id': 189774, 'type': 'user', 'name': 'CV Check by HM', 'removed': None, 'order': 6, 'stay_duration': None}, {'id': 187028, 'type': 'user', 'name': 'Test Task', 'removed': None, 'order': 7, 'stay_duration': None}, {'id': 186503, 'type': 'user', 'name': 'Tech Screening', 'removed': None, 'order': 8, 'stay_duration': None}, {'id': 186504, 'type': 'user', 'name': 'Final Interview', 'removed': None, 'order': 9, 'stay_duration': None}, {'id': 186505, 'type': 'user', 'name': 'Decision', 'removed': None, 'order': 10, 'stay_duration': None}, {'id': 186506, 'type': 'user', 'name': 'Offer', 'removed': None, 'order': 11, 'stay_duration': None}, {'id': 186507, 'type': 'hired', 'name': 'Offer accepted', 'removed': None, 'order': 12, 'stay_duration': None}, {'id': 186508, 'type': 'user', 'name': 'Onboarding', 'removed': None, 'order': 13, 'stay_duration': None}, {'id': 186509, 'type': 'trash', 'name': 'Отказ', 'removed': None, 'order': 9999, 'stay_duration': None}]}[01/Oct/2025 18:29:13] "POST /google-oauth/chat/23/ HTTP/1.1" 302 0
+[01/Oct/2025 18:29:19] "GET /google-oauth/chat/23/ HTTP/1.1" 200 359067
+[01/Oct/2025 18:30:08] "POST /google-oauth/invites/177/invitation-text/ HTTP/1.1" 200 1141
+[01/Oct/2025 18:35:54] "GET /admin/google_oauth/chatsession/24/change/ HTTP/1.1" 200 27944
+[01/Oct/2025 18:35:54] "GET /static/admin/js/collapse.js HTTP/1.1" 304 0
+[01/Oct/2025 18:35:54] "GET /static/admin/css/forms.css HTTP/1.1" 304 0
+[01/Oct/2025 18:35:54] "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 304 0
+[01/Oct/2025 18:35:54] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+[01/Oct/2025 18:35:54] "GET /static/admin/css/widgets.css HTTP/1.1" 304 0
+[01/Oct/2025 18:35:54] "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 304 0
+[01/Oct/2025 18:35:54] "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 200 581
+[01/Oct/2025 18:35:54] "GET /static/admin/js/change_form.js HTTP/1.1" 304 0
+WARNING Not Found: /favicon.ico
+Not Found: /favicon.ico
+[01/Oct/2025 18:35:55] "GET /favicon.ico HTTP/1.1" 404 3815
+[01/Oct/2025 18:35:59] "GET /admin/google_oauth/chatsession/ HTTP/1.1" 200 29620
+[01/Oct/2025 18:36:01] "GET /admin/google_oauth/chatsession/23/change/ HTTP/1.1" 200 27974
+[01/Oct/2025 18:36:01] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+[01/Oct/2025 18:36:04] "GET /admin/google_oauth/chatsession/ HTTP/1.1" 200 29620
+[01/Oct/2025 18:36:12] "POST /admin/google_oauth/chatsession/ HTTP/1.1" 200 24390
+[01/Oct/2025 18:36:13] "POST /admin/google_oauth/chatsession/ HTTP/1.1" 302 0
+[01/Oct/2025 18:36:13] "GET /admin/google_oauth/chatsession/ HTTP/1.1" 200 29341
+[01/Oct/2025 18:36:13] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py changed, reloading.
+
+[TECH_SCREENING] Ищем статус Tech Screening среди 14 статусов
+[TECH_SCREENING] Проверяем статус: 'New'
+[TECH_SCREENING] Проверяем статус: 'Message'
+[TECH_SCREENING] Проверяем статус: 'Contact'
+[TECH_SCREENING] Проверяем статус: 'Portfolio Review'
+[TECH_SCREENING] Проверяем статус: 'HR Screening'
+[TECH_SCREENING] Проверяем статус: 'CV Check by HM'
+[TECH_SCREENING] Проверяем статус: 'Test Task'
+[TECH_SCREENING] Проверяем статус: 'Tech Screening'
+🔍 TECH_SCREENING: Найден статус Tech Screening с ID 186503
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 45 минут
+[TECH_SCREENING] Кандидат: 74481426 -> Tech Screening
+[TECH_SCREENING] Комментарий: Пятница, 3 октября⋅11:00–11:45
+[TECH_SCREENING] Используем статус ID: 186503
+[TECH_SCREENING] Вызываем update_applicant_status...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/74481426
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Андрей","last_name":"Ткачук","middle_name":null,"money":"12.000 PLN (2700 долл)","phone":null,"email":"andretku@gmail.com","skype":null,"position":null,"company":null,"photo":null,"id":74481426,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/3/0/3/3039f89024376b9af2cc729caea13e35.png?s=2DQQ_PgqASMXaw9Qys_Bmw&e=1761924550","birthday":null,"created":"2025-09-30T10:51:30+03:00","tags":[],"links":[{"id":69858009,"status":186502,"updated":"2025-10-01T14:32:01+03:00","c...
+DEBUG: Обновляем статус кандидата 74481426 на статус 186503 для вакансии 3936868 с комментарием: Пятница, 3 октября⋅11:00–11:45
+DEBUG: Пробуем эндпоинт /accounts/291341/applicants/74481426/vacancy с данными {'vacancy': 3936868, 'status': 186503, 'comment': 'Пятница, 3 октября⋅11:00–11:45'}
+🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/applicants/74481426/vacancy
+📤 JSON данные: {'vacancy': 3936868, 'status': 186503, 'comment': 'Пятница, 3 октября⋅11:00–11:45'}
+📥 Ответ API: 200
+📥 Тело ответа: {"id":69858009,"changed":"2025-10-01T18:29:11+03:00","vacancy":3936868,"status":186503,"rejection_reason":null}...
+DEBUG: Статус успешно обновлен через /accounts/291341/applicants/74481426/vacancy
+🗑️ Сброшен кэш для кандидата: 74481426
+[TECH_SCREENING] Результат update_applicant_status: {'id': 69858009, 'changed': '2025-10-01T18:29:11+03:00', 'vacancy': 3936868, 'status': 186503, 'rejection_reason': None}
+[TECH_SCREENING] Успешно обновлен статус на Tech Screening
+[TECH_SCREENING_UPDATE] Статус обновлен: True
+✅ COMBINED_FORM_SAVE: Структура Google Drive создана
+🔍 COMBINED_FORM_SAVE: Обрабатываем scorecard...
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Junior
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Junior+
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Middle
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Middle+
+РЕАЛЬНЫЕ ДАННЫЕ: Обработка scorecard завершена
+РЕАЛЬНЫЕ ДАННЫЕ: Сохранены листы: all, score, Senior
+РЕАЛЬНЫЕ ДАННЫЕ: Удалены листы: Junior, Junior+, Middle, Middle+
+✅ COMBINED_FORM_SAVE: Scorecard обработан
+✅ COMBINED_FORM_SAVE: Инвайт сохранен с ID: 177
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 29 событий
+🔍 DEBUG CHAT: Получено 29 событий из API
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-02T09:20:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Барцевич Андрей в 2025-10-02T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: Обед в 2025-10-02T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 45 минут
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/admin.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 01, 2025 - 18:41:39
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/forms.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 01, 2025 - 18:41:56
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/threading.py", line 1043, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/threading.py", line 994, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+    ~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/management/commands/runserver.py", line 133, in inner_run
+    self.check(display_num_errors=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/management/base.py", line 485, in check
+    all_issues = checks.run_checks(
+        app_configs=app_configs,
+    ...<2 lines>...
+        databases=databases,
+    )
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/registry.py", line 88, in run_checks
+    new_errors = check(app_configs=app_configs, databases=databases)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/urls.py", line 14, in check_url_config
+    return check_resolver(resolver)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/urls.py", line 24, in check_resolver
+    return check_method()
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 494, in check
+    for pattern in self.url_patterns:
+                   ^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/functional.py", line 57, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 715, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/functional.py", line 57, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 708, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/agolubenko/hrhelper/fullstack/backend/config/urls.py", line 34, in <module>
+    path('google-oauth/', include('apps.google_oauth.urls')),
+                          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/conf.py", line 38, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/urls.py", line 2, in <module>
+    from . import views
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py", line 1004, in <module>
+    from .forms import SyncSettingsForm, InviteForm, InviteUpdateForm, InviteCombinedForm, HRScreeningForm, CombinedForm
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/forms.py", line 862, in <module>
+    class ChatSessionTitleForm(forms.ModelForm):
+    ...<14 lines>...
+            }
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/forms.py", line 865, in ChatSessionTitleForm
+    class Meta:
+    ...<11 lines>...
+        }
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/forms.py", line 866, in Meta
+    model = ChatSession
+            ^^^^^^^^^^^
+NameError: name 'ChatSession' is not defined
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/forms.py changed, reloading.
+Performing system checks...
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 01, 2025 - 18:42:45
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 01, 2025 - 18:42:50
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 01, 2025 - 18:42:58
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 01, 2025 - 18:43:08
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/urls.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 01, 2025 - 18:43:58
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 01, 2025 - 18:44:09
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[01/Oct/2025 18:45:15] "GET /google-oauth/chat/23/ HTTP/1.1" 200 363366
+[01/Oct/2025 18:45:53] "POST /google-oauth/chat/23/update-title/ HTTP/1.1" 200 47
+[01/Oct/2025 18:45:58] "POST /google-oauth/chat/23/update-title/ HTTP/1.1" 200 47
+[01/Oct/2025 18:46:01] "POST /google-oauth/chat/23/update-title/ HTTP/1.1" 200 47
+[01/Oct/2025 18:46:04] "GET /google-oauth/chat/23/ HTTP/1.1" 200 363505
+[01/Oct/2025 18:47:41] "GET /accounts/ HTTP/1.1" 200 49554
+[01/Oct/2025 18:47:41] "GET /static/css/profile.css HTTP/1.1" 404 1804

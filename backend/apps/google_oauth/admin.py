@@ -284,15 +284,15 @@ class QuestionTemplateAdmin(admin.ModelAdmin):
 
 @admin.register(ChatSession)
 class ChatSessionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'created_at', 'updated_at', 'messages_count']
+    list_display = ['id', 'title', 'user', 'created_at', 'updated_at', 'messages_count']
     list_filter = ['created_at', 'updated_at']
-    search_fields = ['user__username', 'user__email']
+    search_fields = ['title', 'user__username', 'user__email']
     readonly_fields = ['created_at', 'updated_at']
     ordering = ['-updated_at']
     
     fieldsets = (
         ('Основная информация', {
-            'fields': ('user',)
+            'fields': ('user', 'title')
         }),
         ('Метаданные', {
             'fields': ('created_at', 'updated_at'),

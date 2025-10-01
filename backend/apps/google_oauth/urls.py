@@ -55,6 +55,7 @@ urlpatterns = [
     # Чат-интерфейс
     path('chat/', views.chat_workflow, name='chat_workflow'),
     path('chat/<int:session_id>/', views.chat_workflow, name='chat_workflow_session'),
+    path('chat/<int:session_id>/update-title/', views.update_chat_title, name='update_chat_title'),
     
     # G-данные и автоматизация
     path('gdata-automation/', views.gdata_automation, name='gdata_automation'),
