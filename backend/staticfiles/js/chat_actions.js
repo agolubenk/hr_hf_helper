@@ -13,10 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
         '/s':      'hrscreening',
         '/hr':     'hrscreening',
         '/screen': 'hrscreening',
+        '/ы':      'hrscreening',
         '/in':     'invite',
         '/inv':    'invite',
         '/prigl':  'invite',
-        '/пригл':  'invite'
+        '/пригл':  'invite',
+        '/шт':     'invite'
     };
 
     // Функция для получения CSRF токена
@@ -35,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (textarea) {
         textarea.addEventListener('input', () => {
             const val = textarea.value;
-            const match = val.match(/^\/\w+/);
+            const match = val.match(/^\/[a-zA-Zа-яё]+/);
             if (match) {
                 const cmd = match[0].toLowerCase();
                 const action = COMMANDS[cmd];
