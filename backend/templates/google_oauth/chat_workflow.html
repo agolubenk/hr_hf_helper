@@ -674,7 +674,7 @@
 
 /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: увеличиваем размер ссылок */
 .card .info-link-compact {
-    color: var(--color-primary, #007bff);
+    color: rgba(45, 126, 45, 1); /* --color-water-500 */
     text-decoration: none;
     font-size: 1.1rem !important; /* УВЕЛИЧИВАЕМ до размера пользовательских сообщений */
     white-space: nowrap;
@@ -761,12 +761,12 @@
 }
 
 .card .invite-message .system-bubble {
-    background: linear-gradient(135deg, rgba(255, 193, 7, 0.08) 0%, rgba(255, 193, 7, 0.03) 100%);
-    border-color: rgba(255, 193, 7, 0.2);
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.08) 0%, rgba(33, 150, 243, 0.03) 100%);
+    border-color: rgba(33, 150, 243, 0.2);
 }
 
 .card .invite-message .message-header {
-    color: #f57c00;
+    color: #1976d2;
 }
 
 /* Футер карточки */
@@ -798,6 +798,16 @@
     padding: 12px 16px !important;
     background: var(--hr-gradient, linear-gradient(135deg, #007bff 0%, #0056b3 100%));
     border-bottom: 1px solid var(--hr-border, #dee2e6);
+}
+
+/* Обычные карточки - водно-лунный градиент для светлой темы */
+.card {
+    background: linear-gradient(135deg, rgba(176, 196, 222, 1) 20%, rgba(45, 126, 45, 1) 40%, rgba(135, 206, 235, 1) 60%, rgba(45, 126, 45, 1) 80%, rgba(76, 175, 80, 1) 100%);
+}
+
+/* Темная тема для карточек - лаймово-розовый градиент */
+[data-theme="dark"] .card {
+    background: linear-gradient(135deg, rgba(187, 225, 250, 1) 0%, rgba(55, 171, 218, 1) 50%, rgba(255, 107, 157, 1) 100%);
 }
 
 .card .card-header h6 {
@@ -930,12 +940,12 @@
 }
 
 [data-theme="dark"] .card .invite-message .system-bubble {
-    background: linear-gradient(135deg, rgba(255, 193, 7, 0.12) 0%, rgba(255, 193, 7, 0.06) 100%);
-    border-color: rgba(255, 193, 7, 0.3);
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.12) 0%, rgba(33, 150, 243, 0.06) 100%);
+    border-color: rgba(33, 150, 243, 0.3);
 }
 
  [data-theme="dark"] .card .invite-message .message-header {
-     color: #ffb300;
+     color: #64b5f6;
  }
 
  /* === СТИЛИ ДЛЯ СПИСКА СЕССИЙ === */
@@ -1032,6 +1042,16 @@
  [data-theme="dark"] .card .session-title {
      color: var(--color-text, #e2e8f0);
  }
+
+/* Темная тема для ссылок */
+[data-theme="dark"] .card .info-link-compact {
+    color: rgba(255, 64, 129, 1); /* --color-pink-600 */
+}
+
+/* Темная тема для приглушенного текста */
+[data-theme="dark"] .text-muted {
+    color: rgba(240, 248, 255, 1) !important; /* --color-luna-400 */
+}
 
  /* Скроллбар для списка сессий */
  .card .sessions-list::-webkit-scrollbar {
