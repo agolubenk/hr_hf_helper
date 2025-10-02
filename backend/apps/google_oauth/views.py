@@ -2960,7 +2960,7 @@ def combined_workflow(request):
                 invite = None
                 
                 # Создаем HR-скрининг если нужно - используем существующую форму
-                if action_type in ['hr_screening', 'both']:
+                if action_type in ['hrscreening', 'both']:
                     print(f"🔍 COMBINED_WORKFLOW: Создаем HR-скрининг через HRScreeningForm...")
                     
                     # Создаем данные для HRScreeningForm
@@ -2999,7 +2999,7 @@ def combined_workflow(request):
                 messages.success(request, ' | '.join(success_messages))
                 
                 # Перенаправляем на соответствующую страницу
-                if action_type == 'hr_screening' and hr_screening:
+                if action_type == 'hrscreening' and hr_screening:
                     return redirect('google_oauth:hr_screening_detail', pk=hr_screening.pk)
                 elif action_type == 'invite' and invite:
                     return redirect('google_oauth:invite_detail', pk=invite.pk)
@@ -3085,7 +3085,7 @@ def chat_workflow(request, session_id=None):
             print(f"🔍 CHAT: Определен тип действия: {action_type}")
 
             try:
-                if action_type == 'hr_screening':
+                if action_type == 'hrscreening':
                     # Создаем HR-скрининг с ПРАВИЛЬНЫМИ данными
                     hr_form = HRScreeningForm({'input_data': message_text}, user=request.user)
                     
@@ -3093,24 +3093,22 @@ def chat_workflow(request, session_id=None):
                         try:
                             hr_screening = hr_form.save()
                             
-                            response_content = f"""**Кандидат:** {hr_screening.candidate_name or 'Не указан'}
-**Вакансия:** {hr_screening.vacancy_title or 'Не указана'}
-**Зарплата:** {hr_screening.extracted_salary or 'Не указана'} {hr_screening.salary_currency if hr_screening.extracted_salary else ''} {'' if hr_screening.extracted_salary else ''} | **Уровень:** {hr_screening.determined_grade or 'Не определен'}
-
-✅ **Данные сохранены и переданы в Huntflow**"""
+                            response_content = ""  # Пустой контент, данные будут браться из metadata
                             
                             ChatMessage.objects.create(
                                 session=chat_session,
-                                message_type='hr_screening',
+                                message_type='hrscreening',
                                 content=response_content,
                                 hr_screening=hr_screening,
                                 metadata={
-                                    'action_type': 'hr_screening',
+                                    'action_type': 'hrscreening',
                                     'hr_screening_id': hr_screening.id,
                                     'candidate_name': hr_screening.candidate_name,
                                     'vacancy_name': hr_screening.vacancy_title,
                                     'determined_grade': hr_screening.determined_grade,
-                                    'candidate_url': hr_screening.candidate_url
+                                    'candidate_url': hr_screening.candidate_url,
+                                    'extracted_salary': hr_screening.extracted_salary,
+                                    'salary_currency': hr_screening.salary_currency
                                 }
                             )
                         except Exception as e:
