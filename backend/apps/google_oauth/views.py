@@ -3107,7 +3107,7 @@ def chat_workflow(request, session_id=None):
                                     'vacancy_name': hr_screening.vacancy_title,
                                     'determined_grade': hr_screening.determined_grade,
                                     'candidate_url': hr_screening.candidate_url,
-                                    'extracted_salary': hr_screening.extracted_salary,
+                                    'extracted_salary': str(hr_screening.extracted_salary) if hr_screening.extracted_salary else None,
                                     'salary_currency': hr_screening.salary_currency
                                 }
                             )
