@@ -132,10 +132,17 @@ class HuntflowService:
         comment_parts = []
         
         # Добавляем статус задачи, если есть
-        if task_status and task_status.strip():
-            comment_parts.append("📊 Статус задачи:")
-            comment_parts.append(task_status.strip())
-            comment_parts.append("")  # Пустая строка
+        if task_status:
+            # task_status может быть строкой или словарем
+            if isinstance(task_status, dict):
+                status_name = task_status.get('status', '')
+            else:
+                status_name = str(task_status).strip()
+            
+            if status_name:
+                comment_parts.append("📊 Статус задачи:")
+                comment_parts.append(status_name)
+                comment_parts.append("")  # Пустая строка
         
         # Добавляем описание задачи, если есть
         if task_description and task_description.strip():

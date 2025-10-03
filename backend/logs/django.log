@@ -8417,3 +8417,325 @@ React...
 Не удалось создать тег 'huntflow'
 Не удалось добавить тег 'huntflow' к задаче 86c0fuxan
 [03/Oct/2025 15:46:13] "POST /clickup/task/86c0fuxan/transfer-to-huntflow/ HTTP/1.1" 200 459
+/Users/agolubenko/hrhelper/fullstack/backend/apps/clickup_int/services.py changed, reloading.
+
+✅ Комментарий с объединенными данными успешно добавлен
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/clickup_int/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 03, 2025 - 15:49:41
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/clickup_int/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 03, 2025 - 15:50:01
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/clickup_int/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 03, 2025 - 15:50:36
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 03, 2025 - 15:52:06
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/threading.py", line 1043, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/threading.py", line 994, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+    ~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/management/commands/runserver.py", line 133, in inner_run
+    self.check(display_num_errors=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/management/base.py", line 485, in check
+    all_issues = checks.run_checks(
+        app_configs=app_configs,
+    ...<2 lines>...
+        databases=databases,
+    )
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/registry.py", line 88, in run_checks
+    new_errors = check(app_configs=app_configs, databases=databases)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/urls.py", line 14, in check_url_config
+    return check_resolver(resolver)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/urls.py", line 24, in check_resolver
+    return check_method()
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 494, in check
+    for pattern in self.url_patterns:
+                   ^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/functional.py", line 57, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 715, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/functional.py", line 57, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 708, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/agolubenko/hrhelper/fullstack/backend/config/urls.py", line 30, in <module>
+    path('huntflow/', include('apps.huntflow.urls')),
+                      ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/conf.py", line 38, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/urls.py", line 2, in <module>
+    from . import views, views_token
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/views.py", line 2, in <module>
+    from logic.integration.huntflow.huntflow_service import (
+    ...<3 lines>...
+    )
+  File "/Users/agolubenko/hrhelper/fullstack/backend/logic/integration/huntflow/huntflow_service.py", line 12, in <module>
+    from apps.huntflow.services import HuntflowService
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py", line 143
+    comment_parts.append("📊 Статус задачи:")
+    ^^^^^^^^^^^^^
+IndentationError: expected an indented block after 'if' statement on line 142
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+Watching for file changes with StatReloader
+Не удалось распарсить дату: 1727678962693 (ошибка: month must be in 1..12)
+Не удалось распарсить дату: 1759495929668 (ошибка: month must be in 1..12)
+Не удалось распарсить дату: 1727857800000 (ошибка: month must be in 1..12)
+Не удалось распарсить дату: 1727699699568 (ошибка: month must be in 1..12)
+Не удалось распарсить дату: 1727696936230 (ошибка: month must be in 1..12)
+Не удалось распарсить дату: 1719387808401 (ошибка: month must be in 1..12)
+[03/Oct/2025 15:57:02] "GET /clickup/task/86c0fuxan/ HTTP/1.1" 200 87667
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 03, 2025 - 15:56:50
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+✅ Huntflow аккаунты получены: 1
+  - ID: 291341, Name: Softnetix
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 03, 2025 - 15:57:14
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+Не удалось распарсить дату: 1727773904905 (ошибка: month must be in 1..12)
+Не удалось распарсить дату: 1759496241469 (ошибка: month must be in 1..12)
+Не удалось распарсить дату: 1727868600000 (ошибка: month must be in 1..12)
+Не удалось распарсить дату: 1727870551216 (ошибка: month must be in 1..12)
+Не удалось распарсить дату: 1727850491203 (ошибка: month must be in 1..12)
+Не удалось распарсить дату: 1727774012363 (ошибка: month must be in 1..12)
+[03/Oct/2025 16:08:40] "GET /clickup/task/86c0gj0f6/ HTTP/1.1" 200 86151
+[03/Oct/2025 16:08:49] "GET /huntflow/accounts/291341/vacancies/ajax/ HTTP/1.1" 200 3976
+Не удалось распарсить дату: 1727870551216 (ошибка: month must be in 1..12)
+Не удалось распарсить дату: 1727850491203 (ошибка: month must be in 1..12)
+Не удалось распарсить дату: 1727774012363 (ошибка: month must be in 1..12)
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 03, 2025 - 16:03:26
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+✅ Huntflow аккаунты получены: 1
+  - ID: 291341, Name: Softnetix
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies?page=1&count=30
+📥 Ответ API: 200
+📥 Тело ответа: {"page":1,"count":30,"total_pages":1,"total_items":11,"items":[{"account_division":333497,"account_region":null,"position":"Project Manager","company":null,"money":"800-2000","priority":1,"hidden":false,"state":"OPEN","id":3936534,"created":"2025-03-19T08:33:50+03:00","additional_fields_list":[],"multiple":false,"parent":null,"account_vacancy_status_group":10353},{"account_division":333385,"account_region":null,"position":"Tech Recruiter","company":null,"money":null,"priority":1,"hidden":true,"s...
+🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/upload
+📤 Файл: Yana_Savchenko.pdf (56617 байт)
+📥 Ответ API: 200
+📥 Тело ответа: {"id":96839316,"url":"https://store.huntflow.ru/uploads3/named/4/0/6/40627bc2f7081c4ef2628680d1998840.pdf/Yana_Savchenko.pdf?s=FfbOWcVU7ZT8TG7vmZ6DVg&e=1759540133","content_type":"application/pdf","name":"Yana_Savchenko.pdf","text":"Способы связаться\n\nwww.linkedin.com/in/yana-\nsavchenko-59ba5628b (LinkedIn)\n\nОсновные навыки\nCSS3\nGraphQL\nTypeScript\n\nLanguages\nEnglish (Professional Working)\nBelarussian (Native or Bilingual)\nRussian (Native or Bilingual)\n\nYana Savchenko\nFrontend Eng...
+🔍 Начинаем создание кандидата из данных: {'id': 96839316, 'url': 'https://store.huntflow.ru/uploads3/named/4/0/6/40627bc2f7081c4ef2628680d1998840.pdf/Yana_Savchenko.pdf?s=FfbOWcVU7ZT8TG7vmZ6DVg&e=1759540133', 'content_type': 'application/pdf', 'name': 'Yana_Savchenko.pdf', 'text': "Способы связаться\n\nwww.linkedin.com/in/yana-\nsavchenko-59ba5628b (LinkedIn)\n\nОсновные навыки\nCSS3\nGraphQL\nTypeScript\n\nLanguages\nEnglish (Professional Working)\nBelarussian (Native or Bilingual)\nRussian (Native or Bilingual)\n\nYana Savchenko\nFrontend Engineer\nWarsaw, Mazowieckie, Poland\n\nОбщие сведения\n- Frontend Engineer with 3+ years of commercial experience in\nFrontend development using\nReact with TypeScript / JavaScript building SPAs\n- Great experience with Redux Toolkit and its features, including\naddons like RTK Query\n- Great experience with handling backend REST APIs applying Yup\nvalidation and React Hook\nForm\n- Great experience with styling frontend applications using Tailwind\nCSS, SCSS/SASS, CSS5,\nBootstrap, Less\n- Experience with UI/UX designing using Figma\n- Experience with integrating Google Map API into applications\n- Experience with Git, Jira, Confluence\n- Experience with unit testing using React Testing Library and Jest\n- English level is B2\n- Committed to ongoing professional growth, eager to learn new\ntechnologies, and improve\nskills in familiar areas.\n\nОпыт работы\n\nVisa Travel Agency\nFrontend Developer\nянварь 2024\xa0-\xa0Present\xa0(10 месяцев)\nWarsaw, Mazowieckie, Poland\n\nDeveloping Telegram mini-app from scratch that allows users to apply for\ndifferent types of visa to various countries. The application features modern\nand user friendly\ninterface for tracking visa application status, transfer and accompaniment to\nvisa center,\nbooking additional services like flight tickets and hotel reservations, and\ncourier services for\n\n\xa0 Page 1 of 4\n\nhttp://www.linkedin.com/in/yana-savchenko-59ba5628b?jobid=1234&lipi=urn%3Ali%3Apage%3Ad_jobs_easyapply_pdfgenresume%3BxGHYNnsBST%2Bse%2B4O%2FLd3%2BQ%3D%3D&licu=urn%3Ali%3Acontrol%3Ad_jobs_easyapply_pdfgenresume-v02_profile\nhttp://www.linkedin.com/in/yana-savchenko-59ba5628b?jobid=1234&lipi=urn%3Ali%3Apage%3Ad_jobs_easyapply_pdfgenresume%3BxGHYNnsBST%2Bse%2B4O%2FLd3%2BQ%3D%3D&licu=urn%3Ali%3Acontrol%3Ad_jobs_easyapply_pdfgenresume-v02_profile\n\ndocument delivery.\nTeam: 1 Frontend Engineer, 2 Backend Engineers, 1 Lead Engineer and 1\nProject Manager.\nParticipation:\n* Implementing Frontend app using React and TypeScript from scratch\nfollowing Figma\ndesigns;\n* Setting up Telegram environment for React application;\n* Designing and implementing complex multi-step forms to collect, validate and\nsend to\nbackend input data from across different pages and components using React\nHook Form\nwith Yup validation;\n* Customized Figma designs to meet client requirements;\n* Investigating and integrating calendar and date input public libraries to\napplication;\n* Planning and refinement sessions for frontend tasks along with PM and lead\nengineer;\n* Code reviews to improve TypeScript code quality.\nEnvironment:\nTypeScript, React, RTK Query, Redux Toolkit, Google Map API, Tailwind CSS,\nHTML5, Yup,\nAxios, REST API, Jest, Figma, Postman, Git, Jira.\n\nNike\nJunior Frontend Engineer\nмай 2022\xa0-\xa0декабрь 2023\xa0(1 год 8 месяцев)\nNetherlands · Remote\n\nAn internal website tool that allows NIKE tech teams to centrally assess their\napplications\nagainst the Nike Information Security Policy (NISP) using a questionnaire that\ncalculates a\nrisk score to indicate the application's security maturity. The tool also enables\nthe creation of\ndiscussion threads on completed questionnaires, facilitating conversations with\ntop-level\nmanagers to address and resolve potential security risks.\nTeam: 2 Full-Stack Developers, 1 Frontend Developer, 1 Technical PM and 1\nScrum Master.\nParticipation:\n\n\xa0 Page 2 of 4\n\n* Implementing and supporting UI app using React and TypeScript with\nparticipation in\nUI/UX designing;\n* Contributing to NIKE UI components library;\n* Utilized GraphQL to retrieve thread data for completed questionnaires,\nincluding\ndiscussion messages on specific answers;\n* Interaction with technical PM to define and refine tasks in the backlog as well\nas analysis\nof requirements and business processes;\n* Unit tests on frontend side using Jest;\n* Pair programming, code reviews, knowledge sharing.\nEnvironment:\nTypeScript, React, RTK Query, Redux Toolkit, SASS, HTML5, NIKE UI\ncomponents library,\nYup, Axios, REST API, GraphQL, Jest, Postman, Git, Jira, Confluence.\n\nEPAM Systems\nIntern Frontend Engineer\nсентябрь 2021\xa0-\xa0май 2022\xa0(9 месяцев)\nMinsk, Belarus\n\nThe platform allows EPAM employees to select courses, book interview slots,\nand receive\nfeedback from experts (review and score) with possibility to re-attend course.\nSuccessful\ncompletion of all topics enables mentees to become experts.\nTeam: 2 Full-Stack Developers, 1 Intern Java Engineer, 1 Intern Frontend\nDeveloper, 1 Project\nManager.\nParticipation:\n* Developed and maintained the UI using React and JavaScript for features\nlike course\nselection, slot booking, and feedback viewing.\n* Integrated REST APIs with Axios to ensure smooth data exchange between\nthe React\nfront-end and Java-based backend.\n* Code reviews to improve code quality and knowledge-sharing sessions with\nthe team.\n* Utilized Postman for API testing and troubleshooting.\nEnvironment:\n\n\xa0 Page 3 of 4\n\nReact, JavaScript, HTML5, CSS3, REST API, Axios, Git, Jira, Confluence,\nPostman.\n\nДействия\n10/01/2024, Просмотрено участником Elena Koipash\n\n\xa0 Page 4 of 4", 'fields': {'name': {'first': 'Yana', 'last': 'Savchenko', 'middle': None}, 'birthdate': None, 'phones': None, 'email': None, 'salary': None, 'position': None, 'skype': None, 'telegram': 'mini', 'experience': [{'position': 'Frontend Developer', 'company': None}, {'position': 'Project Manager', 'company': None}, {'position': 'engineer', 'company': None}, {'position': 'Manager', 'company': None}]}, 'parsing_meta': {'last_names_ignored': False, 'emails_ignored': False, 'phones_ignored': False}}
+🔍 Извлекаем ФИО из названия задачи: 'PL Yana Savchenko'
+✅ ФИО из названия задачи: PL Yana Savchenko
+🔍 Создаем личные заметки из ClickUp:
+  - Описание: Если Мидл, то +-1700 чистыми, а если Джун+, то где-то 1300 чистыми.
+
+Подскажите, а какие контракты в...
+  - Комментарии: 3
+  - Статус: reject
+✅ Созданы личные заметки из ClickUp (1158 символов):
+  📊 Статус задачи:
+reject
+
+📋 Описание задачи:
+Если Мидл, то +-1700 чистыми, а если Джун+, то где-то 1300 чистыми. Подскажите, а какие контракты вы поддерживаете? Мне удобно и B2B через инкубатор, и UoP ...
+📝 Подготовлены объединенные заметки для добавления после создания кандидата (1158 символов)
+🔍 Базовые данные кандидата: {'last_name': 'PL', 'first_name': 'Yana', 'externals': [{'auth_type': 'NATIVE', 'data': {'body': "Способы связаться\n\nwww.linkedin.com/in/yana-\nsavchenko-59ba5628b (LinkedIn)\n\nОсновные навыки\nCSS3\nGraphQL\nTypeScript\n\nLanguages\nEnglish (Professional Working)\nBelarussian (Native or Bilingual)\nRussian (Native or Bilingual)\n\nYana Savchenko\nFrontend Engineer\nWarsaw, Mazowieckie, Poland\n\nОбщие сведения\n- Frontend Engineer with 3+ years of commercial experience in\nFrontend development using\nReact with TypeScript / JavaScript building SPAs\n- Great experience with Redux Toolkit and its features, including\naddons like RTK Query\n- Great experience with handling backend REST APIs applying Yup\nvalidation and React Hook\nForm\n- Great experience with styling frontend applications using Tailwind\nCSS, SCSS/SASS, CSS5,\nBootstrap, Less\n- Experience with UI/UX designing using Figma\n- Experience with integrating Google Map API into applications\n- Experience with Git, Jira, Confluence\n- Experience with unit testing using React Testing Library and Jest\n- English level is B2\n- Committed to ongoing professional growth, eager to learn new\ntechnologies, and improve\nskills in familiar areas.\n\nОпыт работы\n\nVisa Travel Agency\nFrontend Developer\nянварь 2024\xa0-\xa0Present\xa0(10 месяцев)\nWarsaw, Mazowieckie, Poland\n\nDeveloping Telegram mini-app from scratch that allows users to apply for\ndifferent types of visa to various countries. The application features modern\nand user friendly\ninterface for tracking visa application status, transfer and accompaniment to\nvisa center,\nbooking additional services like flight tickets and hotel reservations, and\ncourier services for\n\n\xa0 Page 1 of 4\n\nhttp://www.linkedin.com/in/yana-savchenko-59ba5628b?jobid=1234&lipi=urn%3Ali%3Apage%3Ad_jobs_easyapply_pdfgenresume%3BxGHYNnsBST%2Bse%2B4O%2FLd3%2BQ%3D%3D&licu=urn%3Ali%3Acontrol%3Ad_jobs_easyapply_pdfgenresume-v02_profile\nhttp://www.linkedin.com/in/yana-savchenko-59ba5628b?jobid=1234&lipi=urn%3Ali%3Apage%3Ad_jobs_easyapply_pdfgenresume%3BxGHYNnsBST%2Bse%2B4O%2FLd3%2BQ%3D%3D&licu=urn%3Ali%3Acontrol%3Ad_jobs_easyapply_pdfgenresume-v02_profile\n\ndocument delivery.\nTeam: 1 Frontend Engineer, 2 Backend Engineers, 1 Lead Engineer and 1\nProject Manager.\nParticipation:\n* Implementing Frontend app using React and TypeScript from scratch\nfollowing Figma\ndesigns;\n* Setting up Telegram environment for React application;\n* Designing and implementing complex multi-step forms to collect, validate and\nsend to\nbackend input data from across different pages and components using React\nHook Form\nwith Yup validation;\n* Customized Figma designs to meet client requirements;\n* Investigating and integrating calendar and date input public libraries to\napplication;\n* Planning and refinement sessions for frontend tasks along with PM and lead\nengineer;\n* Code reviews to improve TypeScript code quality.\nEnvironment:\nTypeScript, React, RTK Query, Redux Toolkit, Google Map API, Tailwind CSS,\nHTML5, Yup,\nAxios, REST API, Jest, Figma, Postman, Git, Jira.\n\nNike\nJunior Frontend Engineer\nмай 2022\xa0-\xa0декабрь 2023\xa0(1 год 8 месяцев)\nNetherlands · Remote\n\nAn internal website tool that allows NIKE tech teams to centrally assess their\napplications\nagainst the Nike Information Security Policy (NISP) using a questionnaire that\ncalculates a\nrisk score to indicate the application's security maturity. The tool also enables\nthe creation of\ndiscussion threads on completed questionnaires, facilitating conversations with\ntop-level\nmanagers to address and resolve potential security risks.\nTeam: 2 Full-Stack Developers, 1 Frontend Developer, 1 Technical PM and 1\nScrum Master.\nParticipation:\n\n\xa0 Page 2 of 4\n\n* Implementing and supporting UI app using React and TypeScript with\nparticipation in\nUI/UX designing;\n* Contributing to NIKE UI components library;\n* Utilized GraphQL to retrieve thread data for completed questionnaires,\nincluding\ndiscussion messages on specific answers;\n* Interaction with technical PM to define and refine tasks in the backlog as well\nas analysis\nof requirements and business processes;\n* Unit tests on frontend side using Jest;\n* Pair programming, code reviews, knowledge sharing.\nEnvironment:\nTypeScript, React, RTK Query, Redux Toolkit, SASS, HTML5, NIKE UI\ncomponents library,\nYup, Axios, REST API, GraphQL, Jest, Postman, Git, Jira, Confluence.\n\nEPAM Systems\nIntern Frontend Engineer\nсентябрь 2021\xa0-\xa0май 2022\xa0(9 месяцев)\nMinsk, Belarus\n\nThe platform allows EPAM employees to select courses, book interview slots,\nand receive\nfeedback from experts (review and score) with possibility to re-attend course.\nSuccessful\ncompletion of all topics enables mentees to become experts.\nTeam: 2 Full-Stack Developers, 1 Intern Java Engineer, 1 Intern Frontend\nDeveloper, 1 Project\nManager.\nParticipation:\n* Developed and maintained the UI using React and JavaScript for features\nlike course\nselection, slot booking, and feedback viewing.\n* Integrated REST APIs with Axios to ensure smooth data exchange between\nthe React\nfront-end and Java-based backend.\n* Code reviews to improve code quality and knowledge-sharing sessions with\nthe team.\n* Utilized Postman for API testing and troubleshooting.\nEnvironment:\n\n\xa0 Page 3 of 4\n\nReact, JavaScript, HTML5, CSS3, REST API, Axios, Git, Jira, Confluence,\nPostman.\n\nДействия\n10/01/2024, Просмотрено участником Elena Koipash\n\n\xa0 Page 4 of 4"}}]}
+🔍 Найдены custom fields ClickUp (список): 4 полей
+✅ Найдено поле '📧 Email' со значением: yana.savchenko.work@gmail.com
+📧 Email из ClickUp custom fields: yana.savchenko.work@gmail.com
+🔍 Сохраняем vacancy_id для отдельной привязки: 3936868
+🏷️ Сохранили информацию об исполнителе для добавления тега: Yauheni Lebedzeu
+📤 Финальные данные кандидата: {'last_name': 'PL', 'first_name': 'Yana', 'externals': [{'auth_type': 'NATIVE', 'data': {'body': "Способы связаться\n\nwww.linkedin.com/in/yana-\nsavchenko-59ba5628b (LinkedIn)\n\nОсновные навыки\nCSS3\nGraphQL\nTypeScript\n\nLanguages\nEnglish (Professional Working)\nBelarussian (Native or Bilingual)\nRussian (Native or Bilingual)\n\nYana Savchenko\nFrontend Engineer\nWarsaw, Mazowieckie, Poland\n\nОбщие сведения\n- Frontend Engineer with 3+ years of commercial experience in\nFrontend development using\nReact with TypeScript / JavaScript building SPAs\n- Great experience with Redux Toolkit and its features, including\naddons like RTK Query\n- Great experience with handling backend REST APIs applying Yup\nvalidation and React Hook\nForm\n- Great experience with styling frontend applications using Tailwind\nCSS, SCSS/SASS, CSS5,\nBootstrap, Less\n- Experience with UI/UX designing using Figma\n- Experience with integrating Google Map API into applications\n- Experience with Git, Jira, Confluence\n- Experience with unit testing using React Testing Library and Jest\n- English level is B2\n- Committed to ongoing professional growth, eager to learn new\ntechnologies, and improve\nskills in familiar areas.\n\nОпыт работы\n\nVisa Travel Agency\nFrontend Developer\nянварь 2024\xa0-\xa0Present\xa0(10 месяцев)\nWarsaw, Mazowieckie, Poland\n\nDeveloping Telegram mini-app from scratch that allows users to apply for\ndifferent types of visa to various countries. The application features modern\nand user friendly\ninterface for tracking visa application status, transfer and accompaniment to\nvisa center,\nbooking additional services like flight tickets and hotel reservations, and\ncourier services for\n\n\xa0 Page 1 of 4\n\nhttp://www.linkedin.com/in/yana-savchenko-59ba5628b?jobid=1234&lipi=urn%3Ali%3Apage%3Ad_jobs_easyapply_pdfgenresume%3BxGHYNnsBST%2Bse%2B4O%2FLd3%2BQ%3D%3D&licu=urn%3Ali%3Acontrol%3Ad_jobs_easyapply_pdfgenresume-v02_profile\nhttp://www.linkedin.com/in/yana-savchenko-59ba5628b?jobid=1234&lipi=urn%3Ali%3Apage%3Ad_jobs_easyapply_pdfgenresume%3BxGHYNnsBST%2Bse%2B4O%2FLd3%2BQ%3D%3D&licu=urn%3Ali%3Acontrol%3Ad_jobs_easyapply_pdfgenresume-v02_profile\n\ndocument delivery.\nTeam: 1 Frontend Engineer, 2 Backend Engineers, 1 Lead Engineer and 1\nProject Manager.\nParticipation:\n* Implementing Frontend app using React and TypeScript from scratch\nfollowing Figma\ndesigns;\n* Setting up Telegram environment for React application;\n* Designing and implementing complex multi-step forms to collect, validate and\nsend to\nbackend input data from across different pages and components using React\nHook Form\nwith Yup validation;\n* Customized Figma designs to meet client requirements;\n* Investigating and integrating calendar and date input public libraries to\napplication;\n* Planning and refinement sessions for frontend tasks along with PM and lead\nengineer;\n* Code reviews to improve TypeScript code quality.\nEnvironment:\nTypeScript, React, RTK Query, Redux Toolkit, Google Map API, Tailwind CSS,\nHTML5, Yup,\nAxios, REST API, Jest, Figma, Postman, Git, Jira.\n\nNike\nJunior Frontend Engineer\nмай 2022\xa0-\xa0декабрь 2023\xa0(1 год 8 месяцев)\nNetherlands · Remote\n\nAn internal website tool that allows NIKE tech teams to centrally assess their\napplications\nagainst the Nike Information Security Policy (NISP) using a questionnaire that\ncalculates a\nrisk score to indicate the application's security maturity. The tool also enables\nthe creation of\ndiscussion threads on completed questionnaires, facilitating conversations with\ntop-level\nmanagers to address and resolve potential security risks.\nTeam: 2 Full-Stack Developers, 1 Frontend Developer, 1 Technical PM and 1\nScrum Master.\nParticipation:\n\n\xa0 Page 2 of 4\n\n* Implementing and supporting UI app using React and TypeScript with\nparticipation in\nUI/UX designing;\n* Contributing to NIKE UI components library;\n* Utilized GraphQL to retrieve thread data for completed questionnaires,\nincluding\ndiscussion messages on specific answers;\n* Interaction with technical PM to define and refine tasks in the backlog as well\nas analysis\nof requirements and business processes;\n* Unit tests on frontend side using Jest;\n* Pair programming, code reviews, knowledge sharing.\nEnvironment:\nTypeScript, React, RTK Query, Redux Toolkit, SASS, HTML5, NIKE UI\ncomponents library,\nYup, Axios, REST API, GraphQL, Jest, Postman, Git, Jira, Confluence.\n\nEPAM Systems\nIntern Frontend Engineer\nсентябрь 2021\xa0-\xa0май 2022\xa0(9 месяцев)\nMinsk, Belarus\n\nThe platform allows EPAM employees to select courses, book interview slots,\nand receive\nfeedback from experts (review and score) with possibility to re-attend course.\nSuccessful\ncompletion of all topics enables mentees to become experts.\nTeam: 2 Full-Stack Developers, 1 Intern Java Engineer, 1 Intern Frontend\nDeveloper, 1 Project\nManager.\nParticipation:\n* Developed and maintained the UI using React and JavaScript for features\nlike course\nselection, slot booking, and feedback viewing.\n* Integrated REST APIs with Axios to ensure smooth data exchange between\nthe React\nfront-end and Java-based backend.\n* Code reviews to improve code quality and knowledge-sharing sessions with\nthe team.\n* Utilized Postman for API testing and troubleshooting.\nEnvironment:\n\n\xa0 Page 3 of 4\n\nReact, JavaScript, HTML5, CSS3, REST API, Axios, Git, Jira, Confluence,\nPostman.\n\nДействия\n10/01/2024, Просмотрено участником Elena Koipash\n\n\xa0 Page 4 of 4"}}], 'middle_name': 'Savchenko', 'social': [{'social_type': 'TELEGRAM', 'value': 'mini'}], 'email': 'yana.savchenko.work@gmail.com', 'files': [96839316]}
+📝 External источник: Способы связаться
+
+www.linkedin.com/in/yana-
+savchenko-59ba5628b (LinkedIn)
+
+Основные навыки
+CSS3
+Gr...
+🔗 Вакансия в финальных данных: НЕ УКАЗАНА
+🔍 Отправляем запрос на создание кандидата с данными: {'last_name': 'PL', 'first_name': 'Yana', 'externals': [{'auth_type': 'NATIVE', 'data': {'body': "Способы связаться\n\nwww.linkedin.com/in/yana-\nsavchenko-59ba5628b (LinkedIn)\n\nОсновные навыки\nCSS3\nGraphQL\nTypeScript\n\nLanguages\nEnglish (Professional Working)\nBelarussian (Native or Bilingual)\nRussian (Native or Bilingual)\n\nYana Savchenko\nFrontend Engineer\nWarsaw, Mazowieckie, Poland\n\nОбщие сведения\n- Frontend Engineer with 3+ years of commercial experience in\nFrontend development using\nReact with TypeScript / JavaScript building SPAs\n- Great experience with Redux Toolkit and its features, including\naddons like RTK Query\n- Great experience with handling backend REST APIs applying Yup\nvalidation and React Hook\nForm\n- Great experience with styling frontend applications using Tailwind\nCSS, SCSS/SASS, CSS5,\nBootstrap, Less\n- Experience with UI/UX designing using Figma\n- Experience with integrating Google Map API into applications\n- Experience with Git, Jira, Confluence\n- Experience with unit testing using React Testing Library and Jest\n- English level is B2\n- Committed to ongoing professional growth, eager to learn new\ntechnologies, and improve\nskills in familiar areas.\n\nОпыт работы\n\nVisa Travel Agency\nFrontend Developer\nянварь 2024\xa0-\xa0Present\xa0(10 месяцев)\nWarsaw, Mazowieckie, Poland\n\nDeveloping Telegram mini-app from scratch that allows users to apply for\ndifferent types of visa to various countries. The application features modern\nand user friendly\ninterface for tracking visa application status, transfer and accompaniment to\nvisa center,\nbooking additional services like flight tickets and hotel reservations, and\ncourier services for\n\n\xa0 Page 1 of 4\n\nhttp://www.linkedin.com/in/yana-savchenko-59ba5628b?jobid=1234&lipi=urn%3Ali%3Apage%3Ad_jobs_easyapply_pdfgenresume%3BxGHYNnsBST%2Bse%2B4O%2FLd3%2BQ%3D%3D&licu=urn%3Ali%3Acontrol%3Ad_jobs_easyapply_pdfgenresume-v02_profile\nhttp://www.linkedin.com/in/yana-savchenko-59ba5628b?jobid=1234&lipi=urn%3Ali%3Apage%3Ad_jobs_easyapply_pdfgenresume%3BxGHYNnsBST%2Bse%2B4O%2FLd3%2BQ%3D%3D&licu=urn%3Ali%3Acontrol%3Ad_jobs_easyapply_pdfgenresume-v02_profile\n\ndocument delivery.\nTeam: 1 Frontend Engineer, 2 Backend Engineers, 1 Lead Engineer and 1\nProject Manager.\nParticipation:\n* Implementing Frontend app using React and TypeScript from scratch\nfollowing Figma\ndesigns;\n* Setting up Telegram environment for React application;\n* Designing and implementing complex multi-step forms to collect, validate and\nsend to\nbackend input data from across different pages and components using React\nHook Form\nwith Yup validation;\n* Customized Figma designs to meet client requirements;\n* Investigating and integrating calendar and date input public libraries to\napplication;\n* Planning and refinement sessions for frontend tasks along with PM and lead\nengineer;\n* Code reviews to improve TypeScript code quality.\nEnvironment:\nTypeScript, React, RTK Query, Redux Toolkit, Google Map API, Tailwind CSS,\nHTML5, Yup,\nAxios, REST API, Jest, Figma, Postman, Git, Jira.\n\nNike\nJunior Frontend Engineer\nмай 2022\xa0-\xa0декабрь 2023\xa0(1 год 8 месяцев)\nNetherlands · Remote\n\nAn internal website tool that allows NIKE tech teams to centrally assess their\napplications\nagainst the Nike Information Security Policy (NISP) using a questionnaire that\ncalculates a\nrisk score to indicate the application's security maturity. The tool also enables\nthe creation of\ndiscussion threads on completed questionnaires, facilitating conversations with\ntop-level\nmanagers to address and resolve potential security risks.\nTeam: 2 Full-Stack Developers, 1 Frontend Developer, 1 Technical PM and 1\nScrum Master.\nParticipation:\n\n\xa0 Page 2 of 4\n\n* Implementing and supporting UI app using React and TypeScript with\nparticipation in\nUI/UX designing;\n* Contributing to NIKE UI components library;\n* Utilized GraphQL to retrieve thread data for completed questionnaires,\nincluding\ndiscussion messages on specific answers;\n* Interaction with technical PM to define and refine tasks in the backlog as well\nas analysis\nof requirements and business processes;\n* Unit tests on frontend side using Jest;\n* Pair programming, code reviews, knowledge sharing.\nEnvironment:\nTypeScript, React, RTK Query, Redux Toolkit, SASS, HTML5, NIKE UI\ncomponents library,\nYup, Axios, REST API, GraphQL, Jest, Postman, Git, Jira, Confluence.\n\nEPAM Systems\nIntern Frontend Engineer\nсентябрь 2021\xa0-\xa0май 2022\xa0(9 месяцев)\nMinsk, Belarus\n\nThe platform allows EPAM employees to select courses, book interview slots,\nand receive\nfeedback from experts (review and score) with possibility to re-attend course.\nSuccessful\ncompletion of all topics enables mentees to become experts.\nTeam: 2 Full-Stack Developers, 1 Intern Java Engineer, 1 Intern Frontend\nDeveloper, 1 Project\nManager.\nParticipation:\n* Developed and maintained the UI using React and JavaScript for features\nlike course\nselection, slot booking, and feedback viewing.\n* Integrated REST APIs with Axios to ensure smooth data exchange between\nthe React\nfront-end and Java-based backend.\n* Code reviews to improve code quality and knowledge-sharing sessions with\nthe team.\n* Utilized Postman for API testing and troubleshooting.\nEnvironment:\n\n\xa0 Page 3 of 4\n\nReact, JavaScript, HTML5, CSS3, REST API, Axios, Git, Jira, Confluence,\nPostman.\n\nДействия\n10/01/2024, Просмотрено участником Elena Koipash\n\n\xa0 Page 4 of 4"}}], 'middle_name': 'Savchenko', 'social': [{'social_type': 'TELEGRAM', 'value': 'mini'}], 'email': 'yana.savchenko.work@gmail.com', 'files': [96839316]}
+🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/applicants
+📤 JSON данные: {'last_name': 'PL', 'first_name': 'Yana', 'externals': [{'auth_type': 'NATIVE', 'data': {'body': "Способы связаться\n\nwww.linkedin.com/in/yana-\nsavchenko-59ba5628b (LinkedIn)\n\nОсновные навыки\nCSS3\nGraphQL\nTypeScript\n\nLanguages\nEnglish (Professional Working)\nBelarussian (Native or Bilingual)\nRussian (Native or Bilingual)\n\nYana Savchenko\nFrontend Engineer\nWarsaw, Mazowieckie, Poland\n\nОбщие сведения\n- Frontend Engineer with 3+ years of commercial experience in\nFrontend development using\nReact with TypeScript / JavaScript building SPAs\n- Great experience with Redux Toolkit and its features, including\naddons like RTK Query\n- Great experience with handling backend REST APIs applying Yup\nvalidation and React Hook\nForm\n- Great experience with styling frontend applications using Tailwind\nCSS, SCSS/SASS, CSS5,\nBootstrap, Less\n- Experience with UI/UX designing using Figma\n- Experience with integrating Google Map API into applications\n- Experience with Git, Jira, Confluence\n- Experience with unit testing using React Testing Library and Jest\n- English level is B2\n- Committed to ongoing professional growth, eager to learn new\ntechnologies, and improve\nskills in familiar areas.\n\nОпыт работы\n\nVisa Travel Agency\nFrontend Developer\nянварь 2024\xa0-\xa0Present\xa0(10 месяцев)\nWarsaw, Mazowieckie, Poland\n\nDeveloping Telegram mini-app from scratch that allows users to apply for\ndifferent types of visa to various countries. The application features modern\nand user friendly\ninterface for tracking visa application status, transfer and accompaniment to\nvisa center,\nbooking additional services like flight tickets and hotel reservations, and\ncourier services for\n\n\xa0 Page 1 of 4\n\nhttp://www.linkedin.com/in/yana-savchenko-59ba5628b?jobid=1234&lipi=urn%3Ali%3Apage%3Ad_jobs_easyapply_pdfgenresume%3BxGHYNnsBST%2Bse%2B4O%2FLd3%2BQ%3D%3D&licu=urn%3Ali%3Acontrol%3Ad_jobs_easyapply_pdfgenresume-v02_profile\nhttp://www.linkedin.com/in/yana-savchenko-59ba5628b?jobid=1234&lipi=urn%3Ali%3Apage%3Ad_jobs_easyapply_pdfgenresume%3BxGHYNnsBST%2Bse%2B4O%2FLd3%2BQ%3D%3D&licu=urn%3Ali%3Acontrol%3Ad_jobs_easyapply_pdfgenresume-v02_profile\n\ndocument delivery.\nTeam: 1 Frontend Engineer, 2 Backend Engineers, 1 Lead Engineer and 1\nProject Manager.\nParticipation:\n* Implementing Frontend app using React and TypeScript from scratch\nfollowing Figma\ndesigns;\n* Setting up Telegram environment for React application;\n* Designing and implementing complex multi-step forms to collect, validate and\nsend to\nbackend input data from across different pages and components using React\nHook Form\nwith Yup validation;\n* Customized Figma designs to meet client requirements;\n* Investigating and integrating calendar and date input public libraries to\napplication;\n* Planning and refinement sessions for frontend tasks along with PM and lead\nengineer;\n* Code reviews to improve TypeScript code quality.\nEnvironment:\nTypeScript, React, RTK Query, Redux Toolkit, Google Map API, Tailwind CSS,\nHTML5, Yup,\nAxios, REST API, Jest, Figma, Postman, Git, Jira.\n\nNike\nJunior Frontend Engineer\nмай 2022\xa0-\xa0декабрь 2023\xa0(1 год 8 месяцев)\nNetherlands · Remote\n\nAn internal website tool that allows NIKE tech teams to centrally assess their\napplications\nagainst the Nike Information Security Policy (NISP) using a questionnaire that\ncalculates a\nrisk score to indicate the application's security maturity. The tool also enables\nthe creation of\ndiscussion threads on completed questionnaires, facilitating conversations with\ntop-level\nmanagers to address and resolve potential security risks.\nTeam: 2 Full-Stack Developers, 1 Frontend Developer, 1 Technical PM and 1\nScrum Master.\nParticipation:\n\n\xa0 Page 2 of 4\n\n* Implementing and supporting UI app using React and TypeScript with\nparticipation in\nUI/UX designing;\n* Contributing to NIKE UI components library;\n* Utilized GraphQL to retrieve thread data for completed questionnaires,\nincluding\ndiscussion messages on specific answers;\n* Interaction with technical PM to define and refine tasks in the backlog as well\nas analysis\nof requirements and business processes;\n* Unit tests on frontend side using Jest;\n* Pair programming, code reviews, knowledge sharing.\nEnvironment:\nTypeScript, React, RTK Query, Redux Toolkit, SASS, HTML5, NIKE UI\ncomponents library,\nYup, Axios, REST API, GraphQL, Jest, Postman, Git, Jira, Confluence.\n\nEPAM Systems\nIntern Frontend Engineer\nсентябрь 2021\xa0-\xa0май 2022\xa0(9 месяцев)\nMinsk, Belarus\n\nThe platform allows EPAM employees to select courses, book interview slots,\nand receive\nfeedback from experts (review and score) with possibility to re-attend course.\nSuccessful\ncompletion of all topics enables mentees to become experts.\nTeam: 2 Full-Stack Developers, 1 Intern Java Engineer, 1 Intern Frontend\nDeveloper, 1 Project\nManager.\nParticipation:\n* Developed and maintained the UI using React and JavaScript for features\nlike course\nselection, slot booking, and feedback viewing.\n* Integrated REST APIs with Axios to ensure smooth data exchange between\nthe React\nfront-end and Java-based backend.\n* Code reviews to improve code quality and knowledge-sharing sessions with\nthe team.\n* Utilized Postman for API testing and troubleshooting.\nEnvironment:\n\n\xa0 Page 3 of 4\n\nReact, JavaScript, HTML5, CSS3, REST API, Axios, Git, Jira, Confluence,\nPostman.\n\nДействия\n10/01/2024, Просмотрено участником Elena Koipash\n\n\xa0 Page 4 of 4"}}], 'middle_name': 'Savchenko', 'social': [{'social_type': 'TELEGRAM', 'value': 'mini'}], 'email': 'yana.savchenko.work@gmail.com', 'files': [96839316]}
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Yana","last_name":"PL","middle_name":"Savchenko","money":null,"phone":null,"email":"yana.savchenko.work@gmail.com","skype":null,"position":null,"company":null,"photo":null,"id":74649952,"created":"2025-10-03T16:08:54+03:00","birthday":null,"files":null,"doubles":[{"double":74649389}],"agreement":null,"external":[{"id":74478862,"auth_type":"NATIVE","account_source":null,"updated":"2025-10-03T16:08:54+03:00"}],"social":[{"id":4010817,"social_type":"TELEGRAM","value":"mini","verified...
+🔍 Результат _make_request: {'first_name': 'Yana', 'last_name': 'PL', 'middle_name': 'Savchenko', 'money': None, 'phone': None, 'email': 'yana.savchenko.work@gmail.com', 'skype': None, 'position': None, 'company': None, 'photo': None, 'id': 74649952, 'created': '2025-10-03T16:08:54+03:00', 'birthday': None, 'files': None, 'doubles': [{'double': 74649389}], 'agreement': None, 'external': [{'id': 74478862, 'auth_type': 'NATIVE', 'account_source': None, 'updated': '2025-10-03T16:08:54+03:00'}], 'social': [{'id': 4010817, 'social_type': 'TELEGRAM', 'value': 'mini', 'verified': False, 'verification_date': None}], 'reindex_job_id': 'ad071702-d092-44b0-a89c-6f42513b142b'}
+✅ Кандидат успешно создан: {'first_name': 'Yana', 'last_name': 'PL', 'middle_name': 'Savchenko', 'money': None, 'phone': None, 'email': 'yana.savchenko.work@gmail.com', 'skype': None, 'position': None, 'company': None, 'photo': None, 'id': 74649952, 'created': '2025-10-03T16:08:54+03:00', 'birthday': None, 'files': None, 'doubles': [{'double': 74649389}], 'agreement': None, 'external': [{'id': 74478862, 'auth_type': 'NATIVE', 'account_source': None, 'updated': '2025-10-03T16:08:54+03:00'}], 'social': [{'id': 4010817, 'social_type': 'TELEGRAM', 'value': 'mini', 'verified': False, 'verification_date': None}], 'reindex_job_id': 'ad071702-d092-44b0-a89c-6f42513b142b'}
+🔗 Привязываем кандидата 74649952 к вакансии 3936868
+🔗 Привязываем кандидата 74649952 к вакансии 3936868
+📦 Получены данные вакансии из кэша: 3936868
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies/statuses
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":186500,"type":"user","name":"New","removed":null,"order":1,"stay_duration":null},{"id":187026,"type":"user","name":"Message","removed":null,"order":2,"stay_duration":null},{"id":186501,"type":"user","name":"Contact","removed":null,"order":3,"stay_duration":null},{"id":187027,"type":"user","name":"Portfolio Review","removed":null,"order":4,"stay_duration":null},{"id":186502,"type":"user","name":"HR Screening","removed":null,"order":5,"stay_duration":null},{"id":189774,"type":"user...
+🔍 Статус задачи ClickUp: reject, ищем статус 'Отказ' в Huntflow
+✅ Найден статус отказа: Отказ (ID: 186509) типа 'trash'
+🎯 Используем статус 186509 для привязки к вакансии
+🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/applicants/74649952/vacancy
+📤 JSON данные: {'vacancy': 3936868, 'status': 186509, 'comment': 'Автоматически добавлен из ClickUp'}
+📥 Ответ API: 200
+📥 Тело ответа: {"id":70042510,"changed":"2025-10-03T16:08:54+03:00","vacancy":3936868,"status":186509,"rejection_reason":null}...
+✅ Кандидат 74649952 успешно привязан к вакансии 3936868 со статусом 186509
+✅ Кандидат успешно привязан к вакансии
+🔍 Ищем тег для исполнителя: clickup-new
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/tags
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":216903,"name":"Yahor Litavar","color":"ff5151"},{"id":216945,"name":"Uladzislau Churyla ","color":"2965ff"},{"id":216946,"name":"Ilya Petravets ","color":"15d1aa"},{"id":216977,"name":"Ivan Varabei ","color":"006bce"},{"id":219808,"name":"Artsiom Varabei","color":"2965ff"},{"id":216978,"name":"Anton Babrou","color":"30b25b"},{"id":219871,"name":"No come back","color":"2965ff"},{"id":217458,"name":" Anton Dubrouski","color":"2965ff"},{"id":217465,"name":" Aleksei Bondarenko","colo...
+📋 Найдено тегов: 34
+  - Проверяем тег: 'Yahor Litavar'
+  - Проверяем тег: 'Uladzislau Churyla '
+  - Проверяем тег: 'Ilya Petravets '
+  - Проверяем тег: 'Ivan Varabei '
+  - Проверяем тег: 'Artsiom Varabei'
+  - Проверяем тег: 'Anton Babrou'
+  - Проверяем тег: 'No come back'
+  - Проверяем тег: ' Anton Dubrouski'
+  - Проверяем тег: ' Aleksei Bondarenko'
+  - Проверяем тег: 'Maksim Misiukevich'
+  - Проверяем тег: ' Daniil Stakhavets'
+  - Проверяем тег: 'Aliaksandr Mikhniuk'
+  - Проверяем тег: 'Tier One'
+  - Проверяем тег: 'Yauheni Lebedzeu'
+  - Проверяем тег: 'High Priority'
+  - Проверяем тег: 'Aleh Borykau'
+  - Проверяем тег: 'Siarhei Tsukanau'
+  - Проверяем тег: ' Pavel Krauchanka'
+  - Проверяем тег: 'Yauheni Ivanou'
+  - Проверяем тег: 'Резерв'
+  - Проверяем тег: 'Hlieb Jakush'
+  - Проверяем тег: 'Yauheni Savonkin'
+  - Проверяем тег: 'Chernomordin Andrey'
+  - Проверяем тег: 'Dzianis Pytaleu'
+  - Проверяем тег: 'notion'
+  - Проверяем тег: 'Отлик'
+  - Проверяем тег: 'Warsaw'
+  - Проверяем тег: 'Minsk'
+  - Проверяем тег: 'Вторая попытка'
+  - Проверяем тег: 'clickup-new'
+✅ Найден точный тег: clickup-new (ID: 239351)
+🏷️ Добавляем метку clickup-new (ID: 239351)
+🔍 Ищем тег для исполнителя: Yauheni Lebedzeu
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/tags
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":216903,"name":"Yahor Litavar","color":"ff5151"},{"id":216945,"name":"Uladzislau Churyla ","color":"2965ff"},{"id":216946,"name":"Ilya Petravets ","color":"15d1aa"},{"id":216977,"name":"Ivan Varabei ","color":"006bce"},{"id":219808,"name":"Artsiom Varabei","color":"2965ff"},{"id":216978,"name":"Anton Babrou","color":"30b25b"},{"id":219871,"name":"No come back","color":"2965ff"},{"id":217458,"name":" Anton Dubrouski","color":"2965ff"},{"id":217465,"name":" Aleksei Bondarenko","colo...
+📋 Найдено тегов: 34
+  - Проверяем тег: 'Yahor Litavar'
+  - Проверяем тег: 'Uladzislau Churyla '
+  - Проверяем тег: 'Ilya Petravets '
+  - Проверяем тег: 'Ivan Varabei '
+  - Проверяем тег: 'Artsiom Varabei'
+  - Проверяем тег: 'Anton Babrou'
+  - Проверяем тег: 'No come back'
+  - Проверяем тег: ' Anton Dubrouski'
+  - Проверяем тег: ' Aleksei Bondarenko'
+  - Проверяем тег: 'Maksim Misiukevich'
+  - Проверяем тег: ' Daniil Stakhavets'
+  - Проверяем тег: 'Aliaksandr Mikhniuk'
+  - Проверяем тег: 'Tier One'
+  - Проверяем тег: 'Yauheni Lebedzeu'
+✅ Найден точный тег: Yauheni Lebedzeu (ID: 217755)
+🏷️ Добавляем тег для исполнителя: Yauheni Lebedzeu (ID: 217755)
+🏷️ Добавляем все метки одновременно: [239351, 217755]
+🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/applicants/74649952/tags
+📤 JSON данные: {'tags': [239351, 217755]}
+📥 Ответ API: 200
+📥 Тело ответа: {"tags":[239351,217755]}...
+✅ Все метки успешно добавлены к кандидату
+🗑️ Кэш очищен для кандидата 74649952
+🔍 Добавляем комментарий с объединенными данными к кандидату 74649952
+🔍 Добавляем комментарий к кандидату 74649952
+📝 Комментарий будет добавлен к вакансии 3936868
+📤 Данные комментария: {'comment': '📊 Статус задачи:\nreject\n\n📋 Описание задачи:\nЕсли Мидл, то +-1700 чистыми, а если Джун+, то где-то 1300 чистыми. Подскажите, а какие контракты вы поддерживаете? Мне удобно и B2B через инкубатор, и UoP (но тогда нужно будет Освядчение сделать через вас) Скрин/Фото: Фидбек (технический и общее впечатление) Договоренности\n\n💬 Комментарии:\nДата неизвестна: По всем темам много дыр, совсем слабо, отказ Повторно пробовать смысла нет\n\nДата неизвестна: %D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202024-10-02%20%D0%B2%2009.26.37.png\n\nДата неизвестна: PL Общие вопросы: 1. У нас формат работы только из офиса (al. Jana Pawła II 22, БЦ Q22). Вас это устраивает? да 2. Сможет ли работать полный рабочий день? да 3. Планируете продолжать жить из Варшаве? ждет внж 4. Какая причина смены компании? уже не работает 5. Какие зарплатные ожидания (с какой суммы готовы начинать общение)? 1400 6. Работали как ИП? Планируете работать по B2B или по умове о праце? по умове о праце будет 7. Критичные предпочтения по технологиям? 8. Что из последнего нового изучили? редакс ртк квери тулкит 9. Как быстро готовы приступить к работе? неделя-две\n', 'vacancy': '3936868'}
+🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/applicants/74649952/logs
+📤 JSON данные: {'comment': '📊 Статус задачи:\nreject\n\n📋 Описание задачи:\nЕсли Мидл, то +-1700 чистыми, а если Джун+, то где-то 1300 чистыми. Подскажите, а какие контракты вы поддерживаете? Мне удобно и B2B через инкубатор, и UoP (но тогда нужно будет Освядчение сделать через вас) Скрин/Фото: Фидбек (технический и общее впечатление) Договоренности\n\n💬 Комментарии:\nДата неизвестна: По всем темам много дыр, совсем слабо, отказ Повторно пробовать смысла нет\n\nДата неизвестна: %D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202024-10-02%20%D0%B2%2009.26.37.png\n\nДата неизвестна: PL Общие вопросы: 1. У нас формат работы только из офиса (al. Jana Pawła II 22, БЦ Q22). Вас это устраивает? да 2. Сможет ли работать полный рабочий день? да 3. Планируете продолжать жить из Варшаве? ждет внж 4. Какая причина смены компании? уже не работает 5. Какие зарплатные ожидания (с какой суммы готовы начинать общение)? 1400 6. Работали как ИП? Планируете работать по B2B или по умове о праце? по умове о праце будет 7. Критичные предпочтения по технологиям? 8. Что из последнего нового изучили? редакс ртк квери тулкит 9. Как быстро готовы приступить к работе? неделя-две\n', 'vacancy': '3936868'}
+📥 Ответ API: 200
+📥 Тело ответа: {"id":453020350,"applicant":74649952,"type":"COMMENT","vacancy":3936868,"status":186509,"rejection_reason":null,"created":"2025-10-03T16:08:55+03:00","employment_date":null,"applicant_offer":null,"comment":"📊 Статус задачи:\nreject\n\n📋 Описание задачи:\nЕсли Мидл, то +-1700 чистыми, а если Джун+, то где-то 1300 чистыми. Подскажите, а какие контракты вы поддерживаете? Мне удобно и B2B через инкубатор, и UoP (но тогда нужно будет Освядчение сделать через вас) Скрин/Фото: Фидбек (технический и общ...
+✅ Комментарий успешно добавлен: {'id': 453020350, 'applicant': 74649952, 'type': 'COMMENT', 'vacancy': 3936868, 'status': 186509, 'rejection_reason': None, 'created': '2025-10-03T16:08:55+03:00', 'employment_date': None, 'applicant_offer': None, 'comment': '📊 Статус задачи:\nreject\n\n📋 Описание задачи:\nЕсли Мидл, то +-1700 чистыми, а если Джун+, то где-то 1300 чистыми. Подскажите, а какие контракты вы поддерживаете? Мне удобно и B2B через инкубатор, и UoP (но тогда нужно будет Освядчение сделать через вас) Скрин/Фото: Фидбек (технический и общее впечатление) Договоренности\n\n💬 Комментарии:\nДата неизвестна: По всем темам много дыр, совсем слабо, отказ Повторно пробовать смысла нет\n\nДата неизвестна: %D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202024-10-02%20%D0%B2%2009.26.37.png\n\nДата неизвестна: PL Общие вопросы: 1. У нас формат работы только из офиса (al. Jana Pawła II 22, БЦ Q22). Вас это устраивает? да 2. Сможет ли работать полный рабочий день? да 3. Планируете продолжать жить из Варшаве? ждет внж 4. Какая причина смены компании? уже не работает 5. Какие зарплатные ожидания (с какой суммы готовы начинать общение)? 1400 6. Работали как ИП? Планируете работать по B2B или по умове о праце? по умове о праце будет 7. Критичные предпочтения по технологиям? 8. Что из последнего нового изучили? редакс ртк квери тулкит 9. Как быстро готовы приступить к работе? неделя-две', 'files': [], 'calendar_event': None, 'email': None, 'survey_questionary': None, 'workdays_after_deadline_for_employment_date': None, 'hired_in_fill_quota': None, 'applicant_external': None, 'sms': None, 'removed': None, 'vacancy_external': None, 'workdays_until_employment_date': None, 'account': 318267, 'survey_answer_of_type_a': None, 'group_action': None, 'comment_html': '<div>📊 Статус задачи:<br>reject<br><br>📋 Описание задачи:<br>Если Мидл, то +-1700 чистыми, а если Джун+, то где-то 1300 чистыми. Подскажите, а какие контракты вы поддерживаете? Мне удобно и B2B через инкубатор, и UoP (но тогда нужно будет Освядчение сделать через вас) Скрин/Фото: Фидбек (технический и общее впечатление) Договоренности<br><br>💬 Комментарии:<br>Дата неизвестна: По всем темам много дыр, совсем слабо, отказ Повторно пробовать смысла нет<br><br>Дата неизвестна: %D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202024-10-02%20%D0%B2%2009.26.37.png<br><br>Дата неизвестна: PL Общие вопросы: 1. У нас формат работы только из офиса (al. Jana Pawła II 22, БЦ Q22). Вас это устраивает? да 2. Сможет ли работать полный рабочий день? да 3. Планируете продолжать жить из Варшаве? ждет внж 4. Какая причина смены компании? уже не работает 5. Какие зарплатные ожидания (с какой суммы готовы начинать общение)? 1400 6. Работали как ИП? Планируете работать по B2B или по умове о праце? по умове о праце будет 7. Критичные предпочтения по технологиям? 8. Что из последнего нового изучили? редакс ртк квери тулкит 9. Как быстро готовы приступить к работе? неделя-две<br></div>', 'source': None, 'vacancy_frame': 1784359, 'work_days_in_work': None, 'phone_call': None, 'data': None, 'im': [], 'work_days_after_deadline': None, 'recruitment_evaluation': None}[03/Oct/2025 16:08:57] "POST /clickup/task/86c0gj0f6/transfer-to-huntflow/ HTTP/1.1" 200 445

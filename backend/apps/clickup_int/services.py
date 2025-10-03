@@ -211,73 +211,67 @@ class ClickUpService:
                     logger.info(f"Тег '{tag_name}' уже существует для задачи {task_id}")
                     return True
                 
-                # Для тега huntflow ищем в пространстве задачи, а если не найден - во всех пространствах
-                if tag_name.lower() == 'huntflow':
-                    tag_id = self.find_huntflow_tag_in_task_space(task_data)
-                    if tag_id:
-                        logger.info(f"Найден тег 'huntflow' с ID {tag_id} в пространстве задачи")
-                    else:
-                        logger.warning("Тег 'huntflow' не найден в пространстве задачи, ищем во всех пространствах")
-                        # Ищем во всех пространствах как fallback
-                        available_tags = self.get_all_tags()
-                        for tag in available_tags:
-                            tag_name_from_api = tag.get('name', '').lower()
-                            if tag_name_from_api == 'huntflow':
-                                tag_id = tag.get('id')
-                                space_name = tag.get('space_name', 'Unknown')
-                                logger.info(f"Найден тег 'huntflow' с ID {tag_id} в пространстве '{space_name}'")
-                                break
-                else:
-                    # Для других тегов используем общий поиск
-                    available_tags = self.get_all_tags()
-                    logger.info(f"Найдено {len(available_tags)} доступных тегов для поиска '{tag_name}'")
-                    
-                    # Логируем все найденные теги для отладки
-                    tag_names = [tag.get('name', 'Unknown') for tag in available_tags]
-                    logger.info(f"Доступные теги: {tag_names}")
-                    
-                    # Ищем нужный тег среди доступных
-                    tag_id = None
-                    for tag in available_tags:
-                        tag_name_from_api = tag.get('name', '')
-                        if tag_name_from_api.lower() == tag_name.lower():
-                            tag_id = tag.get('id')
-                            space_name = tag.get('space_name', 'Unknown')
-                            logger.info(f"Найден тег '{tag_name}' с ID {tag_id} в пространстве '{space_name}'")
-                            break
-                    
-                    if not tag_id:
-                        logger.warning(f"Тег '{tag_name}' не найден среди доступных тегов: {tag_names}")
-                
-                # Если тег не найден, создаем его
-                if not tag_id:
-                    # Для huntflow создаем в пространстве задачи
-                    if tag_name.lower() == 'huntflow':
-                        # Получаем space_id из данных задачи
-                        list_id = task_data.get('list', {}).get('id')
-                        if list_id:
-                            try:
-                                list_info = self._make_request('GET', f'/list/{list_id}')
-                                space_id = list_info.get('space', {}).get('id')
-                                if space_id:
-                                    tag_id = self.create_tag(tag_name, space_id)
-                                    logger.info(f"Создаем тег 'huntflow' в пространстве {space_id}")
+                # Проверяем, существует ли тег в пространстве задачи
+                tag_exists = False
+                try:
+                    # Получаем пространство задачи
+                    list_id = task_data.get('list', {}).get('id')
+                    if list_id:
+                        list_info = self._make_request('GET', f'/list/{list_id}')
+                        space_id = list_info.get('space', {}).get('id')
+                        
+                        if space_id:
+                            # Проверяем теги в пространстве задачи
+                            space_tags_response = self._make_request('GET', f'/space/{space_id}/tag')
+                            if space_tags_response:
+                                # API может вернуть список тегов или словарь с полем 'tags'
+                                if isinstance(space_tags_response, list):
+                                    space_tags = space_tags_response
+                                elif isinstance(space_tags_response, dict) and 'tags' in space_tags_response:
+                                    space_tags = space_tags_response['tags']
                                 else:
-                                    tag_id = self.create_tag(tag_name)
-                            except Exception as e:
-                                logger.warning(f"Не удалось получить space_id для создания тега: {e}")
-                                tag_id = self.create_tag(tag_name)
-                        else:
-                            tag_id = self.create_tag(tag_name)
-                    else:
-                        tag_id = self.create_tag(tag_name)
+                                    space_tags = []
+                                
+                                for tag in space_tags:
+                                    if isinstance(tag, dict) and tag.get('name', '').lower() == tag_name.lower():
+                                        tag_exists = True
+                                        logger.info(f"Тег '{tag_name}' найден в пространстве задачи {space_id}")
+                                        break
+                except Exception as e:
+                    logger.warning(f"Не удалось проверить существование тега в пространстве задачи: {e}")
+                
+                # Если тег не существует, создаем его
+                if not tag_exists:
+                    logger.info(f"Тег '{tag_name}' не найден, создаем его")
                     
-                    if not tag_id:
-                        logger.error(f"Не удалось создать тег '{tag_name}'")
-                        return False
+                    # Для huntflow создаем в пространстве задачи
+                    if tag_name.lower() == 'huntflow' and list_id:
+                        try:
+                            list_info = self._make_request('GET', f'/list/{list_id}')
+                            space_id = list_info.get('space', {}).get('id')
+                            if space_id:
+                                tag_created = self.create_tag(tag_name, space_id)
+                                if tag_created:
+                                    logger.info(f"Тег 'huntflow' создан в пространстве {space_id}")
+                                else:
+                                    logger.error(f"Не удалось создать тег 'huntflow' в пространстве {space_id}")
+                                    return False
+                            else:
+                                logger.error(f"Не удалось получить space_id для создания тега")
+                                return False
+                        except Exception as e:
+                            logger.error(f"Ошибка при создании тега в пространстве задачи: {e}")
+                            return False
+                    else:
+                        # Для других тегов создаем в первом доступном пространстве
+                        tag_created = self.create_tag(tag_name)
+                        if not tag_created:
+                            logger.error(f"Не удалось создать тег '{tag_name}'")
+                            return False
                 
                 # Добавляем тег к задаче
-                endpoint = f'/task/{task_id}/tag/{tag_id}'
+                # Согласно ClickUp API документации: POST /task/{task_id}/tag/{tag_name}
+                endpoint = f'/task/{task_id}/tag/{tag_name}'
                 response = self._make_request('POST', endpoint)
                 
                 logger.info(f"Тег '{tag_name}' успешно добавлен к задаче {task_id}")
@@ -449,13 +443,27 @@ class ClickUpService:
                 }
                 
                 response = self._make_request('POST', endpoint, data=data)
-                tag_id = response.get('tag', {}).get('id')
                 
-                if tag_id:
-                    logger.info(f"Тег '{tag_name}' успешно создан с ID {tag_id}")
-                    return tag_id
+                if response:
+                    # API может вернуть тег в разных форматах
+                    if isinstance(response, dict):
+                        if 'tag' in response:
+                            tag_id = response['tag'].get('id')
+                        elif 'id' in response:
+                            tag_id = response['id']
+                        else:
+                            tag_id = None
+                    else:
+                        tag_id = None
+                    
+                    if tag_id:
+                        logger.info(f"Тег '{tag_name}' успешно создан с ID {tag_id}")
+                        return tag_id
+                    else:
+                        logger.error(f"Не удалось получить ID созданного тега '{tag_name}'. Ответ: {response}")
+                        return None
                 else:
-                    logger.error(f"Не удалось получить ID созданного тега '{tag_name}'")
+                    logger.error(f"Пустой ответ при создании тега '{tag_name}'")
                     return None
                     
             except ClickUpAPIError as e:
