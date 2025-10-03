@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.conf import settings
 from django.conf.urls import handler404, handler500, handler403
+from django.conf.urls.static import static
 # from django_telethon.urls import django_telethon_urls  # Отключено
 
 def redirect_to_huntflow(request):
@@ -49,3 +50,7 @@ urlpatterns = [
 handler404 = 'apps.common.views.custom_404_view'
 handler500 = 'apps.common.views.custom_500_view'
 handler403 = 'apps.common.views.custom_403_view'
+
+# Обслуживание статических файлов в режиме разработки
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])

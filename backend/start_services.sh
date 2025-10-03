@@ -127,7 +127,7 @@ print_success "Celery Worker запущен (PID: $CELERY_PID)!"
 
 # Запускаем Django сервер
 print_status "Запуск Django сервера..."
-nohup python3 manage.py runserver 8000 > logs/django.log 2>&1 &
+nohup python3 manage.py runserver 8000 --insecure > logs/django.log 2>&1 &
 DJANGO_PID=$!
 echo $DJANGO_PID > logs/django.pid
 
