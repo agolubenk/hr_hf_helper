@@ -1168,7 +1168,7 @@ class HuntflowService:
             traceback.print_exc()
             return None
 
-    def create_applicant_from_parsed_data(self, account_id: int, parsed_data: Dict[str, Any], vacancy_id: int = None, task_name: str = None, task_description: str = None, task_comments: List[Dict[str, Any]] = None, assignees: List[Dict[str, Any]] = None, task_status: str = None, notion_data: Dict[str, Any] = None) -> Optional[Dict[str, Any]]:
+    def create_applicant_from_parsed_data(self, account_id: int, parsed_data: Dict[str, Any], vacancy_id: int = None, task_name: str = None, task_description: str = None, task_comments: List[Dict[str, Any]] = None, assignees: List[Dict[str, Any]] = None, task_status: str = None, notion_data: Dict[str, Any] = None, task_data: Dict[str, Any] = None) -> Optional[Dict[str, Any]]:
         """
         Создает кандидата в Huntflow на основе распарсенных данных
         
@@ -1182,6 +1182,7 @@ class HuntflowService:
             assignees: Исполнители задачи ClickUp для создания метки (опционально)
             task_status: Статус задачи ClickUp (опционально)
             notion_data: Данные из Notion для создания заметок (опционально)
+            task_data: Полные данные задачи для извлечения custom fields (опционально)
             
         Returns:
             Созданный кандидат или None
@@ -1334,6 +1335,48 @@ class HuntflowService:
                     'value': parsed_data.get('fields', {}).get('telegram')
                 })
             
+            # Дополнительные поля из ClickUp custom fields
+            clickup_custom_fields = {}
+            if task_data and task_data.get('custom_fields'):
+                clickup_custom_fields = task_data.get('custom_fields', {})
+                # Проверяем тип данных - может быть список или словарь
+                if isinstance(clickup_custom_fields, list):
+                    print(f"🔍 Найдены custom fields ClickUp (список): {len(clickup_custom_fields)} полей")
+                    # Преобразуем список в словарь для удобства
+                    fields_dict = {}
+                    for field in clickup_custom_fields:
+                        if isinstance(field, dict) and 'name' in field:
+                            fields_dict[field.get('name', '')] = field
+                    clickup_custom_fields = fields_dict
+                else:
+                    print(f"🔍 Найдены custom fields ClickUp (словарь): {list(clickup_custom_fields.keys()) if clickup_custom_fields else []}")
+            
+            # Извлекаем телефон из ClickUp custom fields
+            if not applicant_data.get('phone') and clickup_custom_fields:
+                phone_from_clickup = self._extract_field_from_clickup_custom_fields(clickup_custom_fields, ['phone', 'телефон', 'телефон кандидата', 'контактный телефон'])
+                if phone_from_clickup:
+                    applicant_data['phone'] = phone_from_clickup
+                    print(f"📞 Телефон из ClickUp custom fields: {phone_from_clickup}")
+            
+            # Извлекаем email из ClickUp custom fields
+            if not applicant_data.get('email') and clickup_custom_fields:
+                email_from_clickup = self._extract_field_from_clickup_custom_fields(clickup_custom_fields, ['email', 'электронная почта', 'e-mail', 'почта', 'email кандидата'])
+                if email_from_clickup:
+                    applicant_data['email'] = email_from_clickup
+                    print(f"📧 Email из ClickUp custom fields: {email_from_clickup}")
+            
+            # Извлекаем Telegram из ClickUp custom fields
+            if not applicant_data.get('social') and clickup_custom_fields:
+                telegram_from_clickup = self._extract_field_from_clickup_custom_fields(clickup_custom_fields, ['telegram', 'telegram кандидата', 'tg', '@'])
+                if telegram_from_clickup:
+                    if 'social' not in applicant_data:
+                        applicant_data['social'] = []
+                    applicant_data['social'].append({
+                        'social_type': 'TELEGRAM',
+                        'value': telegram_from_clickup
+                    })
+                    print(f"💬 Telegram из ClickUp custom fields: {telegram_from_clickup}")
+            
             # Фото (ID файла)
             if parsed_data.get('photo', {}).get('id'):
                 applicant_data['photo'] = parsed_data.get('photo', {}).get('id')
@@ -1391,11 +1434,13 @@ class HuntflowService:
             if result:
                 print(f"✅ Кандидат успешно создан: {result}")
                 applicant_id = result.get('id')
+                # Сохраняем данные кандидата для возврата
+                applicant_data_result = result
                 
                 # Привязываем кандидата к вакансии, если указана
                 if applicant_id and target_vacancy_id:
                     print(f"🔗 Привязываем кандидата {applicant_id} к вакансии {target_vacancy_id}")
-                    binding_result = self._bind_applicant_to_vacancy(account_id, applicant_id, target_vacancy_id)
+                    binding_result = self._bind_applicant_to_vacancy(account_id, applicant_id, target_vacancy_id, task_status)
                     if binding_result:
                         print(f"✅ Кандидат успешно привязан к вакансии")
                     else:
@@ -1403,22 +1448,41 @@ class HuntflowService:
                 
                 # Добавляем теги
                 if applicant_id:
+                    # Собираем все метки для добавления
+                    tags_to_add = []
+                    
                     # Добавляем метку clickup-new
-                    print(f"🏷️ Добавляем метку clickup-new")
-                    clickup_tag_added = self._add_tag_to_applicant(account_id, applicant_id, "clickup-new")
-                    if clickup_tag_added:
-                        print(f"✅ Метка clickup-new добавлена к кандидату")
+                    clickup_tag_id = self._find_tag_by_name(account_id, "clickup-new")
+                    if clickup_tag_id:
+                        tags_to_add.append(clickup_tag_id)
+                        print(f"🏷️ Добавляем метку clickup-new (ID: {clickup_tag_id})")
                     else:
-                        print(f"❌ Не удалось добавить метку clickup-new к кандидату")
+                        print(f"❌ Не удалось найти метку clickup-new")
                     
                     # Добавляем тег с исполнителем, если есть
                     if assignee_info:
-                        print(f"🏷️ Добавляем тег для исполнителя: {assignee_info}")
-                        tag_added = self._add_tag_to_applicant(account_id, applicant_id, assignee_info)
-                        if tag_added:
-                            print(f"✅ Тег исполнителя добавлен к кандидату")
+                        executor_tag_id = self._find_tag_by_name(account_id, assignee_info)
+                        if executor_tag_id:
+                            tags_to_add.append(executor_tag_id)
+                            print(f"🏷️ Добавляем тег для исполнителя: {assignee_info} (ID: {executor_tag_id})")
                         else:
-                            print(f"❌ Не удалось добавить тег исполнителя к кандидату")
+                            print(f"❌ Не удалось найти тег для исполнителя: {assignee_info}")
+                    
+                    # Добавляем все метки одновременно
+                    if tags_to_add:
+                        print(f"🏷️ Добавляем все метки одновременно: {tags_to_add}")
+                        tag_data = {'tags': tags_to_add}
+                        result = self._make_request('POST', f"/accounts/{account_id}/applicants/{applicant_id}/tags", json=tag_data)
+                        
+                        if result:
+                            print(f"✅ Все метки успешно добавлены к кандидату")
+                            # Очищаем кэш для этого кандидата после добавления меток
+                            HuntflowAPICache.clear_candidate(self.user.id, account_id, applicant_id)
+                            print(f"🗑️ Кэш очищен для кандидата {applicant_id}")
+                        else:
+                            print(f"❌ Не удалось добавить метки к кандидату")
+                    else:
+                        print(f"⚠️ Нет меток для добавления")
                 
                 # Добавляем комментарий с объединенными данными, если есть
                 if combined_notes and applicant_id:
@@ -1436,7 +1500,7 @@ class HuntflowService:
                     else:
                         print(f"⚠️ Кандидат создан, но не удалось добавить комментарий с объединенными данными")
                 
-                return result
+                return applicant_data_result
             else:
                 print(f"❌ _make_request вернул None для создания кандидата")
                 return None
@@ -1445,6 +1509,58 @@ class HuntflowService:
             print(f"❌ Ошибка при создании кандидата: {e}")
             import traceback
             print(f"❌ Traceback: {traceback.format_exc()}")
+            return None
+    
+    def _extract_field_from_clickup_custom_fields(self, custom_fields: Dict, field_names: List[str]) -> Optional[str]:
+        """
+        Извлекает значение поля из ClickUp custom fields по названию
+        
+        Args:
+            custom_fields: Словарь custom fields из ClickUp (ключи - названия полей)
+            field_names: Список возможных названий поля
+            
+        Returns:
+            Значение поля или None если не найдено
+        """
+        try:
+            # Сначала ищем точное совпадение названий полей
+            for search_name in field_names:
+                search_name_lower = search_name.lower()
+                for field_name, field_data in custom_fields.items():
+                    if search_name_lower in field_name.lower() or field_name.lower() in search_name_lower:
+                        if isinstance(field_data, dict):
+                            field_value = field_data.get('value', '')
+                        else:
+                            field_value = str(field_data)
+                        
+                        if field_value and str(field_value).strip():
+                            print(f"✅ Найдено поле '{field_name}' со значением: {field_value}")
+                            return str(field_value).strip()
+            
+            # Если точное совпадение не найдено, ищем в данных полей
+            for field_name, field_data in custom_fields.items():
+                if isinstance(field_data, dict):
+                    field_name_inner = field_data.get('name', '').lower()
+                    field_value = field_data.get('value', '')
+                    
+                    # Проверяем, совпадает ли название поля с одним из искомых
+                    for search_name in field_names:
+                        if search_name.lower() in field_name_inner or field_name_inner in search_name.lower():
+                            if field_value and str(field_value).strip():
+                                print(f"✅ Найдено поле '{field_name_inner}' со значением: {field_value}")
+                                return str(field_value).strip()
+                
+                elif isinstance(field_data, str) and field_data.strip():
+                    # Если данные в простом формате, проверяем по ключу
+                    for search_name in field_names:
+                        if search_name.lower() in field_name.lower() or field_name.lower() in search_name.lower():
+                            print(f"✅ Найдено простое поле '{field_name}' со значением: {field_data}")
+                            return str(field_data).strip()
+            
+            return None
+            
+        except Exception as e:
+            print(f"❌ Ошибка при извлечении поля из ClickUp custom fields: {e}")
             return None
     
     def add_applicant_comment(self, account_id: int, applicant_id: int, comment: str, vacancy_id: int = None) -> Optional[Dict[str, Any]]:
@@ -1759,7 +1875,7 @@ class HuntflowService:
             print(f"❌ Ошибка при создании тега {tag_name}: {e}")
             return None
     
-    def _bind_applicant_to_vacancy(self, account_id: int, applicant_id: int, vacancy_id: int) -> bool:
+    def _bind_applicant_to_vacancy(self, account_id: int, applicant_id: int, vacancy_id: int, task_status: str = None) -> bool:
         """
         Привязывает кандидата к вакансии
         
@@ -1767,6 +1883,7 @@ class HuntflowService:
             account_id: ID организации
             applicant_id: ID кандидата
             vacancy_id: ID вакансии
+            task_status: Статус задачи ClickUp (для обработки reject)
             
         Returns:
             True если привязка успешна, False иначе
@@ -1786,34 +1903,65 @@ class HuntflowService:
                 print(f"❌ Не удалось получить статусы вакансии")
                 return False
             
-            # Находим статус по умолчанию (обычно первый в списке)
-            default_status = None
-            for status in statuses['items']:
-                if status.get('order', 0) == 1 or status.get('name', '').lower() in ['новая', 'new', 'отклик', 'response']:
-                    default_status = status['id']
-                    break
+            # Определяем статус на основе статуса задачи ClickUp
+            target_status = None
             
-            if not default_status and statuses['items']:
-                default_status = statuses['items'][0]['id']  # Берем первый статус
+            # Если статус задачи "reject", ищем статус "Отказ":"По другой причине"
+            if task_status and task_status.lower() == 'reject':
+                print(f"🔍 Статус задачи ClickUp: {task_status}, ищем статус 'Отказ' в Huntflow")
+                for status in statuses['items']:
+                    status_name = status.get('name', '').lower()
+                    status_type = status.get('type', '').lower()
+                    
+                    # Ищем статус отказа (может быть типа 'trash' или содержать 'отказ'/'reject')
+                    if ('отказ' in status_name or 'reject' in status_name) or status_type == 'trash':
+                        # Проверяем подстатусы (reject_reasons)
+                        if 'reject_reasons' in status and status['reject_reasons']:
+                            for reason in status['reject_reasons']:
+                                reason_name = reason.get('name', '').lower()
+                                if 'по другой причине' in reason_name or 'other reason' in reason_name:
+                                    target_status = reason['id']
+                                    print(f"✅ Найден подстатус отказа: {reason['name']} (ID: {reason['id']})")
+                                    break
+                        else:
+                            # Если нет подстатусов, используем основной статус отказа
+                            target_status = status['id']
+                            print(f"✅ Найден статус отказа: {status['name']} (ID: {status['id']}) типа '{status_type}'")
+                            break
+                
+                if not target_status:
+                    print(f"⚠️ Статус отказа не найден, используем статус по умолчанию")
             
-            if not default_status:
-                print(f"❌ Не удалось найти статус по умолчанию для вакансии")
+            # Если статус отказа не найден или задача не reject, используем статус по умолчанию
+            if not target_status:
+                for status in statuses['items']:
+                    if status.get('order', 0) == 1 or status.get('name', '').lower() in ['новая', 'new', 'отклик', 'response']:
+                        target_status = status['id']
+                        print(f"✅ Используем статус по умолчанию: {status['name']} (ID: {status['id']})")
+                        break
+                
+                if not target_status and statuses['items']:
+                    target_status = statuses['items'][0]['id']  # Берем первый статус
+                    print(f"✅ Используем первый доступный статус: {statuses['items'][0]['name']} (ID: {target_status})")
+            
+            if not target_status:
+                print(f"❌ Не удалось найти статус для привязки к вакансии")
                 return False
             
-            print(f"🎯 Используем статус {default_status} для привязки к вакансии")
+            print(f"🎯 Используем статус {target_status} для привязки к вакансии")
             
             # Привязываем кандидата к вакансии с статусом
             endpoint = f"/accounts/{account_id}/applicants/{applicant_id}/vacancy"
             data = {
                 'vacancy': vacancy_id,
-                'status': default_status,
+                'status': target_status,
                 'comment': 'Автоматически добавлен из ClickUp'
             }
             
             result = self._make_request('POST', endpoint, json=data)
             
             if result:
-                print(f"✅ Кандидат {applicant_id} успешно привязан к вакансии {vacancy_id} со статусом {default_status}")
+                print(f"✅ Кандидат {applicant_id} успешно привязан к вакансии {vacancy_id} со статусом {target_status}")
                 return True
             else:
                 print(f"❌ Не удалось привязать кандидата к вакансии")
@@ -1851,6 +1999,11 @@ class HuntflowService:
             
             if result:
                 print(f"✅ Тег {tag_id} успешно добавлен к кандидату {applicant_id}")
+                
+                # Очищаем кэш для этого кандидата после добавления метки
+                HuntflowAPICache.clear_candidate(self.user.id, account_id, applicant_id)
+                print(f"🗑️ Кэш очищен для кандидата {applicant_id}")
+                
                 return True
             else:
                 print(f"❌ Не удалось добавить тег к кандидату")
@@ -1988,6 +2141,17 @@ class HuntflowService:
                         'error': 'Не удалось обработать rabota.by профиль'
                     }
             
+            # Подготавливаем данные задачи для передачи в create_applicant_from_parsed_data
+            task_data_for_huntflow = {
+                'name': clickup_task.name,
+                'description': clickup_task.description,
+                'status': clickup_task.status,
+                'assignees': clickup_task.assignees,
+                'attachments': attachments,
+                'comments': comments,
+                'custom_fields': clickup_task.get_custom_fields_display()
+            }
+            
             # Создаем кандидата на основе распарсенных данных
             print(f"🔍 Создаем кандидата с данными: account_id={account_id}, task_name='{clickup_task.name}'")
             applicant = self.create_applicant_from_parsed_data(
@@ -1998,7 +2162,8 @@ class HuntflowService:
                 task_description=clickup_task.description,
                 task_comments=comments,
                 assignees=clickup_task.assignees,
-                task_status=clickup_task.status
+                task_status=clickup_task.status,
+                task_data=task_data_for_huntflow
             )
             print(f"🔍 Результат создания кандидата: {applicant}")
             

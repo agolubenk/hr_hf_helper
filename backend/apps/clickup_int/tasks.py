@@ -71,7 +71,7 @@ def bulk_import_clickup_tasks(self, user_id, bulk_import_id):
                 print(f"📄 [WORKER] Запрашиваем страницу {page}...", flush=True)
                 logger.info(f"📄 [WORKER] Запрашиваем страницу {page}...")
                 
-                tasks = service.get_tasks(settings.list_id, include_closed=True, page=page)
+                tasks = service.get_tasks(settings.list_id, include_closed=True, page=page, exclude_huntflow_tagged=True)
                 if not tasks:
                     print(f"📄 Страница {page}: задач не найдено, завершаем")
                     print(f"📄 Страница {page}: задач не найдено, завершаем", flush=True)
@@ -308,6 +308,19 @@ def import_single_task(self, user_id, task_data, bulk_import_id):
                         applicant_id = applicant.get('id', 'unknown')
                         logger.info(f"✅ Задача {task_id} успешно перенесена в Huntflow (кандидат ID: {applicant_id})")
                         print(f"✅ Задача {task_id} успешно перенесена в Huntflow (кандидат ID: {applicant_id})")
+                        
+                        # Добавляем тег huntflow к задаче в ClickUp
+                        try:
+                            tag_added = service.add_tag_to_task(task_id, 'huntflow')
+                            if tag_added:
+                                logger.info(f"🏷️ Тег 'huntflow' успешно добавлен к задаче {task_id}")
+                                print(f"🏷️ Тег 'huntflow' успешно добавлен к задаче {task_id}")
+                            else:
+                                logger.warning(f"⚠️ Не удалось добавить тег 'huntflow' к задаче {task_id}")
+                                print(f"⚠️ Не удалось добавить тег 'huntflow' к задаче {task_id}")
+                        except Exception as tag_error:
+                            logger.error(f"❌ Ошибка при добавлении тега 'huntflow' к задаче {task_id}: {tag_error}")
+                            print(f"❌ Ошибка при добавлении тега 'huntflow' к задаче {task_id}: {tag_error}")
                     else:
                         logger.warning(f"❌ Ошибка переноса задачи {task_id} в Huntflow: неожиданный результат")
                         print(f"❌ Ошибка переноса задачи {task_id} в Huntflow: неожиданный результат")

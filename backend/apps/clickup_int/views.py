@@ -668,17 +668,31 @@ def transfer_to_huntflow(request, task_id):
                 'error': f'Неожиданный формат ответа от Huntflow: {type(applicant)}'
             })
         
+        # Добавляем тег huntflow к задаче в ClickUp
+        tag_added = False
+        try:
+            tag_added = clickup_service.add_tag_to_task(task_id, 'huntflow')
+            if tag_added:
+                logger.info(f"Тег 'huntflow' успешно добавлен к задаче {task_id}")
+            else:
+                logger.warning(f"Не удалось добавить тег 'huntflow' к задаче {task_id}")
+        except Exception as tag_error:
+            logger.error(f"Ошибка при добавлении тега 'huntflow' к задаче {task_id}: {tag_error}")
+        
         # Формируем сообщение
         applicant_id = applicant.get("id", "неизвестно")
+        tag_status = " (тег huntflow добавлен)" if tag_added else " (тег huntflow не добавлен)"
+        
         if vacancy_id:
-            message = f'Кандидат успешно перенесен в Huntflow и привязан к вакансии (ID: {applicant_id})'
+            message = f'Кандидат успешно перенесен в Huntflow и привязан к вакансии (ID: {applicant_id}){tag_status}'
         else:
-            message = f'Кандидат успешно перенесен в Huntflow без привязки к вакансии (ID: {applicant_id})'
+            message = f'Кандидат успешно перенесен в Huntflow без привязки к вакансии (ID: {applicant_id}){tag_status}'
         
         return JsonResponse({
             'success': True,
             'message': message,
-            'applicant_id': applicant_id
+            'applicant_id': applicant_id,
+            'tag_added': tag_added
         })
     
     except json.JSONDecodeError:
@@ -1000,4 +1014,62 @@ def retry_failed_tasks_view(request, import_id):
         return JsonResponse({
             'success': False,
             'error': f'Ошибка повтора: {str(e)}'
+        })
+
+
+@login_required
+def debug_task_tags(request, task_id):
+    """Отладочный endpoint для получения информации о тегах задачи"""
+    user = request.user
+    
+    try:
+        from .services import ClickUpService
+        
+        if not user.clickup_api_key:
+            return JsonResponse({
+                'success': False,
+                'error': 'API токен ClickUp не настроен'
+            })
+        
+        service = ClickUpService(user.clickup_api_key)
+        debug_info = service.debug_task_tags(task_id)
+        
+        return JsonResponse({
+            'success': True,
+            'debug_info': debug_info
+        })
+        
+    except Exception as e:
+        logger.error(f"Ошибка отладки тегов для задачи {task_id}: {e}")
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })
+
+
+@login_required
+@require_POST
+def force_add_huntflow_tag(request, task_id):
+    """Принудительно добавляет тег huntflow к задаче (для отладки)"""
+    user = request.user
+    
+    try:
+        from .services import ClickUpService
+        
+        if not user.clickup_api_key:
+            return JsonResponse({
+                'success': False,
+                'error': 'API токен ClickUp не настроен'
+            })
+        
+        service = ClickUpService(user.clickup_api_key)
+        result = service.force_add_huntflow_tag(task_id)
+        
+        return JsonResponse(result)
+        
+    except Exception as e:
+        logger.error(f"Ошибка принудительного добавления тега huntflow для задачи {task_id}: {e}")
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
         })

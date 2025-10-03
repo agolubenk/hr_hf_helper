@@ -114,8 +114,19 @@ class ClickUpService:
         
         return response.get('lists', [])
     
-    def get_tasks(self, list_id: str, include_closed: bool = False, page: int = 0) -> List[Dict]:
-        """Получает список задач из списка"""
+    def get_tasks(self, list_id: str, include_closed: bool = False, page: int = 0, exclude_huntflow_tagged: bool = True) -> List[Dict]:
+        """
+        Получает список задач из списка
+        
+        Args:
+            list_id: ID списка задач
+            include_closed: Включать ли закрытые задачи
+            page: Номер страницы
+            exclude_huntflow_tagged: Исключать ли задачи с тегом huntflow
+            
+        Returns:
+            Список задач
+        """
         params = {
             'include_closed': include_closed,
             'page': page,
@@ -125,7 +136,13 @@ class ClickUpService:
         }
         
         response = self._make_request('GET', f'/list/{list_id}/task', params=params)
-        return response.get('tasks', [])
+        tasks = response.get('tasks', [])
+        
+        # Фильтруем задачи с тегом huntflow если требуется
+        if exclude_huntflow_tagged:
+            tasks = [task for task in tasks if not self.has_huntflow_tag(task)]
+        
+        return tasks
     
     def get_task(self, task_id: str) -> Dict:
         """Получает детальную информацию о задаче"""
@@ -158,6 +175,482 @@ class ClickUpService:
             parsed_comments.append(parsed_comment)
         
         return parsed_comments
+    
+    def add_tag_to_task(self, task_id: str, tag_name: str) -> bool:
+        """
+        Добавляет тег к задаче в ClickUp
+        
+        Args:
+            task_id: ID задачи в ClickUp
+            tag_name: Название тега для добавления
+            
+        Returns:
+            True если тег успешно добавлен, False в противном случае
+        """
+        max_retries = 3
+        retry_count = 0
+        
+        while retry_count < max_retries:
+            try:
+                # Сначала получаем информацию о задаче
+                task_data = self.get_task(task_id)
+                if not task_data:
+                    logger.error(f"Не удалось получить данные задачи {task_id}")
+                    return False
+                
+                # Получаем текущие теги
+                current_tags = task_data.get('tags', [])
+                
+                # Проверяем, есть ли уже такой тег
+                tag_exists = any(
+                    tag.get('name', '').lower() == tag_name.lower() 
+                    for tag in current_tags if isinstance(tag, dict)
+                )
+                
+                if tag_exists:
+                    logger.info(f"Тег '{tag_name}' уже существует для задачи {task_id}")
+                    return True
+                
+                # Для тега huntflow ищем в пространстве задачи, а если не найден - во всех пространствах
+                if tag_name.lower() == 'huntflow':
+                    tag_id = self.find_huntflow_tag_in_task_space(task_data)
+                    if tag_id:
+                        logger.info(f"Найден тег 'huntflow' с ID {tag_id} в пространстве задачи")
+                    else:
+                        logger.warning("Тег 'huntflow' не найден в пространстве задачи, ищем во всех пространствах")
+                        # Ищем во всех пространствах как fallback
+                        available_tags = self.get_all_tags()
+                        for tag in available_tags:
+                            tag_name_from_api = tag.get('name', '').lower()
+                            if tag_name_from_api == 'huntflow':
+                                tag_id = tag.get('id')
+                                space_name = tag.get('space_name', 'Unknown')
+                                logger.info(f"Найден тег 'huntflow' с ID {tag_id} в пространстве '{space_name}'")
+                                break
+                else:
+                    # Для других тегов используем общий поиск
+                    available_tags = self.get_all_tags()
+                    logger.info(f"Найдено {len(available_tags)} доступных тегов для поиска '{tag_name}'")
+                    
+                    # Логируем все найденные теги для отладки
+                    tag_names = [tag.get('name', 'Unknown') for tag in available_tags]
+                    logger.info(f"Доступные теги: {tag_names}")
+                    
+                    # Ищем нужный тег среди доступных
+                    tag_id = None
+                    for tag in available_tags:
+                        tag_name_from_api = tag.get('name', '')
+                        if tag_name_from_api.lower() == tag_name.lower():
+                            tag_id = tag.get('id')
+                            space_name = tag.get('space_name', 'Unknown')
+                            logger.info(f"Найден тег '{tag_name}' с ID {tag_id} в пространстве '{space_name}'")
+                            break
+                    
+                    if not tag_id:
+                        logger.warning(f"Тег '{tag_name}' не найден среди доступных тегов: {tag_names}")
+                
+                # Если тег не найден, создаем его
+                if not tag_id:
+                    # Для huntflow создаем в пространстве задачи
+                    if tag_name.lower() == 'huntflow':
+                        # Получаем space_id из данных задачи
+                        list_id = task_data.get('list', {}).get('id')
+                        if list_id:
+                            try:
+                                list_info = self._make_request('GET', f'/list/{list_id}')
+                                space_id = list_info.get('space', {}).get('id')
+                                if space_id:
+                                    tag_id = self.create_tag(tag_name, space_id)
+                                    logger.info(f"Создаем тег 'huntflow' в пространстве {space_id}")
+                                else:
+                                    tag_id = self.create_tag(tag_name)
+                            except Exception as e:
+                                logger.warning(f"Не удалось получить space_id для создания тега: {e}")
+                                tag_id = self.create_tag(tag_name)
+                        else:
+                            tag_id = self.create_tag(tag_name)
+                    else:
+                        tag_id = self.create_tag(tag_name)
+                    
+                    if not tag_id:
+                        logger.error(f"Не удалось создать тег '{tag_name}'")
+                        return False
+                
+                # Добавляем тег к задаче
+                endpoint = f'/task/{task_id}/tag/{tag_id}'
+                response = self._make_request('POST', endpoint)
+                
+                logger.info(f"Тег '{tag_name}' успешно добавлен к задаче {task_id}")
+                return True
+                
+            except ClickUpAPIError as e:
+                error_msg = str(e).lower()
+                if 'rate limit' in error_msg or '429' in error_msg:
+                    # Rate limit - ждем и пробуем еще раз
+                    retry_count += 1
+                    if retry_count < max_retries:
+                        wait_time = 2 ** retry_count  # Экспоненциальная задержка
+                        logger.warning(f"Rate limit при добавлении тега '{tag_name}' к задаче {task_id}. Ждем {wait_time} секунд...")
+                        import time
+                        time.sleep(wait_time)
+                        continue
+                    else:
+                        logger.error(f"Превышен лимит попыток при добавлении тега '{tag_name}' к задаче {task_id}")
+                        return False
+                elif 'not found' in error_msg or '404' in error_msg:
+                    logger.error(f"Задача {task_id} или тег '{tag_name}' не найден")
+                    return False
+                elif 'unauthorized' in error_msg or '401' in error_msg:
+                    logger.error(f"Недостаточно прав для добавления тега '{tag_name}' к задаче {task_id}")
+                    return False
+                else:
+                    logger.error(f"API ошибка при добавлении тега '{tag_name}' к задаче {task_id}: {e}")
+                    return False
+            except Exception as e:
+                logger.error(f"Неожиданная ошибка при добавлении тега '{tag_name}' к задаче {task_id}: {e}")
+                return False
+        
+        return False
+    
+    def find_huntflow_tag_in_task_space(self, task_data: Dict) -> Optional[str]:
+        """
+        Находит тег huntflow в том же пространстве, где находится задача
+        
+        Args:
+            task_data: Данные задачи из ClickUp API
+            
+        Returns:
+            ID тега huntflow или None если не найден
+        """
+        try:
+            # Получаем информацию о пространстве задачи
+            list_id = task_data.get('list', {}).get('id')
+            if not list_id:
+                logger.warning("Не удалось получить list_id из данных задачи")
+                return None
+            
+            # Получаем информацию о списке задач
+            try:
+                list_info = self._make_request('GET', f'/list/{list_id}')
+                space_id = list_info.get('space', {}).get('id')
+                if not space_id:
+                    logger.warning(f"Не удалось получить space_id для списка {list_id}")
+                    return None
+                
+                logger.info(f"Задача находится в пространстве {space_id}")
+                
+                # Получаем теги из этого пространства
+                space_tags = self.get_all_tags(space_id)
+                
+                # Ищем тег huntflow
+                for tag in space_tags:
+                    tag_name = tag.get('name', '').lower()
+                    if tag_name == 'huntflow':
+                        tag_id = tag.get('id')
+                        logger.info(f"Найден тег 'huntflow' с ID {tag_id} в пространстве задачи")
+                        return tag_id
+                
+                logger.warning(f"Тег 'huntflow' не найден в пространстве {space_id}")
+                return None
+                
+            except Exception as list_error:
+                logger.error(f"Ошибка при получении информации о списке {list_id}: {list_error}")
+                return None
+                
+        except Exception as e:
+            logger.error(f"Ошибка при поиске тега huntflow в пространстве задачи: {e}")
+            return None
+    
+    def get_all_tags(self, space_id: str = None) -> List[Dict]:
+        """
+        Получает список всех доступных тегов
+        
+        Args:
+            space_id: ID пространства для поиска тегов (если не указан, ищет во всех пространствах)
+        
+        Returns:
+            Список доступных тегов
+        """
+        try:
+            if space_id:
+                # Получаем теги из конкретного пространства
+                response = self._make_request('GET', f'/space/{space_id}/tag')
+                tags = response.get('tags', [])
+                logger.info(f"Получено {len(tags)} тегов из пространства {space_id}")
+                return tags
+            else:
+                # Получаем теги из всех доступных пространств
+                spaces = self.get_spaces()
+                if not spaces:
+                    logger.warning("Нет доступных пространств для получения тегов")
+                    return []
+                
+                all_tags = []
+                for space in spaces:
+                    try:
+                        space_id = space['id']
+                        space_name = space.get('name', 'Unknown')
+                        response = self._make_request('GET', f'/space/{space_id}/tag')
+                        space_tags = response.get('tags', [])
+                        logger.info(f"Пространство '{space_name}' ({space_id}): найдено {len(space_tags)} тегов")
+                        
+                        # Добавляем информацию о пространстве к каждому тегу
+                        for tag in space_tags:
+                            tag['space_id'] = space_id
+                            tag['space_name'] = space_name
+                        
+                        all_tags.extend(space_tags)
+                    except Exception as space_error:
+                        logger.warning(f"Ошибка при получении тегов из пространства {space_id}: {space_error}")
+                        continue
+                
+                logger.info(f"Всего получено {len(all_tags)} тегов из {len(spaces)} пространств")
+                return all_tags
+            
+        except Exception as e:
+            logger.error(f"Ошибка при получении тегов: {e}")
+            return []
+    
+    def create_tag(self, tag_name: str, space_id: str = None) -> Optional[str]:
+        """
+        Создает новый тег
+        
+        Args:
+            tag_name: Название тега
+            space_id: ID пространства для создания тега (если не указан, используется первое доступное)
+            
+        Returns:
+            ID созданного тега или None в случае ошибки
+        """
+        max_retries = 3
+        retry_count = 0
+        
+        while retry_count < max_retries:
+            try:
+                if not space_id:
+                    # Получаем доступные пространства
+                    spaces = self.get_spaces()
+                    if not spaces:
+                        logger.error("Нет доступных пространств для создания тега")
+                        return None
+                    
+                    # Берем первое пространство
+                    space_id = spaces[0]['id']
+                    logger.info(f"Используем первое доступное пространство {space_id} для создания тега '{tag_name}'")
+                
+                # Создаем тег
+                endpoint = f'/space/{space_id}/tag'
+                data = {
+                    'tag': {
+                        'name': tag_name,
+                        'tag_fg': '#FFFFFF',  # Белый текст
+                        'tag_bg': '#1E88E5'   # Синий фон
+                    }
+                }
+                
+                response = self._make_request('POST', endpoint, data=data)
+                tag_id = response.get('tag', {}).get('id')
+                
+                if tag_id:
+                    logger.info(f"Тег '{tag_name}' успешно создан с ID {tag_id}")
+                    return tag_id
+                else:
+                    logger.error(f"Не удалось получить ID созданного тега '{tag_name}'")
+                    return None
+                    
+            except ClickUpAPIError as e:
+                error_msg = str(e).lower()
+                if 'rate limit' in error_msg or '429' in error_msg:
+                    # Rate limit - ждем и пробуем еще раз
+                    retry_count += 1
+                    if retry_count < max_retries:
+                        wait_time = 2 ** retry_count  # Экспоненциальная задержка
+                        logger.warning(f"Rate limit при создании тега '{tag_name}'. Ждем {wait_time} секунд...")
+                        import time
+                        time.sleep(wait_time)
+                        continue
+                    else:
+                        logger.error(f"Превышен лимит попыток при создании тега '{tag_name}'")
+                        return None
+                elif 'duplicate' in error_msg or 'already exists' in error_msg:
+                    # Тег уже существует, пытаемся найти его ID
+                    logger.info(f"Тег '{tag_name}' уже существует, ищем его ID")
+                    available_tags = self.get_all_tags()
+                    for tag in available_tags:
+                        if tag.get('name', '').lower() == tag_name.lower():
+                            tag_id = tag.get('id')
+                            if tag_id:
+                                logger.info(f"Найден существующий тег '{tag_name}' с ID {tag_id}")
+                                return tag_id
+                    logger.error(f"Тег '{tag_name}' существует, но не удалось найти его ID")
+                    return None
+                elif 'unauthorized' in error_msg or '401' in error_msg:
+                    logger.error(f"Недостаточно прав для создания тега '{tag_name}'")
+                    return None
+                else:
+                    logger.error(f"API ошибка при создании тега '{tag_name}': {e}")
+                    return None
+            except Exception as e:
+                logger.error(f"Неожиданная ошибка при создании тега '{tag_name}': {e}")
+                return None
+        
+        return None
+    
+    def debug_task_tags(self, task_id: str) -> Dict:
+        """
+        Отладочный метод для получения информации о тегах задачи
+        
+        Args:
+            task_id: ID задачи в ClickUp
+            
+        Returns:
+            Словарь с отладочной информацией
+        """
+        try:
+            # Получаем данные задачи
+            task_data = self.get_task(task_id)
+            if not task_data:
+                return {'error': f'Задача {task_id} не найдена'}
+            
+            # Получаем информацию о пространстве
+            list_id = task_data.get('list', {}).get('id')
+            space_info = {}
+            if list_id:
+                try:
+                    list_info = self._make_request('GET', f'/list/{list_id}')
+                    space_info = {
+                        'list_id': list_id,
+                        'list_name': list_info.get('name', 'Unknown'),
+                        'space_id': list_info.get('space', {}).get('id'),
+                        'space_name': list_info.get('space', {}).get('name', 'Unknown')
+                    }
+                except Exception as e:
+                    space_info = {'error': f'Ошибка получения информации о списке: {e}'}
+            
+            # Получаем текущие теги задачи
+            current_tags = task_data.get('tags', [])
+            
+            # Получаем все доступные теги в пространстве
+            space_tags = []
+            if space_info.get('space_id'):
+                space_tags = self.get_all_tags(space_info['space_id'])
+            
+            # Ищем huntflow тег
+            huntflow_tag = None
+            for tag in space_tags:
+                if tag.get('name', '').lower() == 'huntflow':
+                    huntflow_tag = tag
+                    break
+            
+            return {
+                'task_id': task_id,
+                'task_name': task_data.get('name', 'Unknown'),
+                'space_info': space_info,
+                'current_tags': [
+                    {
+                        'id': tag.get('id', 'Unknown'),
+                        'name': tag.get('name', 'Unknown'),
+                        'color': tag.get('tag_fg', 'Unknown')
+                    } for tag in current_tags
+                ],
+                'available_space_tags': [
+                    {
+                        'id': tag.get('id', 'Unknown'),
+                        'name': tag.get('name', 'Unknown'),
+                        'color': tag.get('tag_fg', 'Unknown')
+                    } for tag in space_tags
+                ],
+                'huntflow_tag': huntflow_tag,
+                'has_huntflow_tag': self.has_huntflow_tag(task_data)
+            }
+            
+        except Exception as e:
+            return {'error': f'Ошибка отладки: {e}'}
+    
+    def force_add_huntflow_tag(self, task_id: str) -> Dict:
+        """
+        Принудительно добавляет тег huntflow к задаче (для отладки)
+        
+        Args:
+            task_id: ID задачи в ClickUp
+            
+        Returns:
+            Результат операции
+        """
+        try:
+            # Получаем данные задачи
+            task_data = self.get_task(task_id)
+            if not task_data:
+                return {'success': False, 'error': f'Задача {task_id} не найдена'}
+            
+            logger.info(f"🔍 Принудительное добавление тега huntflow к задаче {task_id}")
+            
+            # Проверяем, есть ли уже тег huntflow
+            if self.has_huntflow_tag(task_data):
+                return {'success': True, 'message': 'Тег huntflow уже существует у задачи'}
+            
+            # Ищем тег huntflow в пространстве задачи
+            huntflow_tag_id = self.find_huntflow_tag_in_task_space(task_data)
+            
+            if not huntflow_tag_id:
+                # Создаем тег huntflow в пространстве задачи
+                logger.info("Создаем тег huntflow в пространстве задачи")
+                list_id = task_data.get('list', {}).get('id')
+                if list_id:
+                    list_info = self._make_request('GET', f'/list/{list_id}')
+                    space_id = list_info.get('space', {}).get('id')
+                    if space_id:
+                        huntflow_tag_id = self.create_tag('huntflow', space_id)
+                        if not huntflow_tag_id:
+                            return {'success': False, 'error': 'Не удалось создать тег huntflow'}
+                    else:
+                        return {'success': False, 'error': 'Не удалось определить пространство задачи'}
+                else:
+                    return {'success': False, 'error': 'Не удалось определить список задач'}
+            
+            # Добавляем тег к задаче
+            endpoint = f'/task/{task_id}/tag/{huntflow_tag_id}'
+            response = self._make_request('POST', endpoint)
+            
+            logger.info(f"✅ Тег huntflow успешно добавлен к задаче {task_id}")
+            return {
+                'success': True, 
+                'message': f'Тег huntflow добавлен к задаче {task_id}',
+                'tag_id': huntflow_tag_id
+            }
+            
+        except Exception as e:
+            logger.error(f"Ошибка при принудительном добавлении тега huntflow: {e}")
+            return {'success': False, 'error': str(e)}
+    
+    def has_huntflow_tag(self, task_data: Dict) -> bool:
+        """
+        Проверяет, есть ли у задачи тег 'huntflow'
+        
+        Args:
+            task_data: Данные задачи из ClickUp API
+            
+        Returns:
+            True если у задачи есть тег huntflow, False в противном случае
+        """
+        if not task_data:
+            return False
+        
+        tags = task_data.get('tags', [])
+        if not tags:
+            return False
+        
+        # Проверяем наличие тега huntflow (нечувствительно к регистру)
+        for tag in tags:
+            if isinstance(tag, dict):
+                tag_name = tag.get('name', '').lower()
+                if tag_name == 'huntflow':
+                    return True
+            elif isinstance(tag, str):
+                if tag.lower() == 'huntflow':
+                    return True
+        
+        return False
     
     def _parse_comment(self, comment_data: Dict) -> Dict:
         """Парсит структуру комментария для читаемого отображения"""
@@ -379,8 +872,16 @@ class ClickUpService:
             logger.warning(f"Не удалось распарсить дату: {date_string} (ошибка: {e})")
             return None
     
-    def sync_tasks(self, list_id: str, user, max_pages: int = 10) -> Tuple[int, int, int]:
-        """Синхронизирует задачи из списка"""
+    def sync_tasks(self, list_id: str, user, max_pages: int = 10, exclude_huntflow_tagged: bool = True) -> Tuple[int, int, int]:
+        """
+        Синхронизирует задачи из списка
+        
+        Args:
+            list_id: ID списка задач
+            user: Пользователь Django
+            max_pages: Максимальное количество страниц для обработки
+            exclude_huntflow_tagged: Исключать ли задачи с тегом huntflow
+        """
         from .models import ClickUpTask, ClickUpSyncLog, ClickUpSettings
         
         start_time = django_timezone.now()
@@ -391,7 +892,7 @@ class ClickUpService:
         try:
             # Получаем все задачи из списка (с пагинацией)
             for page in range(max_pages):
-                tasks_data = self.get_tasks(list_id, include_closed=False, page=page)
+                tasks_data = self.get_tasks(list_id, include_closed=False, page=page, exclude_huntflow_tagged=exclude_huntflow_tagged)
                 
                 if not tasks_data:
                     break
@@ -502,12 +1003,13 @@ class ClickUpCacheService:
         ClickUpTask.objects.filter(user=user).delete()
         logger.info(f"Кэш задач очищен для пользователя {user.username}")
     
-    def get_tasks_from_list(self, list_id: str) -> List[Dict[str, Any]]:
+    def get_tasks_from_list(self, list_id: str, exclude_huntflow_tagged: bool = True) -> List[Dict[str, Any]]:
         """
         Получает все задачи из указанного списка
         
         Args:
             list_id: ID списка ClickUp
+            exclude_huntflow_tagged: Исключать ли задачи с тегом huntflow
             
         Returns:
             Список задач из API
@@ -536,7 +1038,18 @@ class ClickUpCacheService:
                 if not tasks:
                     break
                 
-                all_tasks.extend(tasks)
+                # Фильтруем задачи с тегом huntflow если требуется
+                if exclude_huntflow_tagged:
+                    filtered_tasks = [task for task in tasks if not self.has_huntflow_tag(task)]
+                    all_tasks.extend(filtered_tasks)
+                    
+                    # Логируем количество отфильтрованных задач
+                    filtered_count = len(tasks) - len(filtered_tasks)
+                    if filtered_count > 0:
+                        print(f"🔄 Страница {page}: отфильтровано {filtered_count} задач с тегом huntflow")
+                else:
+                    all_tasks.extend(tasks)
+                
                 page += 1
                 
                 # Ограничиваем количество страниц для безопасности
@@ -544,7 +1057,7 @@ class ClickUpCacheService:
                     print(f"⚠️ Достигнут лимит страниц (100), останавливаемся")
                     break
             
-            print(f"✅ Получено {len(all_tasks)} задач из списка {list_id}")
+            print(f"✅ Получено {len(all_tasks)} задач из списка {list_id} (исключены задачи с тегом huntflow: {exclude_huntflow_tagged})")
             return all_tasks
             
         except Exception as e:

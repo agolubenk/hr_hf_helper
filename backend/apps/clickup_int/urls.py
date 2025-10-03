@@ -28,4 +28,6 @@ urlpatterns = [
     path('api/stop-bulk-import/<int:import_id>/', views.stop_bulk_import, name='stop_bulk_import'),
     path('api/bulk-import-progress/<int:import_id>/', views.get_bulk_import_progress, name='get_bulk_import_progress'),
     path('api/retry-failed-tasks/<int:import_id>/', views.retry_failed_tasks_view, name='retry_failed_tasks'),
+    path('api/debug-task-tags/<str:task_id>/', views.debug_task_tags, name='debug_task_tags'),
+    path('api/force-add-huntflow-tag/<str:task_id>/', views.force_add_huntflow_tag, name='force_add_huntflow_tag'),
 ]

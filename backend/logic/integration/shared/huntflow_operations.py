@@ -73,7 +73,8 @@ class HuntflowOperations:
                 task_comments=task_data.get('comments', []),
                 assignees=task_data.get('assignees', []),
                 task_status=task_data.get('status', ''),
-                notion_data=task_data if source_type == 'notion' else None
+                notion_data=task_data if source_type == 'notion' else None,
+                task_data=task_data  # Передаем полные данные задачи для извлечения custom fields
             )
             
             return applicant
