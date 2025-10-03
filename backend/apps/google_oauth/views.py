@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_http_methods
@@ -221,6 +221,7 @@ def get_file_type_display(mime_type):
 
 
 @login_required
+@permission_required('google_oauth.view_googleoauthaccount', raise_exception=True)
 def dashboard_redirect(request):
     """
     Редирект на дашборд Google OAuth
@@ -246,6 +247,7 @@ def dashboard_redirect(request):
     return redirect('accounts:profile')
 
 
+@permission_required('google_oauth.add_googleoauthaccount', raise_exception=True)
 def google_oauth_start(request):
     """
     Начало OAuth процесса
@@ -293,6 +295,7 @@ def google_oauth_start(request):
         return redirect('accounts:account_login')
 
 
+@permission_required('google_oauth.change_googleoauthaccount', raise_exception=True)
 def google_oauth_callback(request):
     """
     Обработка callback от Google OAuth
@@ -451,6 +454,7 @@ def google_oauth_callback(request):
 
 
 @login_required
+@permission_required('google_oauth.view_googleoauthaccount', raise_exception=True)
 def dashboard(request):
     """
     Дашборд Google OAuth
@@ -490,6 +494,7 @@ def dashboard(request):
 
 
 @login_required
+@permission_required('google_oauth.delete_googleoauthaccount', raise_exception=True)
 def disconnect(request):
     """
     Отключение Google OAuth
@@ -530,6 +535,7 @@ def disconnect(request):
 
 
 @login_required
+@permission_required('google_oauth.view_googlecalendar', raise_exception=True)
 def calendar_view(request):
     """
     Просмотр календаря Google
@@ -655,6 +661,7 @@ def calendar_view(request):
 
 
 @login_required
+@permission_required('google_oauth.view_googledrivefile', raise_exception=True)
 def drive_view(request):
     """
     Просмотр Google Drive
@@ -722,6 +729,7 @@ def drive_view(request):
 
 
 @login_required
+@permission_required('google_oauth.view_googlesheet', raise_exception=True)
 def sheets_view(request):
     """
     Просмотр Google Sheets
@@ -786,6 +794,7 @@ def sheets_view(request):
 
 
 @login_required
+@permission_required('google_oauth.change_syncsettings', raise_exception=True)
 @require_POST
 def sync_calendar(request):
     """
@@ -832,6 +841,7 @@ def sync_calendar(request):
         return JsonResponse({'success': False, 'message': f'Ошибка синхронизации: {str(e)}'})
 
 @login_required
+@permission_required('google_oauth.change_syncsettings', raise_exception=True)
 @require_POST
 def sync_drive(request):
     """
@@ -878,6 +888,7 @@ def sync_drive(request):
         return JsonResponse({'success': False, 'message': f'Ошибка синхронизации: {str(e)}'})
 
 @login_required
+@permission_required('google_oauth.change_syncsettings', raise_exception=True)
 @require_POST
 def sync_sheets(request):
     """
@@ -924,6 +935,7 @@ def sync_sheets(request):
         return JsonResponse({'success': False, 'message': f'Ошибка синхронизации: {str(e)}'})
 
 @login_required
+@permission_required('google_oauth.change_syncsettings', raise_exception=True)
 @require_POST
 def sync_all(request):
     """
@@ -1005,6 +1017,7 @@ from .forms import SyncSettingsForm, InviteForm, InviteUpdateForm, InviteCombine
 
 
 @login_required
+@permission_required('google_oauth.view_googleoauthaccount', raise_exception=True)
 def dashboard(request):
     """Дашборд Google автоматизации"""
     user = request.user
@@ -1200,6 +1213,7 @@ def dashboard(request):
 
 
 @login_required
+@permission_required('google_oauth.delete_googleoauthaccount', raise_exception=True)
 @require_POST
 def disconnect_google(request):
     """Отключение Google интеграции"""
@@ -1216,6 +1230,7 @@ def disconnect_google(request):
 
 
 @login_required
+@permission_required('google_oauth.view_googlecalendar', raise_exception=True)
 def calendar_events(request):
     """Список событий календаря"""
     user = request.user
@@ -1411,6 +1426,7 @@ def calendar_events(request):
 
 
 @login_required
+@permission_required('google_oauth.view_googledrivefile', raise_exception=True)
 def drive_files(request):
     """Список файлов Google Drive"""
     user = request.user
@@ -1515,6 +1531,7 @@ def drive_files(request):
 
 
 @login_required
+@permission_required('google_oauth.change_syncsettings', raise_exception=True)
 @require_POST
 def sync_calendar(request):
     """Синхронизация календаря"""
@@ -1546,6 +1563,7 @@ def sync_calendar(request):
 
 
 @login_required
+@permission_required('google_oauth.change_syncsettings', raise_exception=True)
 @require_POST
 def sync_drive(request):
     """Синхронизация Google Drive"""
@@ -1579,6 +1597,7 @@ def sync_drive(request):
 
 
 @login_required
+@permission_required('google_oauth.view_googleoauthaccount', raise_exception=True)
 def test_oauth(request):
     """Страница тестирования OAuth"""
     user = request.user
@@ -1593,6 +1612,7 @@ def test_oauth(request):
 
 
 @login_required
+@permission_required('google_oauth.view_googleoauthaccount', raise_exception=True)
 def test_oauth_url(request):
     """API для тестирования создания OAuth URL"""
     user = request.user
@@ -1613,6 +1633,7 @@ def test_oauth_url(request):
 
 # Views для инвайтов
 @login_required
+@permission_required('google_oauth.view_invite', raise_exception=True)
 def invite_list(request):
     """
     Список приглашений
@@ -1669,6 +1690,7 @@ def invite_list(request):
 
 
 @login_required
+@permission_required('google_oauth.add_invite', raise_exception=True)
 def invite_create(request):
     """
     Создание нового приглашения
@@ -1753,6 +1775,7 @@ def invite_create(request):
 
 
 @login_required
+@permission_required('google_oauth.view_invite', raise_exception=True)
 def invite_detail(request, pk):
     """
     Детали приглашения
@@ -1789,6 +1812,7 @@ def invite_detail(request, pk):
 
 
 @login_required
+@permission_required('google_oauth.change_invite', raise_exception=True)
 def invite_update(request, pk):
     """
     Обновление приглашения
@@ -1839,6 +1863,7 @@ def invite_update(request, pk):
 
 
 @login_required
+@permission_required('google_oauth.delete_invite', raise_exception=True)
 def invite_delete(request, pk):
     """
     Удаление приглашения
@@ -1890,6 +1915,7 @@ def invite_delete(request, pk):
 
 
 @login_required
+@permission_required('google_oauth.change_invite', raise_exception=True)
 @require_POST
 def invite_regenerate_scorecard(request, pk):
     """Пересоздание scorecard для инвайта"""
@@ -1924,6 +1950,7 @@ def invite_regenerate_scorecard(request, pk):
 
 
 @login_required
+@permission_required('google_oauth.view_invite', raise_exception=True)
 def invite_dashboard(request):
     """Дашборд инвайтов"""
     user = request.user
@@ -1957,6 +1984,7 @@ def invite_dashboard(request):
 
 
 @login_required
+@permission_required('google_oauth.view_googleoauthaccount', raise_exception=True)
 def check_integration(request):
     """API для проверки состояния интеграции"""
     user = request.user
@@ -1977,6 +2005,7 @@ def check_integration(request):
 
 
 @login_required
+@permission_required('google_oauth.view_googlecalendar', raise_exception=True)
 def get_event_details(request, event_id):
     """API для получения детальной информации о событии календаря"""
     user = request.user
@@ -2089,6 +2118,7 @@ def get_event_details(request, event_id):
 
 
 @login_required
+@permission_required('google_oauth.view_scorecardpathsettings', raise_exception=True)
 def scorecard_path_settings(request):
     """Страница настроек структуры папок для scorecard"""
     try:
@@ -2137,6 +2167,7 @@ def scorecard_path_settings(request):
 
 
 @login_required
+@permission_required('google_oauth.change_scorecardpathsettings', raise_exception=True)
 @require_POST
 def api_scorecard_path_settings(request):
     """API для сохранения настроек структуры папок"""
@@ -2251,6 +2282,7 @@ def api_scorecard_path_settings(request):
 
 
 @login_required
+@permission_required('google_oauth.view_invite', raise_exception=True)
 @require_POST
 def get_invitation_text(request, pk):
     """API для получения текста приглашения"""
@@ -2273,6 +2305,7 @@ def get_invitation_text(request, pk):
 
 
 @login_required
+@permission_required('google_oauth.view_googlecalendar', raise_exception=True)
 @require_POST
 def get_meetings_count(request):
     """Получает количество встреч для указанных дат из Redis кэша"""
@@ -2385,6 +2418,7 @@ def get_meetings_count(request):
 
 
 @login_required
+@permission_required('google_oauth.view_googleoauthaccount', raise_exception=True)
 def debug_cache(request):
     """Отладочный endpoint для проверки кэша"""
     try:
@@ -2411,6 +2445,7 @@ def debug_cache(request):
 
 
 @login_required
+@permission_required('google_oauth.view_slotssettings', raise_exception=True)
 @require_http_methods(["GET", "POST"])
 def api_slots_settings(request):
     """API для получения и сохранения настроек слотов"""
@@ -2461,6 +2496,8 @@ def api_slots_settings(request):
             })
 
 
+@login_required
+@permission_required('google_oauth.add_invite', raise_exception=True)
 def invite_create_combined(request):
     """Создание нового инвайта с объединенной формой"""
     print(f"🔍 INVITE_CREATE_COMBINED: Метод запроса: {request.method}")
@@ -2519,6 +2556,7 @@ def invite_create_combined(request):
 
 
 @login_required
+@permission_required('google_oauth.view_invite', raise_exception=True)
 @require_POST
 def get_parser_time_analysis(request, pk):
     """API для получения анализа времени от парсера"""
@@ -2557,6 +2595,7 @@ def get_parser_time_analysis(request, pk):
 
 # Views для HR-скрининга
 @login_required
+@permission_required('google_oauth.view_hrscreening', raise_exception=True)
 def hr_screening_list(request):
     """Список HR-скринингов"""
     hr_screenings = HRScreening.objects.filter(user=request.user).order_by('-created_at')
@@ -2575,6 +2614,7 @@ def hr_screening_list(request):
 
 
 @login_required
+@permission_required('google_oauth.add_hrscreening', raise_exception=True)
 def hr_screening_create(request):
     """Создание нового HR-скрининга"""
     if request.method == 'POST':
@@ -2598,6 +2638,7 @@ def hr_screening_create(request):
 
 
 @login_required
+@permission_required('google_oauth.view_hrscreening', raise_exception=True)
 def hr_screening_detail(request, pk):
     """Детали HR-скрининга"""
     hr_screening = get_object_or_404(HRScreening, pk=pk, user=request.user)
@@ -2686,6 +2727,7 @@ def hr_screening_detail(request, pk):
 
 
 @login_required
+@permission_required('google_oauth.delete_hrscreening', raise_exception=True)
 def hr_screening_delete(request, pk):
     """Удаление HR-скрининга"""
     hr_screening = get_object_or_404(HRScreening, pk=pk, user=request.user)
@@ -2703,6 +2745,7 @@ def hr_screening_delete(request, pk):
 
 
 @login_required
+@permission_required('google_oauth.change_hrscreening', raise_exception=True)
 @require_POST
 def hr_screening_retry_analysis(request, pk):
     """Повторный анализ HR-скрининга с помощью Gemini"""
@@ -2731,6 +2774,7 @@ def hr_screening_retry_analysis(request, pk):
 
 
 @login_required
+@permission_required('google_oauth.view_googleoauthaccount', raise_exception=True)
 def gdata_automation(request):
     """Страница G-данных и автоматизации с выбором вакансии"""
     from apps.vacancies.models import Vacancy
@@ -2839,6 +2883,7 @@ def gdata_automation(request):
 
 
 @login_required
+@permission_required('google_oauth.view_googlecalendar', raise_exception=True)
 @require_http_methods(["GET"])
 def api_calendar_events(request):
     """API для получения событий календаря в JSON формате"""
@@ -2929,6 +2974,7 @@ def api_calendar_events(request):
 
 
 @login_required
+@permission_required('google_oauth.view_hrscreening', raise_exception=True)
 def combined_workflow(request):
     """Объединенная страница для HR-скрининга и инвайтов"""
     print(f"🔍 COMBINED_WORKFLOW: Метод запроса: {request.method}")
@@ -3043,6 +3089,7 @@ def combined_workflow(request):
 
 
 @login_required
+@permission_required('google_oauth.view_hrscreening', raise_exception=True)
 def chat_workflow(request, session_id=None):
     """Чат-воркфлоу для HR-скрининга и инвайтов"""
     from .models import ChatSession, ChatMessage
@@ -3313,6 +3360,7 @@ def chat_workflow(request, session_id=None):
 
 
 @login_required
+@permission_required('google_oauth.change_chatsession', raise_exception=True)
 @require_POST
 def update_chat_title(request, session_id):
     """Обновление названия чат-сессии"""

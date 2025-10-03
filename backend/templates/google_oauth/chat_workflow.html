@@ -1587,6 +1587,27 @@
 [data-theme="dark"] .command-example code {
     color: var(--color-primary, #3182ce);
 }
+
+/* === СТИЛИ ДЛЯ КНОПКИ РЕДАКТИРОВАНИЯ ЗАГОЛОВКА ЧАТА === */
+/* Скрываем кнопку редактирования по умолчанию */
+.chat-title-edit {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Показываем кнопку при наведении на карточку */
+.card:hover .chat-title-edit {
+    opacity: 1;
+}
+
+/* Дополнительные стили для кнопки */
+.chat-title-edit .btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.chat-title-edit .btn:hover {
+    transform: scale(1.05);
+}
 </style>
 
 <script>

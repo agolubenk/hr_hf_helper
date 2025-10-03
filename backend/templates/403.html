@@ -18,17 +18,26 @@
             justify-content: center;
             align-items: center;
             min-height: 400px;
+            padding: 20px;
         }
         
         .error-403 {
-            width: 435px;
-            height: 670px;
+            /* Адаптивные размеры с сохранением пропорций */
+            width: 100%;
+            max-width: 435px;
+            height: auto;
+            aspect-ratio: 435 / 670; /* Сохраняем оригинальные пропорции */
+            
             background-image: url('{% static "img/403.png" %}');
             background-repeat: no-repeat;
-            background-size: 200% 100%;
+            background-size: 200% 100%; /* Двойная ширина для двух тем */
             background-position: left center;
             border-radius: 15px;
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            
+            /* Плавные переходы */
+            transition: box-shadow 0.3s ease;
+            
         }
         
         /* Светлая тема: показываем левую половину */
@@ -42,6 +51,29 @@
             background-position: right center;
             box-shadow: 0 0 30px rgba(255, 165, 0, 0.3);
         }
+        
+        /* Адаптивность для мобильных устройств */
+        @media (max-width: 758px) {
+            .error-container {
+                min-height: 60vh;
+                padding: 15px;
+            }
+            
+            .error-image-container {
+                min-height: 300px;
+                padding: 15px;
+            }
+            
+            .error-403, .error-403-alt {
+                max-width: 320px; /* Уменьшаем максимальную ширину на мобильных */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .error-403, .error-403-alt {
+                max-width: 280px; /* Еще меньше на очень маленьких экранах */
+            }
+        }
     </style>
 {% endblock %}
 
@@ -53,7 +85,12 @@
             <!-- Левая колонка - картинка -->
             <div class="col-lg-6">
                 <div class="error-image-container">
+                    <!-- Основной подход: background-position + маска для обрезки центра -->
                     <div class="error-403"></div>
+                    
+                    <!-- Альтернативные подходы (закомментированы для выбора) -->
+                    <!-- <div class="error-403-alt"></div> --> <!-- CSS-маска с обрезкой -->
+                    <!-- <div class="error-403-clip"></div> --> <!-- clip-path с обрезкой -->
                 </div>
             </div>
             
@@ -95,16 +132,21 @@
         function apply403Theme() {
             const body = document.body;
             const html = document.documentElement;
+            const error403 = document.querySelector('.error-403');
             
             // Получаем текущую тему из data-theme атрибута
             const currentTheme = html.getAttribute('data-theme');
             
-            if (currentTheme === 'dark') {
-                body.classList.add('dark-theme');
-                body.classList.remove('light-theme');
-            } else {
-                body.classList.add('light-theme');
-                body.classList.remove('dark-theme');
+            if (error403) {
+                if (currentTheme === 'dark') {
+                    body.classList.add('dark-theme');
+                    body.classList.remove('light-theme');
+                    error403.style.backgroundPosition = 'right center';
+                } else {
+                    body.classList.add('light-theme');
+                    body.classList.remove('dark-theme');
+                    error403.style.backgroundPosition = 'left center';
+                }
             }
         }
         
