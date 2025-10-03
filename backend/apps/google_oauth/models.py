@@ -3663,9 +3663,9 @@ class HRScreening(models.Model):
                 # Формируем комментарий из поля comment
                 comment_text = ""
                 if 'comment' in parsed_analysis and parsed_analysis['comment']:
-                    comment_text = f"HR-скрининг завершен. Дополнительная информация: {parsed_analysis['comment']}"
+                    comment_text = f"Доп. инфо: {parsed_analysis['comment']}"
                 else:
-                    comment_text = "HR-скрининг завершен. Все поля обновлены автоматически."
+                    comment_text = ""
                 
                 # Обновляем статус на "HR Screening"
                 status_result = huntflow_service.update_applicant_status(
