@@ -277,6 +277,16 @@ def import_single_task(self, user_id, task_data, bulk_import_id):
                 else:
                     account_id = accounts[0]['id']
                     
+                    # Получаем комментарии для задачи
+                    comments = []
+                    try:
+                        comments = service.get_task_comments(task_id)
+                        print(f"💬 Получено комментариев для задачи {task_id}: {len(comments)}")
+                        logger.info(f"💬 Получено комментариев для задачи {task_id}: {len(comments)}")
+                    except Exception as e:
+                        logger.warning(f"Не удалось получить комментарии для задачи {task_id}: {e}")
+                        print(f"⚠️ Не удалось получить комментарии для задачи {task_id}: {e}")
+                    
                     # Подготавливаем данные задачи
                     task_data_for_huntflow = {
                         'id': task_id,  # Добавляем ID задачи для ссылки
@@ -284,7 +294,7 @@ def import_single_task(self, user_id, task_data, bulk_import_id):
                         'description': task.description,
                         'status': task.status,
                         'attachments': json.loads(task.attachments) if isinstance(task.attachments, str) else task.attachments,
-                        'comments': [],  # Комментарии можно добавить отдельно если нужно
+                        'comments': comments,  # Используем полученные комментарии
                         'assignees': json.loads(task.assignees) if isinstance(task.assignees, str) else task.assignees,
                         'custom_fields': task.custom_fields
                     }
