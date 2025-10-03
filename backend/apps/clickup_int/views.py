@@ -635,6 +635,7 @@ def transfer_to_huntflow(request, task_id):
         
         # Подготавливаем данные задачи для общей логики
         task_data = {
+            'id': task_id,  # Добавляем ID задачи для ссылки
             'name': task.name,
             'description': task.description,
             'status': task.status,

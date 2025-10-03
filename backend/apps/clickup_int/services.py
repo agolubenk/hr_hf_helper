@@ -850,12 +850,18 @@ class ClickUpService:
             if isinstance(date_string, datetime):
                 return date_string
             
-            # Если это timestamp (число)
-            if isinstance(date_string, (int, float)):
+            # Если это timestamp (число или строка с числом)
+            if isinstance(date_string, (int, float)) or (isinstance(date_string, str) and date_string.isdigit()):
+                # Конвертируем строку в число если нужно
+                if isinstance(date_string, str):
+                    date_string = int(date_string)
+                
                 # ClickUp использует timestamp в миллисекундах
                 # Проверяем, если число больше 1e12, то это точно миллисекунды
+                original_timestamp = date_string
                 if date_string > 1e12:  # Если больше 10^12, то это миллисекунды
                     date_string = date_string / 1000
+                    logger.debug(f"Конвертировали timestamp из миллисекунд: {original_timestamp} -> {date_string}")
                 
                 # Проверяем, что timestamp разумный (не в далеком будущем)
                 # 1e10 = 2001-09-09, 2e10 = 2033-05-18

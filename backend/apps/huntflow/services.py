@@ -110,7 +110,56 @@ class HuntflowService:
                 middle_name = ' '.join(words[2:])
                 return {'first_name': words[1], 'last_name': words[0], 'middle_name': middle_name}
     
-    def _create_clickup_comment(self, task_description: str = None, task_comments: List[Dict[str, Any]] = None, task_status: str = None) -> str:
+    def _extract_google_sheets_links_from_comments(self, task_comments: List[Dict[str, Any]]) -> List[str]:
+        """
+        Извлекает ссылки на Google Sheets из комментариев ClickUp
+        
+        Args:
+            task_comments: Список комментариев к задаче ClickUp
+            
+        Returns:
+            Список найденных ссылок на Google Sheets
+        """
+        import re
+        
+        google_sheets_patterns = [
+            r'https://docs\.google\.com/spreadsheets/[^\s]+',
+            r'https://sheets\.google\.com/[^\s]+',
+            r'https://docs\.google\.com/spreadsheets/d/[a-zA-Z0-9_-]+[^\s]*',
+            r'https://docs\.google\.com/spreadsheets/d/[a-zA-Z0-9_-]+/edit[^\s]*',
+            r'https://docs\.google\.com/spreadsheets/d/[a-zA-Z0-9_-]+/edit#gid=\d+[^\s]*',
+        ]
+        
+        found_links = []
+        
+        if not task_comments:
+            return found_links
+        
+        for comment in task_comments:
+            # Проверяем все текстовые поля комментария
+            text_fields = ['comment', 'comment_text', 'text', 'content', 'message']
+            for field in text_fields:
+                if field in comment and comment[field]:
+                    comment_text = comment[field]
+                    
+                    for pattern in google_sheets_patterns:
+                        matches = re.findall(pattern, comment_text, re.IGNORECASE)
+                        found_links.extend(matches)
+        
+        # Убираем дубликаты, сохраняя порядок
+        unique_links = []
+        seen = set()
+        for link in found_links:
+            if link not in seen:
+                unique_links.append(link)
+                seen.add(link)
+        
+        if unique_links:
+            print(f"🔍 Найдены ссылки на Google Sheets: {unique_links}")
+        
+        return unique_links
+    
+    def _create_clickup_comment(self, task_description: str = None, task_comments: List[Dict[str, Any]] = None, task_status: str = None, task_id: str = None) -> str:
         """
         Создает личные заметки для Huntflow на основе данных из ClickUp
         
@@ -118,6 +167,7 @@ class HuntflowService:
             task_description: Описание задачи ClickUp
             task_comments: Комментарии к задаче ClickUp
             task_status: Статус задачи ClickUp
+            task_id: ID задачи ClickUp для создания ссылки
             
         Returns:
             Форматированные личные заметки для Huntflow
@@ -130,6 +180,13 @@ class HuntflowService:
         print(f"  - Статус: {task_status if task_status else 'Нет статуса'}")
         
         comment_parts = []
+        
+        # Добавляем ссылку на задачу ClickUp, если есть task_id
+        if task_id:
+            clickup_task_url = f"https://app.clickup.com/t/{task_id}"
+            comment_parts.append("🔗 Ссылка на задачу ClickUp:")
+            comment_parts.append(clickup_task_url)
+            comment_parts.append("")  # Пустая строка
         
         # Добавляем статус задачи, если есть
         if task_status:
@@ -1267,7 +1324,8 @@ class HuntflowService:
                 last_name = 'Кандидат'
             
             # Создаем личные заметки из данных ClickUp
-            clickup_notes = self._create_clickup_comment(task_description, task_comments, task_status)
+            task_id = task_data.get('id') if task_data else None
+            clickup_notes = self._create_clickup_comment(task_description, task_comments, task_status, task_id)
             
             # Создаем личные заметки из данных Notion, если они переданы
             notion_notes = ""
@@ -1525,6 +1583,25 @@ class HuntflowService:
                         print(f"✅ Комментарий с объединенными данными успешно добавлен")
                     else:
                         print(f"⚠️ Кандидат создан, но не удалось добавить комментарий с объединенными данными")
+                
+                # Проверяем комментарии на наличие ссылок на Google Sheets и обновляем поле Scorecard
+                if task_comments and applicant_id:
+                    google_sheets_links = self._extract_google_sheets_links_from_comments(task_comments)
+                    if google_sheets_links:
+                        # Берем первую найденную ссылку для поля Scorecard
+                        scorecard_url = google_sheets_links[0]
+                        print(f"📊 Обновляем поле Scorecard кандидата {applicant_id} ссылкой: {scorecard_url}")
+                        
+                        scorecard_result = self.update_applicant_scorecard_field(
+                            account_id=account_id,
+                            applicant_id=applicant_id,
+                            scorecard_url=scorecard_url
+                        )
+                        
+                        if scorecard_result:
+                            print(f"✅ Поле Scorecard успешно обновлено")
+                        else:
+                            print(f"⚠️ Не удалось обновить поле Scorecard")
                 
                 return applicant_data_result
             else:

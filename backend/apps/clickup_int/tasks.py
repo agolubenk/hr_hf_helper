@@ -279,6 +279,7 @@ def import_single_task(self, user_id, task_data, bulk_import_id):
                     
                     # Подготавливаем данные задачи
                     task_data_for_huntflow = {
+                        'id': task_id,  # Добавляем ID задачи для ссылки
                         'name': task.name,
                         'description': task.description,
                         'status': task.status,
