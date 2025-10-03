@@ -160,8 +160,14 @@ class HuntflowService:
             comment_parts.append("💬 Комментарии:")
             
             for comment in task_comments:
-                # Извлекаем дату комментария
-                comment_date = comment.get('date', '')
+                # Извлекаем дату комментария - проверяем различные возможные поля
+                comment_date = None
+                date_fields = ['date', 'date_added', 'created', 'datetime', 'timestamp']
+                for field in date_fields:
+                    if field in comment and comment[field]:
+                        comment_date = comment[field]
+                        break
+                
                 if comment_date:
                     try:
                         from datetime import datetime
@@ -191,8 +197,14 @@ class HuntflowService:
                 else:
                     formatted_date = 'Дата неизвестна'
                 
-                # Извлекаем текст комментария
-                comment_text = comment.get('comment', '')
+                # Извлекаем текст комментария - проверяем различные возможные поля
+                comment_text = ''
+                text_fields = ['comment', 'comment_text', 'text', 'content', 'message']
+                for field in text_fields:
+                    if field in comment and comment[field]:
+                        comment_text = comment[field]
+                        break
+                
                 if comment_text:
                     # Очищаем текст от HTML тегов
                     clean_text = re.sub(r'<[^>]+>', '', comment_text)
@@ -1383,6 +1395,13 @@ class HuntflowService:
                         'value': telegram_from_clickup
                     })
                     print(f"💬 Telegram из ClickUp custom fields: {telegram_from_clickup}")
+            
+            # Извлекаем Salary из ClickUp custom fields в поле money (зарплатные ожидания)
+            if not applicant_data.get('money') and clickup_custom_fields:
+                salary_from_clickup = self._extract_field_from_clickup_custom_fields(clickup_custom_fields, ['salary', 'зарплата', 'зарплатные ожидания', 'ожидания по зарплате'])
+                if salary_from_clickup:
+                    applicant_data['money'] = salary_from_clickup
+                    print(f"💰 Salary из ClickUp custom fields: {salary_from_clickup}")
             
             # Фото (ID файла)
             if parsed_data.get('photo', {}).get('id'):
