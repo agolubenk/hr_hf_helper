@@ -71,3 +71,282 @@ WARNING Not Found: /favicon.ico
 [03/Oct/2025 20:39:46] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
 [03/Oct/2025 20:39:47] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
 [03/Oct/2025 20:39:52] "GET /interviewers/1/ HTTP/1.1" 200 52052
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 03, 2025 - 20:34:41
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 03, 2025 - 20:42:34
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+WARNING Unauthorized: /accounts/test-permissions/
+[03/Oct/2025 20:42:54] "GET /accounts/test-permissions/ HTTP/1.1" 401 165
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 03, 2025 - 20:42:49
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+[03/Oct/2025 20:45:23] "GET /interviewers/list/ HTTP/1.1" 200 84200
+[03/Oct/2025 20:45:27] "GET /huntflow/ HTTP/1.1" 200 45197
+[03/Oct/2025 20:45:33] "GET /huntflow/accounts/291341/applicants/ HTTP/1.1" 200 128342
+[03/Oct/2025 20:45:45] "GET /google-oauth/chat/ HTTP/1.1" 200 646802
+[03/Oct/2025 20:45:53] "GET /interviewers/list/ HTTP/1.1" 200 84200
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 03, 2025 - 20:45:02
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/me
+📥 Ответ API: 200
+📥 Тело ответа: {"id":318267,"name":"API: ClickUp","position":null,"email":"api-291341-1@huntflow.ru","phone":null,"locale":"ru_RU"}...
+✅ Подключение к Huntflow успешно!
+👤 Пользователь: API: ClickUp
+📧 Email: api-291341-1@huntflow.ru
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 Получен account_id из API: 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants?page=1&count=30
+📥 Ответ API: 200
+📥 Тело ответа: {"page":1,"count":30,"total_pages":119,"total_items":3567,"items":[{"first_name":"Полина","last_name":"Гайдина","middle_name":null,"money":"$1500","phone":"+375 (44) 7439361","email":"gaydinapolia@gmail.com","skype":null,"position":"Frontend-разработчик","company":null,"photo":null,"id":74657048,"account":291341,"photo_url":null,"birthday":"2002-12-10","created":"2025-10-03T19:06:32+03:00","tags":[{"tag":239351,"id":24279718},{"tag":217458,"id":24279719}],"links":[{"id":70050577,"status":186509,...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies/statuses
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":186500,"type":"user","name":"New","removed":null,"order":1,"stay_duration":null},{"id":187026,"type":"user","name":"Message","removed":null,"order":2,"stay_duration":null},{"id":186501,"type":"user","name":"Contact","removed":null,"order":3,"stay_duration":null},{"id":187027,"type":"user","name":"Portfolio Review","removed":null,"order":4,"stay_duration":null},{"id":186502,"type":"user","name":"HR Screening","removed":null,"order":5,"stay_duration":null},{"id":189774,"type":"user...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies?count=100
+📥 Ответ API: 200
+📥 Тело ответа: {"page":1,"count":100,"total_pages":1,"total_items":11,"items":[{"account_division":333497,"account_region":null,"position":"Project Manager","company":null,"money":"800-2000","priority":1,"hidden":false,"state":"OPEN","id":3936534,"created":"2025-03-19T08:33:50+03:00","additional_fields_list":[],"multiple":false,"parent":null,"account_vacancy_status_group":10353},{"account_division":333385,"account_region":null,"position":"Tech Recruiter","company":null,"money":null,"priority":1,"hidden":true,"...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 38 событий
+🔍 DEBUG CHAT: Получено 38 событий из API
+🔍 DEBUG CHAT: Передаем 38 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-06T09:00:00+03:00
+🔍 DEBUG CHAT: Событие: Recruitment Meeting в 2025-10-06T10:30:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Семакин Игорь в 2025-10-06T12:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 03, 2025 - 20:47:57
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 03, 2025 - 20:48:08
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+[03/Oct/2025 21:08:31] "POST /admin/accounts/user/3/change/ HTTP/1.1" 302 0
+[03/Oct/2025 21:08:31] "GET /admin/accounts/user/ HTTP/1.1" 200 29760
+[03/Oct/2025 21:08:31] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+404 ошибка: /favicon.ico - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Not Found: /favicon.ico
+[03/Oct/2025 21:08:32] "GET /favicon.ico HTTP/1.1" 404 42576
+[03/Oct/2025 21:08:45] "GET /interviewers/list/ HTTP/1.1" 200 84200
+[03/Oct/2025 21:08:46] "GET /interviewers/rules/ HTTP/1.1" 200 62745
+[03/Oct/2025 21:08:52] "GET /admin/accounts/user/3/change/ HTTP/1.1" 200 79778
+[03/Oct/2025 21:08:52] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+[03/Oct/2025 21:09:05] "POST /admin/accounts/user/3/change/ HTTP/1.1" 302 0
+[03/Oct/2025 21:09:05] "GET /admin/accounts/user/ HTTP/1.1" 200 29760
+[03/Oct/2025 21:09:05] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+[03/Oct/2025 21:09:49] "GET /interviewers/rules/ HTTP/1.1" 200 62745
+[03/Oct/2025 21:09:51] "GET /accounts/ HTTP/1.1" 200 49554
+404 ошибка: /static/css/profile.css - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+500 ошибка: /static/css/profile.css - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/staticfiles/handlers.py", line 54, in get_response
+    return self.serve(request)
+           ~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/staticfiles/handlers.py", line 50, in serve
+    return serve(request, self.file_path(request.path), insecure=True)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/staticfiles/views.py", line 37, in serve
+    raise Http404("'%s' could not be found" % path)
+django.http.response.Http404: 'css/profile.css' could not be found
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 164, in get_exception_response
+    response = callback(request, exception=exception)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/common/views.py", line 35, in custom_404_view
+    return HttpResponseNotFound(render(request, '404.html', context))
+                                ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 61, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 173, in render
+    with context.bind_template(self):
+         ~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/context.py", line 254, in bind_template
+    updates.update(processor(self.request))
+                   ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/common/context_processors.py", line 30, in sidebar_menu_context
+    if not request.user.is_authenticated:
+           ^^^^^^^^^^^^
+AttributeError: 'WSGIRequest' object has no attribute 'user'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/wsgiref/handlers.py", line 137, in run
+    self.result = application(self.environ, self.start_response)
+                  ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/staticfiles/handlers.py", line 81, in __call__
+    return super().__call__(environ, start_response)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/wsgi.py", line 124, in __call__
+    response = self.get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/staticfiles/handlers.py", line 56, in get_response
+    return response_for_exception(request, e)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 68, in response_for_exception
+    response = get_exception_response(
+        request, get_resolver(get_urlconf()), 404, exc
+    )
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 167, in get_exception_response
+    response = handle_uncaught_exception(request, resolver, sys.exc_info())
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 185, in handle_uncaught_exception
+    return callback(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/common/views.py", line 54, in custom_500_view
+    return render(request, '500.html', context, status=500)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 61, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 173, in render
+    with context.bind_template(self):
+         ~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/context.py", line 254, in bind_template
+    updates.update(processor(self.request))
+                   ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/common/context_processors.py", line 30, in sidebar_menu_context
+    if not request.user.is_authenticated:
+           ^^^^^^^^^^^^
+AttributeError: 'WSGIRequest' object has no attribute 'user'
+[03/Oct/2025 21:09:51] "GET /static/css/profile.css HTTP/1.1" 500 59
+[03/Oct/2025 21:09:56] "GET /huntflow/ HTTP/1.1" 200 45197
+[03/Oct/2025 21:09:58] "GET /interviewers/list/ HTTP/1.1" 200 84200
+404 ошибка: /.well-known/appspecific/com.chrome.devtools.json - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[03/Oct/2025 23:03:32] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 42576

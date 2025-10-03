@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import test_views
 
 app_name = 'accounts'
 
@@ -27,4 +28,14 @@ urlpatterns = [
     path('test-huntflow/', views.unified_api_view, {'handler_func': views.test_huntflow_api_handler}, name='test_huntflow_api'),
     path('test-clickup/', views.unified_api_view, {'handler_func': views.test_clickup_api_handler}, name='test_clickup_api'),
     path('test-notion/', views.unified_api_view, {'handler_func': views.test_notion_api_handler}, name='test_notion_api'),
+    
+    # Тестирование прав доступа
+    path('test-permissions/', test_views.test_permission_info, name='test_permission_info'),
+    path('test-permissions/without/', test_views.test_view_without_permission, name='test_view_without_permission'),
+    path('test-permissions/with/', test_views.test_view_with_permission, name='test_view_with_permission'),
+    path('test-permissions/huntflow/', test_views.test_view_with_huntflow_permission, name='test_view_with_huntflow_permission'),
+    path('test-permissions/admin/', test_views.test_admin_required, name='test_admin_required'),
+    path('test-permissions/recruiter/', test_views.test_recruiter_required, name='test_recruiter_required'),
+    path('test-permissions/interviewer/', test_views.test_interviewer_required, name='test_interviewer_required'),
+    path('test-permissions/observer/', test_views.test_observer_required, name='test_observer_required'),
 ]
