@@ -1445,6 +1445,11 @@ a:hover {
     transform: scale(1.05);
 }
 
+/* Малиновая иконка при наведении в светлой теме */
+.chat-header-actions .btn:hover i {
+    color: var(--color-pink-600) !important; /* Малиновый цвет иконки */
+}
+
 /* Темная тема для кнопки удаления */
 [data-theme="dark"] .chat-header-actions .btn {
     background-color: #000000 !important;
