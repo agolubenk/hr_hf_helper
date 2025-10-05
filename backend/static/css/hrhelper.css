@@ -1346,6 +1346,10 @@ a:hover {
 .card .chat-messages {
     background-color: #ffffff; /* Белый фон для светлой темы */
     padding: 12px !important;
+    padding-top: 20px !important; /* Отступ сверху, чтобы не скрываться за header */
+    min-height: 400px; /* Минимальная высота для центрирования */
+    overflow-y: auto; /* Прокрутка для длинных сообщений */
+    position: relative !important; /* Для абсолютного позиционирования приветствия */
 }
 
 /* Темная тема - черный фон чата */
@@ -1353,10 +1357,42 @@ a:hover {
     background-color: #000000;
 }
 
+/* Стили для приветственного сообщения */
+.card .chat-messages .text-center.text-muted.py-5 {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.card .chat-messages .text-center.text-muted.py-5 i {
+    margin-bottom: 1rem;
+}
+
+.card .chat-messages .text-center.text-muted.py-5 p {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.card .chat-messages .text-center.text-muted.py-5 small {
+    font-size: 0.95rem;
+    opacity: 0.8;
+}
+
 .card .message {
     margin-bottom: 12px !important;
     width: 100%;
     display: block;
+    flex-shrink: 0; /* Не сжимаем сообщения */
+    align-self: stretch; /* Растягиваем на всю ширину */
+}
+
+/* Когда появляются сообщения, убираем центрирование */
+.card .chat-messages:has(.message) {
+    justify-content: flex-start !important;
+    align-items: stretch !important;
 }
 
 .card .message > .d-flex {

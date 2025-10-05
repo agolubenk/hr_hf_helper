@@ -266,3 +266,186 @@ Not Found: /.well-known/appspecific/com.chrome.devtools.json
 [05/Oct/2025 17:47:32] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
 [05/Oct/2025 17:47:43] "GET /gemini/chat/25/ HTTP/1.1" 200 68567
 [05/Oct/2025 17:47:43] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[05/Oct/2025 17:49:44] "GET /gemini/chat/25/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:49:44] "GET /static/css/hrhelper.css HTTP/1.1" 200 82202
+[05/Oct/2025 17:49:44] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:49:44] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:49:46] "GET /gemini/chat/24/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:49:46] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[05/Oct/2025 17:49:48] "GET /gemini/chat/26/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:49:48] "GET /static/css/hrhelper.css HTTP/1.1" 200 82267
+[05/Oct/2025 17:49:50] "GET /gemini/chat/20/ HTTP/1.1" 200 77624
+[05/Oct/2025 17:49:50] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[05/Oct/2025 17:50:00] "GET /gemini/chat/20/ HTTP/1.1" 200 77624
+[05/Oct/2025 17:50:00] "GET /static/css/hrhelper.css HTTP/1.1" 200 82267
+[05/Oct/2025 17:50:00] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:50:00] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:50:06] "GET /gemini/chat/10/ HTTP/1.1" 200 87420
+[05/Oct/2025 17:50:06] "GET /static/css/hrhelper.css HTTP/1.1" 200 82267
+[05/Oct/2025 17:50:21] "GET /gemini/chat/8/ HTTP/1.1" 200 105918
+[05/Oct/2025 17:50:21] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[05/Oct/2025 17:51:58] "GET /gemini/chat/8/ HTTP/1.1" 200 105918
+[05/Oct/2025 17:51:58] "GET /static/css/hrhelper.css HTTP/1.1" 200 82542
+[05/Oct/2025 17:51:58] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:51:58] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:52:19] "GET /gemini/chat/8/ HTTP/1.1" 200 105918
+[05/Oct/2025 17:52:19] "GET /static/css/hrhelper.css HTTP/1.1" 200 82941
+[05/Oct/2025 17:52:19] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:52:19] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:52:46] "GET /gemini/chat/23/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:52:47] "GET /static/css/hrhelper.css HTTP/1.1" 200 83172
+[05/Oct/2025 17:52:51] "GET /gemini/chat/23/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:52:51] "GET /static/css/hrhelper.css HTTP/1.1" 200 83172
+[05/Oct/2025 17:52:51] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:52:52] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:52:53] "GET /gemini/chat/24/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:52:53] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[05/Oct/2025 17:52:55] "GET /gemini/chat/26/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:52:55] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}][05/Oct/2025 17:53:26] "GET /gemini/chat/26/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:53:26] "GET /static/css/hrhelper.css HTTP/1.1" 200 82939
+[05/Oct/2025 17:53:27] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:53:27] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:53:30] "GET /gemini/chat/8/ HTTP/1.1" 200 105918
+[05/Oct/2025 17:53:30] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[05/Oct/2025 17:53:47] "GET /gemini/chat/26/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:53:47] "GET /static/css/hrhelper.css HTTP/1.1" 200 82794
+[05/Oct/2025 17:53:54] "GET /gemini/chat/26/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:53:54] "GET /static/css/hrhelper.css HTTP/1.1" 200 82794
+[05/Oct/2025 17:53:54] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:53:54] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:54:57] "GET /gemini/chat/20/ HTTP/1.1" 200 77624
+[05/Oct/2025 17:54:57] "GET /static/css/hrhelper.css HTTP/1.1" 200 82794
+[05/Oct/2025 17:55:10] "GET /gemini/chat/26/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:55:10] "GET /static/css/hrhelper.css HTTP/1.1" 200 82800
+[05/Oct/2025 17:55:12] "GET /gemini/chat/26/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:55:12] "GET /static/css/hrhelper.css HTTP/1.1" 200 82800
+[05/Oct/2025 17:55:12] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:55:12] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:55:16] "GET /gemini/chat/26/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:55:16] "GET /static/css/hrhelper.css HTTP/1.1" 200 82800
+[05/Oct/2025 17:55:16] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:55:17] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:55:24] "GET /gemini/chat/26/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:55:24] "GET /static/css/hrhelper.css HTTP/1.1" 200 82819
+[05/Oct/2025 17:55:24] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:55:24] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:56:16] "GET /gemini/chat/26/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:56:16] "GET /static/css/hrhelper.css HTTP/1.1" 200 82977
+[05/Oct/2025 17:56:16] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:56:16] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:56:18] "GET /gemini/chat/26/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:56:18] "GET /static/css/hrhelper.css HTTP/1.1" 200 82977
+[05/Oct/2025 17:56:18] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:56:18] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:57:34] "GET /gemini/chat/26/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:57:34] "GET /static/css/hrhelper.css HTTP/1.1" 200 82747
+[05/Oct/2025 17:57:35] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:57:35] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:58:16] "GET /gemini/chat/26/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:58:17] "GET /static/css/hrhelper.css HTTP/1.1" 200 82747
+[05/Oct/2025 17:58:17] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:58:17] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:58:30] "GET /gemini/chat/26/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:58:30] "GET /static/css/hrhelper.css HTTP/1.1" 200 82646
+[05/Oct/2025 17:58:30] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:58:30] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:58:41] "GET /gemini/chat/26/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:58:41] "GET /static/css/hrhelper.css HTTP/1.1" 200 82716
+[05/Oct/2025 17:58:41] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:58:41] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:58:48] "GET /gemini/chat/26/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:58:48] "GET /static/css/hrhelper.css HTTP/1.1" 200 82843
+[05/Oct/2025 17:58:48] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:58:48] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:59:05] "GET /gemini/chat/25/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:59:05] "GET /static/css/hrhelper.css HTTP/1.1" 200 82843
+[05/Oct/2025 17:59:09] "GET /gemini/chat/10/ HTTP/1.1" 200 87420
+[05/Oct/2025 17:59:09] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
