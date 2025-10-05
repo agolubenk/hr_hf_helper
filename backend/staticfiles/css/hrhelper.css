@@ -1216,6 +1216,7 @@ a:hover {
     transform: translateY(-1px);
     color: var(--color-btn-primary-text);
     box-shadow: var(--shadow-sm);
+    border: 1px solid #6c757d !important; /* Графитовая граница для светлой темы */
 }
 
 /* === ТЕМНАЯ ТЕМА - ПЕРЕОПРЕДЕЛЕНИЕ КНОПОК === */
@@ -1789,6 +1790,7 @@ a:hover {
     background: linear-gradient(135deg, var(--color-pink-700) 0%, var(--color-pink-800) 100%);
     color: var(--color-luna-400);
     box-shadow: 0 4px 12px rgba(194, 24, 91, 0.3);
+    border: 1px solid var(--color-luna-400) !important; /* Лунная граница для темной темы */
 }
 
 /* === АДАПТИВНОЕ ЦЕНТРИРОВАНИЕ ФОРМЫ ВХОДА === */
