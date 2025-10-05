@@ -1376,6 +1376,48 @@ a:hover {
     font-size: 1.1rem;
 }
 
+/* === ИСПРАВЛЕНИЯ ДЛЯ ЗАГОЛОВКА ЧАТА === */
+/* Лунный цвет для даты создания в темной теме */
+[data-theme="dark"] .card-header small {
+    color: var(--color-luna-300) !important;
+}
+
+[data-theme="dark"] .card-header .text-muted {
+    color: var(--color-luna-300) !important;
+}
+
+/* Стили для иконки редактирования заголовка */
+.chat-title-edit {
+    opacity: 0;
+    transition: all 0.2s ease-in-out;
+    margin-left: 12px !important; /* Отступ от текста */
+    cursor: pointer !important;
+    padding: 4px 6px !important;
+    border-radius: 4px !important;
+    color: var(--hr-text-muted) !important;
+    font-size: 0.9rem !important;
+}
+
+.card:hover .chat-title-edit {
+    opacity: 1;
+}
+
+.chat-title-edit:hover {
+    background-color: rgba(var(--color-pink-500-rgb), 0.1) !important;
+    color: var(--hr-primary) !important;
+    transform: scale(1.1);
+}
+
+/* Темная тема для иконки редактирования */
+[data-theme="dark"] .chat-title-edit {
+    color: var(--color-luna-400) !important;
+}
+
+[data-theme="dark"] .chat-title-edit:hover {
+    background-color: rgba(var(--color-pink-500-rgb), 0.2) !important;
+    color: var(--color-pink-400) !important;
+}
+
 .card .chat-messages .text-center.text-muted.py-5 small {
     font-size: 0.95rem;
     opacity: 0.8;

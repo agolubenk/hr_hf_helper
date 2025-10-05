@@ -49,9 +49,7 @@
                     <div class="flex-grow-1">
                         <div class="d-flex align-items-center">
                             <h6 class="mb-0 me-2" id="chat-title-display">{{ chat_session.title }}</h6>
-                            <button class="btn btn-sm btn-outline-secondary chat-title-edit" id="edit-title-btn" title="Редактировать название">
-                                <i class="fas fa-edit"></i>
-                            </button>
+                            <i class="fas fa-edit chat-title-edit" id="edit-title-btn" title="Редактировать название"></i>
                         </div>
                         <small class="opacity-75">
                             Создан: {{ chat_session.created_at|date:"d.m.Y H:i" }}
