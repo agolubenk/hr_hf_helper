@@ -1418,6 +1418,53 @@ a:hover {
     color: var(--color-pink-400) !important;
 }
 
+/* Стили для формы редактирования заголовка */
+.chat-title-edit-form {
+    display: flex !important;
+    align-items: center !important;
+    height: auto !important;
+    max-height: 2rem !important; /* Не больше высоты исходного текста */
+}
+
+.chat-title-edit-form input {
+    height: 2rem !important; /* Фиксированная высота как у заголовка */
+    font-size: 1.25rem !important;
+    font-weight: 500 !important;
+    padding: 0.25rem 0.5rem !important;
+    border: 1px solid var(--hr-primary) !important;
+    border-radius: 4px !important;
+    background-color: var(--hr-surface) !important;
+    color: var(--hr-text) !important;
+}
+
+.chat-title-edit-form input:focus {
+    border-color: var(--hr-primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(var(--color-pink-500-rgb), 0.25) !important;
+    outline: none !important;
+}
+
+.chat-title-edit-form .btn {
+    height: 2rem !important; /* Такая же высота как у input */
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.875rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Темная тема для формы редактирования */
+[data-theme="dark"] .chat-title-edit-form input {
+    background-color: var(--color-background) !important;
+    border-color: var(--hr-border) !important;
+    color: var(--color-luna-400) !important;
+}
+
+[data-theme="dark"] .chat-title-edit-form input:focus {
+    border-color: var(--hr-primary) !important;
+    background-color: var(--color-background) !important;
+    color: var(--color-luna-400) !important;
+}
+
 .card .chat-messages .text-center.text-muted.py-5 small {
     font-size: 0.95rem;
     opacity: 0.8;

@@ -400,14 +400,15 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Edit button clicked!');
         const currentTitle = chatTitleDisplay.textContent.trim();
         
+        // Создаем контейнер для формы редактирования
+        const editForm = document.createElement('div');
+        editForm.className = 'chat-title-edit-form';
+        
         // Создаем input поле
         const input = document.createElement('input');
         input.type = 'text';
         input.value = currentTitle;
-        input.className = 'form-control form-control-sm d-inline-block';
         input.style.width = '300px';
-        input.style.fontSize = '1.25rem';
-        input.style.fontWeight = '500';
         
         // Создаем кнопки
         const saveBtn = document.createElement('button');
@@ -420,13 +421,17 @@ document.addEventListener('DOMContentLoaded', function() {
         cancelBtn.innerHTML = '<i class="fas fa-times"></i>';
         cancelBtn.title = 'Отмена';
         
-        // Заменяем заголовок на input
+        // Заменяем заголовок на форму редактирования
         chatTitleDisplay.style.display = 'none';
         editTitleBtn.style.display = 'none';
         
-        chatTitleDisplay.parentNode.insertBefore(input, chatTitleDisplay);
-        chatTitleDisplay.parentNode.insertBefore(saveBtn, chatTitleDisplay);
-        chatTitleDisplay.parentNode.insertBefore(cancelBtn, chatTitleDisplay);
+        // Добавляем элементы в контейнер формы
+        editForm.appendChild(input);
+        editForm.appendChild(saveBtn);
+        editForm.appendChild(cancelBtn);
+        
+        // Вставляем форму вместо заголовка
+        chatTitleDisplay.parentNode.insertBefore(editForm, chatTitleDisplay);
         
         // Фокус на input
         input.focus();
@@ -435,9 +440,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Функция отмены
         function cancelEdit() {
             console.log('Cancelling edit');
-            input.remove();
-            saveBtn.remove();
-            cancelBtn.remove();
+            editForm.remove();
             chatTitleDisplay.style.display = 'block';
             editTitleBtn.style.display = 'inline-block';
         }
