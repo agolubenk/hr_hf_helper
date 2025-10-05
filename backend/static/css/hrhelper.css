@@ -1357,6 +1357,194 @@ a:hover {
                 0 4px 12px rgba(var(--color-red-400-rgb), 0.4) !important;
 }
 
+/* === СТИЛИ GEMINI ЧАТА (АДАПТИРОВАННЫЕ ИЗ GOOGLE OAUTH) === */
+.card .chat-messages {
+    background-color: #ffffff; /* Белый фон для светлой темы */
+    padding: 12px !important;
+}
+
+/* Темная тема - черный фон чата */
+[data-theme="dark"] .card .chat-messages {
+    background-color: #000000;
+}
+
+.card .message {
+    margin-bottom: 12px !important;
+    width: 100%;
+    display: block;
+}
+
+.card .message > .d-flex {
+    width: 100%;
+}
+
+/* Единый размер шрифта для всех сообщений */
+.card .message-bubble {
+    padding: 8px 12px;
+    border-radius: 12px;
+    word-wrap: break-word;
+    line-height: 1.3;
+    font-size: 1.1rem !important;
+    display: inline-block;
+    width: auto !important;
+    min-width: fit-content !important;
+    max-width: none !important;
+    font-family: "FKGroteskNeue", "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+/* Пользовательские сообщения - остаются с ограничением */
+.card .user-message .message-bubble {
+    max-width: 75%;
+    min-width: 120px;
+}
+
+/* Системные сообщения - БЕЗ ОГРАНИЧЕНИЙ ШИРИНЫ */
+.card .system-message .message-bubble {
+    max-width: none !important;
+    min-width: fit-content !important;
+    width: auto !important;
+}
+
+.card .user-bubble {
+    background: var(--hr-gradient, linear-gradient(135deg, #007bff 0%, #0056b3 100%));
+    color: white;
+    border: none;
+}
+
+.card .system-bubble {
+    background-color: var(--hr-card-bg, #ffffff);
+    border: 1px solid var(--hr-border, #dee2e6);
+    color: var(--hr-text, #333);
+}
+
+/* Заголовки сообщений */
+.card .message-header {
+    font-size: 0.7rem;
+    margin-bottom: 4px;
+    opacity: 0.8;
+    font-weight: 500;
+    line-height: 1.2;
+    font-family: "FKGroteskNeue", "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+.card .message-header i {
+    font-size: 0.65rem;
+    margin-right: 3px;
+}
+
+.card .message-header strong {
+    font-weight: 600;
+}
+
+.card .message-header small {
+    font-size: 0.65rem;
+    margin-left: 6px;
+}
+
+/* Контент сообщений одинакового размера */
+.card .message-content {
+    line-height: 1.3;
+    margin: 0;
+    font-size: 1.1rem !important;
+    font-family: "FKGroteskNeue", "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+/* Увеличиваем размер статуса */
+.card .status-message-compact {
+    color: var(--color-success, #28a745);
+    font-weight: 500;
+    font-size: 0.9rem !important;
+    padding: 6px 10px;
+    background: rgba(40, 167, 69, 0.1);
+    border-radius: 6px;
+    border-left: 2px solid var(--color-success, #28a745);
+    margin-top: 4px;
+    white-space: nowrap;
+    display: inline-block;
+    width: auto;
+}
+
+/* Выравнивание сообщений */
+.card .user-message {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.card .system-message {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    max-width: none !important;
+}
+
+.card .user-message .message-bubble {
+    border-bottom-right-radius: 3px;
+}
+
+.card .system-message .message-bubble {
+    border-bottom-left-radius: 3px;
+}
+
+/* Футер карточки */
+.card .card-footer {
+    padding: 12px !important;
+    background-color: var(--hr-card-bg, #ffffff);
+    border-top: 1px solid var(--hr-border, #dee2e6);
+}
+
+.card #message-input {
+    border-radius: 18px 0 0 18px;
+    min-height: 48px !important;
+    max-height: 200px !important; /* Примерно 7 строк */
+    overflow-y: auto;
+    border-right: none;
+    padding: 8px 12px;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    resize: none;
+    font-family: "FKGroteskNeue", "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+.card #send-btn {
+    border-radius: 0 18px 18px 0;
+    padding: 8px 12px;
+    min-height: 36px;
+}
+
+/* Заголовок карточки */
+.card .card-header {
+    padding: 12px 16px !important;
+    background: var(--hr-gradient, linear-gradient(135deg, #007bff 0%, #0056b3 100%));
+    border-bottom: 1px solid var(--hr-border, #dee2e6);
+}
+
+/* Обычные карточки - водно-лунный градиент для светлой темы */
+.card {
+    background: linear-gradient(135deg, rgba(176, 196, 222, 1) 20%, rgba(45, 126, 45, 1) 40%, rgba(135, 206, 235, 1) 60%, rgba(45, 126, 45, 1) 80%, rgba(76, 175, 80, 1) 100%);
+}
+
+/* Темная тема для карточек - лаймово-розовый градиент */
+[data-theme="dark"] .card {
+    background: linear-gradient(135deg, rgba(187, 225, 250, 1) 0%, rgba(55, 171, 218, 1) 50%, rgba(255, 107, 157, 1) 100%);
+}
+
+.card .card-header h6 {
+    margin: 0 !important;
+    font-size: 0.9rem !important;
+    color: white !important;
+}
+
+/* Стили для кнопки редактирования заголовка чата */
+.chat-title-edit {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.card:hover .chat-title-edit {
+    opacity: 1;
+}
+
 /* === ТЕМНАЯ ТЕМА - ПЕРЕОПРЕДЕЛЕНИЕ ПОЛЕЙ ФОРМ === */
 [data-theme="dark"] .form-control,
 [data-theme="dark"] .form-select,

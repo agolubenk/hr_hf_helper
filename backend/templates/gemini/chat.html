@@ -43,13 +43,13 @@
     </div>
     
     <div class="col-lg-9">
-        <div class="chat-container">
-            <div class="chat-header">
+        <div class="card chat-container">
+            <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="flex-grow-1">
                         <div class="d-flex align-items-center">
-                            <h4 class="mb-0 me-2" id="chat-title-display">{{ chat_session.title }}</h4>
-                            <button class="btn btn-sm btn-outline-secondary" id="edit-title-btn" title="Редактировать название">
+                            <h6 class="mb-0 me-2" id="chat-title-display">{{ chat_session.title }}</h6>
+                            <button class="btn btn-sm btn-outline-secondary chat-title-edit" id="edit-title-btn" title="Редактировать название">
                                 <i class="fas fa-edit"></i>
                             </button>
                         </div>
@@ -66,26 +66,31 @@
                 </div>
             </div>
             
-            <div class="chat-messages" id="chat-messages">
+            <div class="card-body chat-messages" id="chat-messages">
                 {% for message in messages %}
-                    <div class="message {{ message.role }}">
-                        <div class="message-avatar">
-                            {% if message.role == 'user' %}
-                                <i class="fas fa-user"></i>
-                            {% else %}
-                                <i class="fas fa-robot"></i>
-                            {% endif %}
-                        </div>
-                        <div class="message-content">
-                            {{ message.content|linebreaks }}
+                    <div class="message {% if message.role == 'user' %}user-message{% else %}system-message{% endif %}">
+                        <div class="message-bubble {% if message.role == 'user' %}user-bubble{% else %}system-bubble{% endif %}">
+                            <div class="message-header">
+                                {% if message.role == 'user' %}
+                                    <i class="fas fa-user"></i>
+                                    <strong>Вы</strong>
+                                {% else %}
+                                    <i class="fas fa-robot"></i>
+                                    <strong>Gemini AI</strong>
+                                {% endif %}
+                                <small>{{ message.created_at|date:"H:i" }}</small>
+                            </div>
+                            <div class="message-content">
+                                {{ message.content|linebreaks }}
+                            </div>
                             {% if message.role == 'assistant' and message.response_time %}
-                                <small class="text-muted d-block mt-2">
+                                <div class="status-message-compact">
                                     <i class="fas fa-clock me-1"></i>
                                     {{ message.response_time|floatformat:2 }}с
                                     {% if message.tokens_used %}
                                         • {{ message.tokens_used }} токенов
                                     {% endif %}
-                                </small>
+                                </div>
                             {% endif %}
                         </div>
                     </div>
@@ -97,32 +102,35 @@
                     </div>
                 {% endfor %}
                 
-                <div class="typing-indicator" id="typing-indicator">
-                    <div class="message assistant">
-                        <div class="message-avatar">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <div class="message-content">
-                            <span class="loading-spinner me-2"></span>
-                            Gemini печатает...
+                <div class="typing-indicator" id="typing-indicator" style="display: none;">
+                    <div class="message system-message">
+                        <div class="message-bubble system-bubble">
+                            <div class="message-header">
+                                <i class="fas fa-robot"></i>
+                                <strong>Gemini AI</strong>
+                            </div>
+                            <div class="message-content">
+                                <span class="loading-spinner me-2"></span>
+                                Gemini печатает...
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="chat-input">
+            <div class="card-footer chat-input">
                 <form id="chat-form">
                     {% csrf_token %}
                     <input type="hidden" name="session_id" value="{{ chat_session.id }}">
                     <div class="input-group">
-                        <input type="text" 
-                               class="form-control" 
-                               id="message-input" 
-                               name="message" 
-                               placeholder="Введите ваше сообщение..."
-                               autocomplete="off"
-                               required>
-                        <button type="submit" class="btn-send" id="send-btn">
+                        <textarea class="form-control" 
+                                  id="message-input" 
+                                  name="message" 
+                                  placeholder="Введите ваше сообщение..."
+                                  autocomplete="off"
+                                  required
+                                  rows="1"></textarea>
+                        <button type="submit" class="btn btn-primary" id="send-btn">
                             <i class="fas fa-paper-plane"></i>
                         </button>
                     </div>
@@ -145,6 +153,28 @@ document.addEventListener('DOMContentLoaded', function() {
     // Автофокус на поле ввода
     messageInput.focus();
     
+    // Авторасширение textarea
+    function autoResizeTextarea() {
+        messageInput.style.height = 'auto';
+        // Получаем высоту одной строки (line-height + padding)
+        const lineHeight = parseFloat(window.getComputedStyle(messageInput).lineHeight) || 24;
+        const paddingTop = parseFloat(window.getComputedStyle(messageInput).paddingTop) || 8;
+        const paddingBottom = parseFloat(window.getComputedStyle(messageInput).paddingBottom) || 8;
+        
+        // Высота одной строки с учетом padding
+        const singleLineHeight = lineHeight + paddingTop + paddingBottom;
+        
+        // Ограничиваем до 7 строк
+        const maxHeight = 7 * singleLineHeight;
+        messageInput.style.height = Math.min(messageInput.scrollHeight, maxHeight) + 'px';
+    }
+    
+    // Инициализация высоты
+    autoResizeTextarea();
+    
+    // Обработчик изменения размера
+    messageInput.addEventListener('input', autoResizeTextarea);
+    
     // Отправка сообщения
     chatForm.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -155,8 +185,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Добавляем сообщение пользователя в чат
         addMessageToChat('user', message);
         
-        // Очищаем поле ввода
+        // Очищаем поле ввода и сбрасываем высоту
         messageInput.value = '';
+        autoResizeTextarea();
         
         // Показываем индикатор печати
         showTypingIndicator();
@@ -175,18 +206,29 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function addMessageToChat(role, content) {
         const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${role}`;
+        messageDiv.className = `message ${role === 'user' ? 'user-message' : 'system-message'}`;
         
-        const avatar = document.createElement('div');
-        avatar.className = 'message-avatar';
-        avatar.innerHTML = role === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+        const bubbleDiv = document.createElement('div');
+        bubbleDiv.className = `message-bubble ${role === 'user' ? 'user-bubble' : 'system-bubble'}`;
+        
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'message-header';
+        const now = new Date();
+        const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+        
+        if (role === 'user') {
+            headerDiv.innerHTML = '<i class="fas fa-user"></i><strong>Вы</strong><small>' + timeStr + '</small>';
+        } else {
+            headerDiv.innerHTML = '<i class="fas fa-robot"></i><strong>Gemini AI</strong><small>' + timeStr + '</small>';
+        }
         
         const contentDiv = document.createElement('div');
         contentDiv.className = 'message-content';
         contentDiv.innerHTML = content.replace(/\n/g, '<br>');
         
-        messageDiv.appendChild(avatar);
-        messageDiv.appendChild(contentDiv);
+        bubbleDiv.appendChild(headerDiv);
+        bubbleDiv.appendChild(contentDiv);
+        messageDiv.appendChild(bubbleDiv);
         
         chatMessages.insertBefore(messageDiv, typingIndicator);
         
@@ -222,12 +264,12 @@ document.addEventListener('DOMContentLoaded', function() {
             <span class="loading-spinner me-2"></span>
             ${message}
         `;
-        typingIndicator.classList.add('show');
+        typingIndicator.style.display = 'block';
         scrollToBottom();
     }
     
     function hideTypingIndicator() {
-        typingIndicator.classList.remove('show');
+        typingIndicator.style.display = 'none';
     }
     
     function scrollToBottom() {
