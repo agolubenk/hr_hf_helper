@@ -477,8 +477,18 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Обновляем заголовок
+                    // Обновляем заголовок в чате
                     chatTitleDisplay.textContent = newTitle;
+                    
+                    // Обновляем заголовок в списке истории чатов
+                    const currentSessionItem = document.querySelector('.session-item.active');
+                    if (currentSessionItem) {
+                        const sessionTitle = currentSessionItem.querySelector('.session-title');
+                        if (sessionTitle) {
+                            sessionTitle.textContent = newTitle;
+                        }
+                    }
+                    
                     cancelEdit();
                     
                     // Показываем уведомление об успехе
