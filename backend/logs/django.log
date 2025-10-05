@@ -4209,3 +4209,144 @@ WARNING Not Found: /common/404/
 404 ошибка: /.well-known/appspecific/com.chrome.devtools.json - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
 WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
 [05/Oct/2025 14:50:56] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 43214
+403 ошибка: /google-oauth/chat/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Forbidden (Permission denied): /google-oauth/chat/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[05/Oct/2025 14:53:18] "GET /google-oauth/chat/ HTTP/1.1" 403 43951
+[05/Oct/2025 14:53:24] "GET /accounts/logout/ HTTP/1.1" 302 0
+
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...[05/Oct/2025 14:53:24] "GET /huntflow/ HTTP/1.1" 302 0
+[05/Oct/2025 14:53:24] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 27107
+[05/Oct/2025 14:53:24,281] - Broken pipe from ('127.0.0.1', 53689)
+[05/Oct/2025 14:53:36] "GET /google-oauth/chat/ HTTP/1.1" 302 0
+[05/Oct/2025 14:53:36] "GET /accounts/login/?next=/google-oauth/chat/ HTTP/1.1" 200 26372
+404 ошибка: /.well-known/appspecific/com.chrome.devtools.json - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[05/Oct/2025 14:54:18] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 42836
+[05/Oct/2025 14:55:48] "GET /accounts/login/?next=/google-oauth/chat/ HTTP/1.1" 200 26372
+[05/Oct/2025 14:55:51] "GET /accounts/login/?next=/google-oauth/chat/ HTTP/1.1" 200 26372
+[05/Oct/2025 14:55:51] "GET /static/css/hrhelper.css HTTP/1.1" 200 63994
+[05/Oct/2025 14:55:51] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+404 ошибка: /.well-known/appspecific/com.chrome.devtools.json - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+[05/Oct/2025 14:57:05] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[05/Oct/2025 14:57:05] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 42836
+[05/Oct/2025 15:03:27] "GET /accounts/login/?next=/google-oauth/chat/ HTTP/1.1" 200 26372
+[05/Oct/2025 15:03:27] "GET /static/css/hrhelper.css HTTP/1.1" 200 65393
+404 ошибка: /.well-known/appspecific/com.chrome.devtools.json - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[05/Oct/2025 15:04:29] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 42836
+[05/Oct/2025 15:04:29] "GET /static/css/hrhelper.css HTTP/1.1" 200 65393
+[05/Oct/2025 15:07:28] "GET /accounts/login/?next=/google-oauth/chat/ HTTP/1.1" 200 26372
+404 ошибка: /.well-known/appspecific/com.chrome.devtools.json - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[05/Oct/2025 15:07:29] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 42836
+[05/Oct/2025 15:07:29] "GET /static/css/hrhelper.css HTTP/1.1" 200 65336
+[05/Oct/2025 15:08:09] "GET /accounts/login/?next=/google-oauth/chat/ HTTP/1.1" 200 26372
+404 ошибка: /.well-known/appspecific/com.chrome.devtools.json - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[05/Oct/2025 15:08:09] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 42836
+[05/Oct/2025 15:08:09] "GET /static/css/hrhelper.css HTTP/1.1" 200 65392
+[05/Oct/2025 15:08:20] "GET /accounts/login/ HTTP/1.1" 200 26372
+404 ошибка: /.well-known/appspecific/com.chrome.devtools.json - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[05/Oct/2025 15:08:20] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 42836
+[05/Oct/2025 15:08:20] "GET /static/css/hrhelper.css HTTP/1.1" 304 0

@@ -45,7 +45,7 @@
   --color-pink-500: rgba(255, 64, 129, 1);
   --color-pink-600: rgba(233, 30, 99, 1);
   --color-pink-700: rgba(194, 24, 91, 1);
-  --color-pink-800: rgba(156, 39, 176, 1);
+  --color-pink-800: rgba(183, 5, 115, 1);
   
   /* Луна цвета для темной темы */
   --color-luna-300: rgba(199, 235, 255, 1); /* Акцентная луна */
@@ -1134,6 +1134,19 @@ a:hover {
     margin-top: var(--space-8);
 }
 
+/* === BOOTSTRAP ТЕКСТОВЫЕ КЛАССЫ ПЕРЕОПРЕДЕЛЕНИЕ === */
+.text-muted {
+    color: var(--hr-text-muted) !important;
+}
+
+.text-secondary {
+    color: var(--hr-text-muted) !important;
+}
+
+.small {
+    color: var(--hr-text-muted) !important;
+}
+
 .form-select {
     border: 1px solid var(--hr-border);
     border-radius: var(--radius-base);
@@ -1203,6 +1216,43 @@ a:hover {
     transform: translateY(-1px);
     color: var(--color-btn-primary-text);
     box-shadow: var(--shadow-sm);
+}
+
+/* === ТЕМНАЯ ТЕМА - ПЕРЕОПРЕДЕЛЕНИЕ КНОПОК === */
+[data-theme="dark"] .btn-primary {
+    color: var(--color-luna-400);
+}
+
+[data-theme="dark"] .btn-primary:hover {
+    background: linear-gradient(135deg, var(--color-pink-700) 0%, var(--color-pink-800) 100%);
+    color: var(--color-luna-400);
+    box-shadow: 0 4px 12px rgba(194, 24, 91, 0.3);
+}
+
+[data-theme="dark"] .btn-outline-primary {
+    color: var(--color-luna-400);
+    border-color: var(--color-luna-400);
+}
+
+[data-theme="dark"] .btn-outline-primary:hover {
+    background: var(--color-luna-400);
+    color: var(--color-slate-900);
+}
+
+[data-theme="dark"] .btn-outline-secondary:hover {
+    color: var(--color-luna-400);
+}
+
+[data-theme="dark"] .btn-outline-success:hover {
+    color: var(--color-luna-400);
+}
+
+[data-theme="dark"] .btn-outline-warning:hover {
+    color: var(--color-luna-400);
+}
+
+[data-theme="dark"] .btn-outline-danger:hover {
+    color: var(--color-luna-400);
 }
 
 .btn-outline-primary {
@@ -1704,6 +1754,18 @@ a:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(var(--color-teal-500-rgb), 0.4);
     text-decoration: none;
+}
+
+/* === ТЕМНАЯ ТЕМА - ПЕРЕОПРЕДЕЛЕНИЕ ДЛЯ .btn-new-chat === */
+[data-theme="dark"] .btn-new-chat {
+    color: var(--color-luna-400);
+}
+
+[data-theme="dark"] .btn-new-chat:hover {
+    background: linear-gradient(135deg, var(--color-pink-700) 0%, var(--color-pink-800) 100%);
+    border-color: var(--color-pink-600);
+    color: var(--color-luna-400);
+    box-shadow: 0 6px 16px rgba(233, 30, 99, 0.4);
 }
 
 [data-color-scheme="dark"] .btn-new-chat:hover {
