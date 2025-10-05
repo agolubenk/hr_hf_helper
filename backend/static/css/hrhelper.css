@@ -2131,8 +2131,12 @@ a:hover {
     color: var(--hr-text);
 }
 
-.table thead th {
+.table thead {
     background: var(--hr-gradient);
+}
+
+.table thead th {
+    background: transparent; /* Убираем фон у отдельных th */
     color: var(--color-btn-primary-text);
     border: none;
     font-weight: var(--font-weight-medium);
@@ -2150,6 +2154,15 @@ a:hover {
 
 .table tbody tr:hover {
     background-color: var(--hr-hover-bg);
+}
+
+/* Темная тема для таблиц */
+[data-theme="dark"] .table thead {
+    background: linear-gradient(135deg, rgba(187, 225, 250, 1) 0%, rgba(55, 171, 218, 1) 50%, rgba(255, 107, 157, 1) 100%);
+}
+
+[data-theme="dark"] .table thead th {
+    color: #000000; /* Черный текст на светлом градиенте */
 }
 
 /* =============================================================================
