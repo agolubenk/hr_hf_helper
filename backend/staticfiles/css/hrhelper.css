@@ -1317,21 +1317,6 @@ a:hover {
     background-color: rgba(var(--color-red-500-rgb), 0.1);
 }
 
-/* Красная граница и тени при наведении на иконку удаления */
-.session-item:hover .session-actions:hover ~ .session-content,
-.session-item .session-actions:hover {
-    /* Этот селектор срабатывает когда наводим на иконку удаления */
-}
-
-.session-item .session-actions:hover ~ * {
-    /* Влияем на родительский элемент при наведении на иконку */
-}
-
-/* Альтернативный подход - через JavaScript событие, но пока через CSS */
-.session-actions:hover {
-    /* Стили для самой иконки при наведении */
-}
-
 /* Добавляем стили для карточки при наведении на кнопку удаления */
 .session-item:has(.session-actions:hover) {
     border-color: var(--hr-danger) !important;
@@ -1543,6 +1528,37 @@ a:hover {
 
 .card:hover .chat-title-edit {
     opacity: 1;
+}
+
+/* Выравнивание кнопки "Новый чат" с формой ввода */
+.col-lg-3 {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+}
+
+.col-lg-3 .chat-history-container {
+    flex-grow: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.col-lg-3 .chat-history-container .card-body {
+    flex-grow: 1 !important;
+}
+
+.btn-new-chat {
+    height: 48px !important; /* Такая же высота как у формы ввода */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 16px !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    border-radius: 18px !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+    margin-top: auto !important; /* Прижимаем к низу */
 }
 
 /* === ТЕМНАЯ ТЕМА - ПЕРЕОПРЕДЕЛЕНИЕ ПОЛЕЙ ФОРМ === */
