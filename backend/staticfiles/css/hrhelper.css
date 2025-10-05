@@ -1317,6 +1317,29 @@ a:hover {
     background-color: rgba(var(--color-red-500-rgb), 0.1);
 }
 
+/* Красная граница и тени при наведении на иконку удаления */
+.session-item:hover .session-actions:hover ~ .session-content,
+.session-item .session-actions:hover {
+    /* Этот селектор срабатывает когда наводим на иконку удаления */
+}
+
+.session-item .session-actions:hover ~ * {
+    /* Влияем на родительский элемент при наведении на иконку */
+}
+
+/* Альтернативный подход - через JavaScript событие, но пока через CSS */
+.session-actions:hover {
+    /* Стили для самой иконки при наведении */
+}
+
+/* Добавляем стили для карточки при наведении на кнопку удаления */
+.session-item:has(.session-actions:hover) {
+    border-color: var(--hr-danger) !important;
+    box-shadow: 0 0 0 1px var(--hr-danger), 
+                0 4px 12px rgba(var(--color-red-500-rgb), 0.3) !important;
+    transform: translateY(-1px);
+}
+
 /* Темная тема для иконки удаления */
 [data-theme="dark"] .session-delete-icon {
     color: var(--color-red-400);
@@ -1325,6 +1348,13 @@ a:hover {
 [data-theme="dark"] .session-delete-icon:hover {
     color: var(--color-red-300);
     background-color: rgba(var(--color-red-400-rgb), 0.2);
+}
+
+/* Темная тема для красной границы при наведении */
+[data-theme="dark"] .session-item:has(.session-actions:hover) {
+    border-color: var(--color-red-400) !important;
+    box-shadow: 0 0 0 1px var(--color-red-400), 
+                0 4px 12px rgba(var(--color-red-400-rgb), 0.4) !important;
 }
 
 /* === ТЕМНАЯ ТЕМА - ПЕРЕОПРЕДЕЛЕНИЕ ПОЛЕЙ ФОРМ === */
