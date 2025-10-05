@@ -1223,12 +1223,12 @@ function initializeCharts() {
     if (typeof Chart === 'undefined') {
         console.log('📊 Загружаем Chart.js...');
         const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+        script.src = '{% static "js/chart.min.js" %}';
         script.onload = function() {
             console.log('📊 Chart.js загружен, загружаем date adapter...');
             // Загружаем date adapter
             const dateAdapterScript = document.createElement('script');
-            dateAdapterScript.src = 'https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns';
+            dateAdapterScript.src = '{% static "js/chartjs-adapter-date-fns.min.js" %}';
             dateAdapterScript.onload = function() {
                 console.log('📊 Date adapter загружен, вызываем createCharts...');
             createCharts();
