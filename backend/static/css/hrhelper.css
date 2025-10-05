@@ -1216,7 +1216,6 @@ a:hover {
     transform: translateY(-1px);
     color: var(--color-btn-primary-text);
     box-shadow: var(--shadow-sm);
-    border: 1px solid #6c757d !important; /* Графитовая граница для светлой темы */
 }
 
 /* === ТЕМНАЯ ТЕМА - ПЕРЕОПРЕДЕЛЕНИЕ КНОПОК === */
@@ -1395,7 +1394,7 @@ a:hover {
     cursor: pointer !important;
     padding: 4px 6px !important;
     border-radius: 4px !important;
-    color: var(--color-luna-600) !important; /* Лунный цвет для светлой темы */
+    color: var(--hr-text-muted) !important;
     font-size: 0.9rem !important;
 }
 
@@ -1403,9 +1402,13 @@ a:hover {
     opacity: 1;
 }
 
-.chat-title-edit:hover {
-    background-color: rgba(var(--color-pink-500-rgb), 0.1) !important;
-    color: var(--hr-primary) !important;
+/* Светлая тема для иконки редактирования - более контрастная */
+[data-theme="light"] .chat-title-edit {
+    color: #495057 !important; /* Более контрастный серый цвет */
+}
+
+[data-theme="light"] .chat-title-edit:hover {
+    color: #8b0000 !important; /* Кроваво-темный цвет иконки */
     transform: scale(1.1);
 }
 
@@ -1417,59 +1420,7 @@ a:hover {
 [data-theme="dark"] .chat-title-edit:hover {
     background-color: rgba(var(--color-pink-500-rgb), 0.2) !important;
     color: var(--color-pink-400) !important;
-}
-
-/* === СТИЛИ ДЛЯ КНОПКИ УДАЛЕНИЯ ЧАТА === */
-/* Скрываем кнопку удаления по умолчанию */
-.chat-header-actions {
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
-}
-
-/* Показываем кнопку при наведении на карточку чата */
-.card:hover .chat-header-actions {
-    opacity: 1;
-}
-
-/* Стили для кнопки удаления чата */
-.chat-header-actions .btn {
-    background-color: var(--hr-danger) !important;
-    border-color: var(--hr-danger) !important;
-    color: white !important;
-    transition: all 0.2s ease !important;
-}
-
-.chat-header-actions .btn:hover {
-    background-color: var(--hr-danger-hover) !important;
-    border-color: var(--hr-danger-hover) !important;
-    color: white !important;
-    transform: scale(1.05);
-}
-
-/* Малиновая иконка при наведении в светлой теме */
-.chat-header-actions .btn:hover i {
-    color: var(--color-pink-600) !important; /* Малиновый цвет иконки */
-}
-
-/* Темная тема для кнопки удаления */
-[data-theme="dark"] .chat-header-actions .btn {
-    background-color: #000000 !important;
-    border-color: var(--hr-danger) !important;
-    color: #ffffff !important; /* Белый текст */
-}
-
-[data-theme="dark"] .chat-header-actions .btn i {
-    color: var(--hr-danger) !important; /* Красная иконка */
-}
-
-[data-theme="dark"] .chat-header-actions .btn:hover {
-    background-color: var(--hr-danger) !important;
-    border-color: #ffffff !important; /* Белая граница при наведении */
-    color: #ffffff !important;
-}
-
-[data-theme="dark"] .chat-header-actions .btn:hover i {
-    color: #ffffff !important; /* Белая иконка при наведении */
+    transform: scale(1.1);
 }
 
 /* Стили для формы редактирования заголовка */
@@ -1790,7 +1741,6 @@ a:hover {
     background: linear-gradient(135deg, var(--color-pink-700) 0%, var(--color-pink-800) 100%);
     color: var(--color-luna-400);
     box-shadow: 0 4px 12px rgba(194, 24, 91, 0.3);
-    border: 1px solid var(--color-luna-400) !important; /* Лунная граница для темной темы */
 }
 
 /* === АДАПТИВНОЕ ЦЕНТРИРОВАНИЕ ФОРМЫ ВХОДА === */
@@ -2090,6 +2040,12 @@ a:hover {
     transition: all var(--duration-normal) var(--ease-standard);
 }
 
+/* Исправление для заголовков чата - принудительно применяем градиент */
+.chat-container .card-header {
+    background: var(--hr-gradient) !important;
+    color: var(--color-btn-primary-text) !important;
+}
+
 .card:hover .card-header {
     background: var(--hr-gradient-hover);
 }
@@ -2131,12 +2087,8 @@ a:hover {
     color: var(--hr-text);
 }
 
-.table thead {
-    background: var(--hr-gradient);
-}
-
 .table thead th {
-    background: transparent; /* Убираем фон у отдельных th */
+    background: var(--hr-gradient);
     color: var(--color-btn-primary-text);
     border: none;
     font-weight: var(--font-weight-medium);
@@ -2154,15 +2106,6 @@ a:hover {
 
 .table tbody tr:hover {
     background-color: var(--hr-hover-bg);
-}
-
-/* Темная тема для таблиц */
-[data-theme="dark"] .table thead {
-    background: linear-gradient(135deg, rgba(187, 225, 250, 1) 0%, rgba(55, 171, 218, 1) 50%, rgba(255, 107, 157, 1) 100%);
-}
-
-[data-theme="dark"] .table thead th {
-    color: #000000; /* Черный текст на светлом градиенте */
 }
 
 /* =============================================================================
