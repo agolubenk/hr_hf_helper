@@ -9,16 +9,20 @@
 {% load socialaccount %}
 
 <div class="text-center mb-4">
-    <h6 class="text-muted">Войти через Google</h6>
     <a href="{% url 'accounts:google_oauth_redirect' %}" class="btn btn-primary btn-google btn-lg w-100">
         <i class="fab fa-google me-2"></i>
         Войти через Google
     </a>
 </div>
 
-<hr class="my-4">
+<div class="divider-with-text my-4">
+    <hr class="divider-line">
+    <span class="divider-text">или</span>
+    <hr class="divider-line">
+</div>
+
 <div class="text-center">
-    <small class="text-muted">Или войти через админ панель</small>
+    <small class="text-muted">Войти через админ панель</small>
 </div>
 <div class="text-center mt-3">
     <a href="{% url 'admin:login' %}" class="btn btn-outline-secondary">

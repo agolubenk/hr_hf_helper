@@ -1229,14 +1229,57 @@ a:hover {
     box-shadow: 0 4px 12px rgba(194, 24, 91, 0.3);
 }
 
+/* === УНИКАЛЬНЫЙ РАЗДЕЛИТЕЛЬ С ТЕКСТОМ "ИЛИ" === */
+.divider-with-text {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.divider-line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        var(--hr-text-muted) 15%, 
+        var(--hr-text-muted) 85%, 
+        transparent 100%
+    );
+    border: none;
+    margin: 0;
+    opacity: 0.6;
+}
+
+.divider-text {
+    padding: 0 15px;
+    color: var(--hr-text-muted);
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: lowercase;
+    background: transparent;
+    white-space: nowrap;
+}
+
 /* === GOOGLE КНОПКА С ГРАДИЕНТНОЙ ОБВОДКОЙ И ЦВЕТНЫМИ ТЕНЯМИ === */
 .btn-primary.btn-google {
-    /* Прозрачная внутренность, сохраняем btn-primary поведение */
+    /* Принудительно прозрачная внутренность */
+    background: transparent !important;
+    background-color: transparent !important;
     position: relative;
     border: 2px solid transparent;
     background-clip: padding-box;
     transition: all 0.3s ease;
     z-index: 1;
+    
+    /* Размеры кнопки */
+    width: 100% !important;
+    padding: 12px 24px !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    
+    /* Цвет текста для светлой темы */
+    color: #000000 !important;
     
     /* Многоцветная тень Google */
     box-shadow:
@@ -1246,12 +1289,17 @@ a:hover {
         0 4px 16px 0 rgba(251, 188, 5, 0.2);
 }
 
+/* Темная тема - белый текст */
+[data-theme="dark"] .btn-primary.btn-google {
+    color: #ffffff !important;
+}
+
 .btn-primary.btn-google::before {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    padding: 2px; /* Толщина градиентной обводки */
+    padding: 3px; /* Увеличиваем толщину градиентной обводки */
     background: linear-gradient(90deg, #4285F4, #34A853, #FBBC05, #EA4335);
     -webkit-mask: 
         linear-gradient(#fff 0 0) content-box, 
@@ -1263,6 +1311,11 @@ a:hover {
 }
 
 .btn-primary.btn-google:hover {
+    /* Сохраняем прозрачность при hover */
+    background: transparent !important;
+    background-color: transparent !important;
+    /* Сохраняем цвет текста */
+    color: #000000 !important;
     transform: translateY(-2px);
     
     /* Усиленная многоцветная тень при hover */
@@ -1271,6 +1324,11 @@ a:hover {
         5px 5px 20px 0px rgba(52, 168, 83, 0.3),
         -5px -5px 20px 0px rgba(234, 67, 53, 0.3),
         0 6px 24px 0 rgba(251, 188, 5, 0.3);
+}
+
+/* Темная тема hover - белый текст */
+[data-theme="dark"] .btn-primary.btn-google:hover {
+    color: #ffffff !important;
 }
 
 .btn-primary.btn-google:hover::before {
