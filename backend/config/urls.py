@@ -7,8 +7,8 @@ from django.conf.urls import handler404, handler500, handler403
 from django.conf.urls.static import static
 # from django_telethon.urls import django_telethon_urls  # Отключено
 
-def redirect_to_huntflow(request):
-    return redirect('/huntflow/')
+def redirect_to_chat(request):
+    return redirect('/google-oauth/chat/')
 
 urlpatterns = [
     # API endpoints
@@ -21,7 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     
     # Главная страница
-    path('', redirect_to_huntflow, name='home'),
+    path('', redirect_to_chat, name='home'),
     
     # Django Allauth (отдельный префикс)
     path('auth/', include('allauth.urls')),

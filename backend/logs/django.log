@@ -1,163 +1,22 @@
 Watching for file changes with StatReloader
-[05/Oct/2025 15:14:54] "GET / HTTP/1.1" 302 0
-[05/Oct/2025 15:15:00] "GET /accounts/login/ HTTP/1.1" 200 26372
-[05/Oct/2025 15:15:00] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
-WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
-Not Found: /.well-known/appspecific/com.chrome.devtools.json
-[05/Oct/2025 15:15:00] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4053
-[05/Oct/2025 15:15:02] "GET /accounts/login/ HTTP/1.1" 200 26372
-WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
-Not Found: /.well-known/appspecific/com.chrome.devtools.json
-[05/Oct/2025 15:15:03] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4053
-[05/Oct/2025 15:15:03] "GET /static/css/hrhelper.css HTTP/1.1" 200 66361
-[05/Oct/2025 15:15:03] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[05/Oct/2025 15:53:42] "GET / HTTP/1.1" 302 0
 /Users/agolubenko/hrhelper/fullstack/backend/config/settings.py changed, reloading.
 Performing system checks...
 
 System check identified no issues (0 silenced).
-October 05, 2025 - 15:14:50
+October 05, 2025 - 15:53:38
 Django version 4.2.16, using settings 'config.settings'
 Starting development server at http://127.0.0.1:8000/
 Quit the server with CONTROL-C.
 
 Watching for file changes with StatReloader
-/Users/agolubenko/hrhelper/fullstack/backend/config/settings.py changed, reloading.
-Performing system checks...
-
-System check identified no issues (0 silenced).
-October 05, 2025 - 15:15:07
-Django version 4.2.16, using settings 'config.settings'
-Starting development server at http://127.0.0.1:8000/
-Quit the server with CONTROL-C.
-
-Watching for file changes with StatReloader
-[05/Oct/2025 15:15:27] "GET /accounts/login/ HTTP/1.1" 200 26372
-[05/Oct/2025 15:15:27] "GET /static/css/hrhelper.css HTTP/1.1" 200 66361
-WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
-Not Found: /.well-known/appspecific/com.chrome.devtools.json
-[05/Oct/2025 15:15:27] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4053
-[05/Oct/2025 15:15:27] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
-[05/Oct/2025 15:15:33] "GET /admin/accounts/user/ HTTP/1.1" 302 0
-[05/Oct/2025 15:15:33] "GET /admin/login/?next=/admin/accounts/user/ HTTP/1.1" 200 4246
-[05/Oct/2025 15:15:33] "GET /static/admin/css/dark_mode.css HTTP/1.1" 304 0
-[05/Oct/2025 15:15:33] "GET /static/admin/css/base.css HTTP/1.1" 304 0
-[05/Oct/2025 15:15:33] "GET /static/admin/css/login.css HTTP/1.1" 304 0
-[05/Oct/2025 15:15:33] "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 304 0
-[05/Oct/2025 15:15:33] "GET /static/admin/css/responsive.css HTTP/1.1" 304 0
-[05/Oct/2025 15:15:33] "GET /static/admin/js/theme.js HTTP/1.1" 304 0
-[05/Oct/2025 15:15:33] "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
-WARNING Not Found: /favicon.ico
-Not Found: /favicon.ico
-[05/Oct/2025 15:15:33] "GET /favicon.ico HTTP/1.1" 404 3942
-[05/Oct/2025 15:15:40] "GET / HTTP/1.1" 302 0
-[05/Oct/2025 15:15:40] "GET /huntflow/ HTTP/1.1" 302 0
-[05/Oct/2025 15:15:40] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26372
-[05/Oct/2025 15:16:00] "HEAD /static/css/hrhelper.css HTTP/1.1" 200 0
-[05/Oct/2025 15:16:03] "GET /static/css/hrhelper.css HTTP/1.1" 200 66361
-[05/Oct/2025 15:16:07] "GET /accounts/login/ HTTP/1.1" 200 26372
-[05/Oct/2025 15:16:11] "GET /accounts/login/ HTTP/1.1" 200 26372
-[05/Oct/2025 15:16:30] "GET /accounts/login/ HTTP/1.1" 200 26364
-[05/Oct/2025 15:16:59] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26364
-[05/Oct/2025 15:16:59] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
-[05/Oct/2025 15:17:03] "GET /accounts/login/ HTTP/1.1" 200 26364
-[05/Oct/2025 15:17:07] "GET /auth/login/ HTTP/1.1" 200 25440
-[05/Oct/2025 15:17:47] "GET /auth/login/ HTTP/1.1" 200 25440
-[05/Oct/2025 15:20:01] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26376
-[05/Oct/2025 15:20:01] "GET /static/css/hrhelper.css HTTP/1.1" 200 66776
-[05/Oct/2025 15:21:00] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26376
-[05/Oct/2025 15:21:00] "GET /static/css/hrhelper.css HTTP/1.1" 200 66675
-[05/Oct/2025 15:31:04] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26376
-[05/Oct/2025 15:31:04] "GET /static/css/hrhelper.css HTTP/1.1" 200 67693
-[05/Oct/2025 15:32:51] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26376
-[05/Oct/2025 15:32:51] "GET /static/css/hrhelper.css HTTP/1.1" 200 67943
-[05/Oct/2025 15:33:30] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26376
-[05/Oct/2025 15:33:31] "GET /static/css/hrhelper.css HTTP/1.1" 200 67908
-[05/Oct/2025 15:33:32] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26376
-[05/Oct/2025 15:33:32] "GET /static/css/hrhelper.css HTTP/1.1" 200 67908
-[05/Oct/2025 15:33:32] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
-[05/Oct/2025 15:33:55] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26376
-[05/Oct/2025 15:33:55] "GET /static/css/hrhelper.css HTTP/1.1" 200 68139
-[05/Oct/2025 15:34:16] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26376
-[05/Oct/2025 15:34:16] "GET /static/css/hrhelper.css HTTP/1.1" 200 68365
-[05/Oct/2025 15:34:17] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26376
-[05/Oct/2025 15:34:17] "GET /static/css/hrhelper.css HTTP/1.1" 200 68365
-[05/Oct/2025 15:34:17] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
-[05/Oct/2025 15:35:34] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26376
-[05/Oct/2025 15:35:34] "GET /static/css/hrhelper.css HTTP/1.1" 200 68536
-[05/Oct/2025 15:35:37] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26376
-[05/Oct/2025 15:35:37] "GET /static/css/hrhelper.css HTTP/1.1" 200 68536
-[05/Oct/2025 15:35:37] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
-[05/Oct/2025 15:35:47] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26376
-[05/Oct/2025 15:35:47] "GET /static/css/hrhelper.css HTTP/1.1" 200 68559
-[05/Oct/2025 15:35:48] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
-[05/Oct/2025 15:37:27] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26560
-[05/Oct/2025 15:37:27] "GET /static/css/hrhelper.css HTTP/1.1" 200 68559
-[05/Oct/2025 15:37:32] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26560
-[05/Oct/2025 15:37:33] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26560
-[05/Oct/2025 15:37:34] "GET /static/css/hrhelper.css HTTP/1.1" 200 69337
-[05/Oct/2025 15:37:34] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
-[05/Oct/2025 15:39:07] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26560
-[05/Oct/2025 15:39:07] "GET /static/css/hrhelper.css HTTP/1.1" 200 69224
-[05/Oct/2025 15:39:46] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26480
-[05/Oct/2025 15:39:46] "GET /static/css/hrhelper.css HTTP/1.1" 200 69224
-[05/Oct/2025 15:39:47] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
-[05/Oct/2025 15:40:47] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26480
-[05/Oct/2025 15:40:48] "GET /static/css/hrhelper.css HTTP/1.1" 200 69224
-[05/Oct/2025 15:40:48] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
-[05/Oct/2025 15:41:41] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26480
-[05/Oct/2025 15:41:41] "GET /static/css/hrhelper.css HTTP/1.1" 200 69224
-[05/Oct/2025 15:41:41] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
-[05/Oct/2025 15:43:03] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26472
-[05/Oct/2025 15:43:03] "GET /static/css/hrhelper.css HTTP/1.1" 200 69849
-[05/Oct/2025 15:43:04] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
-[05/Oct/2025 15:43:40] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26472
-[05/Oct/2025 15:43:40] "GET /static/css/hrhelper.css HTTP/1.1" 200 69849
-[05/Oct/2025 15:43:40] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
-[05/Oct/2025 15:48:53] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26472
-[05/Oct/2025 15:48:53] "GET /static/css/hrhelper.css HTTP/1.1" 200 69993
-[05/Oct/2025 15:48:54] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
-[05/Oct/2025 15:49:21] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26472
-[05/Oct/2025 15:49:21] "GET /static/css/hrhelper.css HTTP/1.1" 200 69992
-[05/Oct/2025 15:49:21] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
-[05/Oct/2025 15:49:30] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
-WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
-Not Found: /.well-known/appspecific/com.chrome.devtools.json
-[05/Oct/2025 15:49:30] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4053
-[05/Oct/2025 15:51:38] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26472
-[05/Oct/2025 15:51:38] "GET /static/css/hrhelper.css HTTP/1.1" 200 71759
-[05/Oct/2025 15:51:38] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
-[05/Oct/2025 15:51:51] "GET /auth/google/login/ HTTP/1.1" 302 0
-[05/Oct/2025 15:52:12] "GET /auth/google/login/callback/?state=luYcl2s7OUBKKjdW&code=4/0AVGzR1AnnAtUfK7tRDmHyJmQQoZ8p4mlZ1mFll-Z_5uupH40QThXF39XOgh5V2D0NWb95g&scope=email%20profile%20https://www.googleapis.com/auth/drive%20https://www.googleapis.com/auth/spreadsheets%20https://www.googleapis.com/auth/calendar%20https://www.googleapis.com/auth/userinfo.profile%20https://www.googleapis.com/auth/userinfo.email%20openid&authuser=0&hd=softnetix.io&prompt=consent HTTP/1.1" 302 0
-[05/Oct/2025 15:52:13] "GET /huntflow/ HTTP/1.1" 200 45554
-[05/Oct/2025 15:52:13] "GET /static/css/hrhelper.css HTTP/1.1" 200 71759
-/Users/agolubenko/hrhelper/fullstack/backend/config/settings.py changed, reloading.
-Performing system checks...
-
-System check identified no issues (0 silenced).
-October 05, 2025 - 15:15:18
-Django version 4.2.16, using settings 'config.settings'
-Starting development server at http://127.0.0.1:8000/
-Quit the server with CONTROL-C.
-
-📝 SIGNAL: Обновлен пользователь: andrei.golubenko
-🔍 OAUTH: Найден существующий пользователь: andrei.golubenko (andrei.golubenko@softnetix.io)
-✅ OAUTH: Социальный аккаунт связан с существующим пользователем
-📝 SIGNAL: Обновлен пользователь: andrei.golubenko
-🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
-📥 Ответ API: 200
-📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
-DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
-🔍 API запрос: GET https://api.huntflow.ru/v2/me
-📥 Ответ API: 200
-📥 Тело ответа: {"id":318267,"name":"API: ClickUp","position":null,"email":"api-291341-1@huntflow.ru","phone":null,"locale":"ru_RU"}...
-✅ Подключение к Huntflow успешно!
-👤 Пользователь: API: ClickUp
-📧 Email: api-291341-1@huntflow.ru
-🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
-📥 Ответ API: 200
-📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
-🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
-📥 Ответ API: 200
-📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
-DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
-Watching for file changes with StatReloader
+[05/Oct/2025 15:54:08] "GET /accounts/logout/ HTTP/1.1" 302 0
+[05/Oct/2025 15:54:08] "GET /huntflow/ HTTP/1.1" 302 0
+[05/Oct/2025 15:54:08] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 27207
+[05/Oct/2025 15:54:08] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[05/Oct/2025 15:58:48] "GET /auth/google/login/ HTTP/1.1" 302 0
+[05/Oct/2025 15:58:58] "GET /auth/google/login/callback/?state=LT5f4YEVBQ0TQpFu&code=4/0AVGzR1DyNGW8yCjSAL5zZxpKSODUlo__R60mWjQq87jn1W6KkNwASr9jz5r3TYOeg7YfPA&scope=email%20profile%20https://www.googleapis.com/auth/drive%20https://www.googleapis.com/auth/spreadsheets%20https://www.googleapis.com/auth/calendar%20https://www.googleapis.com/auth/userinfo.profile%20https://www.googleapis.com/auth/userinfo.email%20openid&authuser=0&hd=softnetix.io&prompt=consent HTTP/1.1" 302 0
+[05/Oct/2025 15:59:05] "GET /google-oauth/chat/ HTTP/1.1" 200 647403
+[05/Oct/2025 15:59:05] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[05/Oct/2025 15:59:05] "GET /static/js/vacancy-slots.js HTTP/1.1" 304 0
+[05/Oct/2025 15:59:05] "GET /static/js/chat_actions.js HTTP/1.1" 304 0

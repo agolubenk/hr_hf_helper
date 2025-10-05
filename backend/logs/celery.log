@@ -1,10 +1,10 @@
  
  -------------- celery@andrei-golubenko-macbook.local v5.5.3 (immunity)
 --- ***** ----- 
--- ******* ---- macOS-26.0-arm64-arm-64bit-Mach-O 2025-10-05 15:14:47
+-- ******* ---- macOS-26.0-arm64-arm-64bit-Mach-O 2025-10-05 15:53:35
 - *** --- * --- 
 - ** ---------- [config]
-- ** ---------- .> app:         hrhelper:0x10915ba10
+- ** ---------- .> app:         hrhelper:0x1073b7a10
 - ** ---------- .> transport:   redis://127.0.0.1:6379/0
 - ** ---------- .> results:     redis://127.0.0.1:6379/0
 - *** --- * --- .> concurrency: 1 (prefork)
@@ -32,7 +32,7 @@
   . config.celery.debug_task
   . config.celery.save_hh_analysis_result
 
-[2025-10-05 15:14:47,347: INFO/MainProcess] Connected to redis://127.0.0.1:6379/0
-[2025-10-05 15:14:47,350: INFO/MainProcess] mingle: searching for neighbors
-[2025-10-05 15:14:48,360: INFO/MainProcess] mingle: all alone
-[2025-10-05 15:14:48,373: INFO/MainProcess] celery@andrei-golubenko-macbook.local ready.
+[2025-10-05 15:53:35,568: INFO/MainProcess] Connected to redis://127.0.0.1:6379/0
+[2025-10-05 15:53:35,575: INFO/MainProcess] mingle: searching for neighbors
+[2025-10-05 15:53:36,584: INFO/MainProcess] mingle: all alone
+[2025-10-05 15:53:36,595: INFO/MainProcess] celery@andrei-golubenko-macbook.local ready.
