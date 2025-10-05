@@ -107,3 +107,19 @@ Not Found: /favicon.ico
 [05/Oct/2025 15:41:41] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26480
 [05/Oct/2025 15:41:41] "GET /static/css/hrhelper.css HTTP/1.1" 200 69224
 [05/Oct/2025 15:41:41] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[05/Oct/2025 15:43:03] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26472
+[05/Oct/2025 15:43:03] "GET /static/css/hrhelper.css HTTP/1.1" 200 69849
+[05/Oct/2025 15:43:04] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[05/Oct/2025 15:43:40] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26472
+[05/Oct/2025 15:43:40] "GET /static/css/hrhelper.css HTTP/1.1" 200 69849
+[05/Oct/2025 15:43:40] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 15:48:53] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26472
+[05/Oct/2025 15:48:53] "GET /static/css/hrhelper.css HTTP/1.1" 200 69993
+[05/Oct/2025 15:48:54] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 15:49:21] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26472
+[05/Oct/2025 15:49:21] "GET /static/css/hrhelper.css HTTP/1.1" 200 69992
+[05/Oct/2025 15:49:21] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 15:49:30] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[05/Oct/2025 15:49:30] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4053

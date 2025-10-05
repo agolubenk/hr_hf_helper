@@ -1229,6 +1229,43 @@ a:hover {
     box-shadow: 0 4px 12px rgba(194, 24, 91, 0.3);
 }
 
+/* === АДАПТИВНОЕ ЦЕНТРИРОВАНИЕ ФОРМЫ ВХОДА === */
+.login-page-container {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.login-form-card {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .login-page-container {
+        min-height: 100vh;
+        padding: 20px 15px;
+        align-items: flex-start;
+        padding-top: 10vh;
+    }
+    
+    .login-form-card {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-page-container {
+        padding: 15px 10px;
+        padding-top: 5vh;
+    }
+}
+
 /* === УНИКАЛЬНЫЙ РАЗДЕЛИТЕЛЬ С ТЕКСТОМ "ИЛИ" === */
 .divider-with-text {
     display: flex;

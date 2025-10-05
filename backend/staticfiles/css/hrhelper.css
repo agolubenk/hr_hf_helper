@@ -1229,6 +1229,43 @@ a:hover {
     box-shadow: 0 4px 12px rgba(194, 24, 91, 0.3);
 }
 
+/* === АДАПТИВНОЕ ЦЕНТРИРОВАНИЕ ФОРМЫ ВХОДА === */
+.login-page-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.login-form-card {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .login-page-container {
+        min-height: 100vh;
+        padding: 20px 15px;
+        align-items: flex-start;
+        padding-top: 10vh;
+    }
+    
+    .login-form-card {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-page-container {
+        padding: 15px 10px;
+        padding-top: 5vh;
+    }
+}
+
 /* === УНИКАЛЬНЫЙ РАЗДЕЛИТЕЛЬ С ТЕКСТОМ "ИЛИ" === */
 .divider-with-text {
     display: flex;
@@ -1267,7 +1304,7 @@ a:hover {
     background: transparent !important;
     background-color: transparent !important;
     position: relative;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
     background-clip: padding-box;
     transition: all 0.3s ease;
     z-index: 1;
@@ -1299,7 +1336,7 @@ a:hover {
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    padding: 3px; /* Увеличиваем толщину градиентной обводки */
+    padding: 1px; /* Увеличиваем толщину градиентной обводки */
     background: linear-gradient(90deg, #4285F4, #34A853, #FBBC05, #EA4335);
     -webkit-mask: 
         linear-gradient(#fff 0 0) content-box, 
