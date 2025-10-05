@@ -2269,6 +2269,15 @@ a:hover {
     color: rgba(255, 255, 255, 0.8);
 }
 
+/* Темная тема - лунный цвет для активного чата */
+[data-theme="dark"] .session-item.active .session-title {
+    color: var(--color-luna-400);
+}
+
+[data-theme="dark"] .session-item.active .session-date {
+    color: var(--color-luna-300);
+}
+
 .btn-new-chat {
     background: var(--hr-gradient);
     border: var(--space-2) solid var(--hr-primary);

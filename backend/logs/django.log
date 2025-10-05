@@ -246,3 +246,23 @@ DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'n
 [05/Oct/2025 17:24:15] "GET /static/css/hrhelper.css HTTP/1.1" 200 81163
 [05/Oct/2025 17:24:15] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
 [05/Oct/2025 17:24:15] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:40:53] "GET /gemini/chat/ HTTP/1.1" 200 67760
+[05/Oct/2025 17:40:53] "GET /static/css/hrhelper.css HTTP/1.1" 200 81163
+[05/Oct/2025 17:40:53] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:40:53] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:43:25] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[05/Oct/2025 17:43:25] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4053
+[05/Oct/2025 17:45:27] "GET /vacancies/list/ HTTP/1.1" 200 85224
+[05/Oct/2025 17:45:27] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[05/Oct/2025 17:45:33] "GET /vacancies/1/ HTTP/1.1" 200 104646
+[05/Oct/2025 17:47:32] "GET /gemini/chat/ HTTP/1.1" 200 68567
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[05/Oct/2025 17:47:32] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4053
+[05/Oct/2025 17:47:32] "GET /static/css/hrhelper.css HTTP/1.1" 200 81439
+[05/Oct/2025 17:47:32] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:47:32] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 17:47:43] "GET /gemini/chat/25/ HTTP/1.1" 200 68567
+[05/Oct/2025 17:47:43] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
