@@ -529,8 +529,11 @@ pre code {
 .btn-send:hover {
     background: var(--hr-gradient-hover);
     color: white;
-    transform: translateY(-50%) scale(1.05);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: var(--shadow-md);
+    transition: all var(--duration-normal) var(--ease-standard);
 }
+
 
 .btn-send:disabled {
     background: var(--hr-text-muted);
@@ -1213,9 +1216,10 @@ a:hover {
 
 .btn-primary:hover {
     background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary-active) 100%);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     color: var(--color-btn-primary-text);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-md);
+    transition: all var(--duration-normal) var(--ease-standard);
 }
 
 /* === ТЕМНАЯ ТЕМА - ПЕРЕОПРЕДЕЛЕНИЕ КНОПОК === */
@@ -1377,6 +1381,18 @@ a:hover {
 }
 
 /* === ИСПРАВЛЕНИЯ ДЛЯ ЗАГОЛОВКА ЧАТА === */
+/* Светлая тема - делаем текст более заметным */
+[data-theme="light"] .card-header small,
+[data-theme="light"] .card-header .opacity-75 {
+    color: rgba(255, 255, 255, 0.9) !important; /* Более светлый белый */
+    opacity: 1 !important; /* Убираем opacity-75 */
+}
+
+/* Заголовок чата - лунный цвет для светлой темы */
+[data-theme="light"] #chat-title-display {
+    color: var(--color-luna-400) !important; /* Лунный цвет */
+}
+
 /* Лунный цвет для даты создания в темной теме */
 [data-theme="dark"] .card-header small {
     color: var(--color-luna-300) !important;
@@ -1402,9 +1418,9 @@ a:hover {
     opacity: 1;
 }
 
-/* Светлая тема для иконки редактирования - более контрастная */
+/* Светлая тема для иконки редактирования - лунный цвет */
 [data-theme="light"] .chat-title-edit {
-    color: #495057 !important; /* Более контрастный серый цвет */
+    color: var(--color-luna-600) !important; /* Лунный цвет */
 }
 
 [data-theme="light"] .chat-title-edit:hover {
@@ -1421,6 +1437,35 @@ a:hover {
     background-color: rgba(var(--color-pink-500-rgb), 0.2) !important;
     color: var(--color-pink-400) !important;
     transform: scale(1.1);
+}
+
+/* Стили для кнопки удаления чата */
+.chat-header-actions {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.card:hover .chat-header-actions {
+    opacity: 1;
+}
+
+/* Кнопка удаления чата - светлая тема */
+[data-theme="light"] .chat-header-actions .btn {
+    background-color: transparent !important;
+    border-color: #dc3545 !important;
+    color: #ffffff !important; /* Белый текст до hover */
+    transition: all 0.2s ease !important;
+}
+
+[data-theme="light"] .chat-header-actions .btn:hover {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: #ffffff !important;
+    transform: scale(1.05);
+}
+
+[data-theme="light"] .chat-header-actions .btn i {
+    color: #ffffff !important; /* Белая иконка */
 }
 
 /* Стили для формы редактирования заголовка */
@@ -1627,12 +1672,6 @@ a:hover {
     min-height: 36px;
 }
 
-/* Заголовок карточки */
-.card .card-header {
-    padding: 12px 16px !important;
-    background: var(--hr-gradient, linear-gradient(135deg, #007bff 0%, #0056b3 100%));
-    border-bottom: 1px solid var(--hr-border, #dee2e6);
-}
 
 /* Обычные карточки - водно-лунный градиент для светлой темы */
 .card {
@@ -1644,11 +1683,6 @@ a:hover {
     background: linear-gradient(135deg, rgba(187, 225, 250, 1) 0%, rgba(55, 171, 218, 1) 50%, rgba(255, 107, 157, 1) 100%);
 }
 
-.card .card-header h6 {
-    margin: 0 !important;
-    font-size: 0.9rem !important;
-    color: white !important;
-}
 
 /* Стили для кнопки редактирования заголовка чата */
 .chat-title-edit {
@@ -1677,17 +1711,6 @@ a:hover {
     flex-grow: 1 !important;
 }
 
-.btn-new-chat {
-    height: 48px !important; /* Такая же высота как у формы ввода */
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0 16px !important;
-    font-size: 0.9rem !important;
-    font-weight: 500 !important;
-    border-radius: 18px !important;
-    text-decoration: none !important;
-    transition: all 0.2s ease !important;
     margin-top: auto !important; /* Прижимаем к низу */
 }
 
@@ -1943,7 +1966,9 @@ a:hover {
 .btn-outline-primary:hover {
     background: var(--hr-primary);
     color: var(--color-btn-primary-text);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    transition: all var(--duration-normal) var(--ease-standard);
 }
 
 .btn-outline-secondary {
@@ -2029,10 +2054,11 @@ a:hover {
 .card:hover {
     box-shadow: var(--shadow-md);
     transform: translateY(-2px);
+    transition: all var(--duration-normal) var(--ease-standard);
 }
 
 .card-header {
-    padding: var(--space-16);
+    padding: 12px 16px !important;
     background: var(--hr-gradient);
     color: var(--color-btn-primary-text);
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
@@ -2040,11 +2066,7 @@ a:hover {
     transition: all var(--duration-normal) var(--ease-standard);
 }
 
-/* Исправление для заголовков чата - принудительно применяем градиент */
-.chat-container .card-header {
-    background: var(--hr-gradient) !important;
-    color: var(--color-btn-primary-text) !important;
-}
+
 
 .card:hover .card-header {
     background: var(--hr-gradient-hover);
@@ -2056,9 +2078,9 @@ a:hover {
 }
 
 .card-title {
-    color: var(--color-btn-primary-text);
+    color: white !important;
     font-weight: var(--font-weight-semibold);
-    font-size: var(--font-size-lg);
+    font-size: 0.9rem !important;
     margin-bottom: 0;
 }
 
@@ -2405,6 +2427,21 @@ a:hover {
     color: rgba(255, 255, 255, 0.8);
 }
 
+/* Светлая тема - темнее для session-date */
+[data-theme="light"] .session-date {
+    color: #495057 !important; /* Темнее для светлой темы */
+}
+
+/* Светлая тема - лунный цвет для активного session-title */
+[data-theme="light"] .session-item.active .session-title {
+    color: var(--color-luna-400) !important; /* Лунный цвет */
+}
+
+/* Светлая тема - темнее для активного session-date */
+[data-theme="light"] .session-item.active .session-date {
+    color: #495057 !important; /* Темнее для светлой темы */
+}
+
 /* Темная тема - лунный цвет для активного чата */
 [data-theme="dark"] .session-item.active .session-title {
     color: var(--color-luna-400);
@@ -2416,38 +2453,31 @@ a:hover {
 
 .btn-new-chat {
     background: var(--hr-gradient);
-    border: var(--space-2) solid var(--hr-primary);
     color: var(--color-btn-primary-text);
-    padding: var(--space-12) var(--space-16);
+    border: none;
     border-radius: var(--radius-base);
     width: 100%;
+    height: 48px; /* Высота как у формы ввода */
     margin-bottom: var(--space-16);
     transition: all var(--duration-normal) var(--ease-standard);
     font-weight: var(--font-weight-medium);
     font-size: var(--font-size-base);
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     text-decoration: none;
-    box-shadow: 0 4px 12px rgba(var(--color-teal-500-rgb), 0.3);
+    box-shadow: var(--shadow-sm);
 }
 
-[data-color-scheme="dark"] .btn-new-chat {
-    box-shadow: 0 4px 12px rgba(var(--color-teal-300-rgb), 0.3);
-}
-
-@media (prefers-color-scheme: dark) {
-    .btn-new-chat {
-        box-shadow: 0 4px 12px rgba(var(--color-teal-300-rgb), 0.3);
-    }
-}
 
 .btn-new-chat:hover {
     background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary-active) 100%);
-    border-color: var(--color-primary-hover);
-    color: var(--color-btn-primary-text);
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(var(--color-teal-500-rgb), 0.4);
+    color: var(--color-btn-primary-text);
+    box-shadow: var(--shadow-md);
     text-decoration: none;
+    transition: all var(--duration-normal) var(--ease-standard);
 }
 
 /* === ТЕМНАЯ ТЕМА - ПЕРЕОПРЕДЕЛЕНИЕ ДЛЯ .btn-new-chat === */
@@ -2457,20 +2487,10 @@ a:hover {
 
 [data-theme="dark"] .btn-new-chat:hover {
     background: linear-gradient(135deg, var(--color-pink-700) 0%, var(--color-pink-800) 100%);
-    border-color: var(--color-pink-600);
     color: var(--color-luna-400);
-    box-shadow: 0 6px 16px rgba(233, 30, 99, 0.4);
+    box-shadow: 0 4px 12px rgba(194, 24, 91, 0.3);
 }
 
-[data-color-scheme="dark"] .btn-new-chat:hover {
-    box-shadow: 0 6px 16px rgba(var(--color-teal-300-rgb), 0.4);
-}
-
-@media (prefers-color-scheme: dark) {
-    .btn-new-chat:hover {
-        box-shadow: 0 6px 16px rgba(var(--color-teal-300-rgb), 0.4);
-    }
-}
 
 /* =============================================================================
    11. TELEGRAM КОМПОНЕНТЫ
