@@ -20,3 +20,71 @@ Watching for file changes with StatReloader
 [05/Oct/2025 15:59:05] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
 [05/Oct/2025 15:59:05] "GET /static/js/vacancy-slots.js HTTP/1.1" 304 0
 [05/Oct/2025 15:59:05] "GET /static/js/chat_actions.js HTTP/1.1" 304 0
+[05/Oct/2025 16:00:01] "GET /google-oauth/chat/ HTTP/1.1" 200 647403
+[05/Oct/2025 16:00:01] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[05/Oct/2025 16:01:59] "GET /gemini/ HTTP/1.1" 302 0
+[05/Oct/2025 16:02:00] "GET /gemini/chat/10/ HTTP/1.1" 200 77381
+[05/Oct/2025 16:02:00] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+/Users/agolubenko/hrhelper/fullstack/backend/config/settings.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 05, 2025 - 15:53:52
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+🔍 OAUTH: Найден существующий пользователь: andrei.golubenko (andrei.golubenko@softnetix.io)
+✅ OAUTH: Социальный аккаунт связан с существующим пользователем
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 38 событий
+🔍 DEBUG CHAT: Получено 38 событий из API
+🔍 DEBUG CHAT: Передаем 38 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-06T09:00:00+03:00
+🔍 DEBUG CHAT: Событие: Recruitment Meeting в 2025-10-06T10:30:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Семакин Игорь в 2025-10-06T12:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 38 событий
+🔍 DEBUG CHAT: Получено 38 событий из API
+🔍 DEBUG CHAT: Передаем 38 событий в шаблон
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-06T09:00:00+03:00
+🔍 DEBUG CHAT: Событие: Recruitment Meeting в 2025-10-06T10:30:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Семакин Игорь в 2025-10-06T12:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[05/Oct/2025 16:41:20] "GET /gemini/chat/10/ HTTP/1.1" 200 77404
+[05/Oct/2025 16:41:20] "GET /static/css/hrhelper.css HTTP/1.1" 200 73980
+[05/Oct/2025 16:41:20] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 16:41:20] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 16:47:09] "GET /gemini/chat/10/ HTTP/1.1" 200 77370
+[05/Oct/2025 16:47:09] "GET /static/css/hrhelper.css HTTP/1.1" 200 74070
+[05/Oct/2025 16:47:09] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 16:47:09] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 16:47:51] "POST /gemini/api/send-message/ HTTP/1.1" 200 144
+[05/Oct/2025 16:48:12] "GET /gemini/chat/10/ HTTP/1.1" 200 78898
+[05/Oct/2025 16:48:12] "GET /static/css/hrhelper.css HTTP/1.1" 200 74113
+[05/Oct/2025 16:48:12] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 16:48:12] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 16:49:29] "GET /gemini/chat/10/ HTTP/1.1" 200 78898
+[05/Oct/2025 16:49:29] "GET /static/css/hrhelper.css HTTP/1.1" 200 74257
+[05/Oct/2025 16:49:29] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 16:49:30] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
