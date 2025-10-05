@@ -123,3 +123,41 @@ Not Found: /favicon.ico
 WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
 Not Found: /.well-known/appspecific/com.chrome.devtools.json
 [05/Oct/2025 15:49:30] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4053
+[05/Oct/2025 15:51:38] "GET /accounts/login/?next=/huntflow/ HTTP/1.1" 200 26472
+[05/Oct/2025 15:51:38] "GET /static/css/hrhelper.css HTTP/1.1" 200 71759
+[05/Oct/2025 15:51:38] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[05/Oct/2025 15:51:51] "GET /auth/google/login/ HTTP/1.1" 302 0
+[05/Oct/2025 15:52:12] "GET /auth/google/login/callback/?state=luYcl2s7OUBKKjdW&code=4/0AVGzR1AnnAtUfK7tRDmHyJmQQoZ8p4mlZ1mFll-Z_5uupH40QThXF39XOgh5V2D0NWb95g&scope=email%20profile%20https://www.googleapis.com/auth/drive%20https://www.googleapis.com/auth/spreadsheets%20https://www.googleapis.com/auth/calendar%20https://www.googleapis.com/auth/userinfo.profile%20https://www.googleapis.com/auth/userinfo.email%20openid&authuser=0&hd=softnetix.io&prompt=consent HTTP/1.1" 302 0
+[05/Oct/2025 15:52:13] "GET /huntflow/ HTTP/1.1" 200 45554
+[05/Oct/2025 15:52:13] "GET /static/css/hrhelper.css HTTP/1.1" 200 71759
+/Users/agolubenko/hrhelper/fullstack/backend/config/settings.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 05, 2025 - 15:15:18
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+🔍 OAUTH: Найден существующий пользователь: andrei.golubenko (andrei.golubenko@softnetix.io)
+✅ OAUTH: Социальный аккаунт связан с существующим пользователем
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/me
+📥 Ответ API: 200
+📥 Тело ответа: {"id":318267,"name":"API: ClickUp","position":null,"email":"api-291341-1@huntflow.ru","phone":null,"locale":"ru_RU"}...
+✅ Подключение к Huntflow успешно!
+👤 Пользователь: API: ClickUp
+📧 Email: api-291341-1@huntflow.ru
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader

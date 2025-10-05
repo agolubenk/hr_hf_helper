@@ -1223,6 +1223,52 @@ a:hover {
     color: var(--color-luna-400);
 }
 
+/* === ТЕМНАЯ ТЕМА - ПЕРЕОПРЕДЕЛЕНИЕ ПОЛЕЙ ФОРМ === */
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="email"],
+[data-theme="dark"] input[type="password"],
+[data-theme="dark"] input[type="search"],
+[data-theme="dark"] textarea {
+    background-color: var(--color-background) !important;
+    border-color: var(--hr-border) !important;
+    color: var(--color-luna-400) !important;
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus,
+[data-theme="dark"] input[type="text"]:focus,
+[data-theme="dark"] input[type="email"]:focus,
+[data-theme="dark"] input[type="password"]:focus,
+[data-theme="dark"] input[type="search"]:focus,
+[data-theme="dark"] textarea:focus {
+    background-color: var(--color-background) !important;
+    border-color: var(--hr-primary) !important;
+    color: var(--color-luna-400) !important;
+    box-shadow: 0 0 0 0.2rem rgba(var(--color-pink-500-rgb), 0.25) !important;
+}
+
+[data-theme="dark"] .form-control:hover,
+[data-theme="dark"] .form-select:hover,
+[data-theme="dark"] input[type="text"]:hover,
+[data-theme="dark"] input[type="email"]:hover,
+[data-theme="dark"] input[type="password"]:hover,
+[data-theme="dark"] input[type="search"]:hover,
+[data-theme="dark"] textarea:hover {
+    background-color: var(--color-background) !important;
+    border-color: var(--hr-primary) !important;
+    color: var(--color-luna-400) !important;
+}
+
+[data-theme="dark"] .form-control::placeholder,
+[data-theme="dark"] .form-select::placeholder,
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+    color: var(--hr-text-muted) !important;
+    opacity: 1 !important;
+}
+
 [data-theme="dark"] .btn-primary:hover {
     background: linear-gradient(135deg, var(--color-pink-700) 0%, var(--color-pink-800) 100%);
     color: var(--color-luna-400);
