@@ -3738,3 +3738,474 @@ Traceback (most recent call last):
     raise PermissionDenied
 django.core.exceptions.PermissionDenied
 [04/Oct/2025 00:20:11] "GET /google-oauth/calendar/ HTTP/1.1" 403 44466
+403 ошибка: /google-oauth/calendar/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Forbidden (Permission denied): /google-oauth/calendar/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[04/Oct/2025 00:32:08] "GET /google-oauth/calendar/ HTTP/1.1" 403 45118
+[04/Oct/2025 00:32:08] "GET /static/css/hrhelper.css HTTP/1.1" 200 63725
+[04/Oct/2025 00:32:08] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[04/Oct/2025 00:32:08] "GET /static/img/403.png HTTP/1.1" 200 1474195
+[04/Oct/2025 00:32:08] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+403 ошибка: /google-oauth/calendar/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Forbidden (Permission denied): /google-oauth/calendar/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[04/Oct/2025 00:32:19] "GET /google-oauth/calendar/ HTTP/1.1" 403 45089
+[04/Oct/2025 00:32:19] "GET /static/css/hrhelper.css HTTP/1.1" 200 63725
+[04/Oct/2025 00:32:19] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[04/Oct/2025 00:32:19] "GET /static/img/403.png HTTP/1.1" 200 1474195
+[04/Oct/2025 00:32:19] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+403 ошибка: /google-oauth/calendar/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Forbidden (Permission denied): /google-oauth/calendar/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[04/Oct/2025 00:34:50] "GET /google-oauth/calendar/ HTTP/1.1" 403 45286
+[04/Oct/2025 00:34:51] "GET /static/css/hrhelper.css HTTP/1.1" 200 63725
+[04/Oct/2025 00:34:54] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[04/Oct/2025 00:34:54] "GET /static/img/403.png HTTP/1.1" 200 1474195
+[04/Oct/2025 00:34:54] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+403 ошибка: /google-oauth/calendar/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Forbidden (Permission denied): /google-oauth/calendar/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[05/Oct/2025 14:33:20] "GET /google-oauth/calendar/ HTTP/1.1" 403 45959
+[05/Oct/2025 14:33:20] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[05/Oct/2025 14:33:20] "GET /static/img/logo-dark.png HTTP/1.1" 304 0
+[05/Oct/2025 14:33:20] "GET /static/img/403.png HTTP/1.1" 304 0
+403 ошибка: /google-oauth/calendar/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org43686","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org43686', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":695,"name":"Softnetix","nick":"org56499","member_type":"owner","production_calendar":3}]}...
+DEBUG context_processor: accounts_list = [{'id': 695, 'name': 'Softnetix', 'nick': 'org56499', 'member_type': 'owner', 'production_calendar': 3}]WARNING Forbidden (Permission denied): /google-oauth/calendar/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[05/Oct/2025 14:33:23] "GET /google-oauth/calendar/ HTTP/1.1" 403 45959
+[05/Oct/2025 14:33:23] "GET /static/css/hrhelper.css HTTP/1.1" 200 63725
+[05/Oct/2025 14:33:23] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 14:33:23] "GET /static/img/403.png HTTP/1.1" 200 1474195
+[05/Oct/2025 14:33:23] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 14:33:25] "GET /static/img/logo-light.png HTTP/1.1" 304 0
+403 ошибка: /google-oauth/calendar/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Forbidden (Permission denied): /google-oauth/calendar/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[05/Oct/2025 14:33:30] "GET /google-oauth/calendar/ HTTP/1.1" 403 45857
+[05/Oct/2025 14:33:30] "GET /static/css/hrhelper.css HTTP/1.1" 200 63725
+[05/Oct/2025 14:33:30] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 14:33:30] "GET /static/img/403.png HTTP/1.1" 200 1474195
+[05/Oct/2025 14:33:30] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+403 ошибка: /google-oauth/calendar/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Forbidden (Permission denied): /google-oauth/calendar/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[05/Oct/2025 14:33:42] "GET /google-oauth/calendar/ HTTP/1.1" 403 45457
+[05/Oct/2025 14:33:42] "GET /static/css/hrhelper.css HTTP/1.1" 200 63725
+[05/Oct/2025 14:33:42] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 14:33:42] "GET /static/img/403.png HTTP/1.1" 200 1474195
+[05/Oct/2025 14:33:42] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+403 ошибка: /google-oauth/calendar/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Forbidden (Permission denied): /google-oauth/calendar/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[05/Oct/2025 14:34:30] "GET /google-oauth/calendar/ HTTP/1.1" 403 43934
+[05/Oct/2025 14:34:30] "GET /static/css/hrhelper.css HTTP/1.1" 200 63725
+[05/Oct/2025 14:34:30] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 14:34:30] "GET /static/img/403.png HTTP/1.1" 200 1474195
+[05/Oct/2025 14:34:30] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+403 ошибка: /google-oauth/calendar/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Forbidden (Permission denied): /google-oauth/calendar/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[05/Oct/2025 14:35:14] "GET /google-oauth/calendar/ HTTP/1.1" 403 43934
+[05/Oct/2025 14:35:14] "GET /static/css/hrhelper.css HTTP/1.1" 200 63725
+[05/Oct/2025 14:35:14] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 14:35:14] "GET /static/img/403.png HTTP/1.1" 200 1474195
+[05/Oct/2025 14:35:15] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+403 ошибка: /google-oauth/calendar/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Forbidden (Permission denied): /google-oauth/calendar/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[05/Oct/2025 14:35:26] "GET /google-oauth/calendar/ HTTP/1.1" 403 43934
+[05/Oct/2025 14:35:26] "GET /static/css/hrhelper.css HTTP/1.1" 200 63725
+[05/Oct/2025 14:35:26] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 14:35:26] "GET /static/img/403.png HTTP/1.1" 200 1474195
+[05/Oct/2025 14:35:26] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+403 ошибка: /google-oauth/calendar/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Forbidden (Permission denied): /google-oauth/calendar/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[05/Oct/2025 14:36:08] "GET /google-oauth/calendar/ HTTP/1.1" 403 43934
+403 ошибка: /google-oauth/calendar/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Forbidden (Permission denied): /google-oauth/calendar/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[05/Oct/2025 14:36:22] "GET /google-oauth/calendar/ HTTP/1.1" 403 43933
+[05/Oct/2025 14:36:22] "GET /static/css/hrhelper.css HTTP/1.1" 200 63725
+[05/Oct/2025 14:36:22] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 14:36:22] "GET /static/img/403.png HTTP/1.1" 200 1474195
+[05/Oct/2025 14:36:22] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+403 ошибка: /google-oauth/calendar/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Forbidden (Permission denied): /google-oauth/calendar/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[05/Oct/2025 14:40:19] "GET /google-oauth/calendar/ HTTP/1.1" 403 44171
+[05/Oct/2025 14:40:19] "GET /static/css/hrhelper.css HTTP/1.1" 200 63725
+[05/Oct/2025 14:40:19] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 14:40:19] "GET /static/img/403.png HTTP/1.1" 200 1474195
+[05/Oct/2025 14:40:19] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+403 ошибка: /google-oauth/calendar/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Forbidden (Permission denied): /google-oauth/calendar/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[05/Oct/2025 14:41:00] "GET /google-oauth/calendar/ HTTP/1.1" 403 44171
+[05/Oct/2025 14:41:00] "GET /static/css/hrhelper.css HTTP/1.1" 200 63725
+[05/Oct/2025 14:41:00] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 14:41:00] "GET /static/img/403.png HTTP/1.1" 200 1474195
+[05/Oct/2025 14:41:01] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+403 ошибка: /google-oauth/calendar/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Forbidden (Permission denied): /google-oauth/calendar/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[05/Oct/2025 14:42:01] "GET /google-oauth/calendar/ HTTP/1.1" 403 44171
+403 ошибка: /google-oauth/calendar/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Forbidden (Permission denied): /google-oauth/calendar/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[05/Oct/2025 14:42:11] "GET /google-oauth/calendar/ HTTP/1.1" 403 44171
+[05/Oct/2025 14:42:11] "GET /static/css/hrhelper.css HTTP/1.1" 200 63725
+[05/Oct/2025 14:42:11] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 14:42:11] "GET /static/img/403.png HTTP/1.1" 200 1474195
+[05/Oct/2025 14:42:11] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+403 ошибка: /google-oauth/calendar/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Forbidden (Permission denied): /google-oauth/calendar/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[05/Oct/2025 14:43:05] "GET /google-oauth/calendar/ HTTP/1.1" 403 44088
+403 ошибка: /google-oauth/calendar/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Forbidden (Permission denied): /google-oauth/calendar/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[05/Oct/2025 14:43:41] "GET /google-oauth/calendar/ HTTP/1.1" 403 43951
+403 ошибка: /google-oauth/calendar/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Forbidden (Permission denied): /google-oauth/calendar/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapper_view
+    if test_func(request.user):
+       ~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 78, in check_perms
+    raise PermissionDenied
+django.core.exceptions.PermissionDenied
+[05/Oct/2025 14:43:44] "GET /google-oauth/calendar/ HTTP/1.1" 403 43951
+[05/Oct/2025 14:43:44] "GET /static/css/hrhelper.css HTTP/1.1" 200 63725
+[05/Oct/2025 14:43:44] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[05/Oct/2025 14:43:44] "GET /static/img/403.png HTTP/1.1" 200 1474195
+[05/Oct/2025 14:43:44] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+404 ошибка: /500 - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Not Found: /500
+[05/Oct/2025 14:44:16] "GET /500 HTTP/1.1" 404 42569
+[05/Oct/2025 14:44:16] "GET /static/img/404.png HTTP/1.1" 304 0
+404 ошибка: /error/500 - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Not Found: /error/500
+[05/Oct/2025 14:44:30] "GET /error/500 HTTP/1.1" 404 42569
+500 ошибка: /common/500/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+ERROR Internal Server Error: /common/500/
+[05/Oct/2025 14:45:51] "GET /common/500/ HTTP/1.1" 500 42541
+[05/Oct/2025 14:45:51] "GET /static/img/500.png HTTP/1.1" 304 0
+500 ошибка: /common/500/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+ERROR Internal Server Error: /common/500/
+[05/Oct/2025 14:48:24] "GET /common/500/ HTTP/1.1" 500 43238
+404 ошибка: /common/404/ - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Not Found: /common/404/
+[05/Oct/2025 14:50:16] "GET /common/404/ HTTP/1.1" 404 43214
+404 ошибка: /.well-known/appspecific/com.chrome.devtools.json - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[05/Oct/2025 14:50:56] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 43214

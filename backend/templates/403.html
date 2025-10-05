@@ -22,35 +22,31 @@
         }
         
         .error-403 {
-            /* Адаптивные размеры с сохранением пропорций */
             width: 100%;
             max-width: 435px;
-            height: auto;
-            aspect-ratio: 435 / 670; /* Сохраняем оригинальные пропорции */
-            
+            height: 150%;
+            aspect-ratio: 435 / 670;
             background-image: url('{% static "img/403.png" %}');
             background-repeat: no-repeat;
-            background-size: 200% 100%; /* Двойная ширина для двух тем */
+            background-size: 204.08% 100%; /* 100 / 49 = 2.0408..., инверсия процента */
             background-position: left center;
             border-radius: 15px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
-            
-            /* Плавные переходы */
             transition: box-shadow 0.3s ease;
-            
         }
-        
-        /* Светлая тема: показываем левую половину */
+
+            /* Светлая тема — показываем первые 49% */
         body.light-theme .error-403 {
             background-position: left center;
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
         }
-        
-        /* Тёмная тема: показываем правую половину */
+
+            /* Тёмная тема — показываем последние 49% */
         body.dark-theme .error-403 {
             background-position: right center;
             box-shadow: 0 0 30px rgba(255, 165, 0, 0.3);
         }
+
+        
         
         /* Адаптивность для мобильных устройств */
         @media (max-width: 758px) {
@@ -64,14 +60,14 @@
                 padding: 15px;
             }
             
-            .error-403, .error-403-alt {
-                max-width: 320px; /* Уменьшаем максимальную ширину на мобильных */
+            .error-403 {
+                max-width: 320px;
             }
         }
-        
+
         @media (max-width: 480px) {
-            .error-403, .error-403-alt {
-                max-width: 280px; /* Еще меньше на очень маленьких экранах */
+            .error-403 {
+                max-width: 280px;
             }
         }
     </style>

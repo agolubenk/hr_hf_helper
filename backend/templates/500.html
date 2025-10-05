@@ -21,26 +21,52 @@
         }
         
         .error-500 {
-            width: 435px;
-            height: 670px;
+            width: 100%;
+            max-width: 435px;
+            height: 150%;
+            aspect-ratio: 435 / 670;
             background-image: url('{% static "img/500.png" %}');
             background-repeat: no-repeat;
-            background-size: 200% 100%;
+            background-size: 204.08% 100%; /* 100 / 49 = 2.0408..., инверсия процента */
             background-position: left center;
             border-radius: 15px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            transition: box-shadow 0.3s ease;
         }
         
-        /* Светлая тема: показываем левую половину */
+            /* Светлая тема — показываем первые 49% */
         body.light-theme .error-500 {
             background-position: left center;
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
         }
-        
-        /* Тёмная тема: показываем правую половину */
+
+            /* Тёмная тема — показываем последние 49% */
         body.dark-theme .error-500 {
             background-position: right center;
             box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+        }
+
+        
+        /* Адаптивность для мобильных устройств */
+        @media (max-width: 758px) {
+            .error-container {
+                min-height: 60vh;
+                padding: 15px;
+            }
+            
+            .error-image-container {
+                min-height: 300px;
+                padding: 15px;
+            }
+            
+            .error-500 {
+                max-width: 320px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .error-500 {
+                max-width: 280px;
+            }
         }
     </style>
 {% endblock %}
