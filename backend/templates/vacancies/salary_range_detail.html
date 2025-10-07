@@ -93,7 +93,7 @@
                                 <div class="info-box-content">
                                     <span class="info-box-text">USD (базовая валюта)</span>
                                     <span class="info-box-number">
-                                        ${{ salary_range.salary_min_usd }} - ${{ salary_range.salary_max_usd }}
+                                        {{ salary_range.salary_min_usd }} - {{ salary_range.salary_max_usd }} USD
                                     </span>
                                 </div>
                             </div>
@@ -125,6 +125,23 @@
                                     {% if salary_range.salary_min_pln and salary_range.salary_max_pln %}
                                         <span class="info-box-number">
                                             {{ salary_range.salary_min_pln }} - {{ salary_range.salary_max_pln }} PLN
+                                        </span>
+                                    {% else %}
+                                        <span class="info-box-number text-muted">Не рассчитано</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- EUR -->
+                            <div class="info-box mb-3">
+                                <span class="info-box-icon bg-success">
+                                    <i class="fas fa-euro-sign"></i>
+                                </span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">EUR (автоматически рассчитано)</span>
+                                    {% if salary_range.salary_min_eur and salary_range.salary_max_eur %}
+                                        <span class="info-box-number">
+                                            {{ salary_range.salary_min_eur }} - {{ salary_range.salary_max_eur }} EUR
                                         </span>
                                     {% else %}
                                         <span class="info-box-number text-muted">Не рассчитано</span>

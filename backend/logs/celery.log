@@ -1,10 +1,10 @@
  
  -------------- celery@andrei-golubenko-macbook.local v5.5.3 (immunity)
 --- ***** ----- 
--- ******* ---- macOS-26.0-arm64-arm-64bit-Mach-O 2025-10-07 23:20:58
+-- ******* ---- macOS-26.0-arm64-arm-64bit-Mach-O 2025-10-08 00:22:12
 - *** --- * --- 
 - ** ---------- [config]
-- ** ---------- .> app:         hrhelper:0x10766fa10
+- ** ---------- .> app:         hrhelper:0x107797b60
 - ** ---------- .> transport:   redis://127.0.0.1:6379/0
 - ** ---------- .> results:     redis://127.0.0.1:6379/0
 - *** --- * --- .> concurrency: 1 (prefork)
@@ -26,6 +26,7 @@
   . apps.finance.tasks.generate_benchmark_statistics
   . apps.finance.tasks.process_hh_queue_with_limit
   . apps.finance.tasks.save_hh_analysis_result
+  . apps.finance.tasks.update_currency_rates
   . apps.huntflow.tasks.check_huntflow_token_health
   . apps.huntflow.tasks.refresh_huntflow_tokens
   . apps.notion_int.tasks.auto_sync_notion_pages
@@ -33,8 +34,48 @@
   . apps.notion_int.tasks.retry_failed_pages
   . config.celery.debug_task
   . config.celery.save_hh_analysis_result
+  . config.celery.update_currency_rates
 
-[2025-10-07 23:20:59,002: INFO/MainProcess] Connected to redis://127.0.0.1:6379/0
-[2025-10-07 23:20:59,005: INFO/MainProcess] mingle: searching for neighbors
-[2025-10-07 23:21:00,017: INFO/MainProcess] mingle: all alone
-[2025-10-07 23:21:00,038: INFO/MainProcess] celery@andrei-golubenko-macbook.local ready.
+[2025-10-08 00:22:12,306: INFO/MainProcess] Connected to redis://127.0.0.1:6379/0
+[2025-10-08 00:22:12,309: INFO/MainProcess] mingle: searching for neighbors
+[2025-10-08 00:22:13,317: INFO/MainProcess] mingle: all alone
+[2025-10-08 00:22:13,330: INFO/MainProcess] celery@andrei-golubenko-macbook.local ready.
+[2025-10-08 00:22:24,629: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[76d71aee-340f-4c21-906e-e912bf848201] received
+[2025-10-08 00:22:24,661: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[76d71aee-340f-4c21-906e-e912bf848201] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-08 00:22:26,782: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[9258e905-0bf9-4b64-a576-c782c36ebfb0] received
+[2025-10-08 00:22:26,784: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[e96f34fa-8902-42a5-83b2-2f94d2448a40] received
+[2025-10-08 00:22:26,795: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[9258e905-0bf9-4b64-a576-c782c36ebfb0] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-08 00:22:26,808: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[e96f34fa-8902-42a5-83b2-2f94d2448a40] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined

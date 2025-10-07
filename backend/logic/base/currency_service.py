@@ -61,14 +61,14 @@ class UnifiedCurrencyService(BaseAPIClient):
         Получить все курсы валют
         
         ВХОДЯЩИЕ ДАННЫЕ: Нет
-        ИСТОЧНИКИ ДАННЫЕ: НБРБ API для USD и PLN
+        ИСТОЧНИКИ ДАННЫЕ: НБРБ API для USD, PLN и EUR
         ОБРАБОТКА: Получение курсов для всех поддерживаемых валют
         ВЫХОДЯЩИЕ ДАННЫЕ: Словарь с курсами валют
         СВЯЗИ: self.get_currency_rate()
         ФОРМАТ: Dict[str, Any] с курсами валют
         """
         rates = {}
-        for currency in ['USD', 'PLN']:
+        for currency in ['USD', 'PLN', 'EUR']:
             response = self.get_currency_rate(currency)
             if response.success:
                 rates[currency] = response.data

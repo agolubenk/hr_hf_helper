@@ -20,12 +20,12 @@ class TaxService:
         
         Args:
             net_amount: Net сумма
-            currency: Валюта (PLN, BYN, USD)
+            currency: Валюта (PLN, EUR, BYN, USD)
             
         Returns:
             Gross сумма
         """
-        if currency != "PLN":
+        if currency not in ["PLN", "EUR"]:
             # Для других валют пока возвращаем net сумму
             return net_amount
         
@@ -60,34 +60,48 @@ class TaxService:
         
         Args:
             gross_amount: Gross сумма
-            currency: Валюта (PLN, BYN, USD)
+            currency: Валюта (PLN, EUR, BYN, USD)
             
         Returns:
             Net сумма
         """
-        if currency != "PLN":
+        if currency not in ["PLN", "EUR", "BYN"]:
             # Для других валют пока возвращаем gross сумму
             return gross_amount
         
         try:
-            # Импортируем модель только при необходимости
-            from apps.finance.models import PLNTax
-            
-            active_taxes = PLNTax.objects.filter(is_active=True)
-            
-            if not active_taxes.exists():
-                return gross_amount
-            
-            # Суммируем все налоговые ставки
-            total_tax_rate = sum(tax.rate_decimal for tax in active_taxes)
-            
-            # Net = Gross * (1 - общая_налоговая_ставка)
-            if total_tax_rate >= 1:
-                # Если общая ставка >= 100%, возвращаем 0
-                return Decimal('0')
-            
-            net_amount = gross_amount * (1 - total_tax_rate)
-            return net_amount.quantize(Decimal('0.01'))
+            if currency == "BYN":
+                # Для BYN используем настройки из BenchmarkSettings
+                from apps.finance.models import BenchmarkSettings
+                
+                settings = BenchmarkSettings.objects.first()
+                if settings:
+                    tax_rate = settings.belarus_tax_rate / 100  # Конвертируем в десятичное число
+                    net_amount = gross_amount * (1 - tax_rate)
+                    return net_amount.quantize(Decimal('0.01'))
+                else:
+                    # Если настройки не найдены, используем 13% по умолчанию
+                    net_amount = gross_amount * (1 - Decimal('0.13'))
+                    return net_amount.quantize(Decimal('0.01'))
+            else:
+                # Для PLN и EUR используем PLNTax
+                from apps.finance.models import PLNTax
+                
+                active_taxes = PLNTax.objects.filter(is_active=True)
+                
+                if not active_taxes.exists():
+                    return gross_amount
+                
+                # Суммируем все налоговые ставки
+                total_tax_rate = sum(tax.rate_decimal for tax in active_taxes)
+                
+                # Net = Gross * (1 - общая_налоговая_ставка)
+                if total_tax_rate >= 1:
+                    # Если общая ставка >= 100%, возвращаем 0
+                    return Decimal('0')
+                
+                net_amount = gross_amount * (1 - total_tax_rate)
+                return net_amount.quantize(Decimal('0.01'))
             
         except Exception:
             # Если не удалось получить налоги, возвращаем gross сумму

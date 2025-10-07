@@ -35,11 +35,10 @@ class SalaryService:
     
     @staticmethod
     def calculate_pln_amounts(salary_min_usd: Decimal, salary_max_usd: Decimal) -> tuple[Optional[Decimal], Optional[Decimal]]:
-        """Рассчитывает суммы в PLN на основе USD и курса валют с учетом налогов"""
+        """Рассчитывает суммы в PLN на основе USD и курса валют с учетом налогов (gross)"""
         try:
             # Импортируем модели только при необходимости
-            from apps.finance.models import CurrencyRate
-            from logic.finance.tax_service import TaxService
+            from apps.finance.models import CurrencyRate, PLNTax
             
             usd_rate_obj = CurrencyRate.objects.get(code='USD')
             pln_rate_obj = CurrencyRate.objects.get(code='PLN')
@@ -47,27 +46,69 @@ class SalaryService:
             usd_rate = usd_rate_obj.rate
             pln_to_byn_rate = pln_rate_obj.rate # Сколько BYN за 1 PLN
             
+            # Получаем налоговые ставки для PLN
+            active_taxes = PLNTax.objects.filter(is_active=True)
+            total_tax_rate = sum(tax.rate_decimal for tax in active_taxes) if active_taxes.exists() else Decimal('0')
+            
             min_pln = None
             max_pln = None
             
             if salary_min_usd is not None:
-                # USD -> BYN
+                # USD -> BYN -> PLN (net) с учетом scale
                 byn_amount = salary_min_usd * usd_rate
-                # BYN -> PLN (Gross)
-                pln_gross = byn_amount / pln_to_byn_rate
-                # PLN Gross -> PLN Net (с учетом польских налогов)
-                min_pln = TaxService.calculate_gross_from_net(pln_gross, currency="PLN")
+                pln_net = byn_amount / (pln_to_byn_rate / pln_rate_obj.scale)
+                # PLN net -> PLN gross = net / (1 - налоги)
+                min_pln = pln_net / (1 - total_tax_rate) if total_tax_rate < 1 else pln_net
                 
             if salary_max_usd is not None:
-                # USD -> BYN
+                # USD -> BYN -> PLN (net) с учетом scale
                 byn_amount = salary_max_usd * usd_rate
-                # BYN -> PLN (Gross)
-                pln_gross = byn_amount / pln_to_byn_rate
-                # PLN Gross -> PLN Net (с учетом польских налогов)
-                max_pln = TaxService.calculate_gross_from_net(pln_gross, currency="PLN")
+                pln_net = byn_amount / (pln_to_byn_rate / pln_rate_obj.scale)
+                # PLN net -> PLN gross = net / (1 - налоги)
+                max_pln = pln_net / (1 - total_tax_rate) if total_tax_rate < 1 else pln_net
             
             return min_pln.quantize(Decimal('0.01')) if min_pln else None, \
                    max_pln.quantize(Decimal('0.01')) if max_pln else None
+            
+        except Exception:
+            return None, None
+    
+    @staticmethod
+    def calculate_eur_amounts(salary_min_usd: Decimal, salary_max_usd: Decimal) -> tuple[Optional[Decimal], Optional[Decimal]]:
+        """Рассчитывает суммы в EUR на основе USD и курса валют с учетом налогов (gross)"""
+        try:
+            # Импортируем модели только при необходимости
+            from apps.finance.models import CurrencyRate, PLNTax
+            
+            usd_rate_obj = CurrencyRate.objects.get(code='USD')
+            eur_rate_obj = CurrencyRate.objects.get(code='EUR')
+            
+            usd_rate = usd_rate_obj.rate
+            eur_to_byn_rate = eur_rate_obj.rate # Сколько BYN за 1 EUR
+            
+            # Получаем налоговые ставки для EUR (используем те же, что и для PLN)
+            active_taxes = PLNTax.objects.filter(is_active=True)
+            total_tax_rate = sum(tax.rate_decimal for tax in active_taxes) if active_taxes.exists() else Decimal('0')
+            
+            min_eur = None
+            max_eur = None
+            
+            if salary_min_usd is not None:
+                # USD -> BYN -> EUR (net) с учетом scale
+                byn_amount = salary_min_usd * usd_rate
+                eur_net = byn_amount / (eur_to_byn_rate / eur_rate_obj.scale)
+                # EUR net -> EUR gross = net / (1 - налоги)
+                min_eur = eur_net / (1 - total_tax_rate) if total_tax_rate < 1 else eur_net
+                
+            if salary_max_usd is not None:
+                # USD -> BYN -> EUR (net) с учетом scale
+                byn_amount = salary_max_usd * usd_rate
+                eur_net = byn_amount / (eur_to_byn_rate / eur_rate_obj.scale)
+                # EUR net -> EUR gross = net / (1 - налоги)
+                max_eur = eur_net / (1 - total_tax_rate) if total_tax_rate < 1 else eur_net
+            
+            return min_eur.quantize(Decimal('0.01')) if min_eur else None, \
+                   max_eur.quantize(Decimal('0.01')) if max_eur else None
             
         except Exception:
             return None, None
@@ -81,13 +122,18 @@ class SalaryService:
         min_pln, max_pln = SalaryService.calculate_pln_amounts(
             salary_range.salary_min_usd, salary_range.salary_max_usd
         )
+        min_eur, max_eur = SalaryService.calculate_eur_amounts(
+            salary_range.salary_min_usd, salary_range.salary_max_usd
+        )
         
         salary_range.salary_min_byn = min_byn
         salary_range.salary_max_byn = max_byn
         salary_range.salary_min_pln = min_pln
         salary_range.salary_max_pln = max_pln
+        salary_range.salary_min_eur = min_eur
+        salary_range.salary_max_eur = max_eur
         
-        salary_range.save(update_fields=['salary_min_byn', 'salary_max_byn', 'salary_min_pln', 'salary_max_pln'])
+        salary_range.save(update_fields=['salary_min_byn', 'salary_max_byn', 'salary_min_pln', 'salary_max_pln', 'salary_min_eur', 'salary_max_eur'])
     
     @staticmethod
     def update_all_salary_currency_amounts():

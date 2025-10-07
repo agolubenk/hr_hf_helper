@@ -1,5 +1,6 @@
 import os
 from celery import Celery
+from celery.schedules import crontab
 
 # Устанавливаем переменную окружения для настроек Django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
@@ -39,6 +40,12 @@ def save_hh_analysis_result(ai_response: dict, vacancy_data: dict):
     from apps.finance.tasks import save_hh_analysis_result as original_task
     return original_task(ai_response, vacancy_data)
 
+@app.task
+def update_currency_rates():
+    """Обновляет курсы валют НБРБ"""
+    from apps.finance.tasks import update_currency_rates as original_task
+    return original_task()
+
 # Настройки для периодических задач
 app.conf.beat_schedule = {
         # Finance задачи
@@ -57,6 +64,16 @@ app.conf.beat_schedule = {
     'generate-benchmark-statistics': {
         'task': 'apps.finance.tasks.generate_benchmark_statistics',
         'schedule': 3600.0,  # Каждый час
+    },
+    
+    # Обновление курсов валют НБРБ (11:00 и 16:00 в будние дни)
+    'update-currency-rates-morning': {
+        'task': 'config.celery.update_currency_rates',
+        'schedule': crontab(minute=0, hour=11, day_of_week='1-5'),  # 11:00 ПН-ПТ
+    },
+    'update-currency-rates-afternoon': {
+        'task': 'config.celery.update_currency_rates',
+        'schedule': crontab(minute=0, hour=16, day_of_week='1-5'),  # 16:00 ПН-ПТ
     },
     
     # Notion задачи

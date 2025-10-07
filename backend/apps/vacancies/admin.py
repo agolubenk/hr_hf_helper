@@ -123,6 +123,7 @@ class SalaryRangeAdmin(admin.ModelAdmin):
         'salary_display_usd',
         'salary_display_byn',
         'salary_display_pln',
+        'salary_display_eur',
         'is_active_display',
         'updated_at'
     ]
@@ -143,6 +144,7 @@ class SalaryRangeAdmin(admin.ModelAdmin):
     readonly_fields = [
         'salary_min_byn', 'salary_max_byn',
         'salary_min_pln', 'salary_max_pln',
+        'salary_min_eur', 'salary_max_eur',
         'created_at', 'updated_at'
     ]
     
@@ -160,6 +162,10 @@ class SalaryRangeAdmin(admin.ModelAdmin):
         }),
         ('Зарплата в PLN (автоматически рассчитанная)', {
             'fields': ('salary_min_pln', 'salary_max_pln'),
+            'classes': ('collapse',)
+        }),
+        ('Зарплата в EUR (автоматически рассчитанная)', {
+            'fields': ('salary_min_eur', 'salary_max_eur'),
             'classes': ('collapse',)
         }),
         ('Системная информация', {
@@ -188,6 +194,14 @@ class SalaryRangeAdmin(admin.ModelAdmin):
             return f"{obj.salary_min_pln} - {obj.salary_max_pln} PLN"
         return "Не рассчитано"
     salary_display_pln.short_description = 'Зарплата (PLN)'
+    
+    def salary_display_eur(self, obj):
+        """Отображение зарплаты в EUR"""
+        if obj.salary_min_eur and obj.salary_max_eur:
+            return f"{obj.salary_min_eur} - {obj.salary_max_eur} EUR"
+        return "Не рассчитано"
+    salary_display_eur.short_description = 'Зарплата (EUR)'
+    
     
     def is_active_display(self, obj):
         """Отображение статуса активности"""

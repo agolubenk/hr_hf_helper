@@ -158,10 +158,10 @@ class PLNTaxAdmin(admin.ModelAdmin):
 
 @admin.register(SalaryRange)
 class SalaryRangeAdmin(admin.ModelAdmin):
-    list_display = ("vacancy", "grade", "salary_range_usd", "salary_range_byn", "salary_range_pln", "is_active", "created_at")
+    list_display = ("vacancy", "grade", "salary_range_usd", "salary_range_byn", "salary_range_pln", "salary_range_eur", "is_active", "created_at")
     list_filter = ("is_active", "grade", "vacancy", "created_at")
     search_fields = ("vacancy__name", "grade__name")
-    readonly_fields = ("created_at", "updated_at", "salary_range_usd", "salary_range_byn", "salary_range_pln")
+    readonly_fields = ("created_at", "updated_at", "salary_range_usd", "salary_range_byn", "salary_range_pln", "salary_range_eur")
     fieldsets = (
         (None, {
             'fields': ('vacancy', 'grade', 'is_active')
@@ -175,6 +175,10 @@ class SalaryRangeAdmin(admin.ModelAdmin):
         }),
         ('Зарплата в PLN (автоматически)', {
             'fields': ('salary_min_pln', 'salary_max_pln'),
+            'classes': ('collapse',)
+        }),
+        ('Зарплата в EUR (автоматически)', {
+            'fields': ('salary_min_eur', 'salary_max_eur'),
             'classes': ('collapse',)
         }),
         ('Информация', {
@@ -197,6 +201,11 @@ class SalaryRangeAdmin(admin.ModelAdmin):
         """Отображает диапазон зарплаты в PLN"""
         return obj.salary_range_pln
     salary_range_pln.short_description = "Зарплата (PLN)"
+    
+    def salary_range_eur(self, obj):
+        """Отображает диапазон зарплаты в EUR"""
+        return obj.salary_range_eur
+    salary_range_eur.short_description = "Зарплата (EUR)"
     
     def save_model(self, request, obj, form, change):
         """Валидация при сохранении"""

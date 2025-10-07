@@ -111,17 +111,18 @@ class SalaryRangeSerializer(serializers.ModelSerializer):
     salary_range_usd = serializers.ReadOnlyField()
     salary_range_byn = serializers.ReadOnlyField()
     salary_range_pln = serializers.ReadOnlyField()
+    salary_range_eur = serializers.ReadOnlyField()
     
     class Meta:
         model = SalaryRange
         fields = [
             'id', 'vacancy', 'vacancy_name', 'grade', 'grade_name',
             'salary_min_usd', 'salary_max_usd', 'salary_min_byn', 'salary_max_byn',
-            'salary_min_pln', 'salary_max_pln', 'is_active',
-            'salary_range_usd', 'salary_range_byn', 'salary_range_pln',
+            'salary_min_pln', 'salary_max_pln', 'salary_min_eur', 'salary_max_eur', 'is_active',
+            'salary_range_usd', 'salary_range_byn', 'salary_range_pln', 'salary_range_eur',
             'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'salary_min_byn', 'salary_max_byn', 'salary_min_pln', 'salary_max_pln', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'salary_min_byn', 'salary_max_byn', 'salary_min_pln', 'salary_max_pln', 'salary_min_eur', 'salary_max_eur', 'created_at', 'updated_at']
     
     def validate(self, attrs):
         """Валидация зарплатной вилки"""

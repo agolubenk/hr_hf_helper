@@ -264,6 +264,25 @@ class SalaryRange(models.Model):
         null=True
     )
     
+    # Зарплата в EUR (автоматически рассчитывается)
+    salary_min_eur = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        verbose_name='Минимальная зарплата (EUR)',
+        help_text='Минимальная зарплата в евро',
+        blank=True,
+        null=True
+    )
+    
+    salary_max_eur = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        verbose_name='Максимальная зарплата (EUR)',
+        help_text='Максимальная зарплата в евро',
+        blank=True,
+        null=True
+    )
+    
     is_active = models.BooleanField(
         default=True,
         verbose_name='Активна',
@@ -308,30 +327,49 @@ class SalaryRange(models.Model):
         super().save(*args, **kwargs)
     
     def _calculate_other_currencies(self):
-        """Рассчитывает зарплаты в других валютах на основе курсов"""
+        """Рассчитывает зарплаты в других валютах на основе курсов и налогов"""
         try:
-            from apps.finance.models import CurrencyRate
+            from apps.finance.models import CurrencyRate, PLNTax
             from decimal import Decimal
             
             # Получаем курсы валют
             usd_rate = CurrencyRate.objects.get(code='USD')
             pln_rate = CurrencyRate.objects.get(code='PLN')
+            eur_rate = CurrencyRate.objects.get(code='EUR')
             
-            # Рассчитываем BYN (базовая валюта)
+            # Получаем налоговые ставки для PLN/EUR
+            active_taxes = PLNTax.objects.filter(is_active=True)
+            total_tax_rate = sum(tax.rate_decimal for tax in active_taxes) if active_taxes.exists() else Decimal('0')
+            
+            # Рассчитываем BYN (net - как есть по курсу)
             if self.salary_min_usd:
-                from decimal import Decimal
                 self.salary_min_byn = Decimal(str(self.salary_min_usd)) * usd_rate.rate
             if self.salary_max_usd:
-                from decimal import Decimal
                 self.salary_max_byn = Decimal(str(self.salary_max_usd)) * usd_rate.rate
             
-            # Рассчитываем PLN
+            # Рассчитываем PLN (gross - с налогами)
             if self.salary_min_usd:
-                from decimal import Decimal
-                self.salary_min_pln = Decimal(str(self.salary_min_usd)) * (usd_rate.rate / pln_rate.rate)
+                # USD -> BYN -> PLN (net) с учетом scale
+                byn_amount = Decimal(str(self.salary_min_usd)) * usd_rate.rate
+                pln_net = byn_amount / (pln_rate.rate / pln_rate.scale)
+                # PLN net -> PLN gross = net / (1 - налоги)
+                self.salary_min_pln = pln_net / (1 - total_tax_rate) if total_tax_rate < 1 else pln_net
             if self.salary_max_usd:
-                from decimal import Decimal
-                self.salary_max_pln = Decimal(str(self.salary_max_usd)) * (usd_rate.rate / pln_rate.rate)
+                byn_amount = Decimal(str(self.salary_max_usd)) * usd_rate.rate
+                pln_net = byn_amount / (pln_rate.rate / pln_rate.scale)
+                self.salary_max_pln = pln_net / (1 - total_tax_rate) if total_tax_rate < 1 else pln_net
+            
+            # Рассчитываем EUR (gross - с налогами)
+            if self.salary_min_usd:
+                # USD -> BYN -> EUR (net) с учетом scale
+                byn_amount = Decimal(str(self.salary_min_usd)) * usd_rate.rate
+                eur_net = byn_amount / (eur_rate.rate / eur_rate.scale)
+                # EUR net -> EUR gross = net / (1 - налоги)
+                self.salary_min_eur = eur_net / (1 - total_tax_rate) if total_tax_rate < 1 else eur_net
+            if self.salary_max_usd:
+                byn_amount = Decimal(str(self.salary_max_usd)) * usd_rate.rate
+                eur_net = byn_amount / (eur_rate.rate / eur_rate.scale)
+                self.salary_max_eur = eur_net / (1 - total_tax_rate) if total_tax_rate < 1 else eur_net
                 
         except CurrencyRate.DoesNotExist:
             # Если курсы не найдены, оставляем поля пустыми
@@ -343,15 +381,18 @@ class SalaryRange(models.Model):
     def get_salary_display(self, currency='USD'):
         """Возвращает отформатированную зарплатную вилку для указанной валюты"""
         if currency == 'USD':
-            return f"${self.salary_min_usd} - ${self.salary_max_usd}"
+            return f"{self.salary_min_usd} - {self.salary_max_usd} USD"
         elif currency == 'BYN':
             if self.salary_min_byn and self.salary_max_byn:
                 return f"{self.salary_min_byn} - {self.salary_max_byn} BYN"
         elif currency == 'PLN':
             if self.salary_min_pln and self.salary_max_pln:
                 return f"{self.salary_min_pln} - {self.salary_max_pln} PLN"
+        elif currency == 'EUR':
+            if self.salary_min_eur and self.salary_max_eur:
+                return f"{self.salary_min_eur} - {self.salary_max_eur} EUR"
         
-        return f"${self.salary_min_usd} - ${self.salary_max_usd}"
+        return f"{self.salary_min_usd} - {self.salary_max_usd} USD"
     
     def get_salary_min(self, currency='USD'):
         """Возвращает минимальную зарплату в указанной валюте"""
@@ -361,6 +402,8 @@ class SalaryRange(models.Model):
             return self.salary_min_byn
         elif currency == 'PLN':
             return self.salary_min_pln
+        elif currency == 'EUR':
+            return self.salary_min_eur
         return self.salary_min_usd
     
     def get_salary_max(self, currency='USD'):
@@ -371,4 +414,6 @@ class SalaryRange(models.Model):
             return self.salary_max_byn
         elif currency == 'PLN':
             return self.salary_max_pln
+        elif currency == 'EUR':
+            return self.salary_max_eur
         return self.salary_max_usd

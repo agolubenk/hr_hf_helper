@@ -158,6 +158,7 @@
                                         <th>USD</th>
                                         <th>BYN</th>
                                         <th>PLN</th>
+                                        <th>EUR</th>
                                         <th>Статус</th>
                                         <th>Создано</th>
                                         <th>Действия</th>
@@ -180,6 +181,9 @@
                                             </td>
                                             <td>
                                                 <span class="text-warning salary-pln">{{ salary_range.salary_range_pln }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-primary salary-eur">{{ salary_range.salary_range_eur }}</span>
                                             </td>
                                             <td>
                                                 <span class="badge {% if salary_range.is_active %}bg-success{% else %}bg-secondary{% endif %}">

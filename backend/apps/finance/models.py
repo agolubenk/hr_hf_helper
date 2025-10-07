@@ -22,6 +22,7 @@ class Currency(models.TextChoices):
     BYN = "BYN", "BYN"
     USD = "USD", "USD"
     PLN = "PLN", "PLN"
+    EUR = "EUR", "EUR"
 
 
 class CurrencyRate(models.Model):
@@ -186,6 +187,25 @@ class SalaryRange(models.Model):
         null=True
     )
     
+    # Зарплата в EUR (автоматически рассчитывается)
+    salary_min_eur = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        verbose_name='Минимальная зарплата (EUR)',
+        help_text='Минимальная зарплата в евро',
+        blank=True,
+        null=True
+    )
+    
+    salary_max_eur = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        verbose_name='Максимальная зарплата (EUR)',
+        help_text='Максимальная зарплата в евро',
+        blank=True,
+        null=True
+    )
+    
     is_active = models.BooleanField(
         default=True,
         verbose_name='Активна',
@@ -245,7 +265,7 @@ class SalaryRange(models.Model):
     @property
     def salary_range_usd(self):
         """Возвращает строку с диапазоном зарплаты в USD"""
-        return f"${self.salary_min_usd} - ${self.salary_max_usd}"
+        return f"{self.salary_min_usd} - {self.salary_max_usd} USD"
     
     @property
     def salary_range_byn(self):
@@ -259,6 +279,13 @@ class SalaryRange(models.Model):
         """Возвращает строку с диапазоном зарплаты в PLN"""
         if self.salary_min_pln and self.salary_max_pln:
             return f"{self.salary_min_pln} - {self.salary_max_pln} PLN"
+        return "Не рассчитано"
+    
+    @property
+    def salary_range_eur(self):
+        """Возвращает строку с диапазоном зарплаты в EUR"""
+        if self.salary_min_eur and self.salary_max_eur:
+            return f"{self.salary_min_eur} - {self.salary_max_eur} EUR"
         return "Не рассчитано"
     
     @classmethod
@@ -499,18 +526,18 @@ class Benchmark(models.Model):
     def get_salary_display(self):
         """Возвращает отформатированное отображение зарплаты"""
         if self.salary_to:
-            return f"${self.salary_from:,.0f}–${self.salary_to:,.0f}"
+            return f"{self.salary_from:,.0f}–{self.salary_to:,.0f} USD"
         else:
-            return f"${self.salary_from:,.0f}"
+            return f"{self.salary_from:,.0f} USD"
     
     def get_salary_from_display(self):
         """Возвращает отформатированную зарплату 'от'"""
-        return f"${self.salary_from:,.2f}"
+        return f"{self.salary_from:,.2f} USD"
     
     def get_salary_to_display(self):
         """Возвращает отформатированную зарплату 'до'"""
         if self.salary_to:
-            return f"${self.salary_to:,.2f}"
+            return f"{self.salary_to:,.2f} USD"
         return None
     
     @property

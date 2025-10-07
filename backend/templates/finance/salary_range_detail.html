@@ -93,6 +93,7 @@
 .currency-usd { color: var(--color-success); }
 .currency-byn { color: var(--color-info); }
 .currency-pln { color: var(--color-warning); }
+.currency-eur { color: var(--color-primary); }
 
 [data-theme="dark"] .salary-detail-card {
     background: rgba(255, 255, 255, 0.05);
@@ -179,6 +180,14 @@
                         <div class="currency-code currency-pln">PLN</div>
                         <div class="currency-amount currency-pln">{{ salary_range.salary_range_pln }}</div>
                         <div class="currency-label">Польские злотые</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if salary_range.salary_min_eur and salary_range.salary_max_eur %}
+                    <div class="salary-amount-card">
+                        <div class="currency-code currency-eur">EUR</div>
+                        <div class="currency-amount currency-eur">{{ salary_range.salary_range_eur }}</div>
+                        <div class="currency-label">Евро</div>
                     </div>
                     {% endif %}
                 </div>
@@ -285,9 +294,9 @@
                             {% if salary_range.salary_min_usd and salary_range.salary_max_usd %}
                             <tr>
                                 <td><span class="badge bg-success">USD</span></td>
-                                <td class="currency-usd">${{ salary_range.salary_min_usd|floatformat:2 }}</td>
-                                <td class="currency-usd">${{ salary_range.salary_max_usd|floatformat:2 }}</td>
-                                <td class="currency-usd">${{ salary_range.salary_max_usd|floatformat:2 }} - ${{ salary_range.salary_min_usd|floatformat:2 }}</td>
+                                <td class="currency-usd">{{ salary_range.salary_min_usd|floatformat:2 }} USD</td>
+                                <td class="currency-usd">{{ salary_range.salary_max_usd|floatformat:2 }} USD</td>
+                                <td class="currency-usd">{{ salary_range.salary_max_usd|floatformat:2 }} - {{ salary_range.salary_min_usd|floatformat:2 }} USD</td>
                                 <td><span class="badge bg-success">Базовая</span></td>
                             </tr>
                             {% endif %}
@@ -309,6 +318,16 @@
                                 <td class="currency-pln">{{ salary_range.salary_max_pln|floatformat:2 }} PLN</td>
                                 <td class="currency-pln">{{ salary_range.salary_max_pln|floatformat:2 }} - {{ salary_range.salary_min_pln|floatformat:2 }} PLN</td>
                                 <td><span class="badge bg-warning">Рассчитано</span></td>
+                            </tr>
+                            {% endif %}
+                            
+                            {% if salary_range.salary_min_eur and salary_range.salary_max_eur %}
+                            <tr>
+                                <td><span class="badge bg-primary">EUR</span></td>
+                                <td class="currency-eur">{{ salary_range.salary_min_eur|floatformat:2 }} EUR</td>
+                                <td class="currency-eur">{{ salary_range.salary_max_eur|floatformat:2 }} EUR</td>
+                                <td class="currency-eur">{{ salary_range.salary_max_eur|floatformat:2 }} - {{ salary_range.salary_min_eur|floatformat:2 }} EUR</td>
+                                <td><span class="badge bg-primary">Рассчитано</span></td>
                             </tr>
                             {% endif %}
                         </tbody>

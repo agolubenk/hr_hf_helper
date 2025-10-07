@@ -997,6 +997,93 @@ def get_enhanced_ai_prompt(benchmark_data, our_vacancies_text, our_grades_text):
 
 Отвечай ТОЛЬКО JSON, без дополнительных комментариев."""
 @shared_task
+def update_currency_rates():
+    """
+    Периодическая задача для обновления курсов валют НБРБ
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - Нет параметров (использует глобальный сервис валют)
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - НБРБ API через UnifiedCurrencyService
+    - CurrencyRate модель для сохранения
+    
+    ОБРАБОТКА:
+    - Тестирование подключения к НБРБ API
+    - Получение актуальных курсов валют
+    - Обновление записей в базе данных
+    - Логирование результатов
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Словарь с результатами обновления курсов
+    
+    СВЯЗИ:
+    - Использует: UnifiedCurrencyService, CurrencyRate модель
+    - Передает: результат выполнения задачи
+    - Может вызываться из: Celery Beat (11:00 и 16:00 в будние дни)
+    """
+    try:
+        from logic.base.currency_service import currency_service
+        
+        logger.info("🔄 Запуск автоматического обновления курсов валют НБРБ...")
+        
+        # Тестируем подключение к API
+        logger.info("🔍 Проверяем подключение к НБРБ API...")
+        test_response = currency_service.test_connection()
+        
+        if not test_response.success:
+            error_msg = f"❌ Ошибка подключения к НБРБ API: {test_response.error}"
+            logger.error(error_msg)
+            return {
+                'success': False,
+                'message': error_msg,
+                'updated_count': 0
+            }
+        
+        logger.info("✅ Подключение к НБРБ API успешно")
+        
+        # Обновляем курсы в базе данных
+        logger.info("💱 Обновляем курсы валют в базе данных...")
+        result = currency_service.update_currency_rates_in_db()
+        
+        if result['updated_count'] > 0:
+            success_msg = f"✅ Успешно обновлено {result['updated_count']} курсов валют"
+            logger.info(success_msg)
+            
+            # Логируем детали по каждой валюте
+            for currency, data in result['results'].items():
+                if data['success']:
+                    status = "создан" if data['created'] else "обновлен"
+                    logger.info(f"  💰 {currency}: {data['rate']} BYN ({status})")
+                else:
+                    logger.warning(f"  ⚠️ {currency}: ошибка - {data['error']}")
+            
+            return {
+                'success': True,
+                'message': success_msg,
+                'updated_count': result['updated_count'],
+                'results': result['results']
+            }
+        else:
+            warning_msg = "⚠️ Курсы валют не были обновлены"
+            logger.warning(warning_msg)
+            return {
+                'success': True,
+                'message': warning_msg,
+                'updated_count': 0
+            }
+            
+    except Exception as e:
+        error_msg = f"❌ Ошибка при обновлении курсов валют: {e}"
+        logger.error(error_msg)
+        return {
+            'success': False,
+            'message': error_msg,
+            'updated_count': 0
+        }
+
+
+@shared_task
 def save_hh_analysis_result(ai_response: dict, vacancy_data: dict):
     """
     Сохраняет результат AI анализа в Benchmark с умным сопоставлением

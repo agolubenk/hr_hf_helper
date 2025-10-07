@@ -283,7 +283,7 @@
                                         <div class="mb-2">
                                             <small class="text-muted">USD:</small>
                                             <div class="fw-bold text-primary">
-                                                ${{ salary_range.salary_min_usd }} - ${{ salary_range.salary_max_usd }}
+                                                {{ salary_range.salary_min_usd }} - {{ salary_range.salary_max_usd }} USD
                                             </div>
                                         </div>
                                         
@@ -303,6 +303,16 @@
                                                 <small class="text-muted">PLN:</small>
                                                 <div class="fw-bold text-warning">
                                                     {{ salary_range.salary_min_pln }} - {{ salary_range.salary_max_pln }} PLN
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                        
+                                        <!-- EUR -->
+                                        {% if salary_range.salary_min_eur and salary_range.salary_max_eur %}
+                                            <div class="mb-2">
+                                                <small class="text-muted">EUR:</small>
+                                                <div class="fw-bold text-success">
+                                                    {{ salary_range.salary_min_eur }} - {{ salary_range.salary_max_eur }} EUR
                                                 </div>
                                             </div>
                                         {% endif %}

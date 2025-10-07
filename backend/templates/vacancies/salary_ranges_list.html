@@ -151,7 +151,7 @@
                                                     <strong>USD</strong>
                                                 </span>
                                                 <span class="salary-amount text-success font-weight-bold">
-                                                    ${{ salary_range.salary_min_usd|floatformat:0 }} - ${{ salary_range.salary_max_usd|floatformat:0 }}
+                                                    {{ salary_range.salary_min_usd|floatformat:0 }} - {{ salary_range.salary_max_usd|floatformat:0 }} USD
                                                 </span>
                                             </div>
                                         </div>
@@ -183,6 +183,23 @@
                                                 {% if salary_range.salary_min_pln and salary_range.salary_max_pln %}
                                                     <span class="salary-amount text-warning font-weight-bold">
                                                         {{ salary_range.salary_min_pln|floatformat:0 }} - {{ salary_range.salary_max_pln|floatformat:0 }}
+                                                    </span>
+                                                {% else %}
+                                                    <span class="text-muted">Не рассчитано</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- EUR -->
+                                        <div class="salary-item mb-3">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="currency-label">
+                                                    <i class="fas fa-euro-sign text-primary mr-2"></i>
+                                                    <strong>EUR</strong>
+                                                </span>
+                                                {% if salary_range.salary_min_eur and salary_range.salary_max_eur %}
+                                                    <span class="salary-amount text-primary font-weight-bold">
+                                                        {{ salary_range.salary_min_eur|floatformat:0 }} - {{ salary_range.salary_max_eur|floatformat:0 }}
                                                     </span>
                                                 {% else %}
                                                     <span class="text-muted">Не рассчитано</span>
