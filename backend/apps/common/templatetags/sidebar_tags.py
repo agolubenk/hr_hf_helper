@@ -258,7 +258,7 @@ def render_menu_item(request, key, item, level=0):
     if is_active or has_active_child:
         nav_classes.append('active')
     if has_submenu:
-        nav_classes.append('sidebar-toggle')
+        nav_classes.append('menu-toggle')
     
     # Отступы для вложенности
     margin_class = f'ms-{level}' if level > 0 else ''

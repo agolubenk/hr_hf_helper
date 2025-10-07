@@ -70,11 +70,15 @@
             
             <!-- Main content -->
             <main class="{% if request.resolver_match.url_name == 'account_login' or request.resolver_match.url_name == 'signup' or request.resolver_match.url_name == 'password_reset' %}col-12{% else %}col-md-9 ms-sm-auto col-lg-10{% endif %} px-md-4 main-content">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <div class="sticky-top d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     {% if not request.resolver_match.url_name == 'account_login' and not request.resolver_match.url_name == 'signup' and not request.resolver_match.url_name == 'password_reset' %}
+                    <!-- Кнопка переключения сайдбара -->
+                    <div class="mx-3">
+                        <i class="fas fa-caret-square-right sidebar-toggle" id="sidebarToggle" aria-label="Переключить сайдбар"></i>
                     <h1 class="h2">
-                        {% block page_title %}HR Helper{% endblock %}
+                            {% block page_title %}HR Helper{% endblock %}
                     </h1>
+                    </div>
                     {% else %}
                     <div></div>
                     {% endif %}
@@ -107,20 +111,23 @@
             </div>
         </div>
 
-                <!-- Messages -->
-    {% if messages and not request.resolver_match.url_name == 'chat_workflow' and not request.resolver_match.url_name == 'chat_workflow_session' %}
-        <div class="messages">
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            {% endfor %}
-    </div>
-    {% endif %}
+                <!-- Content wrapper -->
+                <div class="content-wrapper">
+                    <!-- Messages -->
+                    {% if messages and not request.resolver_match.url_name == 'chat_workflow' and not request.resolver_match.url_name == 'chat_workflow_session' %}
+                        <div class="messages">
+                            {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            {% endfor %}
+                    </div>
+                    {% endif %}
 
-                <!-- Page content -->
-        {% block content %}{% endblock %}
+                    <!-- Page content -->
+                    {% block content %}{% endblock %}
+                </div>
     </main>
         </div>
     </div>
@@ -199,7 +206,7 @@
                 
                 // Поднимаемся по иерархии и разворачиваем только родительские меню
                 while (currentItem) {
-                    const parentToggle = currentItem.querySelector('.sidebar-toggle');
+                    const parentToggle = currentItem.querySelector('.menu-toggle');
                     if (parentToggle) {
                         const targetId = parentToggle.getAttribute('data-bs-target');
                         const targetElement = document.querySelector(targetId);
@@ -216,7 +223,7 @@
             });
             
             // Обработка кликов по многоуровневому меню
-            const sidebarToggles = document.querySelectorAll('.sidebar-toggle');
+            const sidebarToggles = document.querySelectorAll('.menu-toggle');
             
             sidebarToggles.forEach(toggle => {
                 toggle.addEventListener('click', function(e) {
@@ -511,6 +518,171 @@
                 toggleTheme();
             };
         });
+    </script>
+
+    <!-- JavaScript для функциональности переключения сайдбара -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Находим кнопку переключения сайдбара (теперь она в HTML)
+        function getSidebarToggle() {
+            const toggleBtn = document.getElementById('sidebarToggle');
+            if (!toggleBtn) {
+                console.warn('Кнопка переключения сайдбара не найдена');
+            }
+            return toggleBtn;
+        }
+        
+        // Создаем кнопку закрытия сайдбара (только для мобильных)
+        function createSidebarClose(sidebar) {
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'sidebar-close';
+            closeBtn.innerHTML = '<i class="fas fa-caret-square-left"></i>';
+            closeBtn.setAttribute('aria-label', 'Закрыть сайдбар');
+            // Добавляем кнопку закрытия только на мобильных устройствах
+            if (window.innerWidth <= 992) {
+                sidebar.appendChild(closeBtn);
+            }
+            return closeBtn;
+        }
+        
+        // Создаем overlay для мобильных
+        function createSidebarOverlay() {
+            const overlay = document.createElement('div');
+            overlay.className = 'sidebar-overlay';
+            document.body.appendChild(overlay);
+            return overlay;
+        }
+        
+        // Применяем классы к существующим элементам
+        function setupSidebarStructure() {
+            const sidebar = document.querySelector('.col-md-3:first-child') || 
+                           document.querySelector('.sidebar') ||
+                           document.querySelector('[class*="sidebar"]');
+                           
+            const mainContent = document.querySelector('.col-md-9:last-child') || 
+                               document.querySelector('.main-content') ||
+                               document.querySelector('[class*="main"]');
+            
+            if (sidebar) {
+                sidebar.classList.add('sidebar-container');
+                
+                // На мобильных по умолчанию скрыт
+                if (window.innerWidth <= 992) {
+                    sidebar.classList.add('hidden');
+                }
+            }
+            
+            if (mainContent) {
+                mainContent.classList.add('main-content');
+            }
+            
+            return { sidebar, mainContent };
+        }
+        
+        // Инициализация
+        const { sidebar, mainContent } = setupSidebarStructure();
+        
+        if (!sidebar) {
+            console.warn('Сайдбар не найден');
+            return;
+        }
+        
+        // Находим элементы управления
+        const toggleBtn = getSidebarToggle();
+        const closeBtn = createSidebarClose(sidebar);
+        const overlay = createSidebarOverlay();
+        
+        // Проверяем, что кнопка переключения найдена
+        if (!toggleBtn) {
+            console.warn('Кнопка переключения сайдбара не найдена, функциональность отключена');
+            return;
+        }
+        
+        // Состояние сайдбара
+        let sidebarVisible = window.innerWidth > 992;
+        
+        // Функция переключения сайдбара
+        function toggleSidebar() {
+            sidebarVisible = !sidebarVisible;
+            
+            if (sidebarVisible) {
+                sidebar.classList.remove('hidden');
+                sidebar.classList.add('show');
+                if (mainContent) mainContent.classList.remove('sidebar-hidden');
+                
+                // На мобильных показываем overlay
+                if (window.innerWidth <= 992) {
+                    overlay.classList.add('show');
+                }
+                
+                toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
+            } else {
+                sidebar.classList.add('hidden');
+                sidebar.classList.remove('show');
+                if (mainContent) mainContent.classList.add('sidebar-hidden');
+                
+                overlay.classList.remove('show');
+                toggleBtn.className = 'fas fa-caret-square-right sidebar-toggle';
+            }
+        }
+        
+        // Функция скрытия сайдбара
+        function hideSidebar() {
+            sidebarVisible = false;
+            sidebar.classList.add('hidden');
+            sidebar.classList.remove('show');
+            if (mainContent) mainContent.classList.add('sidebar-hidden');
+            overlay.classList.remove('show');
+            toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+        }
+        
+        // События
+        toggleBtn.addEventListener('click', toggleSidebar);
+        closeBtn.addEventListener('click', hideSidebar);
+        overlay.addEventListener('click', hideSidebar);
+        
+        // Обработка изменения размера окна
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 992) {
+                // Десктоп: показываем сайдбар, убираем overlay
+                sidebar.classList.remove('hidden', 'show');
+                if (mainContent) mainContent.classList.remove('sidebar-hidden');
+                overlay.classList.remove('show');
+                sidebarVisible = true;
+                toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
+                
+                // Убираем кнопку закрытия на десктопе
+                const existingCloseBtn = sidebar.querySelector('.sidebar-close');
+                if (existingCloseBtn) {
+                    existingCloseBtn.remove();
+                }
+            } else {
+                // Мобильный: скрываем сайдбар
+                if (sidebarVisible) {
+                    overlay.classList.add('show');
+                    sidebar.classList.add('show');
+                } else {
+                    sidebar.classList.add('hidden');
+                    sidebar.classList.remove('show');
+                    overlay.classList.remove('show');
+                }
+                
+                // Добавляем кнопку закрытия на мобильных
+                const existingCloseBtn = sidebar.querySelector('.sidebar-close');
+                if (!existingCloseBtn) {
+                    const newCloseBtn = createSidebarClose(sidebar);
+                    newCloseBtn.addEventListener('click', hideSidebar);
+                }
+            }
+        });
+        
+        // Устанавливаем правильное начальное состояние
+        if (window.innerWidth <= 992) {
+            hideSidebar();
+        } else {
+            toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
+        }
+    });
     </script>
 
     <!-- Дополнительные скрипты для конкретных страниц -->

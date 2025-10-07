@@ -1629,8 +1629,6 @@ a:hover {
 
 .col-lg-3 .chat-history-container .card-body {
     flex-grow: 1 !important;
-}
-
     margin-top: auto !important; /* Прижимаем к низу */
 }
 
@@ -2910,6 +2908,434 @@ a:hover {
     background-position: center;
     display: inline-block;
     vertical-align: middle;
+}
+
+/* =============================================================================
+   ФИКСИРОВАННЫЙ ЗАГОЛОВОК И САЙДБАР С ПЕРЕКЛЮЧАТЕЛЕМ
+   ============================================================================= */
+
+/* Иконка переключения сайдбара в header */
+.sidebar-toggle {
+    background: none !important;
+    color: var(--hr-text-primary) !important;
+    border: none !important;
+    padding: 0 !important;
+    font-size: 20px !important;
+    cursor: pointer !important;
+    transition: all var(--duration-normal) var(--ease-standard) !important;
+    display: inline-block !important;
+    margin-right: 12px !important;
+    vertical-align: middle !important;
+}
+
+.sidebar-toggle:hover {
+    background: none !important;
+    transform: scale(1.1) !important;
+    color: var(--hr-primary) !important;
+}
+
+
+/* Контейнер для заголовка и кнопки */
+.main-content .sticky-top > div:first-child {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0 !important;
+}
+
+/* Заголовок на одном уровне с кнопкой */
+.main-content .sticky-top h1 {
+    margin: 0 !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+}
+
+/* Старые стили navbar больше не нужны - используем фиксированный header блок */
+
+/* Фиксированный сайдбар */
+.sidebar-container {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 240px !important; /* Уменьшили ширину */
+    z-index: 1020 !important;
+    transform: translateX(0) !important;
+    transition: transform var(--duration-normal) var(--ease-standard) !important;
+    background: var(--hr-sidebar-bg) !important;
+    border-right: 1px solid var(--hr-border) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 16px 12px !important; /* Увеличили общий padding */
+}
+
+/* Скрытое состояние сайдбара */
+.sidebar-container.hidden {
+    transform: translateX(-100%) !important;
+}
+
+/* Кнопка закрытия сайдбара (только для мобильных) */
+.sidebar-close {
+    display: none !important;
+    position: absolute !important;
+    top: 15px !important;
+    right: 15px !important;
+    z-index: 1021 !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: var(--radius-full) !important;
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    transition: all var(--duration-normal) var(--ease-standard) !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+.sidebar-close:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: scale(1.1) !important;
+    color: white !important;
+}
+
+/* Скроллбар для сайдбара */
+.sidebar-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.sidebar-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Основной контент */
+.main-content {
+    margin-left: 240px !important; /* Обновили под новую ширину сайд-бара */
+    margin-top: 0 !important; /* Убираем отступ для header */
+    padding: 0 !important; /* Убираем padding */
+    min-height: 100vh !important;
+    transition: margin-left var(--duration-normal) var(--ease-standard) !important;
+    background: var(--hr-bg) !important;
+}
+
+/* Фиксированный header блок - только для основного header с заголовком HR Helper */
+.main-content > .container-fluid > .sticky-top.d-flex.justify-content-between:first-child {
+    position: sticky !important;
+    top: 0 !important;
+    left: 240px !important; /* Отступ от сайд-бара */
+    right: 0 !important;
+    z-index: 1030 !important;
+    background: #ffffff !important; /* Белый фон в светлой теме */
+    padding: 15px 20px !important;
+    margin: 0 !important;
+    border-bottom: 1px solid #e9ecef !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+    transition: left var(--duration-normal) var(--ease-standard) !important;
+}
+
+/* Темная тема для заголовка */
+[data-theme="dark"] .main-content > .container-fluid > .sticky-top.d-flex.justify-content-between:first-child {
+    background: #0d1117 !important; /* Темный фон в темной теме */
+    border-bottom: 1px solid #21262d !important;
+}
+
+/* Дополнительные стили для гарантии непрозрачности фона */
+.main-content .sticky-top {
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+[data-theme="dark"] .main-content .sticky-top {
+    background: #0d1117 !important;
+}
+
+/* Когда сайдбар скрыт, header занимает всю ширину */
+.main-content.sidebar-hidden > .container-fluid > .sticky-top.d-flex.justify-content-between:first-child {
+    left: 0 !important;
+}
+
+/* Content wrapper - убираем margin-top так как header теперь sticky-top */
+.main-content .content-wrapper {
+    padding: 0 !important; /* Убираем padding */
+}
+
+/* Специальные стили для страниц без основного header (например, страница чата) */
+.main-content .container-fluid:not(:has(.d-flex.justify-content-between:first-child)) {
+    padding-top: 20px !important;
+}
+
+/* Альтернативный способ для браузеров без поддержки :has() */
+.main-content .container-fluid .row:first-child {
+    margin-top: 20px !important;
+}
+
+/* Убираем отступы из container-fluid */
+.main-content .container-fluid {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* =============================================================================
+   СТИЛИ ДЛЯ СТРАНИЦЫ ЧАТА - VACANCY SELECTOR
+   ============================================================================= */
+
+.vacancy-selector {
+    background: linear-gradient(135deg, var(--color-success) 0%, var(--color-info) 100%);
+    border-radius: 15px;
+    padding: 12px;
+    margin-bottom: 30px;
+    margin-top: 0 !important; /* Убираем отступ сверху */
+    transition: all var(--duration-normal) var(--ease-standard);
+}
+
+/* Стили для row внутри vacancy-selector */
+.vacancy-selector .row.align-items-center {
+    margin-top: 0 !important;
+}
+
+/* Темная тема - малиновые цвета + темная луна */
+[data-theme="dark"] .vacancy-selector {
+    background: linear-gradient(135deg, var(--color-pink-400) 0%, var(--color-luna-500) 100%);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.vacancy-selector h3 {
+    color: white;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.vacancy-selector .form-select {
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    color: var(--color-text);
+    transition: all var(--duration-normal) var(--ease-standard);
+    backdrop-filter: blur(10px);
+}
+
+.vacancy-selector .form-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.25), 0 4px 15px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.98);
+}
+
+/* Темная тема для селектора вакансий */
+[data-theme="dark"] .vacancy-selector .form-select {
+    background: rgba(0, 0, 0, 0.95);
+    color: var(--color-text);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+[data-theme="dark"] .vacancy-selector .form-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.25), 0 4px 15px rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.98);
+}
+
+/* Основной контент когда сайдбар скрыт */
+.main-content.sidebar-hidden {
+    margin-left: 0 !important;
+}
+
+/* Затемнение фона на мобильных */
+.sidebar-overlay {
+    display: none !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    z-index: 1019 !important;
+    opacity: 0 !important;
+    transition: opacity var(--duration-normal) var(--ease-standard) !important;
+}
+
+.sidebar-overlay.show {
+    display: block !important;
+    opacity: 1 !important;
+}
+
+/* === АДАПТИВНОСТЬ === */
+
+/* Планшеты и мобильные устройства */
+@media (max-width: 992px) {
+    /* Сайдбар по умолчанию скрыт */
+    .sidebar-container {
+        width: 100% !important;
+        transform: translateX(-100%) !important;
+        z-index: 1025 !important;
+    }
+    
+    /* Показываем сайдбар на всю ширину */
+    .sidebar-container.show {
+        transform: translateX(0) !important;
+    }
+    
+    /* Основной контент без отступа */
+    .main-content {
+        margin-left: 0 !important;
+    }
+    
+    /* Header на мобильных занимает всю ширину */
+    .main-content > .container-fluid > .sticky-top.d-flex.justify-content-between:first-child {
+        left: 0 !important;
+    }
+    
+    /* Показываем кнопку закрытия в сайдбаре */
+    .sidebar-close {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    /* Header без дополнительного отступа */
+    .navbar,
+    [class*="navbar"] {
+        padding-left: 0 !important;
+    }
+}
+
+/* Мобильные устройства */
+@media (max-width: 576px) {
+    .sidebar-toggle {
+        min-width: 36px !important;
+        height: 36px !important;
+        padding: var(--space-6) var(--space-8) !important;
+    }
+    
+    .sidebar-toggle i {
+        font-size: 14px !important;
+    }
+    
+    .navbar,
+    [class*="navbar"] {
+        padding-left: 0 !important;
+    }
+}
+
+/* Плавная прокрутка для основного контента */
+.main-content {
+    scroll-behavior: smooth !important;
+}
+
+/* Фиксация карточек чата */
+.chat-container {
+    height: calc(100vh - 120px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.chat-messages {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    max-height: none !important;
+}
+
+/* Сохраняем оригинальные стили для навигационных ссылок в сайдбаре */
+.sidebar-container .nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    border-radius: 8px !important;
+    margin: 2px 0 !important;
+    transition: all 0.3s ease !important;
+    padding: 10px 14px !important; /* Увеличили padding для больших кнопок */
+    text-decoration: none !important;
+    display: block !important;
+    background: none !important; /* Убираем фон кнопок */
+    border: none !important; /* Убираем границы кнопок */
+    box-shadow: none !important; /* Убираем тени кнопок */
+    font-weight: normal !important; /* Убираем жирный шрифт кнопок */
+    text-align: left !important; /* Выравниваем по левому краю */
+}
+
+.sidebar-container .nav-link:hover {
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    transform: translateX(5px) !important;
+    background: rgba(255, 255, 255, 0.1) !important; /* Переопределяем фон кнопок */
+}
+
+.sidebar-container .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    background: rgba(255, 255, 255, 0.2) !important; /* Переопределяем фон кнопок */
+}
+
+/* Специальные стили для элементов с выпадающими меню */
+.sidebar-container .nav-link[data-bs-toggle="collapse"],
+.sidebar-container .menu-toggle {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    font-weight: normal !important;
+    text-align: left !important;
+    padding: 10px 14px !important; /* Увеличили padding для больших кнопок */
+    color: rgba(255, 255, 255, 0.8) !important;
+    border-radius: 8px !important;
+    margin: 2px 0 !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    min-height: auto !important;
+    line-height: 1.2 !important; /* Уменьшили высоту строки */
+}
+
+/* Дополнительное переопределение для Bootstrap */
+.sidebar-container .nav-link[data-bs-toggle="collapse"].btn {
+    padding: 6px 10px !important;
+    min-height: auto !important;
+    height: auto !important;
+}
+
+.sidebar-container .nav-link[data-bs-toggle="collapse"]:hover,
+.sidebar-container .menu-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    transform: translateX(5px) !important;
+    color: white !important;
+}
+
+.sidebar-container .nav-link[data-bs-toggle="collapse"] .fas.fa-chevron-down {
+    font-size: 12px !important;
+    transition: transform 0.3s ease !important;
+}
+
+.sidebar-container .nav-link[data-bs-toggle="collapse"][aria-expanded="true"] .fas.fa-chevron-down {
+    transform: rotate(180deg) !important;
+}
+
+/* === ТЕМНАЯ ТЕМА === */
+[data-theme="dark"] .sidebar-toggle {
+    background: none !important;
+    color: var(--color-luna-400) !important;
+}
+
+[data-theme="dark"] .sidebar-toggle:hover {
+    background: none !important;
+    color: var(--color-pink-500) !important;
+}
+
+[data-theme="dark"] .sidebar-close {
+    background: rgba(0, 0, 0, 0.3) !important;
+    color: var(--color-luna-400) !important;
+}
+
+[data-theme="dark"] .sidebar-close:hover {
+    background: rgba(0, 0, 0, 0.5) !important;
 }
 
 /* =============================================================================
