@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # Основное Django приложение
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./sessions:/var/app/sessions
+      - ./db.sqlite3:/app/db.sqlite3
+    environment:
+      - TG_API_ID=${TG_API_ID}
+      - TG_API_HASH=${TG_API_HASH}
+      - TG_SESSION_PATH=/var/app/sessions/telegram_session
+    depends_on:
+      - redis
+    command: python manage.py runserver 0.0.0.0:8000
+
+  # Фоновый сервис Telethon
+  run_telethon:
+    build: .
+    volumes:
+      - ./sessions:/var/app/sessions
+      - ./db.sqlite3:/app/db.sqlite3
+    environment:
+      - TG_API_ID=${TG_API_ID}
+      - TG_API_HASH=${TG_API_HASH}
+      - TG_SESSION_PATH=/var/app/sessions/telegram_session
+    depends_on:
+      - redis
+    command: python manage.py run_telethon
+    restart: always
+
+  # Обработчик очереди событий
+  process_queue:
+    build: .
+    volumes:
+      - ./sessions:/var/app/sessions
+      - ./db.sqlite3:/app/db.sqlite3
+    environment:
+      - TG_API_ID=${TG_API_ID}
+      - TG_API_HASH=${TG_API_HASH}
+      - TG_SESSION_PATH=/var/app/sessions/telegram_session
+    depends_on:
+      - redis
+    command: python manage.py process_telegram_queue
+    restart: always
+
+  # Redis для очереди событий
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: always
+
+volumes:
+  redis_data:

@@ -1,8 +1,4 @@
-{% extends "telegram/base.html" %}
 
-{% block page_title %}Telegram - Авторизация{% endblock %}
-
-{% block telegram_content %}
 <div class="telegram-auth-form">
     <h2 class="text-center mb-4">
         <i class="fab fa-telegram-plane me-2"></i>
@@ -81,6 +77,25 @@
 
 {% block telegram_js %}
 <script>
+    // Initialize Telegram app only on login page
+    async function initTelegram() {
+        try {
+            const status = await telegramAPI.get('/telegram/api/session-status/');
+            if (status.active) {
+                // Если уже авторизован, перенаправляем на главную
+                window.location.href = "{% url 'telegram:index' %}?view=main";
+            }
+        } catch (error) {
+            console.error('Ошибка инициализации Telegram:', error);
+            // При ошибке остаемся на странице логина
+        }
+    }
+    
+    // Запускаем инициализацию при загрузке страницы
+    document.addEventListener('DOMContentLoaded', initTelegram);
+</script>
+
+<script>
     function showPhone() { 
         document.getElementById('phone-form').style.display = 'block';
         document.getElementById('qr-form').style.display = 'none';
@@ -101,10 +116,20 @@
         
         try {
             showTelegramStatus('Отправка кода...', 'info');
-            await telegramAPI.post('{% url "telegram:auth_phone" %}', { phone });
+            await telegramAPI.post('/telegram/api/auth-phone/', { phone });
             showTelegramStatus('Код отправлен! Проверьте SMS.', 'success');
             document.getElementById('verify').style.display = 'block';
         } catch (error) {
+            if (error.response?.status === 401) {
+                const errorData = error.response?.data;
+                if (errorData?.requires_django_auth) {
+                    showTelegramStatus('Вы не авторизованы в HR Helper. Пожалуйста, войдите в систему.', 'error');
+                } else {
+                    showTelegramStatus('Вы не авторизованы в системе. Пожалуйста, войдите в HR Helper.', 'error');
+                }
+            } else {
+                showTelegramStatus('Ошибка отправки кода: ' + (error.response?.data?.error || error.message), 'error');
+            }
             console.error('Error sending code:', error);
         }
     }
@@ -121,7 +146,7 @@
 
         try {
             showTelegramStatus('Проверка кода...', 'info');
-            const res = await telegramAPI.post('{% url "telegram:auth_verify" %}', { 
+            const res = await telegramAPI.post('/telegram/api/auth-verify/', { 
                 phone, 
                 code, 
                 password: password || null 
@@ -132,9 +157,18 @@
                 setTimeout(() => location.reload(), 2000);
             }
         } catch (error) {
-            if (error.response?.data?.needs_2fa) {
+            if (error.response?.status === 401) {
+                const errorData = error.response?.data;
+                if (errorData?.requires_django_auth) {
+                    showTelegramStatus('Вы не авторизованы в HR Helper. Пожалуйста, войдите в систему.', 'error');
+                } else {
+                    showTelegramStatus('Вы не авторизованы в системе. Пожалуйста, войдите в HR Helper.', 'error');
+                }
+            } else if (error.response?.data?.needs_2fa) {
                 document.getElementById('password-section').style.display = 'block';
                 showTelegramStatus('Требуется пароль 2FA. Введите пароль и попробуйте снова.', 'info');
+            } else {
+                showTelegramStatus('Ошибка проверки кода: ' + (error.response?.data?.error || error.message), 'error');
             }
             console.error('Error verifying code:', error);
         }
@@ -145,7 +179,7 @@
     async function getQR() {
         try {
             showTelegramStatus('Генерация QR-кода...', 'info');
-            const res = await telegramAPI.get('{% url "telegram:qr_start" %}');
+            const res = await telegramAPI.get('/telegram/api/qr-start/');
             
             if (res.url) {
                 document.getElementById('qr-code').innerHTML = `
@@ -180,7 +214,7 @@
 
     async function pollQR() {
         try {
-            const res = await telegramAPI.get('{% url "telegram:qr_status" %}');
+            const res = await telegramAPI.get('/telegram/api/qr-status/');
             if (res.authorized) {
                 clearInterval(qrPollInterval);
                 showTelegramStatus('QR авторизация успешна! Перезагружаем...', 'success');
@@ -194,7 +228,7 @@
     async function checkSessionStatus() {
         try {
             showTelegramStatus('Проверка статуса авторизации...', 'info');
-            const status = await telegramAPI.get('{% url "telegram:session_status" %}');
+            const status = await telegramAPI.get('/telegram/api/session-status/');
             
             if (status.active) {
                 showTelegramStatus('Вы уже авторизованы в Telegram! Переходим к чатам...', 'success');

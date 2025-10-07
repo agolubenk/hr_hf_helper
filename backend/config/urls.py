@@ -36,7 +36,6 @@ urlpatterns = [
     path('finance/', include('apps.finance.urls')),
     path('clickup/', include('apps.clickup_int.urls')),
     path('notion/', include('apps.notion_int.urls')),
-    path('telegram/', include('apps.telegram.urls')),
     # path('telegram-api/', django_telethon_urls()),  # Отключено
     
     # Test page

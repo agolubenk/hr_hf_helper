@@ -101,7 +101,6 @@ INSTALLED_APPS = [
     'apps.google_oauth',
     'apps.clickup_int',
     'apps.notion_int',
-    'apps.telegram',
     
     # Django Telethon (отключено из-за конфликтов)
     # 'django_telethon',
@@ -371,10 +370,10 @@ CORS_ALLOW_ALL_ORIGINS = DEBUG  # Только для разработки
 # TELEGRAM НАСТРОЙКИ
 # =============================================================================
 
-# Telegram API настройки
-# Получите эти значения на https://my.telegram.org/auth
-TELEGRAM_API_ID = 11383291  # Замените на ваш API ID
-TELEGRAM_API_HASH = 'cb4a2adc6b83e9f0cca5b659f407a01c'  # Замените на ваш API Hash
+# Telegram API настройки (получить на my.telegram.org)
+TG_API_ID = os.environ.get('TG_API_ID', '11383291')
+TG_API_HASH = os.environ.get('TG_API_HASH', 'cb4a2adc6b83e9f0cca5b659f407a01c')
+TG_SESSION_PATH = os.environ.get('TG_SESSION_PATH', str(BASE_DIR / 'sessions' / 'telegram_session'))
 
 # Настройки для Telegram клиента
 TELEGRAM_CLIENT_SETTINGS = {

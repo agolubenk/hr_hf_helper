@@ -4,6 +4,7 @@
 {% block title %}Telegram Client - HR Helper{% endblock %}
 
 {% block extra_css %}
+<meta name="csrf-token" content="{{ csrf_token }}">
 <!-- Telegram-specific styles -->
 <style>
     .telegram-container {
@@ -140,10 +141,11 @@
         
         async post(url, data) {
             try {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
                 const response = await axios.post(url, data, {
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+                        'X-CSRFToken': csrfToken
                     }
                 });
                 return response.data;
@@ -179,41 +181,8 @@
         }
     }
 
-    // Initialize Telegram app
-    async function initTelegram() {
-        // Проверяем, находимся ли мы уже на странице логина
-        const currentUrl = window.location.href;
-        const isLoginPage = currentUrl.includes('view=login') || currentUrl.endsWith('/telegram/');
-        
-        // Если мы на странице логина, не проверяем статус сессии
-        if (isLoginPage) {
-            return;
-        }
-        
-        try {
-            const status = await telegramAPI.get('{% url "telegram:session_status" %}');
-            if (status.active) {
-                // Если авторизован, но не на главной странице, перенаправляем
-                if (!currentUrl.includes('view=main')) {
-                    window.location.href = "{% url 'telegram:index' %}?view=main";
-                }
-            } else {
-                // Если не авторизован, перенаправляем на логин
-                if (!currentUrl.includes('view=login')) {
-                    window.location.href = "{% url 'telegram:index' %}?view=login";
-                }
-            }
-        } catch (error) {
-            console.error('Ошибка инициализации Telegram:', error);
-            // Если ошибка и мы не на странице логина, перенаправляем на логин
-            if (!isLoginPage) {
-                window.location.href = "{% url 'telegram:index' %}?view=login";
-            }
-        }
-    }
-
-    // Initialize when DOM is ready
-    document.addEventListener('DOMContentLoaded', initTelegram);
+    // Initialize Telegram app - moved to login.html only
+    // This function is no longer called automatically from base.html
 </script>
 {% endblock %}
 

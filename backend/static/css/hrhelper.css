@@ -3146,7 +3146,7 @@ a:hover {
     border: none;
     border-radius: 10px;
     font-size: 16px;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.55);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     color: var(--color-text);
     transition: all var(--duration-normal) var(--ease-standard);
@@ -3161,7 +3161,7 @@ a:hover {
 
 /* Темная тема для селектора вакансий */
 [data-theme="dark"] .vacancy-selector .form-select {
-    background: rgba(0, 0, 0, 0.15);
+    background: rgba(0, 0, 0, 0.55);
     color: var(--color-text);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);

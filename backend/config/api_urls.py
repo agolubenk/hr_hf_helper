@@ -22,9 +22,9 @@ from apps.notion_int.views_api import (
     NotionSettingsViewSet, NotionPageViewSet, NotionSyncLogViewSet,
     NotionBulkImportViewSet
 )
-from apps.telegram.views_api import (
-    TelegramUserViewSet, AuthAttemptViewSet, TelegramWebhookViewSet
-)
+# from apps.telegram.views_api import (
+#     TelegramUserViewSet, AuthAttemptViewSet, TelegramWebhookViewSet
+# )
 from apps.clickup_int.views_api import (
     ClickUpSettingsViewSet, ClickUpTaskViewSet, ClickUpSyncLogViewSet,
     ClickUpBulkImportViewSet
@@ -81,10 +81,10 @@ router.register(r'notion/sync-logs', NotionSyncLogViewSet, basename='notion-sync
 router.register(r'notion/bulk-imports', NotionBulkImportViewSet, basename='notion-bulk-import')
 # router.register(r'notion/api', NotionApiViewSet, basename='notion-api')  # УДАЛЕНО - NotionApiViewSet не существует
 
-# Telegram
-router.register(r'telegram/users', TelegramUserViewSet, basename='telegram-user')
-router.register(r'telegram/auth-attempts', AuthAttemptViewSet, basename='telegram-auth-attempt')
-router.register(r'telegram/webhook', TelegramWebhookViewSet, basename='telegram-webhook')
+# Telegram - временно отключено
+# router.register(r'telegram/users', TelegramUserViewSet, basename='telegram-user')
+# router.register(r'telegram/auth-attempts', AuthAttemptViewSet, basename='telegram-auth-attempt')
+# router.register(r'telegram/webhook', TelegramWebhookViewSet, basename='telegram-webhook')
 
 # ClickUp Integration
 router.register(r'clickup/settings', ClickUpSettingsViewSet, basename='clickup-settings')
