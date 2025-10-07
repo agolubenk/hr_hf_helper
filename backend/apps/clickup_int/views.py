@@ -795,6 +795,11 @@ def start_bulk_import(request):
         print("ℹ️ [START] Вакансия не выбрана, импорт без привязки к вакансии")
         logger.info("Вакансия не выбрана, импорт без привязки к вакансии")
     
+    # Получаем опцию передачи комментариев из POST данных
+    include_comments = request.POST.get('include_comments') == 'on'
+    print(f"💬 [START] Передача комментариев: {include_comments}")
+    logger.info(f"💬 [START] Передача комментариев: {include_comments}")
+    
     if not CELERY_AVAILABLE:
         print("❌ [START] Celery не доступен")
         print("❌ [START] Celery не доступен", flush=True)
@@ -824,7 +829,8 @@ def start_bulk_import(request):
         bulk_import = ClickUpBulkImport.objects.create(
             user=user,
             status='running',
-            huntflow_vacancy_id=huntflow_vacancy_id
+            huntflow_vacancy_id=huntflow_vacancy_id,
+            include_comments=include_comments
         )
         print(f"📝 [START] Создана запись массового импорта с ID {bulk_import.id}")
         print(f"📝 [START] Создана запись массового импорта с ID {bulk_import.id}", flush=True)

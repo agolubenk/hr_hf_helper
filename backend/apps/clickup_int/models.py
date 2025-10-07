@@ -454,6 +454,13 @@ class ClickUpBulkImport(models.Model):
         help_text='ID вакансии в Huntflow, к которой будут привязаны импортированные кандидаты'
     )
     
+    # Опция передачи комментариев
+    include_comments = models.BooleanField(
+        default=True,
+        verbose_name='Передавать комментарии в Huntflow',
+        help_text='Если отмечено, комментарии из ClickUp будут переданы в Huntflow'
+    )
+    
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создано')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Обновлено')
     completed_at = models.DateTimeField(null=True, blank=True, verbose_name='Завершено')
