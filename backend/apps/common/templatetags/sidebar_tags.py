@@ -44,6 +44,11 @@ SIDEBAR_MENU = {
                         'url': 'google_oauth:invite_create'
                     }
                 }
+            },
+            'scorecard_settings': {
+                'title': 'Настройки Scorecard',
+                'icon': 'fas fa-folder-tree',
+                'url': 'google_oauth:scorecard_path_settings'
             }
         }
     },

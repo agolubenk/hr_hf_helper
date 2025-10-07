@@ -1,12 +1,32 @@
 Watching for file changes with StatReloader
-[07/Oct/2025 23:10:50] "GET / HTTP/1.1" 302 0
-/Users/agolubenko/hrhelper/fullstack/backend/config/celery.py changed, reloading.
+[07/Oct/2025 23:21:06] "GET / HTTP/1.1" 302 0
+[07/Oct/2025 23:21:09] "GET / HTTP/1.1" 302 0
+[07/Oct/2025 23:21:12] "GET /google-oauth/chat/ HTTP/1.1" 200 1003563
+[07/Oct/2025 23:21:19] "GET /finance/ HTTP/1.1" 200 97562
+[07/Oct/2025 23:21:19] "GET /static/css/finance.css HTTP/1.1" 404 1905
+/Users/agolubenko/hrhelper/fullstack/backend/apps/common/templatetags/sidebar_tags.py changed, reloading.
 Performing system checks...
 
 System check identified no issues (0 silenced).
-October 07, 2025 - 23:10:45
+October 07, 2025 - 23:21:02
 Django version 4.2.16, using settings 'config.settings'
 Starting development server at http://127.0.0.1:8000/
 Quit the server with CONTROL-C.
 
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 44 событий
+🔍 DEBUG CHAT: Получено 44 событий из API
+🔍 DEBUG CHAT: Передаем 44 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Dashko Anton в 2025-10-08T11:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Final Interview | Zaytsev Andrey в 2025-10-08T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: Обед в 2025-10-08T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
 Watching for file changes with StatReloader
