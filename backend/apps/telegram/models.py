@@ -5,8 +5,52 @@ from django.utils import timezone
 User = get_user_model()
 
 
+class TelegramSession(models.Model):
+    """Модель для хранения сессий Telegram (основная модель для авторизации)"""
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='telegram_session',
+        verbose_name='Пользователь'
+    )
+    name = models.CharField(
+        max_length=100, 
+        unique=True,
+        verbose_name='Имя сессии'
+    )
+    session_data = models.TextField(
+        blank=True,
+        verbose_name='Данные сессии'
+    )
+    is_authorized = models.BooleanField(
+        default=False,
+        verbose_name='Авторизован'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Создана'
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name='Обновлена'
+    )
+
+    class Meta:
+        verbose_name = 'Telegram сессия'
+        verbose_name_plural = 'Telegram сессии'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.name}"
+
+    def save(self, *args, **kwargs):
+        if not self.name:
+            self.name = f'tg_{self.user.id}'
+        super().save(*args, **kwargs)
+
+
 class TelegramUser(models.Model):
-    """Модель для хранения пользователей Telegram"""
+    """Модель для хранения информации о пользователе Telegram (дополнительная)"""
     user = models.OneToOneField(
         User, 
         on_delete=models.CASCADE, 
@@ -43,15 +87,6 @@ class TelegramUser(models.Model):
         blank=True,
         verbose_name='Телефон'
     )
-    session_name = models.CharField(
-        max_length=100, 
-        unique=True,
-        verbose_name='Имя сессии'
-    )
-    is_authorized = models.BooleanField(
-        default=False,
-        verbose_name='Авторизован'
-    )
     auth_date = models.DateTimeField(
         null=True, 
         blank=True,
@@ -65,21 +100,6 @@ class TelegramUser(models.Model):
         auto_now=True,
         verbose_name='Обновлен'
     )
-    
-    # Поля для состояния клиента
-    client_initialized = models.BooleanField(
-        default=False,
-        verbose_name='Клиент инициализирован'
-    )
-    qr_login_active = models.BooleanField(
-        default=False,
-        verbose_name='QR логин активен'
-    )
-    last_activity = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name='Последняя активность'
-    )
 
     class Meta:
         verbose_name = 'Telegram пользователь'
@@ -90,11 +110,6 @@ class TelegramUser(models.Model):
         if self.telegram_id:
             return f"{self.user.username} - {self.telegram_id}"
         return f"{self.user.username} - не авторизован"
-
-    def save(self, *args, **kwargs):
-        if not self.session_name:
-            self.session_name = f"user_{self.user.id}_{timezone.now().timestamp()}"
-        super().save(*args, **kwargs)
 
 
 class AuthAttempt(models.Model):

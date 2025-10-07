@@ -3,23 +3,57 @@ from django.utils.html import format_html
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
-from .models import TelegramUser, AuthAttempt
+from .models import TelegramSession, TelegramUser, AuthAttempt
+
+
+@admin.register(TelegramSession)
+class TelegramSessionAdmin(admin.ModelAdmin):
+    list_display = [
+        'user', 'name', 'is_authorized', 'created_at', 'updated_at'
+    ]
+    list_filter = ['is_authorized', 'created_at', 'updated_at']
+    search_fields = ['user__username', 'name']
+    readonly_fields = ['created_at', 'updated_at', 'session_data']
+    raw_id_fields = ['user']
+    
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('user', 'name', 'is_authorized')
+        }),
+        ('Данные сессии', {
+            'fields': ('session_data',),
+            'classes': ('collapse',)
+        }),
+        ('Системная информация', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def has_delete_permission(self, request, obj=None):
+        # Разрешаем удаление только суперпользователям
+        if request.user.is_superuser:
+            return True
+        # Для обычных пользователей запрещаем удаление авторизованных сессий
+        if obj and obj.is_authorized:
+            return False
+        return super().has_delete_permission(request, obj)
 
 
 @admin.register(TelegramUser)
 class TelegramUserAdmin(admin.ModelAdmin):
     list_display = [
         'user', 'telegram_id', 'username', 'first_name', 
-        'is_authorized', 'auth_date', 'session_name'
+        'auth_date', 'created_at'
     ]
-    list_filter = ['is_authorized', 'auth_date', 'created_at']
-    search_fields = ['user__username', 'telegram_id', 'username', 'first_name', 'session_name']
+    list_filter = ['auth_date', 'created_at']
+    search_fields = ['user__username', 'telegram_id', 'username', 'first_name']
     readonly_fields = ['created_at', 'updated_at', 'telegram_id', 'auth_date']
     raw_id_fields = ['user']
     
     fieldsets = (
         ('Основная информация', {
-            'fields': ('user', 'session_name', 'is_authorized')
+            'fields': ('user',)
         }),
         ('Данные Telegram', {
             'fields': (
@@ -37,9 +71,6 @@ class TelegramUserAdmin(admin.ModelAdmin):
         # Разрешаем удаление только суперпользователям
         if request.user.is_superuser:
             return True
-        # Для обычных пользователей запрещаем удаление авторизованных TelegramUser
-        if obj and obj.is_authorized:
-            return False
         return super().has_delete_permission(request, obj)
 
 

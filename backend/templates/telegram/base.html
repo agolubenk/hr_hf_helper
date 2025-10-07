@@ -1,0 +1,222 @@
+{% extends "common/base.html" %}
+{% load static %}
+
+{% block title %}Telegram Client - HR Helper{% endblock %}
+
+{% block extra_css %}
+<!-- Telegram-specific styles -->
+<style>
+    .telegram-container {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .telegram-auth-form {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        background: var(--hr-card-bg);
+        border-radius: 8px;
+        border: 1px solid var(--hr-border);
+    }
+    
+    .telegram-chat-container {
+        display: flex;
+        height: 600px;
+        gap: 20px;
+    }
+    
+    .telegram-chat-list {
+        width: 30%;
+        background: var(--hr-card-bg);
+        border-radius: 8px;
+        border: 1px solid var(--hr-border);
+        overflow-y: auto;
+    }
+    
+    .telegram-messages {
+        width: 70%;
+        background: var(--hr-card-bg);
+        border-radius: 8px;
+        border: 1px solid var(--hr-border);
+        overflow-y: auto;
+        padding: 15px;
+    }
+    
+    .telegram-chat-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid var(--hr-border);
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    
+    .telegram-chat-item:hover {
+        background: var(--hr-hover-bg);
+    }
+    
+    .telegram-chat-item.active {
+        background: var(--hr-primary);
+        color: white;
+    }
+    
+    .telegram-message {
+        margin-bottom: 15px;
+        padding: 10px;
+        border-radius: 8px;
+        background: var(--hr-bg);
+        border: 1px solid var(--hr-border);
+    }
+    
+    .telegram-message.outgoing {
+        background: var(--hr-primary);
+        color: white;
+        margin-left: 20%;
+    }
+    
+    .telegram-message-time {
+        font-size: 0.8em;
+        opacity: 0.7;
+        margin-bottom: 5px;
+    }
+    
+    .telegram-qr-code {
+        text-align: center;
+        margin: 20px 0;
+    }
+    
+    .telegram-qr-code img {
+        border: 1px solid var(--hr-border);
+        border-radius: 8px;
+        max-width: 200px;
+    }
+    
+    .telegram-status {
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 4px;
+    }
+    
+    .telegram-status.success {
+        background: var(--hr-success-bg);
+        color: var(--hr-success-text);
+        border: 1px solid var(--hr-success-border);
+    }
+    
+    .telegram-status.error {
+        background: var(--hr-danger-bg);
+        color: var(--hr-danger-text);
+        border: 1px solid var(--hr-danger-border);
+    }
+    
+    .telegram-status.info {
+        background: var(--hr-info-bg);
+        color: var(--hr-info-text);
+        border: 1px solid var(--hr-info-border);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="telegram-container">
+    {% block telegram_content %}{% endblock %}
+</div>
+
+<!-- Telegram-specific JavaScript -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    // Telegram utility functions
+    const telegramAPI = {
+        async get(url) {
+            try {
+                const response = await axios.get(url);
+                return response.data;
+            } catch (error) {
+                console.error('Telegram API Error:', error);
+                showTelegramStatus('Ошибка API: ' + (error.response?.data?.error || error.message), 'error');
+                throw error;
+            }
+        },
+        
+        async post(url, data) {
+            try {
+                const response = await axios.post(url, data, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+                    }
+                });
+                return response.data;
+            } catch (error) {
+                console.error('Telegram API Error:', error);
+                showTelegramStatus('Ошибка API: ' + (error.response?.data?.error || error.message), 'error');
+                throw error;
+            }
+        }
+    };
+
+    function showTelegramStatus(message, type = 'info') {
+        // Remove existing status
+        const existingStatus = document.querySelector('.telegram-status');
+        if (existingStatus) {
+            existingStatus.remove();
+        }
+        
+        const statusDiv = document.createElement('div');
+        statusDiv.className = `telegram-status ${type}`;
+        statusDiv.textContent = message;
+        
+        const container = document.querySelector('.telegram-container');
+        if (container) {
+            container.insertBefore(statusDiv, container.firstChild);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (statusDiv.parentNode) {
+                    statusDiv.remove();
+                }
+            }, 5000);
+        }
+    }
+
+    // Initialize Telegram app
+    async function initTelegram() {
+        // Проверяем, находимся ли мы уже на странице логина
+        const currentUrl = window.location.href;
+        const isLoginPage = currentUrl.includes('view=login') || currentUrl.endsWith('/telegram/');
+        
+        // Если мы на странице логина, не проверяем статус сессии
+        if (isLoginPage) {
+            return;
+        }
+        
+        try {
+            const status = await telegramAPI.get('{% url "telegram:session_status" %}');
+            if (status.active) {
+                // Если авторизован, но не на главной странице, перенаправляем
+                if (!currentUrl.includes('view=main')) {
+                    window.location.href = "{% url 'telegram:index' %}?view=main";
+                }
+            } else {
+                // Если не авторизован, перенаправляем на логин
+                if (!currentUrl.includes('view=login')) {
+                    window.location.href = "{% url 'telegram:index' %}?view=login";
+                }
+            }
+        } catch (error) {
+            console.error('Ошибка инициализации Telegram:', error);
+            // Если ошибка и мы не на странице логина, перенаправляем на логин
+            if (!isLoginPage) {
+                window.location.href = "{% url 'telegram:index' %}?view=login";
+            }
+        }
+    }
+
+    // Initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', initTelegram);
+</script>
+{% endblock %}
+
+{% block extra_js %}
+{% block telegram_js %}{% endblock %}
+{% endblock %}

@@ -366,3 +366,44 @@ SOCIALACCOUNT_ADAPTER = 'apps.accounts.logic.auth_adapters.CustomSocialAccountAd
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # Только для разработки
+
+# =============================================================================
+# TELEGRAM НАСТРОЙКИ
+# =============================================================================
+
+# Telegram API настройки
+# Получите эти значения на https://my.telegram.org/auth
+TELEGRAM_API_ID = 11383291  # Замените на ваш API ID
+TELEGRAM_API_HASH = 'cb4a2adc6b83e9f0cca5b659f407a01c'  # Замените на ваш API Hash
+
+# Настройки для Telegram клиента
+TELEGRAM_CLIENT_SETTINGS = {
+    'connection_retries': 3,
+    'request_retries': 3,
+    'retry_delay': 1,
+    'timeout': 30,
+    'auto_reconnect': True,
+}
+
+# Настройки для сессий Telegram
+TELEGRAM_SESSION_SETTINGS = {
+    'auto_save': True,
+    'save_interval': 300,  # Сохранять каждые 5 минут
+    'max_session_age': 86400 * 30,  # 30 дней
+}
+
+# Настройки для чатов и сообщений
+TELEGRAM_MESSAGE_SETTINGS = {
+    'default_message_limit': 50,
+    'max_message_limit': 100,
+    'auto_refresh_interval': 10,  # секунды
+    'message_history_days': 30,
+}
+
+# Настройки безопасности
+TELEGRAM_SECURITY_SETTINGS = {
+    'require_2fa_for_sensitive_actions': True,
+    'max_auth_attempts': 5,
+    'auth_timeout': 300,  # 5 минут
+    'session_timeout': 3600,  # 1 час
+}
