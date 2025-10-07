@@ -92,13 +92,17 @@
             
                     {% if user.is_authenticated %}
                             <div class="btn-group me-3" role="group">
-                                <a href="{% url 'accounts:profile' %}" class="btn btn-outline-primary">
+                                <a href="{% url 'accounts:profile' %}" class="btn btn-outline-primary" id="user-profile-btn">
                                     <i class="fas fa-user me-1"></i>
-                                    {{ user.email|default:user.username }}
+                                    <!-- Полный email для десктопа -->
+                                    <span class="d-none d-md-inline user-full-text">{{ user.email|default:user.username }}</span>
+                                    <!-- Только имя для мобильных -->
+                                    <span class="d-inline d-md-none user-short-text"></span>
                                 </a>
                                 <a href="{% url 'accounts:account_logout' %}" class="btn btn-outline-danger">
                                     <i class="fas fa-sign-out-alt me-1"></i>
-                                    Выход
+                                    <!-- Текст "Выход" только для десктопа -->
+                                    <span class="d-none d-md-inline">Выход</span>
                                 </a>
                             </div>
                     {% else %}
@@ -171,6 +175,36 @@
         
         // Функциональность многоуровневого сайдбара
         document.addEventListener('DOMContentLoaded', function() {
+            // === АДАПТИВНОЕ ОТОБРАЖЕНИЕ ПОЛЬЗОВАТЕЛЯ ===
+            const userProfileBtn = document.getElementById('user-profile-btn');
+            const userFullText = document.querySelector('.user-full-text');
+            const userShortText = document.querySelector('.user-short-text');
+            
+            if (userProfileBtn && userFullText && userShortText) {
+                const fullEmail = userFullText.textContent.trim();
+                
+                // Извлекаем имя до первой точки или @
+                let shortName = fullEmail;
+                const dotIndex = fullEmail.indexOf('.');
+                const atIndex = fullEmail.indexOf('@');
+                
+                if (dotIndex > 0 && (atIndex === -1 || dotIndex < atIndex)) {
+                    shortName = fullEmail.substring(0, dotIndex);
+                } else if (atIndex > 0) {
+                    shortName = fullEmail.substring(0, atIndex);
+                }
+                
+                // Капитализируем первую букву
+                shortName = shortName.charAt(0).toUpperCase() + shortName.slice(1).toLowerCase();
+                
+                userShortText.textContent = shortName;
+                
+                console.log('👤 Адаптивное отображение пользователя:', {
+                    fullEmail,
+                    shortName
+                });
+            }
+            
             // Проверяем, находимся ли мы на странице "Главная" (чат-помощник)
             const isMainPage = window.location.pathname.includes('/google-oauth/chat/');
             

@@ -201,7 +201,7 @@
                 
                         <div class="card-body p-0">
                     <!-- Сообщения чата -->
-                    <div id="chat-messages" class="chat-messages" style="height: 500px; overflow-y: auto;">
+                    <div id="chat-messages" class="chat-messages" style="overflow-y: auto;">
                                 {% for message in messages %}
                             <div class="message mb-3 {% if message.message_type == 'user' %}user-message{% elif message.message_type == 'hrscreening' %}system-message hr-screening-message{% elif message.message_type == 'invite' %}system-message invite-message{% else %}system-message{% endif %}">
                                         <div class="d-flex {% if message.message_type == 'user' %}justify-content-end{% else %}justify-content-start{% endif %}">
@@ -1888,6 +1888,83 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                     form.style.display = 'none';
                 }
             }
+            
+            // === ДИНАМИЧЕСКАЯ ВЫСОТА ЧАТА ===
+            function calculateChatHeight() {
+                const chatMessages = document.getElementById('chat-messages');
+                if (!chatMessages) return;
+                
+                // Получаем высоту окна
+                const windowHeight = window.innerHeight;
+                
+                // Вычисляем высоту только тех элементов, которые влияют на вертикальное пространство
+                const stickyHeader = document.querySelector('.sticky-top');
+                const vacancySelector = document.querySelector('.vacancy-selector');
+                const chatCard = document.querySelector('.card');
+                const chatHeader = chatCard ? chatCard.querySelector('.card-header') : null;
+                const chatInput = chatCard ? chatCard.querySelector('.card-footer') : null;
+                
+                // Вычисляем общую высоту элементов
+                let usedHeight = 0;
+                
+                if (stickyHeader) {
+                    usedHeight += stickyHeader.offsetHeight;
+                }
+                
+                if (vacancySelector) {
+                    usedHeight += vacancySelector.offsetHeight + 20; // +20px для margin
+                }
+                
+                if (chatHeader) {
+                    usedHeight += chatHeader.offsetHeight;
+                }
+                
+                if (chatInput) {
+                    usedHeight += chatInput.offsetHeight;
+                }
+                
+                // Добавляем отступы и padding
+                usedHeight += 40; // Общие отступы
+                
+                // Вычисляем доступную высоту для чата
+                const availableHeight = windowHeight - usedHeight;
+                
+                // Устанавливаем минимальную и максимальную высоту
+                const minHeight = 300;
+                const maxHeight = windowHeight - 200;
+                const finalHeight = Math.max(minHeight, Math.min(maxHeight, availableHeight));
+                
+                // Применяем высоту только если она действительно изменилась
+                const currentHeight = parseInt(chatMessages.style.height) || 0;
+                if (Math.abs(currentHeight - finalHeight) > 5) { // Только если разница больше 5px
+                    chatMessages.style.height = finalHeight + 'px';
+                    
+                    console.log('📏 Динамическая высота чата:', {
+                        windowHeight,
+                        usedHeight,
+                        availableHeight,
+                        finalHeight,
+                        currentHeight
+                    });
+                }
+            }
+            
+            // Вызываем расчет при загрузке
+            calculateChatHeight();
+            
+            // Обработчик resize с дебаунсом для предотвращения частых вызовов
+            let resizeTimeout;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    const newHeight = window.innerHeight;
+                    // Пересчитываем только если изменилась высота окна
+                    if (Math.abs(newHeight - (window.lastHeight || 0)) > 10) {
+                        calculateChatHeight();
+                        window.lastHeight = newHeight;
+                    }
+                }, 100);
+            });
             </script>
             
             <!-- Подключение скрипта автоматических меток -->

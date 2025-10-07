@@ -3231,6 +3231,27 @@ a:hover {
         left: 0 !important;
     }
     
+    /* Адаптивные кнопки пользователя */
+    .btn-group .btn {
+        padding: 6px 12px !important;
+        font-size: 14px !important;
+    }
+    
+    /* Кнопка профиля - только иконка + имя */
+    .btn-group .btn-outline-primary {
+        min-width: auto !important;
+    }
+    
+    /* Кнопка выхода - только иконка */
+    .btn-group .btn-outline-danger {
+        min-width: auto !important;
+        padding: 6px 8px !important;
+    }
+    
+    .btn-group .btn-outline-danger .fas {
+        margin-right: 0 !important;
+    }
+    
     /* Показываем кнопку закрытия в сайдбаре */
     .sidebar-close {
         display: flex !important;
@@ -3268,11 +3289,28 @@ a:hover {
     scroll-behavior: smooth !important;
 }
 
-/* Фиксация карточек чата */
+/* Динамическая высота чата */
 .chat-container {
-    height: calc(100vh - 120px) !important;
+    height: calc(100vh - 200px) !important; /* Базовое вычитание */
+    min-height: 400px !important; /* Минимальная высота */
+    max-height: calc(100vh - 150px) !important; /* Максимальная высота */
     display: flex !important;
     flex-direction: column !important;
+}
+
+/* Адаптивная высота для разных экранов */
+@media (max-height: 800px) {
+    .chat-container {
+        height: calc(100vh - 180px) !important;
+        min-height: 300px !important;
+    }
+}
+
+@media (max-height: 600px) {
+    .chat-container {
+        height: calc(100vh - 160px) !important;
+        min-height: 250px !important;
+    }
 }
 
 .chat-messages {
