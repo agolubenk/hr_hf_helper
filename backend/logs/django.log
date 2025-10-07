@@ -1,18 +1,12 @@
 Watching for file changes with StatReloader
-[07/Oct/2025 21:51:46] "GET / HTTP/1.1" 302 0
-Ошибка обновления токена: 404 - {"errors":[{"type":"not_found","title":"error.robot_token.not_found"}]}
-Не удалось получить валидный токен для пользователя andrei.golubenko
-Ошибка запроса: Не настроена аутентификация для текущей системы
-[07/Oct/2025 21:52:34] "GET /google-oauth/chat/ HTTP/1.1" 200 948805
-[07/Oct/2025 21:52:34] "GET /static/js/chat_actions.js HTTP/1.1" 200 5325
-[07/Oct/2025 21:52:34] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
-[07/Oct/2025 21:52:34] "GET /static/js/vacancy-slots.js HTTP/1.1" 200 32784
-[07/Oct/2025 21:52:34] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
-[07/Oct/2025 21:52:34] "GET /static/css/all.min.css HTTP/1.1" 200 102025
-[07/Oct/2025 21:52:34] "GET /static/css/hrhelper.css HTTP/1.1" 200 100962
-[07/Oct/2025 21:52:34] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
-[07/Oct/2025 21:52:34] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
-[07/Oct/2025 21:52:34] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
-[07/Oct/2025 21:52:34] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
-[07/Oct/2025 21:52:34] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
-[07/Oct/2025 21:52:38] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[07/Oct/2025 23:10:50] "GET / HTTP/1.1" 302 0
+/Users/agolubenko/hrhelper/fullstack/backend/config/celery.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 07, 2025 - 23:10:45
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader

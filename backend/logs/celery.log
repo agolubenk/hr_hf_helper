@@ -1,10 +1,10 @@
  
  -------------- celery@andrei-golubenko-macbook.local v5.5.3 (immunity)
 --- ***** ----- 
--- ******* ---- macOS-26.0-arm64-arm-64bit-Mach-O 2025-10-07 21:51:39
+-- ******* ---- macOS-26.0-arm64-arm-64bit-Mach-O 2025-10-07 23:10:42
 - *** --- * --- 
 - ** ---------- [config]
-- ** ---------- .> app:         hrhelper:0x10b5dba10
+- ** ---------- .> app:         hrhelper:0x10b83ba10
 - ** ---------- .> transport:   redis://127.0.0.1:6379/0
 - ** ---------- .> results:     redis://127.0.0.1:6379/0
 - *** --- * --- .> concurrency: 1 (prefork)
@@ -26,13 +26,15 @@
   . apps.finance.tasks.generate_benchmark_statistics
   . apps.finance.tasks.process_hh_queue_with_limit
   . apps.finance.tasks.save_hh_analysis_result
+  . apps.huntflow.tasks.check_huntflow_token_health
+  . apps.huntflow.tasks.refresh_huntflow_tokens
   . apps.notion_int.tasks.auto_sync_notion_pages
   . apps.notion_int.tasks.bulk_import_notion_pages
   . apps.notion_int.tasks.retry_failed_pages
   . config.celery.debug_task
   . config.celery.save_hh_analysis_result
 
-[2025-10-07 21:51:39,281: INFO/MainProcess] Connected to redis://127.0.0.1:6379/0
-[2025-10-07 21:51:39,285: INFO/MainProcess] mingle: searching for neighbors
-[2025-10-07 21:51:40,299: INFO/MainProcess] mingle: all alone
-[2025-10-07 21:51:40,308: INFO/MainProcess] celery@andrei-golubenko-macbook.local ready.
+[2025-10-07 23:10:42,802: INFO/MainProcess] Connected to redis://127.0.0.1:6379/0
+[2025-10-07 23:10:42,806: INFO/MainProcess] mingle: searching for neighbors
+[2025-10-07 23:10:43,889: INFO/MainProcess] mingle: all alone
+[2025-10-07 23:10:43,977: INFO/MainProcess] celery@andrei-golubenko-macbook.local ready.

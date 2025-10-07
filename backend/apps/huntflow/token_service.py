@@ -1,4 +1,5 @@
 import requests
+import time
 from django.utils import timezone
 from django.conf import settings
 import logging
@@ -18,10 +19,13 @@ class HuntflowTokenService:
         else:
             return self.user.huntflow_sandbox_url
     
-    def refresh_access_token(self):
+    def refresh_access_token(self, max_retries=3):
         """
-        Обновляет access token используя refresh token
+        Обновляет access token используя refresh token с retry логикой
         
+        Args:
+            max_retries: Максимальное количество попыток
+            
         Returns:
             bool: True если обновление успешно, False иначе
         """
@@ -33,46 +37,72 @@ class HuntflowTokenService:
             logger.error(f"Refresh token истек для пользователя {self.user.username}")
             return False
         
-        try:
-            # Формируем URL для обновления токена
-            base_url = self._get_base_url()
-            if base_url.endswith('/v2'):
-                url = f"{base_url}/token/refresh"
-            else:
-                url = f"{base_url}/v2/token/refresh"
-            
-            data = {
-                'refresh_token': self.user.huntflow_refresh_token
-            }
-            
-            headers = {
-                'Content-Type': 'application/json'
-            }
-            
-            logger.info(f"Обновляем токен для пользователя {self.user.username}")
-            
-            response = requests.post(url, json=data, headers=headers, timeout=30)
-            
-            if response.status_code == 200:
-                token_data = response.json()
+        # Retry логика с экспоненциальным backoff
+        backoff_delays = [1, 2, 4]  # в секундах
+        
+        for attempt in range(max_retries):
+            try:
+                # Формируем URL для обновления токена
+                base_url = self._get_base_url()
+                if base_url.endswith('/v2'):
+                    url = f"{base_url}/token/refresh"
+                else:
+                    url = f"{base_url}/v2/token/refresh"
                 
-                # Обновляем токены пользователя
-                self.user.set_huntflow_tokens(
-                    access_token=token_data['access_token'],
-                    refresh_token=token_data['refresh_token'],
-                    expires_in=token_data.get('expires_in', 604800),
-                    refresh_expires_in=token_data.get('refresh_token_expires_in', 1209600)
-                )
+                data = {
+                    'refresh_token': self.user.huntflow_refresh_token
+                }
                 
-                logger.info(f"Токен успешно обновлен для пользователя {self.user.username}")
-                return True
-            else:
-                logger.error(f"Ошибка обновления токена: {response.status_code} - {response.text}")
-                return False
+                headers = {
+                    'Content-Type': 'application/json'
+                }
                 
-        except Exception as e:
-            logger.error(f"Исключение при обновлении токена: {e}")
-            return False
+                logger.info(f"Обновляем токен для пользователя {self.user.username} (попытка {attempt + 1}/{max_retries})")
+                
+                response = requests.post(url, json=data, headers=headers, timeout=30)
+                
+                if response.status_code == 200:
+                    token_data = response.json()
+                    
+                    # Обновляем токены пользователя
+                    self.user.set_huntflow_tokens(
+                        access_token=token_data['access_token'],
+                        refresh_token=token_data['refresh_token'],
+                        expires_in=token_data.get('expires_in', 604800),
+                        refresh_expires_in=token_data.get('refresh_token_expires_in', 1209600)
+                    )
+                    
+                    logger.info(f"Токен успешно обновлен для пользователя {self.user.username}")
+                    return True
+                else:
+                    logger.warning(f"Ошибка обновления токена (попытка {attempt + 1}): {response.status_code} - {response.text}")
+                    
+                    # Если это последняя попытка, логируем ошибку
+                    if attempt == max_retries - 1:
+                        logger.error(f"Все {max_retries} попыток обновления токена не удались для пользователя {self.user.username}")
+                        return False
+                    
+                    # Ждем перед следующей попыткой
+                    if attempt < max_retries - 1:
+                        delay = backoff_delays[attempt]
+                        logger.info(f"Повторная попытка через {delay} секунд...")
+                        time.sleep(delay)
+                    
+            except Exception as e:
+                logger.warning(f"Исключение при обновлении токена (попытка {attempt + 1}): {e}")
+                
+                # Если это последняя попытка, логируем ошибку
+                if attempt == max_retries - 1:
+                    logger.error(f"Все {max_retries} попыток обновления токена не удались для пользователя {self.user.username}: {e}")
+                    return False
+                
+                # Ждем перед следующей попыткой
+                if attempt < max_retries - 1:
+                    delay = backoff_delays[attempt]
+                    logger.info(f"Повторная попытка через {delay} секунд...")
+                    time.sleep(delay)
+        
+        return False
     
     def ensure_valid_token(self):
         """

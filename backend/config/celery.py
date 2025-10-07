@@ -30,7 +30,7 @@ app.conf.update(
 )
 
 # Автоматическое обнаружение задач в установленных приложениях
-app.autodiscover_tasks(['apps.finance', 'apps.clickup_int', 'apps.notion_int'])
+app.autodiscover_tasks(['apps.finance', 'apps.clickup_int', 'apps.notion_int', 'apps.huntflow'])
 
 # Принудительно регистрируем задачи finance после настройки Django
 @app.task
@@ -64,6 +64,16 @@ app.conf.beat_schedule = {
         'task': 'apps.notion_int.tasks.auto_sync_notion_pages',
         'schedule': 1800.0,  # Каждые 30 минут
         'kwargs': {'user_id': 1},  # TODO: Настроить для всех пользователей
+    },
+    
+    # Huntflow задачи
+    'refresh-huntflow-tokens': {
+        'task': 'apps.huntflow.tasks.refresh_huntflow_tokens',
+        'schedule': 3600.0,  # Каждый час
+    },
+    'check-huntflow-token-health': {
+        'task': 'apps.huntflow.tasks.check_huntflow_token_health',
+        'schedule': 21600.0,  # Каждые 6 часов
     },
     
     # Google OAuth задачи
