@@ -50,7 +50,8 @@ class ClickUpSettingsForm(forms.ModelForm):
             'folder_id',
             'list_id',
             'auto_sync',
-            'sync_interval'
+            'sync_interval',
+            'huntflow_filter'
         ]
         widgets = {
             'auto_sync': forms.CheckboxInput(attrs={
@@ -60,6 +61,9 @@ class ClickUpSettingsForm(forms.ModelForm):
                 'class': 'form-control',
                 'min': '1',
                 'max': '1440'
+            }),
+            'huntflow_filter': forms.Select(attrs={
+                'class': 'form-select'
             })
         }
         labels = {
@@ -68,7 +72,8 @@ class ClickUpSettingsForm(forms.ModelForm):
             'folder_id': 'Папка',
             'list_id': 'Список задач',
             'auto_sync': 'Автоматическая синхронизация',
-            'sync_interval': 'Интервал синхронизации (минуты)'
+            'sync_interval': 'Интервал синхронизации (минуты)',
+            'huntflow_filter': 'Фильтр по тегу huntflow'
         }
         help_texts = {
             'team_id': 'Выберите команду или рабочую область. Если команд нет, будут показаны все ваши пространства.',
@@ -76,7 +81,8 @@ class ClickUpSettingsForm(forms.ModelForm):
             'folder_id': 'Выберите папку в выбранном пространстве (опционально).',
             'list_id': 'Выберите список задач для синхронизации.',
             'auto_sync': 'Автоматически синхронизировать задачи с указанным интервалом.',
-            'sync_interval': 'Интервал автоматической синхронизации в минутах (от 1 до 1440).'
+            'sync_interval': 'Интервал автоматической синхронизации в минутах (от 1 до 1440).',
+            'huntflow_filter': 'Выберите, какие задачи синхронизировать по тегу huntflow. Полезно для разделения задач на обработанные и новые.'
         }
     
     def __init__(self, *args, **kwargs):
@@ -90,6 +96,10 @@ class ClickUpSettingsForm(forms.ModelForm):
         if self.user and not self.instance.pk:
             self.fields['auto_sync'].initial = True
             self.fields['sync_interval'].initial = 30
+            self.fields['huntflow_filter'].initial = 'all'
+        
+        # Загружаем choices для huntflow_filter
+        self.fields['huntflow_filter'].choices = ClickUpSettings.HUNTFLOW_FILTER_CHOICES
         
         # Загружаем команды и пространства, если у пользователя есть API ключ
         if self.user and self.user.clickup_api_key:

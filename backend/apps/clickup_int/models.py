@@ -59,6 +59,21 @@ class ClickUpSettings(models.Model):
         help_text='Интервал автоматической синхронизации в минутах'
     )
     
+    # Фильтрация по тегу huntflow
+    HUNTFLOW_FILTER_CHOICES = [
+        ('all', 'Все задачи'),
+        ('with_huntflow', 'Только с тегом huntflow'),
+        ('without_huntflow', 'Только без тега huntflow'),
+    ]
+    
+    huntflow_filter = models.CharField(
+        max_length=20,
+        choices=HUNTFLOW_FILTER_CHOICES,
+        default='all',
+        verbose_name='Фильтр по тегу huntflow',
+        help_text='Выберите, какие задачи синхронизировать по тегу huntflow'
+    )
+    
     # Метаданные
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создано')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Обновлено')

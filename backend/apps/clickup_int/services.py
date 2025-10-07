@@ -114,7 +114,7 @@ class ClickUpService:
         
         return response.get('lists', [])
     
-    def get_tasks(self, list_id: str, include_closed: bool = False, page: int = 0, exclude_huntflow_tagged: bool = True) -> List[Dict]:
+    def get_tasks(self, list_id: str, include_closed: bool = False, page: int = 0, exclude_huntflow_tagged: bool = None) -> List[Dict]:
         """
         Получает список задач из списка
         
@@ -122,7 +122,7 @@ class ClickUpService:
             list_id: ID списка задач
             include_closed: Включать ли закрытые задачи
             page: Номер страницы
-            exclude_huntflow_tagged: Исключать ли задачи с тегом huntflow
+            exclude_huntflow_tagged: None - все задачи, True - только без тега huntflow, False - только с тегом huntflow
             
         Returns:
             Список задач
@@ -138,11 +138,38 @@ class ClickUpService:
         response = self._make_request('GET', f'/list/{list_id}/task', params=params)
         tasks = response.get('tasks', [])
         
-        # Фильтруем задачи с тегом huntflow если требуется
-        if exclude_huntflow_tagged:
+        # Фильтруем задачи по тегу huntflow в зависимости от настроек
+        if exclude_huntflow_tagged is True:
+            # Только задачи БЕЗ тега huntflow
             tasks = [task for task in tasks if not self.has_huntflow_tag(task)]
+        elif exclude_huntflow_tagged is False:
+            # Только задачи С тегом huntflow
+            tasks = [task for task in tasks if self.has_huntflow_tag(task)]
+        # Если exclude_huntflow_tagged is None - возвращаем все задачи без фильтрации
         
         return tasks
+    
+    def has_huntflow_tag(self, task: Dict) -> bool:
+        """
+        Проверяет, есть ли у задачи тег huntflow
+        
+        Args:
+            task: Данные задачи из ClickUp API
+            
+        Returns:
+            True если у задачи есть тег huntflow, False в противном случае
+        """
+        tags = task.get('tags', [])
+        for tag in tags:
+            if isinstance(tag, dict):
+                tag_name = tag.get('name', '').lower()
+            else:
+                tag_name = str(tag).lower()
+            
+            if tag_name == 'huntflow':
+                return True
+        
+        return False
     
     def get_task(self, task_id: str) -> Dict:
         """Получает детальную информацию о задаче"""
@@ -894,7 +921,7 @@ class ClickUpService:
             list_id: ID списка задач
             user: Пользователь Django
             max_pages: Максимальное количество страниц для обработки
-            exclude_huntflow_tagged: Исключать ли задачи с тегом huntflow
+            exclude_huntflow_tagged: Исключать ли задачи с тегом huntflow (deprecated, используется настройка пользователя)
         """
         from .models import ClickUpTask, ClickUpSyncLog, ClickUpSettings
         
@@ -902,6 +929,23 @@ class ClickUpService:
         tasks_processed = 0
         tasks_created = 0
         tasks_updated = 0
+        
+        # Получаем настройку фильтра huntflow из базы данных
+        try:
+            settings = ClickUpSettings.objects.get(user=user)
+            huntflow_filter = settings.huntflow_filter
+            logger.info(f"Используется фильтр huntflow: {huntflow_filter}")
+        except ClickUpSettings.DoesNotExist:
+            huntflow_filter = 'all'  # По умолчанию все задачи
+            logger.warning(f"Настройки ClickUp не найдены для пользователя {user.username}, используется фильтр по умолчанию: {huntflow_filter}")
+        
+        # Определяем параметры фильтрации на основе настроек
+        if huntflow_filter == 'with_huntflow':
+            exclude_huntflow_tagged = False  # Только с тегом huntflow
+        elif huntflow_filter == 'without_huntflow':
+            exclude_huntflow_tagged = True   # Только без тега huntflow
+        else:  # 'all'
+            exclude_huntflow_tagged = None   # Все задачи (передадим None в get_tasks)
         
         try:
             # Получаем все задачи из списка (с пагинацией)
@@ -1017,13 +1061,13 @@ class ClickUpCacheService:
         ClickUpTask.objects.filter(user=user).delete()
         logger.info(f"Кэш задач очищен для пользователя {user.username}")
     
-    def get_tasks_from_list(self, list_id: str, exclude_huntflow_tagged: bool = True) -> List[Dict[str, Any]]:
+    def get_tasks_from_list(self, list_id: str, exclude_huntflow_tagged: bool = None) -> List[Dict[str, Any]]:
         """
         Получает все задачи из указанного списка
         
         Args:
             list_id: ID списка ClickUp
-            exclude_huntflow_tagged: Исключать ли задачи с тегом huntflow
+            exclude_huntflow_tagged: None - все задачи, True - только без тега huntflow, False - только с тегом huntflow
             
         Returns:
             Список задач из API
@@ -1052,8 +1096,9 @@ class ClickUpCacheService:
                 if not tasks:
                     break
                 
-                # Фильтруем задачи с тегом huntflow если требуется
-                if exclude_huntflow_tagged:
+                # Фильтруем задачи по тегу huntflow в зависимости от настроек
+                if exclude_huntflow_tagged is True:
+                    # Только задачи БЕЗ тега huntflow
                     filtered_tasks = [task for task in tasks if not self.has_huntflow_tag(task)]
                     all_tasks.extend(filtered_tasks)
                     
@@ -1061,7 +1106,17 @@ class ClickUpCacheService:
                     filtered_count = len(tasks) - len(filtered_tasks)
                     if filtered_count > 0:
                         print(f"🔄 Страница {page}: отфильтровано {filtered_count} задач с тегом huntflow")
+                elif exclude_huntflow_tagged is False:
+                    # Только задачи С тегом huntflow
+                    filtered_tasks = [task for task in tasks if self.has_huntflow_tag(task)]
+                    all_tasks.extend(filtered_tasks)
+                    
+                    # Логируем количество отфильтрованных задач
+                    filtered_count = len(tasks) - len(filtered_tasks)
+                    if filtered_count > 0:
+                        print(f"🔄 Страница {page}: отфильтровано {filtered_count} задач без тега huntflow")
                 else:
+                    # Все задачи без фильтрации
                     all_tasks.extend(tasks)
                 
                 page += 1
@@ -1071,7 +1126,8 @@ class ClickUpCacheService:
                     print(f"⚠️ Достигнут лимит страниц (100), останавливаемся")
                     break
             
-            print(f"✅ Получено {len(all_tasks)} задач из списка {list_id} (исключены задачи с тегом huntflow: {exclude_huntflow_tagged})")
+            filter_desc = "все задачи" if exclude_huntflow_tagged is None else ("без тега huntflow" if exclude_huntflow_tagged is True else "с тегом huntflow")
+            print(f"✅ Получено {len(all_tasks)} задач из списка {list_id} (фильтр: {filter_desc})")
             return all_tasks
             
         except Exception as e:

@@ -5,8 +5,8 @@ from .models import ClickUpSettings, ClickUpTask, ClickUpSyncLog, ClickUpBulkImp
 
 @admin.register(ClickUpSettings)
 class ClickUpSettingsAdmin(admin.ModelAdmin):
-    list_display = ['user', 'team_id', 'space_id', 'list_id', 'auto_sync', 'last_sync_at', 'created_at']
-    list_filter = ['auto_sync', 'created_at', 'updated_at']
+    list_display = ['user', 'team_id', 'space_id', 'list_id', 'auto_sync', 'huntflow_filter', 'last_sync_at', 'created_at']
+    list_filter = ['auto_sync', 'huntflow_filter', 'created_at', 'updated_at']
     search_fields = ['user__username', 'user__email', 'team_id', 'space_id', 'list_id']
     readonly_fields = ['created_at', 'updated_at', 'last_sync_at']
     
@@ -23,7 +23,7 @@ class ClickUpSettingsAdmin(admin.ModelAdmin):
             'description': 'Укажите путь к списку задач в ClickUp'
         }),
         ('Настройки синхронизации', {
-            'fields': ('auto_sync', 'sync_interval'),
+            'fields': ('auto_sync', 'sync_interval', 'huntflow_filter'),
             'description': 'Настройки автоматической синхронизации'
         }),
         ('Метаданные', {
@@ -83,7 +83,12 @@ class ClickUpTaskAdmin(admin.ModelAdmin):
         if obj.tags:
             tags_html = []
             for tag in obj.tags:
-                tags_html.append(f'<span class="badge bg-secondary">{tag}</span>')
+                # Обрабатываем разные форматы тегов
+                if isinstance(tag, dict):
+                    tag_name = tag.get('name', str(tag))
+                else:
+                    tag_name = str(tag)
+                tags_html.append(f'<span class="badge bg-secondary">{tag_name}</span>')
             return format_html(' '.join(tags_html))
         return '-'
     tags_display.short_description = 'Теги'
