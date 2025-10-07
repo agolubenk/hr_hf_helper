@@ -126,7 +126,9 @@
                     {% endif %}
 
                     <!-- Page content -->
+                     <div class="px-3">
                     {% block content %}{% endblock %}
+                    </div>
                 </div>
     </main>
         </div>
@@ -600,15 +602,24 @@
         
         // Состояние сайдбара
         let sidebarVisible = window.innerWidth > 992;
+        let isToggling = false; // Флаг для предотвращения конфликтов
         
-        // Функция переключения сайдбара
+        // Обновленная функция переключения сайдбара
         function toggleSidebar() {
+            if (isToggling) return; // Предотвращаем повторные вызовы
+            isToggling = true;
+            
             sidebarVisible = !sidebarVisible;
             
             if (sidebarVisible) {
                 sidebar.classList.remove('hidden');
                 sidebar.classList.add('show');
-                if (mainContent) mainContent.classList.remove('sidebar-hidden');
+                if (mainContent) {
+                    mainContent.classList.remove('sidebar-hidden');
+                    // Принудительно устанавливаем стили
+                    mainContent.style.marginLeft = '240px';
+                    mainContent.style.width = 'calc(100% - 240px)';
+                }
                 
                 // На мобильных показываем overlay
                 if (window.innerWidth <= 992) {
@@ -619,21 +630,56 @@
             } else {
                 sidebar.classList.add('hidden');
                 sidebar.classList.remove('show');
-                if (mainContent) mainContent.classList.add('sidebar-hidden');
+                if (mainContent) {
+                    mainContent.classList.add('sidebar-hidden');
+                    // Принудительно устанавливаем стили
+                    mainContent.style.marginLeft = '0';
+                    mainContent.style.width = '100%';
+                }
                 
                 overlay.classList.remove('show');
                 toggleBtn.className = 'fas fa-caret-square-right sidebar-toggle';
             }
+            
+            // Принудительно перерисовываем layout
+            setTimeout(() => {
+                // Просто принудительно обновляем стили без вызова resize
+                if (mainContent) {
+                    mainContent.style.display = 'none';
+                    mainContent.offsetHeight; // Принудительная перерисовка
+                    mainContent.style.display = '';
+                }
+                isToggling = false; // Сбрасываем флаг
+            }, 300);
         }
         
         // Функция скрытия сайдбара
         function hideSidebar() {
+            if (isToggling) return; // Предотвращаем повторные вызовы
+            isToggling = true;
+            
             sidebarVisible = false;
             sidebar.classList.add('hidden');
             sidebar.classList.remove('show');
-            if (mainContent) mainContent.classList.add('sidebar-hidden');
+            if (mainContent) {
+                mainContent.classList.add('sidebar-hidden');
+                // Принудительно устанавливаем стили
+                mainContent.style.marginLeft = '0';
+                mainContent.style.width = '100%';
+            }
             overlay.classList.remove('show');
-            toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            toggleBtn.className = 'fas fa-caret-square-right sidebar-toggle';
+            
+            // Принудительно перерисовываем layout
+            setTimeout(() => {
+                // Просто принудительно обновляем стили без вызова resize
+                if (mainContent) {
+                    mainContent.style.display = 'none';
+                    mainContent.offsetHeight; // Принудительная перерисовка
+                    mainContent.style.display = '';
+                }
+                isToggling = false; // Сбрасываем флаг
+            }, 300);
         }
         
         // События
@@ -643,10 +689,17 @@
         
         // Обработка изменения размера окна
         window.addEventListener('resize', function() {
+            if (isToggling) return; // Предотвращаем конфликты во время переключения
+            
             if (window.innerWidth > 992) {
                 // Десктоп: показываем сайдбар, убираем overlay
                 sidebar.classList.remove('hidden', 'show');
-                if (mainContent) mainContent.classList.remove('sidebar-hidden');
+                if (mainContent) {
+                    mainContent.classList.remove('sidebar-hidden');
+                    // Принудительно устанавливаем стили
+                    mainContent.style.marginLeft = '240px';
+                    mainContent.style.width = 'calc(100% - 240px)';
+                }
                 overlay.classList.remove('show');
                 sidebarVisible = true;
                 toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
@@ -667,6 +720,13 @@
                     overlay.classList.remove('show');
                 }
                 
+                if (mainContent) {
+                    mainContent.classList.add('sidebar-hidden');
+                    // Принудительно устанавливаем стили
+                    mainContent.style.marginLeft = '0';
+                    mainContent.style.width = '100%';
+                }
+                
                 // Добавляем кнопку закрытия на мобильных
                 const existingCloseBtn = sidebar.querySelector('.sidebar-close');
                 if (!existingCloseBtn) {
@@ -681,6 +741,11 @@
             hideSidebar();
         } else {
             toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
+            // Принудительно устанавливаем стили для десктопа
+            if (mainContent) {
+                mainContent.style.marginLeft = '240px';
+                mainContent.style.width = 'calc(100% - 240px)';
+            }
         }
     });
     </script>

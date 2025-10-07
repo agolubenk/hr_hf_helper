@@ -3024,13 +3024,14 @@ a:hover {
     min-height: 100vh !important;
     transition: margin-left var(--duration-normal) var(--ease-standard) !important;
     background: var(--hr-bg) !important;
+    width: calc(100% - 240px) !important; /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ */
 }
 
 /* Фиксированный header блок - только для основного header с заголовком HR Helper */
 .main-content > .container-fluid > .sticky-top.d-flex.justify-content-between:first-child {
     position: sticky !important;
     top: 0 !important;
-    left: 240px !important; /* Отступ от сайд-бара */
+    left: 0 !important; /* ИЗМЕНИЛИ: убрали отступ слева */
     right: 0 !important;
     z-index: 1030 !important;
     background: #ffffff !important; /* Белый фон в светлой теме */
@@ -3038,7 +3039,8 @@ a:hover {
     margin: 0 !important;
     border-bottom: 1px solid #e9ecef !important;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
-    transition: left var(--duration-normal) var(--ease-standard) !important;
+    width: 100% !important; /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ */
+    transition: none !important; /* Убрали анимацию left */
 }
 
 /* Темная тема для заголовка */
@@ -3052,6 +3054,7 @@ a:hover {
     background: #ffffff !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
+    width: 100% !important; /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ */
 }
 
 [data-theme="dark"] .main-content .sticky-top {
@@ -3078,10 +3081,35 @@ a:hover {
     margin-top: 20px !important;
 }
 
-/* Убираем отступы из container-fluid */
+/* Убираем отступы из container-fluid и гарантируем полную ширину */
 .main-content .container-fluid {
     padding: 0 !important;
     margin: 0 !important;
+    width: 100% !important; /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ */
+    max-width: none !important; /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ */
+}
+
+/* Исправляем все внутренние контейнеры */
+.main-content .container-fluid .row {
+    margin: 0 !important;
+    width: 100% !important; /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ */
+}
+
+.main-content .container-fluid .col-12,
+.main-content .container-fluid .col-lg-12,
+.main-content .container-fluid .col-md-12,
+.main-content .container-fluid .col-sm-12 {
+    width: 100% !important; /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ */
+    max-width: 100% !important; /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ */
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+}
+
+/* Специальная обработка для чат-страниц */
+.main-content .col-lg-9:last-child {
+    width: 100% !important; /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ */
+    max-width: 100% !important; /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ */
+    flex: 0 0 100% !important; /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ */
 }
 
 /* =============================================================================
@@ -3117,7 +3145,6 @@ a:hover {
 .vacancy-selector .form-select {
     border: none;
     border-radius: 10px;
-    padding: 12px 15px;
     font-size: 16px;
     background: rgba(255, 255, 255, 0.95);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -3150,6 +3177,7 @@ a:hover {
 /* Основной контент когда сайдбар скрыт */
 .main-content.sidebar-hidden {
     margin-left: 0 !important;
+    width: 100% !important; /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ */
 }
 
 /* Затемнение фона на мобильных */
@@ -3190,6 +3218,12 @@ a:hover {
     /* Основной контент без отступа */
     .main-content {
         margin-left: 0 !important;
+        width: 100% !important;
+    }
+    
+    .main-content.sidebar-hidden {
+        margin-left: 0 !important;
+        width: 100% !important;
     }
     
     /* Header на мобильных занимает всю ширину */
