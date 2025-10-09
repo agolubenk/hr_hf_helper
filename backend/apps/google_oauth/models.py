@@ -2010,16 +2010,23 @@ class Invite(models.Model):
     
     def analyze_time_with_parser(self):
         """
-        Анализ времени с помощью собственного парсера вместо Gemini AI
+        Расширенный анализ времени с помощью улучшенного парсера
         Возвращает (success: bool, message: str)
+        
+        Особенности:
+        - Поддержка всех форматов из библиотеки date-time-formats.md
+        - Автоматическое исправление опечаток и раскладки
+        - Многоуровневая валидация
+        - Интеграция с промптом из вакансии
+        - Генерация альтернативных слотов
         """
         try:
-            # Импорт парсера
-            from .datetime_parser import parse_datetime_from_text
+            # Импорт расширенного парсера
+            from .enhanced_datetime_parser import parse_datetime_with_validation
             from datetime import datetime
             import pytz
 
-            print(f"[PARSER DEBUG] Анализируем текст пользователя {self.user.username}")
+            print(f"🔍 [ENHANCED_PARSER] Анализируем текст пользователя {self.user.username}")
 
             # Проверяем наличие исходных данных
             if not self.original_form_data:
@@ -2027,35 +2034,82 @@ class Invite(models.Model):
 
             # Очищаем текст от URL
             text_without_url = self._remove_url_from_text(self.original_form_data)
-            print(f"[PARSER DEBUG] Текст для анализа: {text_without_url[:100]}...")
+            print(f"🔍 [ENHANCED_PARSER] Текст для анализа: {text_without_url[:100]}...")
 
-            # Используем собственный парсер вместо Gemini AI
-            parsed_datetime, error_message = parse_datetime_from_text(
-                text_without_url, 
+            # Получаем существующие бронирования из календаря
+            existing_bookings = self._get_existing_bookings()
+
+            # Используем расширенный парсер с валидацией (БЕЗ промпта из вакансии)
+            result = parse_datetime_with_validation(
+                text=text_without_url,
+                existing_bookings=existing_bookings,
+                vacancy_prompt=None,  # Промпт НЕ используется в парсере
                 timezone_name='Europe/Minsk'
             )
 
-            if parsed_datetime:
-                # Форматируем результат в нужном формате DD.MM.YYYY HH:MM
-                self.gemini_suggested_datetime = parsed_datetime.strftime("%d.%m.%Y %H:%M")
-                print(f"[PARSER SUCCESS] Определена дата/время: {self.gemini_suggested_datetime}")
-                return True, "Дата и время успешно определены с помощью парсера"
+            if result['success']:
+                # Сохраняем результат парсинга
+                self.gemini_suggested_datetime = result['parsed_datetime']
+                
+                # Логируем детальную информацию
+                print(f"✅ [ENHANCED_PARSER] Определена дата/время: {self.gemini_suggested_datetime}")
+                print(f"📊 [ENHANCED_PARSER] Уверенность: {result['confidence']:.2f}")
+                print(f"🔧 [ENHANCED_PARSER] Исправлений: {len(result['corrections'])}")
+                print(f"✔️ [ENHANCED_PARSER] Валидация: {'Пройдена' if result['validation']['is_valid'] else 'Не пройдена'}")
+                
+                # Выводим исправления
+                for correction in result['corrections']:
+                    print(f"  🔧 {correction['type']}: {correction['original']} → {correction['corrected']}")
+                
+                # Выводим предупреждения
+                for warning in result['validation'].get('warnings', []):
+                    print(f"  ⚠️ {warning['description']}")
+                
+                # Выводим альтернативы
+                if result['alternatives']:
+                    print(f"📅 [ENHANCED_PARSER] Альтернативные слоты:")
+                    for alt in result['alternatives'][:3]:
+                        print(f"  - {alt['datetime']} (уверенность: {alt['confidence']:.2f})")
+                
+                return True, f"Дата и время успешно определены (уверенность: {result['confidence']:.0%})"
             else:
-                print(f"[PARSER DEBUG] Парсер не смог определить время, пробуем fallback")
+                print(f"❌ [ENHANCED_PARSER] Парсер не смог определить время, пробуем fallback")
                 # Пытаемся найти fallback время из календаря
                 fallback_time = self._get_fallback_time_from_calendar()
                 if fallback_time:
                     self.gemini_suggested_datetime = fallback_time
-                    print(f"[PARSER FALLBACK] Использовано время: {fallback_time}")
+                    print(f"✅ [ENHANCED_PARSER] Использовано резервное время: {fallback_time}")
                     return True, "Использовано резервное время из календаря"
                 else:
-                    return False, f"Парсер не смог определить дату/время: {error_message}"
+                    return False, f"Парсер не смог определить дату/время: {result.get('error', 'Неизвестная ошибка')}"
 
         except Exception as e:
-            print(f"[PARSER ERROR] {str(e)}")
+            print(f"❌ [ENHANCED_PARSER] Ошибка: {str(e)}")
             import traceback
             traceback.print_exc()
             return False, f"Ошибка парсера: {str(e)}"
+    
+    def _get_existing_bookings(self):
+        """Получение существующих бронирований из календаря"""
+        try:
+            from apps.google_oauth.services import GoogleOAuthService, GoogleCalendarService
+            
+            print("📅 [BOOKINGS] Получаем существующие бронирования...")
+            
+            oauth_service = GoogleOAuthService(self.user)
+            calendar_service = GoogleCalendarService(oauth_service)
+            events_data = calendar_service.get_events(days_ahead=30)
+            
+            if events_data:
+                print(f"✅ [BOOKINGS] Найдено событий: {len(events_data)}")
+                return events_data
+            else:
+                print("⚠️ [BOOKINGS] Нет событий в календаре")
+                return []
+                
+        except Exception as e:
+            print(f"⚠️ [BOOKINGS] Ошибка получения бронирований: {e}")
+            return []
 
     def _get_fallback_time_from_calendar(self):
         """
