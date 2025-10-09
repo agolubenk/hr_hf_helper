@@ -481,6 +481,56 @@ class EnhancedDateTimeParser:
         target_date = current_date + timedelta(days=days_ahead)
         return target_date
     
+    def _check_slot_availability(self, dt: datetime, existing_bookings: List) -> Dict:
+        """
+        Проверка доступности слота в календаре
+        Возвращает информацию о занимающем событии или None, если слот свободен
+        """
+        try:
+            # Формируем диапазон времени для слота (45 минут)
+            slot_start = dt
+            slot_end = dt + timedelta(minutes=45)
+            
+            for booking in existing_bookings:
+                try:
+                    # Получаем время начала и конца события
+                    event_start_str = booking.get('start', {}).get('dateTime') or booking.get('start', {}).get('date')
+                    event_end_str = booking.get('end', {}).get('dateTime') or booking.get('end', {}).get('date')
+                    
+                    if not event_start_str or not event_end_str:
+                        continue
+                    
+                    # Парсим даты событий
+                    from dateutil import parser as date_parser
+                    event_start = date_parser.parse(event_start_str)
+                    event_end = date_parser.parse(event_end_str)
+                    
+                    # Проверяем пересечение
+                    # Слот занят, если:
+                    # 1. Начало слота находится внутри события
+                    # 2. Конец слота находится внутри события
+                    # 3. Слот полностью перекрывает событие
+                    if (event_start <= slot_start < event_end) or \
+                       (event_start < slot_end <= event_end) or \
+                       (slot_start <= event_start and slot_end >= event_end):
+                        print(f"⚠️ [SLOT_CHECK] Слот {dt.strftime('%d.%m %H:%M')} занят событием: {booking.get('summary', 'Без названия')}")
+                        return {
+                            'summary': booking.get('summary', 'Без названия'),
+                            'start': event_start.strftime('%d.%m %H:%M'),
+                            'end': event_end.strftime('%d.%m %H:%M')
+                        }
+                
+                except Exception as e:
+                    print(f"⚠️ [SLOT_CHECK] Ошибка проверки события: {e}")
+                    continue
+            
+            print(f"✅ [SLOT_CHECK] Слот {dt.strftime('%d.%m %H:%M')} свободен")
+            return None
+            
+        except Exception as e:
+            print(f"❌ [SLOT_CHECK] Ошибка проверки доступности: {e}")
+            return None
+    
     def validate_datetime(self, dt: datetime, existing_bookings: List = None) -> Dict:
         """Многоуровневая валидация даты и времени"""
         validation_result = {
@@ -534,6 +584,19 @@ class EnhancedDateTimeParser:
                 'description': 'Встреча запланирована более чем на 90 дней вперед',
                 'severity': 'low'
             })
+        
+        # Проверка: занятость слота в календаре
+        if existing_bookings:
+            # Проверяем, есть ли события в это время
+            slot_occupied = self._check_slot_availability(dt, existing_bookings)
+            if slot_occupied:
+                validation_result['is_valid'] = False
+                validation_result['errors'].append({
+                    'type': 'slot_occupied',
+                    'description': f'Слот {dt.strftime("%d.%m %H:%M")} уже занят',
+                    'severity': 'high',
+                    'occupied_event': slot_occupied
+                })
         
         return validation_result
     
@@ -653,6 +716,43 @@ class EnhancedDateTimeParser:
         
         # Валидация результата
         validation_result = self.validate_datetime(result_datetime, existing_bookings)
+        
+        # Если слот занят, пытаемся найти следующий доступный слот в тот же день недели
+        if not validation_result['is_valid']:
+            # Проверяем, занят ли слот
+            slot_occupied_error = next((err for err in validation_result['errors'] if err['type'] == 'slot_occupied'), None)
+            
+            if slot_occupied_error:
+                print(f"⚠️ [ENHANCED_PARSER] Слот {result_datetime.strftime('%d.%m %H:%M')} занят, ищем альтернативу...")
+                
+                # Ищем следующий свободный слот в тот же день недели
+                original_weekday = result_datetime.weekday()
+                original_time = (result_datetime.hour, result_datetime.minute)
+                original_datetime_str = result_datetime.strftime('%d.%m %H:%M')
+                
+                # Пробуем следующую неделю с тем же днем недели и временем
+                for week_offset in range(1, 5):  # Пробуем до 4 недель вперед
+                    alternative_date = result_datetime + timedelta(weeks=week_offset)
+                    alternative_validation = self.validate_datetime(alternative_date, existing_bookings)
+                    
+                    if alternative_validation['is_valid']:
+                        print(f"✅ [ENHANCED_PARSER] Найден свободный слот: {alternative_date.strftime('%d.%m %H:%M')}")
+                        
+                        # Добавляем информацию об исправлении
+                        all_corrections.append({
+                            'type': 'slot_occupied_correction',
+                            'original': original_datetime_str,
+                            'corrected': alternative_date.strftime('%d.%m %H:%M'),
+                            'reason': f'исходный слот занят, перенесено на {week_offset} недел{"ю" if week_offset == 1 else "и"} вперед'
+                        })
+                        
+                        result_datetime = alternative_date
+                        validation_result = alternative_validation
+                        confidence *= 0.85  # Снижаем уверенность из-за переноса
+                        break
+                else:
+                    # Если не нашли свободный слот за 4 недели, оставляем как есть
+                    print(f"⚠️ [ENHANCED_PARSER] Не удалось найти свободный слот в течение 4 недель")
         
         # Генерация альтернатив
         alternatives = self.generate_alternatives(result_datetime, existing_bookings)
