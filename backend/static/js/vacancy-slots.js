@@ -598,9 +598,12 @@ window.copyAllSlots = function() {
     }
     
     if (currentWeekSlots.length > 0) {
-        // Добавляем слоты текущей недели
+        // Добавляем только слоты текущей недели с доступными временами
         currentWeekSlots.forEach(slot => {
-            text += `${slot.weekday} ${slot.slots}\n`;
+            // Пропускаем дни без свободных слотов
+            if (slot.slots && slot.slots !== 'Нет свободных слотов') {
+                text += `${slot.weekday} ${slot.slots}\n`;
+            }
         });
     }
     
@@ -612,9 +615,12 @@ window.copyAllSlots = function() {
             text += '\n';
         }
         
-        // Добавляем слоты следующей недели
+        // Добавляем только слоты следующей недели с доступными временами
         nextWeekSlots.forEach(slot => {
-            text += `${slot.weekday} (${slot.date}) ${slot.slots}\n`;
+            // Пропускаем дни без свободных слотов
+            if (slot.slots && slot.slots !== 'Нет свободных слотов') {
+                text += `${slot.weekday} (${slot.date}) ${slot.slots}\n`;
+            }
         });
     }
     
@@ -658,8 +664,11 @@ window.copyWeekSlots = function(weekType) {
             text += `${slotsSettings.currentWeekPrefix}\n`;
         }
         // Формат для текущей недели: ПН 12-15, 17
+        // Пропускаем дни без свободных слотов
         slots.forEach(slot => {
-            text += `${slot.weekday} ${slot.slots}\n`;
+            if (slot.slots && slot.slots !== 'Нет свободных слотов') {
+                text += `${slot.weekday} ${slot.slots}\n`;
+            }
         });
     } else if (weekType === 'next') {
         // Добавляем префикс следующей недели, если настроен
@@ -667,8 +676,11 @@ window.copyWeekSlots = function(weekType) {
             text += `${slotsSettings.nextWeekPrefix}\n`;
         }
         // Формат для следующей недели: ПН (15.09) 11-14, 15
+        // Пропускаем дни без свободных слотов
         slots.forEach(slot => {
-            text += `${slot.weekday} (${slot.date}) ${slot.slots}\n`;
+            if (slot.slots && slot.slots !== 'Нет свободных слотов') {
+                text += `${slot.weekday} (${slot.date}) ${slot.slots}\n`;
+            }
         });
     }
     
