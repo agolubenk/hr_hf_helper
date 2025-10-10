@@ -172,17 +172,9 @@
                                 <i class="fas fa-undo me-1"></i>
                                 Сбросить
                             </button>
-                            <button type="button" class="btn btn-outline-success" onclick="showExampleStructure()">
-                                <i class="fas fa-lightbulb me-1"></i>
-                                Показать пример
-                            </button>
                             <button type="button" class="btn btn-outline-info" onclick="addNewFolder()">
                                 <i class="fas fa-folder-plus me-1"></i>
                                 Добавить папку
-                            </button>
-                            <button type="button" class="btn btn-outline-warning" onclick="showCurrentHierarchy()">
-                                <i class="fas fa-list me-1"></i>
-                                Показать текущую структуру
                             </button>
                         </div>
                     </div>
@@ -298,15 +290,16 @@
                             </div>
                         </div>
                         
-                        <div class="alert alert-info">
-                            <h6><i class="fas fa-lightbulb me-2"></i>Как использовать:</h6>
-                            <ol class="mb-0">
-                                <li>Нажмите "Добавить папку" слева</li>
-                                <li>Выберите папку (она подсветится)</li>
-                                <li>Нажмите кнопки паттернов справа - они добавятся в выбранную папку</li>
-                                <li>Кнопка <i class="fas fa-backspace"></i> удаляет последний паттерн/слово из выбранной папки</li>
-                                <li>Не забудьте нажать "Сохранить структуру" для применения изменений!</li>
-                            </ol>
+                        <!-- Дополнительные кнопки -->
+                        <div class="d-flex gap-2 flex-wrap mt-3">
+                            <button type="button" class="btn btn-outline-success w-100 mb-2" onclick="showExampleStructure()">
+                                <i class="fas fa-lightbulb me-1"></i>
+                                Показать пример
+                            </button>
+                            <button type="button" class="btn btn-outline-warning w-100 mb-2" onclick="showCurrentHierarchy()">
+                                <i class="fas fa-list me-1"></i>
+                                Показать текущую структуру
+                            </button>
                         </div>
                     </div>
                 </div>
