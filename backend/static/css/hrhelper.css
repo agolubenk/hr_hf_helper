@@ -1271,9 +1271,9 @@ a:hover {
     background-color: #ffffff; /* Белый фон для светлой темы */
     padding: 12px !important;
     padding-top: 20px !important; /* Отступ сверху, чтобы не скрываться за header */
-    min-height: 400px; /* Минимальная высота для центрирования */
+    min-height: 300px; /* Минимальная высота */
     overflow-y: auto; /* Прокрутка для длинных сообщений */
-    position: relative !important; /* Для абсолютного позиционирования приветствия */
+    position: relative !important; /* Для правильного позиционирования */
 }
 
 /* Темная тема - черный фон чата */
@@ -1283,12 +1283,10 @@ a:hover {
 
 /* Стили для приветственного сообщения */
 .card .chat-messages .text-center.text-muted.py-5 {
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    position: relative !important;
+    margin: 2rem auto !important;
+    padding: 2rem !important;
+    text-align: center;
 }
 
 .card .chat-messages .text-center.text-muted.py-5 i {
@@ -2267,24 +2265,7 @@ a:hover {
    10. ЧАТОВЫЕ ИНТЕРФЕЙСЫ (GEMINI)
    ============================================================================= */
 
-.chat-container {
-    height: calc(100vh - 90px);
-    display: flex;
-    flex-direction: column;
-}
-
-.chat-header {
-    flex-shrink: 0;
-}
-
-.chat-messages {
-    flex: 1;
-    overflow-y: auto;
-}
-
-.chat-input {
-    flex-shrink: 0;
-}
+/* Стили чата перенесены в конец файла для лучшей организации */
 
 .session-item {
     padding: var(--space-12);
@@ -3105,8 +3086,8 @@ a:hover {
     padding-right: 15px !important;
 }
 
-/* Специальная обработка для чат-страниц */
-.main-content .col-lg-9:last-child {
+/* Специальная обработка для чат-страниц (НЕ для Gemini чата) */
+.main-content .col-lg-9:last-child:not(.chat-main-panel) {
     width: 100% !important; /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ */
     max-width: 100% !important; /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ */
     flex: 0 0 100% !important; /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ */
@@ -3289,27 +3270,61 @@ a:hover {
     scroll-behavior: smooth !important;
 }
 
-/* Динамическая высота чата */
+/* Адаптивная высота чата */
 .chat-container {
-    height: calc(100vh - 200px) !important; /* Базовое вычитание */
     min-height: 400px !important; /* Минимальная высота */
-    max-height: calc(100vh - 150px) !important; /* Максимальная высота */
+    max-height: calc(100vh - 120px) !important; /* Максимальная высота с учетом header */
     display: flex !important;
     flex-direction: column !important;
+    width: 100% !important; /* Полная ширина контейнера */
+    overflow: hidden !important; /* Предотвращаем переполнение */
+    margin: 0 !important; /* Убираем внешние отступы */
+}
+
+/* Убираем отступы у карточек чата */
+.chat-container .card,
+.chat-history-container .card {
+    margin: 0 !important;
+    border-radius: 0 !important;
+}
+
+/* Убираем отступы у контейнера истории чатов */
+.chat-history-container {
+    margin-bottom: 0 !important;
+}
+
+/* Адаптивность для истории чатов */
+.chat-history-container {
+    height: calc(100vh - 200px) !important;
+    overflow-y: auto !important;
+    width: 100% !important;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .chat-history-container {
+        height: auto !important;
+        max-height: 300px !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .chat-container {
+        max-height: calc(100vh - 150px) !important;
+    }
 }
 
 /* Адаптивная высота для разных экранов */
 @media (max-height: 800px) {
     .chat-container {
-        height: calc(100vh - 180px) !important;
         min-height: 300px !important;
+        max-height: calc(100vh - 100px) !important;
     }
 }
 
 @media (max-height: 600px) {
     .chat-container {
-        height: calc(100vh - 160px) !important;
         min-height: 250px !important;
+        max-height: calc(100vh - 80px) !important;
     }
 }
 
@@ -3317,6 +3332,44 @@ a:hover {
     flex: 1 !important;
     overflow-y: auto !important;
     max-height: none !important;
+    width: 100% !important; /* Полная ширина */
+}
+
+/* Убеждаемся, что row не выходит за пределы экрана */
+.row.g-0 {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Исправляем отступы для чата Gemini */
+.main-content .row.g-0 {
+    margin-left: -15px !important;
+    margin-right: -15px !important;
+    width: calc(100% + 30px) !important;
+}
+
+.main-content .row.g-0 > [class*="col-"] {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+}
+
+/* Адаптивность колонок (НЕ для Gemini чата) */
+@media (max-width: 991px) {
+    .col-lg-3:not(.chat-sidebar),
+    .col-lg-9:not(.chat-main-panel) {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .col-md-4:not(.chat-sidebar),
+    .col-md-8:not(.chat-main-panel) {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
 }
 
 /* Сохраняем оригинальные стили для навигационных ссылок в сайдбаре */

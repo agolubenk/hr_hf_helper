@@ -1,4 +1,5 @@
 {% extends 'common/base.html' %}
+{% load static %}
 
 {% block title %}{{ chat_session.title }} - Gemini AI{% endblock %}
 {% block page_title %}{{ chat_session.title }}{% endblock %}
@@ -7,9 +8,34 @@
 {% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-lg-3">
-        <div class="card mb-3 chat-history-container">
+<style>
+/* Принудительное обновление стилей чата */
+.chat-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.chat-history-container {
+    width: 100% !important;
+    margin: 0 !important;
+}
+
+.row.g-0 {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.row.g-0 > [class*="col-"] {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+}
+</style>
+<div class="row g-0">
+    <div class="col-12 col-md-4 col-lg-3 chat-sidebar">
+        <div class="card chat-history-container">
             <div class="card-header">
                 <h6 class="card-title mb-0">
                     <i class="fas fa-comments me-2"></i>
@@ -42,7 +68,7 @@
         </a>
     </div>
     
-    <div class="col-lg-9">
+    <div class="col-12 col-md-8 col-lg-9 chat-main-panel">
         <div class="card chat-container">
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
