@@ -3412,5 +3412,102 @@ a:hover {
 }
 
 /* =============================================================================
+   УНИВЕРСАЛЬНЫЕ СТИЛИ ДЛЯ ТЕМНОЙ ТЕМЫ
+   ============================================================================= */
+
+/* Карточки папок */
+[data-theme="dark"] .folder-input {
+    background-color: #2d3748 !important;
+    border-color: #4a5568 !important;
+}
+
+[data-theme="dark"] .folder-input input {
+    background-color: #1a202c;
+    border-color: #4a5568;
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .folder-input input:focus {
+    background-color: #2d3748;
+    border-color: #0dcaf0;
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .folder-input .badge {
+    background-color: #3182ce !important;
+}
+
+[data-theme="dark"] .folder-input .text-muted {
+    color: #a0aec0 !important;
+}
+
+/* Модальные окна */
+[data-theme="dark"] .modal-content {
+    background-color: #2d3748;
+    border-color: #4a5568;
+}
+
+[data-theme="dark"] .modal-header {
+    background-color: #1a202c;
+    border-bottom-color: #4a5568;
+}
+
+[data-theme="dark"] .modal-title {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .modal .btn-close {
+    filter: invert(1);
+}
+
+[data-theme="dark"] .modal-body {
+    background-color: #2d3748;
+}
+
+[data-theme="dark"] .modal .form-label {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .modal .form-control {
+    background-color: #1a202c;
+    border-color: #4a5568;
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .modal .form-control:focus {
+    background-color: #2d3748;
+    border-color: #0dcaf0;
+    color: #e2e8f0;
+    box-shadow: 0 0 0 0.2rem rgba(13, 202, 240, 0.25);
+}
+
+[data-theme="dark"] .modal .form-control::placeholder {
+    color: #a0aec0;
+}
+
+[data-theme="dark"] .modal .form-text {
+    color: #a0aec0;
+}
+
+[data-theme="dark"] .modal-footer {
+    background-color: #1a202c;
+    border-top-color: #4a5568;
+}
+
+/* Итоговый путь в лунном цвете для темной темы */
+[data-theme="dark"] #path-preview,
+[data-theme="dark"] #full-hierarchy-path,
+[data-theme="dark"] .alert-success code {
+    color: var(--color-luna-400) !important;
+    font-weight: 600;
+}
+
+[data-theme="dark"] .alert-success {
+    background-color: rgba(176, 196, 222, 0.1);
+    border-color: var(--color-luna-400);
+    color: var(--color-luna-300);
+}
+
+/* =============================================================================
    КОНЕЦ ФАЙЛА
    ============================================================================= */
