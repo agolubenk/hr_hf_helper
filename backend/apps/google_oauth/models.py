@@ -852,13 +852,17 @@ class Invite(models.Model):
         month_name = months_ru.get(month_num, '')
         weekday_name = weekdays_ru.get(weekday, '')
         
+        # Вычисляем номер недели в году (ISO 8601 формат)
+        week_number = self.interview_datetime.isocalendar()[1]
+        
         sample_data = {
             'date': self.interview_datetime.strftime('%d.%m.%Y'),
             'day': self.interview_datetime.strftime('%d'),
-            'week_short_en': self.interview_datetime.strftime('%a'),
-            'week_short_ru': weekdays_ru.get(weekday, ''),
-            'week_full_en': self.interview_datetime.strftime('%A'),
-            'week_full_ru': ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'][self.interview_datetime.weekday()],
+            'week_number': str(week_number),  # Номер недели в году (1-53)
+            'week_short_en': f"W{week_number}",  # Короткий формат: W42
+            'week_short_ru': f"Н{week_number}",  # Короткий формат: Н42
+            'week_full_en': f"Week {week_number}",  # Полный формат: Week 42
+            'week_full_ru': f"Неделя {week_number}",  # Полный формат: Неделя 42
             'month_num': self.interview_datetime.strftime('%m'),
             'month_short_ru': ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'][month_num-1],
             'month_short_en': self.interview_datetime.strftime('%b'),

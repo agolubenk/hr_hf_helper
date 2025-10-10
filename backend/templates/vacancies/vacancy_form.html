@@ -350,37 +350,73 @@
                                         {% for salary_range in salary_ranges %}
                                             <div class="col-md-6 col-lg-4 mb-2">
                                                 <div class="card">
-                                                    <div class="card-body p-2">
-                                                        <div class="d-flex justify-content-between align-items-center">
-                                                            <span class="badge bg-primary">{{ salary_range.grade.name }}</span>
-                                                            {% if salary_range.is_active %}
-                                                                <span class="badge bg-success">Активна</span>
-                                                            {% else %}
-                                                                <span class="badge bg-secondary">Неактивна</span>
-                                                            {% endif %}
-                                                        </div>
-                                                        <div class="mt-1">
-                                                            <small class="text-muted">USD:</small>
+                                                    <div class="card-header">
+                                                        <h6 class="card-title mb-0 d-flex justify-content-between align-items-center">
+                                                            <div>
+                                                                <span class="badge bg-primary me-2">{{ salary_range.grade.name }}</span>
+                                                                {% if salary_range.is_active %}
+                                                                    <span class="badge bg-success">Активна</span>
+                                                                {% else %}
+                                                                    <span class="badge bg-secondary">Неактивна</span>
+                                                                {% endif %}
+                                                            </div>
+                                                            <div>
+                                                                <small class="text-muted text-end">
+                                                                    UPD: {{ salary_range.updated_at|date:"d.m.Y" }}
+                                                                </small>
+                                                            </div>
+                                                        </h6>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <!-- USD -->
+                                                        <div class="mb-2">
                                                             <div class="fw-bold text-primary">
-                                                                ${{ salary_range.salary_min_usd }} - ${{ salary_range.salary_max_usd }}
+                                                                <b class="text-muted">USD:</b>
+                                                                {{ salary_range.salary_min_usd }} - {{ salary_range.salary_max_usd }}
                                                             </div>
                                                         </div>
+                                                        
+                                                        <!-- BYN -->
                                                         {% if salary_range.salary_min_byn and salary_range.salary_max_byn %}
-                                                            <div class="mt-1">
-                                                                <small class="text-muted">BYN:</small>
+                                                            <div class="mb-2">
                                                                 <div class="fw-bold text-info">
-                                                                    {{ salary_range.salary_min_byn }} - {{ salary_range.salary_max_byn }} BYN
+                                                                    <b class="text-muted">BYN:</b>
+                                                                    {{ salary_range.salary_min_byn }} - {{ salary_range.salary_max_byn }}
                                                                 </div>
                                                             </div>
                                                         {% endif %}
+                                                        
+                                                        <!-- PLN -->
                                                         {% if salary_range.salary_min_pln and salary_range.salary_max_pln %}
-                                                            <div class="mt-1">
-                                                                <small class="text-muted">PLN:</small>
+                                                            <div class="mb-2">
                                                                 <div class="fw-bold text-warning">
-                                                                    {{ salary_range.salary_min_pln }} - {{ salary_range.salary_max_pln }} PLN
+                                                                    <b class="text-muted">PLN:</b>
+                                                                    {{ salary_range.salary_min_pln }} - {{ salary_range.salary_max_pln }}
                                                                 </div>
                                                             </div>
                                                         {% endif %}
+                                                        
+                                                        <!-- EUR -->
+                                                        {% if salary_range.salary_min_eur and salary_range.salary_max_eur %}
+                                                            <div class="mb-2">
+                                                                <div class="fw-bold text-success">
+                                                                    <b class="text-muted">EUR:</b>
+                                                                    {{ salary_range.salary_min_eur }} - {{ salary_range.salary_max_eur }}
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="card-footer">
+                                                        <div class="btn-group w-100" role="group">
+                                                            <a href="{% url 'vacancies:salary_range_detail' salary_range.pk %}" 
+                                                               class="btn btn-outline-primary btn-sm" title="Просмотр">
+                                                                <i class="fas fa-eye"></i>
+                                                            </a>
+                                                            <a href="{% url 'vacancies:salary_range_edit' salary_range.pk %}?next={{ request.get_full_path|urlencode }}" 
+                                                               class="btn btn-outline-warning btn-sm" title="Редактировать">
+                                                                <i class="fas fa-edit"></i>
+                                                            </a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -389,12 +425,20 @@
                                     <hr class="my-2">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <small class="text-muted">
-                                            Зарплатные вилки автоматически рассчитываются на основе курсов валют
+                                            Зарплатные вилки автоматически перерассчитываются на основе курса USD НБРБ каждый день
                                         </small>
-                                        <a href="{% url 'vacancies:salary_ranges_list' %}" class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-cog me-1"></i>
-                                            Управление вилками
-                                        </a>
+                                        <div>
+                                            <a href="{% url 'vacancies:salary_range_create' %}" class="btn btn-primary btn-sm me-2" target="_blank" rel="noopener noreferrer">
+                                                <i class="fas fa-plus me-1"></i>
+                                                Создать вилку
+                                                <i class="fas fa-external-link-alt ms-1"></i>
+                                            </a>
+                                            <a href="{% url 'vacancies:salary_ranges_list' %}" class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener noreferrer">
+                                                <i class="fas fa-cog me-1"></i>
+                                                Управление вилками
+                                                <i class="fas fa-external-link-alt ms-1"></i>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             {% else %}
@@ -404,9 +448,10 @@
                                         Зарплатные вилки не настроены
                                     </h6>
                                     <p class="mb-2">Для отображения зарплатных вилок в вакансиях необходимо создать вилки для грейдов.</p>
-                                    <a href="{% url 'vacancies:salary_range_create' %}" class="btn btn-warning">
+                                    <a href="{% url 'vacancies:salary_range_create' %}?next={{ request.get_full_path|urlencode }}" class="btn btn-warning" target="_blank" rel="noopener noreferrer">
                                         <i class="fas fa-plus me-1"></i>
                                         Создать зарплатную вилку
+                                        <i class="fas fa-external-link-alt ms-1"></i>
                                     </a>
                                 </div>
                             {% endif %}

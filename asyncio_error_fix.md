@@ -210,3 +210,5 @@ curl -s http://localhost:8000/telegram/auth/qr/
 Теперь Telegram API работает стабильно без ошибок asyncio! 🎉
 
 
+
+

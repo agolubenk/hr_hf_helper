@@ -240,137 +240,101 @@
                         </div>
                         <div id="available-patterns" class="border rounded p-3 mb-3">
                             <div class="row g-2">
-                                <!-- Основные паттерны -->
+                                <!-- Левая колонка: Основные паттерны, Кандидат и Дни недели -->
                                 <div class="col-6">
+                                    <!-- Основные паттерны -->
                                     <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('text', 'scorecards')">
                                         <i class="fas fa-folder me-1"></i>scorecards
                                     </button>
-                                </div>
-                                <div class="col-6">
                                     <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('vacancy_title')">
                                         <i class="fas fa-briefcase me-1"></i>Вакансия
                                     </button>
-                                </div>
-                                
-                                <!-- Дата и время -->
-                                <div class="col-6">
-                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('date')">
-                                        <i class="fas fa-calendar me-1"></i>Дата (08.09.2025)
-                                    </button>
-                                </div>
-                                <div class="col-6">
-                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('day')">
-                                        <i class="fas fa-calendar-day me-1"></i>День (08)
-                                    </button>
-                                </div>
-                                <div class="col-6">
-                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('month_num')">
-                                        <i class="fas fa-calendar-alt me-1"></i>Месяц (09)
-                                    </button>
-                                </div>
-                                <div class="col-6">
-                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('year_full')">
-                                        <i class="fas fa-calendar me-1"></i>Год (2025)
-                                    </button>
-                                </div>
-                                
-                                <!-- Дни недели -->
-                                <div class="col-6">
-                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('weekday_short_ru')">
-                                        <i class="fas fa-calendar-week me-1"></i>День недели (ПН)
-                                    </button>
-                                </div>
-                                <div class="col-6">
-                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('weekday_full_ru')">
-                                        <i class="fas fa-calendar-week me-1"></i>День недели (Понедельник)
-                                    </button>
-                                </div>
-                                
-                                <!-- Месяцы -->
-                                <div class="col-6">
-                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('month_short_ru')">
-                                        <i class="fas fa-calendar-alt me-1"></i>Месяц (сен)
-                                    </button>
-                                </div>
-                                <div class="col-6">
-                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('month_full_ru')">
-                                        <i class="fas fa-calendar-alt me-1"></i>Месяц (сентябрь)
-                                    </button>
-                                </div>
-                                
-                                <!-- Кандидат -->
-                                <div class="col-6">
-                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('candidate_last_name')">
-                                        <i class="fas fa-user me-1"></i>Фамилия
-                                    </button>
-                                </div>
-                                <div class="col-6">
-                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('candidate_first_name')">
-                                        <i class="fas fa-user me-1"></i>Имя
-                                    </button>
-                                </div>
-                                <div class="col-6">
-                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('candidate_middle_name')">
-                                        <i class="fas fa-user me-1"></i>Отчество
-                                    </button>
-                                </div>
-                                <div class="col-6">
-                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('candidate_id')">
-                                        <i class="fas fa-id-card me-1"></i>ID кандидата
-                                    </button>
-                                </div>
-                                
-                                <!-- Вакансия -->
-                                <div class="col-6">
                                     <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('vacancy_id')">
                                         <i class="fas fa-hashtag me-1"></i>ID вакансии
                                     </button>
-                                </div>
-                                
-                                <!-- Дополнительные паттерны -->
-                                <div class="col-6">
+                                    
+                                    <!-- Кандидат -->
+                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('candidate_last_name')">
+                                        <i class="fas fa-user me-1"></i>Фамилия
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('candidate_first_name')">
+                                        <i class="fas fa-user me-1"></i>Имя
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('candidate_middle_name')">
+                                        <i class="fas fa-user me-1"></i>Отчество
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('candidate_id')">
+                                        <i class="fas fa-id-card me-1"></i>ID кандидата
+                                    </button>
+                                    
+                                    <!-- Дни недели -->
+                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('weekday_short_ru')">
+                                        <i class="fas fa-calendar-week me-1"></i>День недели (ПН)
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('weekday_full_ru')">
+                                        <i class="fas fa-calendar-week me-1"></i>День недели (Понедельник)
+                                    </button>
+                                    
+                                    <!-- Номер недели -->
+                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('week_short_ru')">
+                                        <i class="fas fa-calendar-week me-1"></i>Неделя (Н42)
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('week_full_ru')">
+                                        <i class="fas fa-calendar-week me-1"></i>Неделя (Неделя 42)
+                                    </button>
+ 
+                                    <!-- Год (сокращенный) -->
                                     <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('year_short')">
                                         <i class="fas fa-calendar me-1"></i>Год (25)
                                     </button>
                                 </div>
+                                
+                                <!-- Правая колонка: Даты (Дни, Недели (EN), Месяцы, Год) -->
                                 <div class="col-6">
+                                    <!-- Дни -->
+                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('day')">
+                                        <i class="fas fa-calendar-day me-1"></i>День (08)
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('date')">
+                                        <i class="fas fa-calendar me-1"></i>Дата (08.09.2025)
+                                    </button>
+                                    
+                                    <!-- Месяцы -->
+                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('month_num')">
+                                        <i class="fas fa-calendar-alt me-1"></i>Месяц (09)
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('month_short_ru')">
+                                        <i class="fas fa-calendar-alt me-1"></i>Месяц (сен)
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('month_full_ru')">
+                                        <i class="fas fa-calendar-alt me-1"></i>Месяц (сентябрь)
+                                    </button>
                                     <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('month_short_en')">
                                         <i class="fas fa-calendar-alt me-1"></i>Месяц (Sep)
                                     </button>
-                                </div>
-                                <div class="col-6">
                                     <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('month_full_en')">
                                         <i class="fas fa-calendar-alt me-1"></i>Месяц (September)
                                     </button>
-                                </div>
-                                <div class="col-6">
+                                    
+                                    
+                                    <!-- Дни недели (EN) -->
                                     <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('weekday_short_en')">
                                         <i class="fas fa-calendar-week me-1"></i>День недели (Mon)
                                     </button>
-                                </div>
-                                <div class="col-6">
                                     <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('weekday_full_en')">
                                         <i class="fas fa-calendar-week me-1"></i>День недели (Monday)
                                     </button>
-                                </div>
-                                <div class="col-6">
-                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('week_short_ru')">
-                                        <i class="fas fa-calendar-week me-1"></i>Неделя (ПН)
-                                    </button>
-                                </div>
-                                <div class="col-6">
+                                    
+                                    <!-- Номер недели (EN) -->
                                     <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('week_short_en')">
-                                        <i class="fas fa-calendar-week me-1"></i>Неделя (Mon)
+                                        <i class="fas fa-calendar-week me-1"></i>Неделя (W42)
                                     </button>
-                                </div>
-                                <div class="col-6">
-                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('week_full_ru')">
-                                        <i class="fas fa-calendar-week me-1"></i>Неделя (Понедельник)
-                                    </button>
-                                </div>
-                                <div class="col-6">
                                     <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('week_full_en')">
-                                        <i class="fas fa-calendar-week me-1"></i>Неделя (Monday)
+                                        <i class="fas fa-calendar-week me-1"></i>Неделя (Week 42)
+                                    </button>
+                                    <!-- Год -->
+                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('year_full')">
+                                        <i class="fas fa-calendar me-1"></i>Год (2025)
                                     </button>
                                 </div>
                             </div>
@@ -842,117 +806,10 @@ function moveDown(index) {
        }
 
        function updatePreview() {
-           console.log('🔄 updatePreview called');
-           // Фильтруем пустые папки перед созданием структуры
-           const validFolders = folderInputs.filter(folder => {
-               // Оставляем папки, которые имеют значение или являются паттернами
-               return folder.value && folder.value.trim() !== '' || 
-                      (folder.type && folder.type !== 'text');
-           });
+           console.log('🔄 updatePreview called - ТОЛЬКО обновление локального предпросмотра');
            
-           console.log('📋 Valid folders:', validFolders.length, 'out of', folderInputs.length);
-           
-           // Создаем структуру для API из валидных папок
-           const structure = validFolders.map(folder => {
-               // Проверяем, содержит ли строка множественные паттерны
-               const hasMultiplePatterns = folder.patterns && folder.patterns.length > 1;
-               const hasMixedContent = folder.value && (
-                   folder.value.includes('[Название вакансии]') ||
-                   folder.value.includes('[ID вакансии]') ||
-                   folder.value.includes('[Год (полный)]') ||
-                   folder.value.includes('[Месяц (номер)]') ||
-                   folder.value.includes('[Месяц (полное название)]') ||
-                   folder.value.includes('[День недели (полное название)]') ||
-                   folder.value.includes('[День недели (сокращение)]') ||
-                   folder.value.includes('[Дата]') ||
-                   folder.value.includes('[Фамилия кандидата]') ||
-                   folder.value.includes('[Имя кандидата]') ||
-                   folder.value.includes('[ID кандидата]')
-               );
-               
-               if (hasMultiplePatterns || hasMixedContent) {
-                   return {
-                       type: 'mixed',
-                       value: folder.value || ''
-                   };
-               } else {
-                   return {
-                       type: folder.type || 'text',
-                       value: folder.value || ''
-                   };
-               }
-           });
-           
-           console.log('📋 Structure for API:', structure);
-           
-           // Проверяем, что у нас есть хотя бы один элемент
-           if (structure.length === 0) {
-               console.error('❌ Structure is empty!');
-               alert('Структура папок не может быть пустой!');
-               return;
-           }
-           
-           // Дополнительная проверка: убираем пустые текстовые поля
-           const cleanedStructure = structure.filter(item => {
-               console.log(`🔍 Filtering item:`, item);
-               if (item.type === 'text') {
-                   const isValid = item.value && item.value.trim() !== '';
-                   console.log(`🔍 Text field validation: value='${item.value}', isValid=${isValid}`);
-                   return isValid;
-               }
-               console.log(`🔍 Non-text field, keeping:`, item);
-               return true; // Паттерны и mixed типы оставляем
-           });
-           
-           if (cleanedStructure.length === 0) {
-               console.error('❌ Structure is empty after cleaning!');
-               alert('Структура папок не может быть пустой!');
-               return;
-           }
-           
-           console.log('📋 Cleaned structure:', cleanedStructure);
-           
-           // Детальная отладка каждого элемента
-           cleanedStructure.forEach((item, index) => {
-               console.log(`📋 Item ${index}:`, {
-                   type: item.type,
-                   value: item.value,
-                   isEmpty: !item.value || item.value.trim() === '',
-                   isText: item.type === 'text'
-               });
-           });
-           
-           // Отправляем AJAX запрос для обновления предварительного просмотра
-           fetch('{% url "google_oauth:api_scorecard_path_settings" %}', {
-               method: 'POST',
-               headers: {
-                   'Content-Type': 'application/json',
-                   'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-               },
-               body: JSON.stringify({
-                   folder_structure: cleanedStructure
-               })
-           })
-           .then(response => {
-               console.log('📋 API response status:', response.status);
-               return response.json();
-           })
-           .then(data => {
-               console.log('📋 API response data:', data);
-               if (data.success) {
-                   // Обновляем оба предварительных просмотра
-                   document.getElementById('path-preview').textContent = data.path_preview;
-                   updateFullPathFromAPI(data.path_preview);
-                   updateHierarchyCardFromAPI(data.path_preview);
-                   console.log('✅ Preview updated successfully');
-               } else {
-                   console.error('Ошибка обновления предварительного просмотра:', data.message);
-                   alert('Ошибка сохранения: ' + data.message);
-               }
-           })
-           .catch(error => {
-               console.error('Ошибка:', error);
-           });
+           // Просто обновляем локальный предпросмотр без сохранения на сервер
+           updateFullPathPreview();
        }
 
 function saveStructure() {

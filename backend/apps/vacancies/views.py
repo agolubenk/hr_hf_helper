@@ -6,8 +6,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
-from .models import Vacancy
-from apps.finance.models import SalaryRange
+from .models import Vacancy, SalaryRange
 from .forms import VacancyForm, VacancySearchForm, SalaryRangeForm, SalaryRangeSearchForm
 from apps.finance.models import Grade
 # from .logic.vacancy_handlers import VacancyHandler  # УДАЛЕНО - логика перенесена в logic/candidate/
@@ -107,7 +106,6 @@ def vacancy_create(request):
         form = VacancyForm()
     
     # Получаем все активные зарплатные вилки
-    from apps.finance.models import SalaryRange
     salary_ranges = SalaryRange.objects.filter(is_active=True).order_by('grade__name')
     
     context = {
@@ -134,9 +132,8 @@ def vacancy_edit(request, pk):
     else:
         form = VacancyForm(instance=vacancy)
     
-    # Получаем все активные зарплатные вилки
-    from apps.finance.models import SalaryRange
-    salary_ranges = SalaryRange.objects.filter(is_active=True).order_by('grade__name')
+    # Получаем только зарплатные вилки для ЭТОЙ вакансии
+    salary_ranges = SalaryRange.objects.filter(vacancy=vacancy).order_by('grade__name')
     
     context = {
         'form': form,
@@ -200,7 +197,6 @@ def salary_ranges_list(request):
         'is_active': status_filter
     }
     # Получаем зарплатные вилки с фильтрацией
-    from apps.finance.models import SalaryRange
     salary_ranges = SalaryRange.objects.all()
     
     # Применяем фильтры
@@ -262,6 +258,11 @@ def salary_range_create(request):
         if form.is_valid():
             salary_range = form.save()
             messages.success(request, f'Зарплатная вилка для грейда "{salary_range.grade.name}" успешно создана!')
+            
+            # Проверяем параметр next для редиректа
+            next_url = request.GET.get('next') or request.POST.get('next')
+            if next_url:
+                return redirect(next_url)
             return redirect('vacancies:salary_range_detail', pk=salary_range.pk)
     else:
         form = SalaryRangeForm()
@@ -270,6 +271,7 @@ def salary_range_create(request):
         'form': form,
         'title': 'Создание зарплатной вилки',
         'submit_text': 'Создать зарплатную вилку',
+        'next_url': request.GET.get('next', ''),
     }
     
     return render(request, 'vacancies/salary_range_form.html', context)
@@ -285,6 +287,11 @@ def salary_range_edit(request, pk):
         if form.is_valid():
             salary_range = form.save()
             messages.success(request, f'Зарплатная вилка для грейда "{salary_range.grade.name}" успешно обновлена!')
+            
+            # Проверяем параметр next для редиректа
+            next_url = request.GET.get('next') or request.POST.get('next')
+            if next_url:
+                return redirect(next_url)
             return redirect('vacancies:salary_range_detail', pk=salary_range.pk)
     else:
         form = SalaryRangeForm(instance=salary_range)
@@ -294,6 +301,7 @@ def salary_range_edit(request, pk):
         'salary_range': salary_range,
         'title': f'Редактирование зарплатной вилки для грейда "{salary_range.grade.name}"',
         'submit_text': 'Сохранить изменения',
+        'next_url': request.GET.get('next', ''),
     }
     
     return render(request, 'vacancies/salary_range_form.html', context)

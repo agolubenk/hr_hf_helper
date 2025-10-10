@@ -2920,7 +2920,7 @@ a:hover {
     color: var(--hr-text-primary) !important;
     border: none !important;
     padding: 0 !important;
-    font-size: 20px !important;
+    font-size: 32px !important;
     cursor: pointer !important;
     transition: all var(--duration-normal) var(--ease-standard) !important;
     display: inline-block !important;
@@ -2977,16 +2977,16 @@ a:hover {
 .sidebar-close {
     display: none !important;
     position: absolute !important;
-    top: 15px !important;
-    right: 15px !important;
+    top: 18px !important;
+    right: 18px !important;
     z-index: 1021 !important;
     background: rgba(255, 255, 255, 0.2) !important;
     color: white !important;
     border: none !important;
     border-radius: var(--radius-full) !important;
-    width: 32px !important;
-    height: 32px !important;
-    font-size: 14px !important;
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 21px !important;
     cursor: pointer !important;
     transition: all var(--duration-normal) var(--ease-standard) !important;
     backdrop-filter: blur(10px) !important;
@@ -3270,7 +3270,7 @@ a:hover {
 @media (max-width: 576px) {
     .sidebar-toggle {
         min-width: 36px !important;
-        height: 36px !important;
+        height: 42px !important;
         padding: var(--space-6) var(--space-8) !important;
     }
     

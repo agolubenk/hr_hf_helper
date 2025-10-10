@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from logic.base.response_handler import UnifiedResponseHandler
 from logic.utilities.context_helpers import ContextHelper, DataHelper, PermissionHelper
-from apps.vacancies.models import Vacancy
-from apps.finance.models import Grade, SalaryRange
+from apps.vacancies.models import Vacancy, SalaryRange
+from apps.finance.models import Grade
 # from apps.vacancies.forms import VacancyForm  # Формы не используются
 
 @login_required
@@ -103,8 +103,8 @@ def vacancy_list(request):
     ОБРАБОТКА:
     - Получение параметров фильтрации из GET запроса
     - Фильтрация вакансий по пользователю через PermissionHelper
-    - Поиск по названию, описанию, компании
-    - Фильтрация по статусу активности и рекрутеру
+    - Поиск по названию, external_id, invite_title, scorecard_title
+    - Фильтрация по статусу активности (true/false) и рекрутеру
     - Пагинация результатов
     
     ВЫХОДЯЩИЕ ДАННЫЕ:
@@ -112,7 +112,7 @@ def vacancy_list(request):
     - render: HTML страница 'vacancies/vacancy_list.html'
     
     СВЯЗИ:
-    - Использует: PermissionHelper, SearchHelper, ContextHelper, UnifiedResponseHandler
+    - Использует: PermissionHelper, ContextHelper, UnifiedResponseHandler
     - Передает данные в: vacancies/vacancy_list.html
     - Может вызываться из: apps/vacancies/views.py
     """
@@ -135,20 +135,29 @@ def vacancy_list(request):
         
         # Поиск по вакансиям
         if search_query:
-            from logic.utilities.context_helpers import SearchHelper
-            search_fields = ['name', 'description', 'company_name']
-            vacancies = SearchHelper.filter_queryset_search(vacancies, search_query, search_fields)
+            from django.db.models import Q
+            vacancies = vacancies.filter(
+                Q(name__icontains=search_query) |
+                Q(external_id__icontains=search_query) |
+                Q(invite_title__icontains=search_query) |
+                Q(scorecard_title__icontains=search_query)
+            )
         
         # Фильтрация по статусу
-        if status_filter:
-            if status_filter == 'active':
+        if status_filter and status_filter != '':
+            if status_filter == 'true':
                 vacancies = vacancies.filter(is_active=True)
-            elif status_filter == 'inactive':
+            elif status_filter == 'false':
                 vacancies = vacancies.filter(is_active=False)
         
         # Фильтрация по рекрутеру
         if recruiter_filter:
             vacancies = vacancies.filter(recruiter_id=recruiter_filter)
+        
+        # Подсчитываем статистику ДО пагинации
+        total_count = vacancies.count()
+        active_count = vacancies.filter(is_active=True).count()
+        inactive_count = total_count - active_count
         
         # Пагинация
         pagination_context = ContextHelper.get_pagination_context(vacancies, request.GET.get('page', 1))
@@ -159,9 +168,12 @@ def vacancy_list(request):
             {
                 'vacancies': pagination_context.get('page_obj'),
                 'search_form': search_form,
-                'search_term': search_query,
+                'search_query': search_query,
                 'recruiter_filter': recruiter_filter,
                 'status_filter': status_filter,
+                'total_count': total_count,
+                'active_count': active_count,
+                'inactive_count': inactive_count,
                 **pagination_context
             }
         )
@@ -186,8 +198,7 @@ def vacancy_detail(request, pk):
         
         # Получаем зарплатные вилки для данной вакансии
         salary_ranges = SalaryRange.objects.filter(
-            vacancy=vacancy,
-            is_active=True
+            vacancy=vacancy
         ).order_by('-created_at')
         
         context = ContextHelper.get_base_context(
