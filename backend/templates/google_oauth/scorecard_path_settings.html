@@ -12,22 +12,6 @@
 <div id="saved-structure" data-structure='{{ settings.folder_structure|escapejs }}' style="display: none;"></div>
 
 <div class="row">
-    <!-- ПРОСТОЕ ОТОБРАЖЕНИЕ СТРУКТУРЫ ПАПОК -->
-    <div class="col-12 mb-4">
-        <div class="alert alert-success">
-            <h4><i class="fas fa-folder-tree me-2"></i>Структура папок для Scorecard:</h4>
-            <p><strong>Полный путь:</strong></p>
-            <code style="font-size: 18px; font-weight: bold; color: #000;">
-                G-Drive/{{ path_preview }} | Scorecard FE.gsheet
-            </code>
-            <div class="mt-3">
-                <small class="text-muted">
-                    <i class="fas fa-info-circle me-1"></i>
-                    <strong>Автоматические данные:</strong> Название вакансии, год, месяц, день, день недели, фамилия, имя и заголовок Scorecard подтягиваются автоматически из системы.
-                </small>
-            </div>
-        </div>
-    </div>
     
     <!-- Настройки структуры папок -->
     <div class="col-12 mb-4">
@@ -40,35 +24,12 @@
             </div>
             <div class="card-body">
                 
-                <!-- ПРОСТОЙ ЖЕЛТЫЙ БЛОК -->
-                <div class="alert alert-warning">
-                    <h4>ПОЛНЫЙ ПРИМЕР СТРУКТУРЫ ФАЙЛА:</h4>
-                    <p><strong>Полный путь в Google Drive:</strong></p>
-                    <code id="full-path-preview" style="font-size: 18px; font-weight: bold;">G-Drive/{{ path_preview }} | Scorecard FE.gsheet</code>
-                    <div class="mt-3">
-                        <button type="button" class="btn btn-info btn-sm" onclick="showHierarchyAlert()">
-                            <i class="fas fa-info-circle me-1"></i>
-                            Показать иерархическую структуру
-                        </button>
-                    </div>
-                </div>
-                
                 <!-- СКРИПТ ДЛЯ ОБНОВЛЕНИЯ ПОЛНОГО ПУТИ -->
                 <script>
                 // JavaScript загружен
                 console.log('🚀 JavaScript загружен!');
                 
-                // Функция для обновления полного пути
-                function updateFullPathDisplay() {
-                    const pathPreview = '{{ path_preview|escapejs }}';
-                    const fullPath = 'G-Drive/' + pathPreview + ' | Scorecard FE.gsheet';
-                    
-                    const fullPathElement = document.getElementById('full-path-preview');
-                    if (fullPathElement) {
-                        fullPathElement.textContent = fullPath;
-                        console.log('✅ Full path updated:', fullPath);
-                    }
-                }
+                // Функция для обновления полного пути (удалена, т.к. элемент full-path-preview больше не используется)
                 
                 // Функция для показа иерархической структуры в alert
                 function showHierarchyAlert() {
@@ -147,7 +108,6 @@
                 // Обновляем при загрузке страницы
                 document.addEventListener('DOMContentLoaded', function() {
                     console.log('🚀 DOMContentLoaded - starting initialization');
-                    updateFullPathDisplay();
                     updateHierarchyCard();
                     console.log('✅ DOMContentLoaded - initialization complete');
                 });
@@ -155,12 +115,18 @@
                 
                 <!-- Предварительный просмотр -->
                 <div class="alert alert-info mb-4">
-                    <h6><i class="fas fa-eye me-2"></i>Предварительный просмотр структуры папок:</h6>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0"><i class="fas fa-eye me-2"></i>Предварительный просмотр структуры папок:</h6>
+                        <button type="button" class="btn btn-info btn-sm" onclick="showHierarchyAlert()">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Показать иерархическую структуру
+                        </button>
+                    </div>
                     <code id="path-preview">{{ path_preview }}</code>
                     <div class="mt-2">
                         <small class="text-muted">
                             <i class="fas fa-info-circle me-1"></i>
-                            Каждый элемент в структуре создает отдельную папку. Для объединения нескольких паттернов в одном названии используйте "Произвольный текст" с нужными паттернами.
+                            Каждый элемент в структуре создает отдельную папку. Для комбинирования добавляйте элементы в одной папке.
                         </small>
                     </div>
                 </div>
@@ -744,38 +710,21 @@ function moveDown(index) {
        }
 
        function updateFullPathPreview() {
-           console.log('🔄 Updating full path preview...');
+           console.log('🔄 Updating path preview...');
            console.log('📋 folderInputs:', folderInputs);
            
-           // Создаем полный путь из folderInputs с примерами вместо паттернов
+           // Создаем путь из folderInputs с примерами вместо паттернов
            const pathParts = folderInputs.map(folder => {
                return getFolderDisplayValue(folder);
            }).filter(value => value.trim() !== '');
            
-           const fullPath = 'G-Drive/' + pathParts.join('/') + ' | Scorecard FE.gsheet';
+           const pathPreview = pathParts.join('/');
            
            console.log('📋 Path parts:', pathParts);
-           console.log('📋 Full path:', fullPath);
-           
-           // Обновляем поле в самом верху страницы
-           const fullPathElement = document.getElementById('full-path-preview');
-           if (fullPathElement) {
-               fullPathElement.textContent = fullPath;
-               console.log('✅ Full path preview updated');
-           } else {
-               console.error('❌ Full path preview element not found');
-           }
+           console.log('📋 Path preview:', pathPreview);
        }
        
-       // Глобальная функция для обновления полного пути (вызывается из API)
-       function updateFullPathFromAPI(pathPreview) {
-           const fullPath = 'G-Drive/' + pathPreview + ' | Scorecard FE.gsheet';
-           const fullPathElement = document.getElementById('full-path-preview');
-           if (fullPathElement) {
-               fullPathElement.textContent = fullPath;
-               console.log('✅ Full path updated from API:', fullPath);
-           }
-       }
+       // Глобальная функция для обновления полного пути (удалена, т.к. элемент full-path-preview больше не используется)
        
        // Функция для обновления карточки с иерархической структурой из API
        function updateHierarchyCardFromAPI(pathPreview) {
@@ -860,9 +809,8 @@ function saveStructure() {
     .then(data => {
         if (data.success) {
             alert('Структура сохранена успешно!');
-            // Обновляем оба предварительных просмотра
+            // Обновляем предварительные просмотры
             document.getElementById('path-preview').textContent = data.path_preview;
-            updateFullPathFromAPI(data.path_preview);
             updateHierarchyCardFromAPI(data.path_preview);
             // Также обновляем локальный полный путь
             updateFullPathPreview();
