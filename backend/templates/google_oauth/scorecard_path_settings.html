@@ -196,7 +196,7 @@
                                         <small class="text-muted">(обязательная)</small>
                                     </div>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="folder-0" placeholder="Введите название первой папки" value="scorecards" onclick="selectFolder(0)" oninput="updateFolderValue(0, this.value)">
+                                        <input type="text" class="form-control" id="folder-0" placeholder="Введите название первой папки" value="automations" onclick="selectFolder(0)" oninput="updateFolderValue(0, this.value)">
                                         <button class="btn btn-outline-warning" type="button" onclick="clearFolder(0)" title="Удалить последний паттерн/слово">
                                             <i class="fas fa-backspace"></i>
                                         </button>
@@ -214,9 +214,9 @@
                                 <i class="fas fa-undo me-1"></i>
                                 Сбросить
                             </button>
-                            <button type="button" class="btn btn-outline-success" onclick="addSampleStructure()">
-                                <i class="fas fa-folder-tree me-1"></i>
-                                Пример структуры
+                            <button type="button" class="btn btn-outline-success" onclick="showExampleStructure()">
+                                <i class="fas fa-lightbulb me-1"></i>
+                                Показать пример
                             </button>
                             <button type="button" class="btn btn-outline-info" onclick="addNewFolder()">
                                 <i class="fas fa-folder-plus me-1"></i>
@@ -243,8 +243,8 @@
                                 <!-- Левая колонка: Основные паттерны, Кандидат и Дни недели -->
                                 <div class="col-6">
                                     <!-- Основные паттерны -->
-                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('text', 'scorecards')">
-                                        <i class="fas fa-folder me-1"></i>scorecards
+                                    <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('text', 'текст')">
+                                        <i class="fas fa-t me-1"></i>Текст/Text
                                     </button>
                                     <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('vacancy_title')">
                                         <i class="fas fa-briefcase me-1"></i>Вакансия
@@ -266,8 +266,8 @@
                                     <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('candidate_id')">
                                         <i class="fas fa-id-card me-1"></i>ID кандидата
                                     </button>
-                                    
-                                    <!-- Дни недели -->
+                                
+                                <!-- Дни недели -->
                                     <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="addPatternToCurrentFolder('weekday_short_ru')">
                                         <i class="fas fa-calendar-week me-1"></i>День недели (ПН)
                                     </button>
@@ -418,18 +418,18 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('📋 Converted to folderInputs:', folderInputs);
         } else {
             console.log('📋 No saved structure found, using default');
-            folderInputs = [{type: 'text', value: 'scorecards'}];
+            folderInputs = [{type: 'text', value: 'automations'}];
             console.log('📋 Using default structure (no saved structure)');
         }
     } catch (e) {
         console.error('❌ Error parsing structure from data attribute:', e);
-        folderInputs = [{value: 'scorecards'}];
+        folderInputs = [{value: 'automations'}];
         console.log('📋 Using default structure due to parse error');
     }
     
     // Убеждаемся, что есть хотя бы один input
     if (folderInputs.length === 0) {
-        folderInputs = [{value: 'scorecards'}];
+        folderInputs = [{value: 'automations'}];
     }
     
     // Выбираем первый input
@@ -658,7 +658,7 @@ function moveDown(index) {
            // Обновляем первый input
            const firstInput = document.getElementById('folder-0');
            if (firstInput) {
-               firstInput.value = folderInputs[0].value || 'scorecards';
+               firstInput.value = folderInputs[0].value || 'automations';
                // Добавляем обработчик изменения
                firstInput.oninput = function() {
                    updateFolderValue(0, this.value);
@@ -885,8 +885,17 @@ function saveStructure() {
 }
 
        function resetStructure() {
-           console.log('🔄 Resetting structure...');
-           folderInputs = [{value: 'scorecards'}]; // Оставляем только первый обязательный input
+           console.log('🔄 Resetting structure to real example...');
+           // Используем реальную структуру пользователя agolubenkoby@gmail.com
+           folderInputs = [
+               {type: 'text', value: 'automations'},
+               {type: 'vacancy_title', value: ''},
+               {type: 'year_full', value: ''},
+               {type: 'mixed', value: '[day] [month_full_ru]'},
+               {type: 'mixed', value: '[day] [month_full_ru] ([weekday_short_ru])'},
+               {type: 'mixed', value: '[candidate_last_name] [candidate_first_name]'},
+               {type: 'scorecard_title', value: ''}
+           ];
            selectedFolderIndex = 0; // Выбираем первый input
            renderFolderInputs();
            updateFullPathPreview();
@@ -898,7 +907,7 @@ function testAddPattern() {
     const testPattern = {
         type: 'text',
         label: 'Произвольный текст',
-        example: 'scorecards',
+        example: 'текст',
         inputRequired: true,
         value: 'test-folder'
     };
@@ -907,20 +916,98 @@ function testAddPattern() {
     addPatternToStructure(testPattern);
 }
 
-function addSampleStructure() {
-    console.log('📁 Adding sample structure...');
-    folderInputs = [
-        {value: 'scorecards'},
-        {value: 'Frontend Engineer (React)'},
-        {value: '2025'},
-        {value: '09 08'},
-        {value: 'Иванов Иван'}
-    ];
+function showExampleStructure() {
+    console.log('📁 Showing example structure...');
     
-    console.log('✅ Adding sample structure:', folderInputs);
-    renderFolderInputs();
-    updateFullPathPreview();
-    updatePreview();
+    // Создаем модальное окно для показа примера
+    const exampleModal = document.createElement('div');
+    exampleModal.className = 'modal fade';
+    exampleModal.id = 'exampleModal';
+    exampleModal.innerHTML = `
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Пример структуры папок (из реальных данных)
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Это пример реальной структуры папок. Ваши текущие данные <strong>не изменятся</strong>.
+                    </div>
+                    
+                    <h6><i class="fas fa-folder-tree me-2"></i>Пример структуры:</h6>
+                    <div class="border rounded p-3 mb-3">
+                        <div class="mb-2">
+                            <span class="badge bg-primary me-2">📁 G-Drive</span>
+                            <code>automations</code>
+                        </div>
+                        <div class="mb-2" style="margin-left: 20px;">
+                            <span class="badge bg-secondary me-2">📁 automations</span>
+                            <code>Название вакансии</code>
+                        </div>
+                        <div class="mb-2" style="margin-left: 40px;">
+                            <span class="badge bg-secondary me-2">📁 Название вакансии</span>
+                            <code>2025</code>
+                        </div>
+                        <div class="mb-2" style="margin-left: 60px;">
+                            <span class="badge bg-secondary me-2">📁 2025</span>
+                            <code>09 сентябрь</code>
+                        </div>
+                        <div class="mb-2" style="margin-left: 80px;">
+                            <span class="badge bg-secondary me-2">📁 09 сентябрь</span>
+                            <code>09 сентябрь 15 (ПН)</code>
+                        </div>
+                        <div class="mb-2" style="margin-left: 100px;">
+                            <span class="badge bg-secondary me-2">📁 09 сентябрь 15 (ПН)</span>
+                            <code>Иванов Иван</code><strong> + </strong><code>Заголовок Scorecard</code>
+                        </div>
+                    </div>
+                    
+                    <h6><i class="fas fa-link me-2"></i>Итоговый путь:</h6>
+                    <div class="alert alert-success">
+                        <code>automations/Название вакансии/2025/09 сентябрь/09 сентябрь 15 (ПН)/Иванов Иван + Заголовок Scorecard</code>
+                    </div>
+                    
+                    <h6><i class="fas fa-question-circle me-2"></i>Как это работает:</h6>
+                    <ul>
+                        <li><strong>automations</strong> - фиксированная папка (вводится вручную)</li>
+                        <li><strong>Название вакансии</strong> - автоматически подставляется из вакансии</li>
+                        <li><strong>2025</strong> - год интервью (автоматически)</li>
+                        <li><strong>09 сентябрь</strong> - номер месяца и название месяца интервью (автоматически)</li>
+                        <li><strong>09 сентябрь 15 (ПН)</strong> - номер месяца, название месяца, день месяца и день недели в скобках (автоматически)</li>
+                        <li><strong>Иванов Иван + Заголовок Scorecard</strong> - фамилия, имя и заголовок scorecard в одной папке (автоматически)</li>
+                    </ul>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Автоматические данные:</strong> Фамилия, Имя, Заголовок Scorecard, дата и время интервью подтягиваются автоматически из системы. Вам нужно только настроить структуру папок.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>
+                        Закрыть
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Добавляем модальное окно в DOM
+    document.body.appendChild(exampleModal);
+    
+    // Показываем модальное окно
+    const modal = new bootstrap.Modal(exampleModal);
+    modal.show();
+    
+    // Удаляем модальное окно после закрытия
+    exampleModal.addEventListener('hidden.bs.modal', function() {
+        document.body.removeChild(exampleModal);
+    });
 }
 
        function addNewFolder() {
@@ -1122,7 +1209,7 @@ function updateFolderSelection() {
            
            // Если поле стало пустым, сбрасываем тип
            if (!newValue) {
-               folderInputs[index].type = 'text';
+           folderInputs[index].type = 'text';
                folderInputs[index].patterns = [];
            } else if (!newValue.includes('[')) {
                // Если паттернов больше нет, меняем тип на text
@@ -1152,7 +1239,7 @@ function updateFolderSelection() {
            // Для паттернов (не text) добавляем к существующему значению
            if (type === 'text') {
                const currentValue = folderInputs[selectedFolderIndex].value || '';
-               const newValue = currentValue ? `${currentValue} ${pattern.example}` : pattern.example;
+               const newValue = currentValue ? `${currentValue} ${value}` : value;
                folderInputs[selectedFolderIndex].value = newValue;
                folderInputs[selectedFolderIndex].type = 'text';
                document.getElementById(`folder-${selectedFolderIndex}`).value = newValue;
