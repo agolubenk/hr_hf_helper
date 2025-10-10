@@ -197,8 +197,8 @@
                                     </div>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="folder-0" placeholder="Введите название первой папки" value="scorecards" onclick="selectFolder(0)" oninput="updateFolderValue(0, this.value)">
-                                        <button class="btn btn-outline-secondary" type="button" onclick="clearFolder(0)" title="Очистить">
-                                            <i class="fas fa-eraser"></i>
+                                        <button class="btn btn-outline-warning" type="button" onclick="clearFolder(0)" title="Удалить последний паттерн/слово">
+                                            <i class="fas fa-backspace"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -345,8 +345,9 @@
                             <ol class="mb-0">
                                 <li>Нажмите "Добавить папку" слева</li>
                                 <li>Выберите папку (она подсветится)</li>
-                                <li>Нажмите кнопки паттернов справа</li>
-                                <li>Паттерны добавятся в выбранную папку</li>
+                                <li>Нажмите кнопки паттернов справа - они добавятся в выбранную папку</li>
+                                <li>Кнопка <i class="fas fa-backspace"></i> удаляет последний паттерн/слово из выбранной папки</li>
+                                <li>Не забудьте нажать "Сохранить структуру" для применения изменений!</li>
                             </ol>
                         </div>
                     </div>
@@ -680,17 +681,28 @@ function moveDown(index) {
                
                const isSelected = selectedFolderIndex === index;
                
+               // Получаем название родительской папки с преобразованием паттернов в примеры
+               const parentFolder = folderInputs[index - 1];
+               let parentName = getFolderDisplayValue(parentFolder) || `Папка ${index}`;
+               const parentTooltip = (parentFolder.value || `Папка ${index}`).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+               
+               // Если название слишком длинное, обрезаем его
+               if (parentName.length > 30) {
+                   parentName = parentName.substring(0, 30) + '...';
+               }
+               
+               // Экранируем HTML для безопасного отображения
+               const escapedParentName = parentName.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+               
                folderDiv.innerHTML = `
                    <div class="d-flex align-items-center mb-2">
-                       <span class="badge ${isSelected ? 'bg-primary' : 'bg-secondary'} me-2">Папка ${index + 1}</span>
-                       <button type="button" class="btn btn-sm btn-outline-danger ms-auto" onclick="removeFolder(${index})" title="Удалить папку">
-                           <i class="fas fa-times"></i>
-                       </button>
+                       <span class="badge ${isSelected ? 'bg-primary' : 'bg-secondary'} me-2" title="Подпапка для: ${parentTooltip}">📁 ${escapedParentName}</span>
+                       <i class="fas fa-trash-alt ms-auto text-danger" onclick="removeFolder(${index})" title="Удалить папку" style="cursor: pointer; font-size: 1.1rem;"></i>
                    </div>
                    <div class="input-group mb-2">
                        <input type="text" class="form-control" id="folder-${index}" placeholder="Введите название папки или используйте кнопки справа" value="${folder.type === 'text' ? (folder.value || '') : (folder.type === 'mixed' ? (folder.value || '') : `[${folder.type}]`)}" ${folder.type !== 'text' && folder.type !== 'mixed' ? 'readonly' : ''} onclick="selectFolder(${index})" oninput="updateFolderValue(${index}, this.value)">
-                       <button class="btn btn-outline-secondary" type="button" onclick="clearFolder(${index})" title="Очистить">
-                           <i class="fas fa-eraser"></i>
+                       <button class="btn btn-outline-warning" type="button" onclick="clearFolder(${index})" title="Удалить последний паттерн/слово">
+                           <i class="fas fa-backspace"></i>
                        </button>
                    </div>
                    ${isSelected ? '<div class="alert alert-info py-2 mb-0"><small><i class="fas fa-hand-pointer me-1"></i>Эта папка выбрана. Используйте кнопки справа для добавления паттернов.</small></div>' : ''}
@@ -720,21 +732,36 @@ function moveDown(index) {
            console.log('✅ Folder inputs rendered successfully');
        }
 
+       // Функция для получения примера значения паттерна
+       function getPatternExample(patternType) {
+           const pattern = availablePatterns.find(p => p.type === patternType);
+           return pattern ? pattern.example : patternType;
+       }
+       
+       // Функция для преобразования значения папки в пример
+       function getFolderDisplayValue(folder) {
+           if (!folder.value) return '';
+           
+           let displayValue = folder.value;
+           
+           // Заменяем все паттерны в квадратных скобках на их примеры
+           const patternRegex = /\[([^\]]+)\]/g;
+           displayValue = displayValue.replace(patternRegex, (match, patternType) => {
+               return getPatternExample(patternType);
+           });
+           
+           return displayValue;
+       }
+
        function updateFullPathPreview() {
            console.log('🔄 Updating full path preview...');
            console.log('📋 folderInputs:', folderInputs);
            
-           // Создаем полный путь из folderInputs
+           // Создаем полный путь из folderInputs с примерами вместо паттернов
            const pathParts = folderInputs.map(folder => {
-               if (folder.type === 'text') {
-                   return folder.value || '';
-               } else if (folder.type === 'mixed') {
-                   return folder.value || '';
-               } else {
-                   // Для обычных паттернов показываем их тип в квадратных скобках
-                   return `[${folder.type}]`;
-               }
+               return getFolderDisplayValue(folder);
            }).filter(value => value.trim() !== '');
+           
            const fullPath = 'G-Drive/' + pathParts.join('/') + ' | Scorecard FE.gsheet';
            
            console.log('📋 Path parts:', pathParts);
@@ -926,6 +953,8 @@ function selectFolder(index) {
                }
                updateFullPathPreview();
                updatePreview();
+               // Обновляем badge следующей папки, если она есть
+               updateChildFolderBadge(index);
                return;
            }
            
@@ -950,6 +979,34 @@ function selectFolder(index) {
            
            updateFullPathPreview();
            updatePreview();
+           // Обновляем badge следующей папки, если она есть
+           updateChildFolderBadge(index);
+       }
+       
+       // Функция для обновления badge дочерней папки
+       function updateChildFolderBadge(parentIndex) {
+           const childIndex = parentIndex + 1;
+           if (childIndex >= folderInputs.length) return;
+           
+           // Находим badge дочерней папки
+           const childFolderInputs = document.querySelectorAll('.folder-input');
+           if (childFolderInputs[childIndex]) {
+               const badge = childFolderInputs[childIndex].querySelector('.badge');
+               if (badge) {
+                   const parentFolder = folderInputs[parentIndex];
+                   let parentName = getFolderDisplayValue(parentFolder) || `Папка ${childIndex}`;
+                   const parentTooltip = (parentFolder.value || `Папка ${childIndex}`).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                   
+                   if (parentName.length > 30) {
+                       parentName = parentName.substring(0, 30) + '...';
+                   }
+                   
+                   const escapedParentName = parentName.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                   
+                   badge.innerHTML = `📁 ${escapedParentName}`;
+                   badge.setAttribute('title', `Подпапка для: ${parentTooltip}`);
+               }
+           }
        }
        
        function getPatternTypeByLabel(label) {
@@ -991,12 +1048,58 @@ function selectFolder(index) {
        }
 
        function clearFolder(index) {
-           console.log('🧹 Clearing folder at index:', index);
-           folderInputs[index].type = 'text';
-           folderInputs[index].value = '';
-           folderInputs[index].patterns = []; // Очищаем массив паттернов
-           document.getElementById(`folder-${index}`).value = '';
-           document.getElementById(`folder-${index}`).readOnly = false;
+           console.log('🧹 Removing last pattern from folder at index:', index);
+           
+           const currentValue = folderInputs[index].value || '';
+           
+           // Если поле пустое, ничего не делаем
+           if (!currentValue || currentValue.trim() === '') {
+               console.log('⚠️ Folder is already empty');
+               return;
+           }
+           
+           // Ищем последний паттерн в квадратных скобках [pattern] или последнее слово
+           let newValue = currentValue.trim();
+           
+           // Сначала пробуем удалить последний паттерн в квадратных скобках
+           const patternMatch = newValue.match(/\s*\[[^\]]+\]$/);
+           if (patternMatch) {
+               // Удаляем последний паттерн
+               newValue = newValue.substring(0, newValue.length - patternMatch[0].length).trim();
+               console.log('✅ Removed pattern from end:', patternMatch[0]);
+               
+               // Обновляем массив паттернов
+               if (folderInputs[index].patterns && folderInputs[index].patterns.length > 0) {
+                   folderInputs[index].patterns.pop();
+               }
+           } else {
+               // Если паттернов нет, удаляем последнее слово
+               const words = newValue.split(/\s+/);
+               if (words.length > 1) {
+                   words.pop();
+                   newValue = words.join(' ');
+                   console.log('✅ Removed last word');
+               } else {
+                   // Если это последнее слово, очищаем всё
+                   newValue = '';
+                   console.log('✅ Cleared folder completely');
+               }
+           }
+           
+           // Обновляем значение
+           folderInputs[index].value = newValue;
+           document.getElementById(`folder-${index}`).value = newValue;
+           
+           // Если поле стало пустым, сбрасываем тип
+           if (!newValue) {
+               folderInputs[index].type = 'text';
+               folderInputs[index].patterns = [];
+           } else if (!newValue.includes('[')) {
+               // Если паттернов больше нет, меняем тип на text
+               folderInputs[index].type = 'text';
+               folderInputs[index].patterns = [];
+           }
+           
            updateFullPathPreview();
            updatePreview();
        }
