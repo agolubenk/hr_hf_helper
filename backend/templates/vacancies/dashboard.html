@@ -3,18 +3,109 @@
 {% block title %}Дашборд - Локальные данные по вакансиям - HR Helper{% endblock %}
 {% block page_title %}Дашборд локальных данных по вакансиям{% endblock %}
 
+{% block extra_css %}
+<style>
+/* Принудительные стили для числовых значений в статистике */
+[data-theme="light"] .card.bg-primary h4.card-title,
+[data-theme="light"] .card.bg-success h4.card-title,
+[data-theme="light"] .card.bg-warning h4.card-title,
+[data-theme="light"] .card.bg-danger h4.card-title,
+[data-theme="light"] .card.bg-info h4.card-title,
+[data-theme="light"] .card.bg-secondary h4.card-title {
+    color: white !important;
+}
+
+/* Максимально специфичные правила */
+[data-theme="light"] .card.bg-primary .card-body .d-flex .d-flex h4.card-title.mb-0.me-2,
+[data-theme="light"] .card.bg-success .card-body .d-flex .d-flex h4.card-title.mb-0.me-2,
+[data-theme="light"] .card.bg-warning .card-body .d-flex .d-flex h4.card-title.mb-0.me-2,
+[data-theme="light"] .card.bg-danger .card-body .d-flex .d-flex h4.card-title.mb-0.me-2,
+[data-theme="light"] .card.bg-info .card-body .d-flex .d-flex h4.card-title.mb-0.me-2,
+[data-theme="light"] .card.bg-secondary .card-body .d-flex .d-flex h4.card-title.mb-0.me-2 {
+    color: white !important !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+}
+
+/* Проверка на скрытие элементов */
+[data-theme="light"] .card.bg-primary h4,
+[data-theme="light"] .card.bg-success h4,
+[data-theme="light"] .card.bg-warning h4,
+[data-theme="light"] .card.bg-danger h4,
+[data-theme="light"] .card.bg-info h4,
+[data-theme="light"] .card.bg-secondary h4 {
+    color: white !important !important !important;
+    visibility: visible !important !important;
+    opacity: 1 !important !important;
+    display: block !important !important;
+    font-size: 1.25rem !important !important;
+    font-weight: 600 !important !important;
+}
+
+/* Стили для новых элементов статистики */
+.statistic-number {
+    color: white !important;
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+}
+
+[data-theme="light"] .statistic-number {
+    color: white !important !important !important;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Принудительное отображение числовых значений в светлой теме
+    if (document.documentElement.getAttribute('data-theme') === 'light') {
+        // Старые h4 элементы
+        const numbers = document.querySelectorAll('.card.bg-primary h4.card-title, .card.bg-success h4.card-title, .card.bg-warning h4.card-title, .card.bg-danger h4.card-title, .card.bg-info h4.card-title, .card.bg-secondary h4.card-title');
+        
+        numbers.forEach(function(el) {
+            el.style.color = 'white';
+            el.style.visibility = 'visible';
+            el.style.opacity = '1';
+            el.style.display = 'block';
+            el.style.fontSize = '1.25rem';
+            el.style.fontWeight = '600';
+            console.log('Fixed h4 element:', el.textContent, el.style.color);
+        });
+        
+        // Новые statistic-number элементы
+        const newNumbers = document.querySelectorAll('.statistic-number');
+        
+        newNumbers.forEach(function(el) {
+            el.style.color = 'white';
+            el.style.visibility = 'visible';
+            el.style.opacity = '1';
+            el.style.display = 'block';
+            el.style.fontSize = '1.25rem';
+            el.style.fontWeight = '600';
+            console.log('Fixed statistic-number element:', el.textContent, el.style.color);
+        });
+    }
+});
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="row">
     <!-- Статистика -->
     <div class="col-lg-3 col-md-6 mb-4">
         <div class="card bg-primary text-white">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h4 class="card-title">{{ total_vacancies }}</h4>
-                        <p class="card-text">Всего вакансий</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-baseline">
+                        <div class="statistic-number" style="color: white !important; font-size: 1.25rem; font-weight: 600;">{{ total_vacancies }}</div>
+                        <span class="card-text">Всего вакансий</span>
                     </div>
-                    <div class="align-self-center">
+                    <div>
                         <i class="fas fa-briefcase fa-2x"></i>
                     </div>
                 </div>
@@ -25,12 +116,12 @@
     <div class="col-lg-3 col-md-6 mb-4">
         <div class="card bg-success text-white">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h4 class="card-title">{{ active_vacancies }}</h4>
-                        <p class="card-text">Активных</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-baseline">
+                        <div class="statistic-number" style="color: white !important; font-size: 1.25rem; font-weight: 600;">{{ active_vacancies }}</div>
+                        <span class="card-text">Активных</span>
                     </div>
-                    <div class="align-self-center">
+                    <div>
                         <i class="fas fa-check-circle fa-2x"></i>
                     </div>
                 </div>
@@ -41,12 +132,12 @@
     <div class="col-lg-3 col-md-6 mb-4">
         <div class="card bg-warning text-white">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h4 class="card-title">{{ inactive_vacancies }}</h4>
-                        <p class="card-text">Неактивных</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-baseline">
+                        <div class="statistic-number" style="color: white !important; font-size: 1.25rem; font-weight: 600;">{{ inactive_vacancies }}</div>
+                        <span class="card-text">Неактивных</span>
                     </div>
-                    <div class="align-self-center">
+                    <div>
                         <i class="fas fa-pause-circle fa-2x"></i>
                     </div>
                 </div>
@@ -57,12 +148,12 @@
     <div class="col-lg-3 col-md-6 mb-4">
         <div class="card bg-info text-white">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h4 class="card-title">{{ total_grades }}</h4>
-                        <p class="card-text">Грейдов</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-baseline">
+                        <div class="statistic-number" style="color: white !important; font-size: 1.25rem; font-weight: 600;">{{ total_grades }}</div>
+                        <span class="card-text">Грейдов</span>
                     </div>
-                    <div class="align-self-center">
+                    <div>
                         <i class="fas fa-star fa-2x"></i>
                     </div>
                 </div>
@@ -76,12 +167,12 @@
     <div class="col-lg-3 col-md-6 mb-4">
         <div class="card bg-secondary text-white">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h4 class="card-title">{{ total_salary_ranges }}</h4>
-                        <p class="card-text">Зарплатных вилок</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-baseline">
+                        <div class="statistic-number" style="color: white !important; font-size: 1.25rem; font-weight: 600;">{{ total_salary_ranges }}</div>
+                        <span class="card-text">Зарплатных вилок</span>
                     </div>
-                    <div class="align-self-center">
+                    <div>
                         <i class="fas fa-money-bill-wave fa-2x"></i>
                     </div>
                 </div>
@@ -92,12 +183,12 @@
     <div class="col-lg-3 col-md-6 mb-4">
         <div class="card bg-success text-white">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h4 class="card-title">{{ active_salary_ranges }}</h4>
-                        <p class="card-text">Активных вилок</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-baseline">
+                        <div class="statistic-number" style="color: white !important; font-size: 1.25rem; font-weight: 600;">{{ active_salary_ranges }}</div>
+                        <span class="card-text">Активных вилок</span>
                     </div>
-                    <div class="align-self-center">
+                    <div>
                         <i class="fas fa-check-circle fa-2x"></i>
                     </div>
                 </div>
@@ -108,12 +199,12 @@
     <div class="col-lg-3 col-md-6 mb-4">
         <div class="card bg-warning text-white">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h4 class="card-title">{{ inactive_salary_ranges }}</h4>
-                        <p class="card-text">Неактивных вилок</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-baseline">
+                        <div class="statistic-number" style="color: white !important; font-size: 1.25rem; font-weight: 600;">{{ inactive_salary_ranges }}</div>
+                        <span class="card-text">Неактивных вилок</span>
                     </div>
-                    <div class="align-self-center">
+                    <div>
                         <i class="fas fa-pause-circle fa-2x"></i>
                     </div>
                 </div>

@@ -1988,16 +1988,76 @@ a:hover {
     background: var(--hr-gradient-hover);
 }
 
-/* Цвет текста в заголовках карточек для тёмной темы */
+/* Цвет текста в заголовках карточек */
+.card-title {
+    font-weight: var(--font-weight-semibold);
+    font-size: 0.9rem !important;
+    margin-bottom: 0;
+}
+
+/* Темная тема - лунный цвет */
 [data-theme="dark"] .card-title {
     color: var(--color-luna-400);
 }
 
-.card-title {
+/* Светлая тема - темный цвет */
+[data-theme="light"] .card-title {
+    color: var(--color-slate-800);
+}
+
+/* Светлая тема - темный цвет для h4 (числовые значения в статистике) */
+[data-theme="light"] h4 {
+    color: var(--color-slate-800);
+}
+
+
+/* Принудительный белый цвет для всех h4 в карточках с цветным фоном */
+[data-theme="light"] .bg-primary h4,
+[data-theme="light"] .bg-success h4,
+[data-theme="light"] .bg-warning h4,
+[data-theme="light"] .bg-danger h4,
+[data-theme="light"] .bg-info h4,
+[data-theme="light"] .bg-secondary h4 {
     color: white !important;
-    font-weight: var(--font-weight-semibold);
-    font-size: 0.9rem !important;
-    margin-bottom: 0;
+}
+
+/* Сверх-специфичные правила для h4.card-title в цветных карточках */
+[data-theme="light"] .card.bg-primary .card-body .d-flex .d-flex h4.card-title,
+[data-theme="light"] .card.bg-success .card-body .d-flex .d-flex h4.card-title,
+[data-theme="light"] .card.bg-warning .card-body .d-flex .d-flex h4.card-title,
+[data-theme="light"] .card.bg-danger .card-body .d-flex .d-flex h4.card-title,
+[data-theme="light"] .card.bg-info .card-body .d-flex .d-flex h4.card-title,
+[data-theme="light"] .card.bg-secondary .card-body .d-flex .d-flex h4.card-title {
+    color: white !important;
+}
+
+/* Максимально специфичное правило для статистических карточек */
+[data-theme="light"] .card.bg-primary h4.card-title.mb-0.me-2,
+[data-theme="light"] .card.bg-success h4.card-title.mb-0.me-2,
+[data-theme="light"] .card.bg-warning h4.card-title.mb-0.me-2,
+[data-theme="light"] .card.bg-danger h4.card-title.mb-0.me-2,
+[data-theme="light"] .card.bg-info h4.card-title.mb-0.me-2,
+[data-theme="light"] .card.bg-secondary h4.card-title.mb-0.me-2 {
+    color: white !important !important;
+}
+
+/* Белый цвет только для карточек со специальным фоном (статистика) - только для темной темы */
+[data-theme="dark"] .card.bg-primary .card-title,
+[data-theme="dark"] .card.bg-success .card-title,
+[data-theme="dark"] .card.bg-warning .card-title,
+[data-theme="dark"] .card.bg-danger .card-title,
+[data-theme="dark"] .card.bg-info .card-title {
+    color: white !important;
+}
+
+/* Светлая тема - белый цвет для карточек со специальным фоном */
+[data-theme="light"] .card.bg-primary .card-title,
+[data-theme="light"] .card.bg-success .card-title,
+[data-theme="light"] .card.bg-warning .card-title,
+[data-theme="light"] .card.bg-danger .card-title,
+[data-theme="light"] .card.bg-info .card-title,
+[data-theme="light"] .card.bg-secondary .card-title {
+    color: white !important;
 }
 
 .card-body {
