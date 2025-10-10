@@ -2025,13 +2025,7 @@ a:hover {
     color: var(--hr-text);
 }
 
-.table thead th {
-    background: var(--hr-gradient);
-    color: var(--color-btn-primary-text);
-    border: none;
-    font-weight: var(--font-weight-medium);
-    padding: var(--space-16) var(--space-16);
-}
+/* Заголовки таблиц наследуют оригинальные стили тем */
 
 .table tbody td {
     padding: var(--space-12) var(--space-16);
