@@ -911,6 +911,21 @@ a:hover {
     display: block !important; /* Принудительно показываем при классе show */
 }
 
+/* Отключаем hover меню на мобильных устройствах */
+@media (max-width: 992px) {
+    .sidebar-hover-menu {
+        display: none !important;
+        pointer-events: none;
+        opacity: 0;
+        visibility: hidden;
+    }
+    
+    .sidebar-hover-menu.show {
+        display: none !important;
+        pointer-events: none;
+    }
+}
+
 .hover-menu-header {
     padding: 16px 20px;
     border-bottom: 1px solid var(--hr-border);

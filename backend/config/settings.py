@@ -78,7 +78,7 @@ LOGGING = {
     },
 }
 
-ALLOWED_HOSTS = ['testserver', '127.0.0.1', 'localhost', '192.168.100.7', '*']
+ALLOWED_HOSTS = ['testserver', '127.0.0.1', 'localhost', '192.168.100.7']
 
 # Application definition
 INSTALLED_APPS = [

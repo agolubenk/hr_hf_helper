@@ -640,6 +640,32 @@
             
             if (!sidebarToggle || !hoverMenu || !hoverMenuContent) return;
             
+            // Проверяем, является ли устройство мобильным
+            function isMobileDevice() {
+                return window.innerWidth <= 992; // Bootstrap lg breakpoint
+            }
+            
+            // Если мобильное устройство, отключаем hover меню
+            if (isMobileDevice()) {
+                console.log('📱 Мобильное устройство обнаружено - hover меню отключено');
+                hoverMenu.style.display = 'none';
+                hoverMenu.style.pointerEvents = 'none';
+                return;
+            }
+            
+            // Проверяем при изменении размера окна
+            window.addEventListener('resize', function() {
+                if (isMobileDevice()) {
+                    hoverMenu.style.display = 'none';
+                    hoverMenu.style.pointerEvents = 'none';
+                    console.log('📱 Переключение на мобильный режим - hover меню отключено');
+                } else {
+                    hoverMenu.style.display = 'block';
+                    hoverMenu.style.pointerEvents = 'auto';
+                    console.log('💻 Переключение на десктопный режим - hover меню включено');
+                }
+            });
+            
             // Создаем структуру hover меню с нуля
             function createHoverMenuStructure() {
                 // Очищаем содержимое
@@ -971,7 +997,13 @@
             
             // Инициализируем обработчики событий для hover меню
             function initHoverMenuEvents() {
-                // Обработчики для collapse элементов
+                // Удаляем старые обработчики событий
+                const existingElements = hoverMenuContent.querySelectorAll('[data-bs-toggle="collapse"]');
+                existingElements.forEach(element => {
+                    element.replaceWith(element.cloneNode(true));
+                });
+                
+                // Добавляем новые обработчики событий
                 const collapseElements = hoverMenuContent.querySelectorAll('[data-bs-toggle="collapse"]');
                 collapseElements.forEach(element => {
                     element.addEventListener('click', function(e) {
@@ -982,11 +1014,17 @@
                         const target = document.querySelector(targetId);
                         if (target) {
                             const isCollapsed = target.classList.contains('show');
+                            const arrow = this.querySelector('.submenu-arrow');
                             
                             if (isCollapsed) {
                                 // Закрываем подменю
                                 target.classList.remove('show');
                                 this.setAttribute('aria-expanded', 'false');
+                                
+                                // Поворачиваем стрелочку
+                                if (arrow) {
+                                    arrow.style.transform = 'rotate(0deg)';
+                                }
                                 
                                 // Закрываем все вложенные подменю
                                 const nestedSubmenus = target.querySelectorAll('.hover-submenu.show');
@@ -995,6 +1033,10 @@
                                     const nestedToggle = target.querySelector(`[data-bs-target="#${nestedSubmenu.id}"]`);
                                     if (nestedToggle) {
                                         nestedToggle.setAttribute('aria-expanded', 'false');
+                                        const nestedArrow = nestedToggle.querySelector('.submenu-arrow');
+                                        if (nestedArrow) {
+                                            nestedArrow.style.transform = 'rotate(0deg)';
+                                        }
                                     }
                                 });
                             } else {
@@ -1002,14 +1044,16 @@
                                 target.classList.add('show');
                                 this.setAttribute('aria-expanded', 'true');
                                 
-                                // НЕ закрываем другие подменю на том же уровне
-                                // Это позволяет иметь несколько открытых подменю одновременно
+                                // Поворачиваем стрелочку
+                                if (arrow) {
+                                    arrow.style.transform = 'rotate(180deg)';
+                                }
                             }
                         }
                     });
                 });
                 
-                console.log('✅ Обработчики событий инициализированы');
+                console.log('✅ Обработчики событий инициализированы для', collapseElements.length, 'элементов');
             }
             
             // Синхронизируем активные состояния с основным сайдбаром
@@ -1047,6 +1091,25 @@
                 console.log('✅ Активные состояния синхронизированы');
             }
             
+            // Функция для закрытия всех подменю (для тестирования)
+            function closeAllSubmenus() {
+                const allSubmenus = hoverMenuContent.querySelectorAll('.hover-submenu.show');
+                allSubmenus.forEach(submenu => {
+                    submenu.classList.remove('show');
+                });
+                
+                const allToggles = hoverMenuContent.querySelectorAll('[data-bs-toggle="collapse"]');
+                allToggles.forEach(toggle => {
+                    toggle.setAttribute('aria-expanded', 'false');
+                    const arrow = toggle.querySelector('.submenu-arrow');
+                    if (arrow) {
+                        arrow.style.transform = 'rotate(0deg)';
+                    }
+                });
+                
+                console.log('✅ Все подменю закрыты');
+            }
+            
                 // Создаем структуру при инициализации
                 createHoverMenuStructure();
                 
@@ -1055,33 +1118,23 @@
                 
                 // Синхронизируем активные состояния
                 syncActiveStates();
-            
-            // Синхронизируем состояния collapse элементов
-            function syncCollapseStates() {
-                const originalSidebar = document.querySelector('.sidebar');
-                if (!originalSidebar) return;
                 
-                // Синхронизируем состояния collapse элементов
-                const originalCollapses = originalSidebar.querySelectorAll('[data-bs-toggle="collapse"]');
-                originalCollapses.forEach(originalToggle => {
-                    const originalTarget = originalToggle.getAttribute('data-bs-target');
-                    if (originalTarget) {
-                        const hoverTarget = originalTarget.replace('#', '#hover-');
-                        const hoverToggle = hoverMenuContent.querySelector(`[data-bs-target="${hoverTarget}"]`);
-                        const hoverSubmenu = hoverMenuContent.querySelector(hoverTarget);
-                        
-                        if (hoverToggle && hoverSubmenu) {
-                            const isExpanded = originalToggle.getAttribute('aria-expanded') === 'true';
-                            hoverToggle.setAttribute('aria-expanded', isExpanded.toString());
-                            if (isExpanded) {
-                                hoverSubmenu.classList.add('show');
-                            } else {
-                                hoverSubmenu.classList.remove('show');
-                            }
+                // Добавляем глобальные функции для тестирования
+                window.hoverMenuTest = {
+                    closeAll: closeAllSubmenus,
+                    toggle: function(targetId) {
+                        const target = document.querySelector(targetId);
+                        if (target) {
+                            target.classList.toggle('show');
+                            console.log('Подменю', targetId, 'переключено');
                         }
+                    },
+                    getOpenMenus: function() {
+                        const openMenus = hoverMenuContent.querySelectorAll('.hover-submenu.show');
+                        console.log('Открытые подменю:', Array.from(openMenus).map(m => m.id));
+                        return openMenus;
                     }
-                });
-            }
+                };
             
             // Функция для принудительного закрытия всех подменю в hover меню
             function closeAllHoverSubmenus() {
@@ -1121,8 +1174,8 @@
                 
                 if (shouldUpdate) {
                     setTimeout(() => {
-                        copySidebarStructure();
-                        syncCollapseStates();
+                        // Обновляем только активные состояния, так как структура создается с нуля
+                        syncActiveStates();
                     }, 100);
                 }
             });
@@ -1138,7 +1191,7 @@
             }
             
             // Синхронизируем состояния при инициализации
-            setTimeout(syncCollapseStates, 200);
+            setTimeout(syncActiveStates, 200);
             
             // Принудительно скрываем hover меню при загрузке
             setTimeout(() => {
@@ -1160,10 +1213,26 @@
             }
             
             // Добавляем глобальный слушатель для отслеживания изменений видимости сайдбара
+            let lastSidebarState = null;
+            
             function checkSidebarVisibility() {
-                if (isSidebarVisible()) {
-                    forceHideHoverMenu();
-                    console.log('🔄 Основной сайдбар стал видимым - скрываем hover меню');
+                // Не проверяем на мобильных устройствах
+                if (isMobileDevice()) {
+                    return;
+                }
+                
+                const isVisible = isSidebarVisible();
+                
+                // Проверяем только если состояние изменилось
+                if (lastSidebarState !== isVisible) {
+                    lastSidebarState = isVisible;
+                    
+                    if (isVisible) {
+                        forceHideHoverMenu();
+                        console.log('🔄 Основной сайдбар стал видимым - скрываем hover меню');
+                    } else {
+                        console.log('✅ Показываем hover меню - основной сайдбар скрыт');
+                    }
                 }
             }
             
@@ -1174,8 +1243,8 @@
                 console.log('🚫 Принудительно скрываем hover меню');
             }
             
-            // Проверяем каждые 500ms
-            setInterval(checkSidebarVisibility, 500);
+            // Проверяем каждые 1000ms (реже, чтобы избежать спама)
+            setInterval(checkSidebarVisibility, 1000);
             
             // Также проверяем при изменении размера окна
             window.addEventListener('resize', checkSidebarVisibility);
@@ -1202,24 +1271,16 @@
                 
                 const isVisible = isVisibleOnDesktop || isVisibleOnMobile;
                 
-                console.log('🔍 Проверка сайдбара:', {
-                    isShow,
-                    isHidden,
-                    hasWidth,
-                    isInViewport,
-                    isDesktop,
-                    isVisibleOnDesktop,
-                    isVisibleOnMobile,
-                    isVisible,
-                    classes: sidebar.className,
-                    windowWidth: window.innerWidth
-                });
-                
                 return isVisible;
             }
             
             // Показываем меню при наведении на кнопку
             sidebarToggle.addEventListener('mouseenter', function() {
+                // Не работаем на мобильных устройствах
+                if (isMobileDevice()) {
+                    return;
+                }
+                
                 clearTimeout(hoverTimeout);
                 
                 // Принудительно скрываем hover меню
@@ -1239,6 +1300,11 @@
             
             // Скрываем меню при уходе с кнопки (с задержкой)
             sidebarToggle.addEventListener('mouseleave', function() {
+                // Не работаем на мобильных устройствах
+                if (isMobileDevice()) {
+                    return;
+                }
+                
                 hoverTimeout = setTimeout(() => {
                     hoverMenu.classList.remove('show');
                 }, 100);
@@ -1246,6 +1312,11 @@
             
             // Показываем меню при наведении на само меню
             hoverMenu.addEventListener('mouseenter', function() {
+                // Не работаем на мобильных устройствах
+                if (isMobileDevice()) {
+                    return;
+                }
+                
                 clearTimeout(hoverTimeout);
                 
                 // Проверяем видимость основного сайдбара
@@ -1258,6 +1329,11 @@
             
             // Скрываем меню при уходе с меню
             hoverMenu.addEventListener('mouseleave', function() {
+                // Не работаем на мобильных устройствах
+                if (isMobileDevice()) {
+                    return;
+                }
+                
                 hoverTimeout = setTimeout(() => {
                     hoverMenu.classList.remove('show');
                 }, 100);
@@ -1332,12 +1408,30 @@
         let sidebarVisible = window.innerWidth > 992;
         let isToggling = false; // Флаг для предотвращения конфликтов
         
+        // Инициализируем состояние на основе сохраненных данных
+        function initializeSidebarState() {
+            const savedState = localStorage.getItem('sidebarState');
+            if (savedState) {
+                sidebarVisible = savedState === 'visible';
+                console.log('🔍 Инициализация состояния сайдбара из localStorage:', savedState);
+            } else {
+                console.log('🔍 Используем состояние сайдбара по умолчанию для размера экрана:', window.innerWidth > 992 ? 'visible' : 'hidden');
+            }
+        }
+        
+        // Вызываем инициализацию
+        initializeSidebarState();
+        
         // Обновленная функция переключения сайдбара
         function toggleSidebar() {
             if (isToggling) return; // Предотвращаем повторные вызовы
             isToggling = true;
             
             sidebarVisible = !sidebarVisible;
+            
+            // Сохраняем состояние сайдбара в localStorage
+            localStorage.setItem('sidebarState', sidebarVisible ? 'visible' : 'hidden');
+            console.log('💾 Состояние сайдбара сохранено:', sidebarVisible ? 'visible' : 'hidden');
             
             if (sidebarVisible) {
                 sidebar.classList.remove('hidden');
@@ -1387,6 +1481,10 @@
             isToggling = true;
             
             sidebarVisible = false;
+            
+            // Сохраняем состояние сайдбара в localStorage
+            localStorage.setItem('sidebarState', 'hidden');
+            console.log('💾 Состояние сайдбара сохранено: hidden');
             sidebar.classList.add('hidden');
             sidebar.classList.remove('show');
             if (mainContent) {
@@ -1410,27 +1508,97 @@
             }, 300);
         }
         
+        // Функция восстановления состояния сайдбара
+        function restoreSidebarState() {
+            const savedState = localStorage.getItem('sidebarState');
+            if (savedState) {
+                console.log('🔄 Восстанавливаем состояние сайдбара:', savedState);
+                
+                if (savedState === 'hidden') {
+                    sidebarVisible = false;
+                    sidebar.classList.add('hidden');
+                    sidebar.classList.remove('show');
+                    if (mainContent) {
+                        mainContent.classList.add('sidebar-hidden');
+                        mainContent.style.marginLeft = '0';
+                        mainContent.style.width = '100%';
+                    }
+                    overlay.classList.remove('show');
+                    toggleBtn.className = 'fas fa-caret-square-right sidebar-toggle';
+                } else if (savedState === 'visible') {
+                    sidebarVisible = true;
+                    sidebar.classList.remove('hidden');
+                    sidebar.classList.add('show');
+                    if (mainContent) {
+                        mainContent.classList.remove('sidebar-hidden');
+                        mainContent.style.marginLeft = '240px';
+                        mainContent.style.width = 'calc(100% - 240px)';
+                    }
+                    toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
+                }
+            } else {
+                console.log('🆕 Нет сохраненного состояния сайдбара, используем значение по умолчанию');
+            }
+        }
+        
         // События
         toggleBtn.addEventListener('click', toggleSidebar);
         closeBtn.addEventListener('click', hideSidebar);
         overlay.addEventListener('click', hideSidebar);
+        
+        // Восстанавливаем состояние сайдбара при загрузке
+        restoreSidebarState();
+        
+        // Добавляем глобальные функции для управления состоянием сайдбара
+        window.sidebarState = {
+            reset: function() {
+                localStorage.removeItem('sidebarState');
+                console.log('🗑️ Состояние сайдбара сброшено');
+                // Перезагружаем страницу для применения состояния по умолчанию
+                location.reload();
+            },
+            get: function() {
+                return localStorage.getItem('sidebarState');
+            },
+            set: function(state) {
+                if (state === 'visible' || state === 'hidden') {
+                    localStorage.setItem('sidebarState', state);
+                    console.log('💾 Состояние сайдбара установлено:', state);
+                } else {
+                    console.warn('❌ Неверное состояние сайдбара. Используйте "visible" или "hidden"');
+                }
+            }
+        };
         
         // Обработка изменения размера окна
         window.addEventListener('resize', function() {
             if (isToggling) return; // Предотвращаем конфликты во время переключения
             
             if (window.innerWidth > 992) {
-                // Десктоп: показываем сайдбар, убираем overlay
-                sidebar.classList.remove('hidden', 'show');
-                if (mainContent) {
-                    mainContent.classList.remove('sidebar-hidden');
-                    // Принудительно устанавливаем стили
-                    mainContent.style.marginLeft = '240px';
-                    mainContent.style.width = 'calc(100% - 240px)';
+                // Десктоп: восстанавливаем сохраненное состояние сайдбара
+                const savedState = localStorage.getItem('sidebarState');
+                if (savedState === 'hidden') {
+                    sidebar.classList.add('hidden');
+                    sidebar.classList.remove('show');
+                    if (mainContent) {
+                        mainContent.classList.add('sidebar-hidden');
+                        mainContent.style.marginLeft = '0';
+                        mainContent.style.width = '100%';
+                    }
+                    sidebarVisible = false;
+                    toggleBtn.className = 'fas fa-caret-square-right sidebar-toggle';
+                } else {
+                    sidebar.classList.remove('hidden');
+                    sidebar.classList.add('show');
+                    if (mainContent) {
+                        mainContent.classList.remove('sidebar-hidden');
+                        mainContent.style.marginLeft = '240px';
+                        mainContent.style.width = 'calc(100% - 240px)';
+                    }
+                    sidebarVisible = true;
+                    toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
                 }
                 overlay.classList.remove('show');
-                sidebarVisible = true;
-                toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
                 
                 // Убираем кнопку закрытия на десктопе
                 const existingCloseBtn = sidebar.querySelector('.sidebar-close');
