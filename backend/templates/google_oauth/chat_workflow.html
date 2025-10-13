@@ -115,6 +115,10 @@
                         </form>
                         {% if selected_vacancy %}
                         <div class="mt-2 text-end">
+                            <a href="{% url 'vacancies:vacancy_detail' selected_vacancy.id %}" target="_blank" class="badge bg-primary fs-6 me-2 clickable-badge" style="text-decoration: none; cursor: pointer;">
+                                <i class="fas fa-briefcase me-2"></i> Вакансия
+                                <i class="fas fa-external-link-alt ms-1"></i>
+                            </a>
                             <span class="badge bg-success fs-6 clickable-badge" onclick="toggleSlotsCard()" style="cursor: pointer;">
                                 <i class="fas fa-clock me-2"></i> Свободные слоты
                             </span>
@@ -1847,9 +1851,10 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                 console.log('🔍 Bootstrap доступен:', typeof bootstrap !== 'undefined');
                 console.log('🔍 Bootstrap.Collapse доступен:', typeof bootstrap?.Collapse !== 'undefined');
                 
-                const clickableBadge = document.querySelector('.clickable-badge');
-                console.log('🔍 Кликабельный бейдж найден:', !!clickableBadge);
-                if (clickableBadge) {
+                const clickableBadges = document.querySelectorAll('.clickable-badge');
+                console.log('🔍 Кликабельные бейджи найдены:', clickableBadges.length);
+                
+                clickableBadges.forEach(function(clickableBadge) {
                     // Добавляем hover эффект
                     clickableBadge.addEventListener('mouseenter', function() {
                         this.style.transform = 'scale(1.05)';
@@ -1868,7 +1873,7 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                     clickableBadge.addEventListener('mouseup', function() {
                         this.style.transform = 'scale(1.05)';
                     });
-                }
+                });
             });
             
             // Функция для переключения формы редактирования названия чата
