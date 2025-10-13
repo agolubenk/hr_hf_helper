@@ -1026,6 +1026,16 @@ a:hover {
     display: none !important;
 }
 
+/* Убираем все дублирующиеся стрелочки */
+.hover-menu-nav .nav-link [class*="chevron"]:not(:first-child) {
+    display: none !important;
+}
+
+.hover-menu-nav .nav-link .fa-chevron-down + .fa-chevron-down,
+.hover-menu-nav .nav-link .fa-chevron-up + .fa-chevron-up {
+    display: none !important;
+}
+
 /* Стили для подменю */
 .hover-submenu {
     margin: 0;

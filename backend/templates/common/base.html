@@ -783,7 +783,35 @@
                             arrows[i].remove();
                         }
                     }
+                    
+                    // Также проверяем на дублирующиеся классы chevron
+                    const chevrons = link.querySelectorAll('.fa-chevron-down, .fa-chevron-up');
+                    if (chevrons.length > 1) {
+                        // Оставляем только первую стрелочку
+                        for (let i = 1; i < chevrons.length; i++) {
+                            chevrons[i].remove();
+                        }
+                    }
                 });
+                
+                // Дополнительная проверка - убираем все стрелочки кроме первой в каждом элементе
+                const allArrows = hoverMenuContent.querySelectorAll('[class*="chevron"]');
+                const processedLinks = new Set();
+                
+                allArrows.forEach(arrow => {
+                    const link = arrow.closest('.nav-link');
+                    if (link && !processedLinks.has(link)) {
+                        processedLinks.add(link);
+                        const linkArrows = link.querySelectorAll('[class*="chevron"]');
+                        if (linkArrows.length > 1) {
+                            // Оставляем только первую стрелочку
+                            for (let i = 1; i < linkArrows.length; i++) {
+                                linkArrows[i].remove();
+                            }
+                        }
+                    }
+                });
+                
                 console.log('✅ Дублирующиеся стрелочки удалены');
             }
             
@@ -865,7 +893,7 @@
             }
             
             // Создаем элемент подменю
-            function createSubMenuItem(item, index = 0) {
+            function createSubMenuItem(item, index = 0, level = 1) {
                 const li = document.createElement('li');
                 li.className = 'nav-item';
                 
@@ -875,8 +903,15 @@
                 const a = document.createElement('a');
                 a.className = 'nav-link';
                 a.href = item.url;
-                a.style.padding = '10px 20px 10px 40px';
-                a.style.fontSize = '0.8rem';
+                
+                // Отступы в зависимости от уровня вложенности
+                if (level === 1) {
+                    a.style.padding = '10px 20px 10px 40px';
+                } else {
+                    a.style.padding = '8px 20px 8px 60px';
+                }
+                
+                a.style.fontSize = level === 1 ? '0.8rem' : '0.75rem';
                 a.style.color = 'var(--hr-text-muted)';
                 a.style.borderLeft = '3px solid transparent';
                 a.style.position = 'relative';
@@ -900,7 +935,7 @@
                 const text = document.createTextNode(item.title);
                 a.appendChild(text);
                 
-                // Стрелочка для подменю
+                // Стрелочка для подменю (только если есть подменю)
                 if (hasSubmenu) {
                     const arrow = document.createElement('i');
                     arrow.className = 'fas fa-chevron-down submenu-arrow ms-auto';
@@ -923,7 +958,7 @@
                     submenuUl.style.padding = '0';
                     
                     item.submenu.forEach((subSubItem, subSubIndex) => {
-                        const subSubMenuItem = createSubMenuItem(subSubItem, subSubIndex);
+                        const subSubMenuItem = createSubMenuItem(subSubItem, subSubIndex, level + 1);
                         submenuUl.appendChild(subSubMenuItem);
                     });
                     
