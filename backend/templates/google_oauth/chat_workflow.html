@@ -11,7 +11,6 @@
             <div class="vacancy-selector">
                 <div class="row align-items-center" style="margin-top: 0 !important;">
                     <div class="col-md-8">
-
                         <!-- Информация о выбранной вакансии -->
                         {% if selected_vacancy %}
                         <div class="automation-card">
@@ -28,7 +27,7 @@
                                                 <i class="fas fa-link"></i>
                                                 <div class="position-absolute top-0 start-100 translate-middle">
                                                     <span class="flag-emoji">🇧🇾</span>
-                </div>
+                                                </div>
                                                 <div class="copy-tooltip">Скопировать ссылку на вакансию (Беларусь)</div>
                                             </button>
                                             
@@ -39,7 +38,7 @@
                                                 <i class="fas fa-question"></i>
                                                 <div class="position-absolute top-0 start-100 translate-middle">
                                                     <span class="flag-emoji">🇧🇾</span>
-            </div>
+                                                </div>
                                                 <div class="copy-tooltip">Скопировать вопросы для Беларуси</div>
                                             </button>
                                             
@@ -1739,8 +1738,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- Отладочная информация для событий календаря -->
 <script>
-console.log('🔍 DEBUG: calendar_events_data из Django:', {{ calendar_events_data|safe }});
-console.log('🔍 DEBUG: Количество событий:', {{ calendar_events_data|length }});
+console.log('🔍 DEBUG: calendar_events_data из Django:', {% if calendar_events_data %}{{ calendar_events_data|safe }}{% else %}[]{% endif %});
+console.log('🔍 DEBUG: Количество событий:', {% if calendar_events_data %}{{ calendar_events_data|length }}{% else %}0{% endif %});
 </script>
 
 {% if selected_vacancy %}
@@ -1969,6 +1968,7 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                 }, 100);
             });
             </script>
+            
             
             <!-- Подключение скрипта автоматических меток -->
             <script>
