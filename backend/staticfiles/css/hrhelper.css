@@ -881,6 +881,360 @@ a:hover {
 }
 
 /* =============================================================================
+   САЙДБАР HOVER МЕНЮ
+   ============================================================================= */
+
+/* Субменю при наведении на кнопку сайдбара */
+.sidebar-hover-menu {
+    position: fixed;
+    top: 0;
+    left: 0; /* Без отступа от левого края */
+    width: 320px;
+    height: 100vh; /* На всю высоту экрана */
+    background: var(--hr-card-bg);
+    border: 1px solid var(--hr-border);
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0; /* Скругление только справа */
+    box-shadow: var(--shadow-lg);
+    z-index: 1050;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-20px);
+    transition: all 0.3s ease;
+    display: none !important; /* Принудительно скрываем по умолчанию */
+    flex-direction: column; /* Flexbox для вертикального распределения */
+}
+
+.sidebar-hover-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    display: block !important; /* Принудительно показываем при классе show */
+}
+
+.hover-menu-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--hr-border);
+    background: linear-gradient(135deg, var(--hr-primary) 0%, var(--hr-secondary) 100%);
+    color: white;
+    border-radius: 0 var(--radius-lg) 0 0; /* Скругление только справа сверху */
+    font-size: 1rem;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-expand-sidebar {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+}
+
+.btn-expand-sidebar:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.btn-expand-sidebar:active {
+    transform: scale(0.95);
+}
+
+.hover-menu-content {
+    padding: 16px 0;
+    height: calc(100vh - 80px); /* Вычитаем высоту заголовка */
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Стили для скопированной навигации */
+.hover-menu-nav {
+    margin: 0;
+    padding: 0;
+}
+
+.hover-menu-nav .nav-item {
+    margin: 0;
+}
+
+.hover-menu-nav .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: var(--hr-text);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+    border-radius: 0;
+    background: transparent;
+    position: relative;
+}
+
+.hover-menu-nav .nav-link:hover {
+    background: var(--hr-hover-bg);
+    color: var(--hr-primary);
+    border-left-color: var(--hr-primary);
+    text-decoration: none;
+    transform: translateX(4px);
+}
+
+.hover-menu-nav .nav-link.active {
+    background: rgba(var(--hr-primary-rgb), 0.1);
+    color: var(--hr-primary);
+    border-left-color: var(--hr-primary);
+}
+
+.hover-menu-nav .nav-link i {
+    width: 20px;
+    text-align: center;
+    font-size: 0.875rem;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.hover-menu-nav .nav-link .hrhelper-logo-adaptive {
+    width: 20px !important;
+    height: 20px !important;
+    margin: 0 12px 0 0 !important;
+    flex-shrink: 0;
+}
+
+.hover-menu-nav .nav-link .submenu-arrow {
+    margin-left: auto;
+    font-size: 0.75rem;
+    transition: transform 0.2s ease;
+}
+
+.hover-menu-nav .nav-link[aria-expanded="true"] .submenu-arrow {
+    transform: rotate(180deg);
+}
+
+/* Убираем дублирующиеся стрелочки */
+.hover-menu-nav .nav-link .submenu-arrow + .submenu-arrow {
+    display: none !important;
+}
+
+/* Стили для подменю */
+.hover-submenu {
+    margin: 0;
+    padding: 0;
+    background: rgba(var(--hr-primary-rgb), 0.02);
+    position: relative;
+}
+
+.hover-submenu::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--hr-border);
+    opacity: 0.3;
+}
+
+.hover-submenu .nav-item {
+    margin: 0;
+    position: relative;
+}
+
+.hover-submenu .nav-item::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    width: 8px;
+    height: 1px;
+    background: var(--hr-border);
+    transform: translateY(-50%);
+    opacity: 0.5;
+    z-index: 1;
+}
+
+.hover-submenu .nav-link {
+    padding: 10px 20px 10px 40px;
+    font-size: 0.8rem;
+    color: var(--hr-text-muted);
+    border-left: 3px solid transparent;
+    position: relative;
+    margin-left: 0;
+}
+
+.hover-submenu .nav-link:hover {
+    color: var(--hr-primary);
+    background: var(--hr-hover-bg);
+    border-left-color: var(--hr-primary);
+}
+
+.hover-submenu .nav-link.active {
+    color: var(--hr-primary);
+    background: rgba(var(--hr-primary-rgb), 0.1);
+    border-left-color: var(--hr-primary);
+}
+
+.hover-submenu .nav-link i {
+    width: 16px;
+    margin-right: 8px;
+    font-size: 0.75rem;
+}
+
+/* Вложенные подменю (третий уровень) */
+.hover-submenu .hover-submenu {
+    margin-left: 0;
+    background: rgba(var(--hr-primary-rgb), 0.04);
+}
+
+.hover-submenu .hover-submenu::before {
+    left: 40px;
+    width: 1px;
+}
+
+.hover-submenu .hover-submenu .nav-item::before {
+    left: 40px;
+    width: 6px;
+}
+
+.hover-submenu .hover-submenu .nav-link {
+    font-size: 0.75rem;
+    padding: 8px 20px 8px 60px;
+}
+
+/* Стили для collapse элементов в hover меню */
+.hover-menu-nav .nav-link[data-bs-toggle="collapse"] {
+    cursor: pointer;
+    position: relative;
+}
+
+.hover-menu-nav .nav-link[data-bs-toggle="collapse"]::after {
+    content: '\f107';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 16px;
+    transition: transform 0.2s ease;
+}
+
+.hover-menu-nav .nav-link[data-bs-toggle="collapse"][aria-expanded="true"]::after {
+    transform: rotate(180deg);
+}
+
+/* Анимация для подменю */
+.hover-submenu {
+    transition: all 0.3s ease;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+}
+
+.hover-submenu.show {
+    max-height: 1000px;
+    opacity: 1;
+}
+
+/* Разделитель */
+.hover-menu-content hr {
+    margin: 8px 0;
+    border-color: var(--hr-border);
+    opacity: 0.5;
+}
+
+/* Анимация для кнопки сайдбара при наведении */
+.sidebar-toggle:hover + .sidebar-hover-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+/* Поддержка для hover на само меню */
+.sidebar-hover-menu:hover {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .sidebar-hover-menu {
+        width: 100vw;
+        border-radius: 0;
+    }
+    
+    .hover-menu-header {
+        border-radius: 0;
+    }
+}
+
+/* Темная тема для hover меню */
+[data-theme="dark"] .sidebar-hover-menu {
+    background: var(--color-background);
+    border-color: var(--hr-border);
+}
+
+[data-theme="dark"] .hover-menu-header {
+    background: linear-gradient(135deg, var(--color-pink-500) 0%, var(--color-luna-500) 100%);
+}
+
+[data-theme="dark"] .btn-expand-sidebar {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--color-luna-100);
+}
+
+[data-theme="dark"] .btn-expand-sidebar:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+[data-theme="dark"] .hover-menu-title {
+    color: var(--color-luna-400);
+}
+
+[data-theme="dark"] .hover-menu-nav .nav-link {
+    color: var(--color-luna-400);
+}
+
+[data-theme="dark"] .hover-menu-nav .nav-link:hover {
+    background: rgba(var(--color-pink-500-rgb), 0.1);
+    color: var(--color-pink-400);
+    border-left-color: var(--color-pink-500);
+}
+
+[data-theme="dark"] .hover-menu-nav .nav-link.active {
+    background: rgba(var(--color-pink-500-rgb), 0.15);
+    color: var(--color-pink-400);
+    border-left-color: var(--color-pink-500);
+}
+
+[data-theme="dark"] .hover-submenu .nav-link {
+    color: var(--color-luna-300);
+}
+
+[data-theme="dark"] .hover-submenu .nav-link:hover {
+    color: var(--color-pink-400);
+    background: rgba(var(--color-pink-500-rgb), 0.1);
+}
+
+[data-theme="dark"] .hover-submenu .nav-link.active {
+    background: rgba(var(--color-pink-500-rgb), 0.15);
+    color: var(--color-pink-400);
+    border-left-color: var(--color-pink-500);
+}
+
+[data-theme="dark"] .hover-submenu .hover-submenu .nav-link {
+    color: var(--color-luna-200);
+}
+
+/* =============================================================================
    3. НАВИГАЦИЯ И САЙДБАР
    ============================================================================= */
 
