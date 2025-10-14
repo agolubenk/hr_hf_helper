@@ -3190,11 +3190,8 @@ def chat_workflow(request, session_id=None):
                 content=message_text
             )
 
-            # Проверяем, есть ли action_type в POST данных (от фронтенда)
-            if 'action_type' in request.POST and request.POST['action_type']:
-                action_type = request.POST['action_type']
-                print(f"🔍 CHAT: action_type из POST данных: {action_type}")
-            elif message_text.strip().lower().startswith('/s'):
+            # Проверяем команду /s ПЕРВОЙ (приоритет)
+            if message_text.strip().lower().startswith('/s'):
                 # Принудительно обрабатываем как HR-скрининг
                 action_type = 'hrscreening'
                 print(f"🔍 CHAT: Команда /s обнаружена - принудительный HR-скрининг")
@@ -3216,9 +3213,14 @@ def chat_workflow(request, session_id=None):
                 message_text = processed_text
                 print(f"🔍 CHAT: Обработанный текст (без /s): {message_text[:100]}...")
             else:
-                # Определяем тип действия автоматически
-                action_type = determine_action_type_from_text(message_text)
-                print(f"🔍 CHAT: Определен тип действия: {action_type}")
+                # Проверяем, есть ли action_type в POST данных (от фронтенда)
+                if 'action_type' in request.POST and request.POST['action_type']:
+                    action_type = request.POST['action_type']
+                    print(f"🔍 CHAT: action_type из POST данных: {action_type}")
+                else:
+                    # Определяем тип действия автоматически
+                    action_type = determine_action_type_from_text(message_text)
+                    print(f"🔍 CHAT: Определен тип действия: {action_type}")
 
             try:
                 print(f"🔍 CHAT: ФИНАЛЬНЫЙ action_type: {action_type}")

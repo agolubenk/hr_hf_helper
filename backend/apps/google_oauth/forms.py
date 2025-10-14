@@ -289,6 +289,9 @@ class InviteCombinedForm(forms.ModelForm):
         invite = super().save(commit=False)
         invite.user = self.user
         
+        # Устанавливаем пустое значение для multiple_slots_data
+        invite.multiple_slots_data = {}
+        
         # Сохраняем исходные данные из формы
         if 'combined_data' in self.cleaned_data:
             invite.original_form_data = self.cleaned_data['combined_data']
