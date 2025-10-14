@@ -48,6 +48,12 @@ urlpatterns = [
     path('invites/settings/', views.scorecard_path_settings, name='scorecard_path_settings'),
     path('api/scorecard-path-settings/', views.api_scorecard_path_settings, name='api_scorecard_path_settings'),
     
+    # HR-скрининги
+    path('hr-screening/', views.hr_screening_list, name='hr_screening_list'),
+    path('hr-screening/create/', views.hr_screening_create, name='hr_screening_create'),
+    path('hr-screening/<int:pk>/', views.hr_screening_detail, name='hr_screening_detail'),
+    path('hr-screening/<int:pk>/delete/', views.hr_screening_delete, name='hr_screening_delete'),
+    path('hr-screening/<int:pk>/retry-analysis/', views.hr_screening_retry_analysis, name='hr_screening_retry_analysis'),
     
     # Объединенный рабочий процесс
     path('combined-workflow/', views.combined_workflow, name='combined_workflow'),

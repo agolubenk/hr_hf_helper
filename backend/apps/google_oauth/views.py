@@ -2616,7 +2616,54 @@ def hr_screening_list(request):
 @login_required
 @permission_required('google_oauth.add_hrscreening', raise_exception=True)
 def hr_screening_create(request):
-    """Создание нового HR-скрининга"""
+    """Создание нового HR-скрининга с логикой чат-интерфейса"""
+    from apps.vacancies.models import Vacancy
+    
+    # Получаем активные вакансии для селектора
+    active_vacancies = Vacancy.objects.filter(is_active=True).order_by('name')
+    
+    # Получаем выбранную вакансию
+    selected_vacancy = None
+    vacancy_id = request.GET.get('vacancy_id')
+    if vacancy_id:
+        try:
+            selected_vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True)
+        except Vacancy.DoesNotExist:
+            pass
+    
+    # Получаем настройки слотов для выбранной вакансии
+    slots_settings = None
+    if selected_vacancy:
+        try:
+            from .models import SlotsSettings
+            slots_settings = SlotsSettings.objects.filter(user=request.user).first()
+        except:
+            pass
+    
+    # Получаем события календаря
+    calendar_events_data = []
+    try:
+        from .services.google_calendar_service import GoogleCalendarService
+        from .models import GoogleOAuthAccount
+        
+        oauth_account = GoogleOAuthAccount.objects.filter(user=request.user).first()
+        if oauth_account:
+            calendar_service = GoogleCalendarService(oauth_account)
+            events = calendar_service.get_events_for_next_weeks(2)  # 2 недели
+            calendar_events_data = [
+                {
+                    'id': event.get('id'),
+                    'summary': event.get('summary', ''),
+                    'start': event.get('start', {}).get('dateTime'),
+                    'end': event.get('end', {}).get('dateTime'),
+                    'description': event.get('description', ''),
+                }
+                for event in events
+            ]
+    except Exception as e:
+        print(f"⚠️ Ошибка получения событий календаря: {e}")
+        calendar_events_data = []
+    
     if request.method == 'POST':
         form = HRScreeningForm(request.POST, user=request.user)
         if form.is_valid():
@@ -2631,7 +2678,11 @@ def hr_screening_create(request):
     
     context = {
         'form': form,
-        'title': 'Создать HR-скрининг'
+        'title': 'Создать HR-скрининг',
+        'active_vacancies': active_vacancies,
+        'selected_vacancy': selected_vacancy,
+        'slots_settings': slots_settings,
+        'calendar_events_data': calendar_events_data,
     }
     
     return render(request, 'google_oauth/hr_screening_form.html', context)
@@ -3092,6 +3143,9 @@ def combined_workflow(request):
 @permission_required('google_oauth.view_hrscreening', raise_exception=True)
 def chat_workflow(request, session_id=None):
     """Чат-воркфлоу для HR-скрининга и инвайтов"""
+    print(f"🔍 CHAT_WORKFLOW: ФУНКЦИЯ ВЫЗВАНА! session_id={session_id}, method={request.method}")
+    print(f"🔍 CHAT_WORKFLOW: POST данные: {request.POST}")
+    
     from .models import ChatSession, ChatMessage
     from .forms import ChatForm, HRScreeningForm, InviteCombinedForm, ChatSessionTitleForm
 
@@ -3136,14 +3190,45 @@ def chat_workflow(request, session_id=None):
                 content=message_text
             )
 
-            # Определяем тип действия
-            action_type = determine_action_type_from_text(message_text)
-            print(f"🔍 CHAT: Определен тип действия: {action_type}")
+            # Проверяем, есть ли action_type в POST данных (от фронтенда)
+            if 'action_type' in request.POST and request.POST['action_type']:
+                action_type = request.POST['action_type']
+                print(f"🔍 CHAT: action_type из POST данных: {action_type}")
+            elif message_text.strip().lower().startswith('/s'):
+                # Принудительно обрабатываем как HR-скрининг
+                action_type = 'hrscreening'
+                print(f"🔍 CHAT: Команда /s обнаружена - принудительный HR-скрининг")
+                
+                # Убираем команду /s из текста для обработки
+                processed_text = message_text[2:].strip()  # Убираем "/s" и пробелы
+                
+                # Проверяем, есть ли данные после команды /s
+                if not processed_text:
+                    # Команда /s без данных - показываем инструкцию
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content="Команда /s для принудительного HR-скрининга активна. Введите данные для HR-скрининга после команды /s"
+                    )
+                    return redirect('google_oauth:chat_workflow_session', session_id=chat_session.id)
+                
+                # Используем обработанный текст без команды /s
+                message_text = processed_text
+                print(f"🔍 CHAT: Обработанный текст (без /s): {message_text[:100]}...")
+            else:
+                # Определяем тип действия автоматически
+                action_type = determine_action_type_from_text(message_text)
+                print(f"🔍 CHAT: Определен тип действия: {action_type}")
 
             try:
+                print(f"🔍 CHAT: ФИНАЛЬНЫЙ action_type: {action_type}")
+                print(f"🔍 CHAT: ФИНАЛЬНЫЙ message_text: {message_text[:200]}...")
+                
                 if action_type == 'hrscreening':
+                    print(f"🔍 CHAT: ВХОДИМ В БЛОК HR-СКРИНИНГА")
                     # Создаем HR-скрининг с ПРАВИЛЬНЫМИ данными
                     hr_form = HRScreeningForm({'input_data': message_text}, user=request.user)
+                    print(f"🔍 CHAT: HRScreeningForm создана, is_valid: {hr_form.is_valid()}")
                     
                     if hr_form.is_valid():
                         try:
@@ -3187,6 +3272,8 @@ def chat_workflow(request, session_id=None):
                         )
 
                 elif action_type == 'invite':
+                    print(f"🔍 CHAT: ВХОДИМ В БЛОК ИНВАЙТА - ЭТО ОШИБКА!")
+                    print(f"🔍 CHAT: action_type = {action_type}, но должен быть hrscreening")
                     # Создаем инвайт с ПРАВИЛЬНЫМИ данными
                     invite_form = InviteCombinedForm({'combined_data': message_text}, user=request.user)
                     
