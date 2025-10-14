@@ -215,9 +215,9 @@ function showNotification(message, type = 'info') {
 
 // Функции для генерации слотов (адаптированы из calendar_events.html)
 function calculateAvailableSlots(dayEvents, date) {
-    // Определяем рабочие часы: 11:00-18:00 (7 часов)
-    const workStartHour = 11;
-    const workEndHour = 18;
+    // Определяем рабочие часы из настроек пользователя или используем значения по умолчанию
+    const workStartHour = window.userWorkHours ? window.userWorkHours.startHour : 11;
+    const workEndHour = window.userWorkHours ? window.userWorkHours.endHour : 18;
     
     // Создаем массив слотов по часам
     const slots = [];
@@ -369,7 +369,9 @@ function generateWeekSlots(weekOffset) {
         } else {
             console.log(`⚠️ calendarEvents не доступен для даты ${dateStr}`);
             // Если нет данных о событиях, показываем все слоты как доступные
-            availableSlots = '11-18';
+            const defaultStart = window.userWorkHours ? window.userWorkHours.startHour : 11;
+            const defaultEnd = window.userWorkHours ? window.userWorkHours.endHour : 18;
+            availableSlots = `${defaultStart}-${defaultEnd}`;
         }
         
         slots.push({

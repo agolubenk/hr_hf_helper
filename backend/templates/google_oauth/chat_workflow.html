@@ -1822,6 +1822,14 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
             <script src="{% static 'js/vacancy-slots.js' %}"></script>
             
             <script>
+            // Настройки пользователя для рабочих часов
+            window.userWorkHours = {
+                startHour: {{ user.interview_start_time.hour|default:11 }},
+                endHour: {{ user.interview_end_time.hour|default:18 }}
+            };
+            </script>
+            
+            <script>
             // Функция для переключения карточки слотов по клику на бейдж
             function toggleSlotsCard() {
                 console.log('🔄 toggleSlotsCard вызвана');

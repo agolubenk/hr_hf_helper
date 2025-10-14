@@ -2046,6 +2046,7 @@ class Invite(models.Model):
             # Используем расширенный парсер с валидацией (БЕЗ промпта из вакансии)
             result = parse_datetime_with_validation(
                 text=text_without_url,
+                user=self.user,  # Передаем пользователя для получения рабочих часов
                 existing_bookings=existing_bookings,
                 vacancy_prompt=None,  # Промпт НЕ используется в парсере
                 timezone_name='Europe/Minsk'
@@ -2311,9 +2312,29 @@ class Invite(models.Model):
         from datetime import datetime
         import pytz
         
-        # Рабочие часы: 11:00-18:00
-        work_start_hour = 11
-        work_end_hour = 18
+        # Рабочие часы из настроек пользователя
+        if hasattr(self.user, 'interview_start_time') and hasattr(self.user, 'interview_end_time'):
+            if self.user.interview_start_time and self.user.interview_end_time:
+                start_time = self.user.interview_start_time
+                end_time = self.user.interview_end_time
+                
+                if isinstance(start_time, str):
+                    # Если это строка, парсим её
+                    from datetime import time
+                    work_start_hour = time.fromisoformat(start_time).hour
+                    work_end_hour = time.fromisoformat(end_time).hour
+                else:
+                    # Если это time объект
+                    work_start_hour = start_time.hour
+                    work_end_hour = end_time.hour
+            else:
+                # Fallback к захардкоженным значениям
+                work_start_hour = 11
+                work_end_hour = 18
+        else:
+            # Fallback к захардкоженным значениям
+            work_start_hour = 11
+            work_end_hour = 18
         
         # Создаем массив слотов по часам
         slots = []
