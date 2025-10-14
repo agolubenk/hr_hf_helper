@@ -473,7 +473,7 @@
                             </div>
                         </div>
                  <div class="card-footer py-2">
-                     <a href="{% url 'google_oauth:chat_workflow' %}" class="btn btn-sm btn-outline-primary w-100">
+                     <a href="{% url 'google_oauth:chat_workflow' %}?new=true" class="btn btn-sm btn-outline-primary w-100" id="newChatBtn">
                          <i class="fas fa-plus me-1"></i>Новый чат
                      </a>
                 </div>
@@ -1677,6 +1677,22 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Фокус на поле ввода (убираем автоматический фокус при загрузке)
     // messageInput.focus();
+    
+    // Обработка кнопки "Новый чат"
+    const newChatBtn = document.getElementById('newChatBtn');
+    if (newChatBtn) {
+        newChatBtn.addEventListener('click', function(e) {
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Создание...';
+            this.style.pointerEvents = 'none';
+            
+            // Восстанавливаем кнопку через 2 секунды на случай, если редирект не произойдет
+            setTimeout(() => {
+                this.innerHTML = originalText;
+                this.style.pointerEvents = 'auto';
+            }, 2000);
+        });
+    }
     
     // Копирование текста инвайта
     document.addEventListener('click', function(e) {

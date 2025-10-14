@@ -3105,10 +3105,19 @@ def chat_workflow(request, session_id=None):
             if not chat_session:
                 chat_session = ChatSession.objects.create(user=request.user)
     else:
-        # Если session_id не указан, берем последнюю сессию пользователя
-        chat_session = ChatSession.objects.filter(user=request.user).order_by('-updated_at').first()
-        if not chat_session:
+        # Проверяем, нужно ли создать новую сессию
+        create_new = request.GET.get('new', 'false').lower() == 'true'
+        
+        if create_new:
+            # Создаем новую сессию чата
             chat_session = ChatSession.objects.create(user=request.user)
+            # Перенаправляем на новую сессию без параметра new
+            return redirect('google_oauth:chat_workflow_session', session_id=chat_session.id)
+        else:
+            # Если session_id не указан, берем последнюю сессию пользователя
+            chat_session = ChatSession.objects.filter(user=request.user).order_by('-updated_at').first()
+            if not chat_session:
+                chat_session = ChatSession.objects.create(user=request.user)
 
     # Получаем все сообщения в этой сессии
     messages = chat_session.messages.all().order_by('created_at')
