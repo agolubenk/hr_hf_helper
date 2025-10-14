@@ -5,7 +5,7 @@ from logic.utilities.user_management import (
     test_gemini_api_handler, test_huntflow_api_handler,
     test_clickup_api_handler, test_notion_api_handler,
     profile_template_handler, profile_edit_template_handler,
-    profile_settings_template_handler, integrations_template_handler,
+    integrations_template_handler,
     api_keys_template_handler, google_oauth_redirect,
     google_oauth_callback, unified_login, unified_logout,
     google_oauth_demo, google_oauth_test, oauth_debug
@@ -21,7 +21,6 @@ def components_template_handler(request):
     
     ИСТОЧНИКИ ДАННЫХ:
     - ProfileEditForm: форма редактирования профиля
-    - IntegrationSettingsForm: форма настроек интеграций
     - Демонстрационные данные пользователя и интеграций
     
     ОБРАБОТКА:
@@ -35,15 +34,14 @@ def components_template_handler(request):
     - render: HTML страница 'accounts/components_demo.html'
     
     СВЯЗИ:
-    - Использует: ProfileEditForm, IntegrationSettingsForm
+    - Использует: ProfileEditForm
     - Передает данные в: accounts/components_demo.html
     - Может вызываться из: accounts/ URL patterns
     """
-    from apps.accounts.forms import ProfileEditForm, IntegrationSettingsForm
+    from apps.accounts.forms import ProfileEditForm
     
     # Создаем экземпляры форм для демонстрации
     profile_form = ProfileEditForm()
-    settings_form = IntegrationSettingsForm()
     
     # Демонстрационные данные
     demo_user = {
@@ -101,7 +99,6 @@ def components_template_handler(request):
     
     context = {
         'profile_form': profile_form,
-        'settings_form': settings_form,
         'demo_user': demo_user,
         'demo_integrations': demo_integrations,
         'demo_social_accounts': demo_social_accounts,

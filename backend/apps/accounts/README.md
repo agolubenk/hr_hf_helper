@@ -247,7 +247,6 @@ urlpatterns = [
     # Универсальные шаблоны (HTML)
     path('', views.profile_template_handler, name='profile'),
     path('edit/', views.profile_edit_template_handler, name='profile_edit'),
-    path('settings/', views.profile_settings_template_handler, name='profile_settings'),
     path('integrations/', views.integrations_template_handler, name='integrations'),
     path('api-keys/', views.api_keys_template_handler, name='api_keys'),
     path('components/', views.components_template_handler, name='components'),

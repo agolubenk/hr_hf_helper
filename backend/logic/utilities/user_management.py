@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 
 from apps.accounts.models import User
-from apps.accounts.forms import ProfileEditForm, IntegrationSettingsForm
+from apps.accounts.forms import ProfileEditForm
 from logic.utilities.account_services import UserService
 from logic.base.response_handler import UnifiedResponseHandler
 
@@ -223,21 +223,6 @@ def profile_edit_template_handler(request):
         'messages': messages.get_messages(request),
     }
     
-    return context
-
-
-def profile_settings_template_handler(request):
-    """Обработчик для страницы настроек профиля"""
-    if request.method == 'POST':
-        form = IntegrationSettingsForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Настройки успешно сохранены!')
-            return redirect('accounts:profile_settings')
-    else:
-        form = IntegrationSettingsForm(instance=request.user)
-    
-    context = {'form': form}
     return context
 
 

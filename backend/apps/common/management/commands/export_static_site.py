@@ -213,7 +213,7 @@ class Command(BaseCommand):
         if not skip_accounts:
             urls_to_export.extend([
                 ('/accounts/login/', 'accounts_login.html'),
-                ('/accounts/profile/', 'accounts_profile.html'),
+                ('/accounts/', 'accounts_profile.html'),
             ])
         
         # Добавляем админку если нужно
