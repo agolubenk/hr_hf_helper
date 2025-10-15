@@ -140,20 +140,6 @@
                                 {% endif %}
                             </div>
                         </div>
-                        <div class="col-12">
-                            <div class="mb-3">
-                                <label for="{{ form.invite_prompt.id_for_label }}" class="form-label">
-                                    {{ form.invite_prompt.label }}
-                                </label>
-                                {{ form.invite_prompt }}
-                                {% if form.invite_prompt.help_text %}
-                                    <div class="form-text">{{ form.invite_prompt.help_text }}</div>
-                                {% endif %}
-                                {% if form.invite_prompt.errors %}
-                                    <div class="text-danger">{{ form.invite_prompt.errors }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Scorecard -->
@@ -190,6 +176,58 @@
                                 {% endif %}
                                 {% if form.scorecard_link.errors %}
                                     <div class="text-danger">{{ form.scorecard_link.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Этапы для перевода кандидатов -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-route me-1"></i>
+                                Этапы для перевода кандидатов
+                            </h6>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.hr_screening_stage.id_for_label }}" class="form-label">
+                                    {{ form.hr_screening_stage.label }}
+                                </label>
+                                {{ form.hr_screening_stage }}
+                                {% if form.hr_screening_stage.help_text %}
+                                    <div class="form-text">{{ form.hr_screening_stage.help_text }}</div>
+                                {% endif %}
+                                {% if form.hr_screening_stage.errors %}
+                                    <div class="text-danger">{{ form.hr_screening_stage.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.tech_screening_stage.id_for_label }}" class="form-label">
+                                    {{ form.tech_screening_stage.label }}
+                                </label>
+                                {{ form.tech_screening_stage }}
+                                {% if form.tech_screening_stage.help_text %}
+                                    <div class="form-text">{{ form.tech_screening_stage.help_text }}</div>
+                                {% endif %}
+                                {% if form.tech_screening_stage.errors %}
+                                    <div class="text-danger">{{ form.tech_screening_stage.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.tech_interview_stage.id_for_label }}" class="form-label">
+                                    {{ form.tech_interview_stage.label }}
+                                </label>
+                                {{ form.tech_interview_stage }}
+                                {% if form.tech_interview_stage.help_text %}
+                                    <div class="form-text">{{ form.tech_interview_stage.help_text }}</div>
+                                {% endif %}
+                                {% if form.tech_interview_stage.errors %}
+                                    <div class="text-danger">{{ form.tech_interview_stage.errors }}</div>
                                 {% endif %}
                             </div>
                         </div>

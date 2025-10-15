@@ -38,7 +38,9 @@ class ProfileEditForm(UserChangeForm):
             'last_name', 
             'full_name', 
             'email', 
-            'telegram_username'
+            'telegram_username',
+            'interview_start_time',
+            'interview_end_time'
         ]
         widgets = {
             'first_name': forms.TextInput(attrs={
@@ -61,6 +63,16 @@ class ProfileEditForm(UserChangeForm):
                 'class': 'form-control',
                 'placeholder': '@username'
             }),
+            'interview_start_time': forms.TimeInput(attrs={
+                'class': 'form-control',
+                'type': 'time',
+                'placeholder': '09:00'
+            }),
+            'interview_end_time': forms.TimeInput(attrs={
+                'class': 'form-control',
+                'type': 'time',
+                'placeholder': '18:00'
+            }),
         }
     
     def __init__(self, *args, **kwargs):
@@ -68,56 +80,27 @@ class ProfileEditForm(UserChangeForm):
         # Убираем поле пароля из формы
         if 'password' in self.fields:
             del self.fields['password']
-
-
-class IntegrationSettingsForm(forms.ModelForm):
-    """
-    Форма настроек интеграций
     
-    ВХОДЯЩИЕ ДАННЫЕ:
-    - gemini_api_key: API ключ для Gemini
-    - huntflow_prod_url: URL продакшн Huntflow
-    - huntflow_sandbox_url: URL сэндбокс Huntflow
-    - clickup_api_key: API ключ для ClickUp
-    - notion_api_key: API ключ для Notion
-    - telegram_bot_token: токен Telegram бота
-    
-    ИСТОЧНИКИ ДАННЫЕ:
-    - User модель из apps.accounts.models
-    
-    ОБРАБОТКА:
-    - Настройка полей для интеграций
-    - Валидация API ключей
-    - Настройка виджетов для UI
-    
-    ВЫХОДЯЩИЕ ДАННЫЕ:
-    - Django форма для настроек интеграций
-    
-    СВЯЗИ:
-    - Использует: User модель
-    - Передает: Django форма
-    - Может вызываться из: Account views
-    """
-    
-    class Meta:
-        model = User
-        fields = [
-            'active_system',
-            'interviewer_calendar_url',
-            'is_observer_active'
-        ]
-        widgets = {
-            'active_system': forms.Select(attrs={
-                'class': 'form-select'
-            }),
-            'interviewer_calendar_url': forms.URLInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'https://calendar.google.com/...'
-            }),
-            'is_observer_active': forms.CheckboxInput(attrs={
-                'class': 'form-check-input'
-            }),
-        }
+    def clean(self):
+        cleaned_data = super().clean()
+        start_time = cleaned_data.get('interview_start_time')
+        end_time = cleaned_data.get('interview_end_time')
+        
+        if start_time and end_time:
+            # Проверяем, что время находится в диапазоне 07:00 - 21:00
+            from datetime import time
+            
+            if start_time < time(7, 0) or start_time > time(21, 0):
+                raise forms.ValidationError("Время начала должно быть в диапазоне 07:00 - 21:00")
+            
+            if end_time < time(7, 0) or end_time > time(21, 0):
+                raise forms.ValidationError("Время окончания должно быть в диапазоне 07:00 - 21:00")
+            
+            # Проверяем, что время начала раньше времени окончания
+            if start_time >= end_time:
+                raise forms.ValidationError("Время начала должно быть раньше времени окончания")
+        
+        return cleaned_data
 
 
 class ApiKeysForm(forms.ModelForm):

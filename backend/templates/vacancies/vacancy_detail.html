@@ -114,10 +114,6 @@
                             {{ vacancy.invite_text|linebreaks }}
                         </div>
                         
-                        <h6>Промпт для инвайта:</h6>
-                        <div class="bg-light p-3 rounded">
-                            {{ vacancy.invite_prompt|linebreaks }}
-                        </div>
                     </div>
                 </div>
             </div>
@@ -149,6 +145,75 @@
             </div>
         </div>
 
+        <!-- Этапы для перевода кандидатов -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-route me-2"></i>
+                    Этапы для перевода кандидатов
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 border-primary">
+                            <div class="card-body text-center">
+                                <div class="mb-2">
+                                    <i class="fas fa-user-tie fa-2x text-primary"></i>
+                                </div>
+                                <h6 class="card-title text-primary">HR-скрининг</h6>
+                                <p class="card-text">
+                                    {% if vacancy.hr_screening_stage %}
+                                        <span class="badge bg-primary">{{ vacancy.hr_screening_stage }}</span>
+                                    {% else %}
+                                        <span class="text-muted">Не настроен</span>
+                                    {% endif %}
+                                </p>
+                                <small class="text-muted">Этап после HR-скрининга</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 border-warning">
+                            <div class="card-body text-center">
+                                <div class="mb-2">
+                                    <i class="fas fa-code fa-2x text-warning"></i>
+                                </div>
+                                <h6 class="card-title text-warning">Tech-скрининг</h6>
+                                <p class="card-text">
+                                    {% if vacancy.tech_screening_stage %}
+                                        <span class="badge bg-warning">{{ vacancy.tech_screening_stage }}</span>
+                                    {% else %}
+                                        <span class="text-muted">Не настроен</span>
+                                    {% endif %}
+                                </p>
+                                <small class="text-muted">Этап после Tech-скрининга</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 border-success">
+                            <div class="card-body text-center">
+                                <div class="mb-2">
+                                    <i class="fas fa-users fa-2x text-success"></i>
+                                </div>
+                                <h6 class="card-title text-success">Tech-интервью</h6>
+                                <p class="card-text">
+                                    {% if vacancy.tech_interview_stage %}
+                                        <span class="badge bg-success">{{ vacancy.tech_interview_stage }}</span>
+                                    {% else %}
+                                        <span class="text-muted">Не настроен</span>
+                                    {% endif %}
+                                </p>
+                                <small class="text-muted">Этап после Tech-интервью</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Ссылки на вакансии по странам -->
         {% if vacancy.has_vacancy_links %}

@@ -46,6 +46,18 @@ class User(AbstractUser):
 
     is_observer_active = models.BooleanField(_("Статус наблюдателя"), default=False)
 
+    # Настройки рабочего времени для интервью
+    interview_start_time = models.TimeField(
+        _("Начало рабочего времени для интервью"), 
+        default="09:00",
+        help_text="Время начала рабочего дня для планирования интервью"
+    )
+    interview_end_time = models.TimeField(
+        _("Конец рабочего времени для интервью"), 
+        default="18:00",
+        help_text="Время окончания рабочего дня для планирования интервью"
+    )
+
     # Новые поля для токенной системы Huntflow
     huntflow_access_token = models.TextField(_("Access token для Huntflow API"), blank=True, help_text="Access token для Huntflow API")
     huntflow_refresh_token = models.TextField(_("Refresh token для Huntflow API"), blank=True, help_text="Refresh token для Huntflow API")

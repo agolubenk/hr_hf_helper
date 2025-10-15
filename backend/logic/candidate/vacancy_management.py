@@ -236,7 +236,10 @@ def vacancy_create(request):
                 recruiter=request.user,  # Используем текущего пользователя как рекрутера
                 invite_title=invite_title,
                 invite_text=invite_text,
-                scorecard_title=scorecard_title
+                scorecard_title=scorecard_title,
+                hr_screening_stage=request.POST.get('hr_screening_stage', ''),
+                tech_screening_stage=request.POST.get('tech_screening_stage', ''),
+                tech_interview_stage=request.POST.get('tech_interview_stage', '')
             )
             
             messages.success(request, 'Вакансия успешно создана')
@@ -275,6 +278,9 @@ def vacancy_update(request, pk):
             vacancy.invite_title = invite_title
             vacancy.invite_text = invite_text
             vacancy.scorecard_title = scorecard_title
+            vacancy.hr_screening_stage = request.POST.get('hr_screening_stage', '')
+            vacancy.tech_screening_stage = request.POST.get('tech_screening_stage', '')
+            vacancy.tech_interview_stage = request.POST.get('tech_interview_stage', '')
             vacancy.save()
             
             messages.success(request, 'Вакансия успешно обновлена')

@@ -6,6 +6,49 @@ from apps.interviewers.models import Interviewer
 User = get_user_model()
 
 
+def get_huntflow_statuses_choices(user=None):
+    """
+    Получает список статусов вакансий из Huntflow для использования в формах
+    
+    Returns:
+        List of tuples: [(status_id, status_name), ...]
+    """
+    try:
+        from apps.huntflow.services import HuntflowService
+        
+        if not user:
+            return []
+            
+        # Создаем сервис Huntflow
+        huntflow_service = HuntflowService(user)
+        
+        # Получаем список аккаунтов
+        accounts = huntflow_service.get_accounts()
+        if not accounts or not accounts.get('items'):
+            return []
+            
+        # Берем первый доступный аккаунт
+        account_id = accounts['items'][0]['id']
+        
+        # Получаем статусы вакансий
+        statuses_data = huntflow_service.get_vacancy_statuses(account_id)
+        if not statuses_data or not statuses_data.get('items'):
+            return []
+            
+        # Формируем список кортежей для ChoiceField
+        choices = []
+        for status in statuses_data['items']:
+            status_id = status.get('id')
+            status_name = status.get('name', f'Статус {status_id}')
+            choices.append((status_id, status_name))
+            
+        return choices
+        
+    except Exception as e:
+        print(f"❌ Ошибка получения статусов Huntflow: {e}")
+        return []
+
+
 class VacancyForm(forms.ModelForm):
     """
     Форма для создания и редактирования вакансий
@@ -20,7 +63,8 @@ class VacancyForm(forms.ModelForm):
     - scorecard_link: ссылка на скоркард
     - questions_belarus, questions_poland: вопросы для интервью
     - vacancy_link_belarus, vacancy_link_poland: ссылки на вакансии
-    - candidate_update_prompt, invite_prompt: промпты для AI
+    - candidate_update_prompt: промпт для AI
+    - hr_screening_stage, tech_screening_stage, tech_interview_stage: этапы для перевода кандидатов (из Huntflow)
     - screening_duration: длительность скринингов
     - available_grades: доступные грейды
     - interviewers: интервьюеры
@@ -31,21 +75,83 @@ class VacancyForm(forms.ModelForm):
     - User.objects: рекрутеры из группы 'Рекрутер'
     - Grade.objects: все грейды
     - Interviewer.objects: активные интервьюеры
+    - Huntflow API: статусы вакансий для этапов
     
     ОБРАБОТКА:
     - Валидация обязательных полей
     - Настройка виджетов для UI
     - Ограничение выбора рекрутеров и интервьюеров
+    - Динамическая загрузка статусов из Huntflow
     - Настройка лейблов и подсказок
     
     ВЫХОДЯЩИЕ ДАННЫЕ:
     - Django форма для создания/редактирования вакансий
     
     СВЯЗИ:
-    - Использует: Vacancy модель, User.objects, Grade.objects, Interviewer.objects
+    - Использует: Vacancy модель, User.objects, Grade.objects, Interviewer.objects, HuntflowService
     - Передает: Django форма
     - Может вызываться из: Vacancy views
     """
+    
+    # Переопределяем поля этапов как ChoiceField
+    hr_screening_stage = forms.ChoiceField(
+        choices=[],
+        required=False,
+        label='Этап после HR-скрининга',
+        help_text='Этап в Huntflow, на который переводить кандидата после HR-скрининга',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    
+    tech_screening_stage = forms.ChoiceField(
+        choices=[],
+        required=False,
+        label='Этап после Tech-скрининга',
+        help_text='Этап в Huntflow, на который переводить кандидата после Tech-скрининга',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    
+    tech_interview_stage = forms.ChoiceField(
+        choices=[],
+        required=False,
+        label='Этап после Tech-интервью',
+        help_text='Этап в Huntflow, на который переводить кандидата после Tech-интервью',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    
+    def __init__(self, *args, **kwargs):
+        # Извлекаем user из kwargs, если он передан
+        user = kwargs.pop('user', None)
+        super(VacancyForm, self).__init__(*args, **kwargs)
+        
+        # Загружаем статусы из Huntflow
+        huntflow_choices = get_huntflow_statuses_choices(user)
+        
+        # Добавляем пустой выбор в начало
+        empty_choice = [('', 'Не выбран')]
+        all_choices = empty_choice + huntflow_choices
+        
+        # Устанавливаем choices для полей этапов
+        self.fields['hr_screening_stage'].choices = all_choices
+        self.fields['tech_screening_stage'].choices = all_choices
+        self.fields['tech_interview_stage'].choices = all_choices
+        
+        # Ограничиваем выбор рекрутеров только группой "Рекрутер"
+        self.fields['recruiter'].queryset = User.objects.filter(groups__name='Рекрутер')
+        
+        # Ограничиваем выбор только активными грейдами (все грейды активны по умолчанию)
+        from apps.finance.models import Grade
+        self.fields['available_grades'].queryset = Grade.objects.all()
+        
+        # Ограничиваем выбор только активными интервьюерами
+        self.fields['interviewers'].queryset = Interviewer.objects.filter(is_active=True)
+        
+        # Делаем обязательные поля
+        self.fields['name'].required = True
+        self.fields['external_id'].required = True
+        self.fields['recruiter'].required = True
+        self.fields['invite_title'].required = True
+        self.fields['invite_text'].required = True
+        self.fields['scorecard_title'].required = True
     
     class Meta:
         model = Vacancy
@@ -53,7 +159,8 @@ class VacancyForm(forms.ModelForm):
             'name', 'external_id', 'recruiter', 'invite_title', 'invite_text',
             'scorecard_title', 'scorecard_link', 'questions_belarus', 'questions_poland',
             'vacancy_link_belarus', 'vacancy_link_poland',
-            'candidate_update_prompt', 'invite_prompt', 'screening_duration', 
+            'candidate_update_prompt', 'screening_duration',
+            'hr_screening_stage', 'tech_screening_stage', 'tech_interview_stage',
             'available_grades', 'interviewers', 'is_active'
         ]
         widgets = {
@@ -108,11 +215,6 @@ class VacancyForm(forms.ModelForm):
                 'rows': 4,
                 'placeholder': 'Промпт для обновления информации о кандидате'
             }),
-            'invite_prompt': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 4,
-                'placeholder': 'Промпт для создания приглашения кандидату'
-            }),
             'screening_duration': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'min': '1',
@@ -142,7 +244,6 @@ class VacancyForm(forms.ModelForm):
             'vacancy_link_belarus': 'Ссылка на вакансию (Беларусь)',
             'vacancy_link_poland': 'Ссылка на вакансию (Польша)',
             'candidate_update_prompt': 'Промпт для обновления кандидата',
-            'invite_prompt': 'Промпт для инвайта',
             'screening_duration': 'Длительность скринингов',
             'available_grades': 'Доступные грейды',
             'interviewers': 'Интервьюеры',
@@ -161,35 +262,12 @@ class VacancyForm(forms.ModelForm):
             'vacancy_link_belarus': 'Ссылка на вакансию в Беларуси (например, rabota.by, jobs.tut.by)',
             'vacancy_link_poland': 'Ссылка на вакансию в Польше (например, pracuj.pl, nofluffjobs.com)',
             'candidate_update_prompt': 'Промпт для обновления информации о кандидате',
-            'invite_prompt': 'Промпт для создания приглашения кандидату',
             'screening_duration': 'Длительность скринингов в минутах (по умолчанию 45 минут)',
             'available_grades': 'Грейды, доступные для данной вакансии',
             'interviewers': 'Интервьюеры, привязанные к вакансии',
             'is_active': 'Активна ли вакансия'
         }
     
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        
-        # Ограничиваем выбор рекрутеров только группой "Рекрутер"
-        self.fields['recruiter'].queryset = User.objects.filter(groups__name='Рекрутер')
-        
-        # Ограничиваем выбор только активными грейдами (все грейды активны по умолчанию)
-        from apps.finance.models import Grade
-        self.fields['available_grades'].queryset = Grade.objects.all()
-        
-        # Ограничиваем выбор только активными интервьюерами
-        self.fields['interviewers'].queryset = Interviewer.objects.filter(is_active=True)
-        
-        # Делаем обязательные поля
-        self.fields['name'].required = True
-        self.fields['external_id'].required = True
-        self.fields['recruiter'].required = True
-        self.fields['invite_title'].required = True
-        self.fields['invite_text'].required = True
-        self.fields['scorecard_title'].required = True
-
-
 class VacancySearchForm(forms.Form):
     """
     Форма для поиска вакансий

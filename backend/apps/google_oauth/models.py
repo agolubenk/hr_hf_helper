@@ -1530,23 +1530,42 @@ class Invite(models.Model):
             account_id = accounts['items'][0]['id']
             print(f"[TECH_SCREENING] Получен account_id: {account_id}")
 
-            # Получаем ID статуса Tech Screening через API
+            # Получаем статус из настроек вакансии
             tech_screening_status_id = None
             
-            # Получаем список статусов вакансий
-            print(f"[TECH_SCREENING] Запрашиваем статусы вакансий...")
-            statuses = service.get_vacancy_statuses(account_id)
-            print(f"[TECH_SCREENING] Получены статусы: {statuses}")
-            
-            if statuses and 'items' in statuses:
-                print(f"[TECH_SCREENING] Ищем статус Tech Screening среди {len(statuses['items'])} статусов")
-                for status in statuses['items']:
-                    status_name = status.get('name', '')
-                    print(f"[TECH_SCREENING] Проверяем статус: '{status_name}'")
-                    if status_name.lower() == 'tech screening':
-                        tech_screening_status_id = status.get('id')
-                        print(f"🔍 TECH_SCREENING: Найден статус Tech Screening с ID {tech_screening_status_id}")
-                        break
+            try:
+                # Пытаемся получить вакансию из локальной БД
+                vacancy = Vacancy.objects.filter(external_id=str(self.vacancy_id)).first()
+                
+                if vacancy and vacancy.tech_screening_stage:
+                    tech_screening_status_id = int(vacancy.tech_screening_stage)
+                    print(f"🔍 TECH_SCREENING: Используем статус из вакансии: {tech_screening_status_id}")
+                else:
+                    print(f"⚠️ TECH_SCREENING: Этап не настроен в вакансии, ищем по названию")
+                    
+                    # Fallback: ищем по названию "Tech Screening"
+                    print(f"[TECH_SCREENING] Запрашиваем статусы вакансий...")
+                    statuses = service.get_vacancy_statuses(account_id)
+                    print(f"[TECH_SCREENING] Получены статусы: {statuses}")
+                    
+                    if statuses and 'items' in statuses:
+                        print(f"[TECH_SCREENING] Ищем статус Tech Screening среди {len(statuses['items'])} статусов")
+                        for status in statuses['items']:
+                            status_name = status.get('name', '')
+                            print(f"[TECH_SCREENING] Проверяем статус: '{status_name}'")
+                            if status_name.lower() == 'tech screening':
+                                tech_screening_status_id = status.get('id')
+                                print(f"🔍 TECH_SCREENING: Найден статус Tech Screening с ID {tech_screening_status_id}")
+                                break
+            except Exception as e:
+                print(f"⚠️ TECH_SCREENING: Ошибка получения этапа из вакансии: {e}")
+                # Fallback к старой логике
+                statuses = service.get_vacancy_statuses(account_id)
+                if statuses and 'items' in statuses:
+                    for status in statuses['items']:
+                        if status.get('name', '').lower() == 'tech screening':
+                            tech_screening_status_id = status.get('id')
+                            break
             
             if not tech_screening_status_id:
                 print(f"⚠️ TECH_SCREENING: Статус Tech Screening не найден, используем fallback ID")
@@ -1774,9 +1793,8 @@ class Invite(models.Model):
             # Получаем промпт из приложения vacancies
             try:
                 vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
-                invite_prompt = vacancy.invite_prompt
-                if not invite_prompt:
-                    return False, f"Промпт для анализа времени не настроен для вакансии {vacancy.name}"
+                # Поле invite_prompt удалено из модели Vacancy
+                return False, f"Метод analyze_time_with_gemini устарел - поле invite_prompt удалено из модели Vacancy"
             except Vacancy.DoesNotExist:
                 return False, f"Вакансия с ID {self.vacancy_id} не найдена в локальной базе данных"
             
@@ -1821,9 +1839,9 @@ class Invite(models.Model):
             minsk_tz = pytz.timezone('Europe/Minsk')
             current_date = datetime.now(minsk_tz)
             
-            # Формируем промпт для Gemini, используя промпт из вакансии
+            # Формируем промпт для Gemini (метод устарел)
             system_prompt = f"""
-{invite_prompt}
+Метод analyze_time_with_gemini устарел - поле invite_prompt удалено из модели Vacancy
 
 Данные для анализа:
 - user_text: "{text_without_url}"
@@ -2046,6 +2064,7 @@ class Invite(models.Model):
             # Используем расширенный парсер с валидацией (БЕЗ промпта из вакансии)
             result = parse_datetime_with_validation(
                 text=text_without_url,
+                user=self.user,  # Передаем пользователя для получения рабочих часов
                 existing_bookings=existing_bookings,
                 vacancy_prompt=None,  # Промпт НЕ используется в парсере
                 timezone_name='Europe/Minsk'
@@ -2311,9 +2330,29 @@ class Invite(models.Model):
         from datetime import datetime
         import pytz
         
-        # Рабочие часы: 11:00-18:00
-        work_start_hour = 11
-        work_end_hour = 18
+        # Рабочие часы из настроек пользователя
+        if hasattr(self.user, 'interview_start_time') and hasattr(self.user, 'interview_end_time'):
+            if self.user.interview_start_time and self.user.interview_end_time:
+                start_time = self.user.interview_start_time
+                end_time = self.user.interview_end_time
+                
+                if isinstance(start_time, str):
+                    # Если это строка, парсим её
+                    from datetime import time
+                    work_start_hour = time.fromisoformat(start_time).hour
+                    work_end_hour = time.fromisoformat(end_time).hour
+                else:
+                    # Если это time объект
+                    work_start_hour = start_time.hour
+                    work_end_hour = end_time.hour
+            else:
+                # Fallback к захардкоженным значениям
+                work_start_hour = 11
+                work_end_hour = 18
+        else:
+            # Fallback к захардкоженным значениям
+            work_start_hour = 11
+            work_end_hour = 18
         
         # Создаем массив слотов по часам
         slots = []
@@ -3703,16 +3742,37 @@ class HRScreening(models.Model):
             # Обновляем статус кандидата на "HR Screening" и добавляем комментарий
             print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем статус и добавляем комментарий")
             
-            # Получаем статусы вакансий и ищем "HR Screening"
-            statuses = huntflow_service.get_vacancy_statuses(account_id)
+            # Получаем статус из настроек вакансии
             hr_screening_status_id = None
             
-            if statuses and 'items' in statuses:
-                for status in statuses['items']:
-                    if status.get('name', '').lower() == 'hr screening':
-                        hr_screening_status_id = status.get('id')
-                        print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Найден статус HR Screening с ID {hr_screening_status_id}")
-                        break
+            try:
+                # Пытаемся получить вакансию из локальной БД
+                from apps.vacancies.models import Vacancy
+                vacancy = Vacancy.objects.filter(external_id=str(self.vacancy_id)).first()
+                
+                if vacancy and vacancy.hr_screening_stage:
+                    hr_screening_status_id = int(vacancy.hr_screening_stage)
+                    print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Используем статус из вакансии: {hr_screening_status_id}")
+                else:
+                    print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Этап не настроен в вакансии, ищем по названию")
+                    
+                    # Fallback: ищем по названию "HR Screening"
+                    statuses = huntflow_service.get_vacancy_statuses(account_id)
+                    if statuses and 'items' in statuses:
+                        for status in statuses['items']:
+                            if status.get('name', '').lower() == 'hr screening':
+                                hr_screening_status_id = status.get('id')
+                                print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Найден статус HR Screening с ID {hr_screening_status_id}")
+                                break
+            except Exception as e:
+                print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Ошибка получения этапа из вакансии: {e}")
+                # Fallback к старой логике
+                statuses = huntflow_service.get_vacancy_statuses(account_id)
+                if statuses and 'items' in statuses:
+                    for status in statuses['items']:
+                        if status.get('name', '').lower() == 'hr screening':
+                            hr_screening_status_id = status.get('id')
+                            break
             
             if not hr_screening_status_id:
                 print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Статус HR Screening не найден")

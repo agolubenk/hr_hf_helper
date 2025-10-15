@@ -36,7 +36,7 @@ class VacancyAdmin(admin.ModelAdmin):
             'fields': ('name', 'external_id', 'recruiter', 'is_active')
         }),
         ('Инвайты', {
-            'fields': ('invite_title', 'invite_text', 'invite_prompt'),
+            'fields': ('invite_title', 'invite_text'),
             'classes': ('collapse',)
         }),
         ('Scorecard', {

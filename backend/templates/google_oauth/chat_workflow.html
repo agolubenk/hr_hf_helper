@@ -481,12 +481,13 @@
             
             <!-- Инструкция по командам -->
             <div class="card shadow mt-3">
-                <div class="card-header py-3">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center" style="cursor: pointer;" onclick="toggleCommandsCard()">
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-keyboard me-2"></i>Команды чата
                     </h6>
+                    <i class="fas fa-chevron-down" id="commandsToggleIcon"></i>
                 </div>
-                <div class="card-body p-3">
+                <div class="card-body p-3" id="commandsCardBody">
                     <div class="commands-list">
                         <div class="command-item mb-3">
                             <div class="command-header">
@@ -498,13 +499,33 @@
                             </div>
                         </div>
                         
-                        <div class="command-item">
+                        <div class="command-item mb-3">
                             <div class="command-header">
                                 <span class="command-badge bg-warning">/in</span>
                                 <strong class="ms-2">Инвайт</strong>
                             </div>
                             <div class="command-example mt-1">
                                 <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время]</code>
+                            </div>
+                        </div>
+                        
+                        <div class="command-item mb-3" id="additionalCommand1">
+                            <div class="command-header">
+                                <span class="command-badge bg-info">/t</span>
+                                <strong class="ms-2">Техническое интервью</strong>
+                            </div>
+                            <div class="command-example mt-1">
+                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время]</code>
+                            </div>
+                        </div>
+                        
+                        <div class="command-item" id="additionalCommand2">
+                            <div class="command-header">
+                                <span class="command-badge bg-danger">/del</span>
+                                <strong class="ms-2">Отменить последнее действие</strong>
+                            </div>
+                            <div class="command-example mt-1">
+                                <code class="text-primary small">Отменяет последнее созданное действие<br>(инвайт, скрининг, интервью)</code>
                             </div>
                         </div>
                     </div>
@@ -543,6 +564,28 @@
     word-wrap: break-word;
     line-height: 1.3;
     font-size: 1.1rem !important; /* УВЕЛИЧИВАЕМ до размера пользовательских сообщений */
+}
+
+/* === СТИЛИ ДЛЯ КАРТОЧКИ КОМАНД === */
+.commands-card-header {
+    transition: background-color 0.2s ease;
+}
+
+.commands-card-header:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.command-item {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#commandsToggleIcon {
+    transition: transform 0.3s ease;
+}
+
+.commands-card-header:hover #commandsToggleIcon {
+    transform: scale(1.1);
+}
     display: inline-block;
     width: auto !important;
     min-width: fit-content !important;
@@ -1665,6 +1708,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const maxHeight = 48 * 12; // 12 строк * 48px на строку
         const newHeight = Math.min(this.scrollHeight, maxHeight);
         this.style.height = newHeight + 'px';
+        
+        // Обработка команд (только рабочие команды)
+        const message = this.value.trim();
+        const actionTypeField = document.getElementById('actionType');
+        
+        if (message.startsWith('/s ')) {
+            actionTypeField.value = 'hrscreening';
+        } else if (message.startsWith('/in ')) {
+            actionTypeField.value = 'invite';
+        } else {
+            // Не устанавливаем значение по умолчанию - пусть backend сам определит
+            actionTypeField.value = '';
+        }
     });
     
     // Отправка по Enter (без Shift)
@@ -1822,6 +1878,14 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
             <script src="{% static 'js/vacancy-slots.js' %}"></script>
             
             <script>
+            // Настройки пользователя для рабочих часов
+            window.userWorkHours = {
+                startHour: {{ user.interview_start_time.hour|default:11 }},
+                endHour: {{ user.interview_end_time.hour|default:18 }}
+            };
+            </script>
+            
+            <script>
             // Функция для переключения карточки слотов по клику на бейдж
             function toggleSlotsCard() {
                 console.log('🔄 toggleSlotsCard вызвана');
@@ -1907,6 +1971,34 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                 }
             }
             
+            // Функция для переключения карточки команд
+            function toggleCommandsCard() {
+                console.log('🔄 toggleCommandsCard вызвана');
+                const commandsCardBody = document.getElementById('commandsCardBody');
+                const toggleIcon = document.getElementById('commandsToggleIcon');
+                const additionalCommand1 = document.getElementById('additionalCommand1');
+                const additionalCommand2 = document.getElementById('additionalCommand2');
+                
+                if (commandsCardBody) {
+                    // Проверяем, свернута ли карточка (скрыты ли дополнительные команды)
+                    const isCollapsed = additionalCommand1.style.display === 'none';
+                    
+                    if (isCollapsed) {
+                        // Разворачиваем - показываем все команды
+                        additionalCommand1.style.display = 'block';
+                        additionalCommand2.style.display = 'block';
+                        toggleIcon.className = 'fas fa-chevron-up';
+                        console.log('📖 Команды развернуты');
+                    } else {
+                        // Сворачиваем - показываем только первые 2 команды
+                        additionalCommand1.style.display = 'none';
+                        additionalCommand2.style.display = 'none';
+                        toggleIcon.className = 'fas fa-chevron-down';
+                        console.log('📕 Команды свернуты');
+                    }
+                }
+            }
+            
             // === ДИНАМИЧЕСКАЯ ВЫСОТА ЧАТА ===
             function calculateChatHeight() {
                 const chatMessages = document.getElementById('chat-messages');
@@ -1983,6 +2075,22 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                     }
                 }, 100);
             });
+            
+            // Инициализация состояния карточки команд (свернутое состояние по умолчанию)
+            document.addEventListener('DOMContentLoaded', function() {
+                const additionalCommand1 = document.getElementById('additionalCommand1');
+                const additionalCommand2 = document.getElementById('additionalCommand2');
+                const toggleIcon = document.getElementById('commandsToggleIcon');
+                
+                if (additionalCommand1 && additionalCommand2 && toggleIcon) {
+                    // Устанавливаем свернутое состояние по умолчанию
+                    additionalCommand1.style.display = 'none';
+                    additionalCommand2.style.display = 'none';
+                    toggleIcon.className = 'fas fa-chevron-down';
+                    console.log('📕 Карточка команд инициализирована в свернутом состоянии');
+                }
+            });
+            
             </script>
             
             

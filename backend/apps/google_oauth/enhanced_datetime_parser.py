@@ -16,15 +16,47 @@ class EnhancedDateTimeParser:
     с поддержкой всех форматов из библиотеки date-time-formats.md
     """
 
-    def __init__(self, timezone_name: str = 'Europe/Minsk'):
+    def __init__(self, user=None, timezone_name: str = 'Europe/Minsk'):
+        self.user = user
         self.timezone = pytz.timezone(timezone_name)
         
-        # Бизнес-часы и временные слоты
-        self.BUSINESS_HOURS = {'start': 11, 'end': 18}
+        # Бизнес-часы из настроек пользователя
+        self.BUSINESS_HOURS = self._get_user_business_hours()
         self.TIME_SLOTS = [0, 15, 30, 45]
         
         # Импорт словарей из библиотеки
         self._load_dictionaries()
+    
+    def _get_user_business_hours(self):
+        """
+        Получает рабочие часы из настроек пользователя
+        
+        Returns:
+            dict: Словарь с ключами 'start' и 'end' (часы)
+        """
+        if self.user and hasattr(self.user, 'interview_start_time') and hasattr(self.user, 'interview_end_time'):
+            if self.user.interview_start_time and self.user.interview_end_time:
+                # Обрабатываем как строку или time объект
+                start_time = self.user.interview_start_time
+                end_time = self.user.interview_end_time
+                
+                if isinstance(start_time, str):
+                    # Если это строка, парсим её
+                    from datetime import time
+                    start_hour = time.fromisoformat(start_time).hour
+                    end_hour = time.fromisoformat(end_time).hour
+                else:
+                    # Если это time объект
+                    start_hour = start_time.hour
+                    end_hour = end_time.hour
+                
+                return {
+                    'start': start_hour,
+                    'end': end_hour
+                }
+        
+        # Fallback к захардкоженным значениям, если пользователь не настроен
+        return {'start': 11, 'end': 18}
     
     def _load_dictionaries(self):
         """Загрузка всех словарей из библиотеки форматов"""
@@ -811,6 +843,7 @@ class EnhancedDateTimeParser:
 
 def parse_datetime_with_validation(
     text: str, 
+    user=None,
     existing_bookings: List = None, 
     vacancy_prompt: str = None,
     timezone_name: str = 'Europe/Minsk'
@@ -820,6 +853,7 @@ def parse_datetime_with_validation(
     
     Args:
         text: Текст для анализа
+        user: Объект пользователя Django (для получения рабочих часов)
         existing_bookings: Список существующих бронирований
         vacancy_prompt: Промпт из вакансии для дополнительного контекста
         timezone_name: Название временной зоны
@@ -827,23 +861,24 @@ def parse_datetime_with_validation(
     Returns:
         Словарь с результатами парсинга
     """
-    parser = EnhancedDateTimeParser(timezone_name)
+    parser = EnhancedDateTimeParser(user, timezone_name)
     return parser.parse_datetime(text, existing_bookings, vacancy_prompt)
 
 
 # Обратная совместимость с существующим кодом
-def parse_datetime_from_text(text: str, timezone_name: str = 'Europe/Minsk') -> Tuple[Optional[datetime], str]:
+def parse_datetime_from_text(text: str, user=None, timezone_name: str = 'Europe/Minsk') -> Tuple[Optional[datetime], str]:
     """
     Простая функция для парсинга даты и времени (для обратной совместимости)
     
     Args:
         text: Текст для анализа
+        user: Объект пользователя Django (для получения рабочих часов)
         timezone_name: Название временной зоны
     
     Returns:
         Кортеж (datetime_object, error_message)
     """
-    parser = EnhancedDateTimeParser(timezone_name)
+    parser = EnhancedDateTimeParser(user, timezone_name)
     result = parser.parse_datetime(text)
     
     if result['success']:

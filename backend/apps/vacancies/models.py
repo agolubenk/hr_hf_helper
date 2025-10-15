@@ -85,9 +85,25 @@ class Vacancy(models.Model):
         blank=True
     )
     
-    invite_prompt = models.TextField(
-        verbose_name='Промпт для инвайта',
-        help_text='Промпт для создания приглашения кандидату',
+    # Этапы для перевода кандидатов
+    hr_screening_stage = models.CharField(
+        max_length=100,
+        verbose_name='Этап после HR-скрининга',
+        help_text='Этап в Huntflow, на который переводить кандидата после HR-скрининга',
+        blank=True
+    )
+    
+    tech_screening_stage = models.CharField(
+        max_length=100,
+        verbose_name='Этап после Tech-скрининга',
+        help_text='Этап в Huntflow, на который переводить кандидата после Tech-скрининга',
+        blank=True
+    )
+    
+    tech_interview_stage = models.CharField(
+        max_length=100,
+        verbose_name='Этап после Tech-интервью',
+        help_text='Этап в Huntflow, на который переводить кандидата после Tech-интервью',
         blank=True
     )
     
@@ -190,6 +206,34 @@ class Vacancy(models.Model):
             'poland': self.vacancy_link_poland
         }
         return country_mapping.get(country.lower())
+    
+    def get_stage_by_type(self, stage_type):
+        """Получить этап по типу"""
+        stage_mapping = {
+            'hr_screening': self.hr_screening_stage,
+            'tech_screening': self.tech_screening_stage,
+            'tech_interview': self.tech_interview_stage
+        }
+        return stage_mapping.get(stage_type)
+    
+    def has_stages_configured(self):
+        """Проверить, настроены ли этапы"""
+        return any([
+            self.hr_screening_stage,
+            self.tech_screening_stage,
+            self.tech_interview_stage
+        ])
+    
+    def get_configured_stages(self):
+        """Получить список настроенных этапов"""
+        stages = {}
+        if self.hr_screening_stage:
+            stages['hr_screening'] = self.hr_screening_stage
+        if self.tech_screening_stage:
+            stages['tech_screening'] = self.tech_screening_stage
+        if self.tech_interview_stage:
+            stages['tech_interview'] = self.tech_interview_stage
+        return stages
 
 
 class SalaryRange(models.Model):

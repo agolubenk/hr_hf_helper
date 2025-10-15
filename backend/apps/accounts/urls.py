@@ -8,7 +8,6 @@ urlpatterns = [
     # Основные маршруты профиля
     path('', views.unified_template_view, {'template_name': 'profile/profile.html', 'handler_func': views.profile_template_handler}, name='profile'),
     path('edit/', views.unified_template_view, {'template_name': 'profile/profile_edit.html', 'handler_func': views.profile_edit_template_handler}, name='profile_edit'),
-    path('settings/', views.unified_template_view, {'template_name': 'profile/profile_settings.html', 'handler_func': views.profile_settings_template_handler}, name='profile_settings'),
     
     # Интеграции
     path('integrations/', views.unified_template_view, {'template_name': 'profile/integrations.html', 'handler_func': views.integrations_template_handler}, name='integrations'),

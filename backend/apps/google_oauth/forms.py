@@ -289,6 +289,8 @@ class InviteCombinedForm(forms.ModelForm):
         invite = super().save(commit=False)
         invite.user = self.user
         
+        # multiple_slots_data убрано из модели
+        
         # Сохраняем исходные данные из формы
         if 'combined_data' in self.cleaned_data:
             invite.original_form_data = self.cleaned_data['combined_data']
@@ -394,6 +396,7 @@ class InviteCombinedForm(forms.ModelForm):
                     # Продолжаем работу без scorecard
                 
                 invite.status = 'sent'
+                # multiple_slots_data убрано из модели
                 invite.save()
                 print(f"✅ COMBINED_FORM_SAVE: Инвайт сохранен с ID: {invite.id}")
                 

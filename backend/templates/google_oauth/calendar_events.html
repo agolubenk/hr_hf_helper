@@ -320,6 +320,12 @@ const filterData = {
     search: "{{ search_form.search.value|default:'' }}"
 };
 
+// Настройки пользователя для рабочих часов
+window.userWorkHours = {
+    startHour: {{ user.interview_start_time.hour|default:11 }},
+    endHour: {{ user.interview_end_time.hour|default:18 }}
+};
+
 function syncCalendar() {
     if (confirm('Запустить синхронизацию календаря? Это может занять некоторое время.')) {
         const button = event.target;
@@ -493,9 +499,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function calculateAvailableSlots(dayEvents, date) {
-        // Определяем рабочие часы: 11:00-18:00 (7 часов)
-        const workStartHour = 11;
-        const workEndHour = 18;
+        // Определяем рабочие часы из настроек пользователя или используем значения по умолчанию
+        const workStartHour = window.userWorkHours ? window.userWorkHours.startHour : 11;
+        const workEndHour = window.userWorkHours ? window.userWorkHours.endHour : 18;
         
         // Создаем массив слотов по часам
         const slots = [];
@@ -763,7 +769,9 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 console.log(`⚠️ calendarEvents не доступен для даты ${dateStr}`);
                 // Если нет данных о событиях, показываем все слоты как доступные
-                availableSlots = '11-18';
+                const defaultStart = window.userWorkHours ? window.userWorkHours.startHour : 11;
+                const defaultEnd = window.userWorkHours ? window.userWorkHours.endHour : 18;
+                availableSlots = `${defaultStart}-${defaultEnd}`;
             }
             
             slots.push({
