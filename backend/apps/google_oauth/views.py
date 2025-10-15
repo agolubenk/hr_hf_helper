@@ -3128,7 +3128,11 @@ def chat_workflow(request, session_id=None):
             )
 
             # Определяем тип действия (с приоритетом команд)
-            if message_text.strip().lower().startswith('/s'):
+            if message_text.strip().lower().startswith('/del'):
+                # Команда удаления последнего действия
+                action_type = 'delete_last'
+                print(f"🔍 CHAT: Команда /del обнаружена - удаление последнего действия")
+            elif message_text.strip().lower().startswith('/s'):
                 # Принудительно обрабатываем как HR-скрининг
                 action_type = 'hrscreening'
                 print(f"🔍 CHAT: Команда /s обнаружена - принудительный HR-скрининг")
@@ -3146,7 +3150,42 @@ def chat_workflow(request, session_id=None):
                 print(f"🔍 CHAT: Определен тип действия автоматически: {action_type}")
 
             try:
-                if action_type == 'hrscreening':
+                if action_type == 'delete_last':
+                    # Обрабатываем команду удаления последнего действия
+                    delete_result = delete_last_action(chat_session, request.user)
+                    
+                    if delete_result['success']:
+                        response_content = f"""**Последнее действие удалено**
+
+✅ **Удалено:** {delete_result['action_type']}
+📋 **Кандидат:** {delete_result.get('candidate_name', 'Не указан')}
+📋 **Вакансия:** {delete_result.get('vacancy_name', 'Не указана')}
+
+🗑️ **Очищено:**
+- Удален объект из базы данных
+- Отменены изменения в Huntflow
+- Удалены связанные данные (календарные события, scorecard, etc.)"""
+                        
+                        ChatMessage.objects.create(
+                            session=chat_session,
+                            message_type='system',
+                            content=response_content,
+                            metadata={
+                                'action_type': 'delete_last',
+                                'deleted_action_type': delete_result['action_type'],
+                                'deleted_object_id': delete_result.get('deleted_object_id'),
+                                'deleted_candidate_name': delete_result.get('candidate_name'),
+                                'deleted_vacancy_name': delete_result.get('vacancy_name')
+                            }
+                        )
+                    else:
+                        ChatMessage.objects.create(
+                            session=chat_session,
+                            message_type='system',
+                            content=f"❌ **Не удалось удалить последнее действие**\n\n{delete_result['message']}"
+                        )
+                        
+                elif action_type == 'hrscreening':
                     # Создаем HR-скрининг с ПРАВИЛЬНЫМИ данными
                     hr_form = HRScreeningForm({'input_data': message_text}, user=request.user)
                     
@@ -3371,6 +3410,218 @@ def chat_workflow(request, session_id=None):
         print(f"🔍 DEBUG CHAT: Событие: {event['title']} в {event['start']}")
 
     return render(request, 'google_oauth/chat_workflow.html', context)
+
+
+def delete_last_action(chat_session, user):
+    """
+    Удаляет последнее действие в чате с полной очисткой данных
+    
+    Args:
+        chat_session: Сессия чата
+        user: Пользователь
+    
+    Returns:
+        dict: Результат операции с информацией об удаленном действии
+    """
+    try:
+        from .models import ChatMessage, HRScreening, Invite
+        
+        print(f"🗑️ DELETE_LAST_ACTION: Начинаем удаление последнего действия в сессии {chat_session.id}")
+        
+        # Находим последнее действие (не пользовательское сообщение)
+        last_action = ChatMessage.objects.filter(
+            session=chat_session,
+            message_type__in=['hrscreening', 'invite']
+        ).order_by('-created_at').first()
+        
+        if not last_action:
+            return {
+                'success': False,
+                'message': 'В чате нет действий для удаления'
+            }
+        
+        print(f"🗑️ DELETE_LAST_ACTION: Найдено последнее действие: {last_action.message_type} (ID: {last_action.id})")
+        
+        result = {
+            'success': True,
+            'action_type': last_action.message_type,
+            'deleted_object_id': None,
+            'candidate_name': last_action.metadata.get('candidate_name'),
+            'vacancy_name': last_action.metadata.get('vacancy_name')
+        }
+        
+        # Удаляем объект в зависимости от типа действия
+        if last_action.message_type == 'hrscreening' and last_action.hr_screening:
+            hr_screening = last_action.hr_screening
+            result['deleted_object_id'] = hr_screening.id
+            
+            print(f"🗑️ DELETE_LAST_ACTION: Удаляем HR-скрининг ID: {hr_screening.id}")
+            
+            # ВОССТАНАВЛИВАЕМ СОСТОЯНИЕ ИЗ СНИМКА
+            try:
+                from apps.huntflow.services import HuntflowService
+                from .state_snapshot_service import snapshot_service
+                
+                huntflow_service = HuntflowService(user)
+                
+                # Получаем account_id
+                accounts = huntflow_service.get_accounts()
+                if accounts and accounts.get('items'):
+                    account_id = accounts['items'][0]['id']
+                    
+                    # Получаем снимок состояния
+                    snapshot = snapshot_service.get_candidate_snapshot(
+                        user.id, 
+                        hr_screening.candidate_id, 
+                        'hrscreening'
+                    )
+                    
+                    if snapshot:
+                        print(f"📸 DELETE_LAST_ACTION: Восстанавливаем состояние из снимка")
+                        
+                        # Восстанавливаем основные поля кандидата
+                        candidate_basic = snapshot.get('candidate_basic', {})
+                        if candidate_basic:
+                            # Убираем поля, которые не должны обновляться
+                            restore_data = {k: v for k, v in candidate_basic.items() 
+                                          if k in ['money', 'phone', 'email', 'first_name', 'last_name']}
+                            if restore_data:
+                                huntflow_service.update_applicant(account_id, int(hr_screening.candidate_id), restore_data)
+                                print(f"📸 DELETE_LAST_ACTION: Основные поля восстановлены")
+                        
+                        # Восстанавливаем дополнительные поля (questionary)
+                        candidate_questionary = snapshot.get('candidate_questionary', {})
+                        if candidate_questionary:
+                            huntflow_service.update_applicant_questionary(account_id, int(hr_screening.candidate_id), candidate_questionary)
+                            print(f"📸 DELETE_LAST_ACTION: Дополнительные поля восстановлены")
+                        
+                        # Восстанавливаем статус кандидата
+                        candidate_status = snapshot.get('candidate_status', {})
+                        if candidate_status and candidate_status.get('status_id'):
+                            huntflow_service.update_applicant_status(
+                                account_id=account_id,
+                                applicant_id=int(hr_screening.candidate_id),
+                                status_id=candidate_status['status_id'],
+                                comment="Восстановлено после отмены HR-скрининга",
+                                vacancy_id=int(hr_screening.vacancy_id) if hr_screening.vacancy_id else None
+                            )
+                            print(f"📸 DELETE_LAST_ACTION: Статус восстановлен: {candidate_status['status_id']}")
+                        
+                        # Удаляем снимок после восстановления
+                        snapshot_service.delete_candidate_snapshot(
+                            user.id, 
+                            hr_screening.candidate_id, 
+                            'hrscreening'
+                        )
+                        print(f"🗑️ DELETE_LAST_ACTION: Снимок удален после восстановления")
+                        
+                    else:
+                        print(f"⚠️ DELETE_LAST_ACTION: Снимок не найден, используем fallback")
+                        # Fallback: возвращаем на статус "Contact"
+                        statuses = huntflow_service.get_vacancy_statuses(account_id)
+                        if statuses and 'items' in statuses:
+                            previous_status_id = None
+                            for status in statuses['items']:
+                                if status.get('name', '').lower() == 'contact':
+                                    previous_status_id = status.get('id')
+                                    break
+                            
+                            if previous_status_id:
+                                huntflow_service.update_applicant_status(
+                                    account_id=account_id,
+                                    applicant_id=int(hr_screening.candidate_id),
+                                    status_id=previous_status_id,
+                                    comment="Отменен HR-скрининг (fallback)",
+                                    vacancy_id=int(hr_screening.vacancy_id) if hr_screening.vacancy_id else None
+                                )
+                                print(f"🗑️ DELETE_LAST_ACTION: Статус возвращен на Contact (fallback)")
+            except Exception as e:
+                print(f"⚠️ DELETE_LAST_ACTION: Ошибка восстановления состояния: {e}")
+            
+            # Удаляем HR-скрининг из базы данных
+            hr_screening.delete()
+            print(f"🗑️ DELETE_LAST_ACTION: HR-скрининг удален из базы данных")
+            
+        elif last_action.message_type == 'invite' and last_action.invite:
+            invite = last_action.invite
+            result['deleted_object_id'] = invite.id
+            
+            print(f"🗑️ DELETE_LAST_ACTION: Удаляем инвайт ID: {invite.id}")
+            
+            # Удаляем календарное событие
+            try:
+                if invite.google_calendar_event_id:
+                    from apps.google_oauth.services import GoogleCalendarService, GoogleOAuthService
+                    oauth_service = GoogleOAuthService(user)
+                    calendar_service = GoogleCalendarService(oauth_service)
+                    calendar_service.delete_event(invite.google_calendar_event_id)
+                    print(f"🗑️ DELETE_LAST_ACTION: Календарное событие удалено")
+            except Exception as e:
+                print(f"⚠️ DELETE_LAST_ACTION: Ошибка удаления календарного события: {e}")
+            
+            # Удаляем файл scorecard из Google Drive
+            try:
+                if invite.google_drive_file_id:
+                    from apps.google_oauth.services import GoogleDriveService, GoogleOAuthService
+                    oauth_service = GoogleOAuthService(user)
+                    drive_service = GoogleDriveService(oauth_service)
+                    drive_service.delete_file(invite.google_drive_file_id)
+                    print(f"🗑️ DELETE_LAST_ACTION: Scorecard удален из Google Drive")
+            except Exception as e:
+                print(f"⚠️ DELETE_LAST_ACTION: Ошибка удаления scorecard: {e}")
+            
+            # Отменяем изменения в Huntflow (возвращаем предыдущий статус)
+            try:
+                from apps.huntflow.services import HuntflowService
+                huntflow_service = HuntflowService(user)
+                
+                # Получаем account_id
+                accounts = huntflow_service.get_accounts()
+                if accounts and accounts.get('items'):
+                    account_id = accounts['items'][0]['id']
+                    
+                    # Получаем статусы вакансий для поиска предыдущего статуса
+                    statuses = huntflow_service.get_vacancy_statuses(account_id)
+                    if statuses and 'items' in statuses:
+                        # Ищем статус "Contact" как предыдущий для Tech Screening
+                        previous_status_id = None
+                        for status in statuses['items']:
+                            if status.get('name', '').lower() == 'contact':
+                                previous_status_id = status.get('id')
+                                break
+                        
+                        if previous_status_id:
+                            # Возвращаем кандидата на предыдущий статус
+                            huntflow_service.update_applicant_status(
+                                account_id=account_id,
+                                applicant_id=int(invite.candidate_id),
+                                status_id=previous_status_id,
+                                comment="Отменен инвайт",
+                                vacancy_id=int(invite.vacancy_id) if invite.vacancy_id else None
+                            )
+                            print(f"🗑️ DELETE_LAST_ACTION: Статус кандидата возвращен на Contact")
+            except Exception as e:
+                print(f"⚠️ DELETE_LAST_ACTION: Ошибка отмены статуса в Huntflow: {e}")
+            
+            # Удаляем инвайт из базы данных
+            invite.delete()
+            print(f"🗑️ DELETE_LAST_ACTION: Инвайт удален из базы данных")
+        
+        # Удаляем сообщение о действии из чата
+        last_action.delete()
+        print(f"🗑️ DELETE_LAST_ACTION: Сообщение о действии удалено из чата")
+        
+        print(f"✅ DELETE_LAST_ACTION: Удаление завершено успешно")
+        return result
+        
+    except Exception as e:
+        print(f"❌ DELETE_LAST_ACTION: Ошибка при удалении: {e}")
+        import traceback
+        traceback.print_exc()
+        return {
+            'success': False,
+            'message': f'Ошибка при удалении: {str(e)}'
+        }
 
 
 @login_required

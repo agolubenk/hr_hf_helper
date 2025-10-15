@@ -3669,6 +3669,7 @@ class HRScreening(models.Model):
         """Обновляет поля кандидата в Huntflow на основе анализа"""
         try:
             from apps.huntflow.services import HuntflowService
+            from .state_snapshot_service import snapshot_service
             
             print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Начинаем обновление кандидата {self.candidate_id}")
             
@@ -3683,6 +3684,25 @@ class HRScreening(models.Model):
             # Используем первый доступный аккаунт
             account_id = accounts['items'][0]['id']
             print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Используем аккаунт {account_id}")
+            
+            # СОЗДАЕМ СНИМОК СОСТОЯНИЯ ПЕРЕД ОБНОВЛЕНИЕМ
+            print(f"📸 HR_SCREENING_UPDATE_CANDIDATE: Создаем снимок состояния кандидата")
+            snapshot_data = snapshot_service.create_candidate_snapshot_data(
+                huntflow_service, account_id, self.candidate_id
+            )
+            
+            # Сохраняем снимок в Redis
+            snapshot_saved = snapshot_service.save_candidate_snapshot(
+                self.user.id, 
+                self.candidate_id, 
+                'hrscreening', 
+                snapshot_data
+            )
+            
+            if snapshot_saved:
+                print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Снимок состояния сохранен")
+            else:
+                print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Не удалось сохранить снимок состояния")
             
             # Получаем распарсенный анализ
             parsed_analysis = self.get_parsed_analysis()
