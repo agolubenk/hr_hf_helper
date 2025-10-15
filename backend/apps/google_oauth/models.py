@@ -1774,9 +1774,8 @@ class Invite(models.Model):
             # Получаем промпт из приложения vacancies
             try:
                 vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
-                invite_prompt = vacancy.invite_prompt
-                if not invite_prompt:
-                    return False, f"Промпт для анализа времени не настроен для вакансии {vacancy.name}"
+                # Поле invite_prompt удалено из модели Vacancy
+                return False, f"Метод analyze_time_with_gemini устарел - поле invite_prompt удалено из модели Vacancy"
             except Vacancy.DoesNotExist:
                 return False, f"Вакансия с ID {self.vacancy_id} не найдена в локальной базе данных"
             
@@ -1821,9 +1820,9 @@ class Invite(models.Model):
             minsk_tz = pytz.timezone('Europe/Minsk')
             current_date = datetime.now(minsk_tz)
             
-            # Формируем промпт для Gemini, используя промпт из вакансии
+            # Формируем промпт для Gemini (метод устарел)
             system_prompt = f"""
-{invite_prompt}
+Метод analyze_time_with_gemini устарел - поле invite_prompt удалено из модели Vacancy
 
 Данные для анализа:
 - user_text: "{text_without_url}"

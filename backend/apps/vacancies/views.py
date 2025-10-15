@@ -97,13 +97,13 @@ def vacancy_detail(request, pk):
 def vacancy_create(request):
     """Создание новой вакансии"""
     if request.method == 'POST':
-        form = VacancyForm(request.POST)
+        form = VacancyForm(request.POST, user=request.user)
         if form.is_valid():
             vacancy = form.save()
             messages.success(request, f'Вакансия "{vacancy.name}" успешно создана!')
             return redirect('vacancies:vacancy_detail', pk=vacancy.pk)
     else:
-        form = VacancyForm()
+        form = VacancyForm(user=request.user)
     
     # Получаем все активные зарплатные вилки
     salary_ranges = SalaryRange.objects.filter(is_active=True).order_by('grade__name')
@@ -124,13 +124,13 @@ def vacancy_edit(request, pk):
     vacancy = get_object_or_404(Vacancy, pk=pk)
     
     if request.method == 'POST':
-        form = VacancyForm(request.POST, instance=vacancy)
+        form = VacancyForm(request.POST, instance=vacancy, user=request.user)
         if form.is_valid():
             vacancy = form.save()
             messages.success(request, f'Вакансия "{vacancy.name}" успешно обновлена!')
             return redirect('vacancies:vacancy_detail', pk=vacancy.pk)
     else:
-        form = VacancyForm(instance=vacancy)
+        form = VacancyForm(instance=vacancy, user=request.user)
     
     # Получаем только зарплатные вилки для ЭТОЙ вакансии
     salary_ranges = SalaryRange.objects.filter(vacancy=vacancy).order_by('grade__name')
