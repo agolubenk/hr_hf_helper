@@ -2616,54 +2616,7 @@ def hr_screening_list(request):
 @login_required
 @permission_required('google_oauth.add_hrscreening', raise_exception=True)
 def hr_screening_create(request):
-    """Создание нового HR-скрининга с логикой чат-интерфейса"""
-    from apps.vacancies.models import Vacancy
-    
-    # Получаем активные вакансии для селектора
-    active_vacancies = Vacancy.objects.filter(is_active=True).order_by('name')
-    
-    # Получаем выбранную вакансию
-    selected_vacancy = None
-    vacancy_id = request.GET.get('vacancy_id')
-    if vacancy_id:
-        try:
-            selected_vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True)
-        except Vacancy.DoesNotExist:
-            pass
-    
-    # Получаем настройки слотов для выбранной вакансии
-    slots_settings = None
-    if selected_vacancy:
-        try:
-            from .models import SlotsSettings
-            slots_settings = SlotsSettings.objects.filter(user=request.user).first()
-        except:
-            pass
-    
-    # Получаем события календаря
-    calendar_events_data = []
-    try:
-        from .services.google_calendar_service import GoogleCalendarService
-        from .models import GoogleOAuthAccount
-        
-        oauth_account = GoogleOAuthAccount.objects.filter(user=request.user).first()
-        if oauth_account:
-            calendar_service = GoogleCalendarService(oauth_account)
-            events = calendar_service.get_events_for_next_weeks(2)  # 2 недели
-            calendar_events_data = [
-                {
-                    'id': event.get('id'),
-                    'summary': event.get('summary', ''),
-                    'start': event.get('start', {}).get('dateTime'),
-                    'end': event.get('end', {}).get('dateTime'),
-                    'description': event.get('description', ''),
-                }
-                for event in events
-            ]
-    except Exception as e:
-        print(f"⚠️ Ошибка получения событий календаря: {e}")
-        calendar_events_data = []
-    
+    """Создание нового HR-скрининга"""
     if request.method == 'POST':
         form = HRScreeningForm(request.POST, user=request.user)
         if form.is_valid():
@@ -2678,11 +2631,7 @@ def hr_screening_create(request):
     
     context = {
         'form': form,
-        'title': 'Создать HR-скрининг',
-        'active_vacancies': active_vacancies,
-        'selected_vacancy': selected_vacancy,
-        'slots_settings': slots_settings,
-        'calendar_events_data': calendar_events_data,
+        'title': 'Создать HR-скрининг'
     }
     
     return render(request, 'google_oauth/hr_screening_form.html', context)
@@ -3143,9 +3092,6 @@ def combined_workflow(request):
 @permission_required('google_oauth.view_hrscreening', raise_exception=True)
 def chat_workflow(request, session_id=None):
     """Чат-воркфлоу для HR-скрининга и инвайтов"""
-    print(f"🔍 CHAT_WORKFLOW: ФУНКЦИЯ ВЫЗВАНА! session_id={session_id}, method={request.method}")
-    print(f"🔍 CHAT_WORKFLOW: POST данные: {request.POST}")
-    
     from .models import ChatSession, ChatMessage
     from .forms import ChatForm, HRScreeningForm, InviteCombinedForm, ChatSessionTitleForm
 
@@ -3159,19 +3105,10 @@ def chat_workflow(request, session_id=None):
             if not chat_session:
                 chat_session = ChatSession.objects.create(user=request.user)
     else:
-        # Проверяем, нужно ли создать новую сессию
-        create_new = request.GET.get('new', 'false').lower() == 'true'
-        
-        if create_new:
-            # Создаем новую сессию чата
+        # Если session_id не указан, берем последнюю сессию пользователя
+        chat_session = ChatSession.objects.filter(user=request.user).order_by('-updated_at').first()
+        if not chat_session:
             chat_session = ChatSession.objects.create(user=request.user)
-            # Перенаправляем на новую сессию без параметра new
-            return redirect('google_oauth:chat_workflow_session', session_id=chat_session.id)
-        else:
-            # Если session_id не указан, берем последнюю сессию пользователя
-            chat_session = ChatSession.objects.filter(user=request.user).order_by('-updated_at').first()
-            if not chat_session:
-                chat_session = ChatSession.objects.create(user=request.user)
 
     # Получаем все сообщения в этой сессии
     messages = chat_session.messages.all().order_by('created_at')
@@ -3190,47 +3127,28 @@ def chat_workflow(request, session_id=None):
                 content=message_text
             )
 
-            # Проверяем команду /s ПЕРВОЙ (приоритет)
+            # Определяем тип действия (с приоритетом команд)
             if message_text.strip().lower().startswith('/s'):
                 # Принудительно обрабатываем как HR-скрининг
                 action_type = 'hrscreening'
                 print(f"🔍 CHAT: Команда /s обнаружена - принудительный HR-скрининг")
-                
                 # Убираем команду /s из текста для обработки
-                processed_text = message_text[2:].strip()  # Убираем "/s" и пробелы
-                
-                # Проверяем, есть ли данные после команды /s
-                if not processed_text:
-                    # Команда /s без данных - показываем инструкцию
-                    ChatMessage.objects.create(
-                        session=chat_session,
-                        message_type='system',
-                        content="Команда /s для принудительного HR-скрининга активна. Введите данные для HR-скрининга после команды /s"
-                    )
-                    return redirect('google_oauth:chat_workflow_session', session_id=chat_session.id)
-                
-                # Используем обработанный текст без команды /s
-                message_text = processed_text
-                print(f"🔍 CHAT: Обработанный текст (без /s): {message_text[:100]}...")
+                message_text = message_text[2:].strip()
+            elif message_text.strip().lower().startswith('/in'):
+                # Принудительно обрабатываем как инвайт
+                action_type = 'invite'
+                print(f"🔍 CHAT: Команда /in обнаружена - принудительный инвайт")
+                # Убираем команду /in из текста для обработки
+                message_text = message_text[3:].strip()
             else:
-                # Проверяем, есть ли action_type в POST данных (от фронтенда)
-                if 'action_type' in request.POST and request.POST['action_type']:
-                    action_type = request.POST['action_type']
-                    print(f"🔍 CHAT: action_type из POST данных: {action_type}")
-                else:
-                    # Определяем тип действия автоматически
-                    action_type = determine_action_type_from_text(message_text)
-                    print(f"🔍 CHAT: Определен тип действия: {action_type}")
+                # Определяем тип действия автоматически
+                action_type = determine_action_type_from_text(message_text)
+                print(f"🔍 CHAT: Определен тип действия автоматически: {action_type}")
 
             try:
-                print(f"🔍 CHAT: ФИНАЛЬНЫЙ action_type: {action_type}")
-                print(f"🔍 CHAT: ФИНАЛЬНЫЙ message_text: {message_text[:200]}...")
-                
                 if action_type == 'hrscreening':
-                    print(f"🔍 CHAT: ВХОДИМ В БЛОК HR-СКРИНИНГА")
                     # Создаем HR-скрининг с ПРАВИЛЬНЫМИ данными
                     hr_form = HRScreeningForm({'input_data': message_text}, user=request.user)
-                    print(f"🔍 CHAT: HRScreeningForm создана, is_valid: {hr_form.is_valid()}")
                     
                     if hr_form.is_valid():
                         try:
@@ -3274,8 +3192,6 @@ def chat_workflow(request, session_id=None):
                         )
 
                 elif action_type == 'invite':
-                    print(f"🔍 CHAT: ВХОДИМ В БЛОК ИНВАЙТА - ЭТО ОШИБКА!")
-                    print(f"🔍 CHAT: action_type = {action_type}, но должен быть hrscreening")
                     # Создаем инвайт с ПРАВИЛЬНЫМИ данными
                     invite_form = InviteCombinedForm({'combined_data': message_text}, user=request.user)
                     
@@ -3482,112 +3398,4 @@ def update_chat_title(request, session_id):
             'success': False, 
             'error': 'Ошибка валидации формы'
         })
-
-
-@login_required
-@permission_required('google_oauth.view_hrscreening', raise_exception=True)
-def api_chat_vacancy_data(request, vacancy_id):
-    """AJAX API для получения данных вакансии для чат-воркфлоу"""
-    try:
-        from apps.vacancies.models import Vacancy
-        from apps.google_oauth.models import SlotsSettings
-        import json
-    except ImportError as e:
-        return JsonResponse({'success': False, 'error': f'Ошибка импорта: {str(e)}'})
-    
-    try:
-        vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True)
-    except Vacancy.DoesNotExist:
-        return JsonResponse({'success': False, 'error': 'Вакансия не найдена'})
-    
-    # Получаем данные о событиях календаря
-    calendar_events_data = []
-    try:
-        from logic.integration.oauth.oauth_services import GoogleOAuthService, GoogleCalendarService
-        oauth_service = GoogleOAuthService(request.user)
-        oauth_account = oauth_service.get_oauth_account()
-        
-        if oauth_account:
-            calendar_service = GoogleCalendarService(oauth_account)
-        else:
-            raise Exception("Google OAuth аккаунт не найден")
-        
-        # Получаем события на ближайшие 30 дней
-        events = calendar_service.get_events(days_ahead=30)
-        
-        for event in events:
-            event_data = {
-                'id': event.get('id'),
-                'title': event.get('summary', 'Без названия'),
-                'start': event.get('start', {}).get('dateTime') or event.get('start', {}).get('date'),
-                'end': event.get('end', {}).get('dateTime') or event.get('end', {}).get('date'),
-                'description': event.get('description', ''),
-                'location': event.get('location', ''),
-                'attendees': [att.get('email') for att in event.get('attendees', []) if att.get('email')]
-            }
-            calendar_events_data.append(event_data)
-    except Exception as e:
-        print(f"Ошибка получения событий календаря: {e}")
-        # Если Google OAuth не настроен, просто продолжаем без событий
-    
-    # Получаем настройки слотов
-    slots_settings = SlotsSettings.get_or_create_for_user(request.user)
-    
-    # Формируем данные вакансии
-    vacancy_data = {
-        'id': vacancy.id,
-        'name': vacancy.name,
-        'vacancy_link_belarus': vacancy.vacancy_link_belarus,
-        'vacancy_link_poland': vacancy.vacancy_link_poland,
-        'questions_belarus': vacancy.questions_belarus,
-        'questions_poland': vacancy.questions_poland,
-        'slots_belarus': vacancy.slots_belarus,
-        'slots_poland': vacancy.slots_poland,
-    }
-    
-    try:
-        return JsonResponse({
-            'success': True,
-            'vacancy': vacancy_data,
-            'calendar_events': calendar_events_data,
-            'slots_settings': {
-                'default_duration': slots_settings.default_duration,
-                'working_hours_start': slots_settings.working_hours_start,
-                'working_hours_end': slots_settings.working_hours_end,
-                'working_days': slots_settings.working_days,
-            }
-        })
-    except Exception as e:
-        import traceback
-        print(f"❌ Общая ошибка в api_chat_vacancy_data: {e}")
-        print(f"❌ Traceback: {traceback.format_exc()}")
-        return JsonResponse({'success': False, 'error': f'Внутренняя ошибка сервера: {str(e)}'})
-
-
-@login_required
-@permission_required('google_oauth.view_hrscreening', raise_exception=True)
-def api_chat_sessions(request):
-    """AJAX API для получения списка чат-сессий"""
-    from .models import ChatSession
-    
-    # Получаем параметры
-    limit = int(request.GET.get('limit', 20))
-    
-    # Получаем сессии пользователя
-    sessions = ChatSession.objects.filter(user=request.user).order_by('-updated_at')[:limit]
-    
-    sessions_data = []
-    for session in sessions:
-        sessions_data.append({
-            'id': session.id,
-            'title': session.title or f'Чат #{session.id}',
-            'created_at': session.created_at.strftime('%d.%m.%Y %H:%M'),
-            'updated_at': session.updated_at.strftime('%d.%m.%Y %H:%M'),
-            'message_count': session.messages.count()
-        })
-    
-    return JsonResponse({
-        'success': True,
-        'sessions': sessions_data
-    })
 

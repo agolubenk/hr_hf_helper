@@ -64,8 +64,8 @@ urlpatterns = [
     path('chat/<int:session_id>/update-title/', views.update_chat_title, name='update_chat_title'),
     
     # AJAX API для чат-воркфлоу
-    path('api/chat/vacancy/<int:vacancy_id>/', views.api_chat_vacancy_data, name='api_chat_vacancy_data'),
-    path('api/chat/sessions/', views.api_chat_sessions, name='api_chat_sessions'),
+    # path('api/chat/vacancy/<int:vacancy_id>/', views.api_chat_vacancy_data, name='api_chat_vacancy_data'),
+    # path('api/chat/sessions/', views.api_chat_sessions, name='api_chat_sessions'),
     
     # G-данные и автоматизация
     path('gdata-automation/', views.gdata_automation, name='gdata_automation'),
