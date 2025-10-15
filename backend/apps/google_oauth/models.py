@@ -1530,23 +1530,42 @@ class Invite(models.Model):
             account_id = accounts['items'][0]['id']
             print(f"[TECH_SCREENING] Получен account_id: {account_id}")
 
-            # Получаем ID статуса Tech Screening через API
+            # Получаем статус из настроек вакансии
             tech_screening_status_id = None
             
-            # Получаем список статусов вакансий
-            print(f"[TECH_SCREENING] Запрашиваем статусы вакансий...")
-            statuses = service.get_vacancy_statuses(account_id)
-            print(f"[TECH_SCREENING] Получены статусы: {statuses}")
-            
-            if statuses and 'items' in statuses:
-                print(f"[TECH_SCREENING] Ищем статус Tech Screening среди {len(statuses['items'])} статусов")
-                for status in statuses['items']:
-                    status_name = status.get('name', '')
-                    print(f"[TECH_SCREENING] Проверяем статус: '{status_name}'")
-                    if status_name.lower() == 'tech screening':
-                        tech_screening_status_id = status.get('id')
-                        print(f"🔍 TECH_SCREENING: Найден статус Tech Screening с ID {tech_screening_status_id}")
-                        break
+            try:
+                # Пытаемся получить вакансию из локальной БД
+                vacancy = Vacancy.objects.filter(external_id=str(self.vacancy_id)).first()
+                
+                if vacancy and vacancy.tech_screening_stage:
+                    tech_screening_status_id = int(vacancy.tech_screening_stage)
+                    print(f"🔍 TECH_SCREENING: Используем статус из вакансии: {tech_screening_status_id}")
+                else:
+                    print(f"⚠️ TECH_SCREENING: Этап не настроен в вакансии, ищем по названию")
+                    
+                    # Fallback: ищем по названию "Tech Screening"
+                    print(f"[TECH_SCREENING] Запрашиваем статусы вакансий...")
+                    statuses = service.get_vacancy_statuses(account_id)
+                    print(f"[TECH_SCREENING] Получены статусы: {statuses}")
+                    
+                    if statuses and 'items' in statuses:
+                        print(f"[TECH_SCREENING] Ищем статус Tech Screening среди {len(statuses['items'])} статусов")
+                        for status in statuses['items']:
+                            status_name = status.get('name', '')
+                            print(f"[TECH_SCREENING] Проверяем статус: '{status_name}'")
+                            if status_name.lower() == 'tech screening':
+                                tech_screening_status_id = status.get('id')
+                                print(f"🔍 TECH_SCREENING: Найден статус Tech Screening с ID {tech_screening_status_id}")
+                                break
+            except Exception as e:
+                print(f"⚠️ TECH_SCREENING: Ошибка получения этапа из вакансии: {e}")
+                # Fallback к старой логике
+                statuses = service.get_vacancy_statuses(account_id)
+                if statuses and 'items' in statuses:
+                    for status in statuses['items']:
+                        if status.get('name', '').lower() == 'tech screening':
+                            tech_screening_status_id = status.get('id')
+                            break
             
             if not tech_screening_status_id:
                 print(f"⚠️ TECH_SCREENING: Статус Tech Screening не найден, используем fallback ID")
@@ -3723,16 +3742,37 @@ class HRScreening(models.Model):
             # Обновляем статус кандидата на "HR Screening" и добавляем комментарий
             print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем статус и добавляем комментарий")
             
-            # Получаем статусы вакансий и ищем "HR Screening"
-            statuses = huntflow_service.get_vacancy_statuses(account_id)
+            # Получаем статус из настроек вакансии
             hr_screening_status_id = None
             
-            if statuses and 'items' in statuses:
-                for status in statuses['items']:
-                    if status.get('name', '').lower() == 'hr screening':
-                        hr_screening_status_id = status.get('id')
-                        print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Найден статус HR Screening с ID {hr_screening_status_id}")
-                        break
+            try:
+                # Пытаемся получить вакансию из локальной БД
+                from apps.vacancies.models import Vacancy
+                vacancy = Vacancy.objects.filter(external_id=str(self.vacancy_id)).first()
+                
+                if vacancy and vacancy.hr_screening_stage:
+                    hr_screening_status_id = int(vacancy.hr_screening_stage)
+                    print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Используем статус из вакансии: {hr_screening_status_id}")
+                else:
+                    print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Этап не настроен в вакансии, ищем по названию")
+                    
+                    # Fallback: ищем по названию "HR Screening"
+                    statuses = huntflow_service.get_vacancy_statuses(account_id)
+                    if statuses and 'items' in statuses:
+                        for status in statuses['items']:
+                            if status.get('name', '').lower() == 'hr screening':
+                                hr_screening_status_id = status.get('id')
+                                print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Найден статус HR Screening с ID {hr_screening_status_id}")
+                                break
+            except Exception as e:
+                print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Ошибка получения этапа из вакансии: {e}")
+                # Fallback к старой логике
+                statuses = huntflow_service.get_vacancy_statuses(account_id)
+                if statuses and 'items' in statuses:
+                    for status in statuses['items']:
+                        if status.get('name', '').lower() == 'hr screening':
+                            hr_screening_status_id = status.get('id')
+                            break
             
             if not hr_screening_status_id:
                 print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Статус HR Screening не найден")
