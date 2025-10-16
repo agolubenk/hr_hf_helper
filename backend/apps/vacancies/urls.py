@@ -16,6 +16,8 @@ urlpatterns = [
     
     # AJAX операции для вакансий
     path('<int:pk>/toggle-active/', views.vacancy_toggle_active, name='vacancy_toggle_active'),
+    path('<int:pk>/update-scorecards/', views.update_scorecards, name='update_scorecards'),
+    path('<int:pk>/get-upcoming-interviews/', views.get_upcoming_interviews, name='get_upcoming_interviews'),
     
     # CRUD операции для зарплатных вилок
     path('salary-ranges/', views.salary_ranges_list, name='salary_ranges_list'),
