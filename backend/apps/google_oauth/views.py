@@ -3151,39 +3151,95 @@ def chat_workflow(request, session_id=None):
 
             try:
                 if action_type == 'delete_last':
-                    # Обрабатываем команду удаления последнего действия
-                    delete_result = delete_last_action(chat_session, request.user)
+                    # Проверяем, не была ли уже выполнена команда удаления
+                    last_message = ChatMessage.objects.filter(
+                        session=chat_session
+                    ).order_by('-created_at').first()
                     
-                    if delete_result['success']:
-                        response_content = f"""**Последнее действие удалено**
-
-✅ **Удалено:** {delete_result['action_type']}
-📋 **Кандидат:** {delete_result.get('candidate_name', 'Не указан')}
-📋 **Вакансия:** {delete_result.get('vacancy_name', 'Не указана')}
-
-🗑️ **Очищено:**
-- Удален объект из базы данных
-- Отменены изменения в Huntflow
-- Удалены связанные данные (календарные события, scorecard, etc.)"""
-                        
+                    if last_message and last_message.message_type == 'delete':
                         ChatMessage.objects.create(
                             session=chat_session,
                             message_type='system',
-                            content=response_content,
-                            metadata={
-                                'action_type': 'delete_last',
-                                'deleted_action_type': delete_result['action_type'],
-                                'deleted_object_id': delete_result.get('deleted_object_id'),
-                                'deleted_candidate_name': delete_result.get('candidate_name'),
-                                'deleted_vacancy_name': delete_result.get('vacancy_name')
-                            }
+                            content="⚠️ **Команда удаления уже была выполнена**\n\nКоманда `/del` может быть использована только один раз подряд. Сначала создайте новое действие (HR-скрининг или инвайт), а затем используйте команду удаления."
                         )
                     else:
-                        ChatMessage.objects.create(
-                            session=chat_session,
-                            message_type='system',
-                            content=f"❌ **Не удалось удалить последнее действие**\n\n{delete_result['message']}"
-                        )
+                        # Обрабатываем команду удаления последнего действия
+                        delete_result = delete_last_action(chat_session, request.user)
+                        
+                        if delete_result['success']:
+                            # Создаем стилизованный ответ в виде карточки
+                            action_type_display = {
+                                'hrscreening': 'HR-скрининг',
+                                'invite': 'Инвайт'
+                            }.get(delete_result['action_type'], delete_result['action_type'])
+                            
+                            # Формируем список изменений
+                            changes_html = ""
+                            if delete_result.get('changes'):
+                                changes_list = []
+                                for change in delete_result['changes']:
+                                    changes_list.append(f"<li>{change}</li>")
+                                changes_html = f"""
+<div class="delete-changes">
+<h6><i class="fas fa-list me-2"></i>Выполненные изменения:</h6>
+<ul>{''.join(changes_list)}</ul>
+</div>"""
+                            
+                            # Формируем ссылку на Huntflow
+                            huntflow_link = ""
+                            if delete_result.get('huntflow_candidate_url'):
+                                huntflow_link = f"""
+<div class="delete-item">
+<span class="delete-label">Huntflow:</span> 
+<a href="{delete_result['huntflow_candidate_url']}" target="_blank" class="btn btn-sm btn-outline-primary">
+<i class="fas fa-external-link-alt me-1"></i>Открыть кандидата
+</a>
+</div>"""
+                            
+                            response_content = f"""<div class="delete-result-card">
+<div class="delete-header">
+<i class="fas fa-trash-alt text-danger me-2"></i>
+<strong>Удалено</strong>
+</div>
+<div class="delete-info">
+<div class="delete-item">
+<span class="delete-label">Тип:</span> {action_type_display}
+</div>
+<div class="delete-item">
+<span class="delete-label">Кандидат:</span> {delete_result.get('candidate_name', 'Не указан')}
+</div>
+<div class="delete-item">
+<span class="delete-label">Вакансия:</span> {delete_result.get('vacancy_name', 'Не указана')}
+</div>
+{huntflow_link}
+</div>
+<div class="delete-status">
+<i class="fas fa-check-circle text-success me-2"></i>
+<span class="delete-status-text">Данные удалены и изменения отменены</span>
+</div>
+{changes_html if changes_html else ''}
+</div>"""
+                        
+                            ChatMessage.objects.create(
+                                session=chat_session,
+                                message_type='delete',
+                                content=response_content,
+                                metadata={
+                                    'action_type': 'delete_last',
+                                    'deleted_action_type': delete_result['action_type'],
+                                    'deleted_object_id': delete_result.get('deleted_object_id'),
+                                    'deleted_candidate_name': delete_result.get('candidate_name'),
+                                    'deleted_vacancy_name': delete_result.get('vacancy_name'),
+                                    'huntflow_candidate_url': delete_result.get('huntflow_candidate_url'),
+                                    'changes': delete_result.get('changes', [])
+                                }
+                            )
+                        else:
+                            ChatMessage.objects.create(
+                                session=chat_session,
+                                message_type='system',
+                                content=f"❌ **Ошибка при удалении**\n\n{delete_result.get('message', 'Неизвестная ошибка')}"
+                            )
                         
                 elif action_type == 'hrscreening':
                     # Создаем HR-скрининг с ПРАВИЛЬНЫМИ данными
@@ -3447,13 +3503,18 @@ def delete_last_action(chat_session, user):
             'action_type': last_action.message_type,
             'deleted_object_id': None,
             'candidate_name': last_action.metadata.get('candidate_name'),
-            'vacancy_name': last_action.metadata.get('vacancy_name')
+            'vacancy_name': last_action.metadata.get('vacancy_name'),
+            'huntflow_candidate_url': None,
+            'changes': []
         }
         
         # Удаляем объект в зависимости от типа действия
         if last_action.message_type == 'hrscreening' and last_action.hr_screening:
             hr_screening = last_action.hr_screening
             result['deleted_object_id'] = hr_screening.id
+            
+            # Формируем ссылку на кандидата в Huntflow
+            result['huntflow_candidate_url'] = f"https://huntflow.ru/applicants/{hr_screening.candidate_id}"
             
             print(f"🗑️ DELETE_LAST_ACTION: Удаляем HR-скрининг ID: {hr_screening.id}")
             
@@ -3515,6 +3576,14 @@ def delete_last_action(chat_session, user):
                         )
                         print(f"🗑️ DELETE_LAST_ACTION: Снимок удален после восстановления")
                         
+                        # Добавляем изменения в список
+                        result['changes'].extend([
+                            "Восстановлены основные поля кандидата",
+                            "Восстановлены дополнительные поля (questionary)",
+                            "Восстановлен предыдущий статус кандидата",
+                            "Удален снимок состояния"
+                        ])
+                        
                     else:
                         print(f"⚠️ DELETE_LAST_ACTION: Снимок не найден, используем fallback")
                         # Fallback: возвращаем на статус "Contact"
@@ -3535,16 +3604,22 @@ def delete_last_action(chat_session, user):
                                     vacancy_id=int(hr_screening.vacancy_id) if hr_screening.vacancy_id else None
                                 )
                                 print(f"🗑️ DELETE_LAST_ACTION: Статус возвращен на Contact (fallback)")
+                                result['changes'].append("Статус возвращен на Contact (fallback)")
             except Exception as e:
                 print(f"⚠️ DELETE_LAST_ACTION: Ошибка восстановления состояния: {e}")
+                result['changes'].append(f"Ошибка восстановления состояния: {str(e)}")
             
             # Удаляем HR-скрининг из базы данных
             hr_screening.delete()
+            result['changes'].append("HR-скрининг удален из базы данных")
             print(f"🗑️ DELETE_LAST_ACTION: HR-скрининг удален из базы данных")
             
         elif last_action.message_type == 'invite' and last_action.invite:
             invite = last_action.invite
             result['deleted_object_id'] = invite.id
+            
+            # Формируем ссылку на кандидата в Huntflow
+            result['huntflow_candidate_url'] = f"https://huntflow.ru/applicants/{invite.candidate_id}"
             
             print(f"🗑️ DELETE_LAST_ACTION: Удаляем инвайт ID: {invite.id}")
             
@@ -3555,9 +3630,11 @@ def delete_last_action(chat_session, user):
                     oauth_service = GoogleOAuthService(user)
                     calendar_service = GoogleCalendarService(oauth_service)
                     calendar_service.delete_event(invite.google_calendar_event_id)
+                    result['changes'].append("Календарное событие удалено")
                     print(f"🗑️ DELETE_LAST_ACTION: Календарное событие удалено")
             except Exception as e:
                 print(f"⚠️ DELETE_LAST_ACTION: Ошибка удаления календарного события: {e}")
+                result['changes'].append(f"Ошибка удаления календарного события: {str(e)}")
             
             # Удаляем файл scorecard из Google Drive
             try:
@@ -3566,9 +3643,11 @@ def delete_last_action(chat_session, user):
                     oauth_service = GoogleOAuthService(user)
                     drive_service = GoogleDriveService(oauth_service)
                     drive_service.delete_file(invite.google_drive_file_id)
+                    result['changes'].append("Scorecard удален из Google Drive")
                     print(f"🗑️ DELETE_LAST_ACTION: Scorecard удален из Google Drive")
             except Exception as e:
                 print(f"⚠️ DELETE_LAST_ACTION: Ошибка удаления scorecard: {e}")
+                result['changes'].append(f"Ошибка удаления scorecard: {str(e)}")
             
             # Отменяем изменения в Huntflow (возвращаем предыдущий статус)
             try:
@@ -3599,16 +3678,20 @@ def delete_last_action(chat_session, user):
                                 comment="Отменен инвайт",
                                 vacancy_id=int(invite.vacancy_id) if invite.vacancy_id else None
                             )
+                            result['changes'].append("Статус кандидата возвращен на Contact")
                             print(f"🗑️ DELETE_LAST_ACTION: Статус кандидата возвращен на Contact")
             except Exception as e:
                 print(f"⚠️ DELETE_LAST_ACTION: Ошибка отмены статуса в Huntflow: {e}")
+                result['changes'].append(f"Ошибка отмены статуса в Huntflow: {str(e)}")
             
             # Удаляем инвайт из базы данных
             invite.delete()
+            result['changes'].append("Инвайт удален из базы данных")
             print(f"🗑️ DELETE_LAST_ACTION: Инвайт удален из базы данных")
         
         # Удаляем сообщение о действии из чата
         last_action.delete()
+        result['changes'].append("Сообщение о действии удалено из чата")
         print(f"🗑️ DELETE_LAST_ACTION: Сообщение о действии удалено из чата")
         
         print(f"✅ DELETE_LAST_ACTION: Удаление завершено успешно")
