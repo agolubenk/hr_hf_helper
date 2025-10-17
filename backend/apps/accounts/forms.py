@@ -10,7 +10,6 @@ class ProfileEditForm(UserChangeForm):
     ВХОДЯЩИЕ ДАННЫЕ:
     - first_name: имя пользователя
     - last_name: фамилия пользователя
-    - full_name: полное имя пользователя
     - email: электронная почта
     - telegram_username: имя пользователя в Telegram
     
@@ -36,7 +35,6 @@ class ProfileEditForm(UserChangeForm):
         fields = [
             'first_name', 
             'last_name', 
-            'full_name', 
             'email', 
             'telegram_username',
             'interview_start_time',
@@ -50,10 +48,6 @@ class ProfileEditForm(UserChangeForm):
             'last_name': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Фамилия'
-            }),
-            'full_name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Полное имя'
             }),
             'email': forms.EmailInput(attrs={
                 'class': 'form-control',
@@ -114,7 +108,6 @@ class ApiKeysForm(forms.ModelForm):
             'notion_integration_token',
             'huntflow_sandbox_api_key',
             'huntflow_sandbox_url',
-            'huntflow_prod_api_key',
             'huntflow_prod_url',
             'active_system'
         ]
@@ -138,10 +131,6 @@ class ApiKeysForm(forms.ModelForm):
             'huntflow_sandbox_url': forms.URLInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'https://sandbox-api.huntflow.dev'
-            }),
-            'huntflow_prod_api_key': forms.PasswordInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Введите API ключ Huntflow (прод)'
             }),
             'huntflow_prod_url': forms.URLInput(attrs={
                 'class': 'form-control',

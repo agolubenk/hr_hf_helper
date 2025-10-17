@@ -11,7 +11,7 @@ class UserAdmin(BaseUserAdmin):
             "fields": (
                 "gemini_api_key",
                 "clickup_api_key",
-                "huntflow_prod_url", "huntflow_prod_api_key",
+                "huntflow_prod_url",
                 "huntflow_sandbox_url", "huntflow_sandbox_api_key",
                 "active_system", "telegram_username",
             )
@@ -26,12 +26,12 @@ class UserAdmin(BaseUserAdmin):
             "classes": ("collapse",)
         }),
         (_("Роли/Профиль"), {
-            "fields": ("full_name", "interviewer_calendar_url", "is_observer_active",)
+            "fields": ()
         }),
     )
-    list_display = ("username", "full_name", "email", "active_system", "get_clickup_status", "get_huntflow_token_status", "is_staff")
+    list_display = ("username", "first_name", "last_name", "email", "active_system", "get_clickup_status", "get_huntflow_token_status", "is_staff")
     list_filter = ("is_staff", "is_superuser", "is_active", "active_system", "date_joined")
-    search_fields = ("username", "full_name", "email", "telegram_username")
+    search_fields = ("username", "first_name", "last_name", "email", "telegram_username")
     readonly_fields = ('huntflow_token_expires_at', 'huntflow_refresh_expires_at', 'huntflow_token_status')
     
     def get_clickup_status(self, obj):

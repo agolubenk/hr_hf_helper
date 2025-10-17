@@ -20,9 +20,7 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         """Сохраняет пользователя с дополнительными полями"""
         user = super().save_user(request, user, form, commit=False)
         
-        # Устанавливаем дополнительные поля
-        if 'full_name' in form.cleaned_data:
-            user.full_name = form.cleaned_data['full_name']
+        # Дополнительные поля обрабатываются автоматически
         
         if commit:
             user.save()
@@ -60,10 +58,6 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
         
         # Дополнительная обработка для Google OAuth
         if sociallogin.account.provider == 'google':
-            # Устанавливаем full_name из Google данных
-            if 'name' in data:
-                user.full_name = data['name']
-            
             # Устанавливаем username как email, если username не задан
             if not user.username and user.email:
                 user.username = user.email.split('@')[0]
@@ -81,9 +75,6 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
         
         # Автоматически заполняем данные из Google
         if sociallogin.account.provider == 'google':
-            # Устанавливаем дополнительные поля
-            if not user.full_name and user.first_name and user.last_name:
-                user.full_name = f"{user.first_name} {user.last_name}"
             
             # Даем права наблюдателя ТОЛЬКО новым пользователям
             if is_new_user:
@@ -97,16 +88,18 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
                 print(f"✅ OAUTH: Создан новый пользователь: {user.username} ({user.email})")
                 
                 # Добавляем сообщение для нового пользователя
+                display_name = f"{user.first_name} {user.last_name}".strip() or user.username
                 messages.success(request, 
-                    f"Добро пожаловать, {user.full_name or user.username}! "
+                    f"Добро пожаловать, {display_name}! "
                     f"Ваш Google аккаунт успешно подключен. Вам назначены права наблюдателя."
                 )
             else:
                 print(f"✅ OAUTH: Существующий пользователь {user.username} авторизован через Google")
                 
                 # Добавляем сообщение для существующего пользователя
+                display_name = f"{user.first_name} {user.last_name}".strip() or user.username
                 messages.success(request, 
-                    f"Добро пожаловать обратно, {user.full_name or user.username}! "
+                    f"Добро пожаловать обратно, {display_name}! "
                     f"Ваш Google аккаунт успешно подключен."
                 )
             
