@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Vacancy, SalaryRange
+from .models import Vacancy, SalaryRange, ScorecardUpdateHistory
 
 
 @admin.register(Vacancy)
@@ -219,3 +219,138 @@ class SalaryRangeAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         """Оптимизация запросов"""
         return super().get_queryset(request).select_related('vacancy', 'grade')
+
+
+@admin.register(ScorecardUpdateHistory)
+class ScorecardUpdateHistoryAdmin(admin.ModelAdmin):
+    list_display = [
+        'vacancy',
+        'user',
+        'action_type_display',
+        'success_rate_display',
+        'updated_count',
+        'total_found',
+        'date_range_display',
+        'has_errors_display',
+        'created_at'
+    ]
+    
+    list_filter = [
+        'action_type',
+        'vacancy',
+        'user',
+        'created_at',
+        'updated_count',
+        'total_found'
+    ]
+    
+    search_fields = [
+        'vacancy__name',
+        'user__first_name',
+        'user__last_name',
+        'user__email'
+    ]
+    
+    readonly_fields = [
+        'vacancy',
+        'user',
+        'action_type',
+        'updated_count',
+        'total_found',
+        'date_range_from',
+        'date_range_to',
+        'errors',
+        'updated_interviews',
+        'created_at',
+        'success_rate_display',
+        'has_errors_display'
+    ]
+    
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('vacancy', 'user', 'action_type', 'created_at')
+        }),
+        ('Результаты операции', {
+            'fields': ('updated_count', 'total_found', 'success_rate_display', 'has_errors_display')
+        }),
+        ('Период обновления', {
+            'fields': ('date_range_from', 'date_range_to')
+        }),
+        ('Детали операции', {
+            'fields': ('updated_interviews',),
+            'classes': ('collapse',)
+        }),
+        ('Ошибки', {
+            'fields': ('errors',),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    ordering = ['-created_at']
+    
+    def action_type_display(self, obj):
+        """Отображение типа операции"""
+        if obj.action_type == 'bulk_update':
+            return format_html(
+                '<span style="color: #007bff; font-weight: bold;">🔄 Массовое обновление</span>'
+            )
+        else:
+            return format_html(
+                '<span style="color: #28a745; font-weight: bold;">✏️ Обновление одного</span>'
+            )
+    action_type_display.short_description = 'Тип операции'
+    action_type_display.admin_order_field = 'action_type'
+    
+    def success_rate_display(self, obj):
+        """Отображение процента успешности"""
+        rate = obj.success_rate
+        if rate >= 90:
+            color = '#28a745'  # Зеленый
+            icon = '✅'
+        elif rate >= 70:
+            color = '#ffc107'  # Желтый
+            icon = '⚠️'
+        else:
+            color = '#dc3545'  # Красный
+            icon = '❌'
+        
+        return format_html(
+            '<span style="color: {}; font-weight: bold;">{} {}%</span>',
+            color, icon, rate
+        )
+    success_rate_display.short_description = 'Успешность'
+    
+    def date_range_display(self, obj):
+        """Отображение периода"""
+        return f"{obj.date_range_from.strftime('%d.%m.%Y')} - {obj.date_range_to.strftime('%d.%m.%Y')}"
+    date_range_display.short_description = 'Период'
+    date_range_display.admin_order_field = 'date_range_from'
+    
+    def has_errors_display(self, obj):
+        """Отображение наличия ошибок"""
+        if obj.has_errors:
+            return format_html(
+                '<span style="color: #dc3545; font-weight: bold;">❌ {} ошибок</span>',
+                len(obj.errors)
+            )
+        else:
+            return format_html(
+                '<span style="color: #28a745; font-weight: bold;">✅ Без ошибок</span>'
+            )
+    has_errors_display.short_description = 'Ошибки'
+    
+    def get_queryset(self, request):
+        """Оптимизация запросов"""
+        return super().get_queryset(request).select_related('vacancy', 'user')
+    
+    def has_add_permission(self, request):
+        """Запрещаем добавление новых записей через админку"""
+        return False
+    
+    def has_change_permission(self, request, obj=None):
+        """Запрещаем редактирование записей через админку"""
+        return False
+    
+    def has_delete_permission(self, request, obj=None):
+        """Разрешаем удаление только суперпользователям"""
+        return request.user.is_superuser
