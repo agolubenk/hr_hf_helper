@@ -67,3 +67,326 @@ Watching for file changes with StatReloader
 [21/Oct/2025 22:16:35] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
 [21/Oct/2025 22:18:21] "GET /accounts/ HTTP/1.1" 200 103874
 [21/Oct/2025 22:18:21] "GET /static/css/profile.css HTTP/1.1" 404 1905
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/models.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 21, 2025 - 22:10:54
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/models.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 21, 2025 - 22:19:39
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[21/Oct/2025 22:20:15] "GET /accounts/ HTTP/1.1" 200 104119
+[21/Oct/2025 22:20:15] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[21/Oct/2025 22:20:15] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[21/Oct/2025 22:20:15] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[21/Oct/2025 22:20:15] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[21/Oct/2025 22:20:15] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[21/Oct/2025 22:20:15] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[21/Oct/2025 22:20:15] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:20:15] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 22:20:15] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[21/Oct/2025 22:20:15] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[21/Oct/2025 22:20:15] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/models.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 21, 2025 - 22:19:45
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[21/Oct/2025 22:20:49] "GET /accounts/ HTTP/1.1" 200 104106
+[21/Oct/2025 22:20:49] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:20:57] "GET /auth/google/login/ HTTP/1.1" 302 0
+[21/Oct/2025 22:21:07] "GET /auth/google/login/callback/?state=tir4ZPmcRgwxh315&code=4/0AVGzR1AcljbQgdAq1ddtghlR1bcc1LlQP71QLFQPLy0QX9rCcFZqK5yw2A9fP4TRVublmg&scope=email%20profile%20https://www.googleapis.com/auth/drive%20https://www.googleapis.com/auth/spreadsheets%20https://www.googleapis.com/auth/calendar%20https://www.googleapis.com/auth/userinfo.profile%20https://www.googleapis.com/auth/userinfo.email%20openid&authuser=0&hd=softnetix.io&prompt=consent HTTP/1.1" 302 0
+[21/Oct/2025 22:21:12] "GET /google-oauth/chat/ HTTP/1.1" 200 1696992
+[21/Oct/2025 22:21:17] "GET /accounts/ HTTP/1.1" 200 104622
+[21/Oct/2025 22:21:17] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:21:40] "GET /accounts/ HTTP/1.1" 200 104121
+[21/Oct/2025 22:21:40] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[21/Oct/2025 22:21:40] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:21:40] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[21/Oct/2025 22:21:40] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[21/Oct/2025 22:21:40] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[21/Oct/2025 22:21:40] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[21/Oct/2025 22:21:40] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[21/Oct/2025 22:21:40] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 22:21:40] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[21/Oct/2025 22:21:40] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[21/Oct/2025 22:21:41] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[21/Oct/2025 22:22:32] "GET /accounts/ HTTP/1.1" 200 104219
+[21/Oct/2025 22:22:32] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:23:05] "GET /accounts/ HTTP/1.1" 200 104213
+[21/Oct/2025 22:23:05] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:23:07] "GET /accounts/ HTTP/1.1" 200 104213
+[21/Oct/2025 22:23:08] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[21/Oct/2025 22:23:08] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:23:08] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[21/Oct/2025 22:23:08] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[21/Oct/2025 22:23:08] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[21/Oct/2025 22:23:08] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[21/Oct/2025 22:23:08] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[21/Oct/2025 22:23:08] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 22:23:08] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[21/Oct/2025 22:23:08] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[21/Oct/2025 22:23:08] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[21/Oct/2025 22:24:48] "GET /accounts/ HTTP/1.1" 200 104406
+[21/Oct/2025 22:24:48] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[21/Oct/2025 22:24:48] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[21/Oct/2025 22:24:48] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:24:48] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[21/Oct/2025 22:24:48] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[21/Oct/2025 22:24:48] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[21/Oct/2025 22:24:48] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[21/Oct/2025 22:24:48] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 22:24:48] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[21/Oct/2025 22:24:48] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[21/Oct/2025 22:24:49] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[21/Oct/2025 22:25:08] "GET /accounts/ HTTP/1.1" 200 104499
+[21/Oct/2025 22:25:08] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[21/Oct/2025 22:25:08] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:25:08] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[21/Oct/2025 22:25:08] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[21/Oct/2025 22:25:08] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[21/Oct/2025 22:25:08] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[21/Oct/2025 22:25:08] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[21/Oct/2025 22:25:08] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 22:25:08] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[21/Oct/2025 22:25:08] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[21/Oct/2025 22:25:08] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[21/Oct/2025 22:25:15] "GET /accounts/ HTTP/1.1" 200 104499
+[21/Oct/2025 22:25:15] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[21/Oct/2025 22:25:15] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:25:15] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[21/Oct/2025 22:25:15] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[21/Oct/2025 22:25:15] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[21/Oct/2025 22:25:15] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[21/Oct/2025 22:25:15] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[21/Oct/2025 22:25:15] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 22:25:15] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[21/Oct/2025 22:25:15] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[21/Oct/2025 22:25:15] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[21/Oct/2025 22:26:13] "GET /accounts/ HTTP/1.1" 200 104499
+[21/Oct/2025 22:26:13] "GET /static/css/profile.css HTTP/1.1" 404 1905
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 21, 2025 - 22:20:19
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+🔍 OAUTH: Найден существующий пользователь: andrei.golubenko (andrei.golubenko@softnetix.io)
+✅ OAUTH: Социальный аккаунт связан с существующим пользователем
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 30 событий
+🔍 DEBUG CHAT: Получено 30 событий из API
+🔍 DEBUG CHAT: Передаем 30 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Божков Роман (больничный) в 2025-10-22T08:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | ISHMUKOV PAVEL в 2025-10-22T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Богданович Александр в 2025-10-22T13:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)[21/Oct/2025 22:26:15] "GET /accounts/ HTTP/1.1" 200 104499
+[21/Oct/2025 22:26:15] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[21/Oct/2025 22:26:15] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[21/Oct/2025 22:26:15] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:26:15] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[21/Oct/2025 22:26:15] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[21/Oct/2025 22:26:15] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[21/Oct/2025 22:26:15] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[21/Oct/2025 22:26:15] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 22:26:15] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[21/Oct/2025 22:26:15] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[21/Oct/2025 22:26:15] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[21/Oct/2025 22:26:24] "GET /accounts/ HTTP/1.1" 200 104531
+[21/Oct/2025 22:26:24] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[21/Oct/2025 22:26:24] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:26:24] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[21/Oct/2025 22:26:24] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[21/Oct/2025 22:26:24] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[21/Oct/2025 22:26:24] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[21/Oct/2025 22:26:24] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[21/Oct/2025 22:26:24] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 22:26:24] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[21/Oct/2025 22:26:24] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[21/Oct/2025 22:26:24] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[21/Oct/2025 22:26:30] "GET /accounts/ HTTP/1.1" 200 104380
+[21/Oct/2025 22:26:30] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[21/Oct/2025 22:26:30] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:26:30] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[21/Oct/2025 22:26:30] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[21/Oct/2025 22:26:30] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[21/Oct/2025 22:26:30] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[21/Oct/2025 22:26:30] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[21/Oct/2025 22:26:30] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 22:26:30] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[21/Oct/2025 22:26:30] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[21/Oct/2025 22:26:31] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[21/Oct/2025 22:26:35] "GET /accounts/ HTTP/1.1" 200 104380
+[21/Oct/2025 22:26:35] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[21/Oct/2025 22:26:35] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:26:35] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[21/Oct/2025 22:26:35] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[21/Oct/2025 22:26:35] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[21/Oct/2025 22:26:35] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[21/Oct/2025 22:26:35] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[21/Oct/2025 22:26:35] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 22:26:35] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[21/Oct/2025 22:26:35] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[21/Oct/2025 22:26:36] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[21/Oct/2025 22:26:45] "GET /accounts/ HTTP/1.1" 200 104962
+[21/Oct/2025 22:26:45] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:26:45] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[21/Oct/2025 22:26:45] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[21/Oct/2025 22:26:45] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[21/Oct/2025 22:26:45] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[21/Oct/2025 22:26:45] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[21/Oct/2025 22:26:45] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[21/Oct/2025 22:26:45] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 22:26:45] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[21/Oct/2025 22:26:45] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[21/Oct/2025 22:26:45] "GET /static/img/logo-light.png HTTP/1.1" 200 47574

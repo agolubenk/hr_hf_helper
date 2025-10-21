@@ -20,6 +20,7 @@ class User(AbstractUser):
     """
     # Общие доп.поля
     telegram_username = models.CharField(_("Никнейм Telegram"), max_length=64, blank=True)
+    profile_photo = models.ImageField(_("Фото профиля"), upload_to='profile_photos/', blank=True, null=True)
 
     # Интеграции
     gemini_api_key = models.CharField(_("API ключ Gemini"), max_length=256, blank=True)
@@ -113,3 +114,17 @@ class User(AbstractUser):
             'huntflow_token_expires_at', 
             'huntflow_refresh_expires_at'
         ])
+    
+    def get_profile_photo_url(self):
+        """Получить URL фото профиля (локальное или из Google OAuth)"""
+        if self.profile_photo:
+            return self.profile_photo.url
+        
+        # Проверяем Google OAuth фото
+        try:
+            if hasattr(self, 'google_oauth_account') and self.google_oauth_account.picture_url:
+                return self.google_oauth_account.picture_url
+        except:
+            pass
+        
+        return None

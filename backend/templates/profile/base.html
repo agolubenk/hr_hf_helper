@@ -6,6 +6,25 @@
 
 {% block extra_css %}
 <link href="{% static 'css/profile.css' %}" rel="stylesheet">
+<style>
+/* Градиентная рамка для фото профиля - светлая тема */
+.profile-photo-border {
+    background: linear-gradient(135deg, rgba(176, 196, 222, 1) 20%, rgba(45, 126, 45, 1) 40%, rgba(135, 206, 235, 1) 60%, rgba(45, 126, 45, 1) 80%, rgba(76, 175, 80, 1) 100%);
+    box-shadow: var(--shadow-md), 
+                0 0 20px rgba(176, 196, 222, 0.4),
+                0 0 40px rgba(135, 206, 235, 0.2),
+                0 0 60px rgba(76, 175, 80, 0.1);
+}
+
+/* Градиентная рамка для фото профиля - темная тема */
+[data-theme="dark"] .profile-photo-border {
+    background: linear-gradient(135deg, rgba(187, 225, 250, 1) 0%, rgba(55, 171, 218, 1) 50%, rgba(255, 107, 157, 1) 100%);
+    box-shadow: var(--shadow-md),
+                0 0 20px rgba(187, 225, 250, 0.5),
+                0 0 40px rgba(55, 171, 218, 0.3),
+                0 0 60px rgba(255, 107, 157, 0.2);
+}
+</style>
 {% endblock %}
 
 {% block content %}
@@ -17,11 +36,19 @@
                 <div class="card-body text-center">
                     <!-- Фото пользователя -->
                     <div class="profile-avatar mx-auto mb-3">
-                        {% if user.profile_photo %}
-                            <img src="{{ user.profile_photo.url }}" alt="Фото профиля" class="rounded-circle" width="80" height="80">
-                        {% else %}
-                            {{ user.first_name.0|default:user.email.0|upper }}
-                        {% endif %}
+                        {% with photo_url=user.get_profile_photo_url %}
+                            {% if photo_url %}
+                                <div class="mx-auto profile-photo-border" style="width: 104px; height: 104px; border-radius: 50%; padding: 2px; box-shadow: var(--shadow-md);">
+                                    <img src="{{ photo_url }}" alt="Фото профиля" class="rounded-circle" width="100" height="100" style="display: block; margin: 0 auto;">
+                                </div>
+                            {% else %}
+                                <div class="mx-auto d-flex align-items-center justify-content-center profile-photo-border" style="width: 104px; height: 104px; border-radius: 50%; padding: 2px; box-shadow: var(--shadow-md);">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; background-color: var(--color-surface); color: var(--color-text);">
+                                        {{ user.first_name.0|default:user.email.0|upper }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
                     </div>
                     
                     <!-- ФИО -->
