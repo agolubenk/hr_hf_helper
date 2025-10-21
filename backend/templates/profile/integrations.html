@@ -88,21 +88,17 @@
                                 {% if integration.token_configured %}
                                     <div class="small text-muted">
                                         <div class="mb-1">
-                                        <strong>Токенная система:</strong>
-                                        <span class="badge bg-success ms-1">Активна</span>
-                                    </div>
-                                    <div>Access Token: {% if integration.token_valid %}✅ Валидный{% else %}❌ Истек{% endif %}</div>
-                                    <div>Refresh Token: {% if integration.refresh_valid %}✅ Валидный{% else %}❌ Истек{% endif %}</div>
-                                    <div class="mt-1">
                                         <strong>Текущая система:</strong> {{ integration.active_system }}
-                                    </div>
-                                    {% if integration.sandbox_configured or integration.prod_configured %}
-                                    <div class="mt-2">
-                                        <strong>API ключи (устаревшие):</strong>
-                                        <div>Песочница: {% if integration.sandbox_configured %}✅ Настроен{% else %}❌ Не настроен{% endif %}</div>
-                                        <div>Прод: {% if integration.prod_configured %}✅ Настроен{% else %}❌ Не настроен{% endif %}</div>
-                                    </div>
-                                    {% endif %}
+                                        </div>
+                                        <div>Access Token: {% if integration.token_valid %}✅ Валидный{% else %}❌ Истек{% endif %}</div>
+                                        <div>Refresh Token: {% if integration.refresh_valid %}✅ Валидный{% else %}❌ Истек{% endif %}</div>
+                                        {% if integration.sandbox_configured or integration.prod_configured %}
+                                        <div class="mt-1">
+                                            {% if integration.sandbox_configured %}
+                                            <div>API Песочницы: ✅ Настроен</div>
+                                            {% endif %}
+                                        </div>
+                                        {% endif %}
                                     </div>
                                 {% elif integration.api_configured %}
                                     <div class="small text-muted">

@@ -1719,3 +1719,8 @@ DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'n
 [21/Oct/2025 23:36:40] "GET /accounts/integrations/ HTTP/1.1" 200 147237
 [21/Oct/2025 23:36:40] "GET /static/images/integrations/huntflow-official.ico HTTP/1.1" 304 0
 [21/Oct/2025 23:36:40] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 23:37:35] "GET /accounts/integrations/ HTTP/1.1" 200 147081
+[21/Oct/2025 23:37:35] "GET /static/images/integrations/clickup-official.svg HTTP/1.1" 304 0
+[21/Oct/2025 23:37:35] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 23:38:13] "GET /accounts/integrations/ HTTP/1.1" 200 146899
+[21/Oct/2025 23:38:13] "GET /static/css/profile.css HTTP/1.1" 404 1905
