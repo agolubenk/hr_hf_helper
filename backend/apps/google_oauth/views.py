@@ -3090,6 +3090,258 @@ def combined_workflow(request):
 
 @login_required
 @permission_required('google_oauth.view_hrscreening', raise_exception=True)
+def chat_ajax_handler(request, session_id):
+    """Обработка AJAX запросов для чата"""
+    print(f"🔍 CHAT AJAX HANDLER: Получен запрос на session_id={session_id}")
+    print(f"🔍 CHAT AJAX HANDLER: Метод={request.method}, Content-Type={request.content_type}")
+    
+    if request.method != 'POST' or request.content_type != 'application/json':
+        print(f"❌ CHAT AJAX HANDLER: Неверный тип запроса - метод={request.method}, content_type={request.content_type}")
+        return JsonResponse({'success': False, 'error': 'Неверный тип запроса'})
+    
+    try:
+        import json
+        data = json.loads(request.body)
+        message_text = data.get('text', '').strip()
+        action_type_from_js = data.get('action_type', '')
+        
+        if not message_text:
+            return JsonResponse({'success': False, 'error': 'Пустое сообщение'})
+        
+        # Получаем сессию чата
+        try:
+            chat_session = ChatSession.objects.get(id=session_id, user=request.user)
+        except ChatSession.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Сессия чата не найдена'})
+        
+        # Сохраняем пользовательское сообщение
+        user_message = ChatMessage.objects.create(
+            session=chat_session,
+            message_type='user',
+            content=message_text
+        )
+
+        # Определяем тип действия (с приоритетом команд)
+        print(f"🔍 CHAT AJAX: Анализируем сообщение: '{message_text}'")
+        print(f"🔍 CHAT AJAX: action_type_from_js: '{action_type_from_js}'")
+        
+        if message_text.strip().lower().startswith('/del'):
+            action_type = 'delete_last'
+            print(f"🔍 CHAT AJAX: Команда /del обнаружена - удаление последнего действия")
+        elif message_text.strip().lower().startswith('/s'):
+            action_type = 'hrscreening'
+            print(f"🔍 CHAT AJAX: Команда /s обнаружена - принудительный HR-скрининг")
+            message_text = message_text[2:].strip()
+        elif message_text.strip().lower().startswith('/in'):
+            action_type = 'invite'
+            print(f"🔍 CHAT AJAX: Команда /in обнаружена - принудительный инвайт")
+            message_text = message_text[3:].strip()
+        else:
+            # Только если НЕТ команд, используем JavaScript или автоматическое определение
+            if action_type_from_js:
+                # Используем тип действия из JavaScript
+                action_type = action_type_from_js
+                print(f"🔍 CHAT AJAX: Используем тип действия из JS: {action_type}")
+            else:
+                # Определяем тип действия автоматически
+                action_type = determine_action_type_from_text(message_text)
+                print(f"🔍 CHAT AJAX: Определен тип действия автоматически: {action_type}")
+        
+        print(f"🔍 CHAT AJAX: ФИНАЛЬНЫЙ action_type: {action_type}")
+
+        # Обрабатываем действие
+        if action_type == 'delete_last':
+            # Проверяем, не была ли уже выполнена команда удаления
+            last_message = ChatMessage.objects.filter(
+                session=chat_session
+            ).order_by('-created_at').first()
+            
+            if last_message and last_message.message_type == 'delete':
+                ChatMessage.objects.create(
+                    session=chat_session,
+                    message_type='system',
+                    content="⚠️ **Команда удаления уже была выполнена**\n\nКоманда `/del` может быть использована только один раз подряд. Сначала создайте новое действие (HR-скрининг или инвайт), а затем используйте команду удаления."
+                )
+            else:
+                # Обрабатываем команду удаления последнего действия
+                delete_result = delete_last_action(chat_session, request.user)
+                
+                if delete_result['success']:
+                    # Создаем стилизованный ответ в виде карточки
+                    action_type_display = {
+                        'hrscreening': 'HR-скрининг',
+                        'invite': 'Инвайт'
+                    }.get(delete_result['action_type'], delete_result['action_type'])
+                    
+                    # Формируем список изменений
+                    changes_html = ""
+                    if delete_result.get('changes'):
+                        changes_list = []
+                        for change in delete_result['changes']:
+                            changes_list.append(f"<li>{change}</li>")
+                        changes_html = f"""
+<div class="delete-changes">
+<h6><i class="fas fa-list me-2"></i>Выполненные изменения:</h6>
+<ul>{''.join(changes_list)}</ul>
+</div>"""
+                    
+                    # Формируем ссылку на Huntflow
+                    huntflow_link = ""
+                    if delete_result.get('huntflow_candidate_url'):
+                        huntflow_link = f"""
+<div class="delete-item">
+<span class="delete-label">Huntflow:</span> 
+<a href="{delete_result['huntflow_candidate_url']}" target="_blank" class="btn btn-sm btn-outline-primary">
+<i class="fas fa-external-link-alt me-1"></i>Открыть кандидата
+</a>
+</div>"""
+                    
+                    response_content = f"""<div class="delete-result-card">
+<div class="delete-header">
+<i class="fas fa-trash-alt text-danger me-2"></i>
+<strong>Удалено</strong>
+</div>
+<div class="delete-info">
+<div class="delete-item">
+<span class="delete-label">Тип:</span> {action_type_display}
+</div>
+<div class="delete-item">
+<span class="delete-label">Кандидат:</span> {delete_result.get('candidate_name', 'Не указан')}
+</div>
+<div class="delete-item">
+<span class="delete-label">Вакансия:</span> {delete_result.get('vacancy_name', 'Не указана')}
+</div>
+{huntflow_link}
+</div>
+<div class="delete-status">
+<i class="fas fa-check-circle text-success me-2"></i>
+<span class="delete-status-text">Данные удалены и изменения отменены</span>
+</div>
+{changes_html if changes_html else ''}
+</div>"""
+                
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='delete',
+                        content=response_content,
+                        metadata={
+                            'action_type': 'delete_last',
+                            'deleted_action_type': delete_result['action_type'],
+                            'deleted_object_id': delete_result.get('deleted_object_id'),
+                            'deleted_candidate_name': delete_result.get('candidate_name'),
+                            'deleted_vacancy_name': delete_result.get('vacancy_name'),
+                            'huntflow_candidate_url': delete_result.get('huntflow_candidate_url'),
+                            'changes': delete_result.get('changes', [])
+                        }
+                    )
+                else:
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content=f"❌ **Ошибка при удалении**\n\n{delete_result.get('message', 'Неизвестная ошибка')}"
+                    )
+                
+        elif action_type == 'hrscreening':
+            # Создаем HR-скрининг
+            hr_form = HRScreeningForm({'input_data': message_text}, user=request.user)
+            
+            if hr_form.is_valid():
+                try:
+                    hr_screening = hr_form.save()
+                    
+                    response_content = ""  # Пустой контент, данные будут браться из metadata
+                    
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='hrscreening',
+                        content=response_content,
+                        hr_screening=hr_screening,
+                        metadata={
+                            'action_type': 'hrscreening',
+                            'hr_screening_id': hr_screening.id,
+                            'candidate_name': hr_screening.candidate_name,
+                            'vacancy_name': hr_screening.vacancy_title,
+                            'determined_grade': hr_screening.determined_grade,
+                            'candidate_url': hr_screening.candidate_url,
+                            'extracted_salary': str(hr_screening.extracted_salary) if hr_screening.extracted_salary else None,
+                            'salary_currency': hr_screening.salary_currency
+                        }
+                    )
+                except Exception as e:
+                    print(f"🔍 CHAT AJAX: Ошибка сохранения HR: {str(e)}")
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content=f"Ошибка при обработке HR-скрининга: {str(e)}"
+                    )
+            else:
+                # Ошибки валидации
+                error_content = "Ошибка при обработке HR-скрининга:\n"
+                for field, errors in hr_form.errors.items():
+                    error_content += f"- {field}: {', '.join(errors)}\n"
+                
+                ChatMessage.objects.create(
+                    session=chat_session,
+                    message_type='system',
+                    content=error_content
+                )
+
+        elif action_type == 'invite':
+            # Создаем инвайт
+            invite_form = InviteCombinedForm({'input_data': message_text}, user=request.user)
+            
+            if invite_form.is_valid():
+                try:
+                    invite = invite_form.save()
+                    
+                    response_content = ""  # Пустой контент, данные будут браться из metadata
+                    
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='invite',
+                        content=response_content,
+                        invite=invite,
+                        metadata={
+                            'action_type': 'invite',
+                            'invite_id': invite.id,
+                            'candidate_name': invite.candidate_name,
+                            'vacancy_name': invite.vacancy_name,
+                            'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
+                            'candidate_url': invite.candidate_url,
+                            'calendar_event_url': invite.calendar_event_url,
+                            'google_drive_file_url': invite.google_drive_file_url
+                        }
+                    )
+                except Exception as e:
+                    print(f"🔍 CHAT AJAX: Ошибка сохранения инвайта: {str(e)}")
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content=f"Ошибка при обработке инвайта: {str(e)}"
+                    )
+            else:
+                # Ошибки валидации
+                error_content = "Ошибка при обработке инвайта:\n"
+                for field, errors in invite_form.errors.items():
+                    error_content += f"- {field}: {', '.join(errors)}\n"
+                
+                ChatMessage.objects.create(
+                    session=chat_session,
+                    message_type='system',
+                    content=error_content
+                )
+        
+        return JsonResponse({'success': True})
+        
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Неверный JSON'})
+    except Exception as e:
+        print(f"🔍 CHAT AJAX: Ошибка обработки действия: {str(e)}")
+        return JsonResponse({'success': False, 'error': str(e)})
+
+
+@login_required
+@permission_required('google_oauth.view_hrscreening', raise_exception=True)
 def chat_workflow(request, session_id=None):
     """Чат-воркфлоу для HR-скрининга и инвайтов"""
     from .models import ChatSession, ChatMessage
@@ -3116,6 +3368,11 @@ def chat_workflow(request, session_id=None):
     title_form = ChatSessionTitleForm(instance=chat_session)
 
     if request.method == 'POST':
+        # Проверяем, это AJAX запрос или обычная форма
+        if request.content_type == 'application/json':
+            # AJAX запрос должен обрабатываться в chat_ajax_handler
+            return JsonResponse({'success': False, 'error': 'AJAX запрос должен отправляться на /ajax/ URL'})
+        
         form = ChatForm(request.POST, user=request.user)
         if form.is_valid():
             message_text = form.cleaned_data['message']
