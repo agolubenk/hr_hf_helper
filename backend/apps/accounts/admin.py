@@ -1,32 +1,54 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
+from django import forms
 from .models import User
+
+
+class UserAdminForm(forms.ModelForm):
+    """Кастомная форма для User в админке"""
+    class Meta:
+        model = User
+        fields = '__all__'
+        widgets = {
+            'huntflow_access_token': forms.TextInput(attrs={'placeholder': 'Введите access token'}),
+            'huntflow_refresh_token': forms.TextInput(attrs={'placeholder': 'Введите refresh token'}),
+            'gemini_api_key': forms.TextInput(attrs={'placeholder': 'Введите API ключ Gemini'}),
+            'clickup_api_key': forms.TextInput(attrs={'placeholder': 'Введите API ключ ClickUp'}),
+        }
 
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
+    form = UserAdminForm
     fieldsets = BaseUserAdmin.fieldsets + (
         (_("Интеграции"), {
             "fields": (
                 "gemini_api_key",
                 "clickup_api_key",
-                "huntflow_prod_url",
-                "huntflow_sandbox_url", "huntflow_sandbox_api_key",
-                "active_system", "telegram_username",
+                "telegram_username",
             )
         }),
-        (_("Huntflow Токены"), {
+        (_("Huntflow Песочница"), {
             "fields": (
+                "huntflow_sandbox_url",
+                "huntflow_sandbox_api_key",
+            )
+        }),
+        (_("Huntflow Продакшн"), {
+            "fields": (
+                "huntflow_prod_url",
+            )
+        }),
+        (_("Huntflow Настройки"), {
+            "fields": (
+                "active_system",
                 "huntflow_access_token", 
                 "huntflow_refresh_token",
                 "huntflow_token_expires_at",
                 "huntflow_refresh_expires_at"
             ),
             "classes": ("collapse",)
-        }),
-        (_("Роли/Профиль"), {
-            "fields": ()
         }),
     )
     list_display = ("username", "first_name", "last_name", "email", "active_system", "get_clickup_status", "get_huntflow_token_status", "is_staff")

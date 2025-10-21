@@ -126,11 +126,13 @@ def test_gemini_api_handler(data, request):
     if not api_key:
         return {'success': False, 'message': 'API ключ не указан'}
     
-    # Здесь можно добавить реальную проверку API ключа
-    if len(api_key) < 10:
-        return {'success': False, 'message': 'API ключ слишком короткий'}
-    
-    return {'success': True, 'message': 'API ключ валиден'}
+    try:
+        # Используем реальный сервис для тестирования
+        from logic.utilities.account_services import UserService
+        success, message = UserService.test_api_key_integration('gemini', api_key)
+        return {'success': success, 'message': message}
+    except Exception as e:
+        return {'success': False, 'message': f'Ошибка тестирования: {str(e)}'}
 
 
 def test_huntflow_api_handler(data, request):
@@ -154,10 +156,13 @@ def test_clickup_api_handler(data, request):
     if not api_key:
         return {'success': False, 'message': 'API ключ не указан'}
     
-    if len(api_key) < 10:
-        return {'success': False, 'message': 'API ключ слишком короткий'}
-    
-    return {'success': True, 'message': 'ClickUp API ключ валиден'}
+    try:
+        # Используем реальный сервис для тестирования
+        from logic.utilities.account_services import UserService
+        success, message = UserService.test_api_key_integration('clickup', api_key)
+        return {'success': success, 'message': message}
+    except Exception as e:
+        return {'success': False, 'message': f'Ошибка тестирования: {str(e)}'}
 
 
 def test_notion_api_handler(data, request):
@@ -166,13 +171,13 @@ def test_notion_api_handler(data, request):
     if not api_key:
         return {'success': False, 'message': 'Integration Token не указан'}
     
-    if len(api_key) < 20:
-        return {'success': False, 'message': 'Integration Token слишком короткий'}
-    
-    if not api_key.startswith('secret_'):
-        return {'success': False, 'message': 'Integration Token должен начинаться с "secret_"'}
-    
-    return {'success': True, 'message': 'Notion Integration Token валиден'}
+    try:
+        # Используем реальный сервис для тестирования
+        from logic.utilities.account_services import UserService
+        success, message = UserService.test_api_key_integration('notion', api_key)
+        return {'success': success, 'message': message}
+    except Exception as e:
+        return {'success': False, 'message': f'Ошибка тестирования: {str(e)}'}
 
 
 # =============================================================================
@@ -283,6 +288,8 @@ def api_keys_template_handler(request):
             'huntflow_prod_api_key': request.POST.get('huntflow_prod_api_key', ''),
             'huntflow_sandbox_url': request.POST.get('huntflow_sandbox_url', ''),
             'huntflow_prod_url': request.POST.get('huntflow_prod_url', ''),
+            'huntflow_access_token': request.POST.get('huntflow_access_token', ''),
+            'huntflow_refresh_token': request.POST.get('huntflow_refresh_token', ''),
             'active_system': request.POST.get('active_system', 'sandbox'),
         }
         

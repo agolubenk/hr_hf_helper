@@ -55,8 +55,8 @@ class User(AbstractUser):
     )
 
     # Новые поля для токенной системы Huntflow
-    huntflow_access_token = models.TextField(_("Access token для Huntflow API"), blank=True, help_text="Access token для Huntflow API")
-    huntflow_refresh_token = models.TextField(_("Refresh token для Huntflow API"), blank=True, help_text="Refresh token для Huntflow API")
+    huntflow_access_token = models.CharField(_("Access token для Huntflow API"), max_length=1000, blank=True, help_text="Access token для Huntflow API")
+    huntflow_refresh_token = models.CharField(_("Refresh token для Huntflow API"), max_length=1000, blank=True, help_text="Refresh token для Huntflow API")
     huntflow_token_expires_at = models.DateTimeField(_("Время истечения access token"), null=True, blank=True, help_text="Время истечения access token")
     huntflow_refresh_expires_at = models.DateTimeField(_("Время истечения refresh token"), null=True, blank=True, help_text="Время истечения refresh token")
 

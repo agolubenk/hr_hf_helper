@@ -1,4 +1,5 @@
 {% extends 'profile/base.html' %}
+{% load static %}
 
 {% block profile_title %}API ключи - HR Helper{% endblock %}
 {% block profile_page_title %}Управление API ключами{% endblock %}
@@ -20,19 +21,21 @@ function testApiKey(provider, system = null) {
     testButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Тестирование...';
     resultDiv.innerHTML = '';
     
-    const formData = new FormData();
-    formData.append('api_key', apiKeyField.value);
+    const data = {
+        'api_key': apiKeyField.value
+    };
     if (apiUrlField) {
-        formData.append('api_url', apiUrlField.value);
+        data['api_url'] = apiUrlField.value;
     }
     if (system) {
-        formData.append('system', system);
+        data['system'] = system;
     }
     
-    fetch(`/accounts/test-${provider}-api/`, {
+    fetch(`/accounts/test-${provider}/`, {
         method: 'POST',
-        body: formData,
+        body: JSON.stringify(data),
         headers: {
+            'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         }
     })
@@ -182,7 +185,13 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="card profile-card mb-4">
         <div class="card-header">
             <h5 class="card-title mb-0">
-                <i class="fas fa-robot me-2"></i>
+                <div class="integration-logo me-2" style="display: inline-flex; align-items: center;">
+                    <img src="https://www.gstatic.com/lamda/images/gemini_sparkle_v002_d4735304ff6292a690345.svg" 
+                         alt="Gemini AI" 
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';"
+                         style="width: 24px; height: 24px;">
+                    <i class="fas fa-robot" style="display: none;"></i>
+                </div>
                 Gemini AI
             </h5>
         </div>
@@ -208,7 +217,13 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="card profile-card mb-4">
         <div class="card-header">
             <h5 class="card-title mb-0">
-                <i class="fas fa-tasks me-2"></i>
+                <div class="integration-logo me-2" style="display: inline-flex; align-items: center;">
+                    <img src="{% static 'images/integrations/clickup-official.svg' %}" 
+                         alt="ClickUp" 
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';"
+                         style="width: 24px; height: 24px;">
+                    <i class="fas fa-tasks" style="display: none;"></i>
+                </div>
                 ClickUp
             </h5>
         </div>
@@ -234,7 +249,13 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="card profile-card mb-4">
         <div class="card-header">
             <h5 class="card-title mb-0">
-                <i class="fas fa-file-alt me-2"></i>
+                <div class="integration-logo me-2" style="display: inline-flex; align-items: center;">
+                    <img src="https://www.notion.so/images/logo-ios.png" 
+                         alt="Notion" 
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';"
+                         style="width: 24px; height: 24px;">
+                    <i class="fas fa-file-alt" style="display: none;"></i>
+                </div>
                 Notion
             </h5>
         </div>
@@ -260,7 +281,13 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="card profile-card mb-4">
         <div class="card-header">
             <h5 class="card-title mb-0">
-                <i class="fas fa-briefcase me-2"></i>
+                <div class="integration-logo me-2" style="display: inline-flex; align-items: center;">
+                    <img src="{% static 'images/integrations/huntflow-official.ico' %}" 
+                         alt="Huntflow" 
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';"
+                         style="width: 24px; height: 24px;">
+                    <i class="fas fa-briefcase" style="display: none;"></i>
+                </div>
                 Huntflow
             </h5>
         </div>
@@ -292,35 +319,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div id="result_huntflow_sandbox"></div>
             </div>
             
-            <!-- Прод -->
-            <div class="mb-4">
-                <h6 class="text-muted">Продакшн (Production)</h6>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="huntflow_prod_url" class="form-label">URL</label>
-                            <input type="url" class="form-control" id="huntflow_prod_url" name="huntflow_prod_url" 
-                                   value="{{ user.huntflow_prod_url }}" placeholder="https://api.huntflow.ru">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="huntflow_prod_api_key" class="form-label">API ключ</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="huntflow_prod_api_key" name="huntflow_prod_api_key" 
-                                       value="{{ user.huntflow_prod_api_key }}" placeholder="API ключ продакшна">
-                                <button type="button" class="btn btn-outline-secondary" onclick="testApiKey('huntflow', 'prod')" id="test_huntflow_prod">
-                                    <i class="fas fa-check me-1"></i>Тестировать
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="result_huntflow_prod"></div>
-            </div>
-            
             <!-- Активная система -->
-            <div class="mb-3">
+            <div class="mb-4">
                 <label for="active_system" class="form-label">Активная система</label>
                 <select class="form-select" id="active_system" name="active_system">
                     <option value="sandbox" {% if user.active_system == 'sandbox' %}selected{% endif %}>Песочница</option>
@@ -328,19 +328,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 </select>
                 <div class="form-text">Выберите, какую систему использовать по умолчанию</div>
             </div>
-        </div>
-    </div>
-    
-    <!-- Huntflow Токены (Новая система) -->
-    <div class="card profile-card mb-4">
-        <div class="card-header">
-            <h5 class="card-title mb-0">
-                <i class="fas fa-key me-2"></i>
-                Huntflow Токены
-                <span class="badge bg-success ms-2">Рекомендуется</span>
-            </h5>
-        </div>
-        <div class="card-body">
+            
+            <!-- Huntflow Токены (Новая система) -->
             <div class="alert alert-info mb-3">
                 <i class="fas fa-info-circle me-2"></i>
                 <strong>Новая токенная система</strong> обеспечивает автоматическое обновление токенов и повышенную безопасность.
@@ -352,15 +341,15 @@ document.addEventListener('DOMContentLoaded', function() {
             <!-- Форма для токенов -->
             <div class="mb-3">
                 <label for="huntflow_access_token" class="form-label">Access Token</label>
-                <textarea class="form-control" id="huntflow_access_token" name="huntflow_access_token" rows="3" 
-                          placeholder="Вставьте access_token полученный из Huntflow"></textarea>
+                <input type="password" class="form-control" id="huntflow_access_token" name="huntflow_access_token" 
+                       value="{{ user.huntflow_access_token }}" placeholder="Вставьте access_token полученный из Huntflow">
                 <div class="form-text">Access token для API запросов (действует 7 дней)</div>
             </div>
             
             <div class="mb-3">
                 <label for="huntflow_refresh_token" class="form-label">Refresh Token</label>
-                <textarea class="form-control" id="huntflow_refresh_token" name="huntflow_refresh_token" rows="3"
-                          placeholder="Вставьте refresh_token полученный из Huntflow"></textarea>
+                <input type="password" class="form-control" id="huntflow_refresh_token" name="huntflow_refresh_token"
+                       value="{{ user.huntflow_refresh_token }}" placeholder="Вставьте refresh_token полученный из Huntflow">
                 <div class="form-text">Refresh token для обновления access token (действует 14 дней)</div>
             </div>
             

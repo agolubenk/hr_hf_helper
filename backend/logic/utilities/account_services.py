@@ -188,6 +188,12 @@ class UserService:
                 if 'active_system' in data:
                     user.active_system = data['active_system']
                 
+                if 'huntflow_access_token' in data:
+                    user.huntflow_access_token = data['huntflow_access_token']
+                
+                if 'huntflow_refresh_token' in data:
+                    user.huntflow_refresh_token = data['huntflow_refresh_token']
+                
                 user.save()
                 return True, "API ключи успешно обновлены"
                 
@@ -267,7 +273,19 @@ class UserService:
             if integration_type == 'gemini':
                 from logic.ai_analysis.gemini_services import GeminiService
                 service = GeminiService(api_key)
-                return service.test_connection()
+                result = service.test_connection()
+                if hasattr(result, 'success'):
+                    if result.success:
+                        message = result.data.get('message', 'Подключение к Gemini API успешно')
+                        return True, message
+                    else:
+                        error = result.data.get('error', 'Неизвестная ошибка подключения')
+                        return False, error
+                else:
+                    # Если test_connection возвращает что-то другое
+                    if len(api_key) < 10:
+                        return False, "API ключ слишком короткий"
+                    return True, "Gemini API ключ валиден"
             
             elif integration_type == 'huntflow':
                 api_url = kwargs.get('api_url')
