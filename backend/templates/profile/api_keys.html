@@ -7,7 +7,17 @@
 {% block extra_js %}
 <script>
 function testApiKey(provider, system = null) {
-    const apiKeyField = document.getElementById(`${provider}_api_key${system ? '_' + system : ''}`);
+    // Определяем правильное имя поля в зависимости от провайдера
+    let fieldName;
+    if (provider === 'notion') {
+        fieldName = 'notion_integration_token';
+    } else if (provider === 'huntflow' && system) {
+        fieldName = `huntflow_${system}_api_key`;
+    } else {
+        fieldName = `${provider}_api_key`;
+    }
+    
+    const apiKeyField = document.getElementById(fieldName);
     const apiUrlField = system ? document.getElementById(`${provider}_url${system ? '_' + system : ''}`) : null;
     const testButton = document.getElementById(`test_${provider}${system ? '_' + system : ''}`);
     const resultDiv = document.getElementById(`result_${provider}${system ? '_' + system : ''}`);
@@ -329,11 +339,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="form-text">Выберите, какую систему использовать по умолчанию</div>
             </div>
             
-            <!-- Huntflow Токены (Новая система) -->
-            <div class="alert alert-info mb-3">
-                <i class="fas fa-info-circle me-2"></i>
-                <strong>Новая токенная система</strong> обеспечивает автоматическое обновление токенов и повышенную безопасность.
-            </div>
             
             <!-- Статус токенов -->
             <div id="huntflow-token-status" class="mb-3"></div>
@@ -368,11 +373,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 </button>
             </div>
             
-            <div class="alert alert-warning">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                <strong>Важно:</strong> Получите токены в Huntflow: Настройки → API → Добавить токен. 
-                <a href="{% url 'accounts:integrations' %}" class="alert-link">Подробные инструкции</a>
-            </div>
         </div>
     </div>
     

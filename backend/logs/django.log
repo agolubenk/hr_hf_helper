@@ -2775,3 +2775,12 @@ Watching for file changes with StatReloader
 [22/Oct/2025 00:22:06] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
 [22/Oct/2025 00:22:09] "POST /accounts/test-gemini/ HTTP/1.1" 200 159
 [22/Oct/2025 00:22:11] "POST /accounts/test-clickup/ HTTP/1.1" 200 111
+[22/Oct/2025 00:23:15] "POST /accounts/test-notion/ HTTP/1.1" 200 99
+[22/Oct/2025 00:23:22] "POST /accounts/test-huntflow/ HTTP/1.1" 200 120
+[22/Oct/2025 00:24:05] "GET /accounts/api-keys/ HTTP/1.1" 200 129468
+[22/Oct/2025 00:24:05] "GET /static/images/integrations/clickup-official.svg HTTP/1.1" 304 0
+[22/Oct/2025 00:24:05] "GET /static/images/integrations/huntflow-official.ico HTTP/1.1" 304 0
+[22/Oct/2025 00:24:05] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[22/Oct/2025 00:24:06] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+[22/Oct/2025 00:24:14] "POST /accounts/test-huntflow/ HTTP/1.1" 200 139
+[22/Oct/2025 00:24:25] "POST /accounts/test-notion/ HTTP/1.1" 200 165
