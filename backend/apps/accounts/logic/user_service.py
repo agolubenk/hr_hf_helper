@@ -39,7 +39,14 @@ class UserService:
             oauth_account = GoogleOAuthAccount.objects.get(user=user)
             is_google_oauth_connected = oauth_account is not None
             token_valid = oauth_account.is_token_valid() if oauth_account else False
-        except:
+        except GoogleOAuthAccount.DoesNotExist:
+            oauth_account = None
+            is_google_oauth_connected = False
+            token_valid = False
+        except Exception as e:
+            print(f"Ошибка при получении Google OAuth аккаунта: {e}")
+            oauth_account = None
+            is_google_oauth_connected = False
             token_valid = False
         
         # Получаем статистику Google сервисов
@@ -55,7 +62,8 @@ class UserService:
                 google_stats['calendar_events'] = GoogleCalendarEvent.objects.filter(google_account=oauth_account).count()
                 google_stats['drive_files'] = GoogleDriveFile.objects.filter(google_account=oauth_account).count()
                 google_stats['sheets'] = GoogleSheet.objects.filter(google_account=oauth_account).count()
-            except:
+            except Exception as e:
+                print(f"Ошибка при получении статистики Google: {e}")
                 pass
         
         return {

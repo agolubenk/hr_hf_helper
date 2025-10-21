@@ -182,6 +182,7 @@ def test_notion_api_handler(data, request):
 def profile_template_handler(request):
     """Обработчик для страницы профиля"""
     from django.contrib import messages
+    from apps.accounts.logic.user_service import UserService
     
     # Используем сервисный слой для получения данных профиля
     context = UserService.get_user_profile_data(request.user)
