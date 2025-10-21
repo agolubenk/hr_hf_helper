@@ -31,6 +31,22 @@
     border-color: var(--color-border);
     color: var(--color-text);
 }
+
+/* Стили для полей времени в темной теме */
+[data-theme="dark"] input[type="time"] {
+    background-color: var(--color-surface);
+    border-color: var(--color-border);
+    color: var(--color-text);
+}
+
+[data-theme="dark"] input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+[data-theme="dark"] input[type="time"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
 </style>
 {% endblock %}
 
