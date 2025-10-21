@@ -86,58 +86,44 @@
                         <div class="integration-info mb-3">
                         {% if key == 'huntflow' %}
                                 {% if integration.token_configured %}
-                                    <div class="small text-muted">
-                                        <div class="mb-1">
-                                        <strong>Текущая система:</strong> {{ integration.active_system }}
-                                        </div>
-                                        <div>Access Token: {% if integration.token_valid %}✅ Валидный{% else %}❌ Истек{% endif %}</div>
-                                        <div>Refresh Token: {% if integration.refresh_valid %}✅ Валидный{% else %}❌ Истек{% endif %}</div>
-                                        {% if integration.sandbox_configured or integration.prod_configured %}
-                                        <div class="mt-1">
-                                            {% if integration.sandbox_configured %}
-                                            <div>API Песочницы: ✅ Настроен</div>
-                                            {% endif %}
-                                        </div>
-                                        {% endif %}
+                                    <div class="small">
+                                        <pre class="mb-0"><code>Текущая система: {{ integration.active_system }}
+Access Token: {% if integration.token_valid %}✅ Валидный{% else %}❌ Истек{% endif %}
+Refresh Token: {% if integration.refresh_valid %}✅ Валидный{% else %}❌ Истек{% endif %}{% if integration.sandbox_configured or integration.prod_configured %}
+{% if integration.sandbox_configured %}API Песочницы: ✅ Настроен{% endif %}{% if integration.prod_configured %}
+API Прода: ✅ Настроен{% endif %}{% endif %}</code></pre>
                                     </div>
                                 {% elif integration.api_configured %}
-                                    <div class="small text-muted">
-                                        <div class="mb-1">
-                                        <strong>API ключи:</strong>
-                                        <span class="badge bg-warning ms-1">Устаревший</span>
-                                    </div>
-                                    <div>Песочница: {% if integration.sandbox_configured %}✅ Настроен{% else %}❌ Не настроен{% endif %}</div>
-                                    <div>Прод: {% if integration.prod_configured %}✅ Настроен{% else %}❌ Не настроен{% endif %}</div>
-                                    <div class="mt-1">
-                                        <strong>Активная система:</strong> {{ integration.active_system }}
-                                    </div>
+                                    <div class="small">
+                                        <pre class="mb-0"><code>API ключи: ⚠️ Устаревший
+Песочница: {% if integration.sandbox_configured %}✅ Настроен{% else %}❌ Не настроен{% endif %}
+Прод: {% if integration.prod_configured %}✅ Настроен{% else %}❌ Не настроен{% endif %}
+Активная система: {{ integration.active_system }}</code></pre>
                                     </div>
                                 {% else %}
                                     <div class="text-muted">Не настроено</div>
                                 {% endif %}
                         {% elif key == 'gemini' %}
-                                <div class="small text-muted">
-                                    <div>API ключ: {% if integration.configured %}✅ Настроен{% else %}❌ Не настроен{% endif %}</div>
-                            </div>
+                                <div class="small">
+                                    <pre class="mb-0"><code>API ключ: {% if integration.configured %}✅ Настроен{% else %}❌ Не настроен{% endif %}</code></pre>
+                                </div>
                         {% elif key == 'clickup' %}
-                                <div class="small text-muted">
-                                    <div>API ключ: {% if integration.configured %}✅ Настроен{% else %}❌ Не настроен{% endif %}</div>
-                            </div>
+                                <div class="small">
+                                    <pre class="mb-0"><code>API ключ: {% if integration.configured %}✅ Настроен{% else %}❌ Не настроен{% endif %}</code></pre>
+                                </div>
                         {% elif key == 'telegram' %}
-                                <div class="small text-muted">
-                                    <div>Username: {% if integration.configured %}✅ {{ integration.username }}{% else %}❌ Не настроен{% endif %}</div>
-                            </div>
+                                <div class="small">
+                                    <pre class="mb-0"><code>Username: {% if integration.configured %}✅ {{ integration.username }}{% else %}❌ Не настроен{% endif %}</code></pre>
+                                </div>
                         {% elif key == 'notion' %}
-                                <div class="small text-muted">
-                                    <div>Integration Token: {% if integration.configured %}✅ Настроен{% else %}❌ Не настроен{% endif %}</div>
+                                <div class="small">
+                                    <pre class="mb-0"><code>Integration Token: {% if integration.configured %}✅ Настроен{% else %}❌ Не настроен{% endif %}</code></pre>
                                 </div>
                             {% elif key == 'google_oauth' %}
-                                <div class="small text-muted">
-                                    <div>OAuth: {% if integration.connected %}✅ Подключен{% else %}❌ Не подключен{% endif %}</div>
-                                    {% if integration.connected %}
-                                        <div>Токен: {% if integration.token_valid %}✅ Валидный{% else %}❌ Истек{% endif %}</div>
-                                    {% endif %}
-                            </div>
+                                <div class="small">
+                                    <pre class="mb-0"><code>OAuth: {% if integration.connected %}✅ Подключен{% else %}❌ Не подключен{% endif %}{% if integration.connected %}
+Токен: {% if integration.token_valid %}✅ Валидный{% else %}❌ Истек{% endif %}{% endif %}</code></pre>
+                                </div>
                         {% endif %}
                         </div>
                     </div>
