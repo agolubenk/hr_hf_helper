@@ -212,7 +212,9 @@ def profile_edit_template_handler(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Профиль успешно обновлен!')
-            return redirect('accounts:profile')
+            # После сохранения создаем новую форму с обновленными данными
+            form = ProfileEditForm(instance=request.user)
+        # Если форма не валидна, она уже содержит данные и ошибки
     else:
         form = ProfileEditForm(instance=request.user)
     

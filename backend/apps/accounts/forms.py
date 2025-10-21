@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserChangeForm
 from .models import User, SystemChoice
+from datetime import time
 
 
 class ProfileEditForm(UserChangeForm):
@@ -75,6 +76,25 @@ class ProfileEditForm(UserChangeForm):
         if 'password' in self.fields:
             del self.fields['password']
     
+    def clean_telegram_username(self):
+        """Очищаем telegram username от префиксов @ и https://t.me/"""
+        telegram_username = self.cleaned_data.get('telegram_username', '').strip()
+        
+        if telegram_username:
+            # Убираем @ в начале
+            if telegram_username.startswith('@'):
+                telegram_username = telegram_username[1:]
+            
+            # Убираем https://t.me/ в начале
+            if telegram_username.startswith('https://t.me/'):
+                telegram_username = telegram_username[13:]
+            
+            # Убираем t.me/ в начале
+            if telegram_username.startswith('t.me/'):
+                telegram_username = telegram_username[5:]
+        
+        return telegram_username
+
     def clean(self):
         cleaned_data = super().clean()
         start_time = cleaned_data.get('interview_start_time')
@@ -82,7 +102,6 @@ class ProfileEditForm(UserChangeForm):
         
         if start_time and end_time:
             # Проверяем, что время находится в диапазоне 07:00 - 21:00
-            from datetime import time
             
             if start_time < time(7, 0) or start_time > time(21, 0):
                 raise forms.ValidationError("Время начала должно быть в диапазоне 07:00 - 21:00")

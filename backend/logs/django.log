@@ -408,3 +408,236 @@ DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'n
 [21/Oct/2025 22:28:47] "GET /static/css/profile.css HTTP/1.1" 404 1905
 [21/Oct/2025 22:29:24] "GET /accounts/ HTTP/1.1" 200 105171
 [21/Oct/2025 22:29:24] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:30:05] "GET /accounts/edit/ HTTP/1.1" 200 105987
+[21/Oct/2025 22:30:05] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:31:01] "POST /accounts/edit/ HTTP/1.1" 200 105515
+[21/Oct/2025 22:31:01] "GET /static/css/profile.css HTTP/1.1" 404 1905
+/Users/agolubenko/hrhelper/fullstack/backend/logic/utilities/user_management.py changed, reloading.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[21/Oct/2025 22:33:03] "GET /accounts/ HTTP/1.1" 200 105173
+[21/Oct/2025 22:33:03] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:33:04] "GET /accounts/edit/ HTTP/1.1" 200 105562
+[21/Oct/2025 22:33:05] "GET /static/css/profile.css HTTP/1.1" 404 1905
+/Users/agolubenko/hrhelper/fullstack/backend/logic/utilities/user_management.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 21, 2025 - 22:32:51
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[21/Oct/2025 22:33:17] "POST /accounts/edit/ HTTP/1.1" 200 105088
+[21/Oct/2025 22:33:17] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:33:50] "POST /accounts/edit/ HTTP/1.1" 200 105088
+[21/Oct/2025 22:33:50] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:33:52] "GET /accounts/ HTTP/1.1" 200 105173
+[21/Oct/2025 22:33:52] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:33:54] "GET /accounts/edit/ HTTP/1.1" 200 105562
+[21/Oct/2025 22:33:54] "GET /static/css/profile.css HTTP/1.1" 404 1905
+/Users/agolubenko/hrhelper/fullstack/backend/logic/utilities/user_management.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 21, 2025 - 22:33:10
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/logic/utilities/user_management.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 21, 2025 - 22:34:08
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[21/Oct/2025 22:34:36] "POST /accounts/edit/ HTTP/1.1" 200 106047
+[21/Oct/2025 22:34:36] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:34:43] "POST /accounts/edit/ HTTP/1.1" 200 106047
+[21/Oct/2025 22:34:43] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:34:47] "GET /accounts/ HTTP/1.1" 200 105173
+[21/Oct/2025 22:34:47] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:34:50] "GET /accounts/edit/ HTTP/1.1" 200 105562
+[21/Oct/2025 22:34:50] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:35:37] "GET /accounts/edit/ HTTP/1.1" 200 105899
+[21/Oct/2025 22:35:37] "GET /static/css/profile.css HTTP/1.1" 404 1905
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/forms.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 21, 2025 - 22:34:18
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/forms.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 21, 2025 - 22:37:11
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[21/Oct/2025 22:37:43] "GET /accounts/edit/ HTTP/1.1" 200 105798
+[21/Oct/2025 22:37:43] "GET /static/css/profile.css HTTP/1.1" 404 1905
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/forms.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 21, 2025 - 22:37:33
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/forms.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 21, 2025 - 22:37:47
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[21/Oct/2025 22:37:57] "GET /accounts/edit/ HTTP/1.1" 200 105798
+[21/Oct/2025 22:37:57] "GET /static/css/profile.css HTTP/1.1" 404 1905
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/forms.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 21, 2025 - 22:37:52
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[21/Oct/2025 22:38:12] "POST /accounts/edit/ HTTP/1.1" 200 106281
+[21/Oct/2025 22:38:12] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:38:21] "POST /accounts/edit/ HTTP/1.1" 200 106281
+[21/Oct/2025 22:38:21] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:39:15] "GET /accounts/ HTTP/1.1" 200 105171
+[21/Oct/2025 22:39:15] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 22:39:16] "GET /accounts/edit/ HTTP/1.1" 200 105830
+[21/Oct/2025 22:39:16] "GET /static/css/profile.css HTTP/1.1" 404 1905
