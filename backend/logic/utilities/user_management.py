@@ -141,8 +141,12 @@ def test_huntflow_api_handler(data, request):
     api_url = data.get('api_url')
     system = data.get('system', 'sandbox')
     
-    if not api_key or not api_url:
-        return {'success': False, 'message': 'API ключ и URL обязательны'}
+    
+    if not api_key:
+        return {'success': False, 'message': 'API ключ обязателен'}
+    
+    if not api_url:
+        return {'success': False, 'message': 'URL обязателен'}
     
     if len(api_key) < 10:
         return {'success': False, 'message': 'API ключ слишком короткий'}

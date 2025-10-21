@@ -2784,3 +2784,249 @@ Watching for file changes with StatReloader
 [22/Oct/2025 00:24:06] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
 [22/Oct/2025 00:24:14] "POST /accounts/test-huntflow/ HTTP/1.1" 200 139
 [22/Oct/2025 00:24:25] "POST /accounts/test-notion/ HTTP/1.1" 200 165
+[22/Oct/2025 00:28:44] "GET /accounts/api-keys/ HTTP/1.1" 200 121053
+[22/Oct/2025 00:28:44] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+[22/Oct/2025 00:30:17] "GET /accounts/api-keys/ HTTP/1.1" 200 121792
+[22/Oct/2025 00:30:17] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+[22/Oct/2025 00:31:57] "POST /accounts/test-notion/ HTTP/1.1" 200 165
+[22/Oct/2025 00:32:10] "POST /accounts/test-huntflow/ HTTP/1.1" 200 139
+/Users/agolubenko/hrhelper/fullstack/backend/logic/utilities/user_management.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 22, 2025 - 00:20:10
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[22/Oct/2025 00:33:35] "POST /accounts/test-huntflow/ HTTP/1.1" 200 120
+/Users/agolubenko/hrhelper/fullstack/backend/logic/utilities/user_management.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 22, 2025 - 00:33:30
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+DEBUG: Huntflow test - api_key: test_key_1234567890, api_url: https://sandbox-api.huntflow.dev, system: sandbox
+Watching for file changes with StatReloader
+[22/Oct/2025 00:33:55] "GET /accounts/api-keys/ HTTP/1.1" 200 121773
+[22/Oct/2025 00:33:55] "GET /static/images/integrations/clickup-official.svg HTTP/1.1" 304 0
+[22/Oct/2025 00:33:55] "GET /static/images/integrations/huntflow-official.ico HTTP/1.1" 304 0
+[22/Oct/2025 00:33:55] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+[22/Oct/2025 00:33:57] "POST /accounts/test-huntflow/ HTTP/1.1" 200 120
+/Users/agolubenko/hrhelper/fullstack/backend/logic/utilities/user_management.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 22, 2025 - 00:33:47
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/logic/utilities/account_services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 22, 2025 - 00:34:03
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[22/Oct/2025 00:34:45] "POST /accounts/test-notion/ HTTP/1.1" 200 99
+[22/Oct/2025 00:34:49] "POST /accounts/test-notion/ HTTP/1.1" 200 99
+/Users/agolubenko/hrhelper/fullstack/backend/logic/utilities/account_services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 22, 2025 - 00:34:34
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[22/Oct/2025 00:35:20] "GET /accounts/api-keys/ HTTP/1.1" 200 121773
+[22/Oct/2025 00:35:21] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+[22/Oct/2025 00:35:24] "POST /accounts/test-notion/ HTTP/1.1" 200 99
+[22/Oct/2025 00:38:13] "GET /accounts/api-keys/ HTTP/1.1" 200 120248
+[22/Oct/2025 00:38:13] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+[22/Oct/2025 00:40:08] "GET /accounts/api-keys/ HTTP/1.1" 200 120295
+[22/Oct/2025 00:40:08] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+[22/Oct/2025 00:40:17] "GET /accounts/api-keys/ HTTP/1.1" 200 121099
+[22/Oct/2025 00:40:17] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+[22/Oct/2025 00:42:43] "GET /accounts/api-keys/ HTTP/1.1" 200 123303
+[22/Oct/2025 00:42:43] "GET /static/images/integrations/huntflow-official.ico HTTP/1.1" 304 0
+[22/Oct/2025 00:42:43] "GET /static/images/integrations/clickup-official.svg HTTP/1.1" 304 0
+[22/Oct/2025 00:42:43] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+[22/Oct/2025 00:43:20] "GET /huntflow/tokens/test/ HTTP/1.1" 200 217
+[22/Oct/2025 00:44:50] "GET /accounts/api-keys/ HTTP/1.1" 200 124619
+[22/Oct/2025 00:44:50] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+[22/Oct/2025 00:44:52] "GET /huntflow/tokens/test/ HTTP/1.1" 200 217
+Ошибка обновления токена (попытка 1): 403 - {"errors":[{"type":"access_denied","title":"error.robot_token.refresh_too_early"}]}
+Ошибка обновления токена (попытка 2): 403 - {"errors":[{"type":"access_denied","title":"error.robot_token.refresh_too_early"}]}
+Ошибка обновления токена (попытка 3): 403 - {"errors":[{"type":"access_denied","title":"error.robot_token.refresh_too_early"}]}
+Все 3 попыток обновления токена не удались для пользователя andrei.golubenko
+[22/Oct/2025 00:45:18] "POST /huntflow/tokens/refresh/ HTTP/1.1" 200 166
+[22/Oct/2025 00:45:19] "GET /accounts/api-keys/ HTTP/1.1" 200 124619
+[22/Oct/2025 00:45:19] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+Ошибка обновления токена (попытка 1): 403 - {"errors":[{"type":"access_denied","title":"error.robot_token.refresh_too_early"}]}
+Ошибка обновления токена (попытка 2): 403 - {"errors":[{"type":"access_denied","title":"error.robot_token.refresh_too_early"}]}
+Ошибка обновления токена (попытка 3): 403 - {"errors":[{"type":"access_denied","title":"error.robot_token.refresh_too_early"}]}
+Все 3 попыток обновления токена не удались для пользователя andrei.golubenko
+[22/Oct/2025 00:45:30] "POST /huntflow/tokens/refresh/ HTTP/1.1" 200 166
+[22/Oct/2025 00:46:11] "GET /accounts/api-keys/ HTTP/1.1" 200 124624
+[22/Oct/2025 00:46:12] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+[22/Oct/2025 00:46:24] "GET /accounts/api-keys/ HTTP/1.1" 200 124624
+[22/Oct/2025 00:46:24] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+[22/Oct/2025 00:46:46] "GET /accounts/ HTTP/1.1" 200 115230
+[22/Oct/2025 00:46:46] "GET /static/css/profile.css HTTP/1.1" 404 1905
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 22, 2025 - 00:35:08
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/me
+📥 Ответ API: 200
+📥 Тело ответа: {"id":318267,"name":"API: ClickUp","position":null,"email":"api-291341-1@huntflow.ru","phone":null,"locale":"ru_RU"}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/me
+📥 Ответ API: 200
+📥 Тело ответа: {"id":318267,"name":"API: ClickUp","position":null,"email":"api-291341-1@huntflow.ru","phone":null,"locale":"ru_RU"}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200[22/Oct/2025 00:46:49] "GET /accounts/edit/ HTTP/1.1" 200 115904
+[22/Oct/2025 00:46:49] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[22/Oct/2025 00:47:47] "GET /accounts/ HTTP/1.1" 200 115235
+[22/Oct/2025 00:47:47] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[22/Oct/2025 00:47:58] "GET /accounts/edit/ HTTP/1.1" 200 115904
+[22/Oct/2025 00:47:58] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[22/Oct/2025 00:48:00] "GET /accounts/integrations/ HTTP/1.1" 200 147590
+[22/Oct/2025 00:48:00] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[22/Oct/2025 00:48:03] "GET /accounts/api-keys/ HTTP/1.1" 200 124624
+[22/Oct/2025 00:48:03] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+[22/Oct/2025 00:48:05] "GET /accounts/edit/ HTTP/1.1" 200 115904
+[22/Oct/2025 00:48:05] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[22/Oct/2025 00:50:17] "GET /accounts/api-keys/ HTTP/1.1" 200 124624
+[22/Oct/2025 00:50:17] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157

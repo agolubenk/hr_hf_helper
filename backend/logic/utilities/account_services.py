@@ -305,8 +305,9 @@ class UserService:
                 return True, "ClickUp API ключ валиден"
             
             elif integration_type == 'notion':
-                if not api_key.startswith('secret_'):
-                    return False, "Integration Token должен начинаться с 'secret_'"
+                # Поддерживаем как старый формат (secret_), так и новый (ntn_)
+                if not (api_key.startswith('secret_') or api_key.startswith('ntn_')):
+                    return False, "Integration Token должен начинаться с 'secret_' или 'ntn_'"
                 if len(api_key) < 20:
                     return False, "Integration Token слишком короткий"
                 return True, "Notion Integration Token валиден"
