@@ -1,4 +1,5 @@
 {% extends 'profile/base.html' %}
+{% load static %}
 
 {% block profile_title %}Интеграции - HR Helper{% endblock %}
 {% block profile_page_title %}Управление интеграциями{% endblock %}
@@ -13,79 +14,113 @@
     </div>
     <div class="card-body">
         {% if integrations %}
-            <div class="row">
-                {% for key, integration in integrations.items %}
+        <div class="row">
+            {% for key, integration in integrations.items %}
             <div class="col-md-4 mb-4">
                 <div class="integration-card card h-100">
-                    <!-- Верхняя часть: иконка слева, статус справа -->
+                    <!-- Верхняя часть: иконка, название и статус -->
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center flex-grow-1">
                             {% if key == 'huntflow' %}
-                                <i class="fas fa-briefcase fa-2x me-2 text-primary"></i>
+                                <div class="integration-logo me-2">
+                                    <img src="{% static 'images/integrations/huntflow-official.ico' %}" 
+                                         alt="Huntflow" 
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                                    <i class="fas fa-briefcase fa-2x text-primary" style="display: none;"></i>
+                                </div>
                             {% elif key == 'gemini' %}
-                                <i class="fas fa-robot fa-2x me-2 text-primary"></i>
+                                <div class="integration-logo me-2">
+                                    <img src="https://www.gstatic.com/lamda/images/gemini_sparkle_v002_d4735304ff6292a690345.svg" 
+                                         alt="Gemini AI" 
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                                    <i class="fas fa-robot fa-2x text-primary" style="display: none;"></i>
+                                </div>
                             {% elif key == 'clickup' %}
-                                <i class="fas fa-tasks fa-2x me-2 text-primary"></i>
+                                <div class="integration-logo me-2">
+                                    <img src="{% static 'images/integrations/clickup-official.svg' %}" 
+                                         alt="ClickUp" 
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                                    <i class="fas fa-tasks fa-2x text-primary" style="display: none;"></i>
+                                </div>
                             {% elif key == 'telegram' %}
-                                <i class="fab fa-telegram fa-2x me-2 text-primary"></i>
+                                <div class="integration-logo me-2">
+                                    <img src="https://telegram.org/img/t_logo.png" 
+                                         alt="Telegram" 
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                                    <i class="fab fa-telegram fa-2x text-primary" style="display: none;"></i>
+                                </div>
                             {% elif key == 'notion' %}
-                                <i class="fas fa-file-alt fa-2x me-2 text-primary"></i>
+                                <div class="integration-logo me-2">
+                                    <img src="https://www.notion.so/images/logo-ios.png" 
+                                         alt="Notion" 
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                                    <i class="fas fa-file-alt fa-2x text-primary" style="display: none;"></i>
+                                </div>
                             {% elif key == 'google_oauth' %}
-                                <i class="fab fa-google fa-2x me-2 text-primary"></i>
+                                <div class="integration-logo me-2">
+                                    <img src="https://developers.google.com/identity/images/g-logo.png" 
+                                         alt="Google" 
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                                    <i class="fab fa-google fa-2x text-primary" style="display: none;"></i>
+                                </div>
                             {% endif %}
+                            <h5 class="card-title mb-0 integration-title">{{ integration.name }}</h5>
                         </div>
-                        <div>
+                        <div class="ms-2">
                             {% if integration.configured or integration.connected %}
-                                <span class="badge bg-success">Подключено</span>
+                                <div class="status-icon connected" title="Подключено">
+                                    <i class="fas fa-check-double"></i>
+                                </div>
                             {% else %}
-                                <span class="badge bg-secondary">Не подключено</span>
+                                <div class="status-icon disconnected" title="Не подключено">
+                                    <i class="fas fa-times"></i>
+                                </div>
                             {% endif %}
                         </div>
                     </div>
                     
-                    <!-- Название интеграции -->
+                    <!-- Основной контент -->
                     <div class="card-body text-center">
-                        <h5 class="card-title mb-3">{{ integration.name }}</h5>
                         
                         <!-- Информация по интеграции -->
                         <div class="integration-info mb-3">
-                            {% if key == 'huntflow' %}
+                        {% if key == 'huntflow' %}
                                 {% if integration.token_configured %}
                                     <div class="small text-muted">
                                         <div class="mb-1">
-                                            <strong>Токенная система:</strong>
-                                            <span class="badge bg-success ms-1">Активна</span>
-                                        </div>
-                                        <div>Access Token: {% if integration.token_valid %}✅ Валидный{% else %}❌ Истек{% endif %}</div>
-                                        <div>Refresh Token: {% if integration.refresh_valid %}✅ Валидный{% else %}❌ Истек{% endif %}</div>
+                                        <strong>Токенная система:</strong>
+                                        <span class="badge bg-success ms-1">Активна</span>
+                                    </div>
+                                    <div>Access Token: {% if integration.token_valid %}✅ Валидный{% else %}❌ Истек{% endif %}</div>
+                                    <div>Refresh Token: {% if integration.refresh_valid %}✅ Валидный{% else %}❌ Истек{% endif %}</div>
                                         <div class="mt-1">Система: {{ integration.active_system }}</div>
                                     </div>
                                 {% elif integration.api_configured %}
                                     <div class="small text-muted">
                                         <div class="mb-1">
-                                            <strong>API ключи:</strong>
-                                            <span class="badge bg-warning ms-1">Устаревший</span>
-                                        </div>
-                                        <div>Песочница: {% if integration.sandbox_configured %}✅{% else %}❌{% endif %}</div>
-                                        <div>Прод: {% if integration.prod_configured %}✅{% else %}❌{% endif %}</div>
+                                        <strong>API ключи:</strong>
+                                        <span class="badge bg-warning ms-1">Устаревший</span>
+                                    </div>
+                                    <div>Песочница: {% if integration.sandbox_configured %}✅{% else %}❌{% endif %}</div>
+                                    <div>Прод: {% if integration.prod_configured %}✅{% else %}❌{% endif %}</div>
                                         <div class="mt-1">Система: {{ integration.active_system }}</div>
                                     </div>
                                 {% else %}
                                     <div class="text-muted">Не настроено</div>
                                 {% endif %}
-                            {% elif key == 'gemini' %}
+                        {% elif key == 'gemini' %}
                                 <div class="small text-muted">
                                     <div>API ключ: {% if integration.configured %}✅ Настроен{% else %}❌ Не настроен{% endif %}</div>
-                                </div>
-                            {% elif key == 'clickup' %}
+                            </div>
+                        {% elif key == 'clickup' %}
                                 <div class="small text-muted">
                                     <div>API ключ: {% if integration.configured %}✅ Настроен{% else %}❌ Не настроен{% endif %}</div>
-                                </div>
-                            {% elif key == 'telegram' %}
+                            </div>
+                        {% elif key == 'telegram' %}
                                 <div class="small text-muted">
                                     <div>Username: {% if integration.configured %}✅ {{ integration.username }}{% else %}❌ Не настроен{% endif %}</div>
-                                </div>
-                            {% elif key == 'notion' %}
+                            </div>
+                        {% elif key == 'notion' %}
                                 <div class="small text-muted">
                                     <div>Integration Token: {% if integration.configured %}✅ Настроен{% else %}❌ Не настроен{% endif %}</div>
                                 </div>
@@ -95,20 +130,21 @@
                                     {% if integration.connected %}
                                         <div>Токен: {% if integration.token_valid %}✅ Валидный{% else %}❌ Истек{% endif %}</div>
                                     {% endif %}
-                                </div>
-                            {% endif %}
+                            </div>
+                        {% endif %}
                         </div>
-                        
-                        <!-- Кнопка настройки -->
-                        <a href="{% url 'accounts:api_keys' %}" class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-cog me-1"></i>
-                            Настроить API ключи
-                        </a>
                     </div>
+                    
+                    <!-- Футер с кнопкой настройки -->
+                    <a href="{% url 'accounts:api_keys' %}" class="">
+                        <div class="card-footer btn btn-outline-primary w-100 border-0 rounded-0 p-0">
+                            <i class="fas fa-cog me-1"></i> Настроить API ключи
+                        </div>
+                    </a>
                 </div>
             </div>
-                {% endfor %}
-            </div>
+            {% endfor %}
+        </div>
         {% else %}
             <div class="alert alert-warning">
                 <i class="fas fa-exclamation-triangle me-2"></i>
