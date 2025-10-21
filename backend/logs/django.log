@@ -1872,3 +1872,209 @@ DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'n
 [21/Oct/2025 23:44:35] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
 [21/Oct/2025 23:44:35] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
 [21/Oct/2025 23:44:35] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 23:46:21] "GET /accounts/integrations/ HTTP/1.1" 200 147585
+[21/Oct/2025 23:46:21] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 23:46:25] "GET /accounts/integrations/ HTTP/1.1" 200 147585
+[21/Oct/2025 23:46:25] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[21/Oct/2025 23:46:25] "GET /static/images/integrations/huntflow-official.ico HTTP/1.1" 200 15086
+[21/Oct/2025 23:46:25] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 23:46:25] "GET /static/images/integrations/clickup-official.svg HTTP/1.1" 200 917
+[21/Oct/2025 23:46:25] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[21/Oct/2025 23:46:25] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[21/Oct/2025 23:46:25] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[21/Oct/2025 23:46:25] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[21/Oct/2025 23:46:25] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[21/Oct/2025 23:46:25] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 23:46:25] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[21/Oct/2025 23:46:25] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[21/Oct/2025 23:46:25] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 23:46:34] "GET /accounts/integrations/ HTTP/1.1" 200 147585
+[21/Oct/2025 23:46:34] "GET /static/images/integrations/huntflow-official.ico HTTP/1.1" 200 15086
+[21/Oct/2025 23:46:34] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[21/Oct/2025 23:46:34] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 23:46:34] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[21/Oct/2025 23:46:34] "GET /static/images/integrations/clickup-official.svg HTTP/1.1" 200 917
+[21/Oct/2025 23:46:34] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[21/Oct/2025 23:46:34] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[21/Oct/2025 23:46:34] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[21/Oct/2025 23:46:34] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[21/Oct/2025 23:46:34] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 23:46:34] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[21/Oct/2025 23:46:34] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[21/Oct/2025 23:46:34] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 23:48:21] "GET /accounts/integrations/ HTTP/1.1" 200 147570
+[21/Oct/2025 23:48:21] "GET /static/css/profile.css HTTP/1.1" 404 1905
+
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200[21/Oct/2025 23:48:25] "GET /accounts/integrations/ HTTP/1.1" 200 147570
+[21/Oct/2025 23:48:25] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[21/Oct/2025 23:48:25] "GET /static/images/integrations/huntflow-official.ico HTTP/1.1" 200 15086
+[21/Oct/2025 23:48:25] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 23:48:25] "GET /static/images/integrations/clickup-official.svg HTTP/1.1" 200 917
+[21/Oct/2025 23:48:25] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[21/Oct/2025 23:48:25] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[21/Oct/2025 23:48:25] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[21/Oct/2025 23:48:25] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[21/Oct/2025 23:48:25] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[21/Oct/2025 23:48:25] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 23:48:25] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[21/Oct/2025 23:48:25] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[21/Oct/2025 23:48:26] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 23:52:41] "GET /accounts/integrations/ HTTP/1.1" 200 147576
+[21/Oct/2025 23:52:41] "GET /static/images/integrations/huntflow-official.ico HTTP/1.1" 304 0
+[21/Oct/2025 23:52:41] "GET /static/images/integrations/clickup-official.svg HTTP/1.1" 304 0
+[21/Oct/2025 23:52:41] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 23:52:46] "GET /accounts/integrations/ HTTP/1.1" 200 147576
+[21/Oct/2025 23:52:46] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[21/Oct/2025 23:52:46] "GET /static/images/integrations/huntflow-official.ico HTTP/1.1" 200 15086
+[21/Oct/2025 23:52:46] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 23:52:46] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[21/Oct/2025 23:52:46] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[21/Oct/2025 23:52:46] "GET /static/images/integrations/clickup-official.svg HTTP/1.1" 200 917
+[21/Oct/2025 23:52:46] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[21/Oct/2025 23:52:46] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[21/Oct/2025 23:52:46] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[21/Oct/2025 23:52:46] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 23:52:46] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[21/Oct/2025 23:52:46] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[21/Oct/2025 23:52:47] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 23:57:39] "GET /accounts/integrations/ HTTP/1.1" 200 147581
+[21/Oct/2025 23:57:39] "GET /static/images/integrations/huntflow-official.ico HTTP/1.1" 200 15086
+[21/Oct/2025 23:57:39] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[21/Oct/2025 23:57:39] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 23:57:39] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[21/Oct/2025 23:57:39] "GET /static/images/integrations/clickup-official.svg HTTP/1.1" 200 917
+[21/Oct/2025 23:57:39] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[21/Oct/2025 23:57:39] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[21/Oct/2025 23:57:39] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[21/Oct/2025 23:57:39] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[21/Oct/2025 23:57:39] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 23:57:39] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[21/Oct/2025 23:57:39] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[21/Oct/2025 23:57:40] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 23:58:21] "GET /accounts/edit/ HTTP/1.1" 200 115889
+[21/Oct/2025 23:58:21] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 23:58:24] "GET /accounts/ HTTP/1.1" 200 115230
+[21/Oct/2025 23:58:24] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 23:58:27] "GET /accounts/integrations/ HTTP/1.1" 200 147581
+[21/Oct/2025 23:58:27] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 23:59:08] "GET /accounts/integrations/ HTTP/1.1" 200 147591
+[21/Oct/2025 23:59:08] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 23:59:37] "GET /accounts/integrations/ HTTP/1.1" 200 147591
+[21/Oct/2025 23:59:37] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 23:59:39] "GET /accounts/integrations/ HTTP/1.1" 200 147591
+[21/Oct/2025 23:59:39] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 23:59:39] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[21/Oct/2025 23:59:39] "GET /static/images/integrations/huntflow-official.ico HTTP/1.1" 200 15086
+[21/Oct/2025 23:59:39] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[21/Oct/2025 23:59:39] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[21/Oct/2025 23:59:39] "GET /static/images/integrations/clickup-official.svg HTTP/1.1" 200 917
+[21/Oct/2025 23:59:39] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[21/Oct/2025 23:59:39] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[21/Oct/2025 23:59:39] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[21/Oct/2025 23:59:39] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 23:59:39] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[21/Oct/2025 23:59:39] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[21/Oct/2025 23:59:40] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 23:59:51] "GET /accounts/integrations/ HTTP/1.1" 200 147591
+[21/Oct/2025 23:59:51] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[21/Oct/2025 23:59:51] "GET /static/images/integrations/huntflow-official.ico HTTP/1.1" 200 15086
+[21/Oct/2025 23:59:51] "GET /static/images/integrations/clickup-official.svg HTTP/1.1" 200 917
+[21/Oct/2025 23:59:51] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[21/Oct/2025 23:59:51] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[21/Oct/2025 23:59:51] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[21/Oct/2025 23:59:51] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[21/Oct/2025 23:59:51] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[21/Oct/2025 23:59:51] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[21/Oct/2025 23:59:51] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[21/Oct/2025 23:59:51] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[21/Oct/2025 23:59:51] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[21/Oct/2025 23:59:52] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[22/Oct/2025 00:00:09] "GET /accounts/api-keys/ HTTP/1.1" 200 129148
+[22/Oct/2025 00:00:10] "GET /static/css/profile.css HTTP/1.1" 404 1905
+[22/Oct/2025 00:00:10] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157

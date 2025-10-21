@@ -182,8 +182,8 @@
 }
 
 .integration-card .card-header {
-    min-height: 60px;
-    padding: 0.75rem 1rem;
+    min-height: 45px;
+    padding: 0.4rem 1rem;
 }
 
 /* Адаптация для мобильных устройств */
@@ -201,8 +201,8 @@
     }
     
     .integration-card .card-header {
-        min-height: 50px;
-        padding: 0.5rem 0.75rem;
+        min-height: 40px;
+        padding: 0.3rem 0.75rem;
     }
 }
 
@@ -249,10 +249,10 @@
 .integration-card .card-footer {
     border-radius: 0.375rem !important;
     border: none !important;
-    padding: 0.75rem 1rem;
+    padding: 0.4rem 1rem;
     font-weight: 500;
     transition: all 0.2s ease-in-out;
-    margin: 0;
+    margin: -20px 0 0 0;
     box-shadow: none;
     width: 100%;
     display: block;
@@ -288,25 +288,26 @@
     flex-direction: column;
     padding: 0;
     margin: 0;
+    justify-content: center;
 }
 
 .integration-info pre {
     background-color: var(--color-surface);
     border: none;
     border-radius: 0;
-    padding: 1rem;
-    margin: 0;
+    padding: 0.25rem 0.75rem;
+    margin: 0.125rem 0;
     font-family: 'Courier New', monospace;
     font-size: 0.875rem;
-    line-height: 1.4;
+    line-height: 1.2;
     color: var(--color-text);
     white-space: pre-wrap;
     word-wrap: break-word;
-    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 120px;
+    min-height: auto;
+    max-height: none;
     width: 100%;
 }
 
