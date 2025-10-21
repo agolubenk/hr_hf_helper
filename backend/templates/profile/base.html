@@ -15,18 +15,41 @@
         <div class="col-md-3">
             <div class="card profile-card mb-4">
                 <div class="card-body text-center">
+                    <!-- Фото пользователя -->
                     <div class="profile-avatar mx-auto mb-3">
-                        {{ user.first_name.0|default:user.email.0|upper }}
+                        {% if user.profile_photo %}
+                            <img src="{{ user.profile_photo.url }}" alt="Фото профиля" class="rounded-circle" width="80" height="80">
+                        {% else %}
+                            {{ user.first_name.0|default:user.email.0|upper }}
+                        {% endif %}
                     </div>
-                    <h5 class="card-title">{{ user.full_name|default:user.email }}</h5>
-                    <p class="text-muted">{{ user.email }}</p>
                     
-                    {% if user.telegram_username %}
-                        <p class="text-muted">
-                            <i class="fab fa-telegram me-1"></i>
+                    <!-- ФИО -->
+                    <div class="mb-2">
+                        {% if user.first_name and user.last_name %}
+                            {{ user.first_name }} {{ user.last_name }}
+                        {% elif user.full_name %}
+                            {{ user.full_name }}
+                        {% else %}
+                            <span class="text-muted">Не указано</span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Email -->
+                    <div class="mb-2 text-muted">
+                        <i class="fas fa-envelope me-1"></i>
+                        {{ user.email }}
+                    </div>
+                    
+                    <!-- Telegram -->
+                    <div class="mb-2">
+                        {% if user.telegram_username %}
+                            <i class="fab fa-telegram me-1 text-primary"></i>
                             {{ user.telegram_username }}
-                        </p>
-                    {% endif %}
+                        {% else %}
+                            <span class="text-muted">Не указан</span>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             
