@@ -82,7 +82,8 @@ document.addEventListener('DOMContentLoaded', () => {
             textarea.disabled = true;
             
             // Отправляем AJAX запрос
-            fetch(`/google-oauth/chat/${sessionId}/`, {
+            console.log(`🔍 JS: Отправляем AJAX запрос на /google-oauth/chat/${sessionId}/ajax/`);
+            fetch(`/google-oauth/chat/${sessionId}/ajax/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

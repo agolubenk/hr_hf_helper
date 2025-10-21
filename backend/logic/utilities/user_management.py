@@ -126,11 +126,13 @@ def test_gemini_api_handler(data, request):
     if not api_key:
         return {'success': False, 'message': 'API ключ не указан'}
     
-    # Здесь можно добавить реальную проверку API ключа
-    if len(api_key) < 10:
-        return {'success': False, 'message': 'API ключ слишком короткий'}
-    
-    return {'success': True, 'message': 'API ключ валиден'}
+    try:
+        # Используем реальный сервис для тестирования
+        from logic.utilities.account_services import UserService
+        success, message = UserService.test_api_key_integration('gemini', api_key)
+        return {'success': success, 'message': message}
+    except Exception as e:
+        return {'success': False, 'message': f'Ошибка тестирования: {str(e)}'}
 
 
 def test_huntflow_api_handler(data, request):
@@ -139,8 +141,12 @@ def test_huntflow_api_handler(data, request):
     api_url = data.get('api_url')
     system = data.get('system', 'sandbox')
     
-    if not api_key or not api_url:
-        return {'success': False, 'message': 'API ключ и URL обязательны'}
+    
+    if not api_key:
+        return {'success': False, 'message': 'API ключ обязателен'}
+    
+    if not api_url:
+        return {'success': False, 'message': 'URL обязателен'}
     
     if len(api_key) < 10:
         return {'success': False, 'message': 'API ключ слишком короткий'}
@@ -154,10 +160,13 @@ def test_clickup_api_handler(data, request):
     if not api_key:
         return {'success': False, 'message': 'API ключ не указан'}
     
-    if len(api_key) < 10:
-        return {'success': False, 'message': 'API ключ слишком короткий'}
-    
-    return {'success': True, 'message': 'ClickUp API ключ валиден'}
+    try:
+        # Используем реальный сервис для тестирования
+        from logic.utilities.account_services import UserService
+        success, message = UserService.test_api_key_integration('clickup', api_key)
+        return {'success': success, 'message': message}
+    except Exception as e:
+        return {'success': False, 'message': f'Ошибка тестирования: {str(e)}'}
 
 
 def test_notion_api_handler(data, request):
@@ -166,13 +175,13 @@ def test_notion_api_handler(data, request):
     if not api_key:
         return {'success': False, 'message': 'Integration Token не указан'}
     
-    if len(api_key) < 20:
-        return {'success': False, 'message': 'Integration Token слишком короткий'}
-    
-    if not api_key.startswith('secret_'):
-        return {'success': False, 'message': 'Integration Token должен начинаться с "secret_"'}
-    
-    return {'success': True, 'message': 'Notion Integration Token валиден'}
+    try:
+        # Используем реальный сервис для тестирования
+        from logic.utilities.account_services import UserService
+        success, message = UserService.test_api_key_integration('notion', api_key)
+        return {'success': success, 'message': message}
+    except Exception as e:
+        return {'success': False, 'message': f'Ошибка тестирования: {str(e)}'}
 
 
 # =============================================================================
@@ -182,6 +191,7 @@ def test_notion_api_handler(data, request):
 def profile_template_handler(request):
     """Обработчик для страницы профиля"""
     from django.contrib import messages
+    from apps.accounts.logic.user_service import UserService
     
     # Используем сервисный слой для получения данных профиля
     context = UserService.get_user_profile_data(request.user)
@@ -211,7 +221,9 @@ def profile_edit_template_handler(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Профиль успешно обновлен!')
-            return redirect('accounts:profile')
+            # После сохранения создаем новую форму с обновленными данными
+            form = ProfileEditForm(instance=request.user)
+        # Если форма не валидна, она уже содержит данные и ошибки
     else:
         form = ProfileEditForm(instance=request.user)
     
@@ -280,6 +292,8 @@ def api_keys_template_handler(request):
             'huntflow_prod_api_key': request.POST.get('huntflow_prod_api_key', ''),
             'huntflow_sandbox_url': request.POST.get('huntflow_sandbox_url', ''),
             'huntflow_prod_url': request.POST.get('huntflow_prod_url', ''),
+            'huntflow_access_token': request.POST.get('huntflow_access_token', ''),
+            'huntflow_refresh_token': request.POST.get('huntflow_refresh_token', ''),
             'active_system': request.POST.get('active_system', 'sandbox'),
         }
         

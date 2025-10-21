@@ -336,3 +336,495 @@ def salary_range_toggle_active(request, pk):
         )
     else:
         return ResponseHandler.error_response(result['message'])
+
+
+@login_required
+@require_POST
+def update_scorecards(request, pk):
+    """Обновление будущих скоркардов для вакансии"""
+    from datetime import datetime
+    from apps.google_oauth.services import GoogleDriveService, GoogleSheetsService, GoogleOAuthService
+    from apps.google_oauth.models import Invite
+    import re
+    
+    try:
+        # Получаем вакансию
+        vacancy = get_object_or_404(Vacancy, pk=pk)
+        
+        # Проверяем права доступа
+        if not (request.user == vacancy.recruiter or request.user.is_superuser):
+            return JsonResponse({
+                'success': False,
+                'message': 'Недостаточно прав для обновления скоркардов'
+            })
+        
+        # Проверяем наличие ссылки на шаблон
+        if not vacancy.scorecard_link:
+            return JsonResponse({
+                'success': False,
+                'message': 'Не указана ссылка на шаблон scorecard'
+            })
+        
+        # Проверяем, что у пользователя есть Google OAuth аккаунт
+        try:
+            from apps.google_oauth.models import GoogleOAuthAccount
+            oauth_account = GoogleOAuthAccount.objects.get(user=request.user)
+            if not oauth_account.is_token_valid():
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Google OAuth токен истек. Пожалуйста, повторно авторизуйтесь в Google OAuth.'
+                })
+            
+            # Проверяем необходимые scopes
+            required_scopes = [
+                'https://www.googleapis.com/auth/drive',
+                'https://www.googleapis.com/auth/spreadsheets'
+            ]
+            
+            missing_scopes = []
+            for scope in required_scopes:
+                if scope not in oauth_account.scopes:
+                    missing_scopes.append(scope)
+            
+            if missing_scopes:
+                return JsonResponse({
+                    'success': False,
+                    'message': f'Недостаточно разрешений Google. Требуются: {", ".join(missing_scopes)}. Пожалуйста, повторно авторизуйтесь в Google OAuth.'
+                })
+                
+        except GoogleOAuthAccount.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'У пользователя не настроена авторизация Google. Пожалуйста, авторизуйтесь в Google OAuth.'
+            })
+        
+        # Извлекаем ID файла из ссылки на шаблон
+        def extract_file_id_from_url(url):
+            """Извлечь ID файла из URL Google Sheets"""
+            patterns = [
+                r'/spreadsheets/d/([a-zA-Z0-9-_]+)',
+                r'id=([a-zA-Z0-9-_]+)',
+                r'/([a-zA-Z0-9-_]+)/edit'
+            ]
+            
+            for pattern in patterns:
+                match = re.search(pattern, url)
+                if match:
+                    return match.group(1)
+            return None
+        
+        template_file_id = extract_file_id_from_url(vacancy.scorecard_link)
+        if not template_file_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Не удалось извлечь ID файла из ссылки на шаблон'
+            })
+        
+        # Инициализируем сервисы
+        print(f"DEBUG UPDATE: Инициализируем Google сервисы для пользователя {request.user}")
+        try:
+            oauth_service = GoogleOAuthService(request.user)
+            drive_service = GoogleDriveService(oauth_service)
+            sheets_service = GoogleSheetsService(oauth_service)
+            print(f"DEBUG UPDATE: ✅ Google сервисы инициализированы успешно")
+        except Exception as e:
+            print(f"DEBUG UPDATE: ❌ Ошибка инициализации Google сервисов: {str(e)}")
+            return JsonResponse({
+                'success': False,
+                'message': f'Ошибка инициализации Google сервисов: {str(e)}'
+            })
+        
+        # Проверяем доступность шаблона
+        if not drive_service.file_exists(template_file_id):
+            return JsonResponse({
+                'success': False,
+                'message': 'Шаблон scorecard недоступен или не найден'
+            })
+        
+        # Получаем содержимое шаблона
+        print(f"DEBUG UPDATE: Получаем содержимое шаблона {template_file_id}")
+        try:
+            template_content = sheets_service.get_spreadsheet_content(template_file_id)
+            if not template_content:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Не удалось получить содержимое шаблона'
+                })
+            print(f"DEBUG UPDATE: ✅ Содержимое шаблона получено успешно")
+        except Exception as e:
+            print(f"DEBUG UPDATE: ❌ Ошибка получения шаблона: {str(e)}")
+            return JsonResponse({
+                'success': False,
+                'message': f'Ошибка получения содержимого шаблона: {str(e)}'
+            })
+        
+        # Находим предстоящие интервью
+        from apps.google_oauth.models import Invite
+        from django.utils import timezone
+        
+        # Отладочная информация
+        all_invites = Invite.objects.filter(vacancy_id=str(vacancy.external_id))
+        print(f"DEBUG: Всего инвайтов для вакансии {vacancy.id} (external_id={vacancy.external_id}): {all_invites.count()}")
+        
+        for invite in all_invites:
+            print(f"DEBUG: Инвайт {invite.id}: дата={invite.interview_datetime}, статус={invite.status}, google_drive_file_id={invite.google_drive_file_id}")
+        
+        # Дополнительная отладочная информация
+        current_time = timezone.now()
+        print(f"DEBUG: Текущее время: {current_time}")
+        print(f"DEBUG: Тип vacancy.id: {type(vacancy.id)}, значение: {vacancy.id}")
+        print(f"DEBUG: vacancy_id для фильтра: {str(vacancy.id)}")
+        
+        # Проверяем инвайты с разными фильтрами
+        future_invites = Invite.objects.filter(
+            vacancy_id=str(vacancy.external_id),
+            interview_datetime__gte=current_time
+        )
+        print(f"DEBUG: Инвайтов в будущем: {future_invites.count()}")
+        
+        active_invites = Invite.objects.filter(
+            vacancy_id=str(vacancy.external_id),
+            status__in=['pending', 'sent']
+        )
+        print(f"DEBUG: Активных инвайтов: {active_invites.count()}")
+        
+        # Проверяем все возможные форматы vacancy_id
+        print(f"DEBUG: Проверяем разные форматы vacancy_id...")
+        invites_int = Invite.objects.filter(vacancy_id=int(vacancy.external_id))
+        print(f"DEBUG: Инвайтов с vacancy_id={int(vacancy.external_id)} (int): {invites_int.count()}")
+        
+        invites_str = Invite.objects.filter(vacancy_id=str(vacancy.external_id))
+        print(f"DEBUG: Инвайтов с vacancy_id='{str(vacancy.external_id)}' (str): {invites_str.count()}")
+        
+        # Проверяем все уникальные vacancy_id в базе
+        all_vacancy_ids = Invite.objects.values_list('vacancy_id', flat=True).distinct()
+        print(f"DEBUG: Все vacancy_id в базе: {list(all_vacancy_ids)}")
+        
+        # Проверяем external_id вакансии
+        print(f"DEBUG: external_id вакансии: {vacancy.external_id}")
+        
+        # Проверяем инвайты по external_id
+        invites_by_external_id = Invite.objects.filter(vacancy_id=str(vacancy.external_id))
+        print(f"DEBUG: Инвайтов с vacancy_id='{vacancy.external_id}' (external_id): {invites_by_external_id.count()}")
+        
+        # Проверяем инвайты без фильтра по вакансии
+        all_invites_no_filter = Invite.objects.all()
+        print(f"DEBUG: Всего инвайтов в системе: {all_invites_no_filter.count()}")
+        
+        for invite in all_invites_no_filter[:10]:  # Показываем первые 10
+            print(f"DEBUG: Инвайт {invite.id}: vacancy_id='{invite.vacancy_id}', дата={invite.interview_datetime}, статус={invite.status}")
+        
+        # Исправляем фильтр: используем external_id вместо внутреннего ID
+        # Сначала пробуем по internal ID, потом по external_id
+        upcoming_interviews = Invite.objects.filter(
+            vacancy_id=str(vacancy.external_id),  # Используем external_id
+            interview_datetime__gte=timezone.now(),
+            status__in=['pending', 'sent']  # Только активные инвайты
+        )
+        
+        print(f"DEBUG: Предстоящих интервью найдено по external_id: {upcoming_interviews.count()}")
+        
+        # Если не найдено по external_id, пробуем по internal ID
+        if upcoming_interviews.count() == 0:
+            upcoming_interviews = Invite.objects.filter(
+                vacancy_id=str(vacancy.id),  # Пробуем internal ID
+                interview_datetime__gte=timezone.now(),
+                status__in=['pending', 'sent']
+            )
+            print(f"DEBUG: Предстоящих интервью найдено по internal ID: {upcoming_interviews.count()}")
+        
+        print(f"DEBUG: Предстоящих интервью найдено: {upcoming_interviews.count()}")
+        
+        if not upcoming_interviews:
+            # Сохраняем историю операции даже если нет интервью
+            try:
+                from .models import ScorecardUpdateHistory
+                
+                ScorecardUpdateHistory.objects.create(
+                    vacancy=vacancy,
+                    user=request.user,
+                    action_type='bulk_update',
+                    updated_count=0,
+                    total_found=0,
+                    date_range_from=timezone.now().date(),
+                    date_range_to=timezone.now().date(),
+                    errors=[],
+                    updated_interviews=[]
+                )
+                print(f"DEBUG UPDATE: ✅ История операции сохранена (нет интервью)")
+            except Exception as e:
+                print(f"DEBUG UPDATE: ❌ Ошибка сохранения истории (нет интервью): {str(e)}")
+                # Не прерываем выполнение из-за ошибки сохранения истории
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Нет предстоящих интервью для пересоздания скоркардов',
+                'updated_count': 0,
+                'total_found': 0,
+                'errors_count': 0,
+                'errors': [],
+                'updated_interviews': []
+            })
+        
+        # Обновляем каждый скоркард
+        updated_count = 0
+        errors = []
+        updated_interviews = []
+        
+        for invite in upcoming_interviews:
+            try:
+                print(f"DEBUG RECREATE: Обрабатываем инвайт {invite.id} для {invite.candidate_name}")
+                
+                # Шаг 1: Удаляем старый скоркард (если есть)
+                if invite.google_drive_file_id:
+                    print(f"DEBUG RECREATE: Удаляем старый скоркард {invite.google_drive_file_id}")
+                    try:
+                        drive_service.delete_file(invite.google_drive_file_id)
+                        print(f"DEBUG RECREATE: ✅ Старый скоркард удален")
+                    except Exception as e:
+                        print(f"DEBUG RECREATE: ⚠️ Не удалось удалить старый скоркард: {str(e)}")
+                        # Продолжаем работу, возможно файл уже не существует
+                
+                # Шаг 2: Создаем новую структуру Google Drive (ТОЛЬКО ФАЙЛЫ!)
+                print(f"DEBUG RECREATE: Создаем новую структуру Google Drive для {invite.candidate_name}")
+                try:
+                    # Получаем информацию о вакансии (используем уже полученную вакансию)
+                    scorecard_title = vacancy.scorecard_title
+                    scorecard_template_url = vacancy.scorecard_link
+                    
+                    # Создаем структуру папок напрямую через Google Drive API
+                    from apps.google_oauth.services import GoogleDriveService
+                    drive_service = GoogleDriveService(oauth_service)
+                    
+                    # Генерируем путь папки
+                    folder_path, filename_base = invite._generate_fallback_path_structure()
+                    folder_id = drive_service.create_folder_structure(folder_path)
+                    
+                    if not folder_id:
+                        error_msg = f"Не удалось создать папку для {invite.candidate_name}"
+                        print(f"DEBUG RECREATE: {error_msg}")
+                        errors.append(error_msg)
+                        continue
+                    
+                    # Извлекаем ID шаблона и копируем файл
+                    template_file_id = invite._extract_file_id_from_url(scorecard_template_url)
+                    if not template_file_id:
+                        error_msg = f"Не удалось извлечь ID шаблона для {invite.candidate_name}"
+                        print(f"DEBUG RECREATE: {error_msg}")
+                        errors.append(error_msg)
+                        continue
+                    
+                    new_file_name = f"{filename_base} {scorecard_title}"
+                    new_file_id = drive_service.copy_file(template_file_id, new_file_name, folder_id)
+                    
+                    if not new_file_id:
+                        error_msg = f"Не удалось скопировать файл для {invite.candidate_name}"
+                        print(f"DEBUG RECREATE: {error_msg}")
+                        errors.append(error_msg)
+                        continue
+                    
+                    new_file_url = f"https://docs.google.com/spreadsheets/d/{new_file_id}/edit"
+                    
+                    print(f"DEBUG RECREATE: ✅ Структура Google Drive создана")
+                    print(f"DEBUG RECREATE: Новый файл ID: {new_file_id}")
+                except Exception as e:
+                    error_msg = f"Ошибка создания структуры Google Drive для {invite.candidate_name}: {str(e)}"
+                    print(f"DEBUG RECREATE: {error_msg}")
+                    errors.append(error_msg)
+                    continue
+                
+                # Шаг 3: Обрабатываем новый скоркард (только Google таблицу)
+                print(f"DEBUG RECREATE: Обрабатываем новый скоркард для {invite.candidate_name}")
+                try:
+                    # Обрабатываем новый файл напрямую через Google Sheets API
+                    from apps.google_oauth.services import GoogleSheetsService
+                    sheets_service = GoogleSheetsService(oauth_service)
+                    
+                    # Получаем список всех листов в таблице
+                    sheets = sheets_service.get_sheets(new_file_id)
+                    if not sheets:
+                        error_msg = f"Не удалось получить список листов для {invite.candidate_name}"
+                        print(f"DEBUG RECREATE: {error_msg}")
+                        errors.append(error_msg)
+                        continue
+                    
+                    # Определяем листы для сохранения
+                    sheets_to_keep = ['all', 'score']
+                    if invite.candidate_grade:
+                        sheets_to_keep.append(invite.candidate_grade)
+                    
+                    # Удаляем лишние листы
+                    for sheet in sheets:
+                        sheet_title = sheet.get('properties', {}).get('title', sheet.get('title', 'Unknown'))
+                        sheet_id = sheet.get('properties', {}).get('sheetId', sheet.get('sheetId'))
+                        
+                        if sheet_title not in sheets_to_keep:
+                            try:
+                                sheets_service.delete_sheet(new_file_id, sheet_id)
+                                print(f"DEBUG RECREATE: Удален лист: {sheet_title}")
+                            except Exception as e:
+                                print(f"DEBUG RECREATE: Не удалось удалить лист {sheet_title}: {str(e)}")
+                    
+                    print(f"DEBUG RECREATE: ✅ Скоркард обработан")
+                except Exception as e:
+                    error_msg = f"Ошибка обработки скоркарда для {invite.candidate_name}: {str(e)}"
+                    print(f"DEBUG RECREATE: {error_msg}")
+                    errors.append(error_msg)
+                    continue
+                
+                # Шаг 4: Сохраняем только новые ссылки на файлы в инвайте
+                try:
+                    # Обновляем только поля, связанные с Google Drive
+                    invite.google_drive_folder_id = folder_id
+                    invite.google_drive_file_id = new_file_id
+                    invite.google_drive_file_url = new_file_url
+                    invite.save()
+                    print(f"DEBUG RECREATE: ✅ Инвайт сохранен с новыми ссылками")
+                except Exception as e:
+                    error_msg = f"Ошибка сохранения инвайта для {invite.candidate_name}: {str(e)}"
+                    print(f"DEBUG RECREATE: {error_msg}")
+                    errors.append(error_msg)
+                    continue
+                
+                # Шаг 5: Обновляем ссылку в Huntflow
+                print(f"DEBUG RECREATE: Обновляем ссылку в Huntflow для {invite.candidate_name}")
+                try:
+                    invite._update_huntflow_scorecard_field()
+                    print(f"DEBUG RECREATE: ✅ Ссылка в Huntflow обновлена")
+                except Exception as e:
+                    print(f"DEBUG RECREATE: ⚠️ Не удалось обновить ссылку в Huntflow: {str(e)}")
+                    # Это не критическая ошибка, продолжаем
+                
+                # Успешно пересоздан
+                updated_count += 1
+                updated_interviews.append({
+                    'candidate_name': invite.candidate_name,
+                    'interview_date': invite.interview_datetime.strftime('%Y-%m-%d %H:%M'),
+                    'scorecard_url': invite.google_drive_file_url or 'Не указан'
+                })
+                print(f"DEBUG RECREATE: ✅ Успешно пересоздан скоркард для {invite.candidate_name}")
+                    
+            except Exception as e:
+                error_msg = f"Общая ошибка для {invite.candidate_name}: {str(e)}"
+                print(f"DEBUG RECREATE: {error_msg}")
+                errors.append(error_msg)
+        
+        # Формируем результат
+        result = {
+            'success': True,
+            'updated_count': updated_count,
+            'total_found': len(upcoming_interviews),
+            'errors_count': len(errors),
+            'date_range': {
+                'from': min(inv.interview_datetime for inv in upcoming_interviews).strftime('%Y-%m-%d'),
+                'to': max(inv.interview_datetime for inv in upcoming_interviews).strftime('%Y-%m-%d')
+            },
+            'errors': errors,
+            'updated_interviews': updated_interviews
+        }
+        
+        print(f"DEBUG UPDATE: Итоговый результат: обновлено {updated_count} из {len(upcoming_interviews)}, ошибок: {len(errors)}")
+        print(f"DEBUG UPDATE: Список ошибок: {errors}")
+        print(f"DEBUG UPDATE: Обновленные интервью: {[inv['candidate_name'] for inv in updated_interviews]}")
+        
+        # Сохраняем историю операции
+        try:
+            from .models import ScorecardUpdateHistory
+            
+            ScorecardUpdateHistory.objects.create(
+                vacancy=vacancy,
+                user=request.user,
+                action_type='bulk_update',
+                updated_count=updated_count,
+                total_found=len(upcoming_interviews),
+                date_range_from=min(inv.interview_datetime.date() for inv in upcoming_interviews),
+                date_range_to=max(inv.interview_datetime.date() for inv in upcoming_interviews),
+                errors=errors,
+                updated_interviews=updated_interviews
+            )
+            print(f"DEBUG UPDATE: ✅ История операции сохранена")
+        except Exception as e:
+            print(f"DEBUG UPDATE: ❌ Ошибка сохранения истории: {str(e)}")
+            # Не прерываем выполнение из-за ошибки сохранения истории
+        
+        if updated_count > 0:
+            result['message'] = f"Успешно пересоздано {updated_count} из {len(upcoming_interviews)} скоркардов"
+        else:
+            result['message'] = "Не удалось пересоздать ни одного скоркарда"
+        
+        return JsonResponse(result)
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка при обновлении скоркардов: {str(e)}'
+        })
+
+
+@login_required
+@require_POST
+def get_upcoming_interviews(request, pk):
+    """Получение информации о предстоящих интервью для вакансии"""
+    from apps.google_oauth.models import Invite
+    from django.utils import timezone
+    
+    try:
+        # Получаем вакансию
+        vacancy = get_object_or_404(Vacancy, pk=pk)
+        
+        # Проверяем права доступа
+        if not (request.user == vacancy.recruiter or request.user.is_superuser):
+            return JsonResponse({
+                'success': False,
+                'message': 'Недостаточно прав для просмотра предстоящих интервью'
+            })
+        
+        # Отладочная информация
+        print(f"DEBUG GET_UPCOMING: Вакансия {vacancy.id}, external_id: {vacancy.external_id}")
+        
+        # Находим предстоящие интервью
+        upcoming_interviews = Invite.objects.filter(
+            vacancy_id=str(vacancy.external_id),
+            interview_datetime__gte=timezone.now(),
+            status__in=['pending', 'sent']
+        ).order_by('interview_datetime')
+        
+        print(f"DEBUG GET_UPCOMING: Найдено по external_id: {upcoming_interviews.count()}")
+        
+        # Если не найдено по external_id, пробуем по internal ID
+        if upcoming_interviews.count() == 0:
+            upcoming_interviews = Invite.objects.filter(
+                vacancy_id=str(vacancy.id),
+                interview_datetime__gte=timezone.now(),
+                status__in=['pending', 'sent']
+            ).order_by('interview_datetime')
+            print(f"DEBUG GET_UPCOMING: Найдено по internal ID: {upcoming_interviews.count()}")
+        
+        print(f"DEBUG GET_UPCOMING: Итого найдено: {upcoming_interviews.count()}")
+        
+        # Формируем данные для ответа
+        interviews_data = []
+        for invite in upcoming_interviews:
+            interviews_data.append({
+                'id': invite.id,
+                'candidate_name': invite.candidate_name or 'Не указано',
+                'interview_datetime': invite.interview_datetime.strftime('%Y-%m-%d %H:%M'),
+                'interview_datetime_formatted': invite.get_formatted_interview_datetime(),
+                'status': invite.get_status_display(),
+                'has_scorecard': bool(invite.google_drive_file_id),
+                'scorecard_url': invite.google_drive_file_url or None,
+                'candidate_url': invite.candidate_url
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'vacancy_name': vacancy.name,
+            'total_count': len(interviews_data),
+            'interviews': interviews_data
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка при получении предстоящих интервью: {str(e)}'
+        })

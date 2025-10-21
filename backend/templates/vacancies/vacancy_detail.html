@@ -134,16 +134,87 @@
                         
                     </div>
                     {% if vacancy.scorecard_link %}
-                        <div>
+                        <div class="btn-group" role="group">
                             <a href="{{ vacancy.scorecard_link }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">
                                 <i class="fas fa-external-link-alt me-1"></i>
                                 Открыть Scorecard
                             </a>
+                            <button type="button" class="btn btn-warning" id="updateScorecardsBtn" 
+                                    data-vacancy-id="{{ vacancy.id }}" 
+                                    data-vacancy-name="{{ vacancy.name }}"
+                                    title="Пересоздать скоркарды для всех предстоящих интервью этой вакансии">
+                                <i class="fas fa-sync-alt me-1"></i>
+                                Пересоздать скоркарды
+                            </button>
                         </div>
                     {% endif %}
                 </div>
             </div>
         </div>
+
+        <!-- История обновлений скоркардов -->
+        {% if vacancy.scorecard_updates.exists %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-history me-2"></i>
+                    История обновлений скоркардов
+                </h5>
+            </div>
+            <div class="card-body p-2">
+                <div class="list-group list-group-flush">
+                    {% for update in vacancy.scorecard_updates.all|slice:":5" %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 border-0">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                {% if update.action_type == 'bulk_update' %}
+                                    <i class="fas fa-sync-alt text-primary"></i>
+                                {% else %}
+                                    <i class="fas fa-edit text-info"></i>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <div class="d-flex align-items-center">
+                                    <span class="fw-medium me-2">
+                                        {% if update.action_type == 'bulk_update' %}
+                                            Массовое обновление
+                                        {% else %}
+                                            Обновление скоркарда
+                                        {% endif %}
+                                    </span>
+                                    {% if update.success_rate > 0 %}
+                                        <span class="badge {% if update.success_rate >= 90 %}bg-success{% elif update.success_rate >= 70 %}bg-warning{% else %}bg-danger{% endif %}">
+                                            {{ update.success_rate }}%
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                <small class="text-muted">
+                                    {{ update.updated_count }}/{{ update.total_found }} • {{ update.date_range_from|date:"d.m.Y" }} - {{ update.date_range_to|date:"d.m.Y" }}
+                                    {% if update.has_errors %}
+                                        <span class="text-warning ms-2">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>{{ update.errors|length }}
+                                        </span>
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted">
+                                {{ update.user.get_full_name|truncatechars:15 }}<br>
+                                {{ update.created_at|date:"d.m H:i" }}
+                            </small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if vacancy.scorecard_updates.count > 5 %}
+                <div class="text-center mt-2">
+                    <small class="text-muted">Показано последние 5 из {{ vacancy.scorecard_updates.count }}</small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
 
         <!-- Этапы для перевода кандидатов -->
         <div class="card mb-4">
@@ -527,6 +598,40 @@
 <!-- Скрытый CSRF токен для AJAX запросов -->
 {% csrf_token %}
 
+<!-- Модальное окно для обновления скоркардов -->
+<div class="modal fade" id="updateScorecardsModal" tabindex="-1" aria-labelledby="updateScorecardsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateScorecardsModalLabel">
+                    <i class="fas fa-sync-alt me-2"></i>
+                    Пересоздание скоркардов
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="scorecardsPreview">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Загрузка...</span>
+                        </div>
+                        <p class="mt-2">Загрузка информации о предстоящих интервью для пересоздания скоркардов...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Отмена
+                </button>
+                <button type="button" class="btn btn-warning" id="confirmUpdateBtn" disabled>
+                    <i class="fas fa-sync-alt me-1"></i>
+                    Пересоздать скоркарды
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Функция для получения CSRF токена
@@ -587,6 +692,355 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Обработка обновления скоркардов
+    const updateScorecardsBtn = document.getElementById('updateScorecardsBtn');
+    const updateScorecardsModal = new bootstrap.Modal(document.getElementById('updateScorecardsModal'));
+    const confirmUpdateBtn = document.getElementById('confirmUpdateBtn');
+    
+    if (updateScorecardsBtn) {
+        updateScorecardsBtn.addEventListener('click', function() {
+            const vacancyId = this.dataset.vacancyId;
+            const vacancyName = this.dataset.vacancyName;
+            
+            // Показываем модальное окно
+            updateScorecardsModal.show();
+            
+            // Загружаем информацию о предстоящих интервью
+            loadUpcomingInterviews(vacancyId, vacancyName);
+        });
+    }
+    
+    if (confirmUpdateBtn) {
+        confirmUpdateBtn.addEventListener('click', function() {
+            const vacancyId = updateScorecardsBtn.dataset.vacancyId;
+            updateScorecards(vacancyId);
+        });
+    }
+    
+    function loadUpcomingInterviews(vacancyId, vacancyName) {
+        // Показываем спиннер
+        const previewDiv = document.getElementById('scorecardsPreview');
+        previewDiv.innerHTML = `
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Загрузка...</span>
+                </div>
+                <p class="mt-2">Загрузка информации о предстоящих интервью для пересоздания скоркардов...</p>
+            </div>
+        `;
+        
+        // Делаем запрос для получения информации о предстоящих интервью
+        fetch(`/vacancies/${vacancyId}/get-upcoming-interviews/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken(),
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                showUpcomingInterviewsPreview(data);
+                confirmUpdateBtn.disabled = false;
+            } else {
+                throw new Error(data.message || 'Не удалось загрузить информацию о предстоящих интервью');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            previewDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Ошибка загрузки</h6>
+                    <p class="mb-0">${error.message}</p>
+                </div>
+            `;
+        });
+    }
+    
+    function showUpcomingInterviewsPreview(data) {
+        const previewDiv = document.getElementById('scorecardsPreview');
+        
+        if (data.total_count === 0) {
+            previewDiv.innerHTML = `
+                <div class="alert alert-warning">
+                    <h6><i class="fas fa-info-circle me-2"></i>Нет предстоящих интервью</h6>
+                    <p class="mb-2">Для вакансии <strong>${data.vacancy_name}</strong> не найдено предстоящих интервью.</p>
+                    <p class="mb-0 text-muted">
+                        <small>
+                            <i class="fas fa-info-circle me-1"></i>
+                            Обновление скоркардов будет пропущено
+                        </small>
+                    </p>
+                </div>
+            `;
+            return;
+        }
+        
+        let interviewsHTML = '';
+        if (data.interviews && data.interviews.length > 0) {
+            interviewsHTML = `
+                <div class="mt-3">
+                    <h6><i class="fas fa-list me-2"></i>Найденные предстоящие интервью (${data.total_count}):</h6>
+                    <div class="list-group">
+                        ${data.interviews.map(interview => `
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>${interview.candidate_name}</strong><br>
+                                    <small class="text-muted">${interview.interview_datetime_formatted}</small><br>
+                                    <span class="badge ${interview.has_scorecard ? 'bg-success' : 'bg-warning'}">
+                                        ${interview.has_scorecard ? 'Есть скоркард' : 'Нет скоркарда'}
+                                    </span>
+                                </div>
+                                ${interview.has_scorecard ? `
+                                    <a href="${interview.scorecard_url}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        previewDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-info-circle me-2"></i>Подтверждение пересоздания</h6>
+                    <p class="mb-2">Будут пересозданы скоркарды для <strong>${data.total_count}</strong> предстоящих интервью вакансии:</p>
+                    <p class="mb-2"><strong>${data.vacancy_name}</strong></p>
+                    ${interviewsHTML}
+                    <hr>
+                    <p class="mb-0 text-muted">
+                        <small>
+                            <i class="fas fa-info-circle me-1"></i>
+                            Старые скоркарды будут удалены, новые созданы на основе актуального шаблона
+                        </small>
+                    </p>
+                </div>
+        `;
+    }
+    
+    function updateScorecards(vacancyId) {
+        const confirmBtn = confirmUpdateBtn;
+        const originalHTML = confirmBtn.innerHTML;
+        
+        // Показываем индикатор загрузки
+        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Пересоздание...';
+        confirmBtn.disabled = true;
+        
+        fetch(`/vacancies/${vacancyId}/update-scorecards/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken(),
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Показываем результат
+                showUpdateResult(data);
+                
+                // Закрываем модальное окно через задержку
+                setTimeout(() => {
+                    updateScorecardsModal.hide();
+                }, 3000);
+            } else {
+                throw new Error(data.message || 'Неизвестная ошибка');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            
+            // Показываем подробную ошибку в модальном окне
+            const previewDiv = document.getElementById('scorecardsPreview');
+            previewDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Ошибка обновления скоркардов</h6>
+                    <p class="mb-2"><strong>Ошибка:</strong> ${error.message}</p>
+                    <p class="mb-0 text-muted">
+                        <small>
+                            <i class="fas fa-info-circle me-1"></i>
+                            Проверьте логи сервера для получения подробной информации
+                        </small>
+                    </p>
+                </div>
+            `;
+            
+            // Восстанавливаем кнопку
+            confirmBtn.innerHTML = originalHTML;
+            confirmBtn.disabled = false;
+        });
+    }
+    
+    function showUpdateResult(data) {
+        const previewDiv = document.getElementById('scorecardsPreview');
+        
+        let resultHTML = '';
+        
+        if (data.updated_count > 0) {
+            const successRate = Math.round((data.updated_count / data.total_found) * 100);
+            const alertClass = successRate >= 90 ? 'alert-success' : successRate >= 70 ? 'alert-warning' : 'alert-danger';
+            
+            resultHTML = `
+                <div class="alert ${alertClass}">
+                    <h6><i class="fas fa-check-circle me-2"></i>Пересоздание скоркардов завершено</h6>
+                    <p class="mb-2"><strong>Пересоздано:</strong> ${data.updated_count} из ${data.total_found} предстоящих скоркардов</p>
+                    <p class="mb-2"><strong>Успешность:</strong> ${successRate}%</p>
+                    <p class="mb-2"><strong>Период:</strong> ${data.date_range.from} - ${data.date_range.to}</p>
+                    ${data.errors_count > 0 ? `<p class="mb-2"><strong>Ошибок:</strong> ${data.errors_count}</p>` : ''}
+                    
+                    ${data.updated_interviews.length > 0 ? `
+                        <div class="mt-3">
+                            <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#updatedInterviews">
+                                <i class="fas fa-list me-1"></i>Показать детали (${data.updated_count})
+                            </button>
+                            
+                            <div class="collapse mt-2" id="updatedInterviews">
+                                <div class="list-group">
+                                    ${data.updated_interviews.map(invite => `
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>${invite.candidate_name}</strong><br>
+                                                <small class="text-muted">${invite.interview_date}</small>
+                                            </div>
+                                            <a href="${invite.scorecard_url}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </a>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        } else {
+            resultHTML = `
+                <div class="alert alert-warning">
+                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Пересоздание завершено</h6>
+                    <p class="mb-0">${data.message}</p>
+                </div>
+            `;
+        }
+        
+        if (data.errors && data.errors.length > 0) {
+            resultHTML += `
+                <div class="alert alert-danger">
+                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Ошибки (${data.errors.length}):</h6>
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-outline-danger" type="button" data-bs-toggle="collapse" data-bs-target="#errorDetails">
+                            <i class="fas fa-list me-1"></i>Показать детали ошибок
+                        </button>
+                        
+                        <div class="collapse mt-2" id="errorDetails">
+                            <div class="list-group">
+                                ${data.errors.map(error => `
+                                    <div class="list-group-item list-group-item-danger">
+                                        <small>${error}</small>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        previewDiv.innerHTML = resultHTML;
+    }
 });
 </script>
+
+<style>
+/* Стили для timeline истории обновлений */
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #dee2e6;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -22px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #dee2e6;
+}
+
+.timeline-content {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 15px;
+    margin-left: 10px;
+}
+
+.timeline-title {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.timeline-text {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.timeline-text small {
+    font-size: 12px;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .timeline {
+        padding-left: 25px;
+    }
+    
+    .timeline::before {
+        left: 10px;
+    }
+    
+    .timeline-marker {
+        left: -17px;
+        width: 10px;
+        height: 10px;
+    }
+    
+    .timeline-content {
+        margin-left: 5px;
+        padding: 12px;
+    }
+}
+</style>
 {% endblock %}

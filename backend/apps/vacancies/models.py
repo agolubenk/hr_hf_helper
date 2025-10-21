@@ -461,3 +461,85 @@ class SalaryRange(models.Model):
         elif currency == 'EUR':
             return self.salary_max_eur
         return self.salary_max_usd
+
+
+class ScorecardUpdateHistory(models.Model):
+    """История обновлений скоркардов"""
+    
+    ACTION_TYPES = [
+        ('bulk_update', 'Массовое обновление'),
+        ('single_update', 'Обновление одного скоркарда'),
+    ]
+    
+    vacancy = models.ForeignKey(
+        Vacancy,
+        on_delete=models.CASCADE,
+        related_name='scorecard_updates',
+        verbose_name='Вакансия'
+    )
+    
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь'
+    )
+    
+    action_type = models.CharField(
+        max_length=20,
+        choices=ACTION_TYPES,
+        default='bulk_update',
+        verbose_name='Тип операции'
+    )
+    
+    updated_count = models.PositiveIntegerField(
+        verbose_name='Количество обновленных скоркардов'
+    )
+    
+    total_found = models.PositiveIntegerField(
+        verbose_name='Всего найдено скоркардов'
+    )
+    
+    date_range_from = models.DateField(
+        verbose_name='Период с'
+    )
+    
+    date_range_to = models.DateField(
+        verbose_name='Период по'
+    )
+    
+    errors = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name='Ошибки'
+    )
+    
+    updated_interviews = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name='Обновленные интервью'
+    )
+    
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата создания'
+    )
+    
+    class Meta:
+        verbose_name = 'История обновления скоркардов'
+        verbose_name_plural = 'История обновлений скоркардов'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"Обновление скоркардов для {self.vacancy.name} - {self.created_at.strftime('%d.%m.%Y %H:%M')}"
+    
+    @property
+    def success_rate(self):
+        """Процент успешных обновлений"""
+        if self.total_found == 0:
+            return 0
+        return round((self.updated_count / self.total_found) * 100, 1)
+    
+    @property
+    def has_errors(self):
+        """Есть ли ошибки при обновлении"""
+        return len(self.errors) > 0

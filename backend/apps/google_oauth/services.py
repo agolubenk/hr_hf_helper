@@ -651,6 +651,34 @@ class GoogleDriveService:
         except HttpError as e:
             print(f"Ошибка копирования файла: {e}")
             return None
+    
+    def file_exists(self, file_id):
+        """Проверить существование файла"""
+        service = self._get_service()
+        if not service:
+            return False
+        
+        try:
+            service.files().get(fileId=file_id, fields='id').execute()
+            return True
+        except HttpError as e:
+            if e.resp.status == 404:
+                return False
+            print(f"Ошибка проверки существования файла: {e}")
+            return False
+    
+    def delete_file(self, file_id):
+        """Удалить файл"""
+        service = self._get_service()
+        if not service:
+            return False
+        
+        try:
+            service.files().delete(fileId=file_id).execute()
+            return True
+        except HttpError as e:
+            print(f"Ошибка удаления файла: {e}")
+            return False
 
 
 class GoogleSheetsService:
@@ -738,4 +766,145 @@ class GoogleSheetsService:
             return True
         except HttpError as e:
             print(f"Ошибка удаления листа: {e}")
+            return False
+    
+    def get_spreadsheet_content(self, spreadsheet_id):
+        """Получить содержимое таблицы"""
+        service = self._get_service()
+        if not service:
+            return None
+        
+        try:
+            # Получаем все листы таблицы
+            spreadsheet = service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
+            sheets = spreadsheet.get('sheets', [])
+            
+            content = {}
+            for sheet in sheets:
+                sheet_name = sheet['properties']['title']
+                sheet_id = sheet['properties']['sheetId']
+                
+                # Получаем данные листа
+                range_name = f"{sheet_name}!A1:Z1000"  # Достаточно большой диапазон
+                result = service.spreadsheets().values().get(
+                    spreadsheetId=spreadsheet_id,
+                    range=range_name
+                ).execute()
+                
+                values = result.get('values', [])
+                content[sheet_name] = {
+                    'sheet_id': sheet_id,
+                    'values': values
+                }
+            
+            return content
+            
+        except HttpError as e:
+            print(f"Ошибка получения содержимого таблицы: {e}")
+            return None
+    
+    def update_spreadsheet_content(self, target_spreadsheet_id, source_content):
+        """Обновить содержимое таблицы новыми данными"""
+        service = self._get_service()
+        if not service:
+            return False
+        
+        try:
+            # Получаем информацию о целевой таблице
+            target_spreadsheet = service.spreadsheets().get(spreadsheetId=target_spreadsheet_id).execute()
+            target_sheets = target_spreadsheet.get('sheets', [])
+            
+            requests = []
+            
+            # Обновляем каждый лист
+            for sheet_name, sheet_data in source_content.items():
+                # Ищем соответствующий лист в целевой таблице
+                target_sheet = None
+                for ts in target_sheets:
+                    if ts['properties']['title'] == sheet_name:
+                        target_sheet = ts
+                        break
+                
+                if not target_sheet:
+                    # Если листа нет, создаем его
+                    requests.append({
+                        'addSheet': {
+                            'properties': {
+                                'title': sheet_name
+                            }
+                        }
+                    })
+                
+                # Очищаем лист и заполняем новыми данными
+                if sheet_data['values']:
+                    # Очистка листа
+                    requests.append({
+                        'updateCells': {
+                            'range': {
+                                'sheetId': target_sheet['properties']['sheetId'] if target_sheet else 0,
+                                'startRowIndex': 0,
+                                'endRowIndex': 1000,  # Большой диапазон для очистки
+                                'startColumnIndex': 0,
+                                'endColumnIndex': 26  # A-Z
+                            },
+                            'fields': 'userEnteredValue'
+                        }
+                    })
+                    
+                    # Заполнение данными
+                    requests.append({
+                        'pasteData': {
+                            'coordinate': {
+                                'sheetId': target_sheet['properties']['sheetId'] if target_sheet else 0,
+                                'rowIndex': 0,
+                                'columnIndex': 0
+                            },
+                            'data': self._values_to_csv(sheet_data['values']),
+                            'type': 'PASTE_NORMAL',
+                            'delimiter': ','
+                        }
+                    })
+            
+            # Выполняем все запросы
+            if requests:
+                batch_update_body = {'requests': requests}
+                service.spreadsheets().batchUpdate(
+                    spreadsheetId=target_spreadsheet_id,
+                    body=batch_update_body
+                ).execute()
+            
+            return True
+            
+        except HttpError as e:
+            print(f"Ошибка обновления содержимого таблицы: {e}")
+            return False
+    
+    def _values_to_csv(self, values):
+        """Конвертирует массив значений в CSV строку"""
+        csv_rows = []
+        for row in values:
+            # Экранируем значения и объединяем запятыми
+            escaped_row = []
+            for cell in row:
+                if ',' in str(cell) or '"' in str(cell):
+                    escaped_row.append(f'"{str(cell).replace('"', '""')}"')
+                else:
+                    escaped_row.append(str(cell))
+            csv_rows.append(','.join(escaped_row))
+        
+        return '\n'.join(csv_rows)
+    
+    def file_exists(self, file_id):
+        """Проверить существование файла"""
+        service = self._get_service()
+        if not service:
+            return False
+        
+        try:
+            service.files().get(fileId=file_id, fields='id').execute()
+            return True
+        except HttpError as e:
+            if e.resp.status == 404:
+                return False
+            print(f"Ошибка проверки существования файла: {e}")
             return False

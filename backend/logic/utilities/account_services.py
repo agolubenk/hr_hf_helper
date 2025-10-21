@@ -95,7 +95,7 @@ class UserService:
         # Проверяем старую систему API ключей
         huntflow_api_configured = bool(
             (user.huntflow_sandbox_api_key and user.huntflow_sandbox_url) or
-            (user.huntflow_prod_api_key and user.huntflow_prod_url)
+            user.huntflow_prod_url
         )
         # Общая конфигурация (любая из систем)
         huntflow_configured = huntflow_token_configured or huntflow_api_configured
@@ -104,7 +104,7 @@ class UserService:
             'name': 'Huntflow',
             'enabled': True,
             'sandbox_configured': bool(user.huntflow_sandbox_api_key and user.huntflow_sandbox_url),
-            'prod_configured': bool(user.huntflow_prod_api_key and user.huntflow_prod_url),
+            'prod_configured': bool(user.huntflow_prod_url),
             'active_system': user.active_system,
             'configured': huntflow_configured,
             'token_configured': huntflow_token_configured,
@@ -188,6 +188,12 @@ class UserService:
                 if 'active_system' in data:
                     user.active_system = data['active_system']
                 
+                if 'huntflow_access_token' in data:
+                    user.huntflow_access_token = data['huntflow_access_token']
+                
+                if 'huntflow_refresh_token' in data:
+                    user.huntflow_refresh_token = data['huntflow_refresh_token']
+                
                 user.save()
                 return True, "API ключи успешно обновлены"
                 
@@ -267,7 +273,19 @@ class UserService:
             if integration_type == 'gemini':
                 from logic.ai_analysis.gemini_services import GeminiService
                 service = GeminiService(api_key)
-                return service.test_connection()
+                result = service.test_connection()
+                if hasattr(result, 'success'):
+                    if result.success:
+                        message = result.data.get('message', 'Подключение к Gemini API успешно')
+                        return True, message
+                    else:
+                        error = result.data.get('error', 'Неизвестная ошибка подключения')
+                        return False, error
+                else:
+                    # Если test_connection возвращает что-то другое
+                    if len(api_key) < 10:
+                        return False, "API ключ слишком короткий"
+                    return True, "Gemini API ключ валиден"
             
             elif integration_type == 'huntflow':
                 api_url = kwargs.get('api_url')
@@ -287,8 +305,9 @@ class UserService:
                 return True, "ClickUp API ключ валиден"
             
             elif integration_type == 'notion':
-                if not api_key.startswith('secret_'):
-                    return False, "Integration Token должен начинаться с 'secret_'"
+                # Поддерживаем как старый формат (secret_), так и новый (ntn_)
+                if not (api_key.startswith('secret_') or api_key.startswith('ntn_')):
+                    return False, "Integration Token должен начинаться с 'secret_' или 'ntn_'"
                 if len(api_key) < 20:
                     return False, "Integration Token слишком короткий"
                 return True, "Notion Integration Token валиден"

@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserChangeForm
 from .models import User, SystemChoice
+from datetime import time
 
 
 class ProfileEditForm(UserChangeForm):
@@ -10,7 +11,6 @@ class ProfileEditForm(UserChangeForm):
     ВХОДЯЩИЕ ДАННЫЕ:
     - first_name: имя пользователя
     - last_name: фамилия пользователя
-    - full_name: полное имя пользователя
     - email: электронная почта
     - telegram_username: имя пользователя в Telegram
     
@@ -36,7 +36,6 @@ class ProfileEditForm(UserChangeForm):
         fields = [
             'first_name', 
             'last_name', 
-            'full_name', 
             'email', 
             'telegram_username',
             'interview_start_time',
@@ -50,10 +49,6 @@ class ProfileEditForm(UserChangeForm):
             'last_name': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Фамилия'
-            }),
-            'full_name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Полное имя'
             }),
             'email': forms.EmailInput(attrs={
                 'class': 'form-control',
@@ -81,6 +76,25 @@ class ProfileEditForm(UserChangeForm):
         if 'password' in self.fields:
             del self.fields['password']
     
+    def clean_telegram_username(self):
+        """Очищаем telegram username от префиксов @ и https://t.me/"""
+        telegram_username = self.cleaned_data.get('telegram_username', '').strip()
+        
+        if telegram_username:
+            # Убираем @ в начале
+            if telegram_username.startswith('@'):
+                telegram_username = telegram_username[1:]
+            
+            # Убираем https://t.me/ в начале
+            if telegram_username.startswith('https://t.me/'):
+                telegram_username = telegram_username[13:]
+            
+            # Убираем t.me/ в начале
+            if telegram_username.startswith('t.me/'):
+                telegram_username = telegram_username[5:]
+        
+        return telegram_username
+
     def clean(self):
         cleaned_data = super().clean()
         start_time = cleaned_data.get('interview_start_time')
@@ -88,7 +102,6 @@ class ProfileEditForm(UserChangeForm):
         
         if start_time and end_time:
             # Проверяем, что время находится в диапазоне 07:00 - 21:00
-            from datetime import time
             
             if start_time < time(7, 0) or start_time > time(21, 0):
                 raise forms.ValidationError("Время начала должно быть в диапазоне 07:00 - 21:00")
@@ -114,7 +127,6 @@ class ApiKeysForm(forms.ModelForm):
             'notion_integration_token',
             'huntflow_sandbox_api_key',
             'huntflow_sandbox_url',
-            'huntflow_prod_api_key',
             'huntflow_prod_url',
             'active_system'
         ]
@@ -138,10 +150,6 @@ class ApiKeysForm(forms.ModelForm):
             'huntflow_sandbox_url': forms.URLInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'https://sandbox-api.huntflow.dev'
-            }),
-            'huntflow_prod_api_key': forms.PasswordInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Введите API ключ Huntflow (прод)'
             }),
             'huntflow_prod_url': forms.URLInput(attrs={
                 'class': 'form-control',

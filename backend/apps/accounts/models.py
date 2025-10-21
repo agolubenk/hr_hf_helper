@@ -19,8 +19,8 @@ class User(AbstractUser):
     Для интервьюеров и наблюдателей используем группы + дополнительные поля.
     """
     # Общие доп.поля
-    full_name = models.CharField(_("ФИО"), max_length=255, blank=True)
     telegram_username = models.CharField(_("Никнейм Telegram"), max_length=64, blank=True)
+    profile_photo = models.ImageField(_("Фото профиля"), upload_to='profile_photos/', blank=True, null=True)
 
     # Интеграции
     gemini_api_key = models.CharField(_("API ключ Gemini"), max_length=256, blank=True)
@@ -28,7 +28,6 @@ class User(AbstractUser):
     notion_integration_token = models.CharField(_("Integration токен Notion"), max_length=256, blank=True)
 
     huntflow_prod_url = models.URLField(_("Huntflow прод: ссылка"), blank=True)
-    huntflow_prod_api_key = models.CharField(_("Huntflow прод: API ключ"), max_length=256, blank=True)
 
     huntflow_sandbox_url = models.URLField(_("Huntflow песочница: ссылка"), blank=True)
     huntflow_sandbox_api_key = models.CharField(_("Huntflow песочница: API ключ"), max_length=256, blank=True)
@@ -41,10 +40,7 @@ class User(AbstractUser):
     )
 
     # Поля для ролей
-    interviewer_calendar_url = models.URLField(_("Ссылка на календарь интервьюера"), blank=True)
     # email для интервьюера используем стандартное поле `email`
-
-    is_observer_active = models.BooleanField(_("Статус наблюдателя"), default=False)
 
     # Настройки рабочего времени для интервью
     interview_start_time = models.TimeField(
@@ -59,19 +55,14 @@ class User(AbstractUser):
     )
 
     # Новые поля для токенной системы Huntflow
-    huntflow_access_token = models.TextField(_("Access token для Huntflow API"), blank=True, help_text="Access token для Huntflow API")
-    huntflow_refresh_token = models.TextField(_("Refresh token для Huntflow API"), blank=True, help_text="Refresh token для Huntflow API")
+    huntflow_access_token = models.CharField(_("Access token для Huntflow API"), max_length=1000, blank=True, help_text="Access token для Huntflow API")
+    huntflow_refresh_token = models.CharField(_("Refresh token для Huntflow API"), max_length=1000, blank=True, help_text="Refresh token для Huntflow API")
     huntflow_token_expires_at = models.DateTimeField(_("Время истечения access token"), null=True, blank=True, help_text="Время истечения access token")
     huntflow_refresh_expires_at = models.DateTimeField(_("Время истечения refresh token"), null=True, blank=True, help_text="Время истечения refresh token")
 
     class Meta(AbstractUser.Meta):
         swappable = "AUTH_USER_MODEL"
 
-    def save(self, *args, **kwargs):
-        # Автозаполнение ФИО, если пусто, из first_name/last_name
-        if not self.full_name:
-            self.full_name = " ".join(filter(None, [self.last_name, self.first_name])).strip()
-        super().save(*args, **kwargs)
 
     @property
     def is_admin(self) -> bool:
@@ -123,3 +114,17 @@ class User(AbstractUser):
             'huntflow_token_expires_at', 
             'huntflow_refresh_expires_at'
         ])
+    
+    def get_profile_photo_url(self):
+        """Получить URL фото профиля (локальное или из Google OAuth)"""
+        if self.profile_photo:
+            return self.profile_photo.url
+        
+        # Проверяем Google OAuth фото
+        try:
+            if hasattr(self, 'google_oauth_account') and self.google_oauth_account.picture_url:
+                return self.google_oauth_account.picture_url
+        except:
+            pass
+        
+        return None
