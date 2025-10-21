@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', function() {
     {% csrf_token %}
     
     <!-- Gemini AI -->
-    <div class="card profile-card mb-4">
+    <div class="card profile-card mb-3">
         <div class="card-header">
             <h5 class="card-title mb-0">
                 <div class="integration-logo me-2" style="display: inline-flex; align-items: center;">
@@ -345,7 +345,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     
     <!-- ClickUp -->
-    <div class="card profile-card mb-4">
+    <div class="card profile-card mb-3">
         <div class="card-header">
             <h5 class="card-title mb-0">
                 <div class="integration-logo me-2" style="display: inline-flex; align-items: center;">
@@ -382,7 +382,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     
     <!-- Notion -->
-    <div class="card profile-card mb-4">
+    <div class="card profile-card mb-3">
         <div class="card-header">
             <h5 class="card-title mb-0">
                 <div class="integration-logo me-2" style="display: inline-flex; align-items: center;">
@@ -419,7 +419,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     
     <!-- Huntflow -->
-    <div class="card profile-card mb-4">
+    <div class="card profile-card mb-3">
         <div class="card-header">
             <h5 class="card-title mb-0">
                 <div class="integration-logo me-2" style="display: inline-flex; align-items: center;">
@@ -434,7 +434,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
         <div class="card-body">
             <!-- Песочница -->
-            <div class="mb-4">
+            <div class="mb-3">
                 <h6 class="text-muted">Песочница (Sandbox)</h6>
                 <div class="row">
                     <div class="col-md-6">
@@ -466,7 +466,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             
             <!-- Активная система -->
-            <div class="mb-4">
+            <div class="mb-3">
                 <label for="active_system" class="form-label">Активная система</label>
                 <select class="form-select" id="active_system" name="active_system">
                     <option value="sandbox" {% if user.active_system == 'sandbox' %}selected{% endif %}>Песочница</option>
