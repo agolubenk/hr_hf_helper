@@ -93,7 +93,16 @@
                                     </div>
                                     <div>Access Token: {% if integration.token_valid %}✅ Валидный{% else %}❌ Истек{% endif %}</div>
                                     <div>Refresh Token: {% if integration.refresh_valid %}✅ Валидный{% else %}❌ Истек{% endif %}</div>
-                                        <div class="mt-1">Система: {{ integration.active_system }}</div>
+                                    <div class="mt-1">
+                                        <strong>Текущая система:</strong> {{ integration.active_system }}
+                                    </div>
+                                    {% if integration.sandbox_configured or integration.prod_configured %}
+                                    <div class="mt-2">
+                                        <strong>API ключи (устаревшие):</strong>
+                                        <div>Песочница: {% if integration.sandbox_configured %}✅ Настроен{% else %}❌ Не настроен{% endif %}</div>
+                                        <div>Прод: {% if integration.prod_configured %}✅ Настроен{% else %}❌ Не настроен{% endif %}</div>
+                                    </div>
+                                    {% endif %}
                                     </div>
                                 {% elif integration.api_configured %}
                                     <div class="small text-muted">
@@ -101,9 +110,11 @@
                                         <strong>API ключи:</strong>
                                         <span class="badge bg-warning ms-1">Устаревший</span>
                                     </div>
-                                    <div>Песочница: {% if integration.sandbox_configured %}✅{% else %}❌{% endif %}</div>
-                                    <div>Прод: {% if integration.prod_configured %}✅{% else %}❌{% endif %}</div>
-                                        <div class="mt-1">Система: {{ integration.active_system }}</div>
+                                    <div>Песочница: {% if integration.sandbox_configured %}✅ Настроен{% else %}❌ Не настроен{% endif %}</div>
+                                    <div>Прод: {% if integration.prod_configured %}✅ Настроен{% else %}❌ Не настроен{% endif %}</div>
+                                    <div class="mt-1">
+                                        <strong>Активная система:</strong> {{ integration.active_system }}
+                                    </div>
                                     </div>
                                 {% else %}
                                     <div class="text-muted">Не настроено</div>
@@ -169,7 +180,12 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="geminiHeading">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#geminiCollapse">
-                        <i class="fas fa-robot me-2"></i>
+                        <div class="integration-logo me-2">
+                            <img src="https://www.gstatic.com/lamda/images/gemini_sparkle_v002_d4735304ff6292a690345.svg" 
+                                 alt="Gemini AI" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                            <i class="fas fa-robot fa-2x text-primary" style="display: none;"></i>
+                        </div>
                         <strong>Gemini AI API</strong>
                         <span class="badge bg-primary ms-2">Google AI</span>
                     </button>
@@ -207,7 +223,12 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="huntflowHeading">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#huntflowCollapse">
-                        <i class="fas fa-briefcase me-2"></i>
+                        <div class="integration-logo me-2">
+                            <img src="{% static 'images/integrations/huntflow-official.ico' %}" 
+                                 alt="Huntflow" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                            <i class="fas fa-briefcase fa-2x text-primary" style="display: none;"></i>
+                        </div>
                         <strong>Huntflow API</strong>
                         <span class="badge bg-success ms-2">ATS</span>
                     </button>
@@ -271,7 +292,12 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="clickupHeading">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#clickupCollapse">
-                        <i class="fas fa-tasks me-2"></i>
+                        <div class="integration-logo me-2">
+                            <img src="{% static 'images/integrations/clickup-official.svg' %}" 
+                                 alt="ClickUp" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                            <i class="fas fa-tasks fa-2x text-primary" style="display: none;"></i>
+                        </div>
                         <strong>ClickUp API</strong>
                         <span class="badge bg-warning ms-2">Task Management</span>
                     </button>
@@ -308,7 +334,12 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="telegramHeading">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#telegramCollapse">
-                        <i class="fab fa-telegram me-2"></i>
+                        <div class="integration-logo me-2">
+                            <img src="https://telegram.org/img/t_logo.png" 
+                                 alt="Telegram" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                            <i class="fab fa-telegram fa-2x text-primary" style="display: none;"></i>
+                        </div>
                         <strong>Telegram Username</strong>
                         <span class="badge telegram-badge ms-2">Messaging</span>
                     </button>
@@ -343,7 +374,12 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="notionHeading">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#notionCollapse">
-                        <i class="fas fa-file-alt me-2"></i>
+                        <div class="integration-logo me-2">
+                            <img src="https://www.notion.so/images/logo-ios.png" 
+                                 alt="Notion" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                            <i class="fas fa-file-alt fa-2x text-primary" style="display: none;"></i>
+                        </div>
                         <strong>Notion API</strong>
                         <span class="badge bg-secondary ms-2">Documentation</span>
                     </button>
