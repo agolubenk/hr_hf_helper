@@ -205,11 +205,11 @@ class InviteCombinedForm(forms.ModelForm):
         widget=forms.Textarea(attrs={
             'class': 'form-control',
             'rows': 5,
-            'placeholder': 'Вставьте ссылку и дату-время в одном поле...\n\nПример:\nhttps://huntflow.ru/my/org#/vacancy/123/filter/456/id/789\n2025-09-15 14:00',
+            'placeholder': 'Вставьте ссылку и дату-время в одном поле...\n\nПримеры:\nhttps://huntflow.ru/my/org#/vacancy/123/filter/456/id/789\n2025-09-15 14:00\n2025-09-15 14:00 (1 час)\n2025-09-15 14:00 (30 минут)',
             'required': True
         }),
         label=_('Ссылка на кандидата и дата-время интервью'),
-        help_text=_('Вставьте ссылку на кандидата и дату-время интервью в одном поле. Система автоматически извлечет ссылку и дату.')
+        help_text=_('Вставьте ссылку на кандидата и дату-время интервью в одном поле. Система автоматически извлечет ссылку и дату. Для указания кастомной длительности добавьте в скобках: (1 час), (30 минут), (полчаса), (2 ч), (45 м).')
     )
     
     class Meta:
@@ -288,6 +288,11 @@ class InviteCombinedForm(forms.ModelForm):
         print(f"🔍 COMBINED_FORM_SAVE: Начинаем сохранение инвайта...")
         invite = super().save(commit=False)
         invite.user = self.user
+        
+        # Заполняем email пользователя
+        if self.user and hasattr(self.user, 'email'):
+            invite.user_email = self.user.email
+            print(f"🔍 COMBINED_FORM_SAVE: Установлен email пользователя: {invite.user_email}")
         
         # multiple_slots_data убрано из модели
         
@@ -368,6 +373,15 @@ class InviteCombinedForm(forms.ModelForm):
                     else:
                         print(f"❌ COMBINED_FORM_SAVE: Парсер не вернул время")
                         raise forms.ValidationError('Парсер не вернул время для интервью')
+                
+                # Извлекаем кастомную длительность из исходного текста
+                print(f"🔍 COMBINED_FORM_SAVE: Извлекаем кастомную длительность...")
+                custom_duration = invite.extract_custom_duration(invite.original_form_data)
+                if custom_duration:
+                    invite.custom_duration_minutes = custom_duration
+                    print(f"✅ COMBINED_FORM_SAVE: Установлена кастомная длительность: {custom_duration} минут")
+                else:
+                    print(f"ℹ️ COMBINED_FORM_SAVE: Кастомная длительность не найдена, будет использована стандартная")
                 
                 # Создаем структуру в Google Drive (с улучшенной обработкой ошибок)
                 print(f"🔍 COMBINED_FORM_SAVE: Создаем структуру Google Drive...")
