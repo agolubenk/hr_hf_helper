@@ -3388,6 +3388,8 @@ def chat_ajax_handler(request, session_id):
                             'invite_id': invite.id,
                             'candidate_name': invite.candidate_name,
                             'vacancy_name': invite.vacancy_name,
+                            'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
+                            'interviewer_email': invite.interviewer.email if invite.interviewer else None,
                             'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
                             'candidate_url': invite.candidate_url,
                             'calendar_event_url': invite.calendar_event_url,
@@ -3669,6 +3671,7 @@ def chat_workflow(request, session_id=None):
 **Кандидат:** {invite.candidate_name or 'Не указан'}
 **Вакансия:** {invite.vacancy_title or 'Не указана'}
 **Уровень:** {invite.candidate_grade or 'Не определен'}
+**Интервьюер:** {invite.interviewer.get_full_name() if invite.interviewer else 'Не назначен'}
 **Scorecard:** {invite.google_drive_file_url or 'Создается...'}
 **Дата интервью:** {invite.interview_datetime.strftime('%d.%m.%Y %H:%M') if invite.interview_datetime else 'Не указана'}
 **Google Meet:** {invite.google_meet_url or 'Будет создана'}
@@ -3686,6 +3689,8 @@ def chat_workflow(request, session_id=None):
                                     'candidate_name': invite.candidate_name,
                                     'vacancy_name': invite.vacancy_title,
                                     'determined_grade': invite.candidate_grade,
+                                    'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
+                                    'interviewer_email': invite.interviewer.email if invite.interviewer else None,
                                     'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
                                     'candidate_url': invite.candidate_url
                                 }

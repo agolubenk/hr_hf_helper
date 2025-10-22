@@ -325,7 +325,7 @@
                                                             {% if message.invite.interviewer %}
                                                                 <div class="info-row-table">
                                                                     <span class="info-label-table">Интервьюер:</span>
-                                                                    <span class="info-value-table">{{ message.invite.interviewer.get_full_name }}</span>
+                                                                    <span class="info-value-table">{{ message.invite.interviewer.get_full_name }} ({{ message.invite.interviewer.email }})</span>
                                                                 </div>
                                                             {% endif %}
                                                         </div>
