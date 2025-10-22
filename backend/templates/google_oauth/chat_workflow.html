@@ -442,7 +442,7 @@
                             </div>
                         </div>
                         
-                        <div class="command-item mb-3">
+                        <div class="command-item mb-3 command-hover-card">
                             <div class="command-header">
                                 <span class="command-badge bg-warning">/in</span>
                                 <strong class="ms-2">Инвайт</strong>
@@ -450,15 +450,51 @@
                             <div class="command-example mt-1">
                                 <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время]</code>
                             </div>
+                            <div class="command-details-hover">
+                                <div class="alert alert-info mb-0">
+                                    <div class="d-flex align-items-start">
+                                        <i class="fas fa-info-circle me-2 mt-1"></i>
+                                        <div>
+                                            Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
+                                            <p class="mb-0 mt-2">
+                                                <code>(1 час)</code> OR <code>(60 минут)</code> OR <code>(1h)</code><br>
+                                                <code>(30 минут)</code> OR <code>(30m)</code> OR <code>(полчаса)</code> etc.
+                                            </p>
+                                            <div class="mt-2">
+                                                <strong>Пример:</strong><br>
+                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (1 ч)</code>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
-                        <div class="command-item mb-3" id="additionalCommand1">
+                        <div class="command-item mb-3 command-hover-card" id="additionalCommand1">
                             <div class="command-header">
                                 <span class="command-badge bg-info">/t</span>
                                 <strong class="ms-2">Техническое интервью</strong>
                             </div>
                             <div class="command-example mt-1">
                                 <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время]</code>
+                            </div>
+                            <div class="command-details-hover">
+                                <div class="alert alert-info mb-0">
+                                    <div class="d-flex align-items-start">
+                                        <i class="fas fa-info-circle me-2 mt-1"></i>
+                                        <div>
+                                            Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
+                                            <p class="mb-0 mt-2">
+                                                <code>(1 час)</code> OR <code>(60 минут)</code> OR <code>(1h)</code><br>
+                                                <code>(30 минут)</code> OR <code>(30m)</code> OR <code>(полчаса)</code> etc.
+                                            </p>
+                                            <div class="mt-2">
+                                                <strong>Пример:</strong><br>
+                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (1 ч)</code>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
@@ -524,18 +560,57 @@
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
+/* Стили для карточек с hover эффектом */
+.command-hover-card {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.command-hover-card .command-details-hover {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin-top: 0;
+}
+
+.command-hover-card:hover .command-details-hover {
+    opacity: 1;
+    max-height: 500px;
+    margin-top: 10px;
+}
+
+.command-hover-card:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+    border-radius: 8px;
+    padding: 10px;
+    margin: -10px;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
+}
+
+/* Уменьшаем размер шрифта в hover-блоках для соответствия основному формату */
+.command-details-hover {
+    font-size: 0.875rem; /* 14px - соответствует размеру шрифта в command-example */
+}
+
+.command-details-hover .alert {
+    font-size: 0.875rem;
+}
+
+.command-details-hover strong {
+    font-size: 0.875rem;
+}
+
+.command-details-hover code {
+    font-size: 0.8rem; /* Немного меньше для code элементов */
+}
+
 #commandsToggleIcon {
     transition: transform 0.3s ease;
 }
 
 .commands-card-header:hover #commandsToggleIcon {
     transform: scale(1.1);
-}
-    display: inline-block;
-    width: auto !important;
-    min-width: fit-content !important;
-    max-width: none !important;
-    font-family: "FKGroteskNeue", "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
 /* Пользовательские сообщения - остаются с ограничением */
@@ -973,10 +1048,66 @@
     }
     
     /* Скрываем неактивные кнопки копирования на мобильных устройствах */
-    .copy-buttons .btn-copy:disabled {
-        display: none !important;
+        .copy-buttons .btn-copy:disabled {
+            display: none !important;
+        }
     }
-}
+    
+    /* Стили для раскрывающихся деталей команд */
+    .command-header {
+        transition: background-color 0.2s ease;
+    }
+    
+    .command-header:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        border-radius: 4px;
+    }
+    
+    .command-details {
+        animation: slideDown 0.3s ease-out;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .command-details .alert {
+        border-left: 4px solid #17a2b8;
+        background-color: #f8f9fa;
+    }
+    
+    .command-details code {
+        background-color: #e9ecef;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-size: 0.9em;
+    }
+    
+    /* Стили для мигающего текста "more..." */
+    .more-text {
+        color: #6c757d;
+        font-size: 0.85em;
+        font-style: italic;
+        animation: blink 2s infinite;
+        transition: color 0.3s ease;
+    }
+    
+    .command-header:hover .more-text {
+        color: #007bff;
+        animation: none;
+    }
+    
+    @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0.3; }
+    }
 
 /* Анимации */
 .card .message {
@@ -1654,6 +1785,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // messageInput.focus();
     
     
+    // Hover эффекты теперь обрабатываются через CSS, JavaScript не нужен
+    
     // Копирование текста инвайта
     document.addEventListener('click', function(e) {
         if (e.target.closest('.copy-invitation-btn')) {
@@ -1714,13 +1847,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- Отладочная информация для событий календаря -->
 <script>
-console.log('🔍 DEBUG: calendar_events_data из Django:', {% if calendar_events_data %}{{ calendar_events_data|safe }}{% else %}[]{% endif %});
-console.log('🔍 DEBUG: Количество событий:', {% if calendar_events_data %}{{ calendar_events_data|length }}{% else %}0{% endif %});
+// Получаем данные календаря из JSON скрипта
+const calendarEventsScript = document.getElementById('calendar-events');
+if (calendarEventsScript) {
+    const calendarEventsData = JSON.parse(calendarEventsScript.textContent);
+    console.log('🔍 DEBUG: calendar_events_data из Django:', calendarEventsData);
+    console.log('🔍 DEBUG: Количество событий:', calendarEventsData ? calendarEventsData.length : 0);
+} else {
+    console.log('🔍 DEBUG: calendar_events_data не найдены');
+}
 </script>
 
 {% if selected_vacancy %}
 <script type="application/json" id="vacancy-data">
 {
+    "id": {{ selected_vacancy.id }},
+    "name": "{{ selected_vacancy.name|escapejs }}",
     "vacancy_link_belarus": "{{ selected_vacancy.vacancy_link_belarus|escapejs }}",
     "vacancy_link_poland": "{{ selected_vacancy.vacancy_link_poland|escapejs }}",
     "questions_belarus": "{{ selected_vacancy.questions_belarus|escapejs }}",
@@ -1730,14 +1872,21 @@ console.log('🔍 DEBUG: Количество событий:', {% if calendar_e
 
 <!-- Отладочная информация -->
 <script>
-console.log('🔍 DEBUG: Выбранная вакансия:', {
-    id: {{ selected_vacancy.id }},
-    name: "{{ selected_vacancy.name|escapejs }}",
-    vacancy_link_belarus: "{{ selected_vacancy.vacancy_link_belarus|escapejs }}",
-    vacancy_link_poland: "{{ selected_vacancy.vacancy_link_poland|escapejs }}",
-    questions_belarus: "{{ selected_vacancy.questions_belarus|escapejs }}",
-    questions_poland: "{{ selected_vacancy.questions_poland|escapejs }}"
-});
+// Получаем данные вакансии из JSON скрипта
+const vacancyDataScript = document.getElementById('vacancy-data');
+if (vacancyDataScript) {
+    const vacancyData = JSON.parse(vacancyDataScript.textContent);
+    console.log('🔍 DEBUG: Выбранная вакансия:', {
+        id: vacancyData.id,
+        name: vacancyData.name,
+        vacancy_link_belarus: vacancyData.vacancy_link_belarus,
+        vacancy_link_poland: vacancyData.vacancy_link_poland,
+        questions_belarus: vacancyData.questions_belarus,
+        questions_poland: vacancyData.questions_poland
+    });
+} else {
+    console.log('⚠️ DEBUG: Данные вакансии не найдены');
+}
 </script>
 {% else %}
 <script>
