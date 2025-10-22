@@ -182,23 +182,6 @@
                                     <i class="fas fa-comments me-2"></i>HR-помощник
                                     <span class="badge bg-secondary ms-2">#{{ chat_session.id }}</span>
                                 </h6>
-                                <div class="chat-title-edit">
-                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="toggleTitleEdit()" title="Редактировать название чата">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div id="title-edit-form" class="mt-2" style="display: none;">
-                                <form method="post" action="{% url 'google_oauth:update_chat_title' chat_session.id %}" class="d-flex gap-2">
-                                    {% csrf_token %}
-                                    {{ title_form.title }}
-                                    <button type="submit" class="btn btn-sm btn-success">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-secondary" onclick="toggleTitleEdit()">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </form>
                             </div>
                         </div>
                 
@@ -437,59 +420,10 @@
                     </div>
                 </div>
 
-         <!-- Боковая панель со списком сессий -->
+                <!-- Блок команд -->
                 <div class="col-lg-4">
+                    <!-- Инструкция по командам -->
                     <div class="card shadow">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">
-                         <i class="fas fa-comments me-2"></i>История чатов
-                            </h6>
-                        </div>
-                 <div class="card-body p-0 pt-2">
-                     <!-- Список сессий -->
-                     <div class="sessions-list" style="max-height: 280px; overflow-y: auto;">
-                         {% for session in all_sessions %}
-                             <div class="session-item mx-2 {% if session.id == chat_session.id %}active{% endif %}">
-                                 <a href="{% url 'google_oauth:chat_workflow_session' session.id %}" class="session-link">
-                                     <div class="session-content">
-                                         <div class="session-main-info">
-                                             <span class="session-id">#{{ session.id }}</span>
-                                             {% if session.title %}
-                                                 <span class="session-title">{{ session.title }}</span>
-                                             {% endif %}
-                                         </div>
-                                         <div class="session-date">
-                                             {% if session.last_message_date %}
-                                                 {{ session.last_message_date|date:"d.m.Y H:i" }}
-                                             {% else %}
-                                                 {{ session.updated_at|date:"d.m.Y H:i" }}
-                                             {% endif %}
-                                         </div>
-                                         {% if session.id == chat_session.id %}
-                                             <div class="session-status">
-                                                 <i class="fas fa-circle text-primary" style="font-size: 8px;"></i>
-                                             </div>
-                                         {% endif %}
-                                     </div>
-                                 </a>
-                </div>
-                         {% empty %}
-                             <div class="text-center text-muted py-4">
-                                 <i class="fas fa-comments fa-2x mb-2"></i>
-                                 <p class="mb-0">Нет чатов</p>
-            </div>
-                         {% endfor %}
-                            </div>
-                        </div>
-                 <div class="card-footer py-2">
-                     <a href="{% url 'google_oauth:chat_workflow' %}?new=true" class="btn btn-sm btn-outline-primary w-100" id="newChatBtn">
-                         <i class="fas fa-plus me-1"></i>Новый чат
-                     </a>
-                </div>
-            </div>
-            
-            <!-- Инструкция по командам -->
-            <div class="card shadow mt-3">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center" style="cursor: pointer;" onclick="toggleCommandsCard()">
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-keyboard me-2"></i>Команды чата
@@ -537,6 +471,8 @@
                                 <code class="text-primary small">Отменяет последнее созданное действие<br>(инвайт, скрининг, интервью)</code>
                             </div>
                         </div>
+                    </div>
+                </div>
                     </div>
                 </div>
             </div>
@@ -974,15 +910,6 @@
      margin-left: 6px !important;
  }
 
- .chat-title-edit {
-     display: flex;
-     align-items: center;
- }
-
- .chat-title-edit .btn {
-     padding: 4px 8px;
-     font-size: 0.8rem;
- }
 
 /* Адаптивность для мобильных - сохраняем пропорциональность */
 @media (max-width: 768px) {
@@ -1043,6 +970,11 @@
     
     .card #id_message {
         font-size: 0.85rem; /* На мобильных тоже меньше, но одинаково */
+    }
+    
+    /* Скрываем неактивные кнопки копирования на мобильных устройствах */
+    .copy-buttons .btn-copy:disabled {
+        display: none !important;
     }
 }
 
@@ -1140,134 +1072,6 @@
     color: #ccc;
 }
 
- /* === СТИЛИ ДЛЯ СПИСКА СЕССИЙ === */
- .card .sessions-list {
-     background-color: var(--hr-card-bg, #ffffff);
- }
-
- .card .session-item {
-     border-bottom: 1px solid var(--hr-border, #dee2e6);
-     transition: background-color 0.2s ease;
-     margin-bottom: var(--space-8);
-     padding: var(--space-6);
- }
-
- .card .session-item:last-child {
-     border-bottom: none;
- }
-
- .card .session-item:hover {
-     background-color: var(--hr-hover-bg, #f8f9fa);
- }
-
- .card .session-item.active {
-     background-color: var(--hr-primary-light, rgba(0, 123, 255, 0.1));
-     border-left: 3px solid var(--hr-primary, #007bff);
- }
-
- .card .session-link {
-     display: block;
-     padding: 12px 16px;
-     text-decoration: none;
-     color: inherit;
- }
-
- .card .session-link:hover {
-     text-decoration: none;
-     color: inherit;
- }
-
- .card .session-content {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     gap: 8px;
- }
-
- .card .session-main-info {
-     display: flex;
-     align-items: center;
-     gap: 8px;
-     flex: 1;
-     min-width: 0;
- }
-
- .card .session-id {
-     font-weight: 600;
-     font-size: 0.9rem;
-     color: rgb(112, 153, 112); /* --color-water-500 */
-     white-space: nowrap;
- }
-
- .card .session-title {
-     font-weight: 500;
-     font-size: 0.9rem;
-     color: var(--hr-text, #333);
-     overflow: hidden;
-     text-overflow: ellipsis;
-     white-space: nowrap;
-     flex: 1;
- }
-
- .card .session-date {
-     font-size: 0.75rem;
-     color: var(--hr-text-muted, #6c757d);
-     white-space: nowrap;
-     margin-left: 8px;
- }
-
- .card .session-status {
-     display: flex;
-     align-items: center;
-     margin-left: 8px;
- }
-
- /* Темная тема для списка сессий */
- [data-theme="dark"] .card .session-item:hover {
-     background-color: var(--color-surface-hover, #2d3748);
- }
-
- [data-theme="dark"] .card .session-item.active {
-     background-color: rgba(0, 123, 255, 0.15);
- }
-
- [data-theme="dark"] .card .session-title {
-     color: var(--color-text, #e2e8f0);
- }
-
-/* Темная тема для session-id */
-[data-theme="dark"] .card .session-id {
-    color: rgb(7, 112, 7); /* Темно-зеленый */
-}
-
-/* Темная тема для ссылок */
-[data-theme="dark"] .card .info-link-compact {
-    color: rgba(255, 64, 129, 1); /* --color-pink-600 */
-}
-
-/* Темная тема для приглушенного текста */
-[data-theme="dark"] .text-muted {
-    color: rgba(240, 248, 255, 1) !important; /* --color-luna-400 */
-}
-
- /* Скроллбар для списка сессий */
- .card .sessions-list::-webkit-scrollbar {
-     width: 4px;
- }
-
- .card .sessions-list::-webkit-scrollbar-track {
-     background: var(--hr-border, #dee2e6);
-     border-radius: 2px;
- }
-
- .card .sessions-list::-webkit-scrollbar-thumb {
-     background: var(--hr-primary, #007bff);
-     border-radius: 2px;
- }
-
- .card .sessions-list::-webkit-scrollbar-thumb:hover {
-     background: var(--hr-primary-hover, #0056b3);
- }
 
  /* === СТИЛИ ДЛЯ СЕЛЕКТОРА ВАКАНСИИ И СЛОТОВ === */
  .vacancy-selector {
@@ -1770,26 +1574,6 @@
     color: var(--color-primary, #3182ce);
 }
 
-/* === СТИЛИ ДЛЯ КНОПКИ РЕДАКТИРОВАНИЯ ЗАГОЛОВКА ЧАТА === */
-/* Скрываем кнопку редактирования по умолчанию */
-.chat-title-edit {
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
-}
-
-/* Показываем кнопку при наведении на карточку */
-.card:hover .chat-title-edit {
-    opacity: 1;
-}
-
-/* Дополнительные стили для кнопки */
-.chat-title-edit .btn {
-    transition: all 0.2s ease-in-out;
-}
-
-.chat-title-edit .btn:hover {
-    transform: scale(1.05);
-}
 </style>
 
 <script>
@@ -1869,21 +1653,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Фокус на поле ввода (убираем автоматический фокус при загрузке)
     // messageInput.focus();
     
-    // Обработка кнопки "Новый чат"
-    const newChatBtn = document.getElementById('newChatBtn');
-    if (newChatBtn) {
-        newChatBtn.addEventListener('click', function(e) {
-            const originalText = this.innerHTML;
-            this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Создание...';
-            this.style.pointerEvents = 'none';
-            
-            // Восстанавливаем кнопку через 2 секунды на случай, если редирект не произойдет
-            setTimeout(() => {
-                this.innerHTML = originalText;
-                this.style.pointerEvents = 'auto';
-            }, 2000);
-        });
-    }
     
     // Копирование текста инвайта
     document.addEventListener('click', function(e) {
@@ -2090,21 +1859,6 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                 });
             });
             
-            // Функция для переключения формы редактирования названия чата
-            function toggleTitleEdit() {
-                const form = document.getElementById('title-edit-form');
-                if (form.style.display === 'none') {
-                    form.style.display = 'block';
-                    // Фокусируемся на поле ввода
-                    const input = form.querySelector('input[type="text"]');
-                    if (input) {
-                        input.focus();
-                        input.select();
-                    }
-                } else {
-                    form.style.display = 'none';
-                }
-            }
             
             // Функция для переключения карточки команд
             function toggleCommandsCard() {

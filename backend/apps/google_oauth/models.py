@@ -3867,6 +3867,7 @@ class ChatSession(models.Model):
     """Модель для хранения сессий чата"""
     
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_sessions')
+    vacancy = models.ForeignKey('vacancies.Vacancy', on_delete=models.CASCADE, related_name='chat_sessions', verbose_name="Вакансия", null=True, blank=True)
     title = models.CharField(max_length=200, blank=True, verbose_name="Название чата")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Обновлено")
@@ -3878,8 +3879,8 @@ class ChatSession(models.Model):
     
     def __str__(self):
         if self.title:
-            return f'{self.title} (#{self.id})'
-        return f'Чат #{self.id} - {self.user.username} ({self.created_at.strftime("%d.%m.%Y %H:%M")})'
+            return f'{self.title} - {self.vacancy.name if self.vacancy else "Без вакансии"} (#{self.id})'
+        return f'{self.vacancy.name if self.vacancy else "Без вакансии"} - Чат #{self.id} ({self.created_at.strftime("%d.%m.%Y %H:%M")})'
 
 
 class ChatMessage(models.Model):
