@@ -321,6 +321,13 @@
                                                                     <span class="info-value-table">{{ message.invite.interview_datetime|date:"Y-m-d H:i" }}</span>
                                                                 </div>
                                                             {% endif %}
+                                                            
+                                                            {% if message.invite.interviewer %}
+                                                                <div class="info-row-table">
+                                                                    <span class="info-label-table">Интервьюер:</span>
+                                                                    <span class="info-value-table">{{ message.invite.interviewer.get_full_name }}</span>
+                                                                </div>
+                                                            {% endif %}
                                                         </div>
                                                         
                                                         <div class="status-message-compact">
@@ -393,11 +400,16 @@
                                               style="display:none; font-weight:bold;">
                                         </span>
 
-                                        <div class="input-group">
+                                        <div class="input-group position-relative">
                                             {{ form.message }}
                                             <button type="submit" class="btn btn-primary" id="send-btn">
                                                 <i class="fas fa-paper-plane"></i>
                                             </button>
+                                            
+                                            <!-- Выпадающий список автодополнения интервьюеров -->
+                                            <div id="interviewers-autocomplete" class="autocomplete-dropdown" style="display: none;">
+                                                <div class="autocomplete-list"></div>
+                                            </div>
                                         </div>
                                         
                                         <!-- Скрытое поле для передачи типа действия -->
@@ -603,6 +615,94 @@
 
 .command-details-hover code {
     font-size: 0.8rem; /* Немного меньше для code элементов */
+}
+
+/* Стили для автодополнения интервьюеров */
+.autocomplete-dropdown {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #007bff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 123, 255, 0.25);
+    z-index: 1050;
+    max-height: 300px;
+    margin-bottom: 8px;
+    overflow-y: auto;
+}
+
+.autocomplete-list {
+    padding: 0;
+    margin: 0;
+}
+
+.autocomplete-item {
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.active {
+    background-color: #e3f2fd;
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
+}
+
+.autocomplete-item:last-child {
+    border-bottom: none;
+}
+
+.autocomplete-username {
+    font-weight: bold;
+    color: #007bff;
+    margin-right: 12px;
+    font-size: 1.1rem;
+}
+
+.autocomplete-name {
+    color: #495057;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.autocomplete-email {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-left: auto;
+}
+
+/* Темная тема для автодополнения */
+[data-theme="dark"] .autocomplete-dropdown {
+    background: #343a40;
+    border-color: #007bff;
+    box-shadow: 0 0.5rem 1rem rgba(0, 123, 255, 0.4);
+}
+
+[data-theme="dark"] .autocomplete-item {
+    border-bottom-color: #495057;
+}
+
+[data-theme="dark"] .autocomplete-item:hover,
+[data-theme="dark"] .autocomplete-item.active {
+    background-color: #1e3a5f;
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+[data-theme="dark"] .autocomplete-name {
+    color: #e9ecef;
+}
+
+[data-theme="dark"] .autocomplete-email {
+    color: #adb5bd;
 }
 
 #commandsToggleIcon {
@@ -1714,6 +1814,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const messageInput = document.getElementById('id_message');
     const sendBtn = document.getElementById('send-btn');
     
+    console.log('🔍 INIT: messageInput element:', messageInput);
+    console.log('🔍 INIT: sendBtn element:', sendBtn);
+    console.log('🔍 INIT: chatForm element:', chatForm);
+    
     // Прокрутка вниз чата (без скролла всей страницы)
     function scrollToBottom() {
         if (chatMessages) {
@@ -1780,6 +1884,223 @@ document.addEventListener('DOMContentLoaded', function() {
             chatForm.submit();
         }
     });
+    
+    // Автодополнение интервьюеров
+    let autocompleteTimeout;
+    let currentAutocompleteIndex = -1;
+    let currentAutocompleteResults = [];
+    
+    messageInput.addEventListener('input', function() {
+        const value = this.value;
+        const cursorPos = this.selectionStart;
+        console.log('🔍 INPUT_EVENT: Value:', value, 'Cursor:', cursorPos);
+        console.log('🔍 INPUT_EVENT: Message input element:', this);
+
+        // Ищем @ в тексте перед курсором
+        const textBeforeCursor = value.substring(0, cursorPos);
+        const lastAtIndex = textBeforeCursor.lastIndexOf('@');
+        console.log('🔍 INPUT_EVENT: Text before cursor:', textBeforeCursor, 'Last @ index:', lastAtIndex);
+
+        if (lastAtIndex !== -1) {
+            const textAfterAt = textBeforeCursor.substring(lastAtIndex + 1);
+            console.log('🔍 INPUT_EVENT: Text after @:', textAfterAt);
+
+            // Проверяем, что после @ нет пробелов (значит это начало упоминания)
+            if (!textAfterAt.includes(' ') && !textAfterAt.includes('\n')) {
+                const query = textAfterAt;
+                console.log('🔍 INPUT_EVENT: Query for autocomplete:', query);
+
+                // Очищаем предыдущий таймаут
+                clearTimeout(autocompleteTimeout);
+
+                // Устанавливаем новый таймаут для запроса
+                autocompleteTimeout = setTimeout(() => {
+                    fetchInterviewers(query);
+                }, 300); // Задержка 300мс
+
+                return;
+            }
+        }
+
+        // Скрываем автодополнение, если нет @
+        console.log('🔍 INPUT_EVENT: Hiding autocomplete');
+        hideAutocomplete();
+    });
+    
+    // Обработка клавиш для навигации по автодополнению
+    messageInput.addEventListener('keydown', function(e) {
+        const autocomplete = document.getElementById('interviewers-autocomplete');
+        
+        if (autocomplete.style.display === 'block') {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                navigateAutocomplete(1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                navigateAutocomplete(-1);
+            } else if (e.key === 'Enter' && currentAutocompleteIndex >= 0) {
+                e.preventDefault();
+                selectAutocompleteItem(currentAutocompleteResults[currentAutocompleteIndex]);
+            } else if (e.key === 'Escape') {
+                hideAutocomplete();
+            }
+        }
+    });
+    
+    // Скрытие автодополнения при клике вне его
+    document.addEventListener('click', function(e) {
+        const autocomplete = document.getElementById('interviewers-autocomplete');
+        if (!autocomplete.contains(e.target) && e.target !== messageInput) {
+            hideAutocomplete();
+        }
+    });
+    
+    function fetchInterviewers(query) {
+        console.log('🔍 FETCH_INTERVIEWERS: Запрос:', query);
+        const vacancyId = new URLSearchParams(window.location.search).get('vacancy_id');
+        console.log('🔍 FETCH_INTERVIEWERS: Vacancy ID:', vacancyId);
+        console.log('🔍 FETCH_INTERVIEWERS: Current URL:', window.location.href);
+        
+        if (!vacancyId) {
+            console.log('❌ FETCH_INTERVIEWERS: Нет vacancy_id');
+            hideAutocomplete();
+            return;
+        }
+        
+        const url = `/google-oauth/api/interviewers-autocomplete/?vacancy_id=${vacancyId}&q=${encodeURIComponent(query)}`;
+        console.log('🔍 FETCH_INTERVIEWERS: URL:', url);
+        
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(response => {
+                console.log('🔍 FETCH_INTERVIEWERS: Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('🔍 FETCH_INTERVIEWERS: Response data:', data);
+                console.log('🔍 FETCH_INTERVIEWERS: data.success:', data.success);
+                console.log('🔍 FETCH_INTERVIEWERS: data.results:', data.results);
+                console.log('🔍 FETCH_INTERVIEWERS: data.results.length:', data.results ? data.results.length : 'undefined');
+                if (data.success && data.results.length > 0) {
+                    console.log('🔍 FETCH_INTERVIEWERS: Calling showAutocomplete');
+                    showAutocomplete(data.results);
+                } else {
+                    console.log('🔍 FETCH_INTERVIEWERS: Calling hideAutocomplete');
+                    hideAutocomplete();
+                }
+            })
+            .catch(error => {
+                console.error('❌ FETCH_INTERVIEWERS: Ошибка загрузки интервьюеров:', error);
+                hideAutocomplete();
+            });
+    }
+    
+    function showAutocomplete(results) {
+        console.log('🔍 SHOW_AUTOCOMPLETE: Results:', results);
+        console.log('🔍 SHOW_AUTOCOMPLETE: Showing autocomplete dropdown');
+        currentAutocompleteResults = results;
+        currentAutocompleteIndex = -1;
+        
+        const autocomplete = document.getElementById('interviewers-autocomplete');
+        const list = autocomplete.querySelector('.autocomplete-list');
+        
+        list.innerHTML = '';
+        
+        results.forEach((interviewer, index) => {
+            const item = document.createElement('div');
+            item.className = 'autocomplete-item';
+            item.dataset.index = index;
+            
+            item.innerHTML = `
+                <span class="autocomplete-username">${interviewer.username}</span>
+                <span class="autocomplete-name">${interviewer.full_name}</span>
+                <span class="autocomplete-email">${interviewer.email}</span>
+            `;
+            
+            item.addEventListener('click', () => selectAutocompleteItem(interviewer));
+            list.appendChild(item);
+        });
+        
+        autocomplete.style.display = 'block';
+    }
+    
+    function hideAutocomplete() {
+        console.log('🔍 HIDE_AUTOCOMPLETE: Hiding autocomplete dropdown');
+        const autocomplete = document.getElementById('interviewers-autocomplete');
+        autocomplete.style.display = 'none';
+        currentAutocompleteResults = [];
+        currentAutocompleteIndex = -1;
+    }
+    
+    function navigateAutocomplete(direction) {
+        if (currentAutocompleteResults.length === 0) return;
+        
+        // Убираем активный класс с текущего элемента
+        const items = document.querySelectorAll('.autocomplete-item');
+        if (currentAutocompleteIndex >= 0) {
+            items[currentAutocompleteIndex].classList.remove('active');
+        }
+        
+        // Вычисляем новый индекс
+        currentAutocompleteIndex += direction;
+        
+        if (currentAutocompleteIndex < 0) {
+            currentAutocompleteIndex = currentAutocompleteResults.length - 1;
+        } else if (currentAutocompleteIndex >= currentAutocompleteResults.length) {
+            currentAutocompleteIndex = 0;
+        }
+        
+        // Добавляем активный класс к новому элементу
+        items[currentAutocompleteIndex].classList.add('active');
+    }
+    
+    function selectAutocompleteItem(interviewer) {
+        console.log('🔍 SELECT_AUTOCOMPLETE: Выбран интервьюер:', interviewer);
+        
+        const value = messageInput.value;
+        const cursorPos = messageInput.selectionStart;
+        
+        // Находим позицию @
+        const textBeforeCursor = value.substring(0, cursorPos);
+        const lastAtIndex = textBeforeCursor.lastIndexOf('@');
+        
+        if (lastAtIndex !== -1) {
+            // Заменяем текст от @ до курсора на username интервьюера
+            const newValue = value.substring(0, lastAtIndex) + interviewer.username + ' ' + value.substring(cursorPos);
+            messageInput.value = newValue;
+            
+            // Устанавливаем курсор после username
+            const newCursorPos = lastAtIndex + interviewer.username.length + 1;
+            messageInput.setSelectionRange(newCursorPos, newCursorPos);
+            
+            // Добавляем информацию об интервьюере в скрытое поле для отправки на сервер
+            const interviewerInfo = document.createElement('input');
+            interviewerInfo.type = 'hidden';
+            interviewerInfo.name = 'selected_interviewer';
+            interviewerInfo.value = JSON.stringify({
+                id: interviewer.id,
+                username: interviewer.username,
+                email: interviewer.email,
+                full_name: interviewer.full_name
+            });
+            
+            // Добавляем в форму, если её нет - создаем
+            let chatForm = document.getElementById('chat-form');
+            if (!chatForm) {
+                chatForm = messageInput.closest('form');
+            }
+            chatForm.appendChild(interviewerInfo);
+        }
+        
+        hideAutocomplete();
+        messageInput.focus();
+    }
+    
     
     // Фокус на поле ввода (убираем автоматический фокус при загрузке)
     // messageInput.focus();

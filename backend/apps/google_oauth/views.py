@@ -10,6 +10,7 @@ from django.utils.translation import gettext as _
 from datetime import datetime, timedelta
 from django.contrib.auth import get_user_model, login
 from django import forms
+from django.db import models
 import json
 
 from .models import GoogleOAuthAccount, ScorecardPathSettings, SlotsSettings
@@ -2974,6 +2975,69 @@ def api_calendar_events(request):
 
 
 @login_required
+def api_interviewers_autocomplete(request):
+    """API для автодополнения интервьюеров по вакансии"""
+    try:
+        vacancy_id = request.GET.get('vacancy_id')
+        query = request.GET.get('q', '').strip()
+        
+        print(f"🔍 API INTERVIEWERS AUTOCOMPLETE: vacancy_id={vacancy_id}, query='{query}'")
+        
+        if not vacancy_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Не указан ID вакансии'
+            })
+        
+        # Получаем вакансию
+        from apps.vacancies.models import Vacancy
+        try:
+            vacancy = Vacancy.objects.get(id=vacancy_id)
+        except Vacancy.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Вакансия не найдена'
+            })
+        
+        # Получаем интервьюеров, привязанных к вакансии
+        interviewers = vacancy.interviewers.filter(is_active=True)
+        
+        # Фильтруем по запросу, если он есть
+        if query:
+            interviewers = interviewers.filter(
+                models.Q(first_name__icontains=query) |
+                models.Q(last_name__icontains=query) |
+                models.Q(email__icontains=query)
+            )
+        
+        # Формируем результат
+        results = []
+        for interviewer in interviewers[:10]:  # Ограничиваем до 10 результатов
+            results.append({
+                'id': interviewer.id,
+                'username': interviewer.email.split('@')[0],  # Используем часть email до @ как username
+                'full_name': interviewer.get_full_name(),
+                'email': interviewer.email
+            })
+        
+        print(f"🔍 API INTERVIEWERS AUTOCOMPLETE: Найдено {len(results)} интервьюеров")
+        
+        return JsonResponse({
+            'success': True,
+            'results': results
+        })
+        
+    except Exception as e:
+        print(f"❌ API INTERVIEWERS AUTOCOMPLETE: Ошибка: {e}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка получения интервьюеров: {str(e)}'
+        })
+
+
+@login_required
 @permission_required('google_oauth.view_hrscreening', raise_exception=True)
 def combined_workflow(request):
     """Объединенная страница для HR-скрининга и инвайтов"""
@@ -3026,6 +3090,12 @@ def combined_workflow(request):
                     
                     # Создаем данные для InviteCombinedForm
                     invite_form_data = {'combined_data': combined_data}
+                    
+                    # Передаем данные об интервьюере, если они есть
+                    if 'selected_interviewer' in request.POST:
+                        invite_form_data['selected_interviewer'] = request.POST['selected_interviewer']
+                        print(f"🔍 COMBINED_WORKFLOW: Передаем данные об интервьюере: {request.POST['selected_interviewer']}")
+                    
                     invite_form = InviteCombinedForm(invite_form_data, user=request.user)
                     
                     if invite_form.is_valid():
@@ -3293,7 +3363,14 @@ def chat_ajax_handler(request, session_id):
 
         elif action_type == 'invite':
             # Создаем инвайт
-            invite_form = InviteCombinedForm({'input_data': message_text}, user=request.user)
+            invite_form_data = {'combined_data': message_text}
+            
+            # Передаем данные об интервьюере, если они есть
+            if 'selected_interviewer' in request.POST:
+                invite_form_data['selected_interviewer'] = request.POST['selected_interviewer']
+                print(f"🔍 CHAT AJAX: Передаем данные об интервьюере: {request.POST['selected_interviewer']}")
+            
+            invite_form = InviteCombinedForm(invite_form_data, user=request.user)
             
             if invite_form.is_valid():
                 try:
@@ -3574,7 +3651,14 @@ def chat_workflow(request, session_id=None):
 
                 elif action_type == 'invite':
                     # Создаем инвайт с ПРАВИЛЬНЫМИ данными
-                    invite_form = InviteCombinedForm({'combined_data': message_text}, user=request.user)
+                    invite_form_data = {'combined_data': message_text}
+                    
+                    # Передаем данные об интервьюере, если они есть
+                    if 'selected_interviewer' in request.POST:
+                        invite_form_data['selected_interviewer'] = request.POST['selected_interviewer']
+                        print(f"🔍 CHAT: Передаем данные об интервьюере: {request.POST['selected_interviewer']}")
+                    
+                    invite_form = InviteCombinedForm(invite_form_data, user=request.user)
                     
                     if invite_form.is_valid():
                         try:

@@ -205,11 +205,16 @@ class InviteCombinedForm(forms.ModelForm):
         widget=forms.Textarea(attrs={
             'class': 'form-control',
             'rows': 5,
-            'placeholder': 'Вставьте ссылку и дату-время в одном поле...\n\nПримеры:\nhttps://huntflow.ru/my/org#/vacancy/123/filter/456/id/789\n2025-09-15 14:00\n2025-09-15 14:00 (1 час)\n2025-09-15 14:00 (30 минут)',
+            'placeholder': 'Вставьте ссылку и дата-время в одном поле...\n\nПримеры:\nhttps://huntflow.ru/my/org#/vacancy/123/filter/456/id/789\n2025-09-15 14:00\n2025-09-15 14:00 (1 час)\n2025-09-15 14:00 (30 минут)',
             'required': True
         }),
         label=_('Ссылка на кандидата и дата-время интервью'),
-        help_text=_('Вставьте ссылку на кандидата и дату-время интервью в одном поле. Система автоматически извлечет ссылку и дату. Для указания кастомной длительности добавьте в скобках: (1 час), (30 минут), (полчаса), (2 ч), (45 м).')
+        help_text=_('Вставьте ссылку на кандидата и дата-время интервью в одном поле. Система автоматически извлечет ссылку и дату. Для указания кастомной длительности добавьте в скобках: (1 час), (30 минут), (полчаса), (2 ч), (45 м).')
+    )
+    
+    selected_interviewer = forms.CharField(
+        required=False,
+        widget=forms.HiddenInput()
     )
     
     class Meta:
@@ -300,6 +305,23 @@ class InviteCombinedForm(forms.ModelForm):
         if 'combined_data' in self.cleaned_data:
             invite.original_form_data = self.cleaned_data['combined_data']
             print(f"🔍 COMBINED_FORM_SAVE: Сохранены исходные данные: {invite.original_form_data[:100]}...")
+        
+        # Обрабатываем выбранного интервьюера
+        if 'selected_interviewer' in self.cleaned_data and self.cleaned_data['selected_interviewer']:
+            try:
+                import json
+                interviewer_data = json.loads(self.cleaned_data['selected_interviewer'])
+                interviewer_id = interviewer_data.get('id')
+                if interviewer_id:
+                    from apps.interviewers.models import Interviewer
+                    try:
+                        interviewer = Interviewer.objects.get(id=interviewer_id)
+                        invite.interviewer = interviewer
+                        print(f"✅ COMBINED_FORM_SAVE: Установлен интервьюер: {interviewer.get_full_name()}")
+                    except Interviewer.DoesNotExist:
+                        print(f"⚠️ COMBINED_FORM_SAVE: Интервьюер с ID {interviewer_id} не найден")
+            except (json.JSONDecodeError, KeyError) as e:
+                print(f"⚠️ COMBINED_FORM_SAVE: Ошибка обработки данных интервьюера: {e}")
         
         print(f"🔍 COMBINED_FORM_SAVE: Инвайт создан, user: {invite.user}")
         
@@ -698,6 +720,11 @@ class CombinedForm(forms.Form):
         }),
         label=_('Ссылка на кандидата и данные'),
         help_text=_('Вставьте ссылку на кандидата и любые дополнительные данные. Система автоматически определит тип действия: если есть дата/время - создаст инвайт, если много текста - проведет HR-скрининг.')
+    )
+    
+    selected_interviewer = forms.CharField(
+        required=False,
+        widget=forms.HiddenInput()
     )
     
     def __init__(self, *args, **kwargs):

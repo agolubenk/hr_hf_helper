@@ -90,14 +90,14 @@ class SlotsSettingsAdmin(admin.ModelAdmin):
 class InviteAdmin(admin.ModelAdmin):
     list_display = [
         'id', 'candidate_name', 'vacancy_title', 'interview_datetime', 
-        'status', 'has_gemini_data', 'created_at'
+        'interviewer', 'status', 'has_gemini_data', 'created_at'
     ]
     list_filter = [
-        'status', 'created_at', 'updated_at', 'interview_datetime'
+        'status', 'created_at', 'updated_at', 'interview_datetime', 'interviewer'
     ]
     search_fields = [
         'candidate_name', 'vacancy_title', 'candidate_id', 'vacancy_id',
-        'user__username', 'user__email'
+        'user__username', 'user__email', 'interviewer__first_name', 'interviewer__last_name', 'interviewer__email'
     ]
     readonly_fields = [
         'created_at', 'updated_at', 'candidate_id', 'vacancy_id',
@@ -106,7 +106,7 @@ class InviteAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Основная информация', {
-            'fields': ('user', 'status', 'candidate_url', 'interview_datetime')
+            'fields': ('user', 'status', 'candidate_url', 'interview_datetime', 'interviewer')
         }),
         ('Информация о кандидате', {
             'fields': ('candidate_id', 'candidate_name', 'candidate_grade')

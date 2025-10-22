@@ -276,6 +276,16 @@ class Invite(models.Model):
         help_text=_("Весь текст, введенный пользователем в комбинированную форму")
     )
     
+    # Выбранный интервьюер
+    interviewer = models.ForeignKey(
+        'interviewers.Interviewer',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_("Интервьюер"),
+        help_text=_("Интервьюер, назначенный для проведения интервью")
+    )
+    
     # Данные от Gemini AI
     gemini_suggested_datetime = models.CharField(
         _("Предложенное время от Gemini"),
@@ -1279,6 +1289,11 @@ class Invite(models.Model):
             elif self.user and hasattr(self.user, 'email') and self.user.email:
                 attendees.append(self.user.email)
                 print(f"👥 Добавляем пользователя в участники: {self.user.email}")
+            
+            # Добавляем email интервьюера в участники
+            if self.interviewer and self.interviewer.email:
+                attendees.append(self.interviewer.email)
+                print(f"👥 Добавляем интервьюера в участники: {self.interviewer.email}")
             
             # Создаем событие
             created_event = calendar_service.create_event(
