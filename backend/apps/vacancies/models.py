@@ -268,6 +268,49 @@ class Vacancy(models.Model):
         if self.tech_interview_stage:
             stages['tech_interview'] = self.tech_interview_stage
         return stages
+    
+    def get_stage_name(self, stage_id, user=None):
+        """
+        Получить название этапа по ID из Huntflow
+        
+        Args:
+            stage_id: ID этапа в Huntflow
+            user: Пользователь для получения API ключей Huntflow
+            
+        Returns:
+            Название этапа или ID если не найдено
+        """
+        if not stage_id or not user:
+            return stage_id or "Не указан"
+        
+        try:
+            from apps.huntflow.services import HuntflowService
+            from apps.huntflow.utils import get_correct_account_id
+            
+            # Получаем правильный account_id
+            account_id = get_correct_account_id(user, None)
+            if not account_id:
+                return stage_id
+            
+            # Получаем сервис Huntflow
+            huntflow_service = HuntflowService(user)
+            
+            # Получаем статусы
+            statuses = huntflow_service.get_vacancy_statuses(account_id)
+            if not statuses or 'items' not in statuses:
+                return stage_id
+            
+            # Ищем статус по ID
+            for status in statuses['items']:
+                if str(status['id']) == str(stage_id):
+                    return status.get('name', stage_id)
+            
+            return stage_id
+            
+        except Exception as e:
+            # В случае ошибки возвращаем ID
+            print(f"Ошибка при получении названия этапа {stage_id}: {e}")
+            return stage_id
 
 
 class SalaryRange(models.Model):

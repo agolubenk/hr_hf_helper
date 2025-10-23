@@ -1,5 +1,5 @@
 {% extends 'common/base.html' %}
-{% load custom_filters %}
+{% load vacancy_extras %}
 
 {% block title %}{{ vacancy.name }} - HR Helper{% endblock %}
 {% block page_title %}{{ vacancy.name }}{% endblock %}
@@ -116,7 +116,7 @@
                                         <div class="bg-light p-2 rounded">
                                             {{ vacancy.invite_text|linebreaks|default:"Не указан" }}
                                         </div>
-                                        <p class="mt-2"><strong>Следующий этап:</strong> {{ vacancy.hr_screening_stage|default:"Не указан" }}</p>
+                                        <p class="mt-2"><strong>Следующий этап:</strong> {{ vacancy.hr_screening_stage|get_stage_name|default:"Не указан" }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -137,7 +137,7 @@
                                         <div class="bg-warning bg-opacity-10 p-2 rounded">
                                             {{ vacancy.tech_invite_text|linebreaks|default:"Не указан" }}
                                         </div>
-                                        <p class="mt-2"><strong>Следующий этап:</strong> {{ vacancy.tech_screening_stage|default:"Не указан" }}</p>
+                                        <p class="mt-2"><strong>Следующий этап:</strong> {{ vacancy.tech_screening_stage|get_stage_name|default:"Не указан" }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -155,7 +155,7 @@
                                         <p><strong>Длительность:</strong> <span class="badge bg-secondary">Используется из Tech Screening</span></p>
                                         <p><strong>Заголовок инвайтов:</strong> <span class="badge bg-secondary">Используется из Tech Screening</span></p>
                                         <p><strong>Сопровождающий текст:</strong> <span class="badge bg-secondary">Используется из Tech Screening</span></p>
-                                        <p class="mt-2"><strong>Следующий этап:</strong> {{ vacancy.tech_interview_stage|default:"Не указан" }}</p>
+                                        <p class="mt-2"><strong>Следующий этап:</strong> {{ vacancy.tech_interview_stage|get_stage_name|default:"Не указан" }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -281,7 +281,7 @@
                             <div class="d-flex flex-wrap gap-2">
                                 {% for interviewer in vacancy.interviewers.all %}
                                     <span class="badge bg-primary">
-                                        <i class="fas fa-user me-1"></i>{{ interviewer.name }}
+                                        <i class="fas fa-user me-1"></i>{{ interviewer.get_full_name }}
                                     </span>
                                 {% endfor %}
                             </div>
@@ -304,7 +304,7 @@
                             <div class="d-flex flex-wrap gap-2">
                                 {% for interviewer in vacancy.mandatory_tech_interviewers.all %}
                                     <span class="badge bg-warning">
-                                        <i class="fas fa-user-tie me-1"></i>{{ interviewer.name }}
+                                        <i class="fas fa-user-tie me-1"></i>{{ interviewer.get_full_name }}
                                     </span>
                                 {% endfor %}
                             </div>
@@ -323,28 +323,52 @@
                         </h6>
                     </div>
                     <div class="card-body">
-                        {% if vacancy.available_grades.all %}
+                        {% if salary_ranges %}
                             <div class="table-responsive">
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
                                             <th>Грейд</th>
-                                            <th>Описание</th>
+                                            <th>Зарплата (USD)</th>
+                                            <th>Зарплата (BYN)</th>
+                                            <th>Зарплата (PLN)</th>
+                                            <th>Зарплата (EUR)</th>
                                             <th>Статус</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for grade in vacancy.available_grades.all %}
+                                        {% for salary_range in salary_ranges %}
                                             <tr>
                                                 <td>
-                                                    <span class="badge bg-info">{{ grade.name }}</span>
+                                                    <span class="badge bg-info">{{ salary_range.grade.name }}</span>
                                                 </td>
-                                                <td>{{ grade.description|default:"Описание не указано" }}</td>
+                                                <td>${{ salary_range.salary_min_usd }} - ${{ salary_range.salary_max_usd }}</td>
                                                 <td>
-                                                    {% if grade.is_active %}
-                                                        <span class="badge bg-success">Активен</span>
+                                                    {% if salary_range.salary_min_byn and salary_range.salary_max_byn %}
+                                                        {{ salary_range.salary_min_byn }} - {{ salary_range.salary_max_byn }} BYN
                                                     {% else %}
-                                                        <span class="badge bg-secondary">Неактивен</span>
+                                                        <span class="text-muted">Не рассчитано</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if salary_range.salary_min_pln and salary_range.salary_max_pln %}
+                                                        {{ salary_range.salary_min_pln }} - {{ salary_range.salary_max_pln }} PLN
+                                                    {% else %}
+                                                        <span class="text-muted">Не рассчитано</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if salary_range.salary_min_eur and salary_range.salary_max_eur %}
+                                                        {{ salary_range.salary_min_eur }} - {{ salary_range.salary_max_eur }} EUR
+                                                    {% else %}
+                                                        <span class="text-muted">Не рассчитано</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if salary_range.is_active %}
+                                                        <span class="badge bg-success">Активна</span>
+                                                    {% else %}
+                                                        <span class="badge bg-secondary">Неактивна</span>
                                                     {% endif %}
                                                 </td>
                                             </tr>
