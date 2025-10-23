@@ -5,7 +5,6 @@ from django.http import HttpResponse
 from django.conf import settings
 from django.conf.urls import handler404, handler500, handler403
 from django.conf.urls.static import static
-# from django_telethon.urls import django_telethon_urls  # Отключено
 
 def redirect_to_chat(request):
     return redirect('/google-oauth/chat/')
@@ -36,10 +35,7 @@ urlpatterns = [
     path('finance/', include('apps.finance.urls')),
     path('clickup/', include('apps.clickup_int.urls')),
     path('notion/', include('apps.notion_int.urls')),
-    # path('telegram-api/', django_telethon_urls()),  # Отключено
-    
-    # Test page
-    path('test-telegram/', lambda request: HttpResponse(open('/Users/agolubenko/hrhelper/fullstack/backend/test_simple_telegram.html').read(), content_type='text/html'), name='test_telegram'),
+    path('hiring-plans/', include('apps.hiring_plan.urls')),
     
     # Common URLs (обработчики ошибок)
     path('common/', include('apps.common.urls')),

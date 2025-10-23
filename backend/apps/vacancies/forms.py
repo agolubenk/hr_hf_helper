@@ -138,6 +138,9 @@ class VacancyForm(forms.ModelForm):
         # Ограничиваем выбор рекрутеров только группой "Рекрутер"
         self.fields['recruiter'].queryset = User.objects.filter(groups__name='Рекрутер')
         
+        # Ограничиваем выбор только активными интервьюерами для обязательных участников
+        self.fields['mandatory_tech_interviewers'].queryset = Interviewer.objects.filter(is_active=True)
+        
         # Ограничиваем выбор только активными грейдами (все грейды активны по умолчанию)
         from apps.finance.models import Grade
         self.fields['available_grades'].queryset = Grade.objects.all()
@@ -156,9 +159,9 @@ class VacancyForm(forms.ModelForm):
     class Meta:
         model = Vacancy
         fields = [
-            'name', 'external_id', 'recruiter', 'invite_title', 'invite_text',
-            'scorecard_title', 'scorecard_link', 'questions_belarus', 'questions_poland',
-            'vacancy_link_belarus', 'vacancy_link_poland',
+            'name', 'external_id', 'recruiter', 'technologies', 'tech_interview_duration', 'mandatory_tech_interviewers',
+            'invite_title', 'invite_text', 'tech_invite_title', 'tech_invite_text', 'scorecard_title', 'scorecard_link', 
+            'questions_belarus', 'questions_poland', 'vacancy_link_belarus', 'vacancy_link_poland',
             'candidate_update_prompt', 'screening_duration',
             'hr_screening_stage', 'tech_screening_stage', 'tech_interview_stage',
             'available_grades', 'interviewers', 'is_active'
@@ -175,6 +178,19 @@ class VacancyForm(forms.ModelForm):
             'recruiter': forms.Select(attrs={
                 'class': 'form-select'
             }),
+            'technologies': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Python, Django, PostgreSQL, Redis'
+            }),
+            'tech_interview_duration': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': '60',
+                'min': '1',
+                'max': '480'
+            }),
+            'mandatory_tech_interviewers': forms.CheckboxSelectMultiple(attrs={
+                'class': 'form-check-input'
+            }),
             'invite_title': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Заголовок для приглашений'
@@ -183,6 +199,15 @@ class VacancyForm(forms.ModelForm):
                 'class': 'form-control',
                 'rows': 4,
                 'placeholder': 'Сопровождающий текст для приглашений'
+            }),
+            'tech_invite_title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Заголовок для приглашений на тех. интервью'
+            }),
+            'tech_invite_text': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Сопровождающий текст для приглашений на тех. интервью'
             }),
             'scorecard_title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -234,9 +259,14 @@ class VacancyForm(forms.ModelForm):
         labels = {
             'name': 'Название вакансии',
             'external_id': 'ID для связи',
+            'technologies': 'Технологии',
+            'tech_interview_duration': 'Длительность тех. интервью (минуты)',
+            'mandatory_tech_interviewers': 'Обязательные участники тех. интервью',
             'recruiter': 'Ответственный рекрутер',
             'invite_title': 'Заголовок инвайтов',
             'invite_text': 'Сопровождающий текст для инвайтов',
+            'tech_invite_title': 'Заголовок инвайтов на тех. интервью',
+            'tech_invite_text': 'Сопровождающий текст для инвайтов на тех. интервью',
             'scorecard_title': 'Заголовок Scorecard',
             'scorecard_link': 'Ссылка на Scorecard',
             'questions_belarus': 'Вопросы Беларусь',

@@ -101,6 +101,7 @@ INSTALLED_APPS = [
     'apps.google_oauth',
     'apps.clickup_int',
     'apps.notion_int',
+    'apps.hiring_plan',
     
     # Django Telethon (отключено из-за конфликтов)
     # 'django_telethon',
@@ -273,18 +274,11 @@ except ImportError:
 #     'apps.clickup_int.tasks.import_single_task': {'queue': 'clickup_import'},
 # }
 
-# Django Telethon настройки
-DJANGO_TELETHON = {
-    'RABBITMQ_ACTIVE': False,  # Отключаем RabbitMQ для начала
-    'RABBITMQ_URL': 'amqp://localhost:5672',
-    'QUEUE_CHANNEL_NAME': 'telegram_queue',
-    'QUEUE_CALLBACK': 'django_telethon.callback.on_message'
-}
 
-# Telegram API настройки (получить на my.telegram.org)
-TELEGRAM_API_ID = os.environ.get('TELEGRAM_API_ID', '12345678')
-TELEGRAM_API_HASH = os.environ.get('TELEGRAM_API_HASH', 'test_hash_for_demo')
-TELEGRAM_DEMO_MODE = os.environ.get('TELEGRAM_DEMO_MODE', 'false').lower() == 'true'
+# Telegram API настройки
+TELEGRAM_API_ID = os.getenv('TELEGRAM_API_ID')
+TELEGRAM_API_HASH = os.getenv('TELEGRAM_API_HASH')
+TELEGRAM_DEMO_MODE = os.getenv('TELEGRAM_DEMO_MODE', 'False').lower() == 'true'
 
 # Проверяем что API данные заданы (только если не в тестах)
 import sys
@@ -368,44 +362,3 @@ SOCIALACCOUNT_ADAPTER = 'apps.accounts.logic.auth_adapters.CustomSocialAccountAd
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # Только для разработки
-
-# =============================================================================
-# TELEGRAM НАСТРОЙКИ
-# =============================================================================
-
-# Telegram API настройки (получить на my.telegram.org)
-TG_API_ID = os.environ.get('TG_API_ID', '11383291')
-TG_API_HASH = os.environ.get('TG_API_HASH', 'cb4a2adc6b83e9f0cca5b659f407a01c')
-TG_SESSION_PATH = os.environ.get('TG_SESSION_PATH', str(BASE_DIR / 'sessions' / 'telegram_session'))
-
-# Настройки для Telegram клиента
-TELEGRAM_CLIENT_SETTINGS = {
-    'connection_retries': 3,
-    'request_retries': 3,
-    'retry_delay': 1,
-    'timeout': 30,
-    'auto_reconnect': True,
-}
-
-# Настройки для сессий Telegram
-TELEGRAM_SESSION_SETTINGS = {
-    'auto_save': True,
-    'save_interval': 300,  # Сохранять каждые 5 минут
-    'max_session_age': 86400 * 30,  # 30 дней
-}
-
-# Настройки для чатов и сообщений
-TELEGRAM_MESSAGE_SETTINGS = {
-    'default_message_limit': 50,
-    'max_message_limit': 100,
-    'auto_refresh_interval': 10,  # секунды
-    'message_history_days': 30,
-}
-
-# Настройки безопасности
-TELEGRAM_SECURITY_SETTINGS = {
-    'require_2fa_for_sensitive_actions': True,
-    'max_auth_attempts': 5,
-    'auth_timeout': 300,  # 5 минут
-    'session_timeout': 3600,  # 1 час
-}

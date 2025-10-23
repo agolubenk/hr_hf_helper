@@ -1,4 +1,5 @@
 {% extends 'common/base.html' %}
+{% load vacancy_extras %}
 
 {% block title %}Список вакансий - HR Helper{% endblock %}
 {% block page_title %}Список вакансий{% endblock %}
@@ -129,6 +130,20 @@
                                                 {{ vacancy.recruiter.get_full_name }}
                                             </small>
                                         </p>
+                                        
+                                        <!-- Технологии -->
+                                        {% if vacancy.technologies %}
+                                        <div class="mb-2">
+                                            <small class="text-muted d-block mb-1">
+                                                <i class="fas fa-code me-1"></i>Технологии:
+                                            </small>
+                                            <div class="d-flex flex-wrap gap-1">
+                                                {% for tech in vacancy.technologies|split:"," %}
+                                                    <span class="badge bg-info badge-sm">{{ tech|strip }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        {% endif %}
                                         
                                         <p class="card-text">
                                             <small class="text-muted">

@@ -185,6 +185,18 @@ class InviteForm(forms.ModelForm):
                     raise forms.ValidationError(f'Ошибка обработки scorecard: {message}')
                 print(f"✅ FORM_SAVE: Scorecard обработан")
                 
+                # Добавляем метку интервьюера в Huntflow
+                print(f"🔍 FORM_SAVE: Добавляем метку интервьюера в Huntflow...")
+                try:
+                    tag_success = invite._add_interviewer_tag_to_huntflow()
+                    if tag_success:
+                        print(f"✅ FORM_SAVE: Метка интервьюера добавлена")
+                    else:
+                        print(f"⚠️ FORM_SAVE: Не удалось добавить метку интервьюера")
+                except Exception as e:
+                    print(f"⚠️ FORM_SAVE: Ошибка при добавлении метки интервьюера: {e}")
+                    # Продолжаем работу без метки
+                
                 invite.status = 'sent'
                 invite.save()
                 print(f"✅ FORM_SAVE: Инвайт сохранен с ID: {invite.id}")
@@ -430,6 +442,18 @@ class InviteCombinedForm(forms.ModelForm):
                 except Exception as e:
                     print(f"⚠️ COMBINED_FORM_SAVE: Google Drive API недоступен для scorecard: {e}")
                     # Продолжаем работу без scorecard
+                
+                # Добавляем метку интервьюера в Huntflow (независимо от scorecard)
+                print(f"🔍 COMBINED_FORM_SAVE: Добавляем метку интервьюера в Huntflow...")
+                try:
+                    tag_success = invite._add_interviewer_tag_to_huntflow()
+                    if tag_success:
+                        print(f"✅ COMBINED_FORM_SAVE: Метка интервьюера добавлена")
+                    else:
+                        print(f"⚠️ COMBINED_FORM_SAVE: Не удалось добавить метку интервьюера")
+                except Exception as e:
+                    print(f"⚠️ COMBINED_FORM_SAVE: Ошибка при добавлении метки интервьюера: {e}")
+                    # Продолжаем работу без метки
                 
                 invite.status = 'sent'
                 # multiple_slots_data убрано из модели

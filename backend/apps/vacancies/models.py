@@ -145,6 +145,40 @@ class Vacancy(models.Model):
         verbose_name='Дата обновления'
     )
     
+    technologies = models.TextField(
+        verbose_name='Технологии',
+        help_text='Список технологий через запятую (например: Python, Django, PostgreSQL, Redis)',
+        blank=True
+    )
+    
+    tech_interview_duration = models.PositiveIntegerField(
+        verbose_name='Длительность тех. интервью (минуты)',
+        help_text='Продолжительность технического интервью в минутах',
+        blank=True,
+        null=True
+    )
+    
+    mandatory_tech_interviewers = models.ManyToManyField(
+        'interviewers.Interviewer',
+        verbose_name='Обязательные участники тех. интервью',
+        help_text='Интервьюеры, которые обязательно должны участвовать в техническом интервью',
+        blank=True,
+        related_name='mandatory_tech_interviews'
+    )
+    
+    tech_invite_title = models.CharField(
+        max_length=200,
+        verbose_name='Заголовок инвайтов на тех. интервью',
+        help_text='Заголовок для приглашений на технические интервью',
+        blank=True
+    )
+    
+    tech_invite_text = models.TextField(
+        verbose_name='Сопровождающий текст для инвайтов на тех. интервью',
+        help_text='Текст сопроводительного письма для приглашений на технические интервью',
+        blank=True
+    )
+    
     class Meta:
         verbose_name = 'Вакансия'
         verbose_name_plural = 'Вакансии'

@@ -1179,6 +1179,70 @@ class Invite(models.Model):
             print(f"❌ Ошибка обновления поля 'Scorecard' в Huntflow: {str(e)}")
             return False
     
+    def _add_interviewer_tag_to_huntflow(self):
+        """Добавляет метку с именем интервьюера в Huntflow"""
+        try:
+            print(f"🔍 INTERVIEWER_TAG: Начинаем добавление метки интервьюера...")
+            
+            if not self.interviewer:
+                print("ℹ️ INTERVIEWER_TAG: Нет интервьюера для добавления метки в Huntflow")
+                return True  # Не ошибка, просто нет интервьюера
+            
+            print(f"🔍 INTERVIEWER_TAG: Интервьюер найден: {self.interviewer}")
+            print(f"🔍 INTERVIEWER_TAG: ID интервьюера: {self.interviewer.id}")
+            print(f"🔍 INTERVIEWER_TAG: Email интервьюера: {self.interviewer.email}")
+            
+            from apps.huntflow.services import HuntflowService
+            
+            # Получаем account_id из Huntflow API
+            service = HuntflowService(self.user)
+            accounts = service.get_accounts()
+            if not accounts or 'items' not in accounts or len(accounts['items']) == 0:
+                print("❌ INTERVIEWER_TAG: Не удалось получить account_id для добавления метки интервьюера")
+                return False
+            
+            account_id = accounts['items'][0]['id']
+            print(f"🔍 INTERVIEWER_TAG: Account ID: {account_id}")
+            
+            # Получаем полное имя интервьюера
+            interviewer_name = self.interviewer.get_full_name()
+            print(f"🏷️ INTERVIEWER_TAG: Добавляем метку интервьюера в Huntflow: '{interviewer_name}'")
+            print(f"🔍 INTERVIEWER_TAG: ID кандидата: {self.candidate_id}")
+            
+            # Ищем существующий тег по имени интервьюера
+            print(f"🔍 INTERVIEWER_TAG: Ищем тег по имени: '{interviewer_name}'")
+            tag_id = service._find_tag_by_name(account_id, interviewer_name)
+            print(f"🔍 INTERVIEWER_TAG: Результат поиска тега: {tag_id}")
+            
+            if not tag_id:
+                print(f"⚠️ INTERVIEWER_TAG: Тег для интервьюера '{interviewer_name}' не найден в Huntflow")
+                return False
+            
+            # Добавляем тег к кандидату
+            print(f"🔍 INTERVIEWER_TAG: Добавляем тег {tag_id} к кандидату {self.candidate_id}")
+            tag_data = {'tags': [tag_id]}
+            result = service._make_request('POST', f"/accounts/{account_id}/applicants/{int(self.candidate_id)}/tags", json=tag_data)
+            print(f"🔍 INTERVIEWER_TAG: Результат добавления тега: {result}")
+            
+            if result:
+                print(f"✅ INTERVIEWER_TAG: Метка интервьюера '{interviewer_name}' успешно добавлена к кандидату {self.candidate_id}")
+                
+                # Очищаем кэш для этого кандидата после добавления метки
+                from apps.google_oauth.cache_service import HuntflowAPICache
+                HuntflowAPICache.clear_candidate(self.user.id, account_id, int(self.candidate_id))
+                print(f"🗑️ INTERVIEWER_TAG: Кэш очищен для кандидата {self.candidate_id}")
+                
+                return True
+            else:
+                print(f"❌ INTERVIEWER_TAG: Не удалось добавить метку интервьюера к кандидату")
+                return False
+                
+        except Exception as e:
+            print(f"❌ INTERVIEWER_TAG: Ошибка добавления метки интервьюера в Huntflow: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return False
+    
     def _create_calendar_event(self):
         """Создает календарное событие с длительностью из настроек вакансии"""
         try:
