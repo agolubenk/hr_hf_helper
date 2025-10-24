@@ -2,7 +2,7 @@
 {% load static %}
 {% load hiring_plan_extras %}
 
-{% block title %}Годовая таблица заявок - {{ year }} год{% endblock %}
+{% block title %}План найма '{{ year|slice:"2:" }}{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -30,7 +30,43 @@
     
     .yearly-table .vacancy-info {
         text-align: left;
-        min-width: 120px;
+        max-width: 210px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        position: relative;
+    }
+    
+    .yearly-table .vacancy-info a {
+        color: inherit;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+    
+    .yearly-table .vacancy-info a:hover {
+        color: #007bff;
+        text-decoration: underline;
+    }
+    
+    .yearly-table .vacancy-info .vacancy-name {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-right: 5px;
+    }
+    
+    .yearly-table .vacancy-info .external-icon {
+        flex-shrink: 0;
+        opacity: 0.6;
+        font-size: 0.8em;
+    }
+    
+    .yearly-table .vacancy-info a:hover .external-icon {
+        opacity: 1;
     }
     
     .yearly-table .month-cell {
@@ -60,6 +96,11 @@
         color: #01579b;
     }
     
+    .cell-yellow {
+        background-color: #fff3cd !important;
+        color: #856404;
+    }
+    
     .cell-gray {
         background-color: #e9ecef !important;
         color: #495057;
@@ -72,6 +113,38 @@
     
     .cell-transparent {
         background-color: transparent !important;
+    }
+    
+    .yearly-table tbody tr:hover td {
+        background-color: #f8f9fa !important;
+    }
+    
+    .yearly-table tbody tr:hover td.cell-green {
+        background-color: #d4edda !important;
+    }
+    
+    .yearly-table tbody tr:hover td.cell-red {
+        background-color: #f8d7da !important;
+    }
+    
+    .yearly-table tbody tr:hover td.cell-blue {
+        background-color: #cce5ff !important;
+    }
+    
+    .yearly-table tbody tr:hover td.cell-yellow {
+        background-color: #fff3cd !important;
+    }
+    
+    .yearly-table tbody tr:hover td.cell-lightblue {
+        background-color: #e3f2fd !important;
+    }
+    
+    .yearly-table tbody tr:hover td.cell-gray {
+        background-color: #d3d3d3 !important;
+    }
+    
+    .yearly-table tbody tr:hover td.cell-lightgray {
+        background-color: #e9ecef !important;
     }
     
     .legend {
@@ -140,7 +213,7 @@
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-calendar-alt me-2"></i>Годовая таблица заявок - {{ year }} год</h2>
+                <h2><i class="fas fa-calendar-alt me-2"></i>План найма '{{ year|slice:"2:" }}</h2>
                 
                 <div class="year-selector">
                     <form method="get" class="d-inline">
@@ -172,16 +245,16 @@
                     <span>В работе</span>
                 </div>
                 <div class="legend-item">
+                    <div class="legend-color cell-yellow"></div>
+                    <span>Просрочено</span>
+                </div>
+                <div class="legend-item">
                     <div class="legend-color cell-lightblue"></div>
                     <span>Планируется</span>
                 </div>
                 <div class="legend-item">
                     <div class="legend-color cell-gray"></div>
                     <span>Отменено</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color cell-lightgray"></div>
-                    <span>Другие статусы</span>
                 </div>
             </div>
             
@@ -197,15 +270,22 @@
                                 <th class="month-cell">{{ month }}</th>
                             {% endfor %}
                             <th>SLA</th>
-                            <th>Срок закрытия</th>
+                            <th>В работе</th>
                             <th>Статус</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for row in table_data %}
                             <tr>
-                                <td class="vacancy-info">
-                                    <strong>{{ row.vacancy }}</strong>
+                                <td class="vacancy-info" title="{{ row.vacancy }}">
+                                    <a href="{% url 'hiring_plan:hiring_request_detail' row.request_id %}" 
+                                       target="_blank" 
+                                       class="text-decoration-none">
+                                        <span class="vacancy-name">
+                                            <strong>{{ row.vacancy }}</strong>
+                                        </span>
+                                        <i class="fas fa-external-link-alt external-icon"></i>
+                                    </a>
                                 </td>
                                 <td>{{ row.grade }}</td>
                                 <td>{{ row.project }}</td>
@@ -231,10 +311,10 @@
                                 </td>
                                 
                                 <td>
-                                    {% if row.deadline %}
-                                        {{ row.deadline|date:"d.m.Y" }}
-                                    {% else %}
+                                    {% if row.status == 'planned' %}
                                         <span class="text-muted">—</span>
+                                    {% else %}
+                                        <strong>{{ row.days_in_year }}</strong> дней
                                     {% endif %}
                                 </td>
                                 
@@ -260,74 +340,45 @@
                                 </td>
                             </tr>
                         {% endfor %}
+                        
+                        <!-- Строка с медианными значениями -->
+                {% if table_data %}
+                <tr class="table-info">
+                    <td class="vacancy-info">
+                        <strong><i class="fas fa-chart-line me-2"></i>Медианы</strong>
+                    </td>
+                    <td>
+                        <small class="text-muted">{{ medians.grade }}</small>
+                    </td>
+                    <td>—</td>
+                    
+                    {% for month_num, month_name in months|enumerate_list %}
+                        {% with month_num|add:1 as month %}
+                            <td class="month-cell text-center">
+                                <small class="text-muted">
+                                    {% if medians.monthly_days|get_item:month > 0 %}
+                                        {{ medians.monthly_days|get_item:month|floatformat:0 }}д
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </small>
+                            </td>
+                        {% endwith %}
+                    {% endfor %}
+                    
+                    <td>
+                        <small class="text-muted">{{ medians.sla }}</small>
+                    </td>
+                    <td>
+                        <small class="text-muted">{{ medians.work_days }}</small>
+                    </td>
+                    <td>—</td>
+                </tr>
+                {% endif %}
                     </tbody>
                 </table>
             </div>
             
-            <!-- Статистика -->
-            {% if table_data %}
-                <div class="row mt-4">
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Статистика за {{ year }} год</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="text-center">
-                                            <h4 class="text-primary">{{ table_data|length }}</h4>
-                                            <small class="text-muted">Всего заявок</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="text-center">
-                                            <h4 class="text-success">
-                                                {% for row in table_data %}
-                                                    {% if row.status == 'closed' %}{{ forloop.counter0|add:1 }}{% endif %}
-                                                {% endfor %}
-                                            </h4>
-                                            <small class="text-muted">Закрыто</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Активность</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="text-center">
-                                            <h4 class="text-info">
-                                                {% for row in table_data %}
-                                                    {% if row.status == 'in_progress' %}{{ forloop.counter0|add:1 }}{% endif %}
-                                                {% endfor %}
-                                            </h4>
-                                            <small class="text-muted">В работе</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="text-center">
-                                            <h4 class="text-warning">
-                                                {% for row in table_data %}
-                                                    {% if row.status == 'planned' %}{{ forloop.counter0|add:1 }}{% endif %}
-                                                {% endfor %}
-                                            </h4>
-                                            <small class="text-muted">Планируется</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
         </div>
     </div>
 </div>

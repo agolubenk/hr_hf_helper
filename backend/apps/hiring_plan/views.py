@@ -7,6 +7,7 @@ from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 )
 from django.urls import reverse_lazy, reverse
+from django.db import models
 from django.db.models import Q, Count, Sum, Avg
 from django.views.decorators.http import require_http_methods
 from django.utils import timezone
@@ -848,22 +849,57 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
         year = int(self.request.GET.get('year', timezone.now().year))
         context['year'] = year
         
-        # Получаем все заявки за год
+        # Получаем все заявки за год + переходящие (открытые до года, но не закрытые)
         requests = HiringRequest.objects.filter(
-            opening_date__year=year
+            models.Q(opening_date__year=year) |  # Заявки, открытые в этом году
+            models.Q(
+                opening_date__year__lt=year,  # Открытые до этого года
+                status__in=['in_progress', 'planned']  # Но не закрытые
+            )
         ).select_related('vacancy', 'grade', 'sla').order_by('vacancy__name', 'grade__name')
         
         # Создаем данные для таблицы
         table_data = []
         for request in requests:
+            # Считаем общее количество дней работы (включая предыдущие годы)
+            days_in_year = 0
+            if request.status in ['in_progress', 'closed', 'cancelled']:
+                from datetime import datetime
+                start_date = request.opening_date
+                
+                # Для закрытых и отмененных заявок используем дату закрытия, для остальных - текущую дату
+                if request.status in ['closed', 'cancelled'] and request.closed_date:
+                    end_date = request.closed_date
+                else:
+                    end_date = timezone.now().date()
+                
+                # Ограничиваем только конец периода выбранным годом
+                year_end = datetime(year, 12, 31).date()
+                if end_date > year_end:
+                    end_date = year_end
+                
+                # Если это текущий год, ограничиваем текущей датой (только для активных заявок)
+                if year == timezone.now().year and request.status not in ['closed', 'cancelled']:
+                    today = timezone.now().date()
+                    if end_date > today:
+                        end_date = today
+                
+                # Считаем общее количество дней работы
+                days_in_year = (end_date - start_date).days + 1
+                
+                if days_in_year < 0:
+                    days_in_year = 0
+            
             row_data = {
                 'request': request,
+                'request_id': request.id,
                 'vacancy': request.vacancy.name,
                 'grade': request.grade.name,
                 'project': request.project or '-',
                 'sla_days': request.sla.time_to_offer if request.sla else '-',
                 'deadline': request.deadline,
                 'status': request.status,
+                'days_in_year': days_in_year,
                 'months': self._get_monthly_data(request, year)
             }
             table_data.append(row_data)
@@ -878,7 +914,137 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
         years = HiringRequest.objects.values_list('opening_date__year', flat=True).distinct().order_by('-opening_date__year')
         context['available_years'] = years
         
+        # Рассчитываем медианы
+        context['medians'] = self._calculate_medians(requests, year)
+        
         return context
+    
+    def _calculate_medians(self, requests, year):
+        """Рассчитать медианы согласно алгоритму"""
+        import statistics
+        from datetime import datetime, timedelta
+        
+        medians = {}
+        
+        # 1. Медианный грейд специалистов (по id грейда)
+        grade_ids = [request.grade.id for request in requests]
+        if grade_ids:
+            grade_ids.sort()
+            if len(grade_ids) % 2 == 1:
+                median_grade_id = grade_ids[len(grade_ids) // 2]
+            else:
+                mid1 = grade_ids[len(grade_ids) // 2 - 1]
+                mid2 = grade_ids[len(grade_ids) // 2]
+                median_grade_id = (mid1 + mid2) / 2
+            
+            # Находим название грейда по ID
+            try:
+                median_grade = next((request.grade.name for request in requests if request.grade.id == int(median_grade_id)), 
+                                  f"ID: {median_grade_id}")
+            except ValueError:
+                median_grade = f"ID: {median_grade_id}"
+            
+            medians['grade'] = median_grade
+        else:
+            medians['grade'] = "—"
+        
+        # 2. Медиана дней в месяце для вакансий
+        monthly_days = {i: [] for i in range(1, 13)}  # 1-12 месяцы
+        
+        for request in requests:
+            start_date = request.opening_date
+            end_date = request.closed_date or timezone.now().date()
+            
+            # Если заявка открыта в другом году, начинаем с января
+            if start_date.year < year:
+                start_date = datetime(year, 1, 1).date()
+            
+            # Если заявка закрыта в другом году, заканчиваем в декабре
+            if end_date.year > year:
+                end_date = datetime(year, 12, 31).date()
+            
+            # Распределяем дни по месяцам
+            current_date = start_date
+            while current_date <= end_date:
+                month = current_date.month
+                if month in monthly_days:
+                    monthly_days[month].append(1)  # 1 день в этом месяце
+                current_date += timedelta(days=1)
+        
+        # Рассчитываем медиану для каждого месяца
+        monthly_medians = {}
+        for month, days_list in monthly_days.items():
+            if days_list:
+                days_list.sort()
+                if len(days_list) % 2 == 1:
+                    median_days = days_list[len(days_list) // 2]
+                else:
+                    mid1 = days_list[len(days_list) // 2 - 1]
+                    mid2 = days_list[len(days_list) // 2]
+                    median_days = (mid1 + mid2) / 2
+                monthly_medians[month] = median_days
+            else:
+                monthly_medians[month] = 0
+        
+        medians['monthly_days'] = monthly_medians
+        
+        # 3. Медиана SLA (все значения в днях)
+        sla_days = [request.sla.time_to_offer for request in requests if request.sla]
+        if sla_days:
+            sla_days.sort()
+            if len(sla_days) % 2 == 1:
+                median_sla = sla_days[len(sla_days) // 2]
+            else:
+                mid1 = sla_days[len(sla_days) // 2 - 1]
+                mid2 = sla_days[len(sla_days) // 2]
+                median_sla = (mid1 + mid2) / 2
+            medians['sla'] = f"{median_sla:.0f}д"
+        else:
+            medians['sla'] = "—"
+        
+        # 4. Медиана "в работе (дней)" - общее количество дней работы
+        work_days = []
+        for request in requests:
+            if request.status in ['in_progress', 'closed', 'cancelled']:  # Включаем отмененные
+                # Считаем общее количество дней работы (включая предыдущие годы)
+                start_date = request.opening_date
+                
+                # Для закрытых и отмененных заявок используем дату закрытия, для остальных - текущую дату
+                if request.status in ['closed', 'cancelled'] and request.closed_date:
+                    end_date = request.closed_date
+                else:
+                    end_date = timezone.now().date()
+                
+                # Ограничиваем только конец периода выбранным годом
+                year_end = datetime(year, 12, 31).date()
+                if end_date > year_end:
+                    end_date = year_end
+                
+                # Если это текущий год, ограничиваем текущей датой (только для активных заявок)
+                if year == timezone.now().year and request.status not in ['closed', 'cancelled']:
+                    today = timezone.now().date()
+                    if end_date > today:
+                        end_date = today
+                
+                # Считаем общее количество дней работы
+                days_in_year = (end_date - start_date).days + 1
+                
+                if days_in_year > 0:
+                    work_days.append(days_in_year)
+        
+        if work_days:
+            work_days.sort()
+            if len(work_days) % 2 == 1:
+                median_work_days = work_days[len(work_days) // 2]
+            else:
+                mid1 = work_days[len(work_days) // 2 - 1]
+                mid2 = work_days[len(work_days) // 2]
+                median_work_days = (mid1 + mid2) / 2
+            medians['work_days'] = f"{median_work_days:.0f}д"
+        else:
+            medians['work_days'] = "—"
+        
+        return medians
     
     def _get_monthly_data(self, request, year):
         """Получить данные по месяцам для заявки"""
@@ -888,7 +1054,31 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
         start_date = request.opening_date
         end_date = request.closed_date or timezone.now().date()
         
-        # Если заявка открыта в другом году, начинаем с января
+        # Для планируемых заявок показываем только месяц планируемого открытия
+        if request.status == 'planned':
+            planned_month = start_date.month
+            if start_date.year == year:
+                for month in range(1, 13):
+                    if month == planned_month:
+                        months[month] = {
+                            'color': 'lightblue',
+                            'active': True
+                        }
+                    else:
+                        months[month] = {
+                            'color': 'transparent',
+                            'active': False
+                        }
+            else:
+                # Если планируемая заявка не в этом году, не показываем
+                for month in range(1, 13):
+                    months[month] = {
+                        'color': 'transparent',
+                        'active': False
+                    }
+            return months
+        
+        # Если заявка открыта в другом году, начинаем с января (переходящие заявки)
         if start_date.year < year:
             start_date = timezone.datetime(year, 1, 1).date()
         
@@ -933,7 +1123,11 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
             else:
                 return 'green'  # Закрыто (нет дедлайна)
         elif request.status == 'in_progress':
-            return 'blue'  # В работе
+            # Проверяем, просрочена ли заявка
+            if request.deadline and timezone.now().date() > request.deadline:
+                return 'yellow'  # Просрочена в работе
+            else:
+                return 'blue'  # В работе
         elif request.status == 'planned':
             return 'lightblue'  # Планируется
         else:

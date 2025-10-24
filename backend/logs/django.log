@@ -4802,3 +4802,779 @@ Watching for file changes with StatReloader
 WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
 Not Found: /.well-known/appspecific/com.chrome.devtools.json
 [25/Oct/2025 00:16:03] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3921
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 00:13:17
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[25/Oct/2025 00:20:53] "HEAD /hiring-plans/yearly/ HTTP/1.1" 302 0
+[25/Oct/2025 00:21:23] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 208888
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 00:20:52
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[25/Oct/2025 00:24:42] "GET /hiring-plans/yearly/?year=2024 HTTP/1.1" 200 144031
+[25/Oct/2025 00:24:50] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 208888
+[25/Oct/2025 00:24:57] "GET /hiring-plans/yearly/?year=2024 HTTP/1.1" 200 144031
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 00:21:34
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[25/Oct/2025 00:25:55] "GET /hiring-plans/yearly/?year=2024 HTTP/1.1" 200 145068
+[25/Oct/2025 00:26:00] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 211255
+[25/Oct/2025 00:26:17] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 211487
+[25/Oct/2025 00:26:41] "HEAD /hiring-plans/yearly/ HTTP/1.1" 302 0
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 00:25:23
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[25/Oct/2025 00:26:58] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 218753
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 00:26:56
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 00:28:04
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[25/Oct/2025 00:31:22] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 233229
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 00:31:14
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[25/Oct/2025 00:31:47] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 233229
+[25/Oct/2025 00:31:53] "GET /hiring-plans/yearly/?year=2024 HTTP/1.1" 200 145435
+[25/Oct/2025 00:31:58] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 233229
+[25/Oct/2025 00:32:15] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 233539
+[25/Oct/2025 00:32:25] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 233539
+[25/Oct/2025 00:32:34] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 233539
+[25/Oct/2025 00:32:51] "HEAD /hiring-plans/yearly/ HTTP/1.1" 302 0
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 00:31:36
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[25/Oct/2025 00:34:00] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 233535
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 00:33:19
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[25/Oct/2025 00:34:57] "HEAD /hiring-plans/yearly/ HTTP/1.1" 302 0
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 00:34:34
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[25/Oct/2025 00:35:35] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 241041
+[25/Oct/2025 00:35:58] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 241041
+[25/Oct/2025 00:35:59] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[25/Oct/2025 00:35:59] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[25/Oct/2025 00:35:59] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[25/Oct/2025 00:35:59] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[25/Oct/2025 00:35:59] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[25/Oct/2025 00:35:59] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[25/Oct/2025 00:35:59] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[25/Oct/2025 00:35:59] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[25/Oct/2025 00:35:59] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[25/Oct/2025 00:35:59] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[25/Oct/2025 00:36:27] "HEAD /hiring-plans/yearly/ HTTP/1.1" 302 0
+[25/Oct/2025 00:38:29] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 247625
+[25/Oct/2025 00:41:29] "GET /hiring-plans/ HTTP/1.1" 200 185157
+[25/Oct/2025 00:42:44] "GET /hiring-plans/ HTTP/1.1" 200 185157
+[25/Oct/2025 00:42:50] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 247619
+[25/Oct/2025 00:43:05] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 247619
+[25/Oct/2025 00:43:23] "HEAD /hiring-plans/yearly/ HTTP/1.1" 302 0
+[25/Oct/2025 00:43:28] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 241360
+[25/Oct/2025 00:43:28] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[25/Oct/2025 00:43:28] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[25/Oct/2025 00:43:28] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[25/Oct/2025 00:43:28] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[25/Oct/2025 00:43:28] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[25/Oct/2025 00:43:28] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[25/Oct/2025 00:43:28] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[25/Oct/2025 00:43:28] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[25/Oct/2025 00:43:28] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[25/Oct/2025 00:43:29] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[25/Oct/2025 00:43:52] "GET /hiring-plans/requests/3/ HTTP/1.1" 200 107495
+[25/Oct/2025 00:48:34] "HEAD /hiring-plans/yearly/ HTTP/1.1" 302 0
+[25/Oct/2025 00:48:54] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 243869
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 00:35:32
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+❌ Ошибка запроса к Huntflow: HTTPSConnectionPool(host='api.huntflow.ru', port=443): Max retries exceeded with url: /v2/accounts (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x10c6b7b10>: Failed to resolve 'api.huntflow.ru' ([Errno 8] nodename nor servname provided, or not known)"))
+DEBUG context_processor: accounts_list = []
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:07:27
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[25/Oct/2025 01:07:48] "HEAD /hiring-plans/yearly/ HTTP/1.1" 302 0
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:07:37
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[25/Oct/2025 01:09:07] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 239978
+[25/Oct/2025 01:09:28] "GET /hiring-plans/yearly/?year=2024 HTTP/1.1" 200 147027
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:07:59
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:12:33
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[25/Oct/2025 01:12:51] "HEAD /hiring-plans/yearly/?year=2024 HTTP/1.1" 302 0
+ERROR Internal Server Error: /hiring-plans/yearly/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/mixins.py", line 73, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/views/generic/base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/views/generic/base.py", line 226, in get
+    context = self.get_context_data(**kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py", line 871, in get_context_data
+    year_start = datetime(year, 1, 1).date()
+                 ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'?
+Internal Server Error: /hiring-plans/yearly/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/mixins.py", line 73, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/views/generic/base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/views/generic/base.py", line 226, in get
+    context = self.get_context_data(**kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py", line 871, in get_context_data
+    year_start = datetime(year, 1, 1).date()
+                 ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'?
+[25/Oct/2025 01:12:54] "GET /hiring-plans/yearly/?year=2024 HTTP/1.1" 500 98705
+WARNING Not Found: /favicon.ico
+Not Found: /favicon.ico
+[25/Oct/2025 01:12:54] "GET /favicon.ico HTTP/1.1" 404 3810
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:12:41
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:13:06
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[25/Oct/2025 01:13:15] "GET /hiring-plans/yearly/?year=2024 HTTP/1.1" 200 147024
+[25/Oct/2025 01:13:15] "GET /hiring-plans/yearly/?year=2024 HTTP/1.1" 200 147024
+[25/Oct/2025 01:13:16] "GET /hiring-plans/yearly/?year=2024 HTTP/1.1" 302 0
+[25/Oct/2025 01:13:23] "GET /hiring-plans/requests/30/ HTTP/1.1" 200 107677
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:13:14
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[25/Oct/2025 01:14:15] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 239969
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:13:34
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:15:19
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[25/Oct/2025 01:15:37] "HEAD /hiring-plans/yearly/?year=2025 HTTP/1.1" 302 0
+[25/Oct/2025 01:15:41] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 239969
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:15:35
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[25/Oct/2025 01:16:00] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 239969
+[25/Oct/2025 01:16:00] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[25/Oct/2025 01:16:00] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[25/Oct/2025 01:16:00] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[25/Oct/2025 01:16:00] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[25/Oct/2025 01:16:00] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[25/Oct/2025 01:16:00] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[25/Oct/2025 01:16:00] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[25/Oct/2025 01:16:00] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[25/Oct/2025 01:16:00] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[25/Oct/2025 01:16:01] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:15:56
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[25/Oct/2025 01:17:55] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 239969
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:17:51
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[25/Oct/2025 01:18:06] "HEAD /hiring-plans/yearly/?year=2025 HTTP/1.1" 302 0
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:18:06
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[25/Oct/2025 01:18:19] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 239969
+[25/Oct/2025 01:18:19] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[25/Oct/2025 01:18:19] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[25/Oct/2025 01:18:19] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[25/Oct/2025 01:18:19] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[25/Oct/2025 01:18:19] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[25/Oct/2025 01:18:19] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[25/Oct/2025 01:18:19] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[25/Oct/2025 01:18:19] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[25/Oct/2025 01:18:19] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[25/Oct/2025 01:18:20] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[25/Oct/2025 01:18:27] "GET /hiring-plans/yearly/?year=2024 HTTP/1.1" 200 147024
+[25/Oct/2025 01:18:34] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 239969
+[25/Oct/2025 01:20:04] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 239969
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:18:17
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:21:10
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[25/Oct/2025 01:21:22] "HEAD /hiring-plans/yearly/?year=2025 HTTP/1.1" 302 0
+[25/Oct/2025 01:21:22] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 239969
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:21:20
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+Watching for file changes with StatReloader
+[25/Oct/2025 01:21:36] "GET /hiring-plans/yearly/?year=2024 HTTP/1.1" 200 147024
+[25/Oct/2025 01:21:42] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 239969
+[25/Oct/2025 01:21:46] "GET /hiring-plans/requests/36/ HTTP/1.1" 200 107694
+[25/Oct/2025 01:22:12] "GET /hiring-plans/requests/20/ HTTP/1.1" 200 109713
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:21:35
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:23:24
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:23:36
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:23:44
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[25/Oct/2025 01:23:56] "HEAD /hiring-plans/yearly/?year=2025 HTTP/1.1" 302 0
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:23:53
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[25/Oct/2025 01:24:28] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 239976
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:24:14
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:24:43
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[25/Oct/2025 01:24:53] "HEAD /hiring-plans/yearly/?year=2025 HTTP/1.1" 302 0
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:24:51
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:25:07
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:25:52
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:26:06
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[25/Oct/2025 01:26:24] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 239978
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:26:15
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[25/Oct/2025 01:26:29] "HEAD /hiring-plans/yearly/?year=2025 HTTP/1.1" 302 0
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 25, 2025 - 01:26:26
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[25/Oct/2025 01:26:42] "GET /hiring-plans/yearly/?year=2024 HTTP/1.1" 200 147026
+[25/Oct/2025 01:27:08] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 239978
+[25/Oct/2025 01:27:13] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 239978
+[25/Oct/2025 01:27:13] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[25/Oct/2025 01:27:13] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[25/Oct/2025 01:27:13] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[25/Oct/2025 01:27:13] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[25/Oct/2025 01:27:13] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[25/Oct/2025 01:27:13] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[25/Oct/2025 01:27:13] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[25/Oct/2025 01:27:13] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[25/Oct/2025 01:27:13] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[25/Oct/2025 01:27:14] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[25/Oct/2025 01:30:03] "HEAD /hiring-plans/yearly/?year=2025 HTTP/1.1" 302 0
+[25/Oct/2025 01:30:04] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 239620
+[25/Oct/2025 01:30:04] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[25/Oct/2025 01:30:04] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[25/Oct/2025 01:30:04] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[25/Oct/2025 01:30:04] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[25/Oct/2025 01:30:04] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[25/Oct/2025 01:30:04] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[25/Oct/2025 01:30:04] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[25/Oct/2025 01:30:04] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[25/Oct/2025 01:30:04] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[25/Oct/2025 01:30:05] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[25/Oct/2025 01:30:15] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 239620
+[25/Oct/2025 01:30:15] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[25/Oct/2025 01:30:15] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[25/Oct/2025 01:30:15] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[25/Oct/2025 01:30:15] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[25/Oct/2025 01:30:15] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[25/Oct/2025 01:30:15] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[25/Oct/2025 01:30:15] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[25/Oct/2025 01:30:15] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[25/Oct/2025 01:30:15] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[25/Oct/2025 01:30:15] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[25/Oct/2025 01:31:31] "GET /hiring-plans/yearly/?year=2024 HTTP/1.1" 200 146668
+[25/Oct/2025 01:32:51] "GET /hiring-plans/yearly/?year=2025 HTTP/1.1" 200 239620
