@@ -2187,7 +2187,8 @@ if (calendarEventsScript) {
     "vacancy_link_belarus": "{{ selected_vacancy.vacancy_link_belarus|escapejs }}",
     "vacancy_link_poland": "{{ selected_vacancy.vacancy_link_poland|escapejs }}",
     "questions_belarus": "{{ selected_vacancy.questions_belarus|escapejs }}",
-    "questions_poland": "{{ selected_vacancy.questions_poland|escapejs }}"
+    "questions_poland": "{{ selected_vacancy.questions_poland|escapejs }}",
+    "duration": {{ selected_vacancy.screening_duration|default:60 }}
 }
 </script>
 

@@ -334,6 +334,24 @@ function formatTime(date) {
     return `${hours}.${minutes.toString().padStart(2, '0')}`;
 }
 
+// Функция для получения продолжительности встречи
+function getMeetingDuration() {
+    // Получаем данные вакансии
+    if (typeof vacancyData !== 'undefined' && vacancyData) {
+        // Пытаемся получить продолжительность из данных вакансии
+        // Это может быть поле duration, meeting_duration или аналогичное
+        if (vacancyData.duration) {
+            return vacancyData.duration;
+        }
+        if (vacancyData.meeting_duration) {
+            return vacancyData.meeting_duration;
+        }
+    }
+    
+    // Если нет данных о продолжительности, используем значение по умолчанию
+    return 60; // 60 минут по умолчанию
+}
+
 function generateWeekSlots(weekOffset) {
     const today = new Date();
     const startOfWeek = new Date(today);
@@ -661,6 +679,12 @@ window.copyAllSlots = function() {
         });
     }
     
+    // Добавляем информацию о продолжительности встречи
+    const meetingDuration = getMeetingDuration();
+    if (meetingDuration) {
+        text += `\n\nПо времени нужно будет примерно ${meetingDuration} минут.\nКогда комфортнее?`;
+    }
+    
     copySlotsToClipboard(text.trim());
 };
 
@@ -719,6 +743,12 @@ window.copyWeekSlots = function(weekType) {
                 text += `${slot.weekday} (${slot.date}) ${slot.slots}\n`;
             }
         });
+    }
+    
+    // Добавляем информацию о продолжительности встречи
+    const meetingDuration = getMeetingDuration();
+    if (meetingDuration) {
+        text += `\n\nПо времени нужно будет примерно ${meetingDuration} минут.\nКогда комфортнее?`;
     }
     
     copySlotsToClipboard(text.trim());
