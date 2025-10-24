@@ -13,6 +13,7 @@ class ProfileEditForm(UserChangeForm):
     - last_name: фамилия пользователя
     - email: электронная почта
     - telegram_username: имя пользователя в Telegram
+    - telegram_username: имя пользователя в Telegram
     
     ИСТОЧНИКИ ДАННЫЕ:
     - User модель из apps.accounts.models
@@ -102,6 +103,7 @@ class ProfileEditForm(UserChangeForm):
                 telegram_username = telegram_username[5:]
         
         return telegram_username
+    
 
     def clean(self):
         cleaned_data = super().clean()

@@ -18,7 +18,7 @@ SECRET_KEY = 'django-insecure-hrhelper-secret-key-change-in-production'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# Логирование для отладки OAuth и Telegram
+# Логирование для отладки OAuth
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -37,28 +37,12 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
         },
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'telegram.log',
-            'formatter': 'verbose',
-        },
     },
     'loggers': {
         'apps.accounts.views': {
             'handlers': ['console'],
             'level': 'INFO',
             'propagate': True,
-        },
-        'apps.telegram': {
-            'handlers': ['file', 'console'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'telethon': {
-            'handlers': ['file'],
-            'level': 'WARNING',
-            'propagate': False,
         },
         'allauth': {
             'handlers': ['console'],
@@ -103,9 +87,6 @@ INSTALLED_APPS = [
     'apps.notion_int',
     'apps.hiring_plan',
     
-    # Django Telethon (отключено из-за конфликтов)
-    # 'django_telethon',
-    # 'django_telethon_session',
     
     # Django REST Framework
     'rest_framework',
@@ -274,20 +255,6 @@ except ImportError:
 #     'apps.clickup_int.tasks.import_single_task': {'queue': 'clickup_import'},
 # }
 
-
-# Telegram API настройки
-TELEGRAM_API_ID = os.getenv('TELEGRAM_API_ID')
-TELEGRAM_API_HASH = os.getenv('TELEGRAM_API_HASH')
-TELEGRAM_DEMO_MODE = os.getenv('TELEGRAM_DEMO_MODE', 'False').lower() == 'true'
-
-# Проверяем что API данные заданы (только если не в тестах)
-import sys
-if 'test' not in sys.argv and not TELEGRAM_DEMO_MODE and (not TELEGRAM_API_ID or not TELEGRAM_API_HASH):
-    print("⚠️  ВНИМАНИЕ: TELEGRAM_API_ID и TELEGRAM_API_HASH не настроены!")
-    print("   Установите переменные окружения для работы с Telegram")
-    print("   Получить ключи можно на https://my.telegram.org")
-elif TELEGRAM_DEMO_MODE:
-    print("🎭 ДЕМО РЕЖИМ: Telegram работает в демо-режиме для тестирования")
 
 # Notion API настройки
 NOTION_VERSION = '2022-06-28'

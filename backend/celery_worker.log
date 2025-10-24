@@ -1,0 +1,49 @@
+ 
+ -------------- celery@andrei-golubenko-macbook.local v5.5.3 (immunity)
+--- ***** ----- 
+-- ******* ---- macOS-26.0-arm64-arm-64bit-Mach-O 2025-10-24 13:23:12
+- *** --- * --- 
+- ** ---------- [config]
+- ** ---------- .> app:         hrhelper:0x106fd02f0
+- ** ---------- .> transport:   redis://127.0.0.1:6379/0
+- ** ---------- .> results:     redis://127.0.0.1:6379/0
+- *** --- * --- .> concurrency: 1 (prefork)
+-- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+--- ***** ----- 
+ -------------- [queues]
+                .> celery           exchange=celery(direct) key=celery
+                
+
+[tasks]
+  . apps.clickup_int.tasks.bulk_import_clickup_tasks
+  . apps.clickup_int.tasks.import_single_task
+  . apps.clickup_int.tasks.retry_failed_tasks
+  . apps.finance.tasks.analyze_hh_vacancies_automatic
+  . apps.finance.tasks.analyze_hh_vacancies_batch
+  . apps.finance.tasks.analyze_hh_vacancy_with_ai
+  . apps.finance.tasks.cleanup_old_benchmarks
+  . apps.finance.tasks.fetch_hh_vacancies_task
+  . apps.finance.tasks.generate_benchmark_statistics
+  . apps.finance.tasks.process_hh_queue_with_limit
+  . apps.finance.tasks.save_hh_analysis_result
+  . apps.finance.tasks.update_currency_rates
+  . apps.huntflow.tasks.check_huntflow_token_health
+  . apps.huntflow.tasks.refresh_huntflow_tokens
+  . apps.notion_int.tasks.auto_sync_notion_pages
+  . apps.notion_int.tasks.bulk_import_notion_pages
+  . apps.notion_int.tasks.retry_failed_pages
+  . config.celery.debug_task
+  . config.celery.save_hh_analysis_result
+  . config.celery.update_currency_rates
+
+[2025-10-24 13:23:13,017: INFO/MainProcess] Connected to redis://127.0.0.1:6379/0
+[2025-10-24 13:23:13,020: INFO/MainProcess] mingle: searching for neighbors
+[2025-10-24 13:23:14,046: WARNING/MainProcess] /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/celery/app/control.py:56: DuplicateNodenameWarning: Received multiple replies from node name: celery@andrei-golubenko-macbook.local.
+Please make sure you give each node a unique nodename using
+the celery worker `-n` option.
+  warnings.warn(DuplicateNodenameWarning(
+
+[2025-10-24 13:23:14,047: INFO/MainProcess] mingle: all alone
+[2025-10-24 13:23:14,162: INFO/MainProcess] celery@andrei-golubenko-macbook.local ready.
+
+worker: Warm shutdown (MainProcess)
