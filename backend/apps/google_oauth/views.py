@@ -10,6 +10,7 @@ from django.utils.translation import gettext as _
 from datetime import datetime, timedelta
 from django.contrib.auth import get_user_model, login
 from django import forms
+from django.db import models
 import json
 
 from .models import GoogleOAuthAccount, ScorecardPathSettings, SlotsSettings
@@ -2974,6 +2975,69 @@ def api_calendar_events(request):
 
 
 @login_required
+def api_interviewers_autocomplete(request):
+    """API для автодополнения интервьюеров по вакансии"""
+    try:
+        vacancy_id = request.GET.get('vacancy_id')
+        query = request.GET.get('q', '').strip()
+        
+        print(f"🔍 API INTERVIEWERS AUTOCOMPLETE: vacancy_id={vacancy_id}, query='{query}'")
+        
+        if not vacancy_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Не указан ID вакансии'
+            })
+        
+        # Получаем вакансию
+        from apps.vacancies.models import Vacancy
+        try:
+            vacancy = Vacancy.objects.get(id=vacancy_id)
+        except Vacancy.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Вакансия не найдена'
+            })
+        
+        # Получаем интервьюеров, привязанных к вакансии
+        interviewers = vacancy.interviewers.filter(is_active=True)
+        
+        # Фильтруем по запросу, если он есть
+        if query:
+            interviewers = interviewers.filter(
+                models.Q(first_name__icontains=query) |
+                models.Q(last_name__icontains=query) |
+                models.Q(email__icontains=query)
+            )
+        
+        # Формируем результат
+        results = []
+        for interviewer in interviewers[:10]:  # Ограничиваем до 10 результатов
+            results.append({
+                'id': interviewer.id,
+                'username': interviewer.email.split('@')[0],  # Используем часть email до @ как username
+                'full_name': interviewer.get_full_name(),
+                'email': interviewer.email
+            })
+        
+        print(f"🔍 API INTERVIEWERS AUTOCOMPLETE: Найдено {len(results)} интервьюеров")
+        
+        return JsonResponse({
+            'success': True,
+            'results': results
+        })
+        
+    except Exception as e:
+        print(f"❌ API INTERVIEWERS AUTOCOMPLETE: Ошибка: {e}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка получения интервьюеров: {str(e)}'
+        })
+
+
+@login_required
 @permission_required('google_oauth.view_hrscreening', raise_exception=True)
 def combined_workflow(request):
     """Объединенная страница для HR-скрининга и инвайтов"""
@@ -3026,6 +3090,12 @@ def combined_workflow(request):
                     
                     # Создаем данные для InviteCombinedForm
                     invite_form_data = {'combined_data': combined_data}
+                    
+                    # Передаем данные об интервьюере, если они есть
+                    if 'selected_interviewer' in request.POST:
+                        invite_form_data['selected_interviewer'] = request.POST['selected_interviewer']
+                        print(f"🔍 COMBINED_WORKFLOW: Передаем данные об интервьюере: {request.POST['selected_interviewer']}")
+                    
                     invite_form = InviteCombinedForm(invite_form_data, user=request.user)
                     
                     if invite_form.is_valid():
@@ -3113,6 +3183,11 @@ def chat_ajax_handler(request, session_id):
             chat_session = ChatSession.objects.get(id=session_id, user=request.user)
         except ChatSession.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Сессия чата не найдена'})
+        
+        # Получаем вакансию из сессии чата
+        vacancy = chat_session.vacancy
+        if not vacancy:
+            return JsonResponse({'success': False, 'error': 'Вакансия не найдена для данного чата'})
         
         # Сохраняем пользовательское сообщение
         user_message = ChatMessage.objects.create(
@@ -3288,7 +3363,14 @@ def chat_ajax_handler(request, session_id):
 
         elif action_type == 'invite':
             # Создаем инвайт
-            invite_form = InviteCombinedForm({'input_data': message_text}, user=request.user)
+            invite_form_data = {'combined_data': message_text}
+            
+            # Передаем данные об интервьюере, если они есть
+            if 'selected_interviewer' in request.POST:
+                invite_form_data['selected_interviewer'] = request.POST['selected_interviewer']
+                print(f"🔍 CHAT AJAX: Передаем данные об интервьюере: {request.POST['selected_interviewer']}")
+            
+            invite_form = InviteCombinedForm(invite_form_data, user=request.user)
             
             if invite_form.is_valid():
                 try:
@@ -3306,6 +3388,8 @@ def chat_ajax_handler(request, session_id):
                             'invite_id': invite.id,
                             'candidate_name': invite.candidate_name,
                             'vacancy_name': invite.vacancy_name,
+                            'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
+                            'interviewer_email': invite.interviewer.email if invite.interviewer else None,
                             'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
                             'candidate_url': invite.candidate_url,
                             'calendar_event_url': invite.calendar_event_url,
@@ -3345,27 +3429,51 @@ def chat_ajax_handler(request, session_id):
 def chat_workflow(request, session_id=None):
     """Чат-воркфлоу для HR-скрининга и инвайтов"""
     from .models import ChatSession, ChatMessage
-    from .forms import ChatForm, HRScreeningForm, InviteCombinedForm, ChatSessionTitleForm
+    from .forms import ChatForm, HRScreeningForm, InviteCombinedForm
 
-    # Получаем или создаем сессию чата
+    # Получаем выбранную вакансию из параметров
+    vacancy_id = request.GET.get('vacancy_id')
+    if not vacancy_id:
+        # Если вакансия не указана, берем первую активную вакансию
+        from apps.vacancies.models import Vacancy
+        active_vacancies = Vacancy.objects.filter(is_active=True).order_by('name')
+        if not active_vacancies.exists():
+            messages.error(request, 'Нет активных вакансий для создания чата')
+            return redirect('google_oauth:chat_workflow')
+        
+        # Берем первую активную вакансию
+        vacancy = active_vacancies.first()
+        return redirect(f'{request.path}?vacancy_id={vacancy.id}')
+    
+    try:
+        from apps.vacancies.models import Vacancy
+        vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True)
+    except Vacancy.DoesNotExist:
+        messages.error(request, 'Выбранная вакансия не найдена или неактивна')
+        return redirect('google_oauth:chat_workflow')
+    
+    # Получаем или создаем сессию чата для конкретной вакансии
     if session_id:
         try:
-            chat_session = ChatSession.objects.get(id=session_id, user=request.user)
+            chat_session = ChatSession.objects.get(id=session_id, user=request.user, vacancy=vacancy)
         except ChatSession.DoesNotExist:
-            # Если указанная сессия не найдена, берем последнюю сессию пользователя
-            chat_session = ChatSession.objects.filter(user=request.user).order_by('-updated_at').first()
-            if not chat_session:
-                chat_session = ChatSession.objects.create(user=request.user)
+            # Если указанная сессия не найдена, ищем существующий чат для этой вакансии
+            try:
+                chat_session = ChatSession.objects.get(user=request.user, vacancy=vacancy)
+            except ChatSession.DoesNotExist:
+                # Если чата для этой вакансии нет, создаем новый
+                chat_session = ChatSession.objects.create(user=request.user, vacancy=vacancy, title=vacancy.name)
     else:
-        # Если session_id не указан, берем последнюю сессию пользователя
-        chat_session = ChatSession.objects.filter(user=request.user).order_by('-updated_at').first()
-        if not chat_session:
-            chat_session = ChatSession.objects.create(user=request.user)
+        # Если session_id не указан, получаем или создаем чат для этой вакансии
+        chat_session, created = ChatSession.objects.get_or_create(
+            user=request.user, 
+            vacancy=vacancy,
+            defaults={'title': vacancy.name}
+        )
 
     # Получаем все сообщения в этой сессии
     messages = chat_session.messages.all().order_by('created_at')
     form = ChatForm(user=request.user)
-    title_form = ChatSessionTitleForm(instance=chat_session)
 
     if request.method == 'POST':
         # Проверяем, это AJAX запрос или обычная форма
@@ -3545,7 +3653,14 @@ def chat_workflow(request, session_id=None):
 
                 elif action_type == 'invite':
                     # Создаем инвайт с ПРАВИЛЬНЫМИ данными
-                    invite_form = InviteCombinedForm({'combined_data': message_text}, user=request.user)
+                    invite_form_data = {'combined_data': message_text}
+                    
+                    # Передаем данные об интервьюере, если они есть
+                    if 'selected_interviewer' in request.POST:
+                        invite_form_data['selected_interviewer'] = request.POST['selected_interviewer']
+                        print(f"🔍 CHAT: Передаем данные об интервьюере: {request.POST['selected_interviewer']}")
+                    
+                    invite_form = InviteCombinedForm(invite_form_data, user=request.user)
                     
                     if invite_form.is_valid():
                         try:
@@ -3556,6 +3671,7 @@ def chat_workflow(request, session_id=None):
 **Кандидат:** {invite.candidate_name or 'Не указан'}
 **Вакансия:** {invite.vacancy_title or 'Не указана'}
 **Уровень:** {invite.candidate_grade or 'Не определен'}
+**Интервьюер:** {invite.interviewer.get_full_name() if invite.interviewer else 'Не назначен'}
 **Scorecard:** {invite.google_drive_file_url or 'Создается...'}
 **Дата интервью:** {invite.interview_datetime.strftime('%d.%m.%Y %H:%M') if invite.interview_datetime else 'Не указана'}
 **Google Meet:** {invite.google_meet_url or 'Будет создана'}
@@ -3573,6 +3689,8 @@ def chat_workflow(request, session_id=None):
                                     'candidate_name': invite.candidate_name,
                                     'vacancy_name': invite.vacancy_title,
                                     'determined_grade': invite.candidate_grade,
+                                    'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
+                                    'interviewer_email': invite.interviewer.email if invite.interviewer else None,
                                     'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
                                     'candidate_url': invite.candidate_url
                                 }
@@ -3606,32 +3724,17 @@ def chat_workflow(request, session_id=None):
                     content=f"Ошибка при обработке: {str(e)}"
                 )
 
-            # Обновляем время сессии и перенаправляем
+            # Обновляем время сессии и перенаправляем с сохранением vacancy_id
             chat_session.save()
-            return redirect('google_oauth:chat_workflow_session', session_id=chat_session.id)
+            from django.urls import reverse
+            return redirect(f"{reverse('google_oauth:chat_workflow_session', args=[chat_session.id])}?vacancy_id={vacancy.id}")
 
     print(f"🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: {request.user.username}")
     
-    # Получаем все сессии пользователя для боковой панели
-    all_sessions = ChatSession.objects.filter(user=request.user).order_by('-updated_at')[:20]
     
     # Получаем все активные вакансии для выбора
     from apps.vacancies.models import Vacancy
     active_vacancies = Vacancy.objects.filter(is_active=True).order_by('name')
-    
-    # Получаем выбранную вакансию из параметров
-    selected_vacancy_id = request.GET.get('vacancy_id')
-    selected_vacancy = None
-    
-    if selected_vacancy_id:
-        try:
-            selected_vacancy = Vacancy.objects.get(id=selected_vacancy_id, is_active=True)
-        except Vacancy.DoesNotExist:
-            messages.warning(request, 'Выбранная вакансия не найдена')
-    
-    # Если вакансия не выбрана, берем первую активную
-    if not selected_vacancy and active_vacancies.exists():
-        selected_vacancy = active_vacancies.first()
     
     # Получаем данные о событиях календаря для JavaScript (как на странице gdata_automation)
     calendar_events_data = []
@@ -3706,12 +3809,10 @@ def chat_workflow(request, session_id=None):
     
     context = {
         'form': form,
-        'title_form': title_form,
         'chat_session': chat_session,
         'messages': messages,
-        'all_sessions': all_sessions,
         'active_vacancies': active_vacancies,
-        'selected_vacancy': selected_vacancy,
+        'selected_vacancy': vacancy,
         'calendar_events_data': calendar_events_data,
         'slots_settings': slots_settings,
         'title': 'Чат-помощник',

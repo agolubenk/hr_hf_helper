@@ -185,6 +185,18 @@ class InviteForm(forms.ModelForm):
                     raise forms.ValidationError(f'Ошибка обработки scorecard: {message}')
                 print(f"✅ FORM_SAVE: Scorecard обработан")
                 
+                # Добавляем метку интервьюера в Huntflow
+                print(f"🔍 FORM_SAVE: Добавляем метку интервьюера в Huntflow...")
+                try:
+                    tag_success = invite._add_interviewer_tag_to_huntflow()
+                    if tag_success:
+                        print(f"✅ FORM_SAVE: Метка интервьюера добавлена")
+                    else:
+                        print(f"⚠️ FORM_SAVE: Не удалось добавить метку интервьюера")
+                except Exception as e:
+                    print(f"⚠️ FORM_SAVE: Ошибка при добавлении метки интервьюера: {e}")
+                    # Продолжаем работу без метки
+                
                 invite.status = 'sent'
                 invite.save()
                 print(f"✅ FORM_SAVE: Инвайт сохранен с ID: {invite.id}")
@@ -205,11 +217,16 @@ class InviteCombinedForm(forms.ModelForm):
         widget=forms.Textarea(attrs={
             'class': 'form-control',
             'rows': 5,
-            'placeholder': 'Вставьте ссылку и дату-время в одном поле...\n\nПример:\nhttps://huntflow.ru/my/org#/vacancy/123/filter/456/id/789\n2025-09-15 14:00',
+            'placeholder': 'Вставьте ссылку и дата-время в одном поле...\n\nПримеры:\nhttps://huntflow.ru/my/org#/vacancy/123/filter/456/id/789\n2025-09-15 14:00\n2025-09-15 14:00 (1 час)\n2025-09-15 14:00 (30 минут)',
             'required': True
         }),
         label=_('Ссылка на кандидата и дата-время интервью'),
-        help_text=_('Вставьте ссылку на кандидата и дату-время интервью в одном поле. Система автоматически извлечет ссылку и дату.')
+        help_text=_('Вставьте ссылку на кандидата и дата-время интервью в одном поле. Система автоматически извлечет ссылку и дату. Для указания кастомной длительности добавьте в скобках: (1 час), (30 минут), (полчаса), (2 ч), (45 м).')
+    )
+    
+    selected_interviewer = forms.CharField(
+        required=False,
+        widget=forms.HiddenInput()
     )
     
     class Meta:
@@ -289,12 +306,34 @@ class InviteCombinedForm(forms.ModelForm):
         invite = super().save(commit=False)
         invite.user = self.user
         
+        # Заполняем email пользователя
+        if self.user and hasattr(self.user, 'email'):
+            invite.user_email = self.user.email
+            print(f"🔍 COMBINED_FORM_SAVE: Установлен email пользователя: {invite.user_email}")
+        
         # multiple_slots_data убрано из модели
         
         # Сохраняем исходные данные из формы
         if 'combined_data' in self.cleaned_data:
             invite.original_form_data = self.cleaned_data['combined_data']
             print(f"🔍 COMBINED_FORM_SAVE: Сохранены исходные данные: {invite.original_form_data[:100]}...")
+        
+        # Обрабатываем выбранного интервьюера
+        if 'selected_interviewer' in self.cleaned_data and self.cleaned_data['selected_interviewer']:
+            try:
+                import json
+                interviewer_data = json.loads(self.cleaned_data['selected_interviewer'])
+                interviewer_id = interviewer_data.get('id')
+                if interviewer_id:
+                    from apps.interviewers.models import Interviewer
+                    try:
+                        interviewer = Interviewer.objects.get(id=interviewer_id)
+                        invite.interviewer = interviewer
+                        print(f"✅ COMBINED_FORM_SAVE: Установлен интервьюер: {interviewer.get_full_name()}")
+                    except Interviewer.DoesNotExist:
+                        print(f"⚠️ COMBINED_FORM_SAVE: Интервьюер с ID {interviewer_id} не найден")
+            except (json.JSONDecodeError, KeyError) as e:
+                print(f"⚠️ COMBINED_FORM_SAVE: Ошибка обработки данных интервьюера: {e}")
         
         print(f"🔍 COMBINED_FORM_SAVE: Инвайт создан, user: {invite.user}")
         
@@ -369,6 +408,15 @@ class InviteCombinedForm(forms.ModelForm):
                         print(f"❌ COMBINED_FORM_SAVE: Парсер не вернул время")
                         raise forms.ValidationError('Парсер не вернул время для интервью')
                 
+                # Извлекаем кастомную длительность из исходного текста
+                print(f"🔍 COMBINED_FORM_SAVE: Извлекаем кастомную длительность...")
+                custom_duration = invite.extract_custom_duration(invite.original_form_data)
+                if custom_duration:
+                    invite.custom_duration_minutes = custom_duration
+                    print(f"✅ COMBINED_FORM_SAVE: Установлена кастомная длительность: {custom_duration} минут")
+                else:
+                    print(f"ℹ️ COMBINED_FORM_SAVE: Кастомная длительность не найдена, будет использована стандартная")
+                
                 # Создаем структуру в Google Drive (с улучшенной обработкой ошибок)
                 print(f"🔍 COMBINED_FORM_SAVE: Создаем структуру Google Drive...")
                 try:
@@ -394,6 +442,18 @@ class InviteCombinedForm(forms.ModelForm):
                 except Exception as e:
                     print(f"⚠️ COMBINED_FORM_SAVE: Google Drive API недоступен для scorecard: {e}")
                     # Продолжаем работу без scorecard
+                
+                # Добавляем метку интервьюера в Huntflow (независимо от scorecard)
+                print(f"🔍 COMBINED_FORM_SAVE: Добавляем метку интервьюера в Huntflow...")
+                try:
+                    tag_success = invite._add_interviewer_tag_to_huntflow()
+                    if tag_success:
+                        print(f"✅ COMBINED_FORM_SAVE: Метка интервьюера добавлена")
+                    else:
+                        print(f"⚠️ COMBINED_FORM_SAVE: Не удалось добавить метку интервьюера")
+                except Exception as e:
+                    print(f"⚠️ COMBINED_FORM_SAVE: Ошибка при добавлении метки интервьюера: {e}")
+                    # Продолжаем работу без метки
                 
                 invite.status = 'sent'
                 # multiple_slots_data убрано из модели
@@ -684,6 +744,11 @@ class CombinedForm(forms.Form):
         }),
         label=_('Ссылка на кандидата и данные'),
         help_text=_('Вставьте ссылку на кандидата и любые дополнительные данные. Система автоматически определит тип действия: если есть дата/время - создаст инвайт, если много текста - проведет HR-скрининг.')
+    )
+    
+    selected_interviewer = forms.CharField(
+        required=False,
+        widget=forms.HiddenInput()
     )
     
     def __init__(self, *args, **kwargs):

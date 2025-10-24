@@ -1,6 +1,7 @@
 from __future__ import annotations
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from datetime import timedelta
@@ -53,6 +54,11 @@ class User(AbstractUser):
         default="18:00",
         help_text="Время окончания рабочего дня для планирования интервью"
     )
+    meeting_interval_minutes = models.PositiveIntegerField(
+        _("Время между встречами (минуты)"),
+        default=15,
+        help_text="Время между встречами в минутах (кратно 5, от 0 до 60)"
+    )
 
     # Новые поля для токенной системы Huntflow
     huntflow_access_token = models.CharField(_("Access token для Huntflow API"), max_length=1000, blank=True, help_text="Access token для Huntflow API")
@@ -62,6 +68,19 @@ class User(AbstractUser):
 
     class Meta(AbstractUser.Meta):
         swappable = "AUTH_USER_MODEL"
+    
+    def clean(self):
+        super().clean()
+        # Валидация времени между встречами
+        if self.meeting_interval_minutes is not None:
+            if self.meeting_interval_minutes < 0 or self.meeting_interval_minutes > 60:
+                raise ValidationError({
+                    'meeting_interval_minutes': 'Время между встречами должно быть от 0 до 60 минут'
+                })
+            if self.meeting_interval_minutes % 5 != 0:
+                raise ValidationError({
+                    'meeting_interval_minutes': 'Время между встречами должно быть кратно 5 минутам'
+                })
 
 
     @property
@@ -128,3 +147,12 @@ class User(AbstractUser):
             pass
         
         return None
+    
+    @staticmethod
+    def get_meeting_interval_choices():
+        """Получить список доступных значений для времени между встречами"""
+        return [(i, f"{i} минут") for i in range(0, 61, 5)]
+    
+    def get_meeting_interval_display(self):
+        """Получить отображаемое значение времени между встречами"""
+        return f"{self.meeting_interval_minutes} минут"

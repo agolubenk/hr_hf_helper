@@ -1,4 +1,5 @@
 {% extends 'common/base.html' %}
+{% load vacancy_extras %}
 
 {% block title %}{{ vacancy.name }} - HR Helper{% endblock %}
 {% block page_title %}{{ vacancy.name }}{% endblock %}
@@ -6,1041 +7,402 @@
 {% block content %}
 <div class="row">
     <div class="col-12">
-        <!-- Основная информация -->
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-info-circle me-2"></i>
-                    Основная информация
-                </h5>
-                <div class="btn-group" role="group">
-                    <a href="{% url 'vacancies:vacancy_edit' vacancy.pk %}" class="btn btn-warning">
-                        <i class="fas fa-edit me-1"></i>
-                        Редактировать
-                    </a>
-                    <button type="button" class="btn btn-{% if vacancy.is_active %}warning{% else %}success{% endif %} toggle-active" 
-                            data-url="{% url 'vacancies:vacancy_toggle_active' vacancy.pk %}" 
-                            data-vacancy-name="{{ vacancy.name }}">
-                        {% if vacancy.is_active %}
-                            <i class="fas fa-pause me-1"></i>
-                            Деактивировать
-                        {% else %}
-                            <i class="fas fa-play me-1"></i>
-                            Активировать
-                        {% endif %}
-                    </button>
-                    <a href="{% url 'vacancies:vacancy_list' %}" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left me-1"></i>
-                        Назад к списку
-                    </a>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <table class="table table-borderless">
-                            <tr>
-                                <td><strong>Название:</strong></td>
-                                <td>{{ vacancy.name }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Рекрутер:</strong></td>
-                                <td>
-                                    <i class="fas fa-user me-1"></i>
-                                    {{ vacancy.recruiter.get_full_name }}
-                                    <small class="text-muted">({{ vacancy.recruiter.email }})</small>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>Длительность скринингов:</strong></td>
-                                <td>
-                                    <span class="badge bg-primary">
-                                        <i class="fas fa-clock me-1"></i>{{ vacancy.screening_duration }} мин
-                                    </span>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="col-md-6">
-                        <table class="table table-borderless">
-                            <tr>
-                                <td><strong>ID для связи:</strong></td>
-                                <td><code>{{ vacancy.external_id }}</code></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Статус:</strong></td>
-                                <td>
-                                    {% if vacancy.is_active %}
-                                        <span class="badge bg-success">
-                                            <i class="fas fa-check me-1"></i>Активна
-                                        </span>
-                                    {% else %}
-                                        <span class="badge bg-secondary">
-                                            <i class="fas fa-pause me-1"></i>Неактивна
-                                        </span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>Интервьюеры:</strong></td>
-                                <td>
-                                    <span class="badge bg-info">
-                                        {{ vacancy.get_interviewers_count }} привязано
-                                    </span>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Инвайты -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-envelope me-2"></i>
-                    Инвайты
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-12">
-                        <h6>Заголовок инвайтов: <b class="text-muted">{{ vacancy.invite_title }}</b></h6>
-                        
-                        
-                        <h6 class="mt-1">Сопровождающий текст:</h6>
-                        <div class="bg-light p-3 rounded">
-                            {{ vacancy.invite_text|linebreaks }}
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Scorecard -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-chart-line me-2"></i>
-                    Scorecard
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="mb-1">Заголовок Scorecard: <b class="text-muted mb-0">{{ vacancy.scorecard_title }}</b></h6> 
-                        
-                    </div>
-                    {% if vacancy.scorecard_link %}
-                        <div class="btn-group" role="group">
-                            <a href="{{ vacancy.scorecard_link }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">
-                                <i class="fas fa-external-link-alt me-1"></i>
-                                Открыть Scorecard
-                            </a>
-                            <button type="button" class="btn btn-warning" id="updateScorecardsBtn" 
-                                    data-vacancy-id="{{ vacancy.id }}" 
-                                    data-vacancy-name="{{ vacancy.name }}"
-                                    title="Пересоздать скоркарды для всех предстоящих интервью этой вакансии">
-                                <i class="fas fa-sync-alt me-1"></i>
-                                Пересоздать скоркарды
-                            </button>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-
-        <!-- История обновлений скоркардов -->
-        {% if vacancy.scorecard_updates.exists %}
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-history me-2"></i>
-                    История обновлений скоркардов
-                </h5>
-            </div>
-            <div class="card-body p-2">
-                <div class="list-group list-group-flush">
-                    {% for update in vacancy.scorecard_updates.all|slice:":5" %}
-                    <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 border-0">
-                        <div class="d-flex align-items-center">
-                            <div class="me-3">
-                                {% if update.action_type == 'bulk_update' %}
-                                    <i class="fas fa-sync-alt text-primary"></i>
-                                {% else %}
-                                    <i class="fas fa-edit text-info"></i>
-                                {% endif %}
-                            </div>
-                            <div>
-                                <div class="d-flex align-items-center">
-                                    <span class="fw-medium me-2">
-                                        {% if update.action_type == 'bulk_update' %}
-                                            Массовое обновление
-                                        {% else %}
-                                            Обновление скоркарда
-                                        {% endif %}
-                                    </span>
-                                    {% if update.success_rate > 0 %}
-                                        <span class="badge {% if update.success_rate >= 90 %}bg-success{% elif update.success_rate >= 70 %}bg-warning{% else %}bg-danger{% endif %}">
-                                            {{ update.success_rate }}%
-                                        </span>
-                                    {% endif %}
-                                </div>
-                                <small class="text-muted">
-                                    {{ update.updated_count }}/{{ update.total_found }} • {{ update.date_range_from|date:"d.m.Y" }} - {{ update.date_range_to|date:"d.m.Y" }}
-                                    {% if update.has_errors %}
-                                        <span class="text-warning ms-2">
-                                            <i class="fas fa-exclamation-triangle me-1"></i>{{ update.errors|length }}
-                                        </span>
-                                    {% endif %}
-                                </small>
-                            </div>
-                        </div>
-                        <div class="text-end">
-                            <small class="text-muted">
-                                {{ update.user.get_full_name|truncatechars:15 }}<br>
-                                {{ update.created_at|date:"d.m H:i" }}
-                            </small>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% if vacancy.scorecard_updates.count > 5 %}
-                <div class="text-center mt-2">
-                    <small class="text-muted">Показано последние 5 из {{ vacancy.scorecard_updates.count }}</small>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- Этапы для перевода кандидатов -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-route me-2"></i>
-                    Этапы для перевода кандидатов
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <div class="card h-100 border-primary">
-                            <div class="card-body text-center">
-                                <div class="mb-2">
-                                    <i class="fas fa-user-tie fa-2x text-primary"></i>
-                                </div>
-                                <h6 class="card-title text-primary">HR-скрининг</h6>
-                                <p class="card-text">
-                                    {% if vacancy.hr_screening_stage %}
-                                        <span class="badge bg-primary">{{ vacancy.hr_screening_stage }}</span>
-                                    {% else %}
-                                        <span class="text-muted">Не настроен</span>
-                                    {% endif %}
-                                </p>
-                                <small class="text-muted">Этап после HR-скрининга</small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-4 mb-3">
-                        <div class="card h-100 border-warning">
-                            <div class="card-body text-center">
-                                <div class="mb-2">
-                                    <i class="fas fa-code fa-2x text-warning"></i>
-                                </div>
-                                <h6 class="card-title text-warning">Tech-скрининг</h6>
-                                <p class="card-text">
-                                    {% if vacancy.tech_screening_stage %}
-                                        <span class="badge bg-warning">{{ vacancy.tech_screening_stage }}</span>
-                                    {% else %}
-                                        <span class="text-muted">Не настроен</span>
-                                    {% endif %}
-                                </p>
-                                <small class="text-muted">Этап после Tech-скрининга</small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-4 mb-3">
-                        <div class="card h-100 border-success">
-                            <div class="card-body text-center">
-                                <div class="mb-2">
-                                    <i class="fas fa-users fa-2x text-success"></i>
-                                </div>
-                                <h6 class="card-title text-success">Tech-интервью</h6>
-                                <p class="card-text">
-                                    {% if vacancy.tech_interview_stage %}
-                                        <span class="badge bg-success">{{ vacancy.tech_interview_stage }}</span>
-                                    {% else %}
-                                        <span class="text-muted">Не настроен</span>
-                                    {% endif %}
-                                </p>
-                                <small class="text-muted">Этап после Tech-интервью</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Ссылки на вакансии по странам -->
-        {% if vacancy.has_vacancy_links %}
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-globe me-2"></i>
-                    Ссылки на вакансии по странам
-                    <span class="badge bg-primary ms-2">{{ vacancy.get_vacancy_links_count }}</span>
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    {% for country, link in vacancy.get_vacancy_links.items %}
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <!-- На мобильных: вертикально, на десктопе: горизонтально -->
-                                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-                                    <h6 class="card-title mb-2 mb-md-0">
-                                        <i class="fas fa-flag me-2"></i>
-                                        {{ country }}
-                                    </h6>
-                                    <a href="{{ link }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                                        <i class="fas fa-external-link-alt me-1"></i>
-                                        Открыть вакансию
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- Вопросы для интервью -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-flag me-2"></i>
-                            Вопросы Беларусь
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        {% if vacancy.questions_belarus %}
-                            <div class="bg-light p-3 rounded">
-                                {{ vacancy.questions_belarus|linebreaks }}
-                            </div>
-                        {% else %}
-                            <p class="text-muted">Вопросы не заданы</p>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-flag me-2"></i>
-                            Вопросы Польша
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        {% if vacancy.questions_poland %}
-                            <div class="bg-light p-3 rounded">
-                                {{ vacancy.questions_poland|linebreaks }}
-                            </div>
-                        {% else %}
-                            <p class="text-muted">Вопросы не заданы</p>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Промпты -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-robot me-2"></i>
-                    Промпты для AI
-                </h5>
-            </div>
-            <div class="card-body">
-                <h6>Промпт для обновления кандидата:</h6>
-                <div class="bg-light p-3 rounded mb-3">
-                    {{ vacancy.candidate_update_prompt|linebreaks }}
-                </div>
-            </div>
-        </div>
-
-        <!-- Зарплатные вилки -->
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-money-bill-wave me-2"></i>
-                    Зарплатные вилки
-                </h5>
-                <div>
-                    <a href="{% url 'vacancies:salary_range_create' %}?next={{ request.get_full_path|urlencode }}" class="btn btn-primary btn-sm me-2" target="_blank" rel="noopener noreferrer">
-                        <i class="fas fa-plus me-1"></i>
-                        Создать вилку
-                        <i class="fas fa-external-link-alt ms-1"></i>
-                    </a>
-                    <a href="{% url 'vacancies:salary_ranges_list' %}" class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener noreferrer">
-                        <i class="fas fa-cog me-1"></i>
-                        Управление вилками
-                        <i class="fas fa-external-link-alt ms-1"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="card-body">
-                {% if salary_ranges %}
-                    <div class="row">
-                        {% for salary_range in salary_ranges %}
-                            <div class="col-md-6 col-lg-4 mb-3">
-                                <div class="card h-100">
-                                    <div class="card-header">
-                                        <h6 class="card-title mb-0 d-flex justify-content-between align-items-center">
-                                            <div>
-                                            <span class="badge bg-primary me-2">{{ salary_range.grade.name }}</span>
-                                            {% if salary_range.is_active %}
-                                                <span class="badge bg-success">Активна</span>
-                                            {% else %}
-                                                <span class="badge bg-secondary">Неактивна</span>
-                                            {% endif %}
-                                            </div>
-                                            <div>
-                                            <small class="text-muted text-end">
-                                                UPD: {{ salary_range.updated_at|date:"d.m.Y" }}
-                                            </small>
-                                            </div>
-                                        </h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <!-- USD -->
-                                        <div class="mb-2">
-                                            <div class="fw-bold text-primary">
-                                                <b class="text-muted">USD:</b>
-                                                {{ salary_range.salary_min_usd }} - {{ salary_range.salary_max_usd }}
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- BYN -->
-                                        {% if salary_range.salary_min_byn and salary_range.salary_max_byn %}
-                                            <div class="mb-2">
-                                                <div class="fw-bold text-info">
-                                                    <b class="text-muted">BYN:</b>
-                                                    {{ salary_range.salary_min_byn }} - {{ salary_range.salary_max_byn }}
-                                                </div>
-                                            </div>
-                                        {% endif %}
-                                        
-                                        <!-- PLN -->
-                                        {% if salary_range.salary_min_pln and salary_range.salary_max_pln %}
-                                            <div class="mb-2">
-                                                <div class="fw-bold text-warning">
-                                                    <b class="text-muted">PLN:</b>
-                                                    {{ salary_range.salary_min_pln }} - {{ salary_range.salary_max_pln }}
-                                                </div>
-                                            </div>
-                                        {% endif %}
-                                        
-                                        <!-- EUR -->
-                                        {% if salary_range.salary_min_eur and salary_range.salary_max_eur %}
-                                            <div class="mb-2">
-                                                <div class="fw-bold text-success">
-                                                    <b class="text-muted">EUR:</b>
-                                                    {{ salary_range.salary_min_eur }} - {{ salary_range.salary_max_eur }}
-                                                </div>
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="btn-group w-100" role="group">
-                                            <a href="{% url 'vacancies:salary_range_detail' salary_range.pk %}" 
-                                               class="btn btn-outline-primary btn-sm" title="Просмотр">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            <a href="{% url 'vacancies:salary_range_edit' salary_range.pk %}?next={{ request.get_full_path|urlencode }}" 
-                                               class="btn btn-outline-warning btn-sm" title="Редактировать">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="text-center py-4">
-                        <i class="fas fa-money-bill-wave fa-3x text-muted mb-3"></i>
-                        <h6 class="text-muted">Зарплатные вилки не настроены</h6>
-                        <p class="text-muted mb-3">Настройте зарплатные вилки для грейдов, чтобы отображать их в вакансиях</p>
-                        <a href="{% url 'vacancies:salary_range_create' %}?next={{ request.get_full_path|urlencode }}" class="btn btn-primary">
-                            <i class="fas fa-plus me-1"></i>
-                            Создать зарплатную вилку
-                        </a>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Интервьюеры -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-users me-2"></i>
-                    Привязанные интервьюеры
-                </h5>
-            </div>
-            <div class="card-body">
-                {% if vacancy.has_interviewers %}
-                    <div class="row">
-                        {% for interviewer in vacancy.get_interviewers_list %}
-                            <div class="col-md-6 col-lg-4 mb-3">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h6 class="card-title">
-                                            <i class="fas fa-user me-1"></i>
-                                            {{ interviewer.get_full_name }}
-                                        </h6>
-                                        <p class="card-text">
-                                            <small class="text-muted">
-                                                <i class="fas fa-envelope me-1"></i>
-                                                {{ interviewer.email }}
-                                            </small>
-                                        </p>
-                                        {% if interviewer.calendar_link %}
-                                            <p class="card-text">
-                                                <small class="text-muted">
-                                                    <i class="fas fa-calendar me-1"></i>
-                                                    <a href="{{ interviewer.calendar_link }}" target="_blank" class="text-decoration-none">
-                                                        Календарь
-                                                    </a>
-                                                </small>
-                                            </p>
-                                        {% endif %}
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            {% if interviewer.is_active %}
-                                                <span class="badge bg-success">Активен</span>
-                                            {% else %}
-                                                <span class="badge bg-secondary">Неактивен</span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="text-center py-3">
-                        <i class="fas fa-users fa-2x text-muted mb-2"></i>
-                        <p class="text-muted">К вакансии не привязаны интервьюеры</p>
-                        <a href="{% url 'vacancies:vacancy_edit' vacancy.pk %}" class="btn btn-primary">
-                            <i class="fas fa-plus me-1"></i>
-                            Добавить интервьюеров
-                        </a>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Действия -->
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-cogs me-2"></i>
-                    Действия
-                </h5>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-briefcase me-2"></i>
+                        {{ vacancy.name }}
+                    </h5>
+                    <div>
+                        <a href="{% url 'vacancies:vacancy_edit' vacancy.pk %}" class="btn btn-primary">
+                            <i class="fas fa-edit me-2"></i>Редактировать
+                        </a>
+                        <a href="{% url 'vacancies:vacancy_list' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Назад к списку
+                        </a>
+                    </div>
+                </div>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <a href="{% url 'vacancies:vacancy_edit' vacancy.pk %}" class="btn btn-warning w-100 mb-2">
-                            <i class="fas fa-edit me-1"></i>
-                            Редактировать вакансию
-                        </a>
-                        <a href="{% url 'vacancies:vacancy_list' %}" class="btn btn-secondary w-100">
-                            <i class="fas fa-list me-1"></i>
-                            Вернуться к списку
-                        </a>
-                    </div>
-                    <div class="col-md-6">
-                        <button type="button" class="btn btn-{% if vacancy.is_active %}warning{% else %}success{% endif %} w-100 mb-2 toggle-active" 
-                                data-url="{% url 'vacancies:vacancy_toggle_active' vacancy.pk %}" 
-                                data-vacancy-name="{{ vacancy.name }}">
-                            {% if vacancy.is_active %}
-                                <i class="fas fa-pause me-1"></i>
-                                Деактивировать вакансию
-                            {% else %}
-                                <i class="fas fa-play me-1"></i>
-                                Активировать вакансию
-                            {% endif %}
-                        </button>
-                        <a href="{% url 'admin:vacancies_vacancy_change' vacancy.pk %}" class="btn btn-outline-primary w-100" target="_blank">
-                            <i class="fas fa-cog me-1"></i>
-                            Админка
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Скрытый CSRF токен для AJAX запросов -->
-{% csrf_token %}
-
-<!-- Модальное окно для обновления скоркардов -->
-<div class="modal fade" id="updateScorecardsModal" tabindex="-1" aria-labelledby="updateScorecardsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="updateScorecardsModalLabel">
-                    <i class="fas fa-sync-alt me-2"></i>
-                    Пересоздание скоркардов
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="scorecardsPreview">
-                    <div class="text-center">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Загрузка...</span>
-                        </div>
-                        <p class="mt-2">Загрузка информации о предстоящих интервью для пересоздания скоркардов...</p>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    Отмена
-                </button>
-                <button type="button" class="btn btn-warning" id="confirmUpdateBtn" disabled>
-                    <i class="fas fa-sync-alt me-1"></i>
-                    Пересоздать скоркарды
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Функция для получения CSRF токена
-    function getCSRFToken() {
-        const token = document.querySelector('[name=csrfmiddlewaretoken]');
-        return token ? token.value : '';
-    }
-
-    // Обработка переключения статуса активности
-    document.querySelectorAll('.toggle-active').forEach(button => {
-        button.addEventListener('click', function() {
-            const url = this.dataset.url;
-            const vacancyName = this.dataset.vacancyName;
-            const action = this.textContent.trim();
-            
-            if (confirm(`Вы уверены, что хотите ${action.toLowerCase()}?`)) {
-                // Показываем индикатор загрузки
-                const originalHTML = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Обработка...';
-                this.disabled = true;
                 
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': getCSRFToken(),
-                        'Content-Type': 'application/json',
-                    },
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        // Показываем успешное сообщение
-                        this.innerHTML = '<i class="fas fa-check me-1"></i>Успешно!';
-                        this.classList.remove('btn-warning', 'btn-success');
-                        this.classList.add('btn-success');
-                        
-                        // Перезагружаем страницу через небольшую задержку
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
-                    } else {
-                        throw new Error(data.message || 'Неизвестная ошибка');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Ошибка: ' + error.message);
-                    
-                    // Восстанавливаем кнопку
-                    this.innerHTML = originalHTML;
-                    this.disabled = false;
-                });
-            }
-        });
-    });
-
-    // Обработка обновления скоркардов
-    const updateScorecardsBtn = document.getElementById('updateScorecardsBtn');
-    const updateScorecardsModal = new bootstrap.Modal(document.getElementById('updateScorecardsModal'));
-    const confirmUpdateBtn = document.getElementById('confirmUpdateBtn');
-    
-    if (updateScorecardsBtn) {
-        updateScorecardsBtn.addEventListener('click', function() {
-            const vacancyId = this.dataset.vacancyId;
-            const vacancyName = this.dataset.vacancyName;
-            
-            // Показываем модальное окно
-            updateScorecardsModal.show();
-            
-            // Загружаем информацию о предстоящих интервью
-            loadUpcomingInterviews(vacancyId, vacancyName);
-        });
-    }
-    
-    if (confirmUpdateBtn) {
-        confirmUpdateBtn.addEventListener('click', function() {
-            const vacancyId = updateScorecardsBtn.dataset.vacancyId;
-            updateScorecards(vacancyId);
-        });
-    }
-    
-    function loadUpcomingInterviews(vacancyId, vacancyName) {
-        // Показываем спиннер
-        const previewDiv = document.getElementById('scorecardsPreview');
-        previewDiv.innerHTML = `
-            <div class="text-center">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Загрузка...</span>
-                </div>
-                <p class="mt-2">Загрузка информации о предстоящих интервью для пересоздания скоркардов...</p>
-            </div>
-        `;
-        
-        // Делаем запрос для получения информации о предстоящих интервью
-        fetch(`/vacancies/${vacancyId}/get-upcoming-interviews/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCSRFToken(),
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                showUpcomingInterviewsPreview(data);
-                confirmUpdateBtn.disabled = false;
-            } else {
-                throw new Error(data.message || 'Не удалось загрузить информацию о предстоящих интервью');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            previewDiv.innerHTML = `
-                <div class="alert alert-danger">
-                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Ошибка загрузки</h6>
-                    <p class="mb-0">${error.message}</p>
-                </div>
-            `;
-        });
-    }
-    
-    function showUpcomingInterviewsPreview(data) {
-        const previewDiv = document.getElementById('scorecardsPreview');
-        
-        if (data.total_count === 0) {
-            previewDiv.innerHTML = `
-                <div class="alert alert-warning">
-                    <h6><i class="fas fa-info-circle me-2"></i>Нет предстоящих интервью</h6>
-                    <p class="mb-2">Для вакансии <strong>${data.vacancy_name}</strong> не найдено предстоящих интервью.</p>
-                    <p class="mb-0 text-muted">
-                        <small>
-                            <i class="fas fa-info-circle me-1"></i>
-                            Обновление скоркардов будет пропущено
-                        </small>
-                    </p>
-                </div>
-            `;
-            return;
-        }
-        
-        let interviewsHTML = '';
-        if (data.interviews && data.interviews.length > 0) {
-            interviewsHTML = `
-                <div class="mt-3">
-                    <h6><i class="fas fa-list me-2"></i>Найденные предстоящие интервью (${data.total_count}):</h6>
-                    <div class="list-group">
-                        ${data.interviews.map(interview => `
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>${interview.candidate_name}</strong><br>
-                                    <small class="text-muted">${interview.interview_datetime_formatted}</small><br>
-                                    <span class="badge ${interview.has_scorecard ? 'bg-success' : 'bg-warning'}">
-                                        ${interview.has_scorecard ? 'Есть скоркард' : 'Нет скоркарда'}
-                                    </span>
-                                </div>
-                                ${interview.has_scorecard ? `
-                                    <a href="${interview.scorecard_url}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-external-link-alt"></i>
-                                    </a>
-                                ` : ''}
+                <!-- Блок 1: Основная информация -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Основная информация
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><strong>Название:</strong></td>
+                                        <td>{{ vacancy.name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>ID для связи:</strong></td>
+                                        <td>{{ vacancy.external_id }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Ответственный рекрутер:</strong></td>
+                                        <td>{{ vacancy.recruiter.get_full_name|default:vacancy.recruiter.username }}</td>
+                                    </tr>
+                                </table>
                             </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }
-        
-        previewDiv.innerHTML = `
-                <div class="alert alert-info">
-                    <h6><i class="fas fa-info-circle me-2"></i>Подтверждение пересоздания</h6>
-                    <p class="mb-2">Будут пересозданы скоркарды для <strong>${data.total_count}</strong> предстоящих интервью вакансии:</p>
-                    <p class="mb-2"><strong>${data.vacancy_name}</strong></p>
-                    ${interviewsHTML}
-                    <hr>
-                    <p class="mb-0 text-muted">
-                        <small>
-                            <i class="fas fa-info-circle me-1"></i>
-                            Старые скоркарды будут удалены, новые созданы на основе актуального шаблона
-                        </small>
-                    </p>
-                </div>
-        `;
-    }
-    
-    function updateScorecards(vacancyId) {
-        const confirmBtn = confirmUpdateBtn;
-        const originalHTML = confirmBtn.innerHTML;
-        
-        // Показываем индикатор загрузки
-        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Пересоздание...';
-        confirmBtn.disabled = true;
-        
-        fetch(`/vacancies/${vacancyId}/update-scorecards/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCSRFToken(),
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                // Показываем результат
-                showUpdateResult(data);
-                
-                // Закрываем модальное окно через задержку
-                setTimeout(() => {
-                    updateScorecardsModal.hide();
-                }, 3000);
-            } else {
-                throw new Error(data.message || 'Неизвестная ошибка');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            
-            // Показываем подробную ошибку в модальном окне
-            const previewDiv = document.getElementById('scorecardsPreview');
-            previewDiv.innerHTML = `
-                <div class="alert alert-danger">
-                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Ошибка обновления скоркардов</h6>
-                    <p class="mb-2"><strong>Ошибка:</strong> ${error.message}</p>
-                    <p class="mb-0 text-muted">
-                        <small>
-                            <i class="fas fa-info-circle me-1"></i>
-                            Проверьте логи сервера для получения подробной информации
-                        </small>
-                    </p>
-                </div>
-            `;
-            
-            // Восстанавливаем кнопку
-            confirmBtn.innerHTML = originalHTML;
-            confirmBtn.disabled = false;
-        });
-    }
-    
-    function showUpdateResult(data) {
-        const previewDiv = document.getElementById('scorecardsPreview');
-        
-        let resultHTML = '';
-        
-        if (data.updated_count > 0) {
-            const successRate = Math.round((data.updated_count / data.total_found) * 100);
-            const alertClass = successRate >= 90 ? 'alert-success' : successRate >= 70 ? 'alert-warning' : 'alert-danger';
-            
-            resultHTML = `
-                <div class="alert ${alertClass}">
-                    <h6><i class="fas fa-check-circle me-2"></i>Пересоздание скоркардов завершено</h6>
-                    <p class="mb-2"><strong>Пересоздано:</strong> ${data.updated_count} из ${data.total_found} предстоящих скоркардов</p>
-                    <p class="mb-2"><strong>Успешность:</strong> ${successRate}%</p>
-                    <p class="mb-2"><strong>Период:</strong> ${data.date_range.from} - ${data.date_range.to}</p>
-                    ${data.errors_count > 0 ? `<p class="mb-2"><strong>Ошибок:</strong> ${data.errors_count}</p>` : ''}
-                    
-                    ${data.updated_interviews.length > 0 ? `
-                        <div class="mt-3">
-                            <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#updatedInterviews">
-                                <i class="fas fa-list me-1"></i>Показать детали (${data.updated_count})
-                            </button>
-                            
-                            <div class="collapse mt-2" id="updatedInterviews">
-                                <div class="list-group">
-                                    ${data.updated_interviews.map(invite => `
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <strong>${invite.candidate_name}</strong><br>
-                                                <small class="text-muted">${invite.interview_date}</small>
-                                            </div>
-                                            <a href="${invite.scorecard_url}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-external-link-alt"></i>
-                                            </a>
-                                        </div>
-                                    `).join('')}
-                                </div>
+                            <div class="col-md-6">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><strong>Технологии:</strong></td>
+                                        <td>
+                                            {% if vacancy.technologies %}
+                                                <div class="d-flex flex-wrap gap-1">
+                                                    {% for tech in vacancy.technologies|split:"," %}
+                                                        <span class="badge bg-info">
+                                                            <i class="fas fa-code me-1"></i>{{ tech|strip }}
+                                                        </span>
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                <span class="text-muted">Не указаны</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Статус:</strong></td>
+                                        <td>
+                                            {% if vacancy.is_active %}
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-check-circle me-1"></i>Активна
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">
+                                                    <i class="fas fa-times-circle me-1"></i>Неактивна
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </table>
                             </div>
                         </div>
-                    ` : ''}
+                    </div>
                 </div>
-            `;
-        } else {
-            resultHTML = `
-                <div class="alert alert-warning">
-                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Пересоздание завершено</h6>
-                    <p class="mb-0">${data.message}</p>
-                </div>
-            `;
-        }
-        
-        if (data.errors && data.errors.length > 0) {
-            resultHTML += `
-                <div class="alert alert-danger">
-                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Ошибки (${data.errors.length}):</h6>
-                    <div class="mt-2">
-                        <button class="btn btn-sm btn-outline-danger" type="button" data-bs-toggle="collapse" data-bs-target="#errorDetails">
-                            <i class="fas fa-list me-1"></i>Показать детали ошибок
-                        </button>
-                        
-                        <div class="collapse mt-2" id="errorDetails">
-                            <div class="list-group">
-                                ${data.errors.map(error => `
-                                    <div class="list-group-item list-group-item-danger">
-                                        <small>${error}</small>
+
+                <!-- Блок 2: Этапы для перевода кандидатов -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0">
+                            <i class="fas fa-route me-2"></i>
+                            Этапы для перевода кандидатов
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- HR Screening -->
+                            <div class="col-md-4">
+                                <div class="card h-100 border-info">
+                                    <div class="card-header bg-info text-white">
+                                        <h6 class="card-title mb-0">
+                                            <i class="fas fa-user-check me-2"></i>
+                                            HR Screening
+                                        </h6>
                                     </div>
-                                `).join('')}
+                                    <div class="card-body">
+                                        <p><strong>Назначить этап:</strong> {{ vacancy.hr_screening_stage|get_stage_name|default:"Не указан" }}</p>
+                                        
+                                        <!-- Ссылки-якоря на разделы -->
+                                        <div class="mt-3">
+                                            <h6 class="text-primary mb-2">
+                                                <i class="fas fa-link me-1"></i>
+                                                Связанные разделы
+                                            </h6>
+                                            <div class="d-flex flex-column gap-2">
+                                                <a href="#vacancy-links" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-globe me-1"></i>Ссылки на вакансии
+                                                </a>
+                                                <a href="#interview-questions" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-question-circle me-1"></i>Вопросы для интервью
+                                                </a>
+                                                <a href="#salary-ranges" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-money-bill-wave me-1"></i>Зарплатные вилки
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tech Screening -->
+                            <div class="col-md-4">
+                                <div class="card h-100 border-warning">
+                                    <div class="card-header bg-warning text-dark">
+                                        <h6 class="card-title mb-0">
+                                            <i class="fas fa-laptop-code me-2"></i>
+                                            Tech Screening
+                                        </h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>Длительность:</strong> {{ vacancy.screening_duration|default:"Не указана" }} мин</p>
+                                        <p><strong>Заголовок инвайтов:</strong> {{ vacancy.invite_title|default:"Не указан" }}</p>
+                                        <p><strong>Сопровождающий текст:</strong></p>
+                                        <div class="bg-warning bg-opacity-10 p-2 rounded">
+                                            {{ vacancy.invite_text|linebreaks|default:"Не указан" }}
+                                        </div>
+                                        <p class="mt-2"><strong>Назначить этап:</strong> {{ vacancy.tech_screening_stage|get_stage_name|default:"Не указан" }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tech Interview -->
+                            <div class="col-md-4">
+                                <div class="card h-100 border-success">
+                                    <div class="card-header bg-success text-white">
+                                        <h6 class="card-title mb-0">
+                                            <i class="fas fa-users me-2"></i>
+                                            Tech Interview
+                                        </h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>Длительность:</strong> {{ vacancy.tech_interview_duration|default:"Не указана" }} мин</p>
+                                        <p><strong>Заголовок инвайтов:</strong> {{ vacancy.tech_invite_title|default:"Не указан" }}</p>
+                                        <p><strong>Сопровождающий текст:</strong></p>
+                                        <div class="bg-success bg-opacity-10 p-2 rounded">
+                                            {{ vacancy.tech_invite_text|linebreaks|default:"Не указан" }}
+                                        </div>
+                                        <p class="mt-2"><strong>Назначить этап:</strong> {{ vacancy.tech_interview_stage|get_stage_name|default:"Не указан" }}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            `;
-        }
-        
-        previewDiv.innerHTML = resultHTML;
-    }
-});
-</script>
 
-<style>
-/* Стили для timeline истории обновлений */
-.timeline {
-    position: relative;
-    padding-left: 30px;
-}
+                <!-- Блок 3: Scorecard -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Scorecard
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Заголовок Scorecard:</strong> {{ vacancy.scorecard_title|default:"Не указан" }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Ссылка на Scorecard:</strong> 
+                                    {% if vacancy.scorecard_link %}
+                                        <a href="{{ vacancy.scorecard_link }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-external-link-alt me-1"></i>Открыть
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">Не указана</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-.timeline::before {
-    content: '';
-    position: absolute;
-    left: 15px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: #dee2e6;
-}
+                <!-- Блок 4: Ссылки на вакансии по странам -->
+                <div id="vacancy-links" class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0">
+                            <i class="fas fa-globe me-2"></i>
+                            Ссылки на вакансии по странам
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Ссылка на вакансию (Беларусь):</strong>
+                                    {% if vacancy.vacancy_link_belarus %}
+                                        <a href="{{ vacancy.vacancy_link_belarus }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-external-link-alt me-1"></i>Открыть
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">Не указана</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Ссылка на вакансию (Польша):</strong>
+                                    {% if vacancy.vacancy_link_poland %}
+                                        <a href="{{ vacancy.vacancy_link_poland }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-external-link-alt me-1"></i>Открыть
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">Не указана</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-.timeline-item {
-    position: relative;
-    margin-bottom: 20px;
-}
+                <!-- Блок 5: Вопросы для интервью -->
+                <div id="interview-questions" class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0">
+                            <i class="fas fa-question-circle me-2"></i>
+                            Вопросы для интервью
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-primary">Вопросы для Беларуси:</h6>
+                                <div class="bg-light p-3 rounded">
+                                    {{ vacancy.questions_belarus|linebreaks|default:"Не указаны" }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-primary">Вопросы для Польши:</h6>
+                                <div class="bg-light p-3 rounded">
+                                    {{ vacancy.questions_poland|linebreaks|default:"Не указаны" }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-.timeline-marker {
-    position: absolute;
-    left: -22px;
-    top: 5px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 2px solid #fff;
-    box-shadow: 0 0 0 2px #dee2e6;
-}
+                <!-- Блок 6: Промпт для анализа после скрининга -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0">
+                            <i class="fas fa-robot me-2"></i>
+                            Промпт для анализа после скрининга
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="bg-light p-3 rounded">
+                            {{ vacancy.candidate_update_prompt|linebreaks|default:"Не указан" }}
+                        </div>
+                    </div>
+                </div>
 
-.timeline-content {
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    padding: 15px;
-    margin-left: 10px;
-}
+                <!-- Блок 7: Интервьюеры -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0">
+                            <i class="fas fa-users me-2"></i>
+                            Интервьюеры (только связанные с вакансией)
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        {% if vacancy.interviewers.all %}
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for interviewer in vacancy.interviewers.all %}
+                                    <span class="badge bg-primary">
+                                        <i class="fas fa-user me-1"></i>{{ interviewer.get_full_name }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <span class="text-muted">Интервьюеры не назначены</span>
+                        {% endif %}
+                    </div>
+                </div>
 
-.timeline-title {
-    margin: 0 0 8px 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: #495057;
-}
+                <!-- Блок 8: Обязательные участники тех. интервью -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0">
+                            <i class="fas fa-user-tie me-2"></i>
+                            Обязательные участники тех. интервью (все сохраненные интервьюеры)
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        {% if vacancy.mandatory_tech_interviewers.all %}
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for interviewer in vacancy.mandatory_tech_interviewers.all %}
+                                    <span class="badge bg-warning">
+                                        <i class="fas fa-user-tie me-1"></i>{{ interviewer.get_full_name }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <span class="text-muted">Обязательные участники не назначены</span>
+                        {% endif %}
+                    </div>
+                </div>
 
-.timeline-text {
-    margin: 0;
-    font-size: 13px;
-    line-height: 1.4;
-}
+                <!-- Блок 9: Зарплатные вилки -->
+                <div id="salary-ranges" class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0">
+                            <i class="fas fa-money-bill-wave me-2"></i>
+                            Зарплатные вилки
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        {% if salary_ranges %}
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Грейд</th>
+                                            <th>Зарплата (USD)</th>
+                                            <th>Зарплата (BYN)</th>
+                                            <th>Зарплата (PLN)</th>
+                                            <th>Зарплата (EUR)</th>
+                                            <th>Статус</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for salary_range in salary_ranges %}
+                                            <tr>
+                                                <td>
+                                                    <span class="badge bg-info">{{ salary_range.grade.name }}</span>
+                                                </td>
+                                                <td>${{ salary_range.salary_min_usd }} - ${{ salary_range.salary_max_usd }}</td>
+                                                <td>
+                                                    {% if salary_range.salary_min_byn and salary_range.salary_max_byn %}
+                                                        {{ salary_range.salary_min_byn }} - {{ salary_range.salary_max_byn }} BYN
+                                                    {% else %}
+                                                        <span class="text-muted">Не рассчитано</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if salary_range.salary_min_pln and salary_range.salary_max_pln %}
+                                                        {{ salary_range.salary_min_pln }} - {{ salary_range.salary_max_pln }} PLN
+                                                    {% else %}
+                                                        <span class="text-muted">Не рассчитано</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if salary_range.salary_min_eur and salary_range.salary_max_eur %}
+                                                        {{ salary_range.salary_min_eur }} - {{ salary_range.salary_max_eur }} EUR
+                                                    {% else %}
+                                                        <span class="text-muted">Не рассчитано</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if salary_range.is_active %}
+                                                        <span class="badge bg-success">Активна</span>
+                                                    {% else %}
+                                                        <span class="badge bg-secondary">Неактивна</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Зарплатные вилки не настроены. Перейдите в раздел "Зарплатные вилки" для их настройки.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
 
-.timeline-text small {
-    font-size: 12px;
-}
-
-/* Адаптивность */
-@media (max-width: 768px) {
-    .timeline {
-        padding-left: 25px;
-    }
-    
-    .timeline::before {
-        left: 10px;
-    }
-    
-    .timeline-marker {
-        left: -17px;
-        width: 10px;
-        height: 10px;
-    }
-    
-    .timeline-content {
-        margin-left: 5px;
-        padding: 12px;
-    }
-}
-</style>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

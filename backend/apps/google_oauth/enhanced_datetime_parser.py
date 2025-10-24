@@ -132,19 +132,74 @@ class EnhancedDateTimeParser:
             'jrn': 'окт', 'yjz': 'ноя', 'ltrf,hm': 'декабрь'
         }
         
-        # Относительные даты
+        # Расширенные относительные даты
         self.RELATIVE_DATES = {
-            'сегодня': 0, 'сёдня': 0, 'седня': 0, 'today': 0, 'ctuljyz': 0,
-            'завтра': 1, 'завтро': 1, 'завр': 1, 'tomorrow': 1, 'pfdnhf': 1,
-            'послезавтра': 2, 'послезавтро': 2,
-            'через день': 1,
-            'через два дня': 2,
-            'через три дня': 3,
-            'через неделю': 7,
-            'на следующей неделе': 'next_week',
-            'следующая неделя': 'next_week',
-            'след неделе': 'next_week',
-            'next week': 'next_week'
+            # Сегодня
+            'сегодня': 0, 'сёдня': 0, 'седня': 0, 'седн': 0, 'сед': 0,
+            'today': 0, 'tod': 0, 'ctuljyz': 0, 'ctulj': 0, 'ctul': 0,
+            'сейчас': 0, 'сейч': 0, 'сей': 0,
+            'now': 0, 'nw': 0,
+            
+            # Завтра
+            'завтра': 1, 'завтро': 1, 'завр': 1, 'зав': 1, 'завт': 1,
+            'tomorrow': 1, 'tom': 1, 'pfdnhf': 1, 'pfdn': 1, 'pfd': 1,
+            'завтрашний день': 1, 'завтрашний': 1,
+            
+            # Послезавтра
+            'послезавтра': 2, 'послезавтро': 2, 'послезавт': 2, 'послезав': 2,
+            'day after tomorrow': 2, 'day after': 2,
+            'через день': 1, 'через 1 день': 1, 'через один день': 1,
+            
+            # Через несколько дней
+            'через два дня': 2, 'через 2 дня': 2, 'через два': 2,
+            'через три дня': 3, 'через 3 дня': 3, 'через три': 3,
+            'через четыре дня': 4, 'через 4 дня': 4, 'через четыре': 4,
+            'через пять дней': 5, 'через 5 дней': 5, 'через пять': 5,
+            'через шесть дней': 6, 'через 6 дней': 6, 'через шесть': 6,
+            
+            # Недели
+            'через неделю': 7, 'через 1 неделю': 7, 'через одну неделю': 7,
+            'через две недели': 14, 'через 2 недели': 14, 'через две': 14,
+            'через три недели': 21, 'через 3 недели': 21, 'через три': 21,
+            
+            # Следующая неделя
+            'на следующей неделе': 'next_week', 'следующая неделя': 'next_week',
+            'след неделе': 'next_week', 'следующей неделе': 'next_week',
+            'next week': 'next_week', 'next wk': 'next_week',
+            'в следующую неделю': 'next_week', 'на след неделе': 'next_week',
+            
+            # Месяцы
+            'через месяц': 30, 'через 1 месяц': 30, 'через один месяц': 30,
+            'через два месяца': 60, 'через 2 месяца': 60, 'через два': 60,
+            'через три месяца': 90, 'через 3 месяца': 90, 'через три': 90,
+            
+            # Следующий месяц
+            'в следующем месяце': 'next_month', 'следующий месяц': 'next_month',
+            'next month': 'next_month', 'next mon': 'next_month',
+            
+            # Годы
+            'через год': 365, 'через 1 год': 365, 'через один год': 365,
+            'через два года': 730, 'через 2 года': 730, 'через два': 730,
+            
+            # Следующий год
+            'в следующем году': 'next_year', 'следующий год': 'next_year',
+            'next year': 'next_year', 'next yr': 'next_year',
+            
+            # Временные периоды
+            'через полчаса': 0.5, 'через 30 минут': 0.5, 'через пол часа': 0.5,
+            'через час': 1, 'через 1 час': 1, 'через один час': 1,
+            'через два часа': 2, 'через 2 часа': 2, 'через два': 2,
+            'через три часа': 3, 'через 3 часа': 3, 'через три': 3,
+            
+            # Английские варианты
+            'in an hour': 1, 'in 1 hour': 1, 'in one hour': 1,
+            'in two hours': 2, 'in 2 hours': 2, 'in two': 2,
+            'in a day': 1, 'in 1 day': 1, 'in one day': 1,
+            'in two days': 2, 'in 2 days': 2, 'in two': 2,
+            'in a week': 7, 'in 1 week': 7, 'in one week': 7,
+            'in two weeks': 14, 'in 2 weeks': 14, 'in two': 14,
+            'in a month': 30, 'in 1 month': 30, 'in one month': 30,
+            'in two months': 60, 'in 2 months': 60, 'in two': 60,
         }
         
         # Регулярные выражения для парсинга
@@ -297,8 +352,25 @@ class EnhancedDateTimeParser:
                     if days_to_next_monday == 0:
                         days_to_next_monday = 7
                     return current_date + timedelta(days=days_to_next_monday)
-                else:
-                    return current_date + timedelta(days=days_offset)
+                elif days_offset == 'next_month':
+                    # Следующий месяц - первое число
+                    if current_date.month == 12:
+                        next_month = current_date.replace(year=current_date.year + 1, month=1, day=1)
+                    else:
+                        next_month = current_date.replace(month=current_date.month + 1, day=1)
+                    return next_month
+                elif days_offset == 'next_year':
+                    # Следующий год - первое января
+                    next_year = current_date.replace(year=current_date.year + 1, month=1, day=1)
+                    return next_year
+                elif isinstance(days_offset, (int, float)):
+                    # Обычное смещение в днях
+                    if days_offset < 1:
+                        # Для временных периодов меньше дня (например, полчаса)
+                        # Возвращаем текущую дату, время будет обработано отдельно
+                        return current_date
+                    else:
+                        return current_date + timedelta(days=days_offset)
         
         return None
     
@@ -446,6 +518,46 @@ class EnhancedDateTimeParser:
                     return hour, 0
             except (ValueError, AttributeError):
                 pass
+        
+        return None
+    
+    def extract_time_periods(self, text: str) -> Optional[Tuple[int, int]]:
+        """Извлечение времени из относительных временных периодов"""
+        text_lower = text.lower()
+        minsk_tz = pytz.timezone('Europe/Minsk')
+        current_time = datetime.now(minsk_tz)
+        
+        # Словарь временных периодов
+        time_periods = {
+            # Полчаса
+            'через полчаса': 30, 'через 30 минут': 30, 'через пол часа': 30,
+            'через пол часа': 30, 'через пол-часа': 30, 'через полчаса': 30,
+            'in 30 minutes': 30, 'in half an hour': 30, 'in 30 min': 30,
+            
+            # Час
+            'через час': 60, 'через 1 час': 60, 'через один час': 60,
+            'через 60 минут': 60, 'через час': 60,
+            'in an hour': 60, 'in 1 hour': 60, 'in one hour': 60,
+            'in 60 minutes': 60, 'in 1h': 60,
+            
+            # Два часа
+            'через два часа': 120, 'через 2 часа': 120, 'через два': 120,
+            'через 120 минут': 120, 'через 2ч': 120,
+            'in two hours': 120, 'in 2 hours': 120, 'in two': 120,
+            'in 120 minutes': 120, 'in 2h': 120,
+            
+            # Три часа
+            'через три часа': 180, 'через 3 часа': 180, 'через три': 180,
+            'через 180 минут': 180, 'через 3ч': 180,
+            'in three hours': 180, 'in 3 hours': 180, 'in three': 180,
+            'in 180 minutes': 180, 'in 3h': 180,
+        }
+        
+        for period_text, minutes_offset in time_periods.items():
+            if period_text in text_lower:
+                # Вычисляем время через указанный период
+                future_time = current_time + timedelta(minutes=minutes_offset)
+                return future_time.hour, future_time.minute
         
         return None
     
@@ -715,6 +827,13 @@ class EnhancedDateTimeParser:
             extracted_time = time_tuple
             metadata['components_found']['time'] = True
             print(f"[ENHANCED_PARSER] Найдено время: {time_tuple}")
+        else:
+            # Пробуем извлечь время из временных периодов
+            time_period_tuple = self.extract_time_periods(normalized_text)
+            if time_period_tuple:
+                extracted_time = time_period_tuple
+                metadata['components_found']['time_period'] = True
+                print(f"[ENHANCED_PARSER] Найдено время из периода: {time_period_tuple}")
         
         # Если не найдена дата, используем завтра по умолчанию
         if not extracted_date:

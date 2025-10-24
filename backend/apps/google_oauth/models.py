@@ -208,6 +208,21 @@ class Invite(models.Model):
         _("Дата и время интервью")
     )
     
+    # Кастомная длительность встречи (в минутах)
+    custom_duration_minutes = models.PositiveIntegerField(
+        _("Кастомная длительность встречи (минуты)"),
+        null=True,
+        blank=True,
+        help_text=_("Если указано, будет использоваться вместо стандартной длительности из вакансии")
+    )
+    
+    # Email авторизованного пользователя
+    user_email = models.EmailField(
+        _("Email пользователя"),
+        blank=True,
+        help_text=_("Email авторизованного пользователя, создавшего инвайт")
+    )
+    
     # Статус и результаты
     status = models.CharField(
         _("Статус"),
@@ -259,6 +274,16 @@ class Invite(models.Model):
         _("Исходные данные из формы"),
         blank=True,
         help_text=_("Весь текст, введенный пользователем в комбинированную форму")
+    )
+    
+    # Выбранный интервьюер
+    interviewer = models.ForeignKey(
+        'interviewers.Interviewer',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_("Интервьюер"),
+        help_text=_("Интервьюер, назначенный для проведения интервью")
     )
     
     # Данные от Gemini AI
@@ -506,9 +531,78 @@ class Invite(models.Model):
         except Exception as e:
             return False, f"Ошибка получения информации о кандидате: {str(e)}"
     
+    def extract_custom_duration(self, text):
+        """Извлекает кастомную длительность из текста в скобках"""
+        import re
+        
+        if not text:
+            return None
+        
+        # Сначала пытаемся исправить распространенные опечатки
+        corrected_text = text
+        
+        # Исправляем основные опечатки с раскладкой клавиатуры
+        corrections = [
+            ('xfc', 'час'),      # xfc -> час (раскладка)
+            ('vfc', 'час'),      # vfc -> час
+            ('vf', 'час'),       # vf -> час
+        ]
+        
+        for typo, correct in corrections:
+            if typo in corrected_text.lower():
+                corrected_text = corrected_text.replace(typo, correct)
+                print(f"🔧 Исправлена опечатка: '{typo}' -> '{correct}'")
+        
+        # Паттерны для поиска длительности в скобках
+        patterns = [
+            r'\((\d+)\s*час[а-я]*\)',  # (1 час), (2 часа)
+            r'\((\d+)\s*минут\)',      # (30 минут)
+            r'\((\d+)\s*мин\)',        # (45 мин)
+            r'\((\d+)\s*ч\)',          # (1 ч), (2 ч)
+            r'\((\d+)\s*м\)',          # (30 м), (45 м)
+            r'\(полчаса\)',            # (полчаса)
+        ]
+        
+        # Сначала пробуем исправленный текст
+        for pattern in patterns:
+            match = re.search(pattern, corrected_text, re.IGNORECASE)
+            if match:
+                if 'полчаса' in match.group(0).lower():
+                    duration = 30
+                    print(f"✅ Извлечена длительность: полчаса = {duration} минут")
+                    return duration
+                else:
+                    duration = int(match.group(1))
+                    if 'час' in match.group(0).lower() or 'ч' in match.group(0).lower():
+                        duration *= 60  # Конвертируем часы в минуты
+                    print(f"✅ Извлечена длительность: {match.group(0)} = {duration} минут")
+                    return duration
+        
+        # Если не нашли в исправленном тексте, пробуем оригинальный
+        for pattern in patterns:
+            match = re.search(pattern, text, re.IGNORECASE)
+            if match:
+                if 'полчаса' in match.group(0).lower():
+                    duration = 30
+                    print(f"✅ Извлечена длительность: полчаса = {duration} минут")
+                    return duration
+                else:
+                    duration = int(match.group(1))
+                    if 'час' in match.group(0).lower() or 'ч' in match.group(0).lower():
+                        duration *= 60  # Конвертируем часы в минуты
+                    print(f"✅ Извлечена длительность: {match.group(0)} = {duration} минут")
+                    return duration
+        
+        return None
+    
     def get_screening_duration(self):
         """Получает длительность скринингов для данной вакансии"""
         try:
+            # Если указана кастомная длительность, используем её
+            if self.custom_duration_minutes:
+                print(f"✅ Используем кастомную длительность: {self.custom_duration_minutes} минут")
+                return self.custom_duration_minutes
+            
             from apps.vacancies.models import Vacancy
             
             # Проверяем, что у нас есть ID вакансии
@@ -794,15 +888,12 @@ class Invite(models.Model):
             print(f"ЗАГЛУШКА: Название файла: {new_file_name}")
             print(f"ЗАГЛУШКА: Ссылка НЕ создана (требуется настройка Google OAuth)")
             
-            # Создаем календарное событие (заглушку)
-            print("🔍 Создаем календарное событие (заглушку)...")
-            calendar_success = self._create_calendar_event_stub()
-            print(f"🔍 Результат создания календарного события (заглушка): {calendar_success}")
+            # Календарное событие не создается без Google OAuth
+            print("❌ Календарное событие не создано - требуется настройка Google OAuth")
+            calendar_success = False
             
-            # Обновляем статус на Tech Screening при создании инвайта со scorecard (заглушка)
-            if calendar_success:
-                tech_screening_success = self.update_candidate_status_to_tech_screening()
-                print(f"[TECH_SCREENING_UPDATE] Статус обновлен (заглушка): {tech_screening_success}")
+            # Статус не обновляется без календарного события
+            print("❌ Статус не обновлен - требуется календарное событие")
             
             return True, f"Структура подготовлена (заглушка): {folder_path}. Требуется настройка Google OAuth для создания реальных файлов."
             
@@ -1088,6 +1179,70 @@ class Invite(models.Model):
             print(f"❌ Ошибка обновления поля 'Scorecard' в Huntflow: {str(e)}")
             return False
     
+    def _add_interviewer_tag_to_huntflow(self):
+        """Добавляет метку с именем интервьюера в Huntflow"""
+        try:
+            print(f"🔍 INTERVIEWER_TAG: Начинаем добавление метки интервьюера...")
+            
+            if not self.interviewer:
+                print("ℹ️ INTERVIEWER_TAG: Нет интервьюера для добавления метки в Huntflow")
+                return True  # Не ошибка, просто нет интервьюера
+            
+            print(f"🔍 INTERVIEWER_TAG: Интервьюер найден: {self.interviewer}")
+            print(f"🔍 INTERVIEWER_TAG: ID интервьюера: {self.interviewer.id}")
+            print(f"🔍 INTERVIEWER_TAG: Email интервьюера: {self.interviewer.email}")
+            
+            from apps.huntflow.services import HuntflowService
+            
+            # Получаем account_id из Huntflow API
+            service = HuntflowService(self.user)
+            accounts = service.get_accounts()
+            if not accounts or 'items' not in accounts or len(accounts['items']) == 0:
+                print("❌ INTERVIEWER_TAG: Не удалось получить account_id для добавления метки интервьюера")
+                return False
+            
+            account_id = accounts['items'][0]['id']
+            print(f"🔍 INTERVIEWER_TAG: Account ID: {account_id}")
+            
+            # Получаем полное имя интервьюера
+            interviewer_name = self.interviewer.get_full_name()
+            print(f"🏷️ INTERVIEWER_TAG: Добавляем метку интервьюера в Huntflow: '{interviewer_name}'")
+            print(f"🔍 INTERVIEWER_TAG: ID кандидата: {self.candidate_id}")
+            
+            # Ищем существующий тег по имени интервьюера
+            print(f"🔍 INTERVIEWER_TAG: Ищем тег по имени: '{interviewer_name}'")
+            tag_id = service._find_tag_by_name(account_id, interviewer_name)
+            print(f"🔍 INTERVIEWER_TAG: Результат поиска тега: {tag_id}")
+            
+            if not tag_id:
+                print(f"⚠️ INTERVIEWER_TAG: Тег для интервьюера '{interviewer_name}' не найден в Huntflow")
+                return False
+            
+            # Добавляем тег к кандидату
+            print(f"🔍 INTERVIEWER_TAG: Добавляем тег {tag_id} к кандидату {self.candidate_id}")
+            tag_data = {'tags': [tag_id]}
+            result = service._make_request('POST', f"/accounts/{account_id}/applicants/{int(self.candidate_id)}/tags", json=tag_data)
+            print(f"🔍 INTERVIEWER_TAG: Результат добавления тега: {result}")
+            
+            if result:
+                print(f"✅ INTERVIEWER_TAG: Метка интервьюера '{interviewer_name}' успешно добавлена к кандидату {self.candidate_id}")
+                
+                # Очищаем кэш для этого кандидата после добавления метки
+                from apps.google_oauth.cache_service import HuntflowAPICache
+                HuntflowAPICache.clear_candidate(self.user.id, account_id, int(self.candidate_id))
+                print(f"🗑️ INTERVIEWER_TAG: Кэш очищен для кандидата {self.candidate_id}")
+                
+                return True
+            else:
+                print(f"❌ INTERVIEWER_TAG: Не удалось добавить метку интервьюера к кандидату")
+                return False
+                
+        except Exception as e:
+            print(f"❌ INTERVIEWER_TAG: Ошибка добавления метки интервьюера в Huntflow: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return False
+    
     def _create_calendar_event(self):
         """Создает календарное событие с длительностью из настроек вакансии"""
         try:
@@ -1100,8 +1255,8 @@ class Invite(models.Model):
             oauth_account = oauth_service.get_oauth_account()
             
             if not oauth_account:
-                print("❌ Google OAuth не настроен, создаем заглушку календарного события")
-                return self._create_calendar_event_stub()
+                print("❌ Google OAuth не настроен, невозможно создать календарное событие")
+                return False
             
             # Создаем сервис для работы с Google Calendar
             calendar_service = GoogleCalendarService(oauth_service)
@@ -1190,6 +1345,19 @@ class Invite(models.Model):
             if candidate_email:
                 attendees.append(candidate_email)
                 print(f"👥 Добавляем кандидата в участники: {candidate_email}")
+            
+            # Добавляем email пользователя в участники
+            if self.user_email:
+                attendees.append(self.user_email)
+                print(f"👥 Добавляем пользователя в участники: {self.user_email}")
+            elif self.user and hasattr(self.user, 'email') and self.user.email:
+                attendees.append(self.user.email)
+                print(f"👥 Добавляем пользователя в участники: {self.user.email}")
+            
+            # Добавляем email интервьюера в участники
+            if self.interviewer and self.interviewer.email:
+                attendees.append(self.interviewer.email)
+                print(f"👥 Добавляем интервьюера в участники: {self.interviewer.email}")
             
             # Создаем событие
             created_event = calendar_service.create_event(
@@ -1439,74 +1607,6 @@ class Invite(models.Model):
             print(f"❌ Ошибка удаления события календаря: {str(e)}")
             return False
     
-    def _create_calendar_event_stub(self):
-        """Создает заглушку календарного события"""
-        try:
-            import uuid
-            from datetime import timedelta
-            
-            # Генерируем заглушки для ID
-            event_id = f"event_{uuid.uuid4().hex[:12]}"
-            meet_id = f"meet_{uuid.uuid4().hex[:12]}"
-            
-            # Формируем название события
-            event_title = self._generate_calendar_event_title()
-            
-            # Время начала и окончания
-            start_time = self.interview_datetime
-            
-            # Получаем длительность скринингов из настроек вакансии
-            screening_duration = self.get_screening_duration()
-            end_time = start_time + timedelta(minutes=screening_duration)
-            
-            # Получаем email кандидата
-            candidate_email = None
-            try:
-                from apps.huntflow.services import HuntflowService
-                huntflow_service = HuntflowService(self.user)
-                accounts = huntflow_service.get_accounts()
-                if accounts and 'items' in accounts and len(accounts['items']) > 0:
-                    account_id = accounts['items'][0]['id']
-                    candidate_info = huntflow_service.get_applicant(account_id, int(self.candidate_id))
-                    if candidate_info and candidate_info.get('email'):
-                        candidate_email = candidate_info['email']
-            except Exception as e:
-                print(f"⚠️ Ошибка получения email кандидата: {e}")
-            
-            # Получаем сопроводительный текст
-            invite_text = ""
-            try:
-                if self.vacancy_id:
-                    from apps.vacancies.models import Vacancy
-                    vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
-                    invite_text = vacancy.invite_text or ""
-                    
-                    # Заменяем [телеграм рекрутера] на реальную ссылку
-                    if invite_text and "[телеграм рекрутера]" in invite_text:
-                        telegram_username = self.user.telegram_username
-                        if telegram_username:
-                            telegram_link = f"https://t.me/{telegram_username}"
-                            invite_text = invite_text.replace("[телеграм рекрутера]", telegram_link)
-            except Exception as e:
-                print(f"⚠️ Ошибка получения invite_text: {e}")
-            
-            # Сохраняем заглушки
-            self.calendar_event_id = event_id
-            self.calendar_event_url = f"https://calendar.google.com/event?eid={event_id}"
-            self.google_meet_url = f"https://meet.google.com/{meet_id}"
-            
-            print(f"ЗАГЛУШКА: Календарное событие создано")
-            print(f"ЗАГЛУШКА: ID события: {event_id}")
-            print(f"ЗАГЛУШКА: Название: {event_title}")
-            print(f"ЗАГЛУШКА: Время: {start_time} - {end_time}")
-            print(f"ЗАГЛУШКА: Email кандидата: {candidate_email}")
-            print(f"ЗАГЛУШКА: Google Meet: {self.google_meet_url}")
-            
-            return True
-            
-        except Exception as e:
-            print(f"❌ Ошибка создания заглушки календарного события: {e}")
-            return False
     
     def update_candidate_status_to_tech_screening(self):
         """Обновление статуса кандидата на Tech Screening в Huntflow"""
@@ -3867,6 +3967,7 @@ class ChatSession(models.Model):
     """Модель для хранения сессий чата"""
     
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_sessions')
+    vacancy = models.ForeignKey('vacancies.Vacancy', on_delete=models.CASCADE, related_name='chat_sessions', verbose_name="Вакансия", null=True, blank=True)
     title = models.CharField(max_length=200, blank=True, verbose_name="Название чата")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Обновлено")
@@ -3878,8 +3979,8 @@ class ChatSession(models.Model):
     
     def __str__(self):
         if self.title:
-            return f'{self.title} (#{self.id})'
-        return f'Чат #{self.id} - {self.user.username} ({self.created_at.strftime("%d.%m.%Y %H:%M")})'
+            return f'{self.title} - {self.vacancy.name if self.vacancy else "Без вакансии"} (#{self.id})'
+        return f'{self.vacancy.name if self.vacancy else "Без вакансии"} - Чат #{self.id} ({self.created_at.strftime("%d.%m.%Y %H:%M")})'
 
 
 class ChatMessage(models.Model):

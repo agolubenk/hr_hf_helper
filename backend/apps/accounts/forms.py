@@ -13,6 +13,7 @@ class ProfileEditForm(UserChangeForm):
     - last_name: фамилия пользователя
     - email: электронная почта
     - telegram_username: имя пользователя в Telegram
+    - telegram_username: имя пользователя в Telegram
     
     ИСТОЧНИКИ ДАННЫЕ:
     - User модель из apps.accounts.models
@@ -39,7 +40,8 @@ class ProfileEditForm(UserChangeForm):
             'email', 
             'telegram_username',
             'interview_start_time',
-            'interview_end_time'
+            'interview_end_time',
+            'meeting_interval_minutes'
         ]
         widgets = {
             'first_name': forms.TextInput(attrs={
@@ -68,6 +70,13 @@ class ProfileEditForm(UserChangeForm):
                 'type': 'time',
                 'placeholder': '18:00'
             }),
+            'meeting_interval_minutes': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': '0',
+                'max': '60',
+                'step': '5',
+                'placeholder': '15'
+            }),
         }
     
     def __init__(self, *args, **kwargs):
@@ -94,11 +103,13 @@ class ProfileEditForm(UserChangeForm):
                 telegram_username = telegram_username[5:]
         
         return telegram_username
+    
 
     def clean(self):
         cleaned_data = super().clean()
         start_time = cleaned_data.get('interview_start_time')
         end_time = cleaned_data.get('interview_end_time')
+        meeting_interval = cleaned_data.get('meeting_interval_minutes')
         
         if start_time and end_time:
             # Проверяем, что время находится в диапазоне 07:00 - 21:00
@@ -112,6 +123,13 @@ class ProfileEditForm(UserChangeForm):
             # Проверяем, что время начала раньше времени окончания
             if start_time >= end_time:
                 raise forms.ValidationError("Время начала должно быть раньше времени окончания")
+        
+        # Валидация времени между встречами
+        if meeting_interval is not None:
+            if meeting_interval < 0 or meeting_interval > 60:
+                raise forms.ValidationError("Время между встречами должно быть от 0 до 60 минут")
+            if meeting_interval % 5 != 0:
+                raise forms.ValidationError("Время между встречами должно быть кратно 5 минутам")
         
         return cleaned_data
 

@@ -73,6 +73,11 @@ SIDEBAR_MENU = {
                 'icon': 'fas fa-list',
                 'url': 'vacancies:vacancy_list'
             },
+            'hiring_plans': {
+                'title': 'План найма',
+                'icon': 'fas fa-clipboard-list',
+                'url': 'hiring_plan:plan_list'
+            },
             'salary_ranges': {
                 'title': 'Зарплатные вилки',
                 'icon': 'fas fa-money-bill-wave',
@@ -124,89 +129,74 @@ SIDEBAR_MENU = {
             }
         }
     },
-    'clickup_int': {
-        'title': 'ClickUp',
-        'icon': 'fas fa-tasks',
+    'integrations': {
+        'title': 'Интеграции',
+        'icon': 'fas fa-plug',
         'url': 'clickup_int:dashboard',
         'submenu': {
-            'dashboard': {
-                'title': 'Главная',
-                'icon': 'fas fa-tachometer-alt',
-                'url': 'clickup_int:dashboard'
+            'clickup': {
+                'title': 'ClickUp',
+                'icon': 'fas fa-tasks',
+                'url': 'clickup_int:dashboard',
+                'submenu': {
+                    'dashboard': {
+                        'title': 'Главная',
+                        'icon': 'fas fa-tachometer-alt',
+                        'url': 'clickup_int:dashboard'
+                    },
+                    'lists': {
+                        'title': 'Списки',
+                        'icon': 'fas fa-list',
+                        'url': 'clickup_int:tasks_list'
+                    },
+                    'import': {
+                        'title': 'Импорт',
+                        'icon': 'fas fa-upload',
+                        'url': 'clickup_int:bulk_import'
+                    },
+                    'logs': {
+                        'title': 'Логи',
+                        'icon': 'fas fa-history',
+                        'url': 'clickup_int:sync_logs'
+                    },
+                    'settings': {
+                        'title': 'Настройки',
+                        'icon': 'fas fa-cog',
+                        'url': 'clickup_int:settings'
+                    }
+                }
             },
-            'lists': {
-                'title': 'Списки',
-                'icon': 'fas fa-list',
-                'url': 'clickup_int:tasks_list'
-            },
-            'import': {
-                'title': 'Импорт',
-                'icon': 'fas fa-upload',
-                'url': 'clickup_int:bulk_import'
-            },
-            'logs': {
-                'title': 'Логи',
-                'icon': 'fas fa-history',
-                'url': 'clickup_int:sync_logs'
-            },
-            'settings': {
-                'title': 'Настройки',
-                'icon': 'fas fa-cog',
-                'url': 'clickup_int:settings'
-            }
-        }
-    },
-    'notion_int': {
-        'title': 'Notion',
-        'icon': 'fas fa-sticky-note',
-        'url': 'notion_int:dashboard',
-        'submenu': {
-            'dashboard': {
-                'title': 'Главная',
-                'icon': 'fas fa-tachometer-alt',
-                'url': 'notion_int:dashboard'
-            },
-            'lists': {
-                'title': 'Списки',
-                'icon': 'fas fa-list',
-                'url': 'notion_int:pages_list'
-            },
-            'import': {
-                'title': 'Импорт',
-                'icon': 'fas fa-upload',
-                'url': 'notion_int:bulk_import'
-            },
-            'logs': {
-                'title': 'Логи',
-                'icon': 'fas fa-history',
-                'url': 'notion_int:sync_logs'
-            },
-            'settings': {
-                'title': 'Настройки',
-                'icon': 'fas fa-cog',
-                'url': 'notion_int:settings'
-            }
-        }
-    },
-    'telegram': {
-        'title': 'Telegram',
-        'icon': 'fab fa-telegram',
-        'url': 'telegram:dashboard',
-        'submenu': {
-            'chats': {
-                'title': 'Чаты',
-                'icon': 'fas fa-comments',
-                'url': 'telegram:dashboard'
-            },
-            'contacts': {
-                'title': 'Контакты',
-                'icon': 'fas fa-address-book',
-                'url': 'telegram:dashboard'
-            },
-            'automation': {
-                'title': 'Автоматизация',
-                'icon': 'fas fa-robot',
-                'url': 'telegram:dashboard'
+            'notion': {
+                'title': 'Notion',
+                'icon': 'fas fa-sticky-note',
+                'url': 'notion_int:dashboard',
+                'submenu': {
+                    'dashboard': {
+                        'title': 'Главная',
+                        'icon': 'fas fa-tachometer-alt',
+                        'url': 'notion_int:dashboard'
+                    },
+                    'lists': {
+                        'title': 'Списки',
+                        'icon': 'fas fa-list',
+                        'url': 'notion_int:pages_list'
+                    },
+                    'import': {
+                        'title': 'Импорт',
+                        'icon': 'fas fa-upload',
+                        'url': 'notion_int:bulk_import'
+                    },
+                    'logs': {
+                        'title': 'Логи',
+                        'icon': 'fas fa-history',
+                        'url': 'notion_int:sync_logs'
+                    },
+                    'settings': {
+                        'title': 'Настройки',
+                        'icon': 'fas fa-cog',
+                        'url': 'notion_int:settings'
+                    }
+                }
             }
         }
     }

@@ -24,6 +24,7 @@ class VacancyAdmin(admin.ModelAdmin):
     search_fields = [
         'name',
         'external_id',
+        'technologies',
         'recruiter__first_name',
         'recruiter__last_name',
         'recruiter__email'
@@ -32,39 +33,44 @@ class VacancyAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at', 'updated_at']
     
     fieldsets = (
-        ('Основная информация', {
-            'fields': ('name', 'external_id', 'recruiter', 'is_active')
+        ('Блок 1: Основная информация', {
+            'fields': ('name', 'external_id', 'recruiter', 'technologies', 'is_active')
         }),
-        ('Инвайты', {
-            'fields': ('invite_title', 'invite_text'),
+        ('Блок 2: Этапы для перевода кандидатов', {
+            'fields': (
+                'screening_duration', 'invite_title', 'invite_text', 'hr_screening_stage',
+                'tech_interview_duration', 'tech_invite_title', 'tech_invite_text', 'tech_screening_stage',
+                'tech_interview_stage'
+            ),
             'classes': ('collapse',)
         }),
-        ('Scorecard', {
+        ('Блок 3: Scorecard', {
             'fields': ('scorecard_title', 'scorecard_link'),
             'classes': ('collapse',)
         }),
-        ('Вопросы для интервью', {
+        ('Блок 4: Ссылки на вакансии по странам', {
+            'fields': ('vacancy_link_belarus', 'vacancy_link_poland'),
+            'classes': ('collapse',)
+        }),
+        ('Блок 5: Вопросы для интервью', {
             'fields': ('questions_belarus', 'questions_poland'),
             'classes': ('collapse',)
         }),
-        ('Ссылки на вакансии по странам', {
-            'fields': (
-                'vacancy_link_belarus', 'vacancy_link_poland'
-            ),
-            'classes': ('collapse',),
-            'description': 'Ссылки на вакансии в Беларуси и Польше'
-        }),
-        ('Промпты', {
+        ('Блок 6: Промпт для анализа после скрининга', {
             'fields': ('candidate_update_prompt',),
             'classes': ('collapse',)
         }),
-        ('Настройки скринингов', {
-            'fields': ('screening_duration',),
-            'description': 'Настройки длительности скринингов для данной вакансии'
-        }),
-        ('Интервьюеры', {
+        ('Блок 7: Интервьюеры (только связанные с вакансией)', {
             'fields': ('interviewers',),
-            'description': 'Выберите интервьюеров для этой вакансии. Каждый интервьюер может быть привязан только к одной вакансии.'
+            'classes': ('collapse',)
+        }),
+        ('Блок 8: Обязательные участники тех. интервью', {
+            'fields': ('mandatory_tech_interviewers',),
+            'classes': ('collapse',)
+        }),
+        ('Блок 9: Зарплатные вилки', {
+            'fields': ('available_grades',),
+            'classes': ('collapse',)
         }),
         ('Системная информация', {
             'fields': ('created_at', 'updated_at'),
@@ -72,7 +78,7 @@ class VacancyAdmin(admin.ModelAdmin):
         }),
     )
     
-    filter_horizontal = ['interviewers']
+    filter_horizontal = ['interviewers', 'mandatory_tech_interviewers']
     
     ordering = ['-created_at']
     
@@ -354,3 +360,4 @@ class ScorecardUpdateHistoryAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         """Разрешаем удаление только суперпользователям"""
         return request.user.is_superuser
+

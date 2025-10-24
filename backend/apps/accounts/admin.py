@@ -15,6 +15,12 @@ class UserAdminForm(forms.ModelForm):
             'huntflow_refresh_token': forms.TextInput(attrs={'placeholder': 'Введите refresh token'}),
             'gemini_api_key': forms.TextInput(attrs={'placeholder': 'Введите API ключ Gemini'}),
             'clickup_api_key': forms.TextInput(attrs={'placeholder': 'Введите API ключ ClickUp'}),
+            'meeting_interval_minutes': forms.NumberInput(attrs={
+                'min': '0', 
+                'max': '60', 
+                'step': '5',
+                'placeholder': 'Кратно 5, от 0 до 60'
+            }),
         }
 
 
@@ -38,6 +44,13 @@ class UserAdmin(BaseUserAdmin):
         (_("Huntflow Продакшн"), {
             "fields": (
                 "huntflow_prod_url",
+            )
+        }),
+        (_("Настройки интервью"), {
+            "fields": (
+                "interview_start_time",
+                "interview_end_time",
+                "meeting_interval_minutes",
             )
         }),
         (_("Huntflow Настройки"), {

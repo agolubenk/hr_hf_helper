@@ -182,23 +182,6 @@
                                     <i class="fas fa-comments me-2"></i>HR-помощник
                                     <span class="badge bg-secondary ms-2">#{{ chat_session.id }}</span>
                                 </h6>
-                                <div class="chat-title-edit">
-                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="toggleTitleEdit()" title="Редактировать название чата">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div id="title-edit-form" class="mt-2" style="display: none;">
-                                <form method="post" action="{% url 'google_oauth:update_chat_title' chat_session.id %}" class="d-flex gap-2">
-                                    {% csrf_token %}
-                                    {{ title_form.title }}
-                                    <button type="submit" class="btn btn-sm btn-success">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-secondary" onclick="toggleTitleEdit()">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </form>
                             </div>
                         </div>
                 
@@ -338,6 +321,13 @@
                                                                     <span class="info-value-table">{{ message.invite.interview_datetime|date:"Y-m-d H:i" }}</span>
                                                                 </div>
                                                             {% endif %}
+                                                            
+                                                            {% if message.invite.interviewer %}
+                                                                <div class="info-row-table">
+                                                                    <span class="info-label-table">Интервьюер:</span>
+                                                                    <span class="info-value-table">{{ message.invite.interviewer.get_full_name }} ({{ message.invite.interviewer.email }})</span>
+                                                                </div>
+                                                            {% endif %}
                                                         </div>
                                                         
                                                         <div class="status-message-compact">
@@ -410,11 +400,16 @@
                                               style="display:none; font-weight:bold;">
                                         </span>
 
-                                        <div class="input-group">
+                                        <div class="input-group position-relative">
                                             {{ form.message }}
                                             <button type="submit" class="btn btn-primary" id="send-btn">
                                                 <i class="fas fa-paper-plane"></i>
                                             </button>
+                                            
+                                            <!-- Выпадающий список автодополнения интервьюеров -->
+                                            <div id="interviewers-autocomplete" class="autocomplete-dropdown" style="display: none;">
+                                                <div class="autocomplete-list"></div>
+                                            </div>
                                         </div>
                                         
                                         <!-- Скрытое поле для передачи типа действия -->
@@ -437,59 +432,10 @@
                     </div>
                 </div>
 
-         <!-- Боковая панель со списком сессий -->
+                <!-- Блок команд -->
                 <div class="col-lg-4">
+                    <!-- Инструкция по командам -->
                     <div class="card shadow">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">
-                         <i class="fas fa-comments me-2"></i>История чатов
-                            </h6>
-                        </div>
-                 <div class="card-body p-0 pt-2">
-                     <!-- Список сессий -->
-                     <div class="sessions-list" style="max-height: 280px; overflow-y: auto;">
-                         {% for session in all_sessions %}
-                             <div class="session-item mx-2 {% if session.id == chat_session.id %}active{% endif %}">
-                                 <a href="{% url 'google_oauth:chat_workflow_session' session.id %}" class="session-link">
-                                     <div class="session-content">
-                                         <div class="session-main-info">
-                                             <span class="session-id">#{{ session.id }}</span>
-                                             {% if session.title %}
-                                                 <span class="session-title">{{ session.title }}</span>
-                                             {% endif %}
-                                         </div>
-                                         <div class="session-date">
-                                             {% if session.last_message_date %}
-                                                 {{ session.last_message_date|date:"d.m.Y H:i" }}
-                                             {% else %}
-                                                 {{ session.updated_at|date:"d.m.Y H:i" }}
-                                             {% endif %}
-                                         </div>
-                                         {% if session.id == chat_session.id %}
-                                             <div class="session-status">
-                                                 <i class="fas fa-circle text-primary" style="font-size: 8px;"></i>
-                                             </div>
-                                         {% endif %}
-                                     </div>
-                                 </a>
-                </div>
-                         {% empty %}
-                             <div class="text-center text-muted py-4">
-                                 <i class="fas fa-comments fa-2x mb-2"></i>
-                                 <p class="mb-0">Нет чатов</p>
-            </div>
-                         {% endfor %}
-                            </div>
-                        </div>
-                 <div class="card-footer py-2">
-                     <a href="{% url 'google_oauth:chat_workflow' %}?new=true" class="btn btn-sm btn-outline-primary w-100" id="newChatBtn">
-                         <i class="fas fa-plus me-1"></i>Новый чат
-                     </a>
-                </div>
-            </div>
-            
-            <!-- Инструкция по командам -->
-            <div class="card shadow mt-3">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center" style="cursor: pointer;" onclick="toggleCommandsCard()">
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-keyboard me-2"></i>Команды чата
@@ -508,7 +454,7 @@
                             </div>
                         </div>
                         
-                        <div class="command-item mb-3">
+                        <div class="command-item mb-3 command-hover-card">
                             <div class="command-header">
                                 <span class="command-badge bg-warning">/in</span>
                                 <strong class="ms-2">Инвайт</strong>
@@ -516,15 +462,51 @@
                             <div class="command-example mt-1">
                                 <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время]</code>
                             </div>
+                            <div class="command-details-hover">
+                                <div class="alert alert-info mb-0">
+                                    <div class="d-flex align-items-start">
+                                        <i class="fas fa-info-circle me-2 mt-1"></i>
+                                        <div>
+                                            Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
+                                            <p class="mb-0 mt-2">
+                                                <code>(1 час)</code> OR <code>(60 минут)</code> OR <code>(1h)</code><br>
+                                                <code>(30 минут)</code> OR <code>(30m)</code> OR <code>(полчаса)</code> etc.
+                                            </p>
+                                            <div class="mt-2">
+                                                <strong>Пример:</strong><br>
+                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (1 ч)</code>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
-                        <div class="command-item mb-3" id="additionalCommand1">
+                        <div class="command-item mb-3 command-hover-card" id="additionalCommand1">
                             <div class="command-header">
                                 <span class="command-badge bg-info">/t</span>
                                 <strong class="ms-2">Техническое интервью</strong>
                             </div>
                             <div class="command-example mt-1">
                                 <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время]</code>
+                            </div>
+                            <div class="command-details-hover">
+                                <div class="alert alert-info mb-0">
+                                    <div class="d-flex align-items-start">
+                                        <i class="fas fa-info-circle me-2 mt-1"></i>
+                                        <div>
+                                            Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
+                                            <p class="mb-0 mt-2">
+                                                <code>(1 час)</code> OR <code>(60 минут)</code> OR <code>(1h)</code><br>
+                                                <code>(30 минут)</code> OR <code>(30m)</code> OR <code>(полчаса)</code> etc.
+                                            </p>
+                                            <div class="mt-2">
+                                                <strong>Пример:</strong><br>
+                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (1 ч)</code>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
@@ -537,6 +519,8 @@
                                 <code class="text-primary small">Отменяет последнее созданное действие<br>(инвайт, скрининг, интервью)</code>
                             </div>
                         </div>
+                    </div>
+                </div>
                     </div>
                 </div>
             </div>
@@ -588,18 +572,145 @@
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
+/* Стили для карточек с hover эффектом */
+.command-hover-card {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.command-hover-card .command-details-hover {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin-top: 0;
+}
+
+.command-hover-card:hover .command-details-hover {
+    opacity: 1;
+    max-height: 500px;
+    margin-top: 10px;
+}
+
+.command-hover-card:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+    border-radius: 8px;
+    padding: 10px;
+    margin: -10px;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
+}
+
+/* Уменьшаем размер шрифта в hover-блоках для соответствия основному формату */
+.command-details-hover {
+    font-size: 0.875rem; /* 14px - соответствует размеру шрифта в command-example */
+}
+
+.command-details-hover .alert {
+    font-size: 0.875rem;
+}
+
+.command-details-hover strong {
+    font-size: 0.875rem;
+}
+
+.command-details-hover code {
+    font-size: 0.8rem; /* Немного меньше для code элементов */
+}
+
+/* Стили для автодополнения интервьюеров */
+.autocomplete-dropdown {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #007bff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 123, 255, 0.25);
+    z-index: 1050;
+    max-height: 300px;
+    margin-bottom: 8px;
+    overflow-y: auto;
+}
+
+.autocomplete-list {
+    padding: 0;
+    margin: 0;
+}
+
+.autocomplete-item {
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.active {
+    background-color: #e3f2fd;
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
+}
+
+.autocomplete-item:last-child {
+    border-bottom: none;
+}
+
+.autocomplete-username {
+    font-weight: bold;
+    color: #007bff;
+    margin-right: 12px;
+    font-size: 1.1rem;
+}
+
+.autocomplete-name {
+    color: #495057;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.autocomplete-email {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-left: auto;
+}
+
+/* Темная тема для автодополнения */
+[data-theme="dark"] .autocomplete-dropdown {
+    background: #343a40;
+    border-color: #007bff;
+    box-shadow: 0 0.5rem 1rem rgba(0, 123, 255, 0.4);
+}
+
+[data-theme="dark"] .autocomplete-item {
+    border-bottom-color: #495057;
+}
+
+[data-theme="dark"] .autocomplete-item:hover,
+[data-theme="dark"] .autocomplete-item.active {
+    background-color: #1e3a5f;
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+[data-theme="dark"] .autocomplete-name {
+    color: #e9ecef;
+}
+
+[data-theme="dark"] .autocomplete-email {
+    color: #adb5bd;
+}
+
 #commandsToggleIcon {
     transition: transform 0.3s ease;
 }
 
 .commands-card-header:hover #commandsToggleIcon {
     transform: scale(1.1);
-}
-    display: inline-block;
-    width: auto !important;
-    min-width: fit-content !important;
-    max-width: none !important;
-    font-family: "FKGroteskNeue", "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
 /* Пользовательские сообщения - остаются с ограничением */
@@ -974,15 +1085,6 @@
      margin-left: 6px !important;
  }
 
- .chat-title-edit {
-     display: flex;
-     align-items: center;
- }
-
- .chat-title-edit .btn {
-     padding: 4px 8px;
-     font-size: 0.8rem;
- }
 
 /* Адаптивность для мобильных - сохраняем пропорциональность */
 @media (max-width: 768px) {
@@ -1044,7 +1146,68 @@
     .card #id_message {
         font-size: 0.85rem; /* На мобильных тоже меньше, но одинаково */
     }
-}
+    
+    /* Скрываем неактивные кнопки копирования на мобильных устройствах */
+        .copy-buttons .btn-copy:disabled {
+            display: none !important;
+        }
+    }
+    
+    /* Стили для раскрывающихся деталей команд */
+    .command-header {
+        transition: background-color 0.2s ease;
+    }
+    
+    .command-header:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        border-radius: 4px;
+    }
+    
+    .command-details {
+        animation: slideDown 0.3s ease-out;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .command-details .alert {
+        border-left: 4px solid #17a2b8;
+        background-color: #f8f9fa;
+    }
+    
+    .command-details code {
+        background-color: #e9ecef;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-size: 0.9em;
+    }
+    
+    /* Стили для мигающего текста "more..." */
+    .more-text {
+        color: #6c757d;
+        font-size: 0.85em;
+        font-style: italic;
+        animation: blink 2s infinite;
+        transition: color 0.3s ease;
+    }
+    
+    .command-header:hover .more-text {
+        color: #007bff;
+        animation: none;
+    }
+    
+    @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0.3; }
+    }
 
 /* Анимации */
 .card .message {
@@ -1140,134 +1303,6 @@
     color: #ccc;
 }
 
- /* === СТИЛИ ДЛЯ СПИСКА СЕССИЙ === */
- .card .sessions-list {
-     background-color: var(--hr-card-bg, #ffffff);
- }
-
- .card .session-item {
-     border-bottom: 1px solid var(--hr-border, #dee2e6);
-     transition: background-color 0.2s ease;
-     margin-bottom: var(--space-8);
-     padding: var(--space-6);
- }
-
- .card .session-item:last-child {
-     border-bottom: none;
- }
-
- .card .session-item:hover {
-     background-color: var(--hr-hover-bg, #f8f9fa);
- }
-
- .card .session-item.active {
-     background-color: var(--hr-primary-light, rgba(0, 123, 255, 0.1));
-     border-left: 3px solid var(--hr-primary, #007bff);
- }
-
- .card .session-link {
-     display: block;
-     padding: 12px 16px;
-     text-decoration: none;
-     color: inherit;
- }
-
- .card .session-link:hover {
-     text-decoration: none;
-     color: inherit;
- }
-
- .card .session-content {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     gap: 8px;
- }
-
- .card .session-main-info {
-     display: flex;
-     align-items: center;
-     gap: 8px;
-     flex: 1;
-     min-width: 0;
- }
-
- .card .session-id {
-     font-weight: 600;
-     font-size: 0.9rem;
-     color: rgb(112, 153, 112); /* --color-water-500 */
-     white-space: nowrap;
- }
-
- .card .session-title {
-     font-weight: 500;
-     font-size: 0.9rem;
-     color: var(--hr-text, #333);
-     overflow: hidden;
-     text-overflow: ellipsis;
-     white-space: nowrap;
-     flex: 1;
- }
-
- .card .session-date {
-     font-size: 0.75rem;
-     color: var(--hr-text-muted, #6c757d);
-     white-space: nowrap;
-     margin-left: 8px;
- }
-
- .card .session-status {
-     display: flex;
-     align-items: center;
-     margin-left: 8px;
- }
-
- /* Темная тема для списка сессий */
- [data-theme="dark"] .card .session-item:hover {
-     background-color: var(--color-surface-hover, #2d3748);
- }
-
- [data-theme="dark"] .card .session-item.active {
-     background-color: rgba(0, 123, 255, 0.15);
- }
-
- [data-theme="dark"] .card .session-title {
-     color: var(--color-text, #e2e8f0);
- }
-
-/* Темная тема для session-id */
-[data-theme="dark"] .card .session-id {
-    color: rgb(7, 112, 7); /* Темно-зеленый */
-}
-
-/* Темная тема для ссылок */
-[data-theme="dark"] .card .info-link-compact {
-    color: rgba(255, 64, 129, 1); /* --color-pink-600 */
-}
-
-/* Темная тема для приглушенного текста */
-[data-theme="dark"] .text-muted {
-    color: rgba(240, 248, 255, 1) !important; /* --color-luna-400 */
-}
-
- /* Скроллбар для списка сессий */
- .card .sessions-list::-webkit-scrollbar {
-     width: 4px;
- }
-
- .card .sessions-list::-webkit-scrollbar-track {
-     background: var(--hr-border, #dee2e6);
-     border-radius: 2px;
- }
-
- .card .sessions-list::-webkit-scrollbar-thumb {
-     background: var(--hr-primary, #007bff);
-     border-radius: 2px;
- }
-
- .card .sessions-list::-webkit-scrollbar-thumb:hover {
-     background: var(--hr-primary-hover, #0056b3);
- }
 
  /* === СТИЛИ ДЛЯ СЕЛЕКТОРА ВАКАНСИИ И СЛОТОВ === */
  .vacancy-selector {
@@ -1770,26 +1805,6 @@
     color: var(--color-primary, #3182ce);
 }
 
-/* === СТИЛИ ДЛЯ КНОПКИ РЕДАКТИРОВАНИЯ ЗАГОЛОВКА ЧАТА === */
-/* Скрываем кнопку редактирования по умолчанию */
-.chat-title-edit {
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
-}
-
-/* Показываем кнопку при наведении на карточку */
-.card:hover .chat-title-edit {
-    opacity: 1;
-}
-
-/* Дополнительные стили для кнопки */
-.chat-title-edit .btn {
-    transition: all 0.2s ease-in-out;
-}
-
-.chat-title-edit .btn:hover {
-    transform: scale(1.05);
-}
 </style>
 
 <script>
@@ -1798,6 +1813,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatForm = document.getElementById('chat-form');
     const messageInput = document.getElementById('id_message');
     const sendBtn = document.getElementById('send-btn');
+    
+    console.log('🔍 INIT: messageInput element:', messageInput);
+    console.log('🔍 INIT: sendBtn element:', sendBtn);
+    console.log('🔍 INIT: chatForm element:', chatForm);
     
     // Прокрутка вниз чата (без скролла всей страницы)
     function scrollToBottom() {
@@ -1866,24 +1885,228 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
+    // Автодополнение интервьюеров
+    let autocompleteTimeout;
+    let currentAutocompleteIndex = -1;
+    let currentAutocompleteResults = [];
+    
+    messageInput.addEventListener('input', function() {
+        const value = this.value;
+        const cursorPos = this.selectionStart;
+        console.log('🔍 INPUT_EVENT: Value:', value, 'Cursor:', cursorPos);
+        console.log('🔍 INPUT_EVENT: Message input element:', this);
+
+        // Ищем @ в тексте перед курсором
+        const textBeforeCursor = value.substring(0, cursorPos);
+        const lastAtIndex = textBeforeCursor.lastIndexOf('@');
+        console.log('🔍 INPUT_EVENT: Text before cursor:', textBeforeCursor, 'Last @ index:', lastAtIndex);
+
+        if (lastAtIndex !== -1) {
+            const textAfterAt = textBeforeCursor.substring(lastAtIndex + 1);
+            console.log('🔍 INPUT_EVENT: Text after @:', textAfterAt);
+
+            // Проверяем, что после @ нет пробелов (значит это начало упоминания)
+            if (!textAfterAt.includes(' ') && !textAfterAt.includes('\n')) {
+                const query = textAfterAt;
+                console.log('🔍 INPUT_EVENT: Query for autocomplete:', query);
+
+                // Очищаем предыдущий таймаут
+                clearTimeout(autocompleteTimeout);
+
+                // Устанавливаем новый таймаут для запроса
+                autocompleteTimeout = setTimeout(() => {
+                    fetchInterviewers(query);
+                }, 300); // Задержка 300мс
+
+                return;
+            }
+        }
+
+        // Скрываем автодополнение, если нет @
+        console.log('🔍 INPUT_EVENT: Hiding autocomplete');
+        hideAutocomplete();
+    });
+    
+    // Обработка клавиш для навигации по автодополнению
+    messageInput.addEventListener('keydown', function(e) {
+        const autocomplete = document.getElementById('interviewers-autocomplete');
+        
+        if (autocomplete.style.display === 'block') {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                navigateAutocomplete(1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                navigateAutocomplete(-1);
+            } else if (e.key === 'Enter' && currentAutocompleteIndex >= 0) {
+                e.preventDefault();
+                selectAutocompleteItem(currentAutocompleteResults[currentAutocompleteIndex]);
+            } else if (e.key === 'Escape') {
+                hideAutocomplete();
+            }
+        }
+    });
+    
+    // Скрытие автодополнения при клике вне его
+    document.addEventListener('click', function(e) {
+        const autocomplete = document.getElementById('interviewers-autocomplete');
+        if (!autocomplete.contains(e.target) && e.target !== messageInput) {
+            hideAutocomplete();
+        }
+    });
+    
+    function fetchInterviewers(query) {
+        console.log('🔍 FETCH_INTERVIEWERS: Запрос:', query);
+        const vacancyId = new URLSearchParams(window.location.search).get('vacancy_id');
+        console.log('🔍 FETCH_INTERVIEWERS: Vacancy ID:', vacancyId);
+        console.log('🔍 FETCH_INTERVIEWERS: Current URL:', window.location.href);
+        
+        if (!vacancyId) {
+            console.log('❌ FETCH_INTERVIEWERS: Нет vacancy_id');
+            hideAutocomplete();
+            return;
+        }
+        
+        const url = `/google-oauth/api/interviewers-autocomplete/?vacancy_id=${vacancyId}&q=${encodeURIComponent(query)}`;
+        console.log('🔍 FETCH_INTERVIEWERS: URL:', url);
+        
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(response => {
+                console.log('🔍 FETCH_INTERVIEWERS: Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('🔍 FETCH_INTERVIEWERS: Response data:', data);
+                console.log('🔍 FETCH_INTERVIEWERS: data.success:', data.success);
+                console.log('🔍 FETCH_INTERVIEWERS: data.results:', data.results);
+                console.log('🔍 FETCH_INTERVIEWERS: data.results.length:', data.results ? data.results.length : 'undefined');
+                if (data.success && data.results.length > 0) {
+                    console.log('🔍 FETCH_INTERVIEWERS: Calling showAutocomplete');
+                    showAutocomplete(data.results);
+                } else {
+                    console.log('🔍 FETCH_INTERVIEWERS: Calling hideAutocomplete');
+                    hideAutocomplete();
+                }
+            })
+            .catch(error => {
+                console.error('❌ FETCH_INTERVIEWERS: Ошибка загрузки интервьюеров:', error);
+                hideAutocomplete();
+            });
+    }
+    
+    function showAutocomplete(results) {
+        console.log('🔍 SHOW_AUTOCOMPLETE: Results:', results);
+        console.log('🔍 SHOW_AUTOCOMPLETE: Showing autocomplete dropdown');
+        currentAutocompleteResults = results;
+        currentAutocompleteIndex = -1;
+        
+        const autocomplete = document.getElementById('interviewers-autocomplete');
+        const list = autocomplete.querySelector('.autocomplete-list');
+        
+        list.innerHTML = '';
+        
+        results.forEach((interviewer, index) => {
+            const item = document.createElement('div');
+            item.className = 'autocomplete-item';
+            item.dataset.index = index;
+            
+            item.innerHTML = `
+                <span class="autocomplete-username">${interviewer.username}</span>
+                <span class="autocomplete-name">${interviewer.full_name}</span>
+                <span class="autocomplete-email">${interviewer.email}</span>
+            `;
+            
+            item.addEventListener('click', () => selectAutocompleteItem(interviewer));
+            list.appendChild(item);
+        });
+        
+        autocomplete.style.display = 'block';
+    }
+    
+    function hideAutocomplete() {
+        console.log('🔍 HIDE_AUTOCOMPLETE: Hiding autocomplete dropdown');
+        const autocomplete = document.getElementById('interviewers-autocomplete');
+        autocomplete.style.display = 'none';
+        currentAutocompleteResults = [];
+        currentAutocompleteIndex = -1;
+    }
+    
+    function navigateAutocomplete(direction) {
+        if (currentAutocompleteResults.length === 0) return;
+        
+        // Убираем активный класс с текущего элемента
+        const items = document.querySelectorAll('.autocomplete-item');
+        if (currentAutocompleteIndex >= 0) {
+            items[currentAutocompleteIndex].classList.remove('active');
+        }
+        
+        // Вычисляем новый индекс
+        currentAutocompleteIndex += direction;
+        
+        if (currentAutocompleteIndex < 0) {
+            currentAutocompleteIndex = currentAutocompleteResults.length - 1;
+        } else if (currentAutocompleteIndex >= currentAutocompleteResults.length) {
+            currentAutocompleteIndex = 0;
+        }
+        
+        // Добавляем активный класс к новому элементу
+        items[currentAutocompleteIndex].classList.add('active');
+    }
+    
+    function selectAutocompleteItem(interviewer) {
+        console.log('🔍 SELECT_AUTOCOMPLETE: Выбран интервьюер:', interviewer);
+        
+        const value = messageInput.value;
+        const cursorPos = messageInput.selectionStart;
+        
+        // Находим позицию @
+        const textBeforeCursor = value.substring(0, cursorPos);
+        const lastAtIndex = textBeforeCursor.lastIndexOf('@');
+        
+        if (lastAtIndex !== -1) {
+            // Заменяем текст от @ до курсора на username интервьюера
+            const newValue = value.substring(0, lastAtIndex) + interviewer.username + ' ' + value.substring(cursorPos);
+            messageInput.value = newValue;
+            
+            // Устанавливаем курсор после username
+            const newCursorPos = lastAtIndex + interviewer.username.length + 1;
+            messageInput.setSelectionRange(newCursorPos, newCursorPos);
+            
+            // Добавляем информацию об интервьюере в скрытое поле для отправки на сервер
+            const interviewerInfo = document.createElement('input');
+            interviewerInfo.type = 'hidden';
+            interviewerInfo.name = 'selected_interviewer';
+            interviewerInfo.value = JSON.stringify({
+                id: interviewer.id,
+                username: interviewer.username,
+                email: interviewer.email,
+                full_name: interviewer.full_name
+            });
+            
+            // Добавляем в форму, если её нет - создаем
+            let chatForm = document.getElementById('chat-form');
+            if (!chatForm) {
+                chatForm = messageInput.closest('form');
+            }
+            chatForm.appendChild(interviewerInfo);
+        }
+        
+        hideAutocomplete();
+        messageInput.focus();
+    }
+    
+    
     // Фокус на поле ввода (убираем автоматический фокус при загрузке)
     // messageInput.focus();
     
-    // Обработка кнопки "Новый чат"
-    const newChatBtn = document.getElementById('newChatBtn');
-    if (newChatBtn) {
-        newChatBtn.addEventListener('click', function(e) {
-            const originalText = this.innerHTML;
-            this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Создание...';
-            this.style.pointerEvents = 'none';
-            
-            // Восстанавливаем кнопку через 2 секунды на случай, если редирект не произойдет
-            setTimeout(() => {
-                this.innerHTML = originalText;
-                this.style.pointerEvents = 'auto';
-            }, 2000);
-        });
-    }
+    
+    // Hover эффекты теперь обрабатываются через CSS, JavaScript не нужен
     
     // Копирование текста инвайта
     document.addEventListener('click', function(e) {
@@ -1945,30 +2168,47 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- Отладочная информация для событий календаря -->
 <script>
-console.log('🔍 DEBUG: calendar_events_data из Django:', {% if calendar_events_data %}{{ calendar_events_data|safe }}{% else %}[]{% endif %});
-console.log('🔍 DEBUG: Количество событий:', {% if calendar_events_data %}{{ calendar_events_data|length }}{% else %}0{% endif %});
+// Получаем данные календаря из JSON скрипта
+const calendarEventsScript = document.getElementById('calendar-events');
+if (calendarEventsScript) {
+    const calendarEventsData = JSON.parse(calendarEventsScript.textContent);
+    console.log('🔍 DEBUG: calendar_events_data из Django:', calendarEventsData);
+    console.log('🔍 DEBUG: Количество событий:', calendarEventsData ? calendarEventsData.length : 0);
+} else {
+    console.log('🔍 DEBUG: calendar_events_data не найдены');
+}
 </script>
 
 {% if selected_vacancy %}
 <script type="application/json" id="vacancy-data">
 {
+    "id": {{ selected_vacancy.id }},
+    "name": "{{ selected_vacancy.name|escapejs }}",
     "vacancy_link_belarus": "{{ selected_vacancy.vacancy_link_belarus|escapejs }}",
     "vacancy_link_poland": "{{ selected_vacancy.vacancy_link_poland|escapejs }}",
     "questions_belarus": "{{ selected_vacancy.questions_belarus|escapejs }}",
-    "questions_poland": "{{ selected_vacancy.questions_poland|escapejs }}"
+    "questions_poland": "{{ selected_vacancy.questions_poland|escapejs }}",
+    "duration": {{ selected_vacancy.screening_duration|default:60 }}
 }
 </script>
 
 <!-- Отладочная информация -->
 <script>
-console.log('🔍 DEBUG: Выбранная вакансия:', {
-    id: {{ selected_vacancy.id }},
-    name: "{{ selected_vacancy.name|escapejs }}",
-    vacancy_link_belarus: "{{ selected_vacancy.vacancy_link_belarus|escapejs }}",
-    vacancy_link_poland: "{{ selected_vacancy.vacancy_link_poland|escapejs }}",
-    questions_belarus: "{{ selected_vacancy.questions_belarus|escapejs }}",
-    questions_poland: "{{ selected_vacancy.questions_poland|escapejs }}"
-});
+// Получаем данные вакансии из JSON скрипта
+const vacancyDataScript = document.getElementById('vacancy-data');
+if (vacancyDataScript) {
+    const vacancyData = JSON.parse(vacancyDataScript.textContent);
+    console.log('🔍 DEBUG: Выбранная вакансия:', {
+        id: vacancyData.id,
+        name: vacancyData.name,
+        vacancy_link_belarus: vacancyData.vacancy_link_belarus,
+        vacancy_link_poland: vacancyData.vacancy_link_poland,
+        questions_belarus: vacancyData.questions_belarus,
+        questions_poland: vacancyData.questions_poland
+    });
+} else {
+    console.log('⚠️ DEBUG: Данные вакансии не найдены');
+}
 </script>
 {% else %}
 <script>
@@ -2018,6 +2258,9 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                 startHour: {{ user.interview_start_time.hour|default:11 }},
                 endHour: {{ user.interview_end_time.hour|default:18 }}
             };
+            
+            // Время между встречами пользователя (в минутах)
+            window.userMeetingInterval = {{ user.meeting_interval_minutes|default:15 }};
             </script>
             
             <script>
@@ -2090,21 +2333,6 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                 });
             });
             
-            // Функция для переключения формы редактирования названия чата
-            function toggleTitleEdit() {
-                const form = document.getElementById('title-edit-form');
-                if (form.style.display === 'none') {
-                    form.style.display = 'block';
-                    // Фокусируемся на поле ввода
-                    const input = form.querySelector('input[type="text"]');
-                    if (input) {
-                        input.focus();
-                        input.select();
-                    }
-                } else {
-                    form.style.display = 'none';
-                }
-            }
             
             // Функция для переключения карточки команд
             function toggleCommandsCard() {
