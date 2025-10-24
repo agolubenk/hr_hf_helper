@@ -74,9 +74,9 @@ SIDEBAR_MENU = {
                 'url': 'vacancies:vacancy_list'
             },
             'hiring_plans': {
-                'title': 'План найма',
-                'icon': 'fas fa-clipboard-list',
-                'url': 'hiring_plan:plan_list'
+                'title': 'Заявки на найм',
+                'icon': 'fas fa-users',
+                'url': 'hiring_plan:hiring_requests_list'
             },
             'salary_ranges': {
                 'title': 'Зарплатные вилки',

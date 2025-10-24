@@ -18,6 +18,9 @@
                         <a href="{% url 'hiring_plan:plan_update' plan.pk %}" class="btn btn-primary">
                             <i class="fas fa-edit me-2"></i>Редактировать
                         </a>
+                        <a href="{% url 'hiring_plan:plan_units_list' plan.pk %}" class="btn btn-outline-primary">
+                            <i class="fas fa-users me-2"></i>Заявки
+                        </a>
                         <a href="{% url 'hiring_plan:plan_dashboard' plan.pk %}" class="btn btn-outline-info">
                             <i class="fas fa-chart-bar me-2"></i>Метрики
                         </a>

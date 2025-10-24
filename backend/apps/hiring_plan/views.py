@@ -15,11 +15,12 @@ import json
 
 from .models import (
     HiringPlan, HiringPlanPosition, PositionType, PlanPeriodType,
-    PositionSLA, PositionKPIOKR, PlanKPIOKRBlock, PlanMetrics
+    PositionKPIOKR, PlanKPIOKRBlock, PlanMetrics,
+    VacancySLA, HiringRequest
 )
 from .forms import (
     HiringPlanFormExtended, HiringPlanPositionFormExtended,
-    HiringPlanFilterForm, PositionSLAForm, PositionKPIOKRForm,
+    HiringPlanFilterForm, PositionKPIOKRForm,
     PlanKPIOKRBlockForm, PeriodPlanCreationForm
 )
 from .services import HiringPlanServiceExtended
@@ -181,56 +182,6 @@ class PeriodicPlanCreateView(LoginRequiredMixin, CreateView):
         return redirect('hiring_plan:plan_detail', pk=plan.pk)
 
 
-class PositionSLAListView(LoginRequiredMixin, ListView):
-    """Список SLA позиций"""
-    model = PositionSLA
-    template_name = 'hiring_plan/sla_list.html'
-    context_object_name = 'sla_list'
-    paginate_by = 20
-    
-    def get_queryset(self):
-        return PositionSLA.objects.select_related('vacancy', 'grade').filter(is_active=True).order_by('vacancy__name', 'grade__name')
-
-
-class PositionSLACreateView(LoginRequiredMixin, CreateView):
-    """Создание SLA позиции"""
-    model = PositionSLA
-    form_class = PositionSLAForm
-    template_name = 'hiring_plan/sla_form.html'
-    success_url = reverse_lazy('hiring_plan:sla_list')
-    
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        messages.success(self.request, f'SLA для "{form.instance.vacancy.name}" успешно создано!')
-        return response
-
-
-class PositionSLAUpdateView(LoginRequiredMixin, UpdateView):
-    """Редактирование SLA позиции"""
-    model = PositionSLA
-    form_class = PositionSLAForm
-    template_name = 'hiring_plan/sla_form.html'
-    success_url = reverse_lazy('hiring_plan:sla_list')
-    
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        messages.success(self.request, f'SLA для "{form.instance.vacancy.name}" успешно обновлено!')
-        return response
-
-
-class PlanSLACreateView(LoginRequiredMixin, CreateView):
-    """Создание SLA для вакансии в плане"""
-    model = PositionSLA
-    form_class = PositionSLAForm
-    template_name = 'hiring_plan/plan_sla_form.html'
-    
-    def get_success_url(self):
-        return reverse('hiring_plan:plan_sla_compliance', kwargs={'pk': self.kwargs['plan_pk']})
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['plan'] = get_object_or_404(HiringPlan, pk=self.kwargs['plan_pk'])
-        return context
     
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -507,3 +458,160 @@ def apply_kpi_okr_block_to_plan(request, plan_pk, block_pk):
     except Exception as e:
         messages.error(request, f'Ошибка при применении блока: {str(e)}')
         return redirect('hiring_plan:plan_detail', pk=plan.pk)
+
+
+class HiringRequestsListView(LoginRequiredMixin, ListView):
+    """Единый список всех заявок на найм"""
+    model = HiringRequest
+    template_name = 'hiring_plan/hiring_requests_list.html'
+    context_object_name = 'requests'
+    paginate_by = 50
+    
+    def get_queryset(self):
+        queryset = HiringRequest.objects.select_related(
+            'vacancy', 'grade', 'sla', 'created_by'
+        ).order_by('-opening_date', 'priority')
+        
+        # Фильтры
+        status = self.request.GET.get('status')
+        period = self.request.GET.get('period')
+        grade = self.request.GET.get('grade')
+        vacancy = self.request.GET.get('vacancy')
+        priority = self.request.GET.get('priority')
+        opening_reason = self.request.GET.get('opening_reason')
+        search = self.request.GET.get('search')
+        
+        if status:
+            queryset = queryset.filter(status=status)
+        
+        if period:
+            # Фильтрация по месяцу
+            try:
+                year, month = period.split('-')
+                queryset = queryset.filter(opening_date__year=year, opening_date__month=month)
+            except ValueError:
+                pass
+        
+        if grade:
+            queryset = queryset.filter(grade_id=grade)
+        
+        if vacancy:
+            queryset = queryset.filter(vacancy_id=vacancy)
+        
+        if priority:
+            queryset = queryset.filter(priority=priority)
+        
+        if opening_reason:
+            queryset = queryset.filter(opening_reason=opening_reason)
+        
+        if search:
+            queryset = queryset.filter(
+                Q(vacancy__name__icontains=search) |
+                Q(candidate_name__icontains=search) |
+                Q(candidate_id__icontains=search) |
+                Q(notes__icontains=search) |
+                Q(project__icontains=search)
+            )
+        
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Статистика
+        requests = self.get_queryset()
+        context['total_requests'] = requests.count()
+        context['planned_requests'] = requests.filter(status='planned').count()
+        context['in_progress_requests'] = requests.filter(status='in_progress').count()
+        context['overdue_requests'] = requests.filter(status='overdue').count()
+        context['closed_requests'] = requests.filter(status='closed').count()
+        context['cancelled_requests'] = requests.filter(status='cancelled').count()
+        
+        # Опции для фильтров
+        context['status_choices'] = HiringRequest.STATUS_CHOICES
+        context['priority_choices'] = HiringRequest.PRIORITY_CHOICES
+        context['reason_choices'] = HiringRequest.REASON_CHOICES
+        context['grade_choices'] = HiringRequest.objects.values_list('grade__id', 'grade__name').distinct()
+        context['vacancy_choices'] = HiringRequest.objects.values_list('vacancy__id', 'vacancy__name').distinct()
+        
+        return context
+
+
+class HiringRequestDetailView(LoginRequiredMixin, DetailView):
+    """Детальный просмотр заявки"""
+    model = HiringRequest
+    template_name = 'hiring_plan/hiring_request_detail.html'
+    context_object_name = 'request'
+
+
+class HiringRequestCreateView(LoginRequiredMixin, CreateView):
+    """Создание заявки"""
+    model = HiringRequest
+    fields = ['vacancy', 'grade', 'project', 'priority', 'opening_reason', 'opening_date', 'deadline', 'notes']
+    template_name = 'hiring_plan/hiring_request_form.html'
+    
+    def get_success_url(self):
+        return reverse('hiring_plan:hiring_requests_list')
+    
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        response = super().form_valid(form)
+        messages.success(self.request, f'Заявка "{self.object}" успешно создана!')
+        return response
+
+
+class HiringRequestUpdateView(LoginRequiredMixin, UpdateView):
+    """Редактирование заявки"""
+    model = HiringRequest
+    fields = ['status', 'candidate_id', 'candidate_name', 'closed_date', 'notes']
+    template_name = 'hiring_plan/hiring_request_form.html'
+    
+    def get_success_url(self):
+        return reverse('hiring_plan:hiring_requests_list')
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'Заявка "{self.object}" успешно обновлена!')
+        return response
+
+
+# SLA Views
+class VacancySLAListView(LoginRequiredMixin, ListView):
+    """Список SLA для вакансий"""
+    model = VacancySLA
+    template_name = 'hiring_plan/sla_list.html'
+    context_object_name = 'slas'
+    paginate_by = 50
+    
+    def get_queryset(self):
+        return VacancySLA.objects.select_related('vacancy', 'grade').order_by('vacancy__name', 'grade__name')
+
+
+class VacancySLACreateView(LoginRequiredMixin, CreateView):
+    """Создание SLA для вакансии"""
+    model = VacancySLA
+    fields = ['vacancy', 'grade', 'time_to_fill', 'time_to_hire', 'is_active']
+    template_name = 'hiring_plan/sla_form.html'
+    
+    def get_success_url(self):
+        return reverse('hiring_plan:sla_list')
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'SLA для "{self.object}" успешно создан!')
+        return response
+
+
+class VacancySLAUpdateView(LoginRequiredMixin, UpdateView):
+    """Редактирование SLA для вакансии"""
+    model = VacancySLA
+    fields = ['vacancy', 'grade', 'time_to_fill', 'time_to_hire', 'is_active']
+    template_name = 'hiring_plan/sla_form.html'
+    
+    def get_success_url(self):
+        return reverse('hiring_plan:sla_list')
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'SLA для "{self.object}" успешно обновлен!')
+        return response

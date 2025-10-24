@@ -4,6 +4,8 @@ from django.db.models import Sum, F, Q, Count
 from django.utils import timezone
 from datetime import timedelta
 from decimal import Decimal
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 User = get_user_model()
 
@@ -187,88 +189,6 @@ class PlanKPIOKRBlock(models.Model):
                 )
 
 
-class PositionSLA(models.Model):
-    """SLA связана с конкретной вакансией (Vacancy) и грейдом"""
-    
-    # Связь с Vacancy (обязательна)
-    vacancy = models.ForeignKey(
-        'vacancies.Vacancy',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        verbose_name='Вакансия',
-        help_text='SLA для конкретной вакансии'
-    )
-    
-    # Связь с Grade (опционально)
-    grade = models.ForeignKey(
-        'finance.Grade',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        verbose_name='Грейд',
-        help_text='Если NULL - SLA для всех грейдов этой вакансии'
-    )
-    
-    # SLA параметры
-    target_time_to_fill = models.IntegerField(
-        verbose_name='Целевой Time-to-Fill (дни)',
-        help_text='Целевое время закрытия вакансии в днях'
-    )
-    target_time_to_hire = models.IntegerField(
-        verbose_name='Целевой Time-to-Hire (дни)',
-        help_text='Целевое время найма в днях'
-    )
-    median_time_to_fill = models.DecimalField(
-        max_digits=6,
-        decimal_places=2,
-        default=0,
-        verbose_name='Медианный Time-to-Fill',
-        help_text='Медианное время закрытия вакансии'
-    )
-    
-    # Пороги
-    warning_threshold_percent = models.IntegerField(
-        default=80,
-        verbose_name='Порог предупреждения (%)',
-        help_text='Процент от SLA для предупреждения'
-    )
-    critical_threshold_percent = models.IntegerField(
-        default=120,
-        verbose_name='Критический порог (%)',
-        help_text='Процент от SLA для критического статуса'
-    )
-    
-    # Статус
-    is_active = models.BooleanField(
-        default=True,
-        verbose_name='Активен',
-        help_text='Активен ли SLA'
-    )
-    
-    # Метаданные
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создано')
-    updated_at = models.DateTimeField(auto_now=True, verbose_name='Обновлено')
-    
-    class Meta:
-        verbose_name = 'SLA вакансии'
-        verbose_name_plural = 'SLA вакансий'
-        unique_together = [['vacancy', 'grade']]
-        ordering = ['vacancy', 'grade']
-    
-    def __str__(self):
-        grade_str = f" - {self.grade.name}" if self.grade else " - все грейды"
-        return f"SLA: {self.vacancy.name}{grade_str}"
-    
-    @property
-    def warning_time(self):
-        """Время для warning'а (% от SLA)"""
-        return int(self.target_time_to_fill * self.warning_threshold_percent / 100)
-    
-    @property
-    def critical_time(self):
-        """Критическое время (% от SLA)"""
-        return int(self.target_time_to_fill * self.critical_threshold_percent / 100)
 
 
 class PositionKPIOKR(models.Model):
@@ -546,18 +466,12 @@ class HiringPlan(models.Model):
     def get_sla_for_vacancy(self, vacancy, grade=None):
         """Получить SLA для вакансии в этом плане"""
         if grade:
-            sla = PositionSLA.objects.filter(
+            sla = VacancySLA.objects.filter(
                 vacancy=vacancy, grade=grade, is_active=True
             ).first()
-            if not sla:
-                # Fallback на общую SLA без грейда
-                sla = PositionSLA.objects.filter(
-                    vacancy=vacancy, grade__isnull=True, is_active=True
-                ).first()
         else:
-            sla = PositionSLA.objects.filter(
-                vacancy=vacancy, grade__isnull=True, is_active=True
-            ).first()
+            # Для новой модели VacancySLA всегда нужен грейд
+            sla = None
         
         return sla
     
@@ -747,7 +661,7 @@ class HiringPlanPosition(models.Model):
         """Получить применимую SLA"""
         # Для каждого грейда вакансии
         for grade in self.grades.all():
-            sla = PositionSLA.objects.filter(
+            sla = VacancySLA.objects.filter(
                 vacancy=self.vacancy,
                 grade=grade,
                 is_active=True
@@ -818,6 +732,244 @@ class HiringPlanPosition(models.Model):
         self.hiring_plan.update_metrics()
 
 
+class VacancySLA(models.Model):
+    """SLA для пары Вакансия + Грейд"""
+    
+    vacancy = models.ForeignKey(
+        'vacancies.Vacancy',
+        on_delete=models.CASCADE,
+        verbose_name='Вакансия'
+    )
+    grade = models.ForeignKey(
+        'finance.Grade',
+        on_delete=models.CASCADE,
+        verbose_name='Грейд'
+    )
+    
+    # Целевые показатели в днях
+    time_to_fill = models.PositiveIntegerField(
+        verbose_name='Time-to-Fill (дни)',
+        help_text='Целевое время от открытия до закрытия вакансии'
+    )
+    time_to_hire = models.PositiveIntegerField(
+        verbose_name='Time-to-Hire (дни)',
+        help_text='Целевое время от первого контакта до оффера'
+    )
+    
+    # Метаданные
+    is_active = models.BooleanField(default=True, verbose_name='Активен')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создано')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Обновлено')
+    
+    class Meta:
+        verbose_name = 'SLA вакансии'
+        verbose_name_plural = 'SLA вакансий'
+        unique_together = [['vacancy', 'grade']]
+        ordering = ['vacancy__name', 'grade__name']
+    
+    def __str__(self):
+        return f"SLA: {self.vacancy.name} - {self.grade.name} ({self.time_to_fill} дней)"
+
+
+class HiringRequest(models.Model):
+    """Заявка на найм одного специалиста"""
+    
+    # === ОСНОВНАЯ ИНФОРМАЦИЯ ===
+    vacancy = models.ForeignKey(
+        'vacancies.Vacancy',
+        on_delete=models.CASCADE,
+        verbose_name='Вакансия'
+    )
+    grade = models.ForeignKey(
+        'finance.Grade',
+        on_delete=models.PROTECT,
+        verbose_name='Грейд'
+    )
+    project = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name='Проект'
+    )
+    
+    # === ПРИОРИТЕТ ===
+    PRIORITY_CHOICES = [
+        (1, 'Критический'),
+        (2, 'Высокий'),
+        (3, 'Средний'),
+        (4, 'Низкий'),
+    ]
+    priority = models.IntegerField(
+        choices=PRIORITY_CHOICES,
+        default=3,
+        verbose_name='Приоритет'
+    )
+    
+    # === СТАТУС ===
+    STATUS_CHOICES = [
+        ('planned', 'Планируется'),
+        ('in_progress', 'В процессе'),
+        ('overdue', 'Просрочена'),
+        ('cancelled', 'Отменена'),
+        ('closed', 'Закрыта'),
+    ]
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='planned',
+        verbose_name='Статус'
+    )
+    
+    # === ПРИЧИНА ОТКРЫТИЯ ===
+    REASON_CHOICES = [
+        ('replacement_army', 'Замена - армия'),
+        ('replacement_fired', 'Замена - увольнение'),
+        ('replacement_decree', 'Замена - декрет'),
+        ('new_position', 'Новая позиция'),
+        ('expansion', 'Расширение команды'),
+        ('other', 'Другое'),
+    ]
+    opening_reason = models.CharField(
+        max_length=30,
+        choices=REASON_CHOICES,
+        verbose_name='Причина открытия'
+    )
+    
+    # === ДАТЫ ===
+    opening_date = models.DateField(
+        verbose_name='Дата открытия вакансии',
+        help_text='Может быть в будущем или прошлом'
+    )
+    deadline = models.DateField(
+        verbose_name='Дедлайн',
+        help_text='Целевая дата закрытия'
+    )
+    closed_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name='Дата закрытия'
+    )
+    
+    # === SLA (автоматически подтягивается) ===
+    sla = models.ForeignKey(
+        VacancySLA,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name='SLA',
+        help_text='Автоматически определяется по Вакансия+Грейд'
+    )
+    
+    # === КАНДИДАТ (если закрыта) ===
+    candidate_id = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name='ID кандидата',
+        help_text='ID найденного кандидата (из внешней системы)'
+    )
+    candidate_name = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name='Имя кандидата',
+        help_text='Имя найденного кандидата'
+    )
+    
+    # === ЗАМЕТКИ ===
+    notes = models.TextField(blank=True, verbose_name='Заметки')
+    
+    # === МЕТАДАННЫЕ ===
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создано')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Обновлено')
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='created_requests',
+        verbose_name='Создано пользователем'
+    )
+    
+    class Meta:
+        verbose_name = 'Заявка на найм'
+        verbose_name_plural = 'Заявки на найм'
+        ordering = ['-opening_date', 'priority']
+        indexes = [
+            models.Index(fields=['status', 'opening_date']),
+            models.Index(fields=['vacancy', 'grade']),
+            models.Index(fields=['deadline']),
+        ]
+    
+    def __str__(self):
+        return f"{self.vacancy.name} ({self.grade.name}) - {self.get_status_display()}"
+    
+    def save(self, *args, **kwargs):
+        # Автоматически определяем SLA
+        if not self.sla:
+            self.sla = VacancySLA.objects.filter(
+                vacancy=self.vacancy,
+                grade=self.grade,
+                is_active=True
+            ).first()
+        
+        # Автоматически меняем статус на overdue, если просрочен дедлайн
+        if self.status in ['planned', 'in_progress']:
+            if timezone.now().date() > self.deadline:
+                self.status = 'overdue'
+        
+        super().save(*args, **kwargs)
+    
+    @property
+    def days_in_progress(self):
+        """Количество дней в работе"""
+        if self.status == 'closed' and self.closed_date:
+            return (self.closed_date - self.opening_date).days
+        else:
+            return (timezone.now().date() - self.opening_date).days
+    
+    @property
+    def is_overdue(self):
+        """Проверка просрочки"""
+        if self.status == 'closed':
+            return False
+        return timezone.now().date() > self.deadline
+    
+    @property
+    def sla_compliance(self):
+        """Соответствие SLA (%)"""
+        if not self.sla or not self.closed_date:
+            return None
+        
+        actual_days = (self.closed_date - self.opening_date).days
+        target_days = self.sla.time_to_fill
+        
+        if actual_days <= target_days:
+            return 100
+        else:
+            return round((target_days / actual_days) * 100, 2)
+    
+    @property
+    def sla_status_display(self):
+        """Текстовый статус по SLA"""
+        if not self.sla:
+            return 'Нет SLA'
+        
+        if self.status == 'closed' and self.closed_date:
+            compliance = self.sla_compliance
+            if compliance >= 100:
+                return 'В срок'
+            elif compliance >= 80:
+                return 'С задержкой'
+            else:
+                return 'Просрочено'
+        else:
+            days_left = (self.deadline - timezone.now().date()).days
+            if days_left >= 7:
+                return 'Нормально'
+            elif days_left >= 0:
+                return 'Риск просрочки'
+            else:
+                return 'Просрочено'
+
+
 class PlanMetrics(models.Model):
     """Метрики плана найма"""
     
@@ -868,3 +1020,42 @@ class PlanMetrics(models.Model):
     
     def __str__(self):
         return f"Метрики для {self.hiring_plan.title}"
+
+
+def create_requests_for_position(position):
+    """Создает заявки для позиции на основе headcount_needed и грейдов"""
+    # Удаляем существующие заявки для этой позиции
+    HiringRequest.objects.filter(
+        vacancy=position.vacancy,
+        grade__in=position.grades.all()
+    ).delete()
+    
+    grades = position.grades.all()
+    if not grades.exists():
+        return
+    
+    count = position.headcount_needed
+    for grade in grades:
+        for n in range(1, count + 1):
+            # Рассчитываем даты
+            opening_date = position.created_at.date()
+            deadline = position.urgency_deadline or (opening_date + timedelta(days=30))
+            
+            HiringRequest.objects.create(
+                vacancy=position.vacancy,
+                grade=grade,
+                project=position.project,
+                priority=position.priority,
+                opening_reason='new_position',  # По умолчанию новая позиция
+                opening_date=opening_date,
+                deadline=deadline,
+                status='planned',
+            )
+
+
+@receiver(post_save, sender=HiringPlanPosition)
+def create_requests_on_position_save(sender, instance, created, **kwargs):
+    """Автоматически создает заявки при сохранении позиции"""
+    if created or kwargs.get('update_fields') is None:
+        # Создаем заявки только при создании или полном обновлении
+        create_requests_for_position(instance)

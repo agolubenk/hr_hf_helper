@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from .models import (
     HiringPlan, HiringPlanPosition, PositionType, PlanPeriodType,
-    PositionSLA, PositionKPIOKR, PlanKPIOKRBlock
+    PositionKPIOKR, PlanKPIOKRBlock
 )
 
 User = get_user_model()
@@ -219,118 +219,6 @@ class HiringPlanPositionFormExtended(forms.ModelForm):
         return cleaned_data
 
 
-class PositionSLAForm(forms.ModelForm):
-    """Форма для создания/редактирования SLA позиции"""
-    
-    def __init__(self, *args, **kwargs):
-        plan_pk = kwargs.pop('plan_pk', None)
-        super().__init__(*args, **kwargs)
-        
-        # Если передан plan_pk, фильтруем вакансии по плану
-        if plan_pk:
-            from apps.hiring_plan.models import HiringPlan
-            plan = HiringPlan.objects.get(pk=plan_pk)
-            plan_vacancies = plan.positions.values_list('vacancy', flat=True)
-            self.fields['vacancy'].queryset = self.fields['vacancy'].queryset.filter(
-                id__in=plan_vacancies
-            )
-        
-        # Настройка полей
-        self.fields['vacancy'].required = True
-        self.fields['target_time_to_fill'].required = True
-        self.fields['target_time_to_hire'].required = True
-        
-        # Делаем некоторые поля необязательными
-        self.fields['grade'].required = False
-        self.fields['median_time_to_fill'].required = False
-        self.fields['warning_threshold_percent'].required = False
-        self.fields['critical_threshold_percent'].required = False
-    
-    class Meta:
-        model = PositionSLA
-        fields = [
-            'vacancy', 'grade', 'target_time_to_fill',
-            'target_time_to_hire', 'median_time_to_fill',
-            'warning_threshold_percent', 'critical_threshold_percent',
-            'is_active'
-        ]
-        widgets = {
-            'vacancy': forms.Select(attrs={
-                'class': 'form-control'
-            }),
-            'grade': forms.Select(attrs={
-                'class': 'form-control'
-            }),
-            'target_time_to_fill': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'min': '1',
-                'help_text': 'Целевое время закрытия вакансии в днях'
-            }),
-            'target_time_to_hire': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'min': '1',
-                'help_text': 'Целевое время найма в днях'
-            }),
-            'median_time_to_fill': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'step': '0.01',
-                'help_text': 'Медианное время закрытия вакансии'
-            }),
-            'warning_threshold_percent': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'min': '1',
-                'max': '200'
-            }),
-            'critical_threshold_percent': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'min': '1',
-                'max': '300'
-            }),
-            'is_active': forms.CheckboxInput(attrs={
-                'class': 'form-check-input'
-            }),
-        }
-        labels = {
-            'vacancy': 'Вакансия *',
-            'grade': 'Грейд',
-            'target_time_to_fill': 'Целевой Time-to-Fill (дни) *',
-            'target_time_to_hire': 'Целевой Time-to-Hire (дни) *',
-            'median_time_to_fill': 'Медианный Time-to-Fill',
-            'warning_threshold_percent': 'Порог предупреждения (%)',
-            'critical_threshold_percent': 'Критический порог (%)',
-            'is_active': 'Активен',
-        }
-        help_texts = {
-            'grade': 'Если не указан - SLA для всех грейдов вакансии',
-            'target_time_to_fill': 'Целевое время закрытия вакансии в днях',
-            'target_time_to_hire': 'Целевое время найма в днях',
-            'median_time_to_fill': 'Медианное время закрытия вакансии',
-            'warning_threshold_percent': 'Процент от SLA для предупреждения',
-            'critical_threshold_percent': 'Процент от SLA для критического статуса',
-        }
-    
-    def clean(self):
-        cleaned_data = super().clean()
-        target_time_to_fill = cleaned_data.get('target_time_to_fill')
-        target_time_to_hire = cleaned_data.get('target_time_to_hire')
-        warning_threshold = cleaned_data.get('warning_threshold_percent')
-        critical_threshold = cleaned_data.get('critical_threshold_percent')
-        
-        # Проверка логики порогов
-        if warning_threshold and critical_threshold:
-            if warning_threshold >= critical_threshold:
-                raise forms.ValidationError(
-                    'Порог предупреждения должен быть меньше критического порога'
-                )
-        
-        # Проверка времени
-        if target_time_to_fill and target_time_to_hire:
-            if target_time_to_hire > target_time_to_fill:
-                raise forms.ValidationError(
-                    'Time-to-Hire не может быть больше Time-to-Fill'
-                )
-        
-        return cleaned_data
 
 
 class PositionKPIOKRForm(forms.ModelForm):

@@ -40,3 +40,1168 @@
 [2025-10-24 13:23:47,771: INFO/MainProcess] mingle: searching for neighbors
 [2025-10-24 13:23:48,776: INFO/MainProcess] mingle: all alone
 [2025-10-24 13:23:48,788: INFO/MainProcess] celery@andrei-golubenko-macbook.local ready.
+[2025-10-24 13:27:49,125: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[277a833a-75f1-4e14-9eeb-385666de80d5] received
+[2025-10-24 13:27:49,187: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[277a833a-75f1-4e14-9eeb-385666de80d5] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 13:39:27,266: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[053bbd48-617e-4113-a7ae-23504ac515d0] received
+[2025-10-24 13:39:27,351: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[053bbd48-617e-4113-a7ae-23504ac515d0] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 13:55:28,858: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[6ae16b52-f30e-44a0-8ba8-09ae5d3f4a56] received
+[2025-10-24 13:55:28,870: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[bc8443cf-9299-4454-b4c7-80a649e40eeb] received
+[2025-10-24 13:55:28,880: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[1ea3ad86-3f79-4e9e-baf1-393ff0eedec9] received
+[2025-10-24 13:55:28,885: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[6ae16b52-f30e-44a0-8ba8-09ae5d3f4a56] succeeded in 0.01130675000604242s: {'success': False, 'message': 'Задача временно отключена'}
+[2025-10-24 13:55:28,888: ERROR/MainProcess] Received unregistered task of type 'apps.google_oauth.tasks.refresh_google_oauth_tokens'.
+The message has been ignored and discarded.
+
+Did you remember to import the module containing this task?
+Or maybe you're using relative imports?
+
+Please see
+https://docs.celeryq.dev/en/latest/internals/protocol.html
+for more information.
+
+The full contents of the message body was:
+b'[[], {}, {"callbacks": null, "errbacks": null, "chain": null, "chord": null}]' (77b)
+
+The full contents of the message headers:
+{'lang': 'py', 'task': 'apps.google_oauth.tasks.refresh_google_oauth_tokens', 'id': '75a0d4aa-cfe9-4c0d-909f-652ec8a8cf1c', 'shadow': None, 'eta': None, 'expires': None, 'group': None, 'group_index': None, 'retries': 0, 'timelimit': [None, None], 'root_id': '75a0d4aa-cfe9-4c0d-909f-652ec8a8cf1c', 'parent_id': None, 'argsrepr': '()', 'kwargsrepr': '{}', 'origin': 'gen4784@andrei-golubenko-macbook.local', 'ignore_result': False, 'replaced_task_nesting': 0, 'stamped_headers': None, 'stamps': {}}
+
+The delivery info for this task is:
+{'exchange': '', 'routing_key': 'celery'}
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
+    strategy = strategies[type_]
+               ~~~~~~~~~~^^^^^^^
+KeyError: 'apps.google_oauth.tasks.refresh_google_oauth_tokens'
+[2025-10-24 13:55:29,006: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[bc8443cf-9299-4454-b4c7-80a649e40eeb] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 13:55:29,028: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
+[2025-10-24 13:55:29,028: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[1ea3ad86-3f79-4e9e-baf1-393ff0eedec9] succeeded in 0.02079849998699501s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
+[2025-10-24 14:09:40,955: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[d64049ce-4dd6-459a-a1ac-b79c5ebd459a] received
+[2025-10-24 14:09:41,007: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[d64049ce-4dd6-459a-a1ac-b79c5ebd459a] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 14:15:00,764: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[964e065c-18f7-492a-831d-0d17a5c0df89] received
+[2025-10-24 14:15:00,882: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[964e065c-18f7-492a-831d-0d17a5c0df89] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 14:15:28,853: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[aa21d171-d3ce-4dd6-897e-5361ee45d046] received
+[2025-10-24 14:15:28,867: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[aa21d171-d3ce-4dd6-897e-5361ee45d046] succeeded in 0.0074563330272212625s: {'success': False, 'message': 'Задача временно отключена'}
+[2025-10-24 14:20:00,739: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[263d9cf3-7687-4bdb-b58a-aa1892e46c54] received
+[2025-10-24 14:20:00,848: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[263d9cf3-7687-4bdb-b58a-aa1892e46c54] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 14:22:49,101: INFO/MainProcess] Task apps.finance.tasks.generate_benchmark_statistics[1a57928a-6658-4bf9-8ba4-5d4af6fb8dc0] received
+[2025-10-24 14:22:49,168: INFO/ForkPoolWorker-1] Сгенерирована статистика по 95 бенчмаркам
+[2025-10-24 14:22:49,172: INFO/MainProcess] Task apps.huntflow.tasks.refresh_huntflow_tokens[7597cf03-855f-4259-97e5-a578cff628f9] received
+[2025-10-24 14:22:49,182: INFO/ForkPoolWorker-1] Task apps.finance.tasks.generate_benchmark_statistics[1a57928a-6658-4bf9-8ba4-5d4af6fb8dc0] succeeded in 0.05879883299348876s: {'success': True, 'message': 'Статистика успешно сгенерирована', 'statistics': {'type_stats': [{...}], 'grade_stats': [{...}, {...}, {...}, {...}, {...}, {...}], 'location_stats': [{...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}], 'total_benchmarks': 95, 'generated_at': '2025-10-24T11:22:49.167126+00:00'}}
+[2025-10-24 14:22:49,186: INFO/ForkPoolWorker-1] 🔄 Запуск периодического обновления токенов Huntflow
+[2025-10-24 14:22:49,195: INFO/ForkPoolWorker-1] 📊 Обновление токенов завершено: 0 успешно, 0 ошибок
+[2025-10-24 14:22:49,195: INFO/ForkPoolWorker-1] Task apps.huntflow.tasks.refresh_huntflow_tokens[7597cf03-855f-4259-97e5-a578cff628f9] succeeded in 0.010441999998874962s: {'updated': 0, 'failed': 0, 'total': 2}
+[2025-10-24 14:22:49,337: ERROR/MainProcess] Received unregistered task of type 'apps.google_oauth.tasks.validate_oauth_tokens'.
+The message has been ignored and discarded.
+
+Did you remember to import the module containing this task?
+Or maybe you're using relative imports?
+
+Please see
+https://docs.celeryq.dev/en/latest/internals/protocol.html
+for more information.
+
+The full contents of the message body was:
+b'[[], {}, {"callbacks": null, "errbacks": null, "chain": null, "chord": null}]' (77b)
+
+The full contents of the message headers:
+{'lang': 'py', 'task': 'apps.google_oauth.tasks.validate_oauth_tokens', 'id': 'f7e71315-efd7-4de6-913e-71b410b98fec', 'shadow': None, 'eta': None, 'expires': None, 'group': None, 'group_index': None, 'retries': 0, 'timelimit': [None, None], 'root_id': 'f7e71315-efd7-4de6-913e-71b410b98fec', 'parent_id': None, 'argsrepr': '()', 'kwargsrepr': '{}', 'origin': 'gen4784@andrei-golubenko-macbook.local', 'ignore_result': False, 'replaced_task_nesting': 0, 'stamped_headers': None, 'stamps': {}}
+
+The delivery info for this task is:
+{'exchange': '', 'routing_key': 'celery'}
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
+    strategy = strategies[type_]
+               ~~~~~~~~~~^^^^^^^
+KeyError: 'apps.google_oauth.tasks.validate_oauth_tokens'
+[2025-10-24 14:25:00,737: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[10c5bc74-ddcc-4583-bee4-114229069bb0] received
+[2025-10-24 14:25:00,785: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[10c5bc74-ddcc-4583-bee4-114229069bb0] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 14:25:28,874: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[efc0fa2d-a81d-4b4d-8fff-7b2fc9fbf749] received
+[2025-10-24 14:25:28,875: ERROR/MainProcess] Received unregistered task of type 'apps.google_oauth.tasks.refresh_google_oauth_tokens'.
+The message has been ignored and discarded.
+
+Did you remember to import the module containing this task?
+Or maybe you're using relative imports?
+
+Please see
+https://docs.celeryq.dev/en/latest/internals/protocol.html
+for more information.
+
+The full contents of the message body was:
+b'[[], {}, {"callbacks": null, "errbacks": null, "chain": null, "chord": null}]' (77b)
+
+The full contents of the message headers:
+{'lang': 'py', 'task': 'apps.google_oauth.tasks.refresh_google_oauth_tokens', 'id': '0ff2962f-7d3a-40cb-97cb-e9666b033411', 'shadow': None, 'eta': None, 'expires': None, 'group': None, 'group_index': None, 'retries': 0, 'timelimit': [None, None], 'root_id': '0ff2962f-7d3a-40cb-97cb-e9666b033411', 'parent_id': None, 'argsrepr': '()', 'kwargsrepr': '{}', 'origin': 'gen4784@andrei-golubenko-macbook.local', 'ignore_result': False, 'replaced_task_nesting': 0, 'stamped_headers': None, 'stamps': {}}
+
+The delivery info for this task is:
+{'exchange': '', 'routing_key': 'celery'}
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
+    strategy = strategies[type_]
+               ~~~~~~~~~~^^^^^^^
+KeyError: 'apps.google_oauth.tasks.refresh_google_oauth_tokens'
+[2025-10-24 14:25:28,898: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
+[2025-10-24 14:25:28,901: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[efc0fa2d-a81d-4b4d-8fff-7b2fc9fbf749] succeeded in 0.023929332965053618s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
+[2025-10-24 14:30:00,735: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[7be8b89d-93bd-47aa-906a-542435f7c30c] received
+[2025-10-24 14:30:00,783: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[7be8b89d-93bd-47aa-906a-542435f7c30c] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 14:35:00,738: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[1817fe39-2ad9-4bc5-800e-ac6fa4a2b4bf] received
+[2025-10-24 14:35:00,788: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[1817fe39-2ad9-4bc5-800e-ac6fa4a2b4bf] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 14:35:28,842: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[5f32ef25-8169-4c42-8001-2859e170f428] received
+[2025-10-24 14:35:28,857: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[5f32ef25-8169-4c42-8001-2859e170f428] succeeded in 0.008995292009785771s: {'success': False, 'message': 'Задача временно отключена'}
+[2025-10-24 14:40:00,736: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[a935f792-3e74-440c-bbe5-6d4f0c9c532d] received
+[2025-10-24 14:40:00,779: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[a935f792-3e74-440c-bbe5-6d4f0c9c532d] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 14:45:00,745: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[2a1f4859-2e83-4d16-87ba-48bf90da1cd6] received
+[2025-10-24 14:45:00,893: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[2a1f4859-2e83-4d16-87ba-48bf90da1cd6] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 14:54:07,218: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[f2c25b6d-8092-470a-bf92-4a0dd0398751] received
+[2025-10-24 14:54:07,272: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[f2c25b6d-8092-470a-bf92-4a0dd0398751] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 14:55:28,861: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[80fbe0be-51e2-4897-89d7-fe489a48b1da] received
+[2025-10-24 14:55:28,892: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[a8f0cd0e-ef89-41dd-ac76-0a5de9943e29] received
+[2025-10-24 14:55:28,894: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[80fbe0be-51e2-4897-89d7-fe489a48b1da] succeeded in 0.016696957987733185s: {'success': False, 'message': 'Задача временно отключена'}
+[2025-10-24 14:55:28,895: ERROR/MainProcess] Received unregistered task of type 'apps.google_oauth.tasks.refresh_google_oauth_tokens'.
+The message has been ignored and discarded.
+
+Did you remember to import the module containing this task?
+Or maybe you're using relative imports?
+
+Please see
+https://docs.celeryq.dev/en/latest/internals/protocol.html
+for more information.
+
+The full contents of the message body was:
+b'[[], {}, {"callbacks": null, "errbacks": null, "chain": null, "chord": null}]' (77b)
+
+The full contents of the message headers:
+{'lang': 'py', 'task': 'apps.google_oauth.tasks.refresh_google_oauth_tokens', 'id': 'fe7d25e5-e374-4e8c-a584-57f3996613cf', 'shadow': None, 'eta': None, 'expires': None, 'group': None, 'group_index': None, 'retries': 0, 'timelimit': [None, None], 'root_id': 'fe7d25e5-e374-4e8c-a584-57f3996613cf', 'parent_id': None, 'argsrepr': '()', 'kwargsrepr': '{}', 'origin': 'gen4784@andrei-golubenko-macbook.local', 'ignore_result': False, 'replaced_task_nesting': 0, 'stamped_headers': None, 'stamps': {}}
+
+The delivery info for this task is:
+{'exchange': '', 'routing_key': 'celery'}
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
+    strategy = strategies[type_]
+               ~~~~~~~~~~^^^^^^^
+KeyError: 'apps.google_oauth.tasks.refresh_google_oauth_tokens'
+[2025-10-24 14:55:28,960: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
+[2025-10-24 14:55:28,962: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[a8f0cd0e-ef89-41dd-ac76-0a5de9943e29] succeeded in 0.022560291981790215s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
+[2025-10-24 14:59:07,228: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[3ca9dd0d-c59e-4e96-99a0-91bdbef060a9] received
+[2025-10-24 14:59:07,286: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[3ca9dd0d-c59e-4e96-99a0-91bdbef060a9] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 15:04:07,230: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[7d45b952-6f76-4326-9ba8-fe3252d753d7] received
+[2025-10-24 15:04:07,310: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[7d45b952-6f76-4326-9ba8-fe3252d753d7] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 15:09:07,288: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[311d4da3-df03-44ba-ad75-6c99ee0e7c88] received
+[2025-10-24 15:09:07,405: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[311d4da3-df03-44ba-ad75-6c99ee0e7c88] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 15:14:07,268: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[8d3fa20d-86c8-4d7a-bfca-525b85f6e2ed] received
+[2025-10-24 15:14:07,300: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[8d3fa20d-86c8-4d7a-bfca-525b85f6e2ed] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 15:15:28,844: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[c4377686-fca1-466e-9581-fa99ecce5fa2] received
+[2025-10-24 15:15:28,872: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[c4377686-fca1-466e-9581-fa99ecce5fa2] succeeded in 0.01588383299531415s: {'success': False, 'message': 'Задача временно отключена'}
+[2025-10-24 15:19:07,279: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[2a1aa64b-cb7e-4e39-bb24-f22c1673bad8] received
+[2025-10-24 15:19:07,367: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[2a1aa64b-cb7e-4e39-bb24-f22c1673bad8] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 15:22:49,162: INFO/MainProcess] Task apps.finance.tasks.generate_benchmark_statistics[c4af95ec-0f94-4d25-b82d-63342ea1450c] received
+[2025-10-24 15:22:49,213: INFO/MainProcess] Task apps.huntflow.tasks.refresh_huntflow_tokens[20493561-c67c-4cd1-adac-d89f3d76024d] received
+[2025-10-24 15:22:49,412: ERROR/MainProcess] Received unregistered task of type 'apps.google_oauth.tasks.validate_oauth_tokens'.
+The message has been ignored and discarded.
+
+Did you remember to import the module containing this task?
+Or maybe you're using relative imports?
+
+Please see
+https://docs.celeryq.dev/en/latest/internals/protocol.html
+for more information.
+
+The full contents of the message body was:
+b'[[], {}, {"callbacks": null, "errbacks": null, "chain": null, "chord": null}]' (77b)
+
+The full contents of the message headers:
+{'lang': 'py', 'task': 'apps.google_oauth.tasks.validate_oauth_tokens', 'id': 'ac857767-4a89-43a6-9ef0-8e9b30224a1b', 'shadow': None, 'eta': None, 'expires': None, 'group': None, 'group_index': None, 'retries': 0, 'timelimit': [None, None], 'root_id': 'ac857767-4a89-43a6-9ef0-8e9b30224a1b', 'parent_id': None, 'argsrepr': '()', 'kwargsrepr': '{}', 'origin': 'gen4784@andrei-golubenko-macbook.local', 'ignore_result': False, 'replaced_task_nesting': 0, 'stamped_headers': None, 'stamps': {}}
+
+The delivery info for this task is:
+{'exchange': '', 'routing_key': 'celery'}
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
+    strategy = strategies[type_]
+               ~~~~~~~~~~^^^^^^^
+KeyError: 'apps.google_oauth.tasks.validate_oauth_tokens'
+[2025-10-24 15:22:49,529: INFO/ForkPoolWorker-1] Сгенерирована статистика по 95 бенчмаркам
+[2025-10-24 15:22:49,544: INFO/ForkPoolWorker-1] Task apps.finance.tasks.generate_benchmark_statistics[c4af95ec-0f94-4d25-b82d-63342ea1450c] succeeded in 0.36965050001163036s: {'success': True, 'message': 'Статистика успешно сгенерирована', 'statistics': {'type_stats': [{...}], 'grade_stats': [{...}, {...}, {...}, {...}, {...}, {...}], 'location_stats': [{...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}], 'total_benchmarks': 95, 'generated_at': '2025-10-24T12:22:49.529538+00:00'}}
+[2025-10-24 15:22:49,548: INFO/ForkPoolWorker-1] 🔄 Запуск периодического обновления токенов Huntflow
+[2025-10-24 15:22:49,572: INFO/ForkPoolWorker-1] 📊 Обновление токенов завершено: 0 успешно, 0 ошибок
+[2025-10-24 15:22:49,578: INFO/ForkPoolWorker-1] Task apps.huntflow.tasks.refresh_huntflow_tokens[20493561-c67c-4cd1-adac-d89f3d76024d] succeeded in 0.030700874980539083s: {'updated': 0, 'failed': 0, 'total': 2}
+[2025-10-24 15:24:07,288: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[67ed1d3d-7ca4-47ab-9505-71914660c395] received
+[2025-10-24 15:24:07,333: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[67ed1d3d-7ca4-47ab-9505-71914660c395] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 15:25:28,874: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[5a1fea0c-b031-4ff8-85f1-02185abd1c14] received
+[2025-10-24 15:25:28,885: ERROR/MainProcess] Received unregistered task of type 'apps.google_oauth.tasks.refresh_google_oauth_tokens'.
+The message has been ignored and discarded.
+
+Did you remember to import the module containing this task?
+Or maybe you're using relative imports?
+
+Please see
+https://docs.celeryq.dev/en/latest/internals/protocol.html
+for more information.
+
+The full contents of the message body was:
+b'[[], {}, {"callbacks": null, "errbacks": null, "chain": null, "chord": null}]' (77b)
+
+The full contents of the message headers:
+{'lang': 'py', 'task': 'apps.google_oauth.tasks.refresh_google_oauth_tokens', 'id': '01c3f1d6-1626-40f0-b4d2-a89b2c339bcc', 'shadow': None, 'eta': None, 'expires': None, 'group': None, 'group_index': None, 'retries': 0, 'timelimit': [None, None], 'root_id': '01c3f1d6-1626-40f0-b4d2-a89b2c339bcc', 'parent_id': None, 'argsrepr': '()', 'kwargsrepr': '{}', 'origin': 'gen4784@andrei-golubenko-macbook.local', 'ignore_result': False, 'replaced_task_nesting': 0, 'stamped_headers': None, 'stamps': {}}
+
+The delivery info for this task is:
+{'exchange': '', 'routing_key': 'celery'}
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
+    strategy = strategies[type_]
+               ~~~~~~~~~~^^^^^^^
+KeyError: 'apps.google_oauth.tasks.refresh_google_oauth_tokens'
+[2025-10-24 15:25:28,923: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
+[2025-10-24 15:25:28,935: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[5a1fea0c-b031-4ff8-85f1-02185abd1c14] succeeded in 0.044420207967050374s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
+[2025-10-24 15:29:07,346: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[307aa457-986b-4298-a556-895359f98485] received
+[2025-10-24 15:29:07,429: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[307aa457-986b-4298-a556-895359f98485] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 15:34:07,412: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[73df6995-4f4b-43cc-adf1-2f1e9e050dff] received
+[2025-10-24 15:34:07,545: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[73df6995-4f4b-43cc-adf1-2f1e9e050dff] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 15:35:28,858: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[35e49fb9-da56-496d-b9ac-14909f64cb24] received
+[2025-10-24 15:35:28,919: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[35e49fb9-da56-496d-b9ac-14909f64cb24] succeeded in 0.043560917023569345s: {'success': False, 'message': 'Задача временно отключена'}
+[2025-10-24 15:39:07,371: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[50125022-76ff-4784-bb2d-ecf62c504e6b] received
+[2025-10-24 15:39:07,458: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[50125022-76ff-4784-bb2d-ecf62c504e6b] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 15:44:07,372: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[f7cc3638-ab02-4d3d-91f4-94ff85cd36d2] received
+[2025-10-24 15:44:07,504: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[f7cc3638-ab02-4d3d-91f4-94ff85cd36d2] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 15:49:07,444: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[8674fda2-3ede-49c1-9079-64f533398ea1] received
+[2025-10-24 15:49:07,594: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[8674fda2-3ede-49c1-9079-64f533398ea1] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 15:54:07,459: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[a8c433d9-3118-4050-bc3b-abeb09753ddc] received
+[2025-10-24 15:54:07,605: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[a8c433d9-3118-4050-bc3b-abeb09753ddc] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 15:55:28,852: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[47793ba5-47d3-43a5-8475-5bb7e55cdc90] received
+[2025-10-24 15:55:28,869: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[47793ba5-47d3-43a5-8475-5bb7e55cdc90] succeeded in 0.00811045803129673s: {'success': False, 'message': 'Задача временно отключена'}
+[2025-10-24 15:55:28,875: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[e3d2078c-5bbe-49b3-a197-eafbc1ff0ef8] received
+[2025-10-24 15:55:28,877: ERROR/MainProcess] Received unregistered task of type 'apps.google_oauth.tasks.refresh_google_oauth_tokens'.
+The message has been ignored and discarded.
+
+Did you remember to import the module containing this task?
+Or maybe you're using relative imports?
+
+Please see
+https://docs.celeryq.dev/en/latest/internals/protocol.html
+for more information.
+
+The full contents of the message body was:
+b'[[], {}, {"callbacks": null, "errbacks": null, "chain": null, "chord": null}]' (77b)
+
+The full contents of the message headers:
+{'lang': 'py', 'task': 'apps.google_oauth.tasks.refresh_google_oauth_tokens', 'id': 'b0aad57e-582e-40b9-aede-b9cdc9d68f51', 'shadow': None, 'eta': None, 'expires': None, 'group': None, 'group_index': None, 'retries': 0, 'timelimit': [None, None], 'root_id': 'b0aad57e-582e-40b9-aede-b9cdc9d68f51', 'parent_id': None, 'argsrepr': '()', 'kwargsrepr': '{}', 'origin': 'gen4784@andrei-golubenko-macbook.local', 'ignore_result': False, 'replaced_task_nesting': 0, 'stamped_headers': None, 'stamps': {}}
+
+The delivery info for this task is:
+{'exchange': '', 'routing_key': 'celery'}
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
+    strategy = strategies[type_]
+               ~~~~~~~~~~^^^^^^^
+KeyError: 'apps.google_oauth.tasks.refresh_google_oauth_tokens'
+[2025-10-24 15:55:28,942: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
+[2025-10-24 15:55:28,943: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[e3d2078c-5bbe-49b3-a197-eafbc1ff0ef8] succeeded in 0.03345904202433303s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
+[2025-10-24 16:04:20,935: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[d5e67d74-4d04-47c1-8df6-35c2c426185e] received
+[2025-10-24 16:04:20,946: INFO/MainProcess] Task config.celery.update_currency_rates[084881a2-5e23-496b-b86b-fcc681c7e073] received
+[2025-10-24 16:04:21,069: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[d5e67d74-4d04-47c1-8df6-35c2c426185e] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 16:04:21,086: INFO/ForkPoolWorker-1] 🔄 Запуск автоматического обновления курсов валют НБРБ...
+[2025-10-24 16:04:21,086: INFO/ForkPoolWorker-1] 🔍 Проверяем подключение к НБРБ API...
+[2025-10-24 16:04:21,653: INFO/ForkPoolWorker-1] ✅ Подключение к НБРБ API успешно
+[2025-10-24 16:04:21,653: INFO/ForkPoolWorker-1] 💱 Обновляем курсы валют в базе данных...
+[2025-10-24 16:04:21,887: INFO/ForkPoolWorker-1] ✅ Успешно обновлено 3 курсов валют
+[2025-10-24 16:04:21,888: INFO/ForkPoolWorker-1]   💰 USD: 2.9832 BYN (обновлен)
+[2025-10-24 16:04:21,888: INFO/ForkPoolWorker-1]   💰 PLN: 8.1662 BYN (обновлен)
+[2025-10-24 16:04:21,888: INFO/ForkPoolWorker-1]   💰 EUR: 3.4596 BYN (обновлен)
+[2025-10-24 16:04:21,889: INFO/ForkPoolWorker-1] Task config.celery.update_currency_rates[084881a2-5e23-496b-b86b-fcc681c7e073] succeeded in 0.8127101249992847s: {'success': True, 'message': '✅ Успешно обновлено 3 курсов валют', 'updated_count': 3, 'results': {'USD': {'success': True, 'rate': Decimal('2.9832'), 'created': False}, 'PLN': {'success': True, 'rate': Decimal('8.1662'), 'created': False}, 'EUR': {'success': True, 'rate': Decimal('3.4596'), 'created': False}}}
+[2025-10-24 16:09:20,943: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[ee62f991-45c0-496d-84ed-a003851b2502] received
+[2025-10-24 16:09:21,082: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[ee62f991-45c0-496d-84ed-a003851b2502] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 16:14:20,942: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[25fe5ccf-9aff-4403-ab6d-929123fb55e1] received
+[2025-10-24 16:14:20,989: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[25fe5ccf-9aff-4403-ab6d-929123fb55e1] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 16:15:28,848: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[cf2a6e67-114e-4ff2-b280-541e32d8fa98] received
+[2025-10-24 16:15:28,862: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[cf2a6e67-114e-4ff2-b280-541e32d8fa98] succeeded in 0.008867125026881695s: {'success': False, 'message': 'Задача временно отключена'}
+[2025-10-24 16:19:20,931: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[67e7ecc5-c52f-4f83-8edc-02aac91dcb97] received
+[2025-10-24 16:19:21,003: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[67e7ecc5-c52f-4f83-8edc-02aac91dcb97] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 16:22:49,135: INFO/MainProcess] Task apps.finance.tasks.generate_benchmark_statistics[bff4c6a1-158a-421b-8ae2-555abda4ea5b] received
+[2025-10-24 16:22:49,171: INFO/MainProcess] Task apps.huntflow.tasks.refresh_huntflow_tokens[8e8037e2-7c96-4019-bb11-ef783af639e7] received
+[2025-10-24 16:22:49,189: INFO/ForkPoolWorker-1] Сгенерирована статистика по 95 бенчмаркам
+[2025-10-24 16:22:49,200: INFO/ForkPoolWorker-1] Task apps.finance.tasks.generate_benchmark_statistics[bff4c6a1-158a-421b-8ae2-555abda4ea5b] succeeded in 0.05150533403502777s: {'success': True, 'message': 'Статистика успешно сгенерирована', 'statistics': {'type_stats': [{...}], 'grade_stats': [{...}, {...}, {...}, {...}, {...}, {...}], 'location_stats': [{...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}], 'total_benchmarks': 95, 'generated_at': '2025-10-24T13:22:49.189024+00:00'}}
+[2025-10-24 16:22:49,203: INFO/ForkPoolWorker-1] 🔄 Запуск периодического обновления токенов Huntflow
+[2025-10-24 16:22:49,219: INFO/ForkPoolWorker-1] 📊 Обновление токенов завершено: 0 успешно, 0 ошибок
+[2025-10-24 16:22:49,223: INFO/ForkPoolWorker-1] Task apps.huntflow.tasks.refresh_huntflow_tokens[8e8037e2-7c96-4019-bb11-ef783af639e7] succeeded in 0.021349542017560452s: {'updated': 0, 'failed': 0, 'total': 2}
+[2025-10-24 16:22:49,340: ERROR/MainProcess] Received unregistered task of type 'apps.google_oauth.tasks.validate_oauth_tokens'.
+The message has been ignored and discarded.
+
+Did you remember to import the module containing this task?
+Or maybe you're using relative imports?
+
+Please see
+https://docs.celeryq.dev/en/latest/internals/protocol.html
+for more information.
+
+The full contents of the message body was:
+b'[[], {}, {"callbacks": null, "errbacks": null, "chain": null, "chord": null}]' (77b)
+
+The full contents of the message headers:
+{'lang': 'py', 'task': 'apps.google_oauth.tasks.validate_oauth_tokens', 'id': '76317f37-67db-46d9-8d3d-748ec089bc4d', 'shadow': None, 'eta': None, 'expires': None, 'group': None, 'group_index': None, 'retries': 0, 'timelimit': [None, None], 'root_id': '76317f37-67db-46d9-8d3d-748ec089bc4d', 'parent_id': None, 'argsrepr': '()', 'kwargsrepr': '{}', 'origin': 'gen4784@andrei-golubenko-macbook.local', 'ignore_result': False, 'replaced_task_nesting': 0, 'stamped_headers': None, 'stamps': {}}
+
+The delivery info for this task is:
+{'exchange': '', 'routing_key': 'celery'}
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
+    strategy = strategies[type_]
+               ~~~~~~~~~~^^^^^^^
+KeyError: 'apps.google_oauth.tasks.validate_oauth_tokens'
+[2025-10-24 16:24:20,942: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[2fd775bd-0e49-412d-9c0a-3a55e29d0979] received
+[2025-10-24 16:24:20,979: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[2fd775bd-0e49-412d-9c0a-3a55e29d0979] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 16:25:28,861: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[1cdffbdd-e0f5-4c78-92c3-a3aef74a5bae] received
+[2025-10-24 16:25:28,875: ERROR/MainProcess] Received unregistered task of type 'apps.google_oauth.tasks.refresh_google_oauth_tokens'.
+The message has been ignored and discarded.
+
+Did you remember to import the module containing this task?
+Or maybe you're using relative imports?
+
+Please see
+https://docs.celeryq.dev/en/latest/internals/protocol.html
+for more information.
+
+The full contents of the message body was:
+b'[[], {}, {"callbacks": null, "errbacks": null, "chain": null, "chord": null}]' (77b)
+
+The full contents of the message headers:
+{'lang': 'py', 'task': 'apps.google_oauth.tasks.refresh_google_oauth_tokens', 'id': '537f33ac-c48e-4631-8ef1-d038be065c27', 'shadow': None, 'eta': None, 'expires': None, 'group': None, 'group_index': None, 'retries': 0, 'timelimit': [None, None], 'root_id': '537f33ac-c48e-4631-8ef1-d038be065c27', 'parent_id': None, 'argsrepr': '()', 'kwargsrepr': '{}', 'origin': 'gen4784@andrei-golubenko-macbook.local', 'ignore_result': False, 'replaced_task_nesting': 0, 'stamped_headers': None, 'stamps': {}}
+
+The delivery info for this task is:
+{'exchange': '', 'routing_key': 'celery'}
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
+    strategy = strategies[type_]
+               ~~~~~~~~~~^^^^^^^
+KeyError: 'apps.google_oauth.tasks.refresh_google_oauth_tokens'
+[2025-10-24 16:25:28,893: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
+[2025-10-24 16:25:28,899: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[1cdffbdd-e0f5-4c78-92c3-a3aef74a5bae] succeeded in 0.03446341602830216s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
+[2025-10-24 16:29:20,977: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[8648f93d-ceed-48bf-8174-3bfeae8f353d] received
+[2025-10-24 16:29:21,025: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[8648f93d-ceed-48bf-8174-3bfeae8f353d] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 16:34:20,959: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[d6de723e-9e2e-4a40-8c61-838b1d989498] received
+[2025-10-24 16:34:21,051: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[d6de723e-9e2e-4a40-8c61-838b1d989498] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 16:35:28,848: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[756f07f5-e442-4bce-acd6-6424968a39f4] received
+[2025-10-24 16:35:28,889: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[756f07f5-e442-4bce-acd6-6424968a39f4] succeeded in 0.02807424997445196s: {'success': False, 'message': 'Задача временно отключена'}
+[2025-10-24 16:39:20,948: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[7f9e9a35-8653-414d-a5fa-2ca2967324e7] received
+[2025-10-24 16:39:21,032: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[7f9e9a35-8653-414d-a5fa-2ca2967324e7] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 16:44:20,989: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[ca5f91a1-d33d-49b6-99cf-b6964919f0eb] received
+[2025-10-24 16:44:21,056: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[ca5f91a1-d33d-49b6-99cf-b6964919f0eb] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 16:49:26,252: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[7bf6fb90-baa9-4c10-bfe9-285cdfc494cd] received
+[2025-10-24 16:49:26,355: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[7bf6fb90-baa9-4c10-bfe9-285cdfc494cd] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 16:54:26,250: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[7210099c-bbac-4a2d-831b-89484db304f0] received
+[2025-10-24 16:54:26,297: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[7210099c-bbac-4a2d-831b-89484db304f0] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 16:55:28,842: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[8f0a9b87-d3a1-430e-8c7f-bf40cc816aae] received
+[2025-10-24 16:55:28,853: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[8f0a9b87-d3a1-430e-8c7f-bf40cc816aae] succeeded in 0.00594083295436576s: {'success': False, 'message': 'Задача временно отключена'}
+[2025-10-24 16:55:28,861: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[fc6a6a96-f30f-45ec-98ad-d445964a7d56] received
+[2025-10-24 16:55:28,873: ERROR/MainProcess] Received unregistered task of type 'apps.google_oauth.tasks.refresh_google_oauth_tokens'.
+The message has been ignored and discarded.
+
+Did you remember to import the module containing this task?
+Or maybe you're using relative imports?
+
+Please see
+https://docs.celeryq.dev/en/latest/internals/protocol.html
+for more information.
+
+The full contents of the message body was:
+b'[[], {}, {"callbacks": null, "errbacks": null, "chain": null, "chord": null}]' (77b)
+
+The full contents of the message headers:
+{'lang': 'py', 'task': 'apps.google_oauth.tasks.refresh_google_oauth_tokens', 'id': '42bf5773-9d24-4564-83bc-7557ad021399', 'shadow': None, 'eta': None, 'expires': None, 'group': None, 'group_index': None, 'retries': 0, 'timelimit': [None, None], 'root_id': '42bf5773-9d24-4564-83bc-7557ad021399', 'parent_id': None, 'argsrepr': '()', 'kwargsrepr': '{}', 'origin': 'gen4784@andrei-golubenko-macbook.local', 'ignore_result': False, 'replaced_task_nesting': 0, 'stamped_headers': None, 'stamps': {}}
+
+The delivery info for this task is:
+{'exchange': '', 'routing_key': 'celery'}
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
+    strategy = strategies[type_]
+               ~~~~~~~~~~^^^^^^^
+KeyError: 'apps.google_oauth.tasks.refresh_google_oauth_tokens'
+[2025-10-24 16:55:28,890: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
+[2025-10-24 16:55:28,893: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[fc6a6a96-f30f-45ec-98ad-d445964a7d56] succeeded in 0.03185366600519046s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
+[2025-10-24 16:59:26,267: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[b9769d40-6a2e-4998-8a05-7fca1ec45aad] received
+[2025-10-24 16:59:26,380: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[b9769d40-6a2e-4998-8a05-7fca1ec45aad] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 17:04:26,294: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[2deb025c-19d0-4946-a5d9-a31f752a3f4b] received
+[2025-10-24 17:04:26,386: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[2deb025c-19d0-4946-a5d9-a31f752a3f4b] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 17:09:26,281: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[4f4f73b1-821e-4d89-83e4-2e02bcc724a6] received
+[2025-10-24 17:09:26,407: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[4f4f73b1-821e-4d89-83e4-2e02bcc724a6] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 17:14:26,288: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[80000b2f-9a42-4727-a608-9de2e679f362] received
+[2025-10-24 17:14:26,335: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[80000b2f-9a42-4727-a608-9de2e679f362] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 17:15:28,847: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[99ca985e-4f53-4a6b-8568-4d7f66ebb152] received
+[2025-10-24 17:15:28,877: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[99ca985e-4f53-4a6b-8568-4d7f66ebb152] succeeded in 0.01045858400175348s: {'success': False, 'message': 'Задача временно отключена'}
+[2025-10-24 17:19:26,297: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[738780d9-363b-4184-8231-76b667efcf87] received
+[2025-10-24 17:19:26,352: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[738780d9-363b-4184-8231-76b667efcf87] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 17:22:49,173: INFO/MainProcess] Task apps.finance.tasks.generate_benchmark_statistics[39ccb148-955c-4824-8db5-f17016e1dad4] received
+[2025-10-24 17:22:49,199: INFO/MainProcess] Task apps.huntflow.tasks.refresh_huntflow_tokens[fd1edf6f-b60b-4db3-9394-b6e059d60707] received
+[2025-10-24 17:22:49,251: INFO/ForkPoolWorker-1] Сгенерирована статистика по 95 бенчмаркам
+[2025-10-24 17:22:49,262: INFO/ForkPoolWorker-1] Task apps.finance.tasks.generate_benchmark_statistics[39ccb148-955c-4824-8db5-f17016e1dad4] succeeded in 0.05734912498155609s: {'success': True, 'message': 'Статистика успешно сгенерирована', 'statistics': {'type_stats': [{...}], 'grade_stats': [{...}, {...}, {...}, {...}, {...}, {...}], 'location_stats': [{...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}], 'total_benchmarks': 95, 'generated_at': '2025-10-24T14:22:49.251118+00:00'}}
+[2025-10-24 17:22:49,264: INFO/ForkPoolWorker-1] 🔄 Запуск периодического обновления токенов Huntflow
+[2025-10-24 17:22:49,276: INFO/ForkPoolWorker-1] 📊 Обновление токенов завершено: 0 успешно, 0 ошибок
+[2025-10-24 17:22:49,279: INFO/ForkPoolWorker-1] Task apps.huntflow.tasks.refresh_huntflow_tokens[fd1edf6f-b60b-4db3-9394-b6e059d60707] succeeded in 0.015176707995124161s: {'updated': 0, 'failed': 0, 'total': 2}
+[2025-10-24 17:22:49,339: ERROR/MainProcess] Received unregistered task of type 'apps.google_oauth.tasks.validate_oauth_tokens'.
+The message has been ignored and discarded.
+
+Did you remember to import the module containing this task?
+Or maybe you're using relative imports?
+
+Please see
+https://docs.celeryq.dev/en/latest/internals/protocol.html
+for more information.
+
+The full contents of the message body was:
+b'[[], {}, {"callbacks": null, "errbacks": null, "chain": null, "chord": null}]' (77b)
+
+The full contents of the message headers:
+{'lang': 'py', 'task': 'apps.google_oauth.tasks.validate_oauth_tokens', 'id': '67f6c283-7f2f-46c3-b904-5d9cb3ad0a9b', 'shadow': None, 'eta': None, 'expires': None, 'group': None, 'group_index': None, 'retries': 0, 'timelimit': [None, None], 'root_id': '67f6c283-7f2f-46c3-b904-5d9cb3ad0a9b', 'parent_id': None, 'argsrepr': '()', 'kwargsrepr': '{}', 'origin': 'gen4784@andrei-golubenko-macbook.local', 'ignore_result': False, 'replaced_task_nesting': 0, 'stamped_headers': None, 'stamps': {}}
+
+The delivery info for this task is:
+{'exchange': '', 'routing_key': 'celery'}
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
+    strategy = strategies[type_]
+               ~~~~~~~~~~^^^^^^^
+KeyError: 'apps.google_oauth.tasks.validate_oauth_tokens'
+[2025-10-24 17:24:26,297: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[bdbed78a-2e4a-4a0e-8c4c-15c61c434703] received
+[2025-10-24 17:24:26,362: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[bdbed78a-2e4a-4a0e-8c4c-15c61c434703] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 17:25:28,876: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[39404e52-558b-4ad9-9e57-18e4e47eec49] received
+[2025-10-24 17:25:28,881: ERROR/MainProcess] Received unregistered task of type 'apps.google_oauth.tasks.refresh_google_oauth_tokens'.
+The message has been ignored and discarded.
+
+Did you remember to import the module containing this task?
+Or maybe you're using relative imports?
+
+Please see
+https://docs.celeryq.dev/en/latest/internals/protocol.html
+for more information.
+
+The full contents of the message body was:
+b'[[], {}, {"callbacks": null, "errbacks": null, "chain": null, "chord": null}]' (77b)
+
+The full contents of the message headers:
+{'lang': 'py', 'task': 'apps.google_oauth.tasks.refresh_google_oauth_tokens', 'id': 'b03bea4a-02df-4eaf-8f95-ce0063c194fb', 'shadow': None, 'eta': None, 'expires': None, 'group': None, 'group_index': None, 'retries': 0, 'timelimit': [None, None], 'root_id': 'b03bea4a-02df-4eaf-8f95-ce0063c194fb', 'parent_id': None, 'argsrepr': '()', 'kwargsrepr': '{}', 'origin': 'gen4784@andrei-golubenko-macbook.local', 'ignore_result': False, 'replaced_task_nesting': 0, 'stamped_headers': None, 'stamps': {}}
+
+The delivery info for this task is:
+{'exchange': '', 'routing_key': 'celery'}
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
+    strategy = strategies[type_]
+               ~~~~~~~~~~^^^^^^^
+KeyError: 'apps.google_oauth.tasks.refresh_google_oauth_tokens'
+[2025-10-24 17:25:28,912: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
+[2025-10-24 17:25:28,917: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[39404e52-558b-4ad9-9e57-18e4e47eec49] succeeded in 0.03247454098891467s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
+[2025-10-24 17:29:26,292: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[574b53db-56f7-43d7-82a1-8f9f7b6f6cdb] received
+[2025-10-24 17:29:26,350: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[574b53db-56f7-43d7-82a1-8f9f7b6f6cdb] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 17:34:26,311: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[14b60f64-81db-4140-99c6-c6f5c713ed02] received
+[2025-10-24 17:34:26,389: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[14b60f64-81db-4140-99c6-c6f5c713ed02] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 17:35:28,849: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[220b2d8d-396d-4a9d-b44d-b5e68840b1e3] received
+[2025-10-24 17:35:28,881: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[220b2d8d-396d-4a9d-b44d-b5e68840b1e3] succeeded in 0.008483749988954514s: {'success': False, 'message': 'Задача временно отключена'}
+[2025-10-24 17:39:26,292: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[de178b97-212a-4b53-bf28-4a2744994cb4] received
+[2025-10-24 17:39:26,369: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[de178b97-212a-4b53-bf28-4a2744994cb4] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 17:44:26,342: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[23682cb2-68f8-420d-a6dc-70e39d2f6bce] received
+[2025-10-24 17:44:26,424: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[23682cb2-68f8-420d-a6dc-70e39d2f6bce] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 17:53:31,449: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[48268627-5df5-41e2-9c10-df00d6e1b528] received
+[2025-10-24 17:53:31,584: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[48268627-5df5-41e2-9c10-df00d6e1b528] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 17:55:28,855: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[a86cf50b-b254-4c6d-a6ac-2e54a0de79f3] received
+[2025-10-24 17:55:28,865: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[544bfbfc-af06-4ef5-8ad2-9d22eaea49cb] received
+[2025-10-24 17:55:28,879: ERROR/MainProcess] Received unregistered task of type 'apps.google_oauth.tasks.refresh_google_oauth_tokens'.
+The message has been ignored and discarded.
+
+Did you remember to import the module containing this task?
+Or maybe you're using relative imports?
+
+Please see
+https://docs.celeryq.dev/en/latest/internals/protocol.html
+for more information.
+
+The full contents of the message body was:
+b'[[], {}, {"callbacks": null, "errbacks": null, "chain": null, "chord": null}]' (77b)
+
+The full contents of the message headers:
+{'lang': 'py', 'task': 'apps.google_oauth.tasks.refresh_google_oauth_tokens', 'id': '6538cb20-5cbc-4133-a6d0-65b073a1ca37', 'shadow': None, 'eta': None, 'expires': None, 'group': None, 'group_index': None, 'retries': 0, 'timelimit': [None, None], 'root_id': '6538cb20-5cbc-4133-a6d0-65b073a1ca37', 'parent_id': None, 'argsrepr': '()', 'kwargsrepr': '{}', 'origin': 'gen4784@andrei-golubenko-macbook.local', 'ignore_result': False, 'replaced_task_nesting': 0, 'stamped_headers': None, 'stamps': {}}
+
+The delivery info for this task is:
+{'exchange': '', 'routing_key': 'celery'}
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
+    strategy = strategies[type_]
+               ~~~~~~~~~~^^^^^^^
+KeyError: 'apps.google_oauth.tasks.refresh_google_oauth_tokens'
+[2025-10-24 17:55:28,892: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[a86cf50b-b254-4c6d-a6ac-2e54a0de79f3] succeeded in 0.02481654199073091s: {'success': False, 'message': 'Задача временно отключена'}
+[2025-10-24 17:55:28,937: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
+[2025-10-24 17:55:28,938: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[544bfbfc-af06-4ef5-8ad2-9d22eaea49cb] succeeded in 0.036961832956876606s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
+[2025-10-24 17:58:31,403: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[739a9fbd-5d87-406f-85f8-5c2a2216dc42] received
+[2025-10-24 17:58:31,440: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[739a9fbd-5d87-406f-85f8-5c2a2216dc42] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 18:03:31,403: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[903fa3be-cc7e-4228-a833-1b9735f7d764] received
+[2025-10-24 18:03:31,466: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[903fa3be-cc7e-4228-a833-1b9735f7d764] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 18:08:31,419: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[fc54b38b-0460-4238-a67c-6512d38709c3] received
+[2025-10-24 18:08:31,465: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[fc54b38b-0460-4238-a67c-6512d38709c3] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 18:13:31,550: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[ae8f5176-caa0-4593-8ac1-f494f6a39540] received
+[2025-10-24 18:13:31,670: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[ae8f5176-caa0-4593-8ac1-f494f6a39540] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 18:15:29,013: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[e5481c44-3212-49f5-babb-b9141e4360d9] received
+[2025-10-24 18:15:29,055: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[e5481c44-3212-49f5-babb-b9141e4360d9] succeeded in 0.023444875027053058s: {'success': False, 'message': 'Задача временно отключена'}
+[2025-10-24 18:18:31,480: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[b1f608d2-c983-4fc1-9174-4d3450edc8c9] received
+[2025-10-24 18:18:31,590: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[b1f608d2-c983-4fc1-9174-4d3450edc8c9] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 18:22:49,244: INFO/MainProcess] Task apps.finance.tasks.generate_benchmark_statistics[cf2da803-8721-4782-9ec9-e6dd970c4956] received
+[2025-10-24 18:22:49,302: INFO/MainProcess] Task apps.huntflow.tasks.refresh_huntflow_tokens[9f6f5a92-3a3c-45d7-98c7-93fc73ced828] received
+[2025-10-24 18:22:49,360: INFO/ForkPoolWorker-1] Сгенерирована статистика по 95 бенчмаркам
+[2025-10-24 18:22:49,380: ERROR/MainProcess] Received unregistered task of type 'apps.google_oauth.tasks.validate_oauth_tokens'.
+The message has been ignored and discarded.
+
+Did you remember to import the module containing this task?
+Or maybe you're using relative imports?
+
+Please see
+https://docs.celeryq.dev/en/latest/internals/protocol.html
+for more information.
+
+The full contents of the message body was:
+b'[[], {}, {"callbacks": null, "errbacks": null, "chain": null, "chord": null}]' (77b)
+
+The full contents of the message headers:
+{'lang': 'py', 'task': 'apps.google_oauth.tasks.validate_oauth_tokens', 'id': '9d12d092-d873-4b40-b8a5-959f7f4135cc', 'shadow': None, 'eta': None, 'expires': None, 'group': None, 'group_index': None, 'retries': 0, 'timelimit': [None, None], 'root_id': '9d12d092-d873-4b40-b8a5-959f7f4135cc', 'parent_id': None, 'argsrepr': '()', 'kwargsrepr': '{}', 'origin': 'gen4784@andrei-golubenko-macbook.local', 'ignore_result': False, 'replaced_task_nesting': 0, 'stamped_headers': None, 'stamps': {}}
+
+The delivery info for this task is:
+{'exchange': '', 'routing_key': 'celery'}
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
+    strategy = strategies[type_]
+               ~~~~~~~~~~^^^^^^^
+KeyError: 'apps.google_oauth.tasks.validate_oauth_tokens'
+[2025-10-24 18:22:49,393: INFO/ForkPoolWorker-1] Task apps.finance.tasks.generate_benchmark_statistics[cf2da803-8721-4782-9ec9-e6dd970c4956] succeeded in 0.1179710830328986s: {'success': True, 'message': 'Статистика успешно сгенерирована', 'statistics': {'type_stats': [{...}], 'grade_stats': [{...}, {...}, {...}, {...}, {...}, {...}], 'location_stats': [{...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}, {...}], 'total_benchmarks': 95, 'generated_at': '2025-10-24T15:22:49.359617+00:00'}}
+[2025-10-24 18:22:49,406: INFO/ForkPoolWorker-1] 🔄 Запуск периодического обновления токенов Huntflow
+[2025-10-24 18:22:49,416: INFO/ForkPoolWorker-1] 📊 Обновление токенов завершено: 0 успешно, 0 ошибок
+[2025-10-24 18:22:49,418: INFO/ForkPoolWorker-1] Task apps.huntflow.tasks.refresh_huntflow_tokens[9f6f5a92-3a3c-45d7-98c7-93fc73ced828] succeeded in 0.012933082995004952s: {'updated': 0, 'failed': 0, 'total': 2}
+[2025-10-24 18:23:31,471: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[e215ce47-edaa-4820-bf6a-0e9ceb512a02] received
+[2025-10-24 18:23:31,544: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[e215ce47-edaa-4820-bf6a-0e9ceb512a02] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 18:25:28,970: INFO/MainProcess] Task apps.notion_int.tasks.auto_sync_notion_pages[88a5735e-6c7a-43c4-9bae-13331b1a86c7] received
+[2025-10-24 18:25:28,988: ERROR/MainProcess] Received unregistered task of type 'apps.google_oauth.tasks.refresh_google_oauth_tokens'.
+The message has been ignored and discarded.
+
+Did you remember to import the module containing this task?
+Or maybe you're using relative imports?
+
+Please see
+https://docs.celeryq.dev/en/latest/internals/protocol.html
+for more information.
+
+The full contents of the message body was:
+b'[[], {}, {"callbacks": null, "errbacks": null, "chain": null, "chord": null}]' (77b)
+
+The full contents of the message headers:
+{'lang': 'py', 'task': 'apps.google_oauth.tasks.refresh_google_oauth_tokens', 'id': '458b5cf0-8c17-4df0-8fc6-d85959aae855', 'shadow': None, 'eta': None, 'expires': None, 'group': None, 'group_index': None, 'retries': 0, 'timelimit': [None, None], 'root_id': '458b5cf0-8c17-4df0-8fc6-d85959aae855', 'parent_id': None, 'argsrepr': '()', 'kwargsrepr': '{}', 'origin': 'gen4784@andrei-golubenko-macbook.local', 'ignore_result': False, 'replaced_task_nesting': 0, 'stamped_headers': None, 'stamps': {}}
+
+The delivery info for this task is:
+{'exchange': '', 'routing_key': 'celery'}
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
+    strategy = strategies[type_]
+               ~~~~~~~~~~^^^^^^^
+KeyError: 'apps.google_oauth.tasks.refresh_google_oauth_tokens'
+[2025-10-24 18:25:29,017: ERROR/ForkPoolWorker-1] Настройки Notion не найдены для пользователя 1
+[2025-10-24 18:25:29,031: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.auto_sync_notion_pages[88a5735e-6c7a-43c4-9bae-13331b1a86c7] succeeded in 0.053868999995756894s: {'status': 'failed', 'message': 'Настройки Notion не найдены'}
+[2025-10-24 18:33:00,262: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[7fa6edfc-3cb5-4cec-9f79-b2fdfb1779b9] received
+[2025-10-24 18:33:00,387: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[7fa6edfc-3cb5-4cec-9f79-b2fdfb1779b9] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 18:35:29,201: INFO/MainProcess] Task apps.finance.tasks.fetch_hh_vacancies_task[bfcf3c07-2efb-45e2-a2ac-fb2422f31ac5] received
+[2025-10-24 18:35:29,476: INFO/ForkPoolWorker-1] Task apps.finance.tasks.fetch_hh_vacancies_task[bfcf3c07-2efb-45e2-a2ac-fb2422f31ac5] succeeded in 0.1360517920111306s: {'success': False, 'message': 'Задача временно отключена'}
+[2025-10-24 18:38:00,342: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[38a53c35-feda-4e54-a7c6-a5a043379cdc] received
+[2025-10-24 18:38:00,551: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[38a53c35-feda-4e54-a7c6-a5a043379cdc] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 18:43:00,333: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[2f041929-418f-443e-b769-70abd09e8435] received
+[2025-10-24 18:43:00,360: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[2f041929-418f-443e-b769-70abd09e8435] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined

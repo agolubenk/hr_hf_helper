@@ -6,7 +6,8 @@ from django.db.models import Count, Sum
 
 from .models import (
     HiringPlan, HiringPlanPosition, PositionType, PlanPeriodType,
-    PositionSLA, PositionKPIOKR, PlanKPIOKRBlock, PlanMetrics
+    PositionKPIOKR, PlanKPIOKRBlock, PlanMetrics,
+    VacancySLA, HiringRequest
 )
 
 
@@ -74,32 +75,6 @@ class PlanKPIOKRBlockAdmin(admin.ModelAdmin):
     grades_count.short_description = 'Грейдов'
 
 
-@admin.register(PositionSLA)
-class PositionSLAAdmin(admin.ModelAdmin):
-    list_display = ['vacancy', 'grade', 'target_time_to_fill', 'target_time_to_hire', 'is_active', 'created_at']
-    list_filter = ['vacancy', 'grade', 'is_active']
-    search_fields = ['vacancy__name']
-    ordering = ['vacancy__name', 'grade__name']
-    
-    fieldsets = (
-        ('Связи', {
-            'fields': ('vacancy', 'grade'),
-            'description': 'Если грейд не указан - SLA для всех грейдов вакансии'
-        }),
-        ('Целевые показатели', {
-            'fields': ('target_time_to_fill', 'target_time_to_hire', 'median_time_to_fill')
-        }),
-        ('Пороги', {
-            'fields': ('warning_threshold_percent', 'critical_threshold_percent'),
-            'classes': ('collapse',)
-        }),
-        ('Настройки', {
-            'fields': ('is_active',)
-        }),
-    )
-    
-    def get_queryset(self, request):
-        return super().get_queryset(request).select_related('vacancy', 'grade')
 
 
 @admin.register(PositionKPIOKR)
@@ -312,6 +287,82 @@ class PositionKPIOKRInline(admin.TabularInline):
 
 # Добавляем inline'ы к HiringPlan
 HiringPlanAdmin.inlines = [HiringPlanPositionInline, PositionKPIOKRInline]
+
+
+@admin.register(VacancySLA)
+class VacancySLAAdmin(admin.ModelAdmin):
+    list_display = ['vacancy', 'grade', 'time_to_fill', 'time_to_hire', 'is_active', 'created_at']
+    list_filter = ['vacancy', 'grade', 'is_active']
+    search_fields = ['vacancy__name', 'grade__name']
+    ordering = ['vacancy__name', 'grade__name']
+    
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('vacancy', 'grade')
+        }),
+        ('Целевые показатели', {
+            'fields': ('time_to_fill', 'time_to_hire')
+        }),
+        ('Настройки', {
+            'fields': ('is_active',)
+        }),
+    )
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('vacancy', 'grade')
+
+
+@admin.register(HiringRequest)
+class HiringRequestAdmin(admin.ModelAdmin):
+    list_display = ['vacancy', 'grade', 'project', 'status', 'priority', 'opening_date', 'deadline', 'sla_status_display', 'days_in_progress']
+    list_filter = ['status', 'priority', 'opening_reason', 'grade', 'vacancy', 'opening_date']
+    search_fields = ['vacancy__name', 'candidate_name', 'candidate_id', 'notes', 'project']
+    readonly_fields = ['sla_status_display', 'sla_compliance', 'days_in_progress', 'is_overdue', 'created_at', 'updated_at']
+    ordering = ['-opening_date', 'priority']
+    
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('vacancy', 'grade', 'project', 'priority', 'opening_reason')
+        }),
+        ('Статус и даты', {
+            'fields': ('status', 'opening_date', 'deadline', 'closed_date', 'sla_status_display', 'sla_compliance', 'days_in_progress', 'is_overdue')
+        }),
+        ('SLA', {
+            'fields': ('sla',),
+            'classes': ('collapse',)
+        }),
+        ('Кандидат', {
+            'fields': ('candidate_id', 'candidate_name'),
+            'classes': ('collapse',)
+        }),
+        ('Дополнительно', {
+            'fields': ('notes',),
+            'classes': ('collapse',)
+        }),
+        ('Метаданные', {
+            'fields': ('created_by', 'created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def sla_status_display(self, obj):
+        status = obj.sla_status_display
+        status_colors = {
+            'В срок': 'green',
+            'С задержкой': 'orange',
+            'Просрочено': 'red',
+            'Нормально': 'blue',
+            'Риск просрочки': 'orange',
+            'Нет SLA': 'gray'
+        }
+        color = status_colors.get(status, 'gray')
+        return format_html('<span style="color: {};">{}</span>', color, status)
+    sla_status_display.short_description = 'SLA статус'
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related(
+            'vacancy', 'grade', 'sla', 'created_by'
+        )
 
 
 # Настройка админки
