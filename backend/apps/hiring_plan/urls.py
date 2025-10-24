@@ -16,4 +16,10 @@ urlpatterns = [
     path('sla/', views.VacancySLAListView.as_view(), name='sla_list'),
     path('sla/create/', views.VacancySLACreateView.as_view(), name='sla_create'),
     path('sla/<int:pk>/edit/', views.VacancySLAUpdateView.as_view(), name='sla_update'),
+    
+    # Метрики и KPI
+    path('metrics/', views.MetricsDashboardView.as_view(), name='metrics_dashboard'),
+    path('metrics/list/', views.MetricsListView.as_view(), name='metrics_list'),
+    path('forecasts/', views.ForecastsListView.as_view(), name='forecasts_list'),
+    path('capacity/', views.RecruiterCapacityListView.as_view(), name='recruiter_capacity_list'),
 ]

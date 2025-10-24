@@ -7,7 +7,7 @@ from django.db.models import Count, Sum
 from .models import (
     HiringPlan, HiringPlanPosition, PositionType, PlanPeriodType,
     PositionKPIOKR, PlanKPIOKRBlock, PlanMetrics,
-    VacancySLA, HiringRequest
+    VacancySLA, HiringRequest, RecruitmentMetrics, DemandForecast, RecruiterCapacity
 )
 
 
@@ -363,6 +363,91 @@ class HiringRequestAdmin(admin.ModelAdmin):
         return super().get_queryset(request).select_related(
             'vacancy', 'grade', 'sla', 'created_by'
         )
+
+
+@admin.register(RecruitmentMetrics)
+class RecruitmentMetricsAdmin(admin.ModelAdmin):
+    list_display = ['period_type', 'period_start', 'period_end', 'vacancy', 'grade', 'avg_time_to_fill', 'sla_compliance_rate', 'calculated_at']
+    list_filter = ['period_type', 'period_start', 'vacancy', 'grade']
+    search_fields = ['vacancy__name', 'grade__name', 'project']
+    readonly_fields = ['calculated_at']
+    ordering = ['-period_start']
+    
+    fieldsets = (
+        ('Период', {
+            'fields': ('period_type', 'period_start', 'period_end')
+        }),
+        ('Группировка', {
+            'fields': ('vacancy', 'grade', 'project'),
+            'classes': ('collapse',)
+        }),
+        ('Временные метрики', {
+            'fields': ('avg_time_to_fill', 'median_time_to_fill', 'avg_time_to_hire')
+        }),
+        ('Скорость найма', {
+            'fields': ('hires_count', 'hiring_velocity_weekly')
+        }),
+        ('SLA и отставание', {
+            'fields': ('sla_compliance_rate', 'avg_days_behind_schedule', 'overdue_requests_count')
+        }),
+        ('Общая статистика', {
+            'fields': ('total_requests', 'closed_requests', 'in_progress_requests', 'cancelled_requests')
+        }),
+    )
+
+
+@admin.register(DemandForecast)
+class DemandForecastAdmin(admin.ModelAdmin):
+    list_display = ['vacancy', 'grade', 'forecast_period', 'forecasted_demand', 'confidence_level', 'created_at']
+    list_filter = ['forecast_period', 'vacancy', 'grade', 'created_at']
+    search_fields = ['vacancy__name', 'grade__name', 'project', 'notes']
+    readonly_fields = ['created_at']
+    ordering = ['-forecast_start']
+    
+    fieldsets = (
+        ('Прогноз', {
+            'fields': ('forecast_period', 'forecast_start', 'forecast_end')
+        }),
+        ('Объект прогноза', {
+            'fields': ('vacancy', 'grade', 'project')
+        }),
+        ('Результат прогноза', {
+            'fields': ('forecasted_demand', 'confidence_level')
+        }),
+        ('Факторы', {
+            'fields': ('based_on_history', 'seasonality_factor', 'growth_factor'),
+            'classes': ('collapse',)
+        }),
+        ('Метаданные', {
+            'fields': ('created_by', 'notes', 'created_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(RecruiterCapacity)
+class RecruiterCapacityAdmin(admin.ModelAdmin):
+    list_display = ['recruiter', 'period_start', 'capacity_utilization', 'active_requests_count', 'is_overloaded', 'calculated_at']
+    list_filter = ['period_start', 'is_overloaded', 'recruiter']
+    search_fields = ['recruiter__username', 'recruiter__first_name', 'recruiter__last_name']
+    readonly_fields = ['calculated_at']
+    ordering = ['-period_start', 'recruiter']
+    
+    fieldsets = (
+        ('Период и рекрутер', {
+            'fields': ('recruiter', 'period_start', 'period_end')
+        }),
+        ('Загрузка', {
+            'fields': ('active_requests_count', 'planned_requests_count')
+        }),
+        ('Мощность', {
+            'fields': ('max_capacity', 'available_capacity', 'capacity_utilization', 'is_overloaded')
+        }),
+        ('Производительность', {
+            'fields': ('avg_time_per_request', 'closed_requests_count', 'success_rate'),
+            'classes': ('collapse',)
+        }),
+    )
 
 
 # Настройка админки

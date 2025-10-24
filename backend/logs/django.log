@@ -4397,3 +4397,1275 @@ DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'n
 [24/Oct/2025 18:41:29] "GET /hiring-plans/requests/create/ HTTP/1.1" 200 111881
 [24/Oct/2025 18:42:13] "POST /hiring-plans/requests/create/ HTTP/1.1" 302 0
 [24/Oct/2025 18:42:13] "GET /hiring-plans/ HTTP/1.1" 200 119238
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 CHAT: Определен тип действия автоматически: hrscreening
+🔍 HR_SCREENING_FORM_SAVE: Начинаем сохранение HR-скрининга...
+🔍 HR_SCREENING_FORM_SAVE: HR-скрининг создан, user: andrei.golubenko
+🔍 HR_SCREENING_FORM_SAVE: Извлекаем URL...
+✅ HR_SCREENING_FORM_SAVE: URL извлечен: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/75435450
+🔍 HR_SCREENING_FORM_SAVE: Парсим URL...
+✅ HR_SCREENING_FORM_SAVE: URL распарсен успешно
+🔍 HR_SCREENING_FORM_SAVE: Получаем информацию о кандидате...
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Начинаем получение информации о кандидате 75435450
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Используем аккаунт 291341
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Запрашиваем данные кандидата 75435450 из аккаунта 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75435450
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Вадим","last_name":"Кагукин","middle_name":null,"money":null,"phone":"+375336913298","email":"vkagukin@gmail.com","skype":null,"position":"Frontend developer","company":"Oxagile","photo":98012173,"id":75435450,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/3/a/d/3ade2b1cd1dde08b97f33d87674b3737.jpeg?s=L_IdZ08jthpc4D0r--P0ZQ&e=1763912907","birthday":"1995-06-11","created":"2025-10-24T18:06:50+03:00","tags":[],"links":[{"id":70881922,"status":186500,"updated":"2025...
+💾 Сохранены данные кандидата в кэш: 75435450
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Получены данные кандидата: {'first_name': 'Вадим', 'last_name': 'Кагукин', 'middle_name': None, 'money': None, 'phone': '+375336913298', 'email': 'vkagukin@gmail.com', 'skype': None, 'position': 'Frontend developer', 'company': 'Oxagile', 'photo': 98012173, 'id': 75435450, 'account': 291341, 'photo_url': 'https://store.huntflow.ru/uploads3/3/a/d/3ade2b1cd1dde08b97f33d87674b3737.jpeg?s=L_IdZ08jthpc4D0r--P0ZQ&e=1763912907', 'birthday': '1995-06-11', 'created': '2025-10-24T18:06:50+03:00', 'tags': [], 'links': [{'id': 70881922, 'status': 186500, 'updated': '2025-10-24T18:06:56+03:00', 'changed': '2025-10-24T18:06:56+03:00', 'vacancy': 3936868}], 'external': [{'id': 75264353, 'auth_type': 'RABOTABY', 'account_source': 551946, 'updated': '2025-10-24T18:07:00+03:00'}], 'agreement': None, 'doubles': [], 'social': [{'id': 4074295, 'social_type': 'TELEGRAM', 'value': 'vadim953', 'verified': False, 'verification_date': None}]}
+✅ HR_SCREENING_GET_CANDIDATE_INFO: Информация о кандидате получена: Вадим Кагукин
+✅ HR_SCREENING_FORM_SAVE: Информация о кандидате получена
+🔍 HR_SCREENING_FORM_SAVE: Получаем информацию о вакансии...
+🔍 HR_SCREENING_GET_VACANCY_INFO: Начинаем получение информации о вакансии 3936868
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_VACANCY_INFO: Используем аккаунт 291341
+🔍 HR_SCREENING_GET_VACANCY_INFO: Запрашиваем данные вакансии 3936868 из аккаунта 291341
+📦 Получены данные вакансии из кэша: 3936868
+🔍 HR_SCREENING_GET_VACANCY_INFO: Получены данные вакансии: {'account_division': 333519, 'account_region': None, 'position': 'Frontend Engineer', 'company': None, 'money': '600-3500', 'priority': 1, 'hidden': False, 'state': 'OPEN', 'id': 3936868, 'created': '2025-03-19T12:01:01+03:00', 'additional_fields_list': [], 'multiple': False, 'parent': None, 'account_vacancy_status_group': None, 'updated': '2025-10-23T16:52:07+03:00', 'body': '<p><strong>Описание проектов:</strong></p><p>Проект в области спортивной статистики, киберспорта, гемблинга. Кодовая база новая, legacy отсутствует.</p><p>Разработка проектов идёт на <strong>React</strong>/<strong>Redux</strong> с использование Redux-Epics. Используется GraphqQL, Websocket, RxJS, WebGL.</p><p>Проекты высоконагруженные, требуют внимания к производительности, необходимо обрабатывать и отображать большое количество данных в реальном времени.</p><p>Для CI/CD используется GitLab.</p>', 'requirements': '<p><strong>Что нужно знать/уметь/иметь?</strong></p><ul><li>Опыт коммерческой разработки от 1-ого года;</li><li>JavaScript (ES6), Promise, ES6 Generators;</li><li>Flux архитектуру.</li></ul><p>\u200b\u200b\u200b\u200b\u200b<strong>Преимуществами будут:</strong></p><ul><li>Typescript;</li><li>React, Redux, React-router , Redux-Saga/Redux-Epic (RxJs), Reselect, Webpack/Rollup;</li><li>Глубокое понимание асинхронного программирования (Callback, Event Loop, Promise, Observable);</li><li>Понимание основ функционального программирования;</li><li>WebGL, PixiJS, Babylon.js;</li><li>Опыт в game dev.</li></ul>', 'conditions': '<ul><li>Ежегодные Performance Review и частые пересмотры ЗП.</li><li>Чёткий план карьерного и профессионального роста.</li><li>Комфортный офис в центре Минска (ст.м. Немига).</li><li>Официальное трудоустройство по ТК РБ.</li><li>Полностью оплачиваемые больничные.</li><li>Отпуск 28 дней, возможность брать отпуск по частям.</li><li>Корпоративные курсы английского языка.</li></ul>', 'files': [], 'source': None, 'blocks': []}
+✅ HR_SCREENING_GET_VACANCY_INFO: Информация о вакансии получена: Frontend Engineer
+✅ HR_SCREENING_FORM_SAVE: Информация о вакансии получена
+🤖 HR_SCREENING_FORM_SAVE: Анализируем данные с помощью Gemini AI...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 Получен account_id из API: 291341
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Получаем схему полей кандидата
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Используем аккаунт 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","disableAutofill":true,"account":291341,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","account":291341,"placeholder":"","search_filter":true,"is...
+✅ HR_SCREENING_GET_FIELDS_SCHEMA: Схема полей получена: 13 полей
+🔍 HR_SCREENING_ANALYSIS: Вызываем _extract_salary_and_determine_grade
+✅ Извлечена зарплата: 3000
+✅ Определена валюта: USD
+🔍 HR_SCREENING_GRADE: Определяем грейд для зарплаты 3000 USD
+✅ Найдена подходящая зарплатная вилка: Senior (3000 USD)
+✅ Определен грейд: Senior
+🔍 HR_SCREENING_LEVEL: Получаем ID уровня для грейда 'Senior'
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_filter":true,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_filter":true,"placeholder":"","is_archived":false,"search_field":...
+✅ Найден точный уровень 'Senior' в Huntflow (индекс: 4)
+✅ ID уровня в Huntflow: 4
+🔍 HR_SCREENING_LEVEL: ID уровня сохранен, обновление произойдет в update_candidate_in_huntflow
+🔍 HR_SCREENING_ANALYSIS: Метод _extract_salary_and_determine_grade завершен успешно
+✅ HR_SCREENING_FORM_SAVE: Анализ завершен с помощью Gemini AI
+✅ HR_SCREENING_FORM_SAVE: HR-скрининг сохранен с ID: 208
+🔍 HR_SCREENING_FORM_SAVE: Данные кандидата: Вадим Кагукин
+🔍 HR_SCREENING_FORM_SAVE: Данные вакансии: Frontend Engineer
+🔍 HR_SCREENING_FORM_SAVE: Анализ Gemini: {
+    "money": {
+        "value": "3000 USD",
+        "quote": "от $3000",
+        "field_key": "mon...
+🔄 HR_SCREENING_FORM_SAVE: Автоматически обновляем кандидата в Huntflow...
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Начинаем обновление кандидата 75435450
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Используем аккаунт 291341
+📸 HR_SCREENING_UPDATE_CANDIDATE: Создаем снимок состояния кандидата
+📦 Получены данные кандидата из кэша: 75435450
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75435450/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {}...
+✅ HR_SCREENING_UPDATE_CANDIDATE: Снимок состояния сохранен
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Получаем схему полей кандидата
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Используем аккаунт 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"search_field":"string_field_1","disableAutofill":true,"account":291341,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"search_field":"string_field_7","placeholder":"","account":291341,"is...
+✅ HR_SCREENING_GET_FIELDS_SCHEMA: Схема полей получена: 13 полей
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле money = 3000 USD
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле CsWOTYehY2IkL3I7myfwM = Да
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле YAMd8vkvLFq5KLmIkiLVf = Да. | Офис: да. Локация Минск. Полный рабочий день: да
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле n-U2tU6G5iBoxSPkXFN7F = нет
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле S58S9DFqO7w-JzDbF2HJA = военник на руках
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле c8wID33nTMvoCpJmtngyq = нет
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле Ew3LqHTK8SL67j2VQ-n6y = проект закончился, контракт иссек
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле DoOdxUlwbb0nILXQGBDaT = могу начать в любой день
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем основные поля
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/75435450
+📤 JSON данные: {'money': '3000 USD'}
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Вадим","last_name":"Кагукин","middle_name":null,"money":"3000 USD","phone":"+375336913298","email":"vkagukin@gmail.com","skype":null,"position":"Frontend developer","company":"Oxagile","photo":98012173,"id":75435450,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/3/a/d/3ade2b1cd1dde08b97f33d87674b3737.jpeg?s=8n_SYM_8Za7MJqo5cZL22w&e=1763912923","birthday":"1995-06-11","created":"2025-10-24T18:06:50+03:00","tags":[],"links":[{"id":70881922,"status":186500,"updated"...
+🗑️ Сброшен кэш для кандидата: 75435450
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75435450
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Вадим","last_name":"Кагукин","middle_name":null,"money":"3000 USD","phone":"+375336913298","email":"vkagukin@gmail.com","skype":null,"position":"Frontend developer","company":"Oxagile","photo":98012173,"id":75435450,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/3/a/d/3ade2b1cd1dde08b97f33d87674b3737.jpeg?s=8n_SYM_8Za7MJqo5cZL22w&e=1763912923","birthday":"1995-06-11","created":"2025-10-24T18:06:50+03:00","tags":[],"links":[{"id":70881922,"status":186500,"updated"...[24/Oct/2025 18:48:46] "POST /google-oauth/chat/38/?vacancy_id=1 HTTP/1.1" 302 0
+
+💾 Обновлены данные кандидата в кэше: 75435450
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем дополнительные поля
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/75435450/questionary с данными {'CsWOTYehY2IkL3I7myfwM': 'Да', 'YAMd8vkvLFq5KLmIkiLVf': 'Да. | Офис: да. Локация Минск. Полный рабочий день: да', 'n-U2tU6G5iBoxSPkXFN7F': 'нет', 'S58S9DFqO7w-JzDbF2HJA': 'военник на руках', 'c8wID33nTMvoCpJmtngyq': 'нет', 'Ew3LqHTK8SL67j2VQ-n6y': 'проект закончился, контракт иссек', 'DoOdxUlwbb0nILXQGBDaT': 'могу начать в любой день'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/75435450/questionary
+📤 JSON данные: {'CsWOTYehY2IkL3I7myfwM': 'Да', 'YAMd8vkvLFq5KLmIkiLVf': 'Да. | Офис: да. Локация Минск. Полный рабочий день: да', 'n-U2tU6G5iBoxSPkXFN7F': 'нет', 'S58S9DFqO7w-JzDbF2HJA': 'военник на руках', 'c8wID33nTMvoCpJmtngyq': 'нет', 'Ew3LqHTK8SL67j2VQ-n6y': 'проект закончился, контракт иссек', 'DoOdxUlwbb0nILXQGBDaT': 'могу начать в любой день'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да. | Офис: да. Локация Минск. Полный рабочий день: да","n-U2tU6G5iBoxSPkXFN7F":"нет","S58S9DFqO7w-JzDbF2HJA":"военник на руках","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"проект закончился, контракт иссек","DoOdxUlwbb0nILXQGBDaT":"могу начать в любой день","ICXvQX-WT9eleJW-QlVa9":null,"RMLxfRH9raQtHItMcdeq-":null,"X6qYbAqZnb0q1R3VMumbH":null,"bfPBtccRoL5s_7xyLXuia":null}...
+🗑️ Сброшен кэш для кандидата: 75435450
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем уровень кандидата: 4
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"account":291341,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"account":291341,"is_archived":false,"search_field":"string_field_7",...
+🔍 HR_SCREENING_LEVEL_UPDATE: Индекс 4 соответствует значению 'Senior'
+🔍 HR_SCREENING_LEVEL_UPDATE: Обновляем поле kIbah4MN0iHussXm3n2Ar значением 'Senior'
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/75435450/questionary с данными {'kIbah4MN0iHussXm3n2Ar': 'Senior'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/75435450/questionary
+📤 JSON данные: {'kIbah4MN0iHussXm3n2Ar': 'Senior'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да. | Офис: да. Локация Минск. Полный рабочий день: да","n-U2tU6G5iBoxSPkXFN7F":"нет","S58S9DFqO7w-JzDbF2HJA":"военник на руках","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"проект закончился, контракт иссек","DoOdxUlwbb0nILXQGBDaT":"могу начать в любой день","ICXvQX-WT9eleJW-QlVa9":null,"RMLxfRH9raQtHItMcdeq-":null,"X6qYbAqZnb0q1R3VMumbH":null,"bfPBtccRoL5s_7xyLXuia":nu...
+🗑️ Сброшен кэш для кандидата: 75435450
+✅ Уровень кандидата обновлен в Huntflow: Senior
+✅ HR_SCREENING_UPDATE_CANDIDATE: Уровень кандидата обновлен
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем статус и добавляем комментарий
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Используем статус из вакансии: 186502
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75435450
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Вадим","last_name":"Кагукин","middle_name":null,"money":"3000 USD","phone":"+375336913298","email":"vkagukin@gmail.com","skype":null,"position":"Frontend developer","company":"Oxagile","photo":98012173,"id":75435450,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/3/a/d/3ade2b1cd1dde08b97f33d87674b3737.jpeg?s=CnDNdF9uGHUK5yxGHqtwfg&e=1763912925","birthday":"1995-06-11","created":"2025-10-24T18:06:50+03:00","tags":[],"links":[{"id":70881922,"status":186500,"updated"...
+DEBUG: Обновляем статус кандидата 75435450 на статус 186502 для вакансии 3936868 с комментарием: Доп. инфо: если имеется ввиду с чем последним работал, то react 18, typescript, mobx и т.д.
+10. senior
+DEBUG: Пробуем эндпоинт /accounts/291341/applicants/75435450/vacancy с данными {'vacancy': 3936868, 'status': 186502, 'comment': 'Доп. инфо: если имеется ввиду с чем последним работал, то react 18, typescript, mobx и т.д.\n10. senior'}
+🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/applicants/75435450/vacancy
+📤 JSON данные: {'vacancy': 3936868, 'status': 186502, 'comment': 'Доп. инфо: если имеется ввиду с чем последним работал, то react 18, typescript, mobx и т.д.\n10. senior'}
+📥 Ответ API: 200
+📥 Тело ответа: {"id":70881922,"changed":"2025-10-24T18:48:46+03:00","vacancy":3936868,"status":186502,"rejection_reason":null}...
+DEBUG: Статус успешно обновлен через /accounts/291341/applicants/75435450/vacancy
+🗑️ Сброшен кэш для кандидата: 75435450
+✅ HR_SCREENING_UPDATE_CANDIDATE: Статус обновлен на HR Screening
+🗑️ HR_SCREENING_UPDATE_CANDIDATE: Кэш очищен для кандидата 75435450
+✅ HR_SCREENING_UPDATE_CANDIDATE: Кандидат успешно обновлен
+✅ HR_SCREENING_FORM_SAVE: Кандидат успешно обновлен в Huntflow: Кандидат успешно обновлен в Huntflow
+✅ HR_SCREENING_FORM_SAVE: HR-скрининг завершен БЕЗ создания инвайта
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 36 событий
+🔍 DEBUG CHAT: Получено 36 событий из API
+🔍 DEBUG CHAT: Передаем 36 событий в шаблон
+🔍 DEBUG CHAT: Событие: Проверить инвайты на ПН-ЧТ в 2025-10-24T18:30:00+03:00
+🔍 DEBUG CHAT: Событие: Vacation в 2025-10-27T02:00:00+03:00
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-27T09:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}][24/Oct/2025 18:48:54] "GET /google-oauth/chat/38/?vacancy_id=1 HTTP/1.1" 200 708834
+[24/Oct/2025 18:48:54] "GET /static/js/vacancy-slots.js HTTP/1.1" 304 0
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/models.py changed, reloading.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 24, 2025 - 18:51:08
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 24, 2025 - 18:52:03
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 24, 2025 - 18:52:17
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/threading.py", line 1043, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/threading.py", line 994, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+    ~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/management/commands/runserver.py", line 133, in inner_run
+    self.check(display_num_errors=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/management/base.py", line 485, in check
+    all_issues = checks.run_checks(
+        app_configs=app_configs,
+    ...<2 lines>...
+        databases=databases,
+    )
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/registry.py", line 88, in run_checks
+    new_errors = check(app_configs=app_configs, databases=databases)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/urls.py", line 14, in check_url_config
+    return check_resolver(resolver)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/urls.py", line 24, in check_resolver
+    return check_method()
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 494, in check
+    for pattern in self.url_patterns:
+                   ^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/functional.py", line 57, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 715, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/functional.py", line 57, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 708, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/agolubenko/hrhelper/fullstack/backend/config/urls.py", line 38, in <module>
+    path('hiring-plans/', include('apps.hiring_plan.urls')),
+                          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/conf.py", line 38, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/urls.py", line 2, in <module>
+    from . import views
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py", line 622, in <module>
+    class MetricsDashboardView(LoginRequiredMixin, TemplateView):
+                                                   ^^^^^^^^^^^^
+NameError: name 'TemplateView' is not defined. Did you mean: 'UpdateView'?
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/admin.py changed, reloading.
+Performing system checks...
+
+Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/threading.py", line 1043, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/threading.py", line 994, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+    ~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/management/commands/runserver.py", line 133, in inner_run
+    self.check(display_num_errors=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/management/base.py", line 485, in check
+    all_issues = checks.run_checks(
+        app_configs=app_configs,
+    ...<2 lines>...
+        databases=databases,
+    )
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/registry.py", line 88, in run_checks
+    new_errors = check(app_configs=app_configs, databases=databases)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/urls.py", line 14, in check_url_config
+    return check_resolver(resolver)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/urls.py", line 24, in check_resolver
+    return check_method()
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 494, in check
+    for pattern in self.url_patterns:
+                   ^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/functional.py", line 57, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 715, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/functional.py", line 57, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 708, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/agolubenko/hrhelper/fullstack/backend/config/urls.py", line 38, in <module>
+    path('hiring-plans/', include('apps.hiring_plan.urls')),
+                          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/conf.py", line 38, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/urls.py", line 2, in <module>
+    from . import views
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py", line 622, in <module>
+    class MetricsDashboardView(LoginRequiredMixin, TemplateView):
+                                                   ^^^^^^^^^^^^
+NameError: name 'TemplateView' is not defined. Did you mean: 'UpdateView'?
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/admin.py changed, reloading.
+Performing system checks...
+
+Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/threading.py", line 1043, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/threading.py", line 994, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+    ~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/management/commands/runserver.py", line 133, in inner_run
+    self.check(display_num_errors=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/management/base.py", line 485, in check
+    all_issues = checks.run_checks(
+        app_configs=app_configs,
+    ...<2 lines>...
+        databases=databases,
+    )
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/registry.py", line 88, in run_checks
+    new_errors = check(app_configs=app_configs, databases=databases)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/urls.py", line 14, in check_url_config
+    return check_resolver(resolver)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/urls.py", line 24, in check_resolver
+    return check_method()
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 494, in check
+    for pattern in self.url_patterns:
+                   ^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/functional.py", line 57, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 715, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/functional.py", line 57, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 708, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/agolubenko/hrhelper/fullstack/backend/config/urls.py", line 38, in <module>
+    path('hiring-plans/', include('apps.hiring_plan.urls')),
+                          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/conf.py", line 38, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/urls.py", line 2, in <module>
+    from . import views
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py", line 622, in <module>
+    class MetricsDashboardView(LoginRequiredMixin, TemplateView):
+                                                   ^^^^^^^^^^^^
+NameError: name 'TemplateView' is not defined. Did you mean: 'UpdateView'?
+/Users/agolubenko/hrhelper/fullstack/backend/apps/common/templatetags/sidebar_tags.py changed, reloading.
+Performing system checks...
+
+Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/threading.py", line 1043, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/threading.py", line 994, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+    ~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/management/commands/runserver.py", line 133, in inner_run
+    self.check(display_num_errors=True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/management/base.py", line 485, in check
+    all_issues = checks.run_checks(
+        app_configs=app_configs,
+    ...<2 lines>...
+        databases=databases,
+    )
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/registry.py", line 88, in run_checks
+    new_errors = check(app_configs=app_configs, databases=databases)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/urls.py", line 14, in check_url_config
+    return check_resolver(resolver)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/checks/urls.py", line 24, in check_resolver
+    return check_method()
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 494, in check
+    for pattern in self.url_patterns:
+                   ^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/functional.py", line 57, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 715, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/utils/functional.py", line 57, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/resolvers.py", line 708, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/agolubenko/hrhelper/fullstack/backend/config/urls.py", line 38, in <module>
+    path('hiring-plans/', include('apps.hiring_plan.urls')),
+                          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/urls/conf.py", line 38, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/urls.py", line 2, in <module>
+    from . import views
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py", line 622, in <module>
+    class MetricsDashboardView(LoginRequiredMixin, TemplateView):
+                                                   ^^^^^^^^^^^^
+NameError: name 'TemplateView' is not defined. Did you mean: 'UpdateView'?
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/views.py changed, reloading.
+Performing system checks...
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/common/templatetags/sidebar_tags.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 24, 2025 - 18:56:06
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[24/Oct/2025 19:02:22] "GET /google-oauth/chat/38/?vacancy_id=1 HTTP/1.1" 200 709559
+[24/Oct/2025 19:02:22] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[24/Oct/2025 19:02:22] "GET /static/js/chat_actions.js HTTP/1.1" 200 5449
+[24/Oct/2025 19:02:22] "GET /static/js/vacancy-slots.js HTTP/1.1" 200 38296
+[24/Oct/2025 19:02:22] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[24/Oct/2025 19:02:22] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[24/Oct/2025 19:02:22] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[24/Oct/2025 19:02:22] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[24/Oct/2025 19:02:22] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[24/Oct/2025 19:02:22] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[24/Oct/2025 19:02:22] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[24/Oct/2025 19:02:22] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[24/Oct/2025 19:02:23] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[24/Oct/2025 19:09:52] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 233377
+[24/Oct/2025 19:11:12] "GET /google-oauth/chat/38/?vacancy_id=1 HTTP/1.1" 200 709559
+[24/Oct/2025 19:11:27] "GET /hiring-plans/ HTTP/1.1" 200 119747
+[24/Oct/2025 19:11:36] "GET /hiring-plans/sla/ HTTP/1.1" 200 176521
+[24/Oct/2025 19:11:39] "GET /hiring-plans/ HTTP/1.1" 200 119747
+[24/Oct/2025 19:13:24] "GET /hiring-plans/ HTTP/1.1" 200 120038
+[24/Oct/2025 19:13:26] "GET /hiring-plans/metrics/ HTTP/1.1" 200 112860
+ERROR Internal Server Error: /hiring-plans/forecasts/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 880, in _resolve_lookup
+    current = current[bit]
+              ~~~~~~~^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 890, in _resolve_lookup
+    current = getattr(current, bit)
+AttributeError: 'NoneType' object has no attribute 'username'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 896, in _resolve_lookup
+    current = current[int(bit)]
+                      ~~~^^^^^
+ValueError: invalid literal for int() with base 10: 'username'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/response.py", line 92, in rendered_content
+    return template.render(context, self._request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 61, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 175, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 167, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 966, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 157, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 167, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 966, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 63, in render
+    result = block.nodelist.render(context)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 966, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 238, in render
+    nodelist.append(node.render_annotated(context))
+                    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 966, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1064, in render
+    output = self.filter_expression.resolve(context)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 736, in resolve
+    arg_vals.append(arg.resolve(context))
+                    ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 847, in resolve
+    value = self._resolve_lookup(context)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 903, in _resolve_lookup
+    raise VariableDoesNotExist(
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )  # missing attribute
+    ^
+django.template.base.VariableDoesNotExist: Failed lookup for key [username] in None
+Internal Server Error: /hiring-plans/forecasts/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 880, in _resolve_lookup
+    current = current[bit]
+              ~~~~~~~^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 890, in _resolve_lookup
+    current = getattr(current, bit)
+AttributeError: 'NoneType' object has no attribute 'username'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 896, in _resolve_lookup
+    current = current[int(bit)]
+                      ~~~^^^^^
+ValueError: invalid literal for int() with base 10: 'username'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/response.py", line 92, in rendered_content
+    return template.render(context, self._request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 61, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 175, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 167, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 966, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 157, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 167, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 966, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 63, in render
+    result = block.nodelist.render(context)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 966, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/defaulttags.py", line 238, in render
+    nodelist.append(node.render_annotated(context))
+                    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 966, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1064, in render
+    output = self.filter_expression.resolve(context)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 736, in resolve
+    arg_vals.append(arg.resolve(context))
+                    ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 847, in resolve
+    value = self._resolve_lookup(context)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 903, in _resolve_lookup
+    raise VariableDoesNotExist(
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )  # missing attribute
+    ^
+django.template.base.VariableDoesNotExist: Failed lookup for key [username] in None
+[24/Oct/2025 19:13:39] "GET /hiring-plans/forecasts/ HTTP/1.1" 500 206848
+WARNING Not Found: /favicon.ico
+Not Found: /favicon.ico
+[24/Oct/2025 19:13:39] "GET /favicon.ico HTTP/1.1" 404 3810
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/metrics_service.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 24, 2025 - 18:56:44
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 35 событий
+🔍 DEBUG CHAT: Получено 35 событий из API
+🔍 DEBUG CHAT: Передаем 35 событий в шаблон
+🔍 DEBUG CHAT: Событие: Vacation в 2025-10-27T02:00:00+03:00
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-27T09:00:00+03:00
+🔍 DEBUG CHAT: Событие: Recruitment Meeting в 2025-10-27T10:30:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 35 событий
+🔍 DEBUG CHAT: Получено 35 событий из API
+🔍 DEBUG CHAT: Передаем 35 событий в шаблон
+🔍 DEBUG CHAT: Событие: Vacation в 2025-10-27T02:00:00+03:00
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-27T09:00:00+03:00
+🔍 DEBUG CHAT: Событие: Recruitment Meeting в 2025-10-27T10:30:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 35 событий
+🔍 DEBUG CHAT: Получено 35 событий из API
+🔍 DEBUG CHAT: Передаем 35 событий в шаблон
+🔍 DEBUG CHAT: Событие: Vacation в 2025-10-27T02:00:00+03:00
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-27T09:00:00+03:00
+🔍 DEBUG CHAT: Событие: Recruitment Meeting в 2025-10-27T10:30:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hiring_plan/metrics_service.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 24, 2025 - 19:14:37
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[24/Oct/2025 19:16:10] "GET /hiring-plans/forecasts/ HTTP/1.1" 200 110286
+[24/Oct/2025 19:16:19] "GET /hiring-plans/capacity/ HTTP/1.1" 200 106936
+[24/Oct/2025 19:16:32] "GET /hiring-plans/ HTTP/1.1" 200 120038
+[24/Oct/2025 19:18:36] "GET /google-oauth/api/interviewers-autocomplete/?vacancy_id=1&q= HTTP/1.1" 200 943
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 24, 2025 - 19:15:04
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API INTERVIEWERS AUTOCOMPLETE: vacancy_id=1, query=''
+🔍 API INTERVIEWERS AUTOCOMPLETE: Найдено 8 интервьюеров
+🔍 CHAT: Определен тип действия автоматически: invite
+🔍 CHAT: Передаем данные об интервьюере: {"id":5,"username":"anton.dubrouski","email":"anton.dubrouski@softnetix.io","full_name":"Dubrouski Anton"}
+🔍 CLEAN_COMBINED_DATA: combined_data = 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/75435450
+ВТ 12 anton.dubrouski'
+🔍 CLEAN_COMBINED_DATA: Найдено URLs: ['https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/75435450']
+✅ CLEAN_COMBINED_DATA: URL извлечен: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/75435450
+✅ CLEAN_COMBINED_DATA: Весь текст сохранен для парсера: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/75435450
+ВТ 12 anton.dubrouski'
+🔍 COMBINED_FORM_CLEAN: Начинаем очистку формы
+🔍 COMBINED_FORM_CLEAN: cleaned_data keys: ['candidate_url', 'interview_datetime', 'combined_data', 'selected_interviewer']
+🔍 COMBINED_FORM_CLEAN: combined_data: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/75435450
+ВТ 12 anton.dubrouski
+🔍 COMBINED_FORM_CLEAN: URL извлечен, дату обработает парсер
+🔍 COMBINED_FORM_CLEAN: Финальные cleaned_data: {'candidate_url': 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/75435450', 'interview_datetime': None, 'combined_data': 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/75435450\r\nВТ 12 anton.dubrouski', 'selected_interviewer': '{"id":5,"username":"anton.dubrouski","email":"anton.dubrouski@softnetix.io","full_name":"Dubrouski Anton"}'}
+🔍 COMBINED_FORM_SAVE: Начинаем сохранение инвайта...
+🔍 COMBINED_FORM_SAVE: Установлен email пользователя: andrei.golubenko@softnetix.io
+🔍 COMBINED_FORM_SAVE: Сохранены исходные данные: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/75435450
+ВТ 12 anton.dubrouski...
+✅ COMBINED_FORM_SAVE: Установлен интервьюер: Dubrouski Anton
+🔍 COMBINED_FORM_SAVE: Инвайт создан, user: andrei.golubenko
+🔍 COMBINED_FORM_SAVE: Парсим URL...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 PARSE_URL: Используем первый доступный account_id: 291341
+✅ COMBINED_FORM_SAVE: URL распарсен успешно
+🔍 COMBINED_FORM_SAVE: Получаем информацию о кандидате...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 GET_CANDIDATE_INFO: Автоматически получен account_id: 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75435450
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Вадим","last_name":"Кагукин","middle_name":null,"money":"3000 USD","phone":"+375336913298","email":"vkagukin@gmail.com","skype":null,"position":"Frontend developer","company":"Oxagile","photo":98012173,"id":75435450,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/3/a/d/3ade2b1cd1dde08b97f33d87674b3737.jpeg?s=rbeYk_CDRhsIBnq1Drv__Q&e=1763914720","birthday":"1995-06-11","created":"2025-10-24T18:06:50+03:00","tags":[],"links":[{"id":70881922,"status":186502,"updated"...
+💾 Сохранены данные кандидата в кэш: 75435450
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75435450/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да. | Офис: да. Локация Минск. Полный рабочий день: да","n-U2tU6G5iBoxSPkXFN7F":"нет","S58S9DFqO7w-JzDbF2HJA":"военник на руках","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"проект закончился, контракт иссек","DoOdxUlwbb0nILXQGBDaT":"могу начать в любой день","ICXvQX-WT9eleJW-QlVa9":null,"RMLxfRH9raQtHItMcdeq-":null,"X6qYbAqZnb0q1R3VMumbH":null,"bfPBtccRoL5s_7xyLXuia":nu...
+РЕАЛЬНЫЕ ДАННЫЕ: Доступные грейды в системе: ['Head', 'Junior', 'Junior+', 'Lead', 'Middle', 'Middle+', 'Senior', 'Senior+']
+РЕАЛЬНЫЕ ДАННЫЕ: Не удалось получить схему анкеты: HuntflowService.get_applicant_questionary_schema() takes 2 positional arguments but 3 were given
+РЕАЛЬНЫЕ ДАННЫЕ: Найден уровень по значению: Senior (поле: kIbah4MN0iHussXm3n2Ar)
+РЕАЛЬНЫЕ ДАННЫЕ: ✅ Найден уровень в анкете: Senior (поле: kIbah4MN0iHussXm3n2Ar)
+РЕАЛЬНЫЕ ДАННЫЕ: Получена информация о кандидате 75435450
+РЕАЛЬНЫЕ ДАННЫЕ: Имя: Кагукин Вадим
+РЕАЛЬНЫЕ ДАННЫЕ: Уровень: Senior
+✅ COMBINED_FORM_SAVE: Информация о кандидате получена
+🔍 COMBINED_FORM_SAVE: Получаем информацию о вакансии...
+ЛОКАЛЬНЫЕ ДАННЫЕ: Найдена вакансия в локальной БД: Frontend Engineer (React)
+ЛОКАЛЬНЫЕ ДАННЫЕ: Шаблон scorecard: https://docs.google.com/spreadsheets/d/1Zz61HtsXAWvfHtlTucfJQnJEDCKLwcVRybmT9BHfZqg/edit?gid=1164423222#gid=1164423222
+ЛОКАЛЬНЫЕ ДАННЫЕ: Длительность скринингов: 40 минут
+✅ COMBINED_FORM_SAVE: Информация о вакансии получена
+🤖 COMBINED_FORM_SAVE: Анализируем время с помощью парсера...
+🔍 [ENHANCED_PARSER] Анализируем текст пользователя andrei.golubenko
+🔍 [ENHANCED_PARSER] Текст для анализа: ВТ 12 anton.dubrouski...
+📅 [BOOKINGS] Получаем существующие бронирования...
+💾 Сохранены события календаря в кэш: 53 событий
+✅ [BOOKINGS] Найдено событий: 53
+✅ [PARSER_INIT] Загружены полные словари: 194 дней недели, 3156 месяцев
+[ENHANCED_PARSER] Исходный текст: ВТ 12 anton.dubrouski
+[ENHANCED_PARSER] Нормализованный текст: вт 12 anton.dubrouski
+[ENHANCED_PARSER] Найден день недели: 1 -> 2025-10-28 19:18:50.630737+03:00
+[ENHANCED_PARSER] Найдено время: (12, 0)
+⚠️ [SLOT_CHECK] Слот 28.10 12:00 занят событием: Vacation
+⚠️ [ENHANCED_PARSER] Слот 28.10 12:00 занят, ищем альтернативу...
+✅ [SLOT_CHECK] Слот 04.11 12:00 свободен
+✅ [ENHANCED_PARSER] Найден свободный слот: 04.11 12:00
+[ENHANCED_PARSER] Итоговый результат: 04.11.2025 12:00
+[ENHANCED_PARSER] Уверенность: 0.77
+[ENHANCED_PARSER] Исправлений: 1
+✅ [ENHANCED_PARSER] Определена дата/время: 04.11.2025 12:00
+📊 [ENHANCED_PARSER] Уверенность: 0.77
+🔧 [ENHANCED_PARSER] Исправлений: 1
+✔️ [ENHANCED_PARSER] Валидация: Пройдена
+  🔧 slot_occupied_correction: 28.10 12:00 → 04.11 12:00
+📅 [ENHANCED_PARSER] Альтернативные слоты:
+  - 11.11.2025 12:00 (уверенность: 0.85)
+  - 05.11.2025 12:00 (уверенность: 0.80)
+  - 04.11.2025 14:00 (уверенность: 0.75)
+✅ COMBINED_FORM_SAVE: Время проанализировано с помощью парсера
+✅ COMBINED_FORM_SAVE: Дата интервью установлена из парсера: 2025-11-04 12:00:00+03:00
+🔍 COMBINED_FORM_SAVE: Извлекаем кастомную длительность...
+ℹ️ COMBINED_FORM_SAVE: Кастомная длительность не найдена, будет использована стандартная
+🔍 COMBINED_FORM_SAVE: Создаем структуру Google Drive...
+ЛОКАЛЬНЫЕ ДАННЫЕ: Используем scorecard из локальной БД: | Scorecard FE
+ЛОКАЛЬНЫЕ ДАННЫЕ: Ссылка на шаблон: https://docs.google.com/spreadsheets/d/1Zz61HtsXAWvfHtlTucfJQnJEDCKLwcVRybmT9BHfZqg/edit?gid=1164423222#gid=1164423222
+🔍 SAMPLE_DATA: Подготавливаем данные для генерации пути папок
+🔍 SAMPLE_DATA: candidate_name = 'Кагукин Вадим'
+🔍 SAMPLE_DATA: vacancy_title = 'Frontend Engineer (React)'
+🔍 SAMPLE_DATA: interview_datetime = '2025-11-04 12:00:00+03:00'
+🔍 SAMPLE_DATA: Подготовленные данные:
+🔍 SAMPLE_DATA:   date = '04.11.2025'
+🔍 SAMPLE_DATA:   day = '04'
+🔍 SAMPLE_DATA:   week_number = '45'
+🔍 SAMPLE_DATA:   week_short_en = 'W45'
+🔍 SAMPLE_DATA:   week_short_ru = 'Н45'
+🔍 SAMPLE_DATA:   week_full_en = 'Week 45'
+🔍 SAMPLE_DATA:   week_full_ru = 'Неделя 45'
+🔍 SAMPLE_DATA:   month_num = '11'
+🔍 SAMPLE_DATA:   month_short_ru = 'ноя'
+🔍 SAMPLE_DATA:   month_short_en = 'Nov'
+🔍 SAMPLE_DATA:   month_full_ru = 'ноябрь'
+🔍 SAMPLE_DATA:   month_full_en = 'November'
+🔍 SAMPLE_DATA:   weekday_short_ru = 'ВТ'
+🔍 SAMPLE_DATA:   weekday_short_en = 'Tue'
+🔍 SAMPLE_DATA:   weekday_full_ru = 'Вторник'
+🔍 SAMPLE_DATA:   weekday_full_en = 'Tuesday'
+🔍 SAMPLE_DATA:   year_short = '25'
+🔍 SAMPLE_DATA:   year_full = '2025'
+🔍 SAMPLE_DATA:   candidate_first_name = 'Вадим'
+🔍 SAMPLE_DATA:   candidate_last_name = 'Кагукин'
+🔍 SAMPLE_DATA:   candidate_middle_name = ''
+🔍 SAMPLE_DATA:   candidate_id = '75435450'
+🔍 SAMPLE_DATA:   vacancy_title = 'Frontend Engineer (React)'
+🔍 SAMPLE_DATA:   vacancy_id = '3936868'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=text, value='automations'
+🔍 FOLDER_GEN: Text элемент: 'automations'
+🔍 FOLDER_GEN: Добавлена папка: 'automations'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[vacancy_title]'
+🔍 FOLDER_GEN: Mixed элемент: '[vacancy_title]' -> 'Frontend Engineer (React)'
+🔍 FOLDER_GEN: Добавлена папка: 'Frontend Engineer (React)'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[year_full]'
+🔍 FOLDER_GEN: Mixed элемент: '[year_full]' -> '2025'
+🔍 FOLDER_GEN: Добавлена папка: '2025'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[month_num] [month_full_ru]'
+🔍 FOLDER_GEN: Mixed элемент: '[month_num] [month_full_ru]' -> '11 ноябрь'
+🔍 FOLDER_GEN: Добавлена папка: '11 ноябрь'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[day] [month_full_ru] ([weekday_short_ru])'
+🔍 FOLDER_GEN: Mixed элемент: '[day] [month_full_ru] ([weekday_short_ru])' -> '04 ноябрь (ВТ)'
+🔍 FOLDER_GEN: Добавлена папка: '04 ноябрь (ВТ)'
+НАСТРОЙКИ ПАПОК: Структура папок: automations/Frontend Engineer (React)/2025/11 ноябрь/04 ноябрь (ВТ)
+НАСТРОЙКИ ПАПОК: База названия файла: Кагукин Вадим
+РЕАЛЬНЫЕ ДАННЫЕ: Создана структура папок: automations/Frontend Engineer (React)/2025/11 ноябрь/04 ноябрь (ВТ)
+РЕАЛЬНЫЕ ДАННЫЕ: ID папки: 1E4AnNNeaiVgJruh0MmODGRd9kMJnWe6N
+РЕАЛЬНЫЕ ДАННЫЕ: ID файла: 1KYVqA59pU6eqXABcBIbhfbEIdCMV5YoKAzXaifxqlHE
+РЕАЛЬНЫЕ ДАННЫЕ: Ссылка: https://docs.google.com/spreadsheets/d/1KYVqA59pU6eqXABcBIbhfbEIdCMV5YoKAzXaifxqlHE/edit
+РЕАЛЬНЫЕ ДАННЫЕ: Название файла: Кагукин Вадим | Scorecard FE
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"search_field":"string_field_1","disableAutofill":true,"account":291341,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"search_field":"string_field_7","placeholder":"","account":291341,"is...
+🔍 Найдено поле Scorecard в схеме: oMvUCpzbKSzzhPLUCwmGW = Scorecard (тип: url)
+📝 Обновляем поле Scorecard oMvUCpzbKSzzhPLUCwmGW со ссылкой: https://docs.google.com/spreadsheets/d/1KYVqA59pU6eqXABcBIbhfbEIdCMV5YoKAzXaifxqlHE/edit
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/75435450/questionary с данными {'oMvUCpzbKSzzhPLUCwmGW': 'https://docs.google.com/spreadsheets/d/1KYVqA59pU6eqXABcBIbhfbEIdCMV5YoKAzXaifxqlHE/edit'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/75435450/questionary
+📤 JSON данные: {'oMvUCpzbKSzzhPLUCwmGW': 'https://docs.google.com/spreadsheets/d/1KYVqA59pU6eqXABcBIbhfbEIdCMV5YoKAzXaifxqlHE/edit'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1KYVqA59pU6eqXABcBIbhfbEIdCMV5YoKAzXaifxqlHE/edit","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да. | Офис: да. Локация Минск. Полный рабочий день: да","n-U2tU6G5iBoxSPkXFN7F":"нет","S58S9DFqO7w-JzDbF2HJA":"военник на руках","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"проект закончился, контракт иссек","DoOdxUlwbb0nILXQGBDaT":"могу начать в любой день","ICXvQX-WT9eleJW-QlVa9":nul...
+🗑️ Сброшен кэш для кандидата: 75435450
+✅ Поле Scorecard обновлено со ссылкой на scorecard
+✅ Поле 'Scorecard' в Huntflow обновлено со ссылкой на scorecard
+🔍 Создаем календарное событие...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75435450
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Вадим","last_name":"Кагукин","middle_name":null,"money":"3000 USD","phone":"+375336913298","email":"vkagukin@gmail.com","skype":null,"position":"Frontend developer","company":"Oxagile","photo":98012173,"id":75435450,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/3/a/d/3ade2b1cd1dde08b97f33d87674b3737.jpeg?s=B2Rnrum8l14dGgNdbrwqsg&e=1763914743","birthday":"1995-06-11","created":"2025-10-24T18:06:50+03:00","tags":[],"links":[{"id":70881922,"status":186502,"updated"...
+💾 Сохранены данные кандидата в кэш: 75435450
+📧 Найден email кандидата: vkagukin@gmail.com
+📅 Сгенерировано название события: JS Tech Screening | Кагукин Вадим
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 40 минут
+⏱️ Используем длительность скринингов: 40 минут
+📝 Найден телеграм рекрутера: talent_softnetix
+📝 Ссылка на телеграм: https://t.me/talent_softnetix
+📝 Сопроводительный текст: Попрошу быть с камерой. Технический скрининг будет с секцией лайв-кодинга (нужно будет шарить экран)...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔗 Сгенерирована ссылка на Huntflow (prod): https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/75435450
+👥 Добавляем кандидата в участники: vkagukin@gmail.com
+👥 Добавляем пользователя в участники: andrei.golubenko@softnetix.io
+👥 Добавляем интервьюера в участники: anton.dubrouski@softnetix.io
+🔍 Время с timezone: 2025-11-04 12:00:00+03:00
+🔍 Время начала (UTC): 2025-11-04 09:00:00+00:00
+🔍 Время окончания (UTC): 2025-11-04 09:40:00+00:00
+🔍 Строка времени начала: 2025-11-04T09:00:00
+🔍 Строка времени окончания: 2025-11-04T09:40:00
+📅 Создаем событие: JS Tech Screening | Кагукин Вадим
+📅 Время начала: 2025-11-04T09:00:00
+📅 Время окончания: 2025-11-04T09:40:00
+📅 Данные события: {'summary': 'JS Tech Screening | Кагукин Вадим', 'description': 'Попрошу быть с камерой. Технический скрининг будет с секцией лайв-кодинга (нужно будет шарить экран). Если возникнут вопросы - на связи в телеграм https://t.me/talent_softnetix\n\nДля интервьюеров:\nhttps://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/75435450', 'location': '', 'start': {'dateTime': '2025-11-04T09:00:00', 'timeZone': 'UTC'}, 'end': {'dateTime': '2025-11-04T09:40:00', 'timeZone': 'UTC'}, 'attendees': [{'email': 'vkagukin@gmail.com'}, {'email': 'andrei.golubenko@softnetix.io'}, {'email': 'anton.dubrouski@softnetix.io'}], 'conferenceData': {'createRequest': {'requestId': 'meet-202511041200', 'conferenceSolutionKey': {'type': 'hangoutsMeet'}}}, 'reminders': {'useDefault': False, 'overrides': [{'method': 'email', 'minutes': 1440}, {'method': 'popup', 'minutes': 10}]}}
+✅ Событие создано: JS Tech Screening | Кагукин Вадим (2025-11-04 12:00:00+03:00 - 2025-11-04 12:40:00+03:00)
+⏱️ Длительность: 40 минут
+🔗 Ссылка на событие: https://www.google.com/calendar/event?eid=YTUxYnBlOTBxcWhvaGMzYmhpcWNwcThiMDQgYW5kcmVpLmdvbHViZW5rb0Bzb2Z0bmV0aXguaW8
+🔗 Google Meet ссылка: https://meet.google.com/odi-gjsb-rjr
+✅ Календарное событие создано: JS Tech Screening | Кагукин Вадим
+🔗 Ссылка на событие: https://www.google.com/calendar/event?eid=YTUxYnBlOTBxcWhvaGMzYmhpcWNwcThiMDQgYW5kcmVpLmdvbHViZW5rb0Bzb2Z0bmV0aXguaW8
+🔍 Результат создания календарного события: True
+[TECH_SCREENING_UPDATE] Календарное событие создано успешно, обновляем статус...
+[TECH_SCREENING] Начинаем обновление статуса кандидата 75435450
+[TECH_SCREENING] Импорты выполнены успешно
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+[TECH_SCREENING] Получен account_id: 291341
+🔍 TECH_SCREENING: Используем статус из вакансии: 186503
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 40 минут
+[TECH_SCREENING] Кандидат: 75435450 -> Tech Screening
+[TECH_SCREENING] Комментарий: Вторник, 4 ноября⋅12:00–12:40
+[TECH_SCREENING] Используем статус ID: 186503
+[TECH_SCREENING] Вызываем update_applicant_status...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75435450
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Вадим","last_name":"Кагукин","middle_name":null,"money":"3000 USD","phone":"+375336913298","email":"vkagukin@gmail.com","skype":null,"position":"Frontend developer","company":"Oxagile","photo":98012173,"id":75435450,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/3/a/d/3ade2b1cd1dde08b97f33d87674b3737.jpeg?s=OYcpts9TwLheiaN3_zjZzQ&e=1763914745","birthday":"1995-06-11","created":"2025-10-24T18:06:50+03:00","tags":[],"links":[{"id":70881922,"status":186502,"updated"...
+DEBUG: Обновляем статус кандидата 75435450 на статус 186503 для вакансии 3936868 с комментарием: Вторник, 4 ноября⋅12:00–12:40
+DEBUG: Пробуем эндпоинт /accounts/291341/applicants/75435450/vacancy с данными {'vacancy': 3936868, 'status': 186503, 'comment': 'Вторник, 4 ноября⋅12:00–12:40'}
+🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/applicants/75435450/vacancy
+📤 JSON данные: {'vacancy': 3936868, 'status': 186503, 'comment': 'Вторник, 4 ноября⋅12:00–12:40'}
+📥 Ответ API: 200
+📥 Тело ответа: {"id":70881922,"changed":"2025-10-24T19:19:05+03:00","vacancy":3936868,"status":186503,"rejection_reason":null}...
+DEBUG: Статус успешно обновлен через /accounts/291341/applicants/75435450/vacancy
+🗑️ Сброшен кэш для кандидата: 75435450
+[TECH_SCREENING] Результат update_applicant_status: {'id': 70881922, 'changed': '2025-10-24T19:19:05+03:00', 'vacancy': 3936868, 'status': 186503, 'rejection_reason': None}
+[TECH_SCREENING] Успешно обновлен статус на Tech Screening
+[TECH_SCREENING_UPDATE] Статус обновлен: True
+✅ COMBINED_FORM_SAVE: Структура Google Drive создана
+🔍 COMBINED_FORM_SAVE: Обрабатываем scorecard...
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Junior
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Junior+
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Middle
+РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: Middle+
+РЕАЛЬНЫЕ ДАННЫЕ: Обработка scorecard завершена
+РЕАЛЬНЫЕ ДАННЫЕ: Сохранены листы: all, score, Senior[24/Oct/2025 19:19:11] "POST /google-oauth/chat/38/?vacancy_id=1 HTTP/1.1" 302 0
+[24/Oct/2025 19:19:19] "GET /google-oauth/chat/38/?vacancy_id=1 HTTP/1.1" 200 721254
+[24/Oct/2025 19:19:35] "POST /google-oauth/invites/301/invitation-text/ HTTP/1.1" 200 1135
+
+РЕАЛЬНЫЕ ДАННЫЕ: Удалены листы: Junior, Junior+, Middle, Middle+
+✅ COMBINED_FORM_SAVE: Scorecard обработан
+🔍 COMBINED_FORM_SAVE: Добавляем метку интервьюера в Huntflow...
+🔍 INTERVIEWER_TAG: Начинаем добавление метки интервьюера...
+🔍 INTERVIEWER_TAG: Интервьюер найден: Dubrouski Anton (anton.dubrouski@softnetix.io)
+🔍 INTERVIEWER_TAG: ID интервьюера: 5
+🔍 INTERVIEWER_TAG: Email интервьюера: anton.dubrouski@softnetix.io
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 INTERVIEWER_TAG: Account ID: 291341
+🏷️ INTERVIEWER_TAG: Добавляем метку интервьюера в Huntflow: 'Dubrouski Anton'
+🔍 INTERVIEWER_TAG: ID кандидата: 75435450
+🔍 INTERVIEWER_TAG: Ищем тег по имени: 'Dubrouski Anton'
+🔍 Ищем тег для исполнителя: Dubrouski Anton
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/tags
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":216903,"name":"Yahor Litavar","color":"ff5151"},{"id":216945,"name":"Uladzislau Churyla ","color":"2965ff"},{"id":216946,"name":"Ilya Petravets ","color":"15d1aa"},{"id":216977,"name":"Ivan Varabei ","color":"006bce"},{"id":219808,"name":"Artsiom Varabei","color":"2965ff"},{"id":216978,"name":"Anton Babrou","color":"30b25b"},{"id":219871,"name":"No come back","color":"2965ff"},{"id":217458,"name":" Anton Dubrouski","color":"2965ff"},{"id":217465,"name":" Aleksei Bondarenko","colo...
+📋 Найдено тегов: 34
+  - Проверяем тег: 'Yahor Litavar'
+  - Проверяем тег: 'Uladzislau Churyla '
+  - Проверяем тег: 'Ilya Petravets '
+  - Проверяем тег: 'Ivan Varabei '
+  - Проверяем тег: 'Artsiom Varabei'
+  - Проверяем тег: 'Anton Babrou'
+  - Проверяем тег: 'No come back'
+  - Проверяем тег: ' Anton Dubrouski'
+  - Проверяем тег: ' Aleksei Bondarenko'
+  - Проверяем тег: 'Maksim Misiukevich'
+  - Проверяем тег: ' Daniil Stakhavets'
+  - Проверяем тег: 'Aliaksandr Mikhniuk'
+  - Проверяем тег: 'Tier One'
+  - Проверяем тег: 'Yauheni Lebedzeu'
+  - Проверяем тег: 'High Priority'
+  - Проверяем тег: 'Aleh Borykau'
+  - Проверяем тег: 'Siarhei Tsukanau'
+  - Проверяем тег: ' Pavel Krauchanka'
+  - Проверяем тег: 'Yauheni Ivanou'
+  - Проверяем тег: 'Резерв'
+  - Проверяем тег: 'Hlieb Jakush'
+  - Проверяем тег: 'Yauheni Savonkin'
+  - Проверяем тег: 'Chernomordin Andrey'
+  - Проверяем тег: 'Dzianis Pytaleu'
+  - Проверяем тег: 'notion'
+  - Проверяем тег: 'Отлик'
+  - Проверяем тег: 'Warsaw'
+  - Проверяем тег: 'Minsk'
+  - Проверяем тег: 'Вторая попытка'
+  - Проверяем тег: 'clickup-new'
+  - Проверяем тег: 'Сome back later'
+  - Проверяем тег: 'Черный список'
+  - Проверяем тег: 'Рекомендация'
+  - Проверяем тег: 'Pavel Liashkovich'
+🔍 Точного совпадения нет, ищем частичное совпадение...
+❌ Тег для исполнителя 'Dubrouski Anton' не найден
+🔍 INTERVIEWER_TAG: Результат поиска тега: None
+⚠️ INTERVIEWER_TAG: Тег для интервьюера 'Dubrouski Anton' не найден в Huntflow
+⚠️ COMBINED_FORM_SAVE: Не удалось добавить метку интервьюера
+✅ COMBINED_FORM_SAVE: Инвайт сохранен с ID: 301
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 36 событий
+🔍 DEBUG CHAT: Получено 36 событий из API
+🔍 DEBUG CHAT: Передаем 36 событий в шаблон
+🔍 DEBUG CHAT: Событие: Vacation в 2025-10-27T02:00:00+03:00
+🔍 DEBUG CHAT: Событие: A2+ в 2025-10-27T09:00:00+03:00
+🔍 DEBUG CHAT: Событие: Recruitment Meeting в 2025-10-27T10:30:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 40 минут
+🔍 CHAT: Определен тип действия автоматически: hrscreening
+🔍 HR_SCREENING_FORM_SAVE: Начинаем сохранение HR-скрининга...
+🔍 HR_SCREENING_FORM_SAVE: HR-скрининг создан, user: andrei.golubenko
+🔍 HR_SCREENING_FORM_SAVE: Извлекаем URL...
+✅ HR_SCREENING_FORM_SAVE: URL извлечен: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186500/id/75215141
+🔍 HR_SCREENING_FORM_SAVE: Парсим URL...
+✅ HR_SCREENING_FORM_SAVE: URL распарсен успешно
+🔍 HR_SCREENING_FORM_SAVE: Получаем информацию о кандидате...
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Начинаем получение информации о кандидате 75215141
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Используем аккаунт 291341
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Запрашиваем данные кандидата 75215141 из аккаунта 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75215141
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Вадим","last_name":"Волков","middle_name":null,"money":null,"phone":null,"email":null,"skype":null,"position":"Frontend-разработчик (React/TypeScript)","company":"ООО «Digital Solutions»","photo":null,"id":75215141,"account":291341,"photo_url":null,"birthday":null,"created":"2025-10-20T10:51:36+03:00","tags":[],"links":[{"id":70634191,"status":187026,"updated":"2025-10-24T18:53:43+03:00","changed":"2025-10-24T18:53:43+03:00","vacancy":3936868}],"external":[{"id":75044047,"auth_typ...
+💾 Сохранены данные кандидата в кэш: 75215141
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Получены данные кандидата: {'first_name': 'Вадим', 'last_name': 'Волков', 'middle_name': None, 'money': None, 'phone': None, 'email': None, 'skype': None, 'position': 'Frontend-разработчик (React/TypeScript)', 'company': 'ООО «Digital Solutions»', 'photo': None, 'id': 75215141, 'account': 291341, 'photo_url': None, 'birthday': None, 'created': '2025-10-20T10:51:36+03:00', 'tags': [], 'links': [{'id': 70634191, 'status': 187026, 'updated': '2025-10-24T18:53:43+03:00', 'changed': '2025-10-24T18:53:43+03:00', 'vacancy': 3936868}], 'external': [{'id': 75044047, 'auth_type': 'RABOTABY', 'account_source': 551946, 'updated': '2025-10-20T10:51:36+03:00'}], 'agreement': None, 'doubles': [], 'social': [{'id': 4074385, 'social_type': 'TELEGRAM', 'value': 'V_volkov_dev', 'verified': False, 'verification_date': None}]}
+✅ HR_SCREENING_GET_CANDIDATE_INFO: Информация о кандидате получена: Вадим Волков
+✅ HR_SCREENING_FORM_SAVE: Информация о кандидате получена
+🔍 HR_SCREENING_FORM_SAVE: Получаем информацию о вакансии...
+🔍 HR_SCREENING_GET_VACANCY_INFO: Начинаем получение информации о вакансии 3936868
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_VACANCY_INFO: Используем аккаунт 291341
+🔍 HR_SCREENING_GET_VACANCY_INFO: Запрашиваем данные вакансии 3936868 из аккаунта 291341
+📦 Получены данные вакансии из кэша: 3936868
+🔍 HR_SCREENING_GET_VACANCY_INFO: Получены данные вакансии: {'account_division': 333519, 'account_region': None, 'position': 'Frontend Engineer', 'company': None, 'money': '600-3500', 'priority': 1, 'hidden': False, 'state': 'OPEN', 'id': 3936868, 'created': '2025-03-19T12:01:01+03:00', 'additional_fields_list': [], 'multiple': False, 'parent': None, 'account_vacancy_status_group': None, 'updated': '2025-10-23T16:52:07+03:00', 'body': '<p><strong>Описание проектов:</strong></p><p>Проект в области спортивной статистики, киберспорта, гемблинга. Кодовая база новая, legacy отсутствует.</p><p>Разработка проектов идёт на <strong>React</strong>/<strong>Redux</strong> с использование Redux-Epics. Используется GraphqQL, Websocket, RxJS, WebGL.</p><p>Проекты высоконагруженные, требуют внимания к производительности, необходимо обрабатывать и отображать большое количество данных в реальном времени.</p><p>Для CI/CD используется GitLab.</p>', 'requirements': '<p><strong>Что нужно знать/уметь/иметь?</strong></p><ul><li>Опыт коммерческой разработки от 1-ого года;</li><li>JavaScript (ES6), Promise, ES6 Generators;</li><li>Flux архитектуру.</li></ul><p>\u200b\u200b\u200b\u200b\u200b<strong>Преимуществами будут:</strong></p><ul><li>Typescript;</li><li>React, Redux, React-router , Redux-Saga/Redux-Epic (RxJs), Reselect, Webpack/Rollup;</li><li>Глубокое понимание асинхронного программирования (Callback, Event Loop, Promise, Observable);</li><li>Понимание основ функционального программирования;</li><li>WebGL, PixiJS, Babylon.js;</li><li>Опыт в game dev.</li></ul>', 'conditions': '<ul><li>Ежегодные Performance Review и частые пересмотры ЗП.</li><li>Чёткий план карьерного и профессионального роста.</li><li>Комфортный офис в центре Минска (ст.м. Немига).</li><li>Официальное трудоустройство по ТК РБ.</li><li>Полностью оплачиваемые больничные.</li><li>Отпуск 28 дней, возможность брать отпуск по частям.</li><li>Корпоративные курсы английского языка.</li></ul>', 'files': [], 'source': None, 'blocks': []}
+✅ HR_SCREENING_GET_VACANCY_INFO: Информация о вакансии получена: Frontend Engineer
+✅ HR_SCREENING_FORM_SAVE: Информация о вакансии получена
+🤖 HR_SCREENING_FORM_SAVE: Анализируем данные с помощью Gemini AI...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 Получен account_id из API: 291341
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Получаем схему полей кандидата
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Используем аккаунт 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_filter":true,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_filter":true,"placeholder":"","is_archived":false,"search_field":...
+✅ HR_SCREENING_GET_FIELDS_SCHEMA: Схема полей получена: 13 полей
+🔍 HR_SCREENING_ANALYSIS: Вызываем _extract_salary_and_determine_grade
+✅ Извлечена зарплата: 1500
+✅ Определена валюта: USD
+🔍 HR_SCREENING_GRADE: Определяем грейд для зарплаты 1500 USD
+✅ Найдена подходящая зарплатная вилка: Junior+ (1500 USD)
+✅ Определен грейд: Junior+
+🔍 HR_SCREENING_LEVEL: Получаем ID уровня для грейда 'Junior+'
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"search_field":"string_field_1","disableAutofill":true,"is_archived":false,"account":291341},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"search_field":"string_field_7","placeholder":"","is_archived":false,...
+✅ Найден точный уровень 'Junior+' в Huntflow (индекс: 1)
+✅ ID уровня в Huntflow: 1
+🔍 HR_SCREENING_LEVEL: ID уровня сохранен, обновление произойдет в update_candidate_in_huntflow
+🔍 HR_SCREENING_ANALYSIS: Метод _extract_salary_and_determine_grade завершен успешно
+✅ HR_SCREENING_FORM_SAVE: Анализ завершен с помощью Gemini AI
+✅ HR_SCREENING_FORM_SAVE: HR-скрининг сохранен с ID: 209
+🔍 HR_SCREENING_FORM_SAVE: Данные кандидата: Вадим Волков
+🔍 HR_SCREENING_FORM_SAVE: Данные вакансии: Frontend Engineer
+🔍 HR_SCREENING_FORM_SAVE: Анализ Gemini: {
+    "money": {
+        "value": "1500 USD",
+        "quote": "мин 1500$, комфорт 2000$",
+        "...
+🔄 HR_SCREENING_FORM_SAVE: Автоматически обновляем кандидата в Huntflow...
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Начинаем обновление кандидата 75215141
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Используем аккаунт 291341
+📸 HR_SCREENING_UPDATE_CANDIDATE: Создаем снимок состояния кандидата
+📦 Получены данные кандидата из кэша: 75215141
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75215141/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {}...
+✅ HR_SCREENING_UPDATE_CANDIDATE: Снимок состояния сохранен
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Получаем схему полей кандидата
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Используем аккаунт 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"is_archived":false,"disableAutofill":true,"account":291341,"search_filter":true,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"account":291341,"search_filter":true,"placeholder":"","search_field":...
+✅ HR_SCREENING_GET_FIELDS_SCHEMA: Схема полей получена: 13 полей
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле money = 1500 USD
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле CsWOTYehY2IkL3I7myfwM = Да
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле YAMd8vkvLFq5KLmIkiLVf = Да. | Офис: офис да, сейчас в Гродно. Полный рабочий день: да
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле n-U2tU6G5iBoxSPkXFN7F = нет
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле S58S9DFqO7w-JzDbF2HJA = билет на руках
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле c8wID33nTMvoCpJmtngyq = нет
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле Ew3LqHTK8SL67j2VQ-n6y = проект закрыли
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле DoOdxUlwbb0nILXQGBDaT = 2-3 недели
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем основные поля
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/75215141
+📤 JSON данные: {'money': '1500 USD'}
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Вадим","last_name":"Волков","middle_name":null,"money":"1500 USD","phone":null,"email":null,"skype":null,"position":"Frontend-разработчик (React/TypeScript)","company":"ООО «Digital Solutions»","photo":null,"id":75215141,"account":291341,"photo_url":null,"birthday":null,"created":"2025-10-20T10:51:36+03:00","tags":[],"links":[{"id":70634191,"status":187026,"updated":"2025-10-24T18:53:43+03:00","changed":"2025-10-24T18:53:43+03:00","vacancy":3936868}],"external":[{"id":75044047,"au...
+🗑️ Сброшен кэш для кандидата: 75215141
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75215141
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Вадим","last_name":"Волков","middle_name":null,"money":"1500 USD","phone":null,"email":null,"skype":null,"position":"Frontend-разработчик (React/TypeScript)","company":"ООО «Digital Solutions»","photo":null,"id":75215141,"account":291341,"photo_url":null,"birthday":null,"created":"2025-10-20T10:51:36+03:00","tags":[],"links":[{"id":70634191,"status":187026,"updated":"2025-10-24T18:53:43+03:00","changed":"2025-10-24T18:53:43+03:00","vacancy":3936868}],"external":[{"id":75044047,"au...
+💾 Обновлены данные кандидата в кэше: 75215141
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем дополнительные поля
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/75215141/questionary с данными {'CsWOTYehY2IkL3I7myfwM': 'Да', 'YAMd8vkvLFq5KLmIkiLVf': 'Да. | Офис: офис да, сейчас в Гродно. Полный рабочий день: да', 'n-U2tU6G5iBoxSPkXFN7F': 'нет', 'S58S9DFqO7w-JzDbF2HJA': 'билет на руках', 'c8wID33nTMvoCpJmtngyq': 'нет', 'Ew3LqHTK8SL67j2VQ-n6y': 'проект закрыли', 'DoOdxUlwbb0nILXQGBDaT': '2-3 недели'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/75215141/questionary
+📤 JSON данные: {'CsWOTYehY2IkL3I7myfwM': 'Да', 'YAMd8vkvLFq5KLmIkiLVf': 'Да. | Офис: офис да, сейчас в Гродно. Полный рабочий день: да', 'n-U2tU6G5iBoxSPkXFN7F': 'нет', 'S58S9DFqO7w-JzDbF2HJA': 'билет на руках', 'c8wID33nTMvoCpJmtngyq': 'нет', 'Ew3LqHTK8SL67j2VQ-n6y': 'проект закрыли', 'DoOdxUlwbb0nILXQGBDaT': '2-3 недели'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да. | Офис: офис да, сейчас в Гродно. Полный рабочий день: да","n-U2tU6G5iBoxSPkXFN7F":"нет","S58S9DFqO7w-JzDbF2HJA":"билет на руках","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"проект закрыли","DoOdxUlwbb0nILXQGBDaT":"2-3 недели","ICXvQX-WT9eleJW-QlVa9":null,"RMLxfRH9raQtHItMcdeq-":null,"X6qYbAqZnb0q1R3VMumbH":null,"bfPBtccRoL5s_7xyLXuia":null}...
+🗑️ Сброшен кэш для кандидата: 75215141
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем уровень кандидата: 1
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_filter":true,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_filter":true,"placeholder":"","is_archived":false,"search_field":...
+🔍 HR_SCREENING_LEVEL_UPDATE: Индекс 1 соответствует значению 'Junior+'
+🔍 HR_SCREENING_LEVEL_UPDATE: Обновляем поле kIbah4MN0iHussXm3n2Ar значением 'Junior+'
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/75215141/questionary с данными {'kIbah4MN0iHussXm3n2Ar': 'Junior+'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/75215141/questionary
+📤 JSON данные: {'kIbah4MN0iHussXm3n2Ar': 'Junior+'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior+","oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да. | Офис: офис да, сейчас в Гродно. Полный рабочий день: да","n-U2tU6G5iBoxSPkXFN7F":"нет","S58S9DFqO7w-JzDbF2HJA":"билет на руках","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"проект закрыли","DoOdxUlwbb0nILXQGBDaT":"2-3 недели","ICXvQX-WT9eleJW-QlVa9":null,"RMLxfRH9raQtHItMcdeq-":null,"X6qYbAqZnb0q1R3VMumbH":null,"bfPBtccRoL5s_7xyLXuia":null}...
+🗑️ Сброшен кэш для кандидата: 75215141
+✅ Уровень кандидата обновлен в Huntflow: Junior+
+✅ HR_SCREENING_UPDATE_CANDIDATE: Уровень кандидата обновлен
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем статус и добавляем комментарий
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Используем статус из вакансии: 186502[24/Oct/2025 19:22:01] "POST /google-oauth/chat/38/?vacancy_id=1 HTTP/1.1" 302 0
+[24/Oct/2025 19:22:02] "GET /google-oauth/chat/38/?vacancy_id=1 HTTP/1.1" 200 729047

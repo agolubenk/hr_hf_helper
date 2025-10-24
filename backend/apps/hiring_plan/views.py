@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.generic import (
-    ListView, DetailView, CreateView, UpdateView, DeleteView
+    ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 )
 from django.urls import reverse_lazy, reverse
 from django.db.models import Q, Count, Sum, Avg
@@ -16,7 +16,7 @@ import json
 from .models import (
     HiringPlan, HiringPlanPosition, PositionType, PlanPeriodType,
     PositionKPIOKR, PlanKPIOKRBlock, PlanMetrics,
-    VacancySLA, HiringRequest
+    VacancySLA, HiringRequest, RecruitmentMetrics, DemandForecast, RecruiterCapacity
 )
 from .forms import (
     HiringPlanFormExtended, HiringPlanPositionFormExtended,
@@ -24,6 +24,7 @@ from .forms import (
     PlanKPIOKRBlockForm, PeriodPlanCreationForm
 )
 from .services import HiringPlanServiceExtended
+from .metrics_service import MetricsService
 
 
 class HiringPlanListView(LoginRequiredMixin, ListView):
@@ -615,3 +616,85 @@ class VacancySLAUpdateView(LoginRequiredMixin, UpdateView):
         response = super().form_valid(form)
         messages.success(self.request, f'SLA для "{self.object}" успешно обновлен!')
         return response
+
+
+# Metrics Views
+class MetricsDashboardView(LoginRequiredMixin, TemplateView):
+    """Dashboard с метриками и KPI"""
+    template_name = 'hiring_plan/metrics_dashboard.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Период (по умолчанию - текущий месяц)
+        today = timezone.now().date()
+        period_start = today.replace(day=1)
+        next_month = period_start + timedelta(days=32)
+        period_end = next_month.replace(day=1) - timedelta(days=1)
+        
+        # Рассчитываем метрики
+        metrics = MetricsService.calculate_recruitment_metrics(
+            period_start, period_end
+        )
+        
+        # Мощность команды
+        team_capacity = MetricsService.get_team_capacity_summary()
+        
+        # KPI Cards
+        context['kpi_cards'] = {
+            'avg_time_to_fill': metrics.avg_time_to_fill,
+            'hiring_velocity': metrics.hiring_velocity_weekly,
+            'sla_compliance': metrics.sla_compliance_rate,
+            'days_behind_schedule': metrics.avg_days_behind_schedule,
+        }
+        
+        # Данные для графиков
+        context['metrics'] = metrics
+        context['team_capacity'] = team_capacity
+        
+        # Прогнозы
+        from apps.vacancies.models import Vacancy
+        vacancies = Vacancy.objects.all()[:5]
+        forecasts = []
+        for vacancy in vacancies:
+            try:
+                forecast = MetricsService.forecast_demand(vacancy, forecast_period='next_month')
+                forecasts.append(forecast)
+            except:
+                pass  # Игнорируем ошибки прогнозирования
+        context['forecasts'] = forecasts
+        
+        return context
+
+
+class MetricsListView(LoginRequiredMixin, ListView):
+    """Список всех метрик"""
+    model = RecruitmentMetrics
+    template_name = 'hiring_plan/metrics_list.html'
+    context_object_name = 'metrics_list'
+    paginate_by = 20
+    
+    def get_queryset(self):
+        return RecruitmentMetrics.objects.select_related('vacancy', 'grade').order_by('-period_start')
+
+
+class ForecastsListView(LoginRequiredMixin, ListView):
+    """Список прогнозов"""
+    model = DemandForecast
+    template_name = 'hiring_plan/forecasts_list.html'
+    context_object_name = 'forecasts'
+    paginate_by = 20
+    
+    def get_queryset(self):
+        return DemandForecast.objects.select_related('vacancy', 'grade', 'created_by').order_by('-forecast_start')
+
+
+class RecruiterCapacityListView(LoginRequiredMixin, ListView):
+    """Список мощностей рекрутеров"""
+    model = RecruiterCapacity
+    template_name = 'hiring_plan/recruiter_capacity_list.html'
+    context_object_name = 'capacities'
+    paginate_by = 20
+    
+    def get_queryset(self):
+        return RecruiterCapacity.objects.select_related('recruiter').order_by('-period_start', 'recruiter')

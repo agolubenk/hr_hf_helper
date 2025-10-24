@@ -970,6 +970,324 @@ class HiringRequest(models.Model):
                 return 'Просрочено'
 
 
+class RecruitmentMetrics(models.Model):
+    """Агрегированные метрики найма за период"""
+    
+    # Период
+    PERIOD_TYPE_CHOICES = [
+        ('weekly', 'Неделя'),
+        ('monthly', 'Месяц'),
+        ('quarterly', 'Квартал'),
+        ('yearly', 'Год'),
+        ('custom', 'Произвольный'),
+    ]
+    period_type = models.CharField(
+        max_length=20,
+        choices=PERIOD_TYPE_CHOICES,
+        verbose_name='Тип периода'
+    )
+    period_start = models.DateField(verbose_name='Начало периода')
+    period_end = models.DateField(verbose_name='Конец периода')
+    
+    # Опциональная группировка
+    vacancy = models.ForeignKey(
+        'vacancies.Vacancy',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        verbose_name='Вакансия (если метрика для конкретной)'
+    )
+    grade = models.ForeignKey(
+        'finance.Grade',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        verbose_name='Грейд (если метрика для конкретного)'
+    )
+    project = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name='Проект'
+    )
+    
+    # === ВРЕМЕННЫЕ МЕТРИКИ ===
+    avg_time_to_fill = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        default=0,
+        verbose_name='Средний Time-to-Fill (дни)',
+        help_text='Среднее время от открытия до закрытия заявки'
+    )
+    median_time_to_fill = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        default=0,
+        verbose_name='Медианный Time-to-Fill (дни)'
+    )
+    avg_time_to_hire = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        default=0,
+        verbose_name='Средний Time-to-Hire (дни)',
+        help_text='Среднее время от первого контакта до оффера'
+    )
+    
+    # === HIRING VELOCITY ===
+    hires_count = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Количество найма за период'
+    )
+    hiring_velocity_weekly = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        default=0,
+        verbose_name='Скорость найма (hires/week)',
+        help_text='Количество закрытий в неделю'
+    )
+    
+    # === DAYS BEHIND SCHEDULE ===
+    avg_days_behind_schedule = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        default=0,
+        verbose_name='Среднее отставание от графика (дни)',
+        help_text='Среднее количество дней просрочки для закрытых заявок'
+    )
+    overdue_requests_count = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Количество просроченных заявок'
+    )
+    
+    # === SLA COMPLIANCE ===
+    sla_compliance_rate = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=0,
+        verbose_name='SLA Compliance (%)',
+        help_text='% заявок, закрытых в срок по SLA'
+    )
+    
+    # === ОБЩАЯ СТАТИСТИКА ===
+    total_requests = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Всего заявок за период'
+    )
+    closed_requests = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Закрыто заявок'
+    )
+    in_progress_requests = models.PositiveIntegerField(
+        default=0,
+        verbose_name='В процессе'
+    )
+    cancelled_requests = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Отменено'
+    )
+    
+    # Метаданные
+    calculated_at = models.DateTimeField(auto_now=True, verbose_name='Рассчитано')
+    
+    class Meta:
+        verbose_name = 'Метрики найма'
+        verbose_name_plural = 'Метрики найма'
+        unique_together = [
+            ['period_type', 'period_start', 'vacancy', 'grade', 'project']
+        ]
+        indexes = [
+            models.Index(fields=['period_start', 'period_end']),
+            models.Index(fields=['vacancy', 'grade']),
+        ]
+        ordering = ['-period_start']
+    
+    def __str__(self):
+        return f"Метрики: {self.period_type} ({self.period_start} - {self.period_end})"
+
+
+class DemandForecast(models.Model):
+    """Прогноз потребности в персонале"""
+    
+    # Период прогноза
+    FORECAST_PERIOD_CHOICES = [
+        ('next_month', 'Следующий месяц'),
+        ('next_quarter', 'Следующий квартал'),
+        ('next_year', 'Следующий год'),
+    ]
+    forecast_period = models.CharField(
+        max_length=20,
+        choices=FORECAST_PERIOD_CHOICES,
+        verbose_name='Период прогноза'
+    )
+    forecast_start = models.DateField(verbose_name='Начало прогнозного периода')
+    forecast_end = models.DateField(verbose_name='Конец прогнозного периода')
+    
+    # Для чего прогноз
+    vacancy = models.ForeignKey(
+        'vacancies.Vacancy',
+        on_delete=models.CASCADE,
+        verbose_name='Вакансия'
+    )
+    grade = models.ForeignKey(
+        'finance.Grade',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        verbose_name='Грейд'
+    )
+    project = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name='Проект'
+    )
+    
+    # === ПРОГНОЗ ===
+    forecasted_demand = models.PositiveIntegerField(
+        verbose_name='Прогнозируемая потребность',
+        help_text='Ожидаемое количество заявок'
+    )
+    confidence_level = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=0,
+        verbose_name='Уровень уверенности (%)',
+        help_text='Уверенность в прогнозе (0-100%)'
+    )
+    
+    # Факторы прогноза
+    based_on_history = models.BooleanField(
+        default=True,
+        verbose_name='На основе истории',
+        help_text='Прогноз основан на исторических данных'
+    )
+    seasonality_factor = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=1.0,
+        verbose_name='Фактор сезонности',
+        help_text='Коэффициент сезонности (1.0 = нормально)'
+    )
+    growth_factor = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=1.0,
+        verbose_name='Фактор роста',
+        help_text='Коэффициент роста команды'
+    )
+    
+    # Метаданные
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создано')
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name='Создано пользователем'
+    )
+    notes = models.TextField(blank=True, verbose_name='Заметки')
+    
+    class Meta:
+        verbose_name = 'Прогноз потребности'
+        verbose_name_plural = 'Прогнозы потребности'
+        ordering = ['-forecast_start']
+    
+    def __str__(self):
+        return f"Прогноз: {self.vacancy.name} - {self.forecasted_demand} чел."
+
+
+class RecruiterCapacity(models.Model):
+    """Планирование мощностей команды рекрутеров"""
+    
+    # Рекрутер
+    recruiter = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='capacity_plans',
+        verbose_name='Рекрутер'
+    )
+    
+    # Период
+    period_start = models.DateField(verbose_name='Начало периода')
+    period_end = models.DateField(verbose_name='Конец периода')
+    
+    # === ТЕКУЩАЯ ЗАГРУЗКА ===
+    active_requests_count = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Активных заявок',
+        help_text='Текущее количество заявок в работе'
+    )
+    planned_requests_count = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Запланировано заявок',
+        help_text='Заявки, которые скоро начнутся'
+    )
+    
+    # === МОЩНОСТЬ ===
+    max_capacity = models.PositiveIntegerField(
+        default=10,
+        verbose_name='Максимальная мощность',
+        help_text='Максимальное количество заявок одновременно'
+    )
+    available_capacity = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Доступная мощность',
+        help_text='Свободные слоты для новых заявок'
+    )
+    capacity_utilization = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=0,
+        verbose_name='Загрузка (%)',
+        help_text='Процент использования мощности'
+    )
+    
+    # === ПРОИЗВОДИТЕЛЬНОСТЬ ===
+    avg_time_per_request = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        default=0,
+        verbose_name='Среднее время на заявку (дни)'
+    )
+    closed_requests_count = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Закрыто заявок за период'
+    )
+    success_rate = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=0,
+        verbose_name='Успешность закрытия (%)'
+    )
+    
+    # Статус
+    is_overloaded = models.BooleanField(
+        default=False,
+        verbose_name='Перегружен',
+        help_text='Загрузка > 90%'
+    )
+    
+    # Метаданные
+    calculated_at = models.DateTimeField(auto_now=True, verbose_name='Рассчитано')
+    
+    class Meta:
+        verbose_name = 'Мощность рекрутера'
+        verbose_name_plural = 'Мощности рекрутеров'
+        unique_together = [['recruiter', 'period_start']]
+        ordering = ['-period_start', 'recruiter']
+    
+    def __str__(self):
+        return f"{self.recruiter.get_full_name()} - {self.capacity_utilization}%"
+    
+    def calculate_capacity(self):
+        """Автоматический расчет мощности"""
+        self.available_capacity = self.max_capacity - self.active_requests_count
+        if self.max_capacity > 0:
+            self.capacity_utilization = round(
+                (self.active_requests_count / self.max_capacity) * 100, 2
+            )
+        self.is_overloaded = self.capacity_utilization > 90
+        self.save()
+
+
 class PlanMetrics(models.Model):
     """Метрики плана найма"""
     

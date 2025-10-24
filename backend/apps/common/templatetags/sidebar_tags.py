@@ -76,7 +76,24 @@ SIDEBAR_MENU = {
             'hiring_plans': {
                 'title': 'Заявки на найм',
                 'icon': 'fas fa-users',
-                'url': 'hiring_plan:hiring_requests_list'
+                'url': 'hiring_plan:hiring_requests_list',
+                'submenu': {
+                    'requests': {
+                        'title': 'Все заявки',
+                        'icon': 'fas fa-list',
+                        'url': 'hiring_plan:hiring_requests_list'
+                    },
+                    'metrics': {
+                        'title': 'Метрики и KPI',
+                        'icon': 'fas fa-chart-bar',
+                        'url': 'hiring_plan:metrics_dashboard'
+                    },
+                    'sla': {
+                        'title': 'Управление SLA',
+                        'icon': 'fas fa-clock',
+                        'url': 'hiring_plan:sla_list'
+                    }
+                }
             },
             'salary_ranges': {
                 'title': 'Зарплатные вилки',
