@@ -341,8 +341,41 @@
                             </tr>
                         {% endfor %}
                         
-                        <!-- Строка с медианными значениями -->
+                        <!-- Строка со средними значениями -->
                 {% if table_data %}
+                <tr class="table-warning">
+                    <td class="vacancy-info">
+                        <strong><i class="fas fa-calculator me-2"></i>Средние</strong>
+                    </td>
+                    <td>
+                        <small class="text-muted">{{ medians.averages.grade }}</small>
+                    </td>
+                    <td>—</td>
+                    
+                    {% for month_num, month_name in months|enumerate_list %}
+                        {% with month_num|add:1 as month %}
+                            <td class="month-cell text-center">
+                                <small class="text-muted">
+                                    {% if medians.averages.monthly_days|get_item:month > 0 %}
+                                        {{ medians.averages.monthly_days|get_item:month|floatformat:0 }}д
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </small>
+                            </td>
+                        {% endwith %}
+                    {% endfor %}
+                    
+                    <td>
+                        <small class="text-muted">{{ medians.averages.sla }}</small>
+                    </td>
+                    <td>
+                        <small class="text-muted">{{ medians.averages.work_days }}</small>
+                    </td>
+                    <td>—</td>
+                </tr>
+                
+                <!-- Строка с медианными значениями -->
                 <tr class="table-info">
                     <td class="vacancy-info">
                         <strong><i class="fas fa-chart-line me-2"></i>Медианы</strong>

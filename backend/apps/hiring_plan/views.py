@@ -948,28 +948,38 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
         else:
             medians['grade'] = "—"
         
-        # 2. Медиана дней в месяце для вакансий
+        # 2. Медиана дней в месяце для вакансий (все переходящие вакансии дробим)
+        # Алгоритм: Для каждой вакансии считаем полный срок работы к моменту каждого месяца
         monthly_days = {i: [] for i in range(1, 13)}  # 1-12 месяцы
         
         for request in requests:
-            start_date = request.opening_date
+            original_start_date = request.opening_date
             end_date = request.closed_date or timezone.now().date()
             
-            # Если заявка открыта в другом году, начинаем с января
-            if start_date.year < year:
-                start_date = datetime(year, 1, 1).date()
-            
-            # Если заявка закрыта в другом году, заканчиваем в декабре
-            if end_date.year > year:
-                end_date = datetime(year, 12, 31).date()
-            
-            # Распределяем дни по месяцам
-            current_date = start_date
-            while current_date <= end_date:
-                month = current_date.month
-                if month in monthly_days:
-                    monthly_days[month].append(1)  # 1 день в этом месяце
-                current_date += timedelta(days=1)
+            # Для каждого месяца в выбранном году считаем полный срок работы с заявкой
+            for month in range(1, 13):
+                # Определяем конец месяца для расчета
+                if month == 12:
+                    month_end = datetime(year, 12, 31).date()
+                else:
+                    month_end = datetime(year, month + 1, 1).date() - timedelta(days=1)
+                
+                # Если заявка еще не началась к концу этого месяца, пропускаем
+                if original_start_date > month_end:
+                    continue
+                
+                # Если заявка уже закрыта к началу этого месяца, пропускаем
+                if request.closed_date and request.closed_date < datetime(year, month, 1).date():
+                    continue
+                
+                # Определяем дату окончания для расчета (конец месяца или дата закрытия)
+                calculation_end = min(month_end, end_date)
+                
+                # Считаем полный срок работы с заявкой к концу этого месяца
+                total_days = (calculation_end - original_start_date).days + 1
+                
+                if total_days > 0:
+                    monthly_days[month].append(total_days)
         
         # Рассчитываем медиану для каждого месяца
         monthly_medians = {}
@@ -977,8 +987,10 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
             if days_list:
                 days_list.sort()
                 if len(days_list) % 2 == 1:
+                    # Нечетное число - берем средний элемент
                     median_days = days_list[len(days_list) // 2]
                 else:
+                    # Четное число - среднее из двух средних
                     mid1 = days_list[len(days_list) // 2 - 1]
                     mid2 = days_list[len(days_list) // 2]
                     median_days = (mid1 + mid2) / 2
@@ -1002,11 +1014,11 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
         else:
             medians['sla'] = "—"
         
-        # 4. Медиана "в работе (дней)" - общее количество дней работы
+        # 4. Медиана "в работе (дней)" - полное количество дней работы с заявкой
         work_days = []
         for request in requests:
             if request.status in ['in_progress', 'closed', 'cancelled']:  # Включаем отмененные
-                # Считаем общее количество дней работы (включая предыдущие годы)
+                # Считаем полное количество дней работы с заявкой (включая все предыдущие периоды)
                 start_date = request.opening_date
                 
                 # Для закрытых и отмененных заявок используем дату закрытия, для остальных - текущую дату
@@ -1015,22 +1027,11 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
                 else:
                     end_date = timezone.now().date()
                 
-                # Ограничиваем только конец периода выбранным годом
-                year_end = datetime(year, 12, 31).date()
-                if end_date > year_end:
-                    end_date = year_end
+                # Считаем полное количество дней работы (без ограничений по годам)
+                total_days = (end_date - start_date).days + 1
                 
-                # Если это текущий год, ограничиваем текущей датой (только для активных заявок)
-                if year == timezone.now().year and request.status not in ['closed', 'cancelled']:
-                    today = timezone.now().date()
-                    if end_date > today:
-                        end_date = today
-                
-                # Считаем общее количество дней работы
-                days_in_year = (end_date - start_date).days + 1
-                
-                if days_in_year > 0:
-                    work_days.append(days_in_year)
+                if total_days > 0:
+                    work_days.append(total_days)
         
         if work_days:
             work_days.sort()
@@ -1043,6 +1044,48 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
             medians['work_days'] = f"{median_work_days:.0f}д"
         else:
             medians['work_days'] = "—"
+        
+        # 5. Средние значения (аналогично медианам)
+        averages = {}
+        
+        # 5.1. Средний грейд специалистов (по id грейда)
+        if grade_ids:
+            average_grade_id = sum(grade_ids) / len(grade_ids)
+            try:
+                average_grade = next((request.grade.name for request in requests if request.grade.id == int(average_grade_id)), 
+                                  f"ID: {average_grade_id:.1f}")
+            except ValueError:
+                average_grade = f"ID: {average_grade_id:.1f}"
+            averages['grade'] = average_grade
+        else:
+            averages['grade'] = "—"
+        
+        # 5.2. Среднее дней в месяце для вакансий (используем те же данные что и для медианы)
+        monthly_averages = {}
+        for month, days_list in monthly_days.items():
+            if days_list:
+                average_days = sum(days_list) / len(days_list)
+                monthly_averages[month] = average_days
+            else:
+                monthly_averages[month] = 0
+        averages['monthly_days'] = monthly_averages
+        
+        # 5.3. Среднее SLA (все значения в днях)
+        if sla_days:
+            average_sla = sum(sla_days) / len(sla_days)
+            averages['sla'] = f"{average_sla:.0f}д"
+        else:
+            averages['sla'] = "—"
+        
+        # 5.4. Среднее "в работе (дней)" - общее количество дней работы
+        if work_days:
+            average_work_days = sum(work_days) / len(work_days)
+            averages['work_days'] = f"{average_work_days:.0f}д"
+        else:
+            averages['work_days'] = "—"
+        
+        # Добавляем средние значения в результат
+        medians['averages'] = averages
         
         return medians
     
