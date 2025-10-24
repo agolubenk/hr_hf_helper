@@ -92,6 +92,11 @@ SIDEBAR_MENU = {
                         'title': 'Управление SLA',
                         'icon': 'fas fa-clock',
                         'url': 'hiring_plan:sla_list'
+                    },
+                    'yearly': {
+                        'title': 'Годовая таблица',
+                        'icon': 'fas fa-calendar-alt',
+                        'url': 'hiring_plan:yearly_hiring_plan'
                     }
                 }
             },

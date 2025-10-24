@@ -23,4 +23,7 @@ urlpatterns = [
     path('metrics/list/', views.MetricsListView.as_view(), name='metrics_list'),
     path('forecasts/', views.ForecastsListView.as_view(), name='forecasts_list'),
     path('capacity/', views.RecruiterCapacityListView.as_view(), name='recruiter_capacity_list'),
+    
+    # Годовая таблица заявок
+    path('yearly/', views.YearlyHiringPlanView.as_view(), name='yearly_hiring_plan'),
 ]

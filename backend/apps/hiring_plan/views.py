@@ -835,3 +835,106 @@ def get_available_grades(request):
         return JsonResponse({'error': 'Vacancy not found'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+
+class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
+    """Годовая таблица заявок с цветными ячейками по месяцам"""
+    template_name = 'hiring_plan/yearly_hiring_plan.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Получаем год из параметров (по умолчанию текущий год)
+        year = int(self.request.GET.get('year', timezone.now().year))
+        context['year'] = year
+        
+        # Получаем все заявки за год
+        requests = HiringRequest.objects.filter(
+            opening_date__year=year
+        ).select_related('vacancy', 'grade', 'sla').order_by('vacancy__name', 'grade__name')
+        
+        # Создаем данные для таблицы
+        table_data = []
+        for request in requests:
+            row_data = {
+                'request': request,
+                'vacancy': request.vacancy.name,
+                'grade': request.grade.name,
+                'project': request.project or '-',
+                'sla_days': request.sla.time_to_offer if request.sla else '-',
+                'deadline': request.deadline,
+                'status': request.status,
+                'months': self._get_monthly_data(request, year)
+            }
+            table_data.append(row_data)
+        
+        context['table_data'] = table_data
+        context['months'] = [
+            'Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн',
+            'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'
+        ]
+        
+        # Доступные годы для фильтра
+        years = HiringRequest.objects.values_list('opening_date__year', flat=True).distinct().order_by('-opening_date__year')
+        context['available_years'] = years
+        
+        return context
+    
+    def _get_monthly_data(self, request, year):
+        """Получить данные по месяцам для заявки"""
+        months = {}
+        
+        # Определяем период работы над заявкой
+        start_date = request.opening_date
+        end_date = request.closed_date or timezone.now().date()
+        
+        # Если заявка открыта в другом году, начинаем с января
+        if start_date.year < year:
+            start_date = timezone.datetime(year, 1, 1).date()
+        
+        # Если заявка закрыта в другом году, заканчиваем в декабре
+        if end_date.year > year:
+            end_date = timezone.datetime(year, 12, 31).date()
+        
+        # Заполняем месяцы
+        for month in range(1, 13):
+            month_start = timezone.datetime(year, month, 1).date()
+            if month == 12:
+                month_end = timezone.datetime(year, 12, 31).date()
+            else:
+                month_end = timezone.datetime(year, month + 1, 1).date() - timezone.timedelta(days=1)
+            
+            # Проверяем, пересекается ли заявка с этим месяцем
+            if start_date <= month_end and end_date >= month_start:
+                # Определяем цвет ячейки
+                color = self._get_cell_color(request, month_start, month_end)
+                months[month] = {
+                    'color': color,
+                    'active': True
+                }
+            else:
+                months[month] = {
+                    'color': 'transparent',
+                    'active': False
+                }
+        
+        return months
+    
+    def _get_cell_color(self, request, month_start, month_end):
+        """Определить цвет ячейки на основе статуса заявки"""
+        if request.status == 'cancelled':
+            return 'gray'
+        elif request.status == 'closed':
+            if request.closed_date and request.deadline:
+                if request.closed_date <= request.deadline:
+                    return 'green'  # Закрыто в срок
+                else:
+                    return 'red'    # Закрыто с просрочкой
+            else:
+                return 'green'  # Закрыто (нет дедлайна)
+        elif request.status == 'in_progress':
+            return 'blue'  # В работе
+        elif request.status == 'planned':
+            return 'lightblue'  # Планируется
+        else:
+            return 'lightgray'  # Остальные статусы

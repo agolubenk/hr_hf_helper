@@ -1,0 +1,354 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% load hiring_plan_extras %}
+
+{% block title %}Годовая таблица заявок - {{ year }} год{% endblock %}
+
+{% block extra_css %}
+<style>
+    .yearly-table {
+        font-size: 0.9rem;
+    }
+    
+    .yearly-table th {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        padding: 8px;
+        text-align: center;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .yearly-table td {
+        border: 1px solid #dee2e6;
+        padding: 6px;
+        text-align: center;
+        vertical-align: middle;
+    }
+    
+    .yearly-table .vacancy-info {
+        text-align: left;
+        min-width: 120px;
+    }
+    
+    .yearly-table .month-cell {
+        width: 40px;
+        height: 30px;
+        position: relative;
+    }
+    
+    /* Цвета для статусов */
+    .cell-green {
+        background-color: #d4edda !important;
+        color: #155724;
+    }
+    
+    .cell-red {
+        background-color: #f8d7da !important;
+        color: #721c24;
+    }
+    
+    .cell-blue {
+        background-color: #cce5ff !important;
+        color: #004085;
+    }
+    
+    .cell-lightblue {
+        background-color: #e3f2fd !important;
+        color: #01579b;
+    }
+    
+    .cell-gray {
+        background-color: #e9ecef !important;
+        color: #495057;
+    }
+    
+    .cell-lightgray {
+        background-color: #f8f9fa !important;
+        color: #6c757d;
+    }
+    
+    .cell-transparent {
+        background-color: transparent !important;
+    }
+    
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border: 1px solid #dee2e6;
+        border-radius: 3px;
+    }
+    
+    .year-selector {
+        margin-bottom: 20px;
+    }
+    
+    .table-container {
+        overflow-x: auto;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    
+    .status-badge {
+        font-size: 0.8rem;
+        padding: 2px 6px;
+        border-radius: 3px;
+    }
+    
+    .badge-planned {
+        background-color: #e3f2fd;
+        color: #01579b;
+    }
+    
+    .badge-in-progress {
+        background-color: #cce5ff;
+        color: #004085;
+    }
+    
+    .badge-closed {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+    .badge-cancelled {
+        background-color: #e9ecef;
+        color: #495057;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-calendar-alt me-2"></i>Годовая таблица заявок - {{ year }} год</h2>
+                
+                <div class="year-selector">
+                    <form method="get" class="d-inline">
+                        <div class="input-group">
+                            <select name="year" class="form-select" onchange="this.form.submit()">
+                                {% for available_year in available_years %}
+                                    <option value="{{ available_year }}" {% if available_year == year %}selected{% endif %}>
+                                        {{ available_year }} год
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Легенда -->
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color cell-green"></div>
+                    <span>Закрыто в срок</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color cell-red"></div>
+                    <span>Закрыто с просрочкой</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color cell-blue"></div>
+                    <span>В работе</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color cell-lightblue"></div>
+                    <span>Планируется</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color cell-gray"></div>
+                    <span>Отменено</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color cell-lightgray"></div>
+                    <span>Другие статусы</span>
+                </div>
+            </div>
+            
+            <!-- Таблица -->
+            <div class="table-container">
+                <table class="table table-bordered yearly-table">
+                    <thead>
+                        <tr>
+                            <th class="vacancy-info">Вакансия</th>
+                            <th>Грейд</th>
+                            <th>Проект</th>
+                            {% for month in months %}
+                                <th class="month-cell">{{ month }}</th>
+                            {% endfor %}
+                            <th>SLA</th>
+                            <th>Срок закрытия</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in table_data %}
+                            <tr>
+                                <td class="vacancy-info">
+                                    <strong>{{ row.vacancy }}</strong>
+                                </td>
+                                <td>{{ row.grade }}</td>
+                                <td>{{ row.project }}</td>
+                                
+                                {% for month_num, month_name in months|enumerate_list %}
+                                    {% with month_num|add:1 as month %}
+                                        {% with row.months|get_item:month as month_data %}
+                                            <td class="month-cell cell-{{ month_data.color }}">
+                                                {% if month_data.active %}
+                                                    <span title="Активна в {{ month_name }}"></span>
+                                                {% endif %}
+                                            </td>
+                                        {% endwith %}
+                                    {% endwith %}
+                                {% endfor %}
+                                
+                                <td>
+                                    {% if row.sla_days != '-' %}
+                                        <span class="badge bg-secondary">{{ row.sla_days }}д</span>
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
+                                </td>
+                                
+                                <td>
+                                    {% if row.deadline %}
+                                        {{ row.deadline|date:"d.m.Y" }}
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
+                                </td>
+                                
+                                <td>
+                                    {% if row.status == 'planned' %}
+                                        <span class="status-badge badge-planned">Планируется</span>
+                                    {% elif row.status == 'in_progress' %}
+                                        <span class="status-badge badge-in-progress">В работе</span>
+                                    {% elif row.status == 'closed' %}
+                                        <span class="status-badge badge-closed">Закрыто</span>
+                                    {% elif row.status == 'cancelled' %}
+                                        <span class="status-badge badge-cancelled">Отменено</span>
+                                    {% else %}
+                                        <span class="status-badge">{{ row.status }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="15" class="text-center text-muted py-4">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Нет заявок за {{ year }} год
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Статистика -->
+            {% if table_data %}
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Статистика за {{ year }} год</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="text-center">
+                                            <h4 class="text-primary">{{ table_data|length }}</h4>
+                                            <small class="text-muted">Всего заявок</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-center">
+                                            <h4 class="text-success">
+                                                {% for row in table_data %}
+                                                    {% if row.status == 'closed' %}{{ forloop.counter0|add:1 }}{% endif %}
+                                                {% endfor %}
+                                            </h4>
+                                            <small class="text-muted">Закрыто</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Активность</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="text-center">
+                                            <h4 class="text-info">
+                                                {% for row in table_data %}
+                                                    {% if row.status == 'in_progress' %}{{ forloop.counter0|add:1 }}{% endif %}
+                                                {% endfor %}
+                                            </h4>
+                                            <small class="text-muted">В работе</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-center">
+                                            <h4 class="text-warning">
+                                                {% for row in table_data %}
+                                                    {% if row.status == 'planned' %}{{ forloop.counter0|add:1 }}{% endif %}
+                                                {% endfor %}
+                                            </h4>
+                                            <small class="text-muted">Планируется</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Добавляем подсказки при наведении на ячейки
+    document.addEventListener('DOMContentLoaded', function() {
+        const cells = document.querySelectorAll('.month-cell');
+        cells.forEach(cell => {
+            if (cell.classList.contains('cell-green') || 
+                cell.classList.contains('cell-red') || 
+                cell.classList.contains('cell-blue') || 
+                cell.classList.contains('cell-lightblue') || 
+                cell.classList.contains('cell-gray')) {
+                
+                cell.style.cursor = 'pointer';
+                cell.title = 'Заявка активна в этом месяце';
+            }
+        });
+    });
+</script>
+{% endblock %}
