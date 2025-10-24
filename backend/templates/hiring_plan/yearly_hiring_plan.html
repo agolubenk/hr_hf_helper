@@ -3,6 +3,7 @@
 {% load hiring_plan_extras %}
 
 {% block title %}План найма '{{ year|slice:"2:" }}{% endblock %}
+{% block page_title %}План найма '{{ year|slice:"2:" }}{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -213,8 +214,35 @@
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-calendar-alt me-2"></i>План найма '{{ year|slice:"2:" }}</h2>
+                <!-- Легенда слева -->
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color cell-green"></div>
+                        <span>Закрыто в срок</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color cell-red"></div>
+                        <span>Закрыто с просрочкой</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color cell-blue"></div>
+                        <span>В работе</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color cell-yellow"></div>
+                        <span>Просрочено</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color cell-lightblue"></div>
+                        <span>Планируется</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color cell-gray"></div>
+                        <span>Отменено</span>
+                    </div>
+                </div>
                 
+                <!-- Селектор года справа -->
                 <div class="year-selector">
                     <form method="get" class="d-inline">
                         <div class="input-group">
@@ -227,34 +255,6 @@
                             </select>
                         </div>
                     </form>
-                </div>
-            </div>
-            
-            <!-- Легенда -->
-            <div class="legend">
-                <div class="legend-item">
-                    <div class="legend-color cell-green"></div>
-                    <span>Закрыто в срок</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color cell-red"></div>
-                    <span>Закрыто с просрочкой</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color cell-blue"></div>
-                    <span>В работе</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color cell-yellow"></div>
-                    <span>Просрочено</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color cell-lightblue"></div>
-                    <span>Планируется</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color cell-gray"></div>
-                    <span>Отменено</span>
                 </div>
             </div>
             
