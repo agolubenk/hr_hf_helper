@@ -303,14 +303,18 @@ function calculateAvailableSlots(dayEvents, date) {
         });
     }
     
+    // Получаем требуемую продолжительность встречи
+    const requiredDuration = getMeetingDuration();
+    console.log(`⏱️ Требуемая продолжительность встречи: ${requiredDuration} минут`);
+    
     // Формируем строку доступных слотов
     const availableRanges = [];
     freeIntervals.forEach(interval => {
         const duration = interval.end.getTime() - interval.start.getTime();
         const durationMinutes = Math.floor(duration / (60 * 1000));
         
-        // Показываем интервал только если он длится больше 15 минут
-        if (durationMinutes >= 15) {
+        // Показываем интервал только если он длится больше 15 минут И больше или равен требуемой продолжительности
+        if (durationMinutes >= 15 && durationMinutes >= requiredDuration) {
             const startTime = formatTime(interval.start);
             const endTime = formatTime(interval.end);
             
@@ -320,7 +324,11 @@ function calculateAvailableSlots(dayEvents, date) {
                 availableRanges.push(`${startTime}-${endTime}`);
             }
             
-            console.log(`✅ Свободный интервал: ${startTime} - ${endTime} (${durationMinutes} мин)`);
+            console.log(`✅ Свободный интервал: ${startTime} - ${endTime} (${durationMinutes} мин) - подходит для встречи ${requiredDuration} мин`);
+        } else if (durationMinutes >= 15) {
+            const startTime = formatTime(interval.start);
+            const endTime = formatTime(interval.end);
+            console.log(`❌ Свободный интервал: ${startTime} - ${endTime} (${durationMinutes} мин) - слишком короткий для встречи ${requiredDuration} мин`);
         }
     });
     
