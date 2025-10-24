@@ -4,6 +4,18 @@ from apps.vacancies.models import Vacancy
 from apps.finance.models import Grade
 
 
+class DateInput(forms.DateInput):
+    """Кастомный виджет для правильного формата даты в HTML5"""
+    input_type = 'date'
+    
+    def format_value(self, value):
+        if value is None:
+            return ''
+        if hasattr(value, 'strftime'):
+            return value.strftime('%Y-%m-%d')
+        return str(value)
+
+
 class HiringRequestForm(forms.ModelForm):
     class Meta:
         model = HiringRequest
@@ -35,20 +47,30 @@ class HiringRequestUpdateForm(forms.ModelForm):
     class Meta:
         model = HiringRequest
         fields = [
-            'candidate_id', 'candidate_name', 'closed_date', 'notes'
+            'opening_date', 'candidate_id', 'candidate_name', 'closed_date', 'notes'
         ]
         widgets = {
+            'opening_date': DateInput(attrs={'class': 'form-control'}),
             'candidate_id': forms.TextInput(attrs={'class': 'form-control'}),
             'candidate_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'closed_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'closed_date': DateInput(attrs={'class': 'form-control'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
         labels = {
+            'opening_date': 'Дата открытия',
             'candidate_id': 'ID кандидата',
             'candidate_name': 'Имя кандидата',
             'closed_date': 'Дата закрытия',
             'notes': 'Заметки',
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Показываем поле opening_date только для планируемых заявок
+        if self.instance and self.instance.status != 'planned':
+            self.fields['opening_date'].widget = forms.HiddenInput()
+            self.fields['opening_date'].required = False
 
 
 class VacancySLAForm(forms.ModelForm):

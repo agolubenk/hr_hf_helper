@@ -567,7 +567,15 @@ class HiringRequestUpdateView(LoginRequiredMixin, UpdateView):
         return reverse('hiring_plan:hiring_requests_list')
     
     def form_valid(self, form):
+        # Сохраняем старую дату открытия для сравнения
+        old_opening_date = self.object.opening_date
+        
         response = super().form_valid(form)
+        
+        # Если изменилась дата открытия, пересчитываем статус
+        if old_opening_date != self.object.opening_date:
+            self.object.save()  # Это вызовет post_save сигнал, который пересчитает статус
+        
         messages.success(self.request, f'Заявка "{self.object}" успешно обновлена!')
         return response
 

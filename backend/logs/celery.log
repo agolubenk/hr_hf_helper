@@ -666,3 +666,29 @@ Traceback (most recent call last):
     hh_service = HHVacancyService()
                  ^^^^^^^^^^^^^^^^
 NameError: name 'HHVacancyService' is not defined
+[2025-10-24 23:52:25,936: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[6f154e9c-a84b-4af1-ae59-be7c73c72138] received
+[2025-10-24 23:52:25,999: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[6f154e9c-a84b-4af1-ae59-be7c73c72138] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
+[2025-10-24 23:57:25,953: INFO/MainProcess] Task apps.finance.tasks.process_hh_queue_with_limit[02182930-e706-4edb-a5a5-8e9ec8144eb5] received
+[2025-10-24 23:57:25,987: ERROR/ForkPoolWorker-1] Task apps.finance.tasks.process_hh_queue_with_limit[02182930-e706-4edb-a5a5-8e9ec8144eb5] raised unexpected: NameError("name 'HHVacancyService' is not defined")
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 453, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/celery/app/trace.py", line 736, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/tasks.py", line 617, in process_hh_queue_with_limit
+    hh_service = HHVacancyService()
+                 ^^^^^^^^^^^^^^^^
+NameError: name 'HHVacancyService' is not defined
