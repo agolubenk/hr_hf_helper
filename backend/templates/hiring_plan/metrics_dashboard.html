@@ -7,13 +7,42 @@
 {% block content %}
 <div class="container-fluid">
     
+    <!-- Фильтр по периоду -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="get" class="row g-3 align-items-end">
+                        <div class="col-md-6">
+                            <label for="period" class="form-label">Период расчета</label>
+                            <select name="period" id="period" class="form-select" onchange="this.form.submit()">
+                                {% for value, label in period_choices %}
+                                    <option value="{{ value }}" {% if current_period == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-info mb-0">
+                                <i class="fas fa-calendar-alt me-2"></i>
+                                <strong>{{ period_info.full_description }}</strong>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
     <!-- KPI Cards -->
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="card text-white bg-primary">
                 <div class="card-body text-center">
-                    <h5><i class="fas fa-clock me-2"></i>Time-to-Fill</h5>
-                    <h2>{{ kpi_cards.avg_time_to_fill }} дней</h2>
+                    <h5><i class="fas fa-clock me-2"></i>Time-to-Offer</h5>
+                    <h2>{{ kpi_cards.avg_time_to_offer }} дней</h2>
                     <small>Среднее время закрытия</small>
                 </div>
             </div>
@@ -54,27 +83,27 @@
                 <div class="card-header">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-chart-bar me-2"></i>
-                        Детальные метрики за текущий месяц
+                        Детальные метрики за {{ period_info.description }}
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="text-center">
-                                <h4 class="text-primary">{{ metrics.total_requests }}</h4>
-                                <small class="text-muted">Всего заявок</small>
+                                <h4 class="text-primary">{{ metrics.active_requests }}</h4>
+                                <small class="text-muted">Активно за период</small>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="text-center">
-                                <h4 class="text-success">{{ metrics.closed_requests }}</h4>
-                                <small class="text-muted">Закрыто</small>
+                                <h4 class="text-success">{{ metrics.hires_count }}</h4>
+                                <small class="text-muted">Закрытые за период</small>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="text-center">
-                                <h4 class="text-warning">{{ metrics.in_progress_requests }}</h4>
-                                <small class="text-muted">В процессе</small>
+                                <h4 class="text-warning">{{ metrics.critical_requests_count }}</h4>
+                                <small class="text-muted">Критические</small>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -96,7 +125,7 @@
                 <div class="card-header">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-users me-2"></i>
-                        Мощность команды рекрутеров
+                        Мощность команды рекрутеров за {{ period_info.description }}
                     </h5>
                 </div>
                 <div class="card-body">
@@ -175,7 +204,7 @@
                 <div class="card-header">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-crystal-ball me-2"></i>
-                        Прогноз потребности (следующий месяц)
+                        Прогноз потребности (следующий период)
                     </h5>
                 </div>
                 <div class="card-body">

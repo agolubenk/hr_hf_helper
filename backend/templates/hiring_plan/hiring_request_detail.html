@@ -77,8 +77,6 @@
                                                 <span class="badge bg-info">Планируется</span>
                                             {% elif request.status == 'in_progress' %}
                                                 <span class="badge bg-warning">В процессе</span>
-                                            {% elif request.status == 'overdue' %}
-                                                <span class="badge bg-danger">Просрочена</span>
                                             {% elif request.status == 'closed' %}
                                                 <span class="badge bg-success">Закрыта</span>
                                             {% elif request.status == 'cancelled' %}
@@ -112,9 +110,13 @@
                                     <tr>
                                         <td><strong>Дедлайн:</strong></td>
                                         <td>
-                                            {{ request.deadline|date:"d.m.Y" }}
-                                            {% if request.is_overdue %}
-                                                <br><small class="text-danger">Просрочено</small>
+                                            {% if request.deadline %}
+                                                {{ request.deadline|date:"d.m.Y" }}
+                                                {% if request.is_overdue %}
+                                                    <br><small class="text-danger">Просрочено</small>
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="text-muted">Нет SLA</span>
                                             {% endif %}
                                         </td>
                                     </tr>
@@ -139,8 +141,6 @@
                                         <td>
                                             {% if request.sla_status_display == 'В срок' %}
                                                 <span class="badge bg-success">В срок</span>
-                                            {% elif request.sla_status_display == 'С задержкой' %}
-                                                <span class="badge bg-warning">С задержкой</span>
                                             {% elif request.sla_status_display == 'Просрочено' %}
                                                 <span class="badge bg-danger">Просрочено</span>
                                             {% elif request.sla_status_display == 'Нормально' %}

@@ -13,15 +13,12 @@ from django.utils import timezone
 from datetime import timedelta, date
 import json
 
+from .forms import HiringRequestForm, HiringRequestUpdateForm, VacancySLAForm
+
 from .models import (
     HiringPlan, HiringPlanPosition, PositionType, PlanPeriodType,
     PositionKPIOKR, PlanKPIOKRBlock, PlanMetrics,
     VacancySLA, HiringRequest, RecruitmentMetrics, DemandForecast, RecruiterCapacity
-)
-from .forms import (
-    HiringPlanFormExtended, HiringPlanPositionFormExtended,
-    HiringPlanFilterForm, PositionKPIOKRForm,
-    PlanKPIOKRBlockForm, PeriodPlanCreationForm
 )
 from .services import HiringPlanServiceExtended
 from .metrics_service import MetricsService
@@ -121,7 +118,7 @@ class HiringPlanDetailView(LoginRequiredMixin, DetailView):
 class HiringPlanCreateView(LoginRequiredMixin, CreateView):
     """Создание плана найма"""
     model = HiringPlan
-    form_class = HiringPlanFormExtended
+    # form_class = HiringPlanFormExtended  # Удалено - форма не существует
     template_name = 'hiring_plan/plan_form.html'
     success_url = reverse_lazy('hiring_plan:plan_list')
     
@@ -135,7 +132,7 @@ class HiringPlanCreateView(LoginRequiredMixin, CreateView):
 class HiringPlanUpdateView(LoginRequiredMixin, UpdateView):
     """Редактирование плана найма"""
     model = HiringPlan
-    form_class = HiringPlanFormExtended
+    # form_class = HiringPlanFormExtended  # Удалено - форма не существует
     template_name = 'hiring_plan/plan_form.html'
     
     def get_success_url(self):
@@ -162,7 +159,7 @@ class HiringPlanDeleteView(LoginRequiredMixin, DeleteView):
 class PeriodicPlanCreateView(LoginRequiredMixin, CreateView):
     """Создание периодического плана"""
     template_name = 'hiring_plan/periodic_plan_create.html'
-    form_class = PeriodPlanCreationForm
+    # form_class = PeriodPlanCreationForm  # Удалено - форма не существует
     success_url = reverse_lazy('hiring_plan:plan_list')
     
     def get_context_data(self, **kwargs):
@@ -260,7 +257,7 @@ class PlanKPIOKRBlockListView(LoginRequiredMixin, ListView):
 class PlanKPIOKRBlockCreateView(LoginRequiredMixin, CreateView):
     """Создание блока KPI/OKR"""
     model = PlanKPIOKRBlock
-    form_class = PlanKPIOKRBlockForm
+    # form_class = PlanKPIOKRBlockForm  # Удалено - форма не существует
     template_name = 'hiring_plan/kpi_okr_block_form.html'
     success_url = reverse_lazy('hiring_plan:kpi_okr_block_list')
     
@@ -273,7 +270,7 @@ class PlanKPIOKRBlockCreateView(LoginRequiredMixin, CreateView):
 class PlanKPIOKRBlockUpdateView(LoginRequiredMixin, UpdateView):
     """Редактирование блока KPI/OKR"""
     model = PlanKPIOKRBlock
-    form_class = PlanKPIOKRBlockForm
+    # form_class = PlanKPIOKRBlockForm  # Удалено - форма не существует
     template_name = 'hiring_plan/kpi_okr_block_form.html'
     success_url = reverse_lazy('hiring_plan:kpi_okr_block_list')
     
@@ -286,7 +283,7 @@ class PlanKPIOKRBlockUpdateView(LoginRequiredMixin, UpdateView):
 class PositionKPIOKRCreateView(LoginRequiredMixin, CreateView):
     """Создание KPI/OKR"""
     model = PositionKPIOKR
-    form_class = PositionKPIOKRForm
+    # form_class = PositionKPIOKRForm  # Удалено - форма не существует
     template_name = 'hiring_plan/kpi_okr_form.html'
     
     def get_success_url(self):
@@ -307,7 +304,7 @@ class PositionKPIOKRCreateView(LoginRequiredMixin, CreateView):
 class PositionKPIOKRUpdateView(LoginRequiredMixin, UpdateView):
     """Редактирование KPI/OKR"""
     model = PositionKPIOKR
-    form_class = PositionKPIOKRForm
+    # form_class = PositionKPIOKRForm  # Удалено - форма не существует
     template_name = 'hiring_plan/kpi_okr_form.html'
     
     def get_success_url(self):
@@ -322,7 +319,7 @@ class PositionKPIOKRUpdateView(LoginRequiredMixin, UpdateView):
 class HiringPlanPositionCreateView(LoginRequiredMixin, CreateView):
     """Создание позиции в плане"""
     model = HiringPlanPosition
-    form_class = HiringPlanPositionFormExtended
+    # form_class = HiringPlanPositionFormExtended  # Удалено - форма не существует
     template_name = 'hiring_plan/position_form.html'
     
     def get_success_url(self):
@@ -343,7 +340,7 @@ class HiringPlanPositionCreateView(LoginRequiredMixin, CreateView):
 class HiringPlanPositionUpdateView(LoginRequiredMixin, UpdateView):
     """Редактирование позиции в плане"""
     model = HiringPlanPosition
-    form_class = HiringPlanPositionFormExtended
+    # form_class = HiringPlanPositionFormExtended  # Удалено - форма не существует
     template_name = 'hiring_plan/position_form.html'
     
     def get_success_url(self):
@@ -524,7 +521,6 @@ class HiringRequestsListView(LoginRequiredMixin, ListView):
         context['total_requests'] = requests.count()
         context['planned_requests'] = requests.filter(status='planned').count()
         context['in_progress_requests'] = requests.filter(status='in_progress').count()
-        context['overdue_requests'] = requests.filter(status='overdue').count()
         context['closed_requests'] = requests.filter(status='closed').count()
         context['cancelled_requests'] = requests.filter(status='cancelled').count()
         
@@ -548,7 +544,7 @@ class HiringRequestDetailView(LoginRequiredMixin, DetailView):
 class HiringRequestCreateView(LoginRequiredMixin, CreateView):
     """Создание заявки"""
     model = HiringRequest
-    fields = ['vacancy', 'grade', 'project', 'priority', 'opening_reason', 'opening_date', 'deadline', 'notes']
+    form_class = HiringRequestForm
     template_name = 'hiring_plan/hiring_request_form.html'
     
     def get_success_url(self):
@@ -564,7 +560,7 @@ class HiringRequestCreateView(LoginRequiredMixin, CreateView):
 class HiringRequestUpdateView(LoginRequiredMixin, UpdateView):
     """Редактирование заявки"""
     model = HiringRequest
-    fields = ['status', 'candidate_id', 'candidate_name', 'closed_date', 'notes']
+    form_class = HiringRequestUpdateForm
     template_name = 'hiring_plan/hiring_request_form.html'
     
     def get_success_url(self):
@@ -585,13 +581,60 @@ class VacancySLAListView(LoginRequiredMixin, ListView):
     paginate_by = 50
     
     def get_queryset(self):
-        return VacancySLA.objects.select_related('vacancy', 'grade').order_by('vacancy__name', 'grade__name')
+        queryset = VacancySLA.objects.select_related('vacancy', 'grade').order_by('vacancy__name', 'grade__name')
+        
+        # Фильтр по вакансии
+        vacancy_id = self.request.GET.get('vacancy')
+        if vacancy_id:
+            queryset = queryset.filter(vacancy_id=vacancy_id)
+        
+        # Фильтр по грейду
+        grade_id = self.request.GET.get('grade')
+        if grade_id:
+            queryset = queryset.filter(grade_id=grade_id)
+        
+        # Фильтр по активности
+        is_active = self.request.GET.get('is_active')
+        if is_active in ['true', 'false']:
+            queryset = queryset.filter(is_active=is_active == 'true')
+        
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Добавляем списки для фильтров
+        from apps.vacancies.models import Vacancy
+        from apps.finance.models import Grade
+        
+        context['vacancies'] = Vacancy.objects.filter(is_active=True).order_by('name')
+        context['grades'] = Grade.objects.all().order_by('name')
+        
+        # Добавляем текущие значения фильтров
+        context['current_vacancy'] = self.request.GET.get('vacancy', '')
+        context['current_grade'] = self.request.GET.get('grade', '')
+        context['current_is_active'] = self.request.GET.get('is_active', '')
+        
+        # Проверяем, можно ли создавать новые SLA (только для активных вакансий)
+        active_vacancies = Vacancy.objects.filter(is_active=True)
+        all_grades = Grade.objects.all()
+        total_possible_slas = active_vacancies.count() * all_grades.count()
+        existing_slas_for_active = VacancySLA.objects.filter(vacancy__in=active_vacancies).count()
+        
+        context['can_create_sla'] = existing_slas_for_active < total_possible_slas
+        context['sla_coverage'] = {
+            'existing': existing_slas_for_active,
+            'total': total_possible_slas,
+            'percentage': round((existing_slas_for_active / total_possible_slas * 100), 1) if total_possible_slas > 0 else 0
+        }
+        
+        return context
 
 
 class VacancySLACreateView(LoginRequiredMixin, CreateView):
     """Создание SLA для вакансии"""
     model = VacancySLA
-    fields = ['vacancy', 'grade', 'time_to_fill', 'time_to_hire', 'is_active']
+    form_class = VacancySLAForm
     template_name = 'hiring_plan/sla_form.html'
     
     def get_success_url(self):
@@ -606,7 +649,7 @@ class VacancySLACreateView(LoginRequiredMixin, CreateView):
 class VacancySLAUpdateView(LoginRequiredMixin, UpdateView):
     """Редактирование SLA для вакансии"""
     model = VacancySLA
-    fields = ['vacancy', 'grade', 'time_to_fill', 'time_to_hire', 'is_active']
+    form_class = VacancySLAForm
     template_name = 'hiring_plan/sla_form.html'
     
     def get_success_url(self):
@@ -626,23 +669,23 @@ class MetricsDashboardView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        # Период (по умолчанию - текущий месяц)
-        today = timezone.now().date()
-        period_start = today.replace(day=1)
-        next_month = period_start + timedelta(days=32)
-        period_end = next_month.replace(day=1) - timedelta(days=1)
+        # Получаем период из параметров запроса
+        period_type = self.request.GET.get('period', 'current_quarter')
+        
+        # Получаем даты периода
+        period_start, period_end = MetricsService.get_period_dates(period_type)
         
         # Рассчитываем метрики
         metrics = MetricsService.calculate_recruitment_metrics(
             period_start, period_end
         )
         
-        # Мощность команды
-        team_capacity = MetricsService.get_team_capacity_summary()
+        # Мощность команды (также для выбранного периода)
+        team_capacity = MetricsService.get_team_capacity_summary(period_start, period_end)
         
         # KPI Cards
         context['kpi_cards'] = {
-            'avg_time_to_fill': metrics.avg_time_to_fill,
+            'avg_time_to_offer': metrics.avg_time_to_offer,
             'hiring_velocity': metrics.hiring_velocity_weekly,
             'sla_compliance': metrics.sla_compliance_rate,
             'days_behind_schedule': metrics.avg_days_behind_schedule,
@@ -651,14 +694,57 @@ class MetricsDashboardView(LoginRequiredMixin, TemplateView):
         # Данные для графиков
         context['metrics'] = metrics
         context['team_capacity'] = team_capacity
+        # Варианты периодов
+        period_choices = [
+            ('current_month', 'Текущий месяц'),
+            ('current_quarter', 'Текущий квартал'),
+            ('last_month', 'Прошлый месяц'),
+            ('last_quarter', 'Прошлый квартал'),
+            ('last_6_months', 'Последние 6 месяцев'),
+            ('last_year', 'Прошлый год'),
+            ('current_year', 'Текущий год'),
+            ('all_time', 'Все время'),
+            ('custom', 'Выбрать период вручную'),
+        ]
         
-        # Прогнозы
+        # Описание периода
+        period_descriptions = {
+            'current_month': 'Текущий месяц',
+            'current_quarter': 'Текущий квартал',
+            'last_month': 'Прошлый месяц',
+            'last_quarter': 'Прошлый квартал',
+            'last_6_months': 'Последние 6 месяцев',
+            'last_year': 'Прошлый год',
+            'current_year': 'Текущий год',
+            'all_time': 'Все время',
+            'custom': 'Выбрать период вручную',
+        }
+        
+        context['period_info'] = {
+            'start': period_start,
+            'end': period_end,
+            'type': period_type,
+            'description': period_descriptions.get(period_type, 'Текущий квартал'),
+            'full_description': f'{period_descriptions.get(period_type, "Текущий квартал")} ({period_start.strftime("%d.%m.%Y")} - {period_end.strftime("%d.%m.%Y")})'
+        }
+        context['period_choices'] = period_choices
+        context['current_period'] = period_type
+        
+        # Прогнозы (для следующего периода того же типа)
         from apps.vacancies.models import Vacancy
         vacancies = Vacancy.objects.all()[:5]
         forecasts = []
+        
+        # Определяем период для прогноза на основе выбранного периода
+        forecast_period = 'next_month'
+        if period_type in ['current_quarter', 'last_quarter']:
+            forecast_period = 'next_quarter'
+        elif period_type in ['current_year', 'last_year']:
+            forecast_period = 'next_year'
+            
         for vacancy in vacancies:
             try:
-                forecast = MetricsService.forecast_demand(vacancy, forecast_period='next_month')
+                forecast = MetricsService.forecast_demand(vacancy, forecast_period=forecast_period)
                 forecasts.append(forecast)
             except:
                 pass  # Игнорируем ошибки прогнозирования
@@ -698,3 +784,46 @@ class RecruiterCapacityListView(LoginRequiredMixin, ListView):
     
     def get_queryset(self):
         return RecruiterCapacity.objects.select_related('recruiter').order_by('-period_start', 'recruiter')
+
+
+@login_required
+def get_available_grades(request):
+    """AJAX endpoint для получения доступных грейдов для вакансии"""
+    vacancy_id = request.GET.get('vacancy_id')
+    
+    if not vacancy_id:
+        return JsonResponse({'error': 'vacancy_id is required'}, status=400)
+    
+    try:
+        from apps.vacancies.models import Vacancy
+        from apps.finance.models import Grade
+        
+        # Получаем вакансию
+        vacancy = Vacancy.objects.get(id=vacancy_id)
+        
+        # Получаем все грейды
+        all_grades = Grade.objects.all()
+        
+        # Получаем грейды, для которых уже созданы SLA
+        existing_grades = VacancySLA.objects.filter(vacancy=vacancy).values_list('grade', flat=True)
+        
+        # Находим доступные грейды
+        available_grades = all_grades.exclude(id__in=existing_grades)
+        
+        # Формируем ответ
+        data = {
+            'available_grades': [
+                {'id': grade.id, 'name': grade.name}
+                for grade in available_grades
+            ],
+            'total_grades': all_grades.count(),
+            'existing_grades': len(existing_grades),
+            'available_count': available_grades.count()
+        }
+        
+        return JsonResponse(data)
+        
+    except Vacancy.DoesNotExist:
+        return JsonResponse({'error': 'Vacancy not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

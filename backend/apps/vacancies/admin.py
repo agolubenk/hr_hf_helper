@@ -119,6 +119,29 @@ class VacancyAdmin(admin.ModelAdmin):
         if db_field.name == "interviewers":
             kwargs["queryset"] = db_field.related_model.objects.filter(is_active=True)
         return super().formfield_for_manytomany(db_field, request, **kwargs)
+    
+    actions = ['update_activity_status']
+    
+    def update_activity_status(self, request, queryset):
+        """Обновляет статус активности выбранных вакансий"""
+        updated_count = 0
+        for vacancy in queryset:
+            if vacancy.update_activity_status():
+                updated_count += 1
+        
+        if updated_count > 0:
+            self.message_user(
+                request,
+                f'Статус активности обновлен для {updated_count} вакансий.',
+                level='SUCCESS'
+            )
+        else:
+            self.message_user(
+                request,
+                'Статус активности не изменился ни для одной вакансии.',
+                level='INFO'
+            )
+    update_activity_status.short_description = 'Обновить статус активности на основе заявок'
 
 
 @admin.register(SalaryRange)

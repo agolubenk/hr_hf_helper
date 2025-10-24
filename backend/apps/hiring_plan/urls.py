@@ -16,6 +16,7 @@ urlpatterns = [
     path('sla/', views.VacancySLAListView.as_view(), name='sla_list'),
     path('sla/create/', views.VacancySLACreateView.as_view(), name='sla_create'),
     path('sla/<int:pk>/edit/', views.VacancySLAUpdateView.as_view(), name='sla_update'),
+    path('sla/get-available-grades/', views.get_available_grades, name='get_available_grades'),
     
     # Метрики и KPI
     path('metrics/', views.MetricsDashboardView.as_view(), name='metrics_dashboard'),

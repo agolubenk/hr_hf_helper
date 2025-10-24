@@ -747,9 +747,9 @@ class VacancySLA(models.Model):
     )
     
     # Целевые показатели в днях
-    time_to_fill = models.PositiveIntegerField(
-        verbose_name='Time-to-Fill (дни)',
-        help_text='Целевое время от открытия до закрытия вакансии'
+    time_to_offer = models.PositiveIntegerField(
+        verbose_name='Time-to-Offer (дни)',
+        help_text='Целевое время от открытия до предложения кандидату'
     )
     time_to_hire = models.PositiveIntegerField(
         verbose_name='Time-to-Hire (дни)',
@@ -768,7 +768,7 @@ class VacancySLA(models.Model):
         ordering = ['vacancy__name', 'grade__name']
     
     def __str__(self):
-        return f"SLA: {self.vacancy.name} - {self.grade.name} ({self.time_to_fill} дней)"
+        return f"SLA: {self.vacancy.name} - {self.grade.name} ({self.time_to_offer} дней)"
 
 
 class HiringRequest(models.Model):
@@ -808,7 +808,6 @@ class HiringRequest(models.Model):
     STATUS_CHOICES = [
         ('planned', 'Планируется'),
         ('in_progress', 'В процессе'),
-        ('overdue', 'Просрочена'),
         ('cancelled', 'Отменена'),
         ('closed', 'Закрыта'),
     ]
@@ -821,16 +820,14 @@ class HiringRequest(models.Model):
     
     # === ПРИЧИНА ОТКРЫТИЯ ===
     REASON_CHOICES = [
-        ('replacement_army', 'Замена - армия'),
-        ('replacement_fired', 'Замена - увольнение'),
-        ('replacement_decree', 'Замена - декрет'),
-        ('new_position', 'Новая позиция'),
-        ('expansion', 'Расширение команды'),
-        ('other', 'Другое'),
+        ('planned', 'Плановая'),
+        ('new_position', 'Новая'),
+        ('replacement', 'Замена'),
     ]
     opening_reason = models.CharField(
         max_length=30,
         choices=REASON_CHOICES,
+        default='new_position',
         verbose_name='Причина открытия'
     )
     
@@ -838,10 +835,6 @@ class HiringRequest(models.Model):
     opening_date = models.DateField(
         verbose_name='Дата открытия вакансии',
         help_text='Может быть в будущем или прошлом'
-    )
-    deadline = models.DateField(
-        verbose_name='Дедлайн',
-        help_text='Целевая дата закрытия'
     )
     closed_date = models.DateField(
         null=True,
@@ -895,13 +888,16 @@ class HiringRequest(models.Model):
         indexes = [
             models.Index(fields=['status', 'opening_date']),
             models.Index(fields=['vacancy', 'grade']),
-            models.Index(fields=['deadline']),
+            models.Index(fields=['opening_date']),
         ]
     
     def __str__(self):
         return f"{self.vacancy.name} ({self.grade.name}) - {self.get_status_display()}"
     
     def save(self, *args, **kwargs):
+        from django.utils import timezone
+        from datetime import timedelta
+        
         # Автоматически определяем SLA
         if not self.sla:
             self.sla = VacancySLA.objects.filter(
@@ -910,12 +906,31 @@ class HiringRequest(models.Model):
                 is_active=True
             ).first()
         
-        # Автоматически меняем статус на overdue, если просрочен дедлайн
-        if self.status in ['planned', 'in_progress']:
-            if timezone.now().date() > self.deadline:
-                self.status = 'overdue'
+        # Автоматически определяем статус на основе дат и данных кандидата
+        today = timezone.now().date()
+        
+        if self.closed_date:
+            # Если есть дата закрытия - статус "закрыта"
+            self.status = 'closed'
+        elif self.candidate_id or self.candidate_name:
+            # Если есть данные кандидата, но нет даты закрытия - статус "отменена"
+            self.status = 'cancelled'
+        elif self.opening_date > today:
+            # Если дата открытия в будущем - статус "планируется"
+            self.status = 'planned'
+        else:
+            # Если дата открытия в прошлом или сегодня - статус "в процессе"
+            self.status = 'in_progress'
         
         super().save(*args, **kwargs)
+    
+    @property
+    def deadline(self):
+        """Автоматически рассчитываемый дедлайн на основе SLA"""
+        if self.sla and self.opening_date:
+            from datetime import timedelta
+            return self.opening_date + timedelta(days=self.sla.time_to_offer)
+        return None
     
     @property
     def days_in_progress(self):
@@ -930,7 +945,9 @@ class HiringRequest(models.Model):
         """Проверка просрочки"""
         if self.status == 'closed':
             return False
-        return timezone.now().date() > self.deadline
+        if self.deadline:
+            return timezone.now().date() > self.deadline
+        return False
     
     @property
     def sla_compliance(self):
@@ -939,7 +956,7 @@ class HiringRequest(models.Model):
             return None
         
         actual_days = (self.closed_date - self.opening_date).days
-        target_days = self.sla.time_to_fill
+        target_days = self.sla.time_to_offer
         
         if actual_days <= target_days:
             return 100
@@ -957,7 +974,7 @@ class HiringRequest(models.Model):
             if compliance >= 100:
                 return 'В срок'
             elif compliance >= 80:
-                return 'С задержкой'
+                return 'Просрочено'
             else:
                 return 'Просрочено'
         else:
@@ -1011,18 +1028,18 @@ class RecruitmentMetrics(models.Model):
     )
     
     # === ВРЕМЕННЫЕ МЕТРИКИ ===
-    avg_time_to_fill = models.DecimalField(
+    avg_time_to_offer = models.DecimalField(
         max_digits=6,
         decimal_places=2,
         default=0,
-        verbose_name='Средний Time-to-Fill (дни)',
-        help_text='Среднее время от открытия до закрытия заявки'
+        verbose_name='Средний Time-to-Offer (дни)',
+        help_text='Среднее время от открытия до предложения кандидату'
     )
-    median_time_to_fill = models.DecimalField(
+    median_time_to_offer = models.DecimalField(
         max_digits=6,
         decimal_places=2,
         default=0,
-        verbose_name='Медианный Time-to-Fill (дни)'
+        verbose_name='Медианный Time-to-Offer (дни)'
     )
     avg_time_to_hire = models.DecimalField(
         max_digits=6,
@@ -1076,13 +1093,27 @@ class RecruitmentMetrics(models.Model):
         default=0,
         verbose_name='Закрыто заявок'
     )
+    active_requests = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Активные заявки',
+        help_text='Все заявки, которые не закрыты (in_progress + planned + cancelled)'
+    )
     in_progress_requests = models.PositiveIntegerField(
         default=0,
         verbose_name='В процессе'
     )
+    planned_requests = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Планируемые'
+    )
     cancelled_requests = models.PositiveIntegerField(
         default=0,
         verbose_name='Отменено'
+    )
+    critical_requests_count = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Критические',
+        help_text='Активные заявки, которые просрочены'
     )
     
     # Метаданные

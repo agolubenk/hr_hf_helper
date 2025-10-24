@@ -179,6 +179,13 @@ class Vacancy(models.Model):
         blank=True
     )
     
+    # Статус активности вакансии
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name='Активна',
+        help_text='Автоматически определяется на основе активных заявок на найм'
+    )
+    
     class Meta:
         verbose_name = 'Вакансия'
         verbose_name_plural = 'Вакансии'
@@ -196,6 +203,46 @@ class Vacancy(models.Model):
             raise ValidationError({
                 'recruiter': 'Выбранный пользователь не является рекрутером'
             })
+    
+    def update_activity_status(self):
+        """Обновляет статус активности вакансии на основе заявок на найм"""
+        from apps.hiring_plan.models import HiringRequest
+        from django.utils import timezone
+        
+        # Проверяем наличие активных заявок
+        today = timezone.now().date()
+        
+        # Активные заявки: планируется, в процессе
+        active_requests = HiringRequest.objects.filter(
+            vacancy=self,
+            status__in=['planned', 'in_progress']
+        ).exists()
+        
+        # Заявки в будущем (дата открытия в будущем)
+        future_requests = HiringRequest.objects.filter(
+            vacancy=self,
+            opening_date__gt=today
+        ).exists()
+        
+        # Вакансия активна, если есть активные заявки или заявки в будущем
+        new_status = active_requests or future_requests
+        
+        # Обновляем статус только если он изменился
+        if self.is_active != new_status:
+            self.is_active = new_status
+            self.save(update_fields=['is_active'])
+            return True  # Статус изменился
+        
+        return False  # Статус не изменился
+    
+    @classmethod
+    def update_all_activity_statuses(cls):
+        """Обновляет статус активности для всех вакансий"""
+        updated_count = 0
+        for vacancy in cls.objects.all():
+            if vacancy.update_activity_status():
+                updated_count += 1
+        return updated_count
     
     def save(self, *args, **kwargs):
         self.clean()

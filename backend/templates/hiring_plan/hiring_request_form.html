@@ -42,74 +42,86 @@
                                     </h6>
                                 </div>
                                 <div class="card-body">
+                                    {% if not object %}
+                                    <!-- Поля для создания заявки -->
                                     <div class="mb-3">
-                                        <label for="id_vacancy" class="form-label">Вакансия <span class="text-danger">*</span></label>
-                                        <select name="vacancy" id="id_vacancy" class="form-select" required>
-                                            <option value="">Выберите вакансию</option>
-                                            {% for vacancy in form.vacancy.field.queryset %}
-                                                <option value="{{ vacancy.pk }}" {% if form.vacancy.value == vacancy.pk %}selected{% endif %}>
-                                                    {{ vacancy.name }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
+                                        <label for="{{ form.vacancy.id_for_label }}" class="form-label">Вакансия <span class="text-danger">*</span></label>
+                                        {{ form.vacancy }}
                                         {% if form.vacancy.errors %}
                                             <div class="text-danger">{{ form.vacancy.errors.0 }}</div>
                                         {% endif %}
                                     </div>
                                     
                                     <div class="mb-3">
-                                        <label for="id_grade" class="form-label">Грейд <span class="text-danger">*</span></label>
-                                        <select name="grade" id="id_grade" class="form-select" required>
-                                            <option value="">Выберите грейд</option>
-                                            {% for grade in form.grade.field.queryset %}
-                                                <option value="{{ grade.pk }}" {% if form.grade.value == grade.pk %}selected{% endif %}>
-                                                    {{ grade.name }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
+                                        <label for="{{ form.grade.id_for_label }}" class="form-label">Грейд <span class="text-danger">*</span></label>
+                                        {{ form.grade }}
                                         {% if form.grade.errors %}
                                             <div class="text-danger">{{ form.grade.errors.0 }}</div>
                                         {% endif %}
                                     </div>
                                     
                                     <div class="mb-3">
-                                        <label for="id_project" class="form-label">Проект</label>
-                                        <input type="text" name="project" id="id_project" class="form-control" 
-                                               value="{{ form.project.value|default:'' }}">
+                                        <label for="{{ form.project.id_for_label }}" class="form-label">Проект</label>
+                                        {{ form.project }}
                                         {% if form.project.errors %}
                                             <div class="text-danger">{{ form.project.errors.0 }}</div>
                                         {% endif %}
                                     </div>
                                     
                                     <div class="mb-3">
-                                        <label for="id_priority" class="form-label">Приоритет <span class="text-danger">*</span></label>
-                                        <select name="priority" id="id_priority" class="form-select" required>
-                                            <option value="">Выберите приоритет</option>
-                                            {% for value, label in form.priority.field.choices %}
-                                                <option value="{{ value }}" {% if form.priority.value == value %}selected{% endif %}>
-                                                    {{ label }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
+                                        <label for="{{ form.priority.id_for_label }}" class="form-label">Приоритет <span class="text-danger">*</span></label>
+                                        {{ form.priority }}
                                         {% if form.priority.errors %}
                                             <div class="text-danger">{{ form.priority.errors.0 }}</div>
                                         {% endif %}
                                     </div>
                                     
                                     <div class="mb-3">
-                                        <label for="id_opening_reason" class="form-label">Причина открытия <span class="text-danger">*</span></label>
-                                        <select name="opening_reason" id="id_opening_reason" class="form-select" required>
-                                            <option value="">Выберите причину</option>
-                                            {% for value, label in form.opening_reason.field.choices %}
-                                                <option value="{{ value }}" {% if form.opening_reason.value == value %}selected{% endif %}>
-                                                    {{ label }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
+                                        <label for="{{ form.opening_reason.id_for_label }}" class="form-label">Причина открытия <span class="text-danger">*</span></label>
+                                        {{ form.opening_reason }}
                                         {% if form.opening_reason.errors %}
                                             <div class="text-danger">{{ form.opening_reason.errors.0 }}</div>
                                         {% endif %}
                                     </div>
+                                    {% else %}
+                                    <!-- Информация для редактирования заявки (только для чтения) -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Вакансия</label>
+                                        <div class="form-control-plaintext">
+                                            <strong>{{ object.vacancy.name }}</strong>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Грейд</label>
+                                        <div class="form-control-plaintext">
+                                            <strong>{{ object.grade.name }}</strong>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Проект</label>
+                                        <div class="form-control-plaintext">
+                                            {{ object.project|default:"-" }}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Приоритет</label>
+                                        <div class="form-control-plaintext">
+                                            <span class="badge bg-{% if object.priority == 1 %}danger{% elif object.priority == 2 %}warning{% elif object.priority == 3 %}info{% else %}secondary{% endif %}">
+                                                {{ object.get_priority_display }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Причина открытия</label>
+                                        <div class="form-control-plaintext">
+                                            {{ object.get_opening_reason_display }}
+                                        </div>
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -123,38 +135,47 @@
                                     </h6>
                                 </div>
                                 <div class="card-body">
+                                    {% if not object %}
                                     <div class="mb-3">
-                                        <label for="id_opening_date" class="form-label">Дата открытия <span class="text-danger">*</span></label>
-                                        <input type="date" name="opening_date" id="id_opening_date" class="form-control" 
-                                               value="{% if form.opening_date.value %}{{ form.opening_date.value|date:'Y-m-d' }}{% endif %}" required>
+                                        <label for="{{ form.opening_date.id_for_label }}" class="form-label">Дата открытия <span class="text-danger">*</span></label>
+                                        {{ form.opening_date }}
                                         {% if form.opening_date.errors %}
                                             <div class="text-danger">{{ form.opening_date.errors.0 }}</div>
                                         {% endif %}
                                     </div>
+                                    {% else %}
+                                    <div class="mb-3">
+                                        <label class="form-label">Дата открытия</label>
+                                        <div class="form-control-plaintext">
+                                            <strong>{{ object.opening_date|date:"d.m.Y" }}</strong>
+                                        </div>
+                                    </div>
+                                    {% endif %}
                                     
                                     <div class="mb-3">
-                                        <label for="id_deadline" class="form-label">Дедлайн <span class="text-danger">*</span></label>
-                                        <input type="date" name="deadline" id="id_deadline" class="form-control" 
-                                               value="{% if form.deadline.value %}{{ form.deadline.value|date:'Y-m-d' }}{% endif %}" required>
-                                        {% if form.deadline.errors %}
-                                            <div class="text-danger">{{ form.deadline.errors.0 }}</div>
-                                        {% endif %}
+                                        <label class="form-label">Дедлайн</label>
+                                        <div class="form-control-plaintext" id="calculated_deadline">
+                                            {% if object and object.deadline %}
+                                                <span class="text-success">
+                                                    <i class="fas fa-calendar-alt me-1"></i>
+                                                    {{ object.deadline|date:"d.m.Y" }}
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">Будет рассчитан автоматически на основе SLA</span>
+                                            {% endif %}
+                                        </div>
                                         <div class="form-text">Автоматически рассчитывается из SLA при выборе вакансии и грейда</div>
                                     </div>
                                     
                                     {% if object %}
                                     <div class="mb-3">
-                                        <label for="id_status" class="form-label">Статус</label>
-                                        <select name="status" id="id_status" class="form-select">
-                                            {% for value, label in form.status.field.choices %}
-                                                <option value="{{ value }}" {% if form.status.value == value %}selected{% endif %}>
-                                                    {{ label }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
-                                        {% if form.status.errors %}
-                                            <div class="text-danger">{{ form.status.errors.0 }}</div>
-                                        {% endif %}
+                                        <label class="form-label">Статус</label>
+                                        <div class="form-control-plaintext">
+                                            <span class="badge bg-{% if object.status == 'planned' %}info{% elif object.status == 'in_progress' %}warning{% elif object.status == 'closed' %}success{% else %}secondary{% endif %}">
+                                                {{ object.get_status_display }}
+                                            </span>
+                                        </div>
+                                        <div class="form-text">Статус определяется автоматически на основе дат и данных кандидата</div>
                                     </div>
                                     
                                     <div class="mb-3">
@@ -184,9 +205,8 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="mb-3">
-                                        <label for="id_candidate_id" class="form-label">ID кандидата</label>
-                                        <input type="text" name="candidate_id" id="id_candidate_id" class="form-control" 
-                                               value="{{ form.candidate_id.value|default:'' }}">
+                                        <label for="{{ form.candidate_id.id_for_label }}" class="form-label">ID кандидата</label>
+                                        {{ form.candidate_id }}
                                         {% if form.candidate_id.errors %}
                                             <div class="text-danger">{{ form.candidate_id.errors.0 }}</div>
                                         {% endif %}
@@ -194,11 +214,18 @@
                                     </div>
                                     
                                     <div class="mb-3">
-                                        <label for="id_candidate_name" class="form-label">Имя кандидата</label>
-                                        <input type="text" name="candidate_name" id="id_candidate_name" class="form-control" 
-                                               value="{{ form.candidate_name.value|default:'' }}">
+                                        <label for="{{ form.candidate_name.id_for_label }}" class="form-label">Имя кандидата</label>
+                                        {{ form.candidate_name }}
                                         {% if form.candidate_name.errors %}
                                             <div class="text-danger">{{ form.candidate_name.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="{{ form.closed_date.id_for_label }}" class="form-label">Дата закрытия</label>
+                                        {{ form.closed_date }}
+                                        {% if form.closed_date.errors %}
+                                            <div class="text-danger">{{ form.closed_date.errors.0 }}</div>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -219,8 +246,8 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="mb-3">
-                                        <label for="id_notes" class="form-label">Заметки</label>
-                                        <textarea name="notes" id="id_notes" class="form-control" rows="4">{{ form.notes.value|default:'' }}</textarea>
+                                        <label for="{{ form.notes.id_for_label }}" class="form-label">Заметки</label>
+                                        {{ form.notes }}
                                         {% if form.notes.errors %}
                                             <div class="text-danger">{{ form.notes.errors.0 }}</div>
                                         {% endif %}
@@ -249,22 +276,37 @@
 </div>
 
 <script>
-// Автоматическое заполнение дедлайна при выборе вакансии и грейда
+// Автоматическое отображение дедлайна при выборе вакансии и грейда
 document.getElementById('id_vacancy').addEventListener('change', updateDeadline);
 document.getElementById('id_grade').addEventListener('change', updateDeadline);
+document.getElementById('id_opening_date').addEventListener('change', updateDeadline);
 
 function updateDeadline() {
     const vacancyId = document.getElementById('id_vacancy').value;
     const gradeId = document.getElementById('id_grade').value;
     const openingDate = document.getElementById('id_opening_date').value;
+    const deadlineElement = document.getElementById('calculated_deadline');
     
     if (vacancyId && gradeId && openingDate) {
-        // Здесь можно добавить AJAX запрос для получения SLA
-        // Пока просто добавляем 30 дней к дате открытия
+        // Пока просто добавляем 30 дней к дате открытия (по умолчанию)
         const date = new Date(openingDate);
         date.setDate(date.getDate() + 30);
-        document.getElementById('id_deadline').value = date.toISOString().split('T')[0];
+        const deadlineDate = date.toISOString().split('T')[0];
+        
+        deadlineElement.innerHTML = `
+            <span class="text-success">
+                <i class="fas fa-calendar-alt me-1"></i>
+                ${deadlineDate} (30 дней по умолчанию)
+            </span>
+        `;
+    } else {
+        deadlineElement.innerHTML = '<span class="text-muted">Будет рассчитан автоматически на основе SLA</span>';
     }
 }
+
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    updateDeadline();
+});
 </script>
 {% endblock %}

@@ -291,7 +291,7 @@ HiringPlanAdmin.inlines = [HiringPlanPositionInline, PositionKPIOKRInline]
 
 @admin.register(VacancySLA)
 class VacancySLAAdmin(admin.ModelAdmin):
-    list_display = ['vacancy', 'grade', 'time_to_fill', 'time_to_hire', 'is_active', 'created_at']
+    list_display = ['vacancy', 'grade', 'time_to_offer', 'time_to_hire', 'is_active', 'created_at']
     list_filter = ['vacancy', 'grade', 'is_active']
     search_fields = ['vacancy__name', 'grade__name']
     ordering = ['vacancy__name', 'grade__name']
@@ -301,7 +301,7 @@ class VacancySLAAdmin(admin.ModelAdmin):
             'fields': ('vacancy', 'grade')
         }),
         ('Целевые показатели', {
-            'fields': ('time_to_fill', 'time_to_hire')
+            'fields': ('time_to_offer', 'time_to_hire')
         }),
         ('Настройки', {
             'fields': ('is_active',)
@@ -314,7 +314,7 @@ class VacancySLAAdmin(admin.ModelAdmin):
 
 @admin.register(HiringRequest)
 class HiringRequestAdmin(admin.ModelAdmin):
-    list_display = ['vacancy', 'grade', 'project', 'status', 'priority', 'opening_date', 'deadline', 'sla_status_display', 'days_in_progress']
+    list_display = ['vacancy', 'grade', 'project', 'status', 'priority', 'opening_date', 'sla_status_display', 'days_in_progress']
     list_filter = ['status', 'priority', 'opening_reason', 'grade', 'vacancy', 'opening_date']
     search_fields = ['vacancy__name', 'candidate_name', 'candidate_id', 'notes', 'project']
     readonly_fields = ['sla_status_display', 'sla_compliance', 'days_in_progress', 'is_overdue', 'created_at', 'updated_at']
@@ -325,7 +325,7 @@ class HiringRequestAdmin(admin.ModelAdmin):
             'fields': ('vacancy', 'grade', 'project', 'priority', 'opening_reason')
         }),
         ('Статус и даты', {
-            'fields': ('status', 'opening_date', 'deadline', 'closed_date', 'sla_status_display', 'sla_compliance', 'days_in_progress', 'is_overdue')
+            'fields': ('status', 'opening_date', 'closed_date', 'sla_status_display', 'sla_compliance', 'days_in_progress', 'is_overdue')
         }),
         ('SLA', {
             'fields': ('sla',),
@@ -367,7 +367,7 @@ class HiringRequestAdmin(admin.ModelAdmin):
 
 @admin.register(RecruitmentMetrics)
 class RecruitmentMetricsAdmin(admin.ModelAdmin):
-    list_display = ['period_type', 'period_start', 'period_end', 'vacancy', 'grade', 'avg_time_to_fill', 'sla_compliance_rate', 'calculated_at']
+    list_display = ['period_type', 'period_start', 'period_end', 'vacancy', 'grade', 'avg_time_to_offer', 'sla_compliance_rate', 'calculated_at']
     list_filter = ['period_type', 'period_start', 'vacancy', 'grade']
     search_fields = ['vacancy__name', 'grade__name', 'project']
     readonly_fields = ['calculated_at']
@@ -382,7 +382,7 @@ class RecruitmentMetricsAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Временные метрики', {
-            'fields': ('avg_time_to_fill', 'median_time_to_fill', 'avg_time_to_hire')
+            'fields': ('avg_time_to_offer', 'median_time_to_offer', 'avg_time_to_hire')
         }),
         ('Скорость найма', {
             'fields': ('hires_count', 'hiring_velocity_weekly')
