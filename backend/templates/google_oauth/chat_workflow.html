@@ -2257,6 +2257,9 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                 startHour: {{ user.interview_start_time.hour|default:11 }},
                 endHour: {{ user.interview_end_time.hour|default:18 }}
             };
+            
+            // Время между встречами пользователя (в минутах)
+            window.userMeetingInterval = {{ user.meeting_interval_minutes|default:15 }};
             </script>
             
             <script>

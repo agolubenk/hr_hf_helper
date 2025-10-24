@@ -215,22 +215,19 @@ function showNotification(message, type = 'info') {
 
 // Функции для генерации слотов (адаптированы из calendar_events.html)
 function calculateAvailableSlots(dayEvents, date) {
-    // Определяем рабочие часы: 11:00-18:00 (7 часов)
-    const workStartHour = 11;
-    const workEndHour = 18;
+    // Определяем рабочие часы из настроек пользователя или используем значения по умолчанию
+    const workStartHour = window.userWorkHours ? window.userWorkHours.startHour : 11;
+    const workEndHour = window.userWorkHours ? window.userWorkHours.endHour : 18;
     
-    // Создаем массив слотов по часам
-    const slots = [];
-    for (let hour = workStartHour; hour < workEndHour; hour++) {
-        slots.push({
-            hour: hour,
-            start: new Date(date.getFullYear(), date.getMonth(), date.getDate(), hour, 0, 0),
-            end: new Date(date.getFullYear(), date.getMonth(), date.getDate(), hour + 1, 0, 0),
-            isOccupied: false
-        });
-    }
+    // Получаем время между встречами из настроек пользователя (в минутах)
+    const meetingIntervalMinutes = window.userMeetingInterval || 15; // По умолчанию 15 минут
     
-    // Проверяем каждое событие дня и отмечаем занятые слоты
+    console.log(`🕐 Рабочие часы: ${workStartHour}:00 - ${workEndHour}:00`);
+    console.log(`⏱️ Время между встречами: ${meetingIntervalMinutes} минут`);
+    
+    // Создаем массив занятых интервалов с учетом времени между встречами
+    const occupiedIntervals = [];
+    
     dayEvents.forEach(event => {
         // Пропускаем события на весь день
         if (event.is_all_day) {
@@ -240,63 +237,101 @@ function calculateAvailableSlots(dayEvents, date) {
         const eventStart = new Date(event.start);
         const eventEnd = new Date(event.end);
         
-        // Проверяем, пересекается ли событие с рабочими часами
-        if (eventStart.getHours() < workEndHour && eventEnd.getHours() >= workStartHour) {
-            // Отмечаем занятые слоты
-            slots.forEach(slot => {
-                // Если событие занимает хотя бы полчаса в слоте, считаем слот занятым
-                const slotStart = slot.start.getTime();
-                const slotEnd = slot.end.getTime();
-                const eventStartTime = eventStart.getTime();
-                const eventEndTime = eventEnd.getTime();
-                
-                // Проверяем пересечение (событие занимает минимум 30 минут в слоте)
-                const overlapStart = Math.max(slotStart, eventStartTime);
-                const overlapEnd = Math.min(slotEnd, eventEndTime);
-                const overlapDuration = overlapEnd - overlapStart;
-                
-                if (overlapDuration >= 30 * 60 * 1000) { // 30 минут в миллисекундах
-                    slot.isOccupied = true;
-                }
+        // Расширяем интервал события на время между встречами
+        const extendedStart = new Date(eventStart.getTime() - meetingIntervalMinutes * 60 * 1000);
+        const extendedEnd = new Date(eventEnd.getTime() + meetingIntervalMinutes * 60 * 1000);
+        
+        // Проверяем, пересекается ли расширенный интервал с рабочими часами
+        const workStart = new Date(date.getFullYear(), date.getMonth(), date.getDate(), workStartHour, 0, 0);
+        const workEnd = new Date(date.getFullYear(), date.getMonth(), date.getDate(), workEndHour, 0, 0);
+        
+        if (extendedStart < workEnd && extendedEnd > workStart) {
+            // Ограничиваем интервал рабочими часами
+            const intervalStart = new Date(Math.max(extendedStart.getTime(), workStart.getTime()));
+            const intervalEnd = new Date(Math.min(extendedEnd.getTime(), workEnd.getTime()));
+            
+            occupiedIntervals.push({
+                start: intervalStart,
+                end: intervalEnd
             });
+            
+            console.log(`🚫 Занятый интервал: ${formatTime(intervalStart)} - ${formatTime(intervalEnd)} (событие: ${formatTime(eventStart)} - ${formatTime(eventEnd)})`);
         }
     });
+    
+    // Сортируем занятые интервалы по времени начала
+    occupiedIntervals.sort((a, b) => a.start.getTime() - b.start.getTime());
+    
+    // Объединяем пересекающиеся интервалы
+    const mergedIntervals = [];
+    occupiedIntervals.forEach(interval => {
+        if (mergedIntervals.length === 0) {
+            mergedIntervals.push(interval);
+        } else {
+            const lastInterval = mergedIntervals[mergedIntervals.length - 1];
+            if (interval.start <= lastInterval.end) {
+                // Интервалы пересекаются, объединяем их
+                lastInterval.end = new Date(Math.max(lastInterval.end.getTime(), interval.end.getTime()));
+            } else {
+                // Интервалы не пересекаются, добавляем новый
+                mergedIntervals.push(interval);
+            }
+        }
+    });
+    
+    // Формируем свободные интервалы
+    const freeIntervals = [];
+    let currentTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), workStartHour, 0, 0);
+    
+    mergedIntervals.forEach(interval => {
+        if (currentTime < interval.start) {
+            // Есть свободный интервал перед занятым
+            freeIntervals.push({
+                start: new Date(currentTime),
+                end: new Date(interval.start)
+            });
+        }
+        currentTime = new Date(Math.max(currentTime.getTime(), interval.end.getTime()));
+    });
+    
+    // Проверяем, есть ли свободное время после последнего занятого интервала
+    const workEnd = new Date(date.getFullYear(), date.getMonth(), date.getDate(), workEndHour, 0, 0);
+    if (currentTime < workEnd) {
+        freeIntervals.push({
+            start: new Date(currentTime),
+            end: new Date(workEnd)
+        });
+    }
     
     // Формируем строку доступных слотов
     const availableRanges = [];
-    let currentRangeStart = null;
-    
-    slots.forEach((slot, index) => {
-        if (!slot.isOccupied) {
-            if (currentRangeStart === null) {
-                currentRangeStart = slot.hour;
+    freeIntervals.forEach(interval => {
+        const duration = interval.end.getTime() - interval.start.getTime();
+        const durationMinutes = Math.floor(duration / (60 * 1000));
+        
+        // Показываем интервал только если он длится больше 15 минут
+        if (durationMinutes >= 15) {
+            const startTime = formatTime(interval.start);
+            const endTime = formatTime(interval.end);
+            
+            if (startTime === endTime) {
+                availableRanges.push(startTime);
+            } else {
+                availableRanges.push(`${startTime}-${endTime}`);
             }
-        } else {
-            if (currentRangeStart !== null) {
-                // Завершаем текущий диапазон
-                if (currentRangeStart === slot.hour - 1) {
-                    availableRanges.push(currentRangeStart.toString());
-                } else {
-                    // Добавляем +1 к последнему часу диапазона, так как слот означает время до следующего часа
-                    availableRanges.push(`${currentRangeStart}-${slot.hour}`);
-                }
-                currentRangeStart = null;
-            }
+            
+            console.log(`✅ Свободный интервал: ${startTime} - ${endTime} (${durationMinutes} мин)`);
         }
     });
     
-    // Завершаем последний диапазон, если он есть
-    if (currentRangeStart !== null) {
-        const lastSlot = slots[slots.length - 1];
-        if (currentRangeStart === lastSlot.hour) {
-            availableRanges.push(currentRangeStart.toString());
-        } else {
-            // Добавляем +1 к последнему часу, так как слот 17 означает время 17:00-18:00
-            availableRanges.push(`${currentRangeStart}-${lastSlot.hour + 1}`);
-        }
-    }
-    
     return availableRanges.length > 0 ? availableRanges.join(', ') : 'Нет свободных слотов';
+}
+
+// Вспомогательная функция для форматирования времени
+function formatTime(date) {
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    return `${hours}.${minutes.toString().padStart(2, '0')}`;
 }
 
 function generateWeekSlots(weekOffset) {
@@ -369,7 +404,9 @@ function generateWeekSlots(weekOffset) {
         } else {
             console.log(`⚠️ calendarEvents не доступен для даты ${dateStr}`);
             // Если нет данных о событиях, показываем все слоты как доступные
-            availableSlots = '11-18';
+            const defaultStart = window.userWorkHours ? window.userWorkHours.startHour : 11;
+            const defaultEnd = window.userWorkHours ? window.userWorkHours.endHour : 18;
+            availableSlots = `${defaultStart}-${defaultEnd}`;
         }
         
         slots.push({
