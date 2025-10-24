@@ -43,6 +43,23 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
+                                <label for="{{ form.position_type.id_for_label }}" class="form-label">
+                                    <i class="fas fa-tag me-2"></i>
+                                    {{ form.position_type.label }}
+                                </label>
+                                {{ form.position_type }}
+                                {% if form.position_type.help_text %}
+                                    <div class="form-text">{{ form.position_type.help_text }}</div>
+                                {% endif %}
+                                {% if form.position_type.errors %}
+                                    <div class="text-danger">{{ form.position_type.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="mb-3">
                                 <label for="{{ form.project.id_for_label }}" class="form-label">
                                     <i class="fas fa-project-diagram me-2"></i>
                                     {{ form.project.label }}
@@ -53,6 +70,21 @@
                                 {% endif %}
                                 {% if form.project.errors %}
                                     <div class="text-danger">{{ form.project.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.priority.id_for_label }}" class="form-label">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    {{ form.priority.label }}
+                                </label>
+                                {{ form.priority }}
+                                {% if form.priority.help_text %}
+                                    <div class="form-text">{{ form.priority.help_text }}</div>
+                                {% endif %}
+                                {% if form.priority.errors %}
+                                    <div class="text-danger">{{ form.priority.errors }}</div>
                                 {% endif %}
                             </div>
                         </div>
@@ -114,28 +146,13 @@
                         </div>
                     </div>
 
-                    <!-- Блок 3: Приоритет и дедлайн -->
+                    <!-- Блок 3: Дедлайн -->
                     <div class="row mb-4">
                         <div class="col-12">
                             <h6 class="text-primary mb-3">
-                                <i class="fas fa-exclamation-triangle me-1"></i>
-                                Приоритет и дедлайн
+                                <i class="fas fa-calendar-alt me-1"></i>
+                                Дедлайн
                             </h6>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="{{ form.priority.id_for_label }}" class="form-label">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>
-                                    {{ form.priority.label }}
-                                </label>
-                                {{ form.priority }}
-                                {% if form.priority.help_text %}
-                                    <div class="form-text">{{ form.priority.help_text }}</div>
-                                {% endif %}
-                                {% if form.priority.errors %}
-                                    <div class="text-danger">{{ form.priority.errors }}</div>
-                                {% endif %}
-                            </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
@@ -154,7 +171,47 @@
                         </div>
                     </div>
 
-                    <!-- Блок 4: Грейды -->
+                    <!-- Блок 4: Замена сотрудника -->
+                    <div class="row mb-4" id="replacement-fields" style="display: none;">
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-exchange-alt me-1"></i>
+                                Информация о замене
+                            </h6>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.replacement_reason.id_for_label }}" class="form-label">
+                                    <i class="fas fa-comment me-2"></i>
+                                    {{ form.replacement_reason.label }}
+                                </label>
+                                {{ form.replacement_reason }}
+                                {% if form.replacement_reason.help_text %}
+                                    <div class="form-text">{{ form.replacement_reason.help_text }}</div>
+                                {% endif %}
+                                {% if form.replacement_reason.errors %}
+                                    <div class="text-danger">{{ form.replacement_reason.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.replaced_employee_id.id_for_label }}" class="form-label">
+                                    <i class="fas fa-user-minus me-2"></i>
+                                    {{ form.replaced_employee_id.label }}
+                                </label>
+                                {{ form.replaced_employee_id }}
+                                {% if form.replaced_employee_id.help_text %}
+                                    <div class="form-text">{{ form.replaced_employee_id.help_text }}</div>
+                                {% endif %}
+                                {% if form.replaced_employee_id.errors %}
+                                    <div class="text-danger">{{ form.replaced_employee_id.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Блок 5: Грейды -->
                     <div class="row mb-4">
                         <div class="col-12">
                             <h6 class="text-primary mb-3">
@@ -165,7 +222,7 @@
                         <div class="col-12">
                             <div class="row">
                                 {% for choice in form.grades %}
-                                <div class="col-md-3 col-sm-4 col-6">
+                                <div class="col-md-3 col-sm-4 col-6 mb-2">
                                     <div class="form-check">
                                         {{ choice.tag }}
                                         <label class="form-check-label" for="{{ choice.id_for_label }}">
@@ -175,13 +232,46 @@
                                 </div>
                                 {% endfor %}
                             </div>
+                            {% if form.grades.help_text %}
+                                <div class="form-text">{{ form.grades.help_text }}</div>
+                            {% endif %}
                             {% if form.grades.errors %}
                                 <div class="text-danger">{{ form.grades.errors }}</div>
                             {% endif %}
                         </div>
                     </div>
 
-                    <!-- Блок 5: Дополнительная информация -->
+                    <!-- Блок 6: KPI/OKR блоки -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-cubes me-1"></i>
+                                {{ form.applied_kpi_okr_blocks.label }}
+                            </h6>
+                        </div>
+                        <div class="col-12">
+                            <div class="row">
+                                {% for choice in form.applied_kpi_okr_blocks %}
+                                <div class="col-md-6 col-sm-12 mb-2">
+                                    <div class="form-check">
+                                        {{ choice.tag }}
+                                        <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                            {{ choice.choice_label }}
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% if form.applied_kpi_okr_blocks.help_text %}
+                                <div class="form-text">{{ form.applied_kpi_okr_blocks.help_text }}</div>
+                            {% endif %}
+                            {% if form.applied_kpi_okr_blocks.errors %}
+                                <div class="text-danger">{{ form.applied_kpi_okr_blocks.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Блок 7: Дополнительная информация -->
                     <div class="row mb-4">
                         <div class="col-12">
                             <h6 class="text-primary mb-3">
@@ -221,7 +311,7 @@
                         </div>
                     </div>
 
-                    <!-- Блок 6: Статус -->
+                    <!-- Блок 8: Статус -->
                     <div class="row mb-4">
                         <div class="col-12">
                             <h6 class="text-primary mb-3">
@@ -254,7 +344,7 @@
                     <!-- Кнопки -->
                     <div class="d-flex justify-content-between align-items-center pt-3 border-top">
                         <div>
-                            <a href="{% url 'hiring_plan:plan_detail' hiring_plan.pk %}" class="btn btn-outline-secondary btn-lg">
+                            <a href="{% url 'hiring_plan:plan_detail' plan.pk %}" class="btn btn-outline-secondary btn-lg">
                                 <i class="fas fa-arrow-left me-2"></i>Назад к плану
                             </a>
                         </div>
@@ -274,8 +364,36 @@
 
 {% block extra_js %}
 <script>
+// Управление полями замены
 document.addEventListener('DOMContentLoaded', function() {
-    // Валидация количества
+    const positionTypeSelect = document.getElementById('{{ form.position_type.id_for_label }}');
+    const replacementFields = document.getElementById('replacement-fields');
+    
+    function toggleReplacementFields() {
+        if (positionTypeSelect.value) {
+            // Получаем выбранный option
+            const selectedOption = positionTypeSelect.options[positionTypeSelect.selectedIndex];
+            const positionType = selectedOption.textContent.toLowerCase();
+            
+            if (positionType.includes('замена')) {
+                replacementFields.style.display = 'block';
+            } else {
+                replacementFields.style.display = 'none';
+            }
+        } else {
+            replacementFields.style.display = 'none';
+        }
+    }
+    
+    // Инициализация
+    toggleReplacementFields();
+    
+    // Обработчик изменения типа позиции
+    positionTypeSelect.addEventListener('change', toggleReplacementFields);
+});
+
+// Валидация количества
+document.addEventListener('DOMContentLoaded', function() {
     const neededInput = document.getElementById('{{ form.headcount_needed.id_for_label }}');
     const hiredInput = document.getElementById('{{ form.headcount_hired.id_for_label }}');
     const inProgressInput = document.getElementById('{{ form.headcount_in_progress.id_for_label }}');

@@ -14,15 +14,21 @@
                         <i class="fas fa-clipboard-list me-2"></i>
                         {{ plan.title }}
                     </h5>
-                    <div>
+                    <div class="btn-group" role="group">
                         <a href="{% url 'hiring_plan:plan_update' plan.pk %}" class="btn btn-primary">
                             <i class="fas fa-edit me-2"></i>Редактировать
                         </a>
                         <a href="{% url 'hiring_plan:plan_dashboard' plan.pk %}" class="btn btn-outline-info">
                             <i class="fas fa-chart-bar me-2"></i>Метрики
                         </a>
+                        <a href="{% url 'hiring_plan:plan_sla_compliance' plan.pk %}" class="btn btn-outline-warning">
+                            <i class="fas fa-clock me-2"></i>SLA
+                        </a>
+                        <a href="{% url 'hiring_plan:plan_kpi_okr' plan.pk %}" class="btn btn-outline-success">
+                            <i class="fas fa-target me-2"></i>KPI/OKR
+                        </a>
                         <a href="{% url 'hiring_plan:plan_list' %}" class="btn btn-outline-secondary">
-                            <i class="fas fa-arrow-left me-2"></i>Назад к списку
+                            <i class="fas fa-arrow-left me-2"></i>Назад
                         </a>
                     </div>
                 </div>

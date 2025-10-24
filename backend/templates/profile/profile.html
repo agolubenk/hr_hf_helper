@@ -61,6 +61,13 @@
                         </td>
                     </tr>
                     <tr>
+                        <td><strong>Время между встречами:</strong></td>
+                        <td>
+                            <i class="fas fa-stopwatch me-1"></i>
+                            {{ user.get_meeting_interval_display }}
+                        </td>
+                    </tr>
+                    <tr>
                         <td><strong>Активная среда:</strong></td>
                         <td>
                             <span class="status-badge {% if user.active_system == 'prod' %}status-active{% else %}status-inactive{% endif %}">

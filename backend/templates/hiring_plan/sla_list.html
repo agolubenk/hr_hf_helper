@@ -1,0 +1,164 @@
+{% extends 'common/base.html' %}
+
+{% block title %}SLA позиций - HR Helper{% endblock %}
+{% block page_title %}SLA позиций{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- Заголовок страницы -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h3 mb-0">
+                    <i class="fas fa-clock text-primary me-2"></i>
+                    SLA позиций
+                </h1>
+                <p class="text-muted mb-0">Управление Service Level Agreement для типов позиций</p>
+            </div>
+            <a href="{% url 'hiring_plan:sla_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Создать SLA
+            </a>
+        </div>
+
+        <!-- Фильтры -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="position_type" class="form-label">Тип позиции</label>
+                        <select name="position_type" id="position_type" class="form-control">
+                            <option value="">Все типы</option>
+                            <!-- Здесь можно добавить фильтр по типам позиций -->
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="grade" class="form-label">Грейд</label>
+                        <select name="grade" id="grade" class="form-control">
+                            <option value="">Все грейды</option>
+                            <!-- Здесь можно добавить фильтр по грейдам -->
+                        </select>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-outline-primary me-2">
+                            <i class="fas fa-filter me-1"></i>Фильтровать
+                        </button>
+                        <a href="{% url 'hiring_plan:sla_list' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-1"></i>Сбросить
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Список SLA -->
+        <div class="card">
+            <div class="card-body">
+                {% if sla_list %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Тип позиции</th>
+                                    <th>Грейд</th>
+                                    <th>Time-to-Fill</th>
+                                    <th>Time-to-Hire</th>
+                                    <th>Медианное время</th>
+                                    <th>Пороги</th>
+                                    <th>Статус</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sla in sla_list %}
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-info">{{ sla.position_type.name }}</span>
+                                    </td>
+                                    <td>
+                                        {% if sla.grade %}
+                                            <span class="badge bg-secondary">{{ sla.grade.name }}</span>
+                                        {% else %}
+                                            <span class="text-muted">Все грейды</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <strong>{{ sla.target_time_to_fill }}</strong> дней
+                                    </td>
+                                    <td>
+                                        {{ sla.target_time_to_hire }} дней
+                                    </td>
+                                    <td>
+                                        {{ sla.median_time_to_fill }} дней
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            Предупреждение: {{ sla.warning_time }} дней<br>
+                                            Критично: {{ sla.critical_time }} дней
+                                        </small>
+                                    </td>
+                                    <td>
+                                        {% if sla.is_active %}
+                                            <span class="badge bg-success">Активен</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Неактивен</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'hiring_plan:sla_update' sla.pk %}" 
+                                               class="btn btn-outline-primary" title="Редактировать">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Пагинация -->
+                    {% if is_paginated %}
+                        <nav aria-label="Пагинация SLA">
+                            <ul class="pagination justify-content-center">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=1">Первая</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
+                                    </li>
+                                {% endif %}
+                                
+                                <li class="page-item active">
+                                    <span class="page-link">
+                                        Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+                                    </span>
+                                </li>
+                                
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Следующая</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Последняя</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-clock fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">SLA не найдены</h5>
+                        <p class="text-muted">Создайте первый SLA для типов позиций</p>
+                        <a href="{% url 'hiring_plan:sla_create' %}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Создать SLA
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
