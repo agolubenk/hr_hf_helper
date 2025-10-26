@@ -224,6 +224,22 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+/* Стили для изображения аватара */
+.avatar-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Убираем фон и цвет для аватара с изображением */
+.message-avatar:has(.avatar-image) {
+    background: none !important;
+    color: inherit !important;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
 .message-bubble {
     max-width: 70%;
     padding: 16px 20px;
@@ -394,6 +410,13 @@
         width: 32px;
         height: 32px;
         font-size: 14px;
+    }
+    
+    .avatar-image {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
     }
     
     .message-bubble {

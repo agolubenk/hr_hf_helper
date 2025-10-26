@@ -99,7 +99,11 @@
                     <div class="message {% if message.role == 'user' %}user-message{% else %}system-message{% endif %}">
                         <div class="message-avatar">
                             {% if message.role == 'user' %}
-                                <i class="fas fa-user"></i>
+                                {% if user_photo_url %}
+                                    <img src="{{ user_photo_url }}" alt="Фото пользователя" class="avatar-image">
+                                {% else %}
+                                    <i class="fas fa-user"></i>
+                                {% endif %}
                             {% else %}
                                 <i class="fas fa-robot"></i>
                             {% endif %}
@@ -248,7 +252,11 @@ document.addEventListener('DOMContentLoaded', function() {
         avatarDiv.className = 'message-avatar';
         
         if (role === 'user') {
-            avatarDiv.innerHTML = '<i class="fas fa-user"></i>';
+            {% if user_photo_url %}
+                avatarDiv.innerHTML = '<img src="{{ user_photo_url }}" alt="Фото пользователя" class="avatar-image">';
+            {% else %}
+                avatarDiv.innerHTML = '<i class="fas fa-user"></i>';
+            {% endif %}
         } else {
             avatarDiv.innerHTML = '<i class="fas fa-robot"></i>';
         }

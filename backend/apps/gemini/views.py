@@ -142,6 +142,7 @@ def chat_session(request, session_id=None):
             'messages': messages_list,
             'all_sessions': all_sessions,
             'api_key_configured': True,
+            'user_photo_url': request.user.get_profile_photo_url(),
         }
         
         logger.info("Рендерим шаблон chat.html")
