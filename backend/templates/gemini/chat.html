@@ -7,6 +7,10 @@
 {% block page_actions %}
 {% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/enhanced_chat.css' %}">
+{% endblock %}
+
 {% block content %}
 <style>
 /* Принудительное обновление стилей чата */
@@ -93,13 +97,18 @@
             <div class="card-body chat-messages" id="chat-messages">
                 {% for message in messages %}
                     <div class="message {% if message.role == 'user' %}user-message{% else %}system-message{% endif %}">
+                        <div class="message-avatar">
+                            {% if message.role == 'user' %}
+                                <i class="fas fa-user"></i>
+                            {% else %}
+                                <i class="fas fa-robot"></i>
+                            {% endif %}
+                        </div>
                         <div class="message-bubble {% if message.role == 'user' %}user-bubble{% else %}system-bubble{% endif %}">
                             <div class="message-header">
                                 {% if message.role == 'user' %}
-                                    <i class="fas fa-user"></i>
                                     <strong>Вы</strong>
                                 {% else %}
-                                    <i class="fas fa-robot"></i>
                                     <strong>Gemini AI</strong>
                                 {% endif %}
                                 <small>{{ message.created_at|date:"H:i" }}</small>
@@ -128,9 +137,11 @@
                 
                 <div class="typing-indicator" id="typing-indicator" style="display: none;">
                     <div class="message system-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
                         <div class="message-bubble system-bubble">
                             <div class="message-header">
-                                <i class="fas fa-robot"></i>
                                 <strong>Gemini AI</strong>
                             </div>
                             <div class="message-content">
@@ -232,6 +243,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${role === 'user' ? 'user-message' : 'system-message'}`;
         
+        // Создаем аватар
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'message-avatar';
+        
+        if (role === 'user') {
+            avatarDiv.innerHTML = '<i class="fas fa-user"></i>';
+        } else {
+            avatarDiv.innerHTML = '<i class="fas fa-robot"></i>';
+        }
+        
         const bubbleDiv = document.createElement('div');
         bubbleDiv.className = `message-bubble ${role === 'user' ? 'user-bubble' : 'system-bubble'}`;
         
@@ -241,9 +262,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
         
         if (role === 'user') {
-            headerDiv.innerHTML = '<i class="fas fa-user"></i><strong>Вы</strong><small>' + timeStr + '</small>';
+            headerDiv.innerHTML = '<strong>Вы</strong><small>' + timeStr + '</small>';
         } else {
-            headerDiv.innerHTML = '<i class="fas fa-robot"></i><strong>Gemini AI</strong><small>' + timeStr + '</small>';
+            headerDiv.innerHTML = '<strong>Gemini AI</strong><small>' + timeStr + '</small>';
         }
         
         const contentDiv = document.createElement('div');
@@ -252,6 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         bubbleDiv.appendChild(headerDiv);
         bubbleDiv.appendChild(contentDiv);
+        messageDiv.appendChild(avatarDiv);
         messageDiv.appendChild(bubbleDiv);
         
         chatMessages.insertBefore(messageDiv, typingIndicator);

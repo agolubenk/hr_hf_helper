@@ -1,0 +1,476 @@
+/**
+ * Стили для улучшенного AJAX чата с индикаторами состояния
+ */
+
+/* Анимации для индикаторов обработки */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Стили для сообщений обработки */
+.processing-message {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.processing-text {
+    font-style: italic;
+    color: #6c757d;
+    animation: pulse 2s infinite;
+}
+
+.processing-dots {
+    display: flex;
+    gap: 4px;
+}
+
+.processing-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #007bff;
+    animation: bounce 1.4s infinite ease-in-out;
+}
+
+.processing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.processing-dots span:nth-child(2) { animation-delay: -0.16s; }
+.processing-dots span:nth-child(3) { animation-delay: 0s; }
+
+/* Стили для последовательности действий */
+.processing-sequence {
+    padding: 15px 0;
+}
+
+.action-sequence {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.action-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    border-left: 4px solid #dee2e6;
+    transition: all 0.3s ease;
+    opacity: 0.6;
+}
+
+.action-step.active {
+    background-color: #e3f2fd;
+    border-left-color: #2196f3;
+    opacity: 1;
+    animation: pulse 2s infinite;
+}
+
+.action-step.completed {
+    background-color: #e8f5e8;
+    border-left-color: #4caf50;
+    opacity: 1;
+}
+
+.action-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border: 2px solid #dee2e6;
+    transition: all 0.3s ease;
+}
+
+.action-step.active .action-icon {
+    border-color: #2196f3;
+    background-color: #e3f2fd;
+}
+
+.action-step.completed .action-icon {
+    border-color: #4caf50;
+    background-color: #e8f5e8;
+}
+
+.action-icon i {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.action-step.active .action-icon i {
+    color: #2196f3;
+}
+
+.action-step.completed .action-icon i {
+    color: #4caf50;
+}
+
+.action-text {
+    flex: 1;
+    font-weight: 500;
+    color: #495057;
+}
+
+.action-step.active .action-text {
+    color: #1976d2;
+}
+
+.action-step.completed .action-text {
+    color: #2e7d32;
+}
+
+.action-status {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-status i {
+    font-size: 12px;
+}
+
+.action-step.active .action-status i {
+    color: #2196f3;
+    animation: spin 1s linear infinite;
+}
+
+.action-step.completed .action-status i {
+    color: #4caf50;
+}
+
+.current-message {
+    padding: 10px 15px;
+    background-color: #f0f8ff;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+    font-style: italic;
+    color: #0056b3;
+    animation: fadeInUp 0.5s ease;
+}
+
+/* Улучшенные стили для сообщений */
+.message {
+    margin-bottom: 20px;
+    animation: fadeInUp 0.3s ease;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.user-message {
+    flex-direction: row-reverse;
+}
+
+.system-message {
+    flex-direction: row;
+}
+
+.message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.user-message .message-avatar {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+}
+
+.system-message .message-avatar {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+}
+
+.message-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.message-bubble {
+    max-width: 70%;
+    padding: 16px 20px;
+    border-radius: 20px;
+    position: relative;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    word-wrap: break-word;
+}
+
+.message-bubble:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.user-message .message-bubble {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    border-bottom-right-radius: 6px;
+    margin-left: auto;
+}
+
+.system-message .message-bubble {
+    background: #ffffff;
+    color: #333;
+    border: 1px solid #e9ecef;
+    border-bottom-left-radius: 6px;
+    margin-right: auto;
+}
+
+/* Указатели для сообщений */
+.message-bubble::before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: 8px solid transparent;
+}
+
+.user-message .message-bubble::before {
+    right: -16px;
+    top: 12px;
+    border-left-color: #0056b3;
+}
+
+.system-message .message-bubble::before {
+    left: -16px;
+    top: 12px;
+    border-right-color: #ffffff;
+    border-right-width: 8px;
+}
+
+.message-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 0.85em;
+    opacity: 0.9;
+}
+
+.user-message .message-header {
+    color: rgba(255, 255, 255, 0.95);
+    justify-content: flex-end;
+}
+
+.system-message .message-header {
+    color: #6c757d;
+    justify-content: flex-start;
+}
+
+.message-header i {
+    font-size: 0.9em;
+}
+
+.message-header strong {
+    font-weight: 600;
+}
+
+.message-header small {
+    font-size: 0.8em;
+    opacity: 0.8;
+}
+
+.user-message .message-header small {
+    margin-right: auto;
+}
+
+.system-message .message-header small {
+    margin-left: auto;
+}
+
+.message-content {
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+/* Стили для кнопки отправки */
+#send-btn {
+    transition: all 0.3s ease;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#send-btn:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+#send-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Стили для поля ввода */
+#message-input {
+    border: 2px solid #e9ecef;
+    border-radius: 20px;
+    padding: 12px 16px;
+    resize: none;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+#message-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+/* Стили для индикатора печати */
+#typing-indicator {
+    display: none;
+    margin-bottom: 15px;
+}
+
+#typing-indicator .message-bubble {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 18px;
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .message {
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+    
+    .message-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+    
+    .message-bubble {
+        max-width: 85%;
+        padding: 12px 16px;
+    }
+    
+    .message-bubble::before {
+        border-width: 6px;
+    }
+    
+    .user-message .message-bubble::before {
+        right: -12px;
+    }
+    
+    .system-message .message-bubble::before {
+        left: -12px;
+        border-right-width: 6px;
+    }
+    
+    .action-sequence {
+        gap: 8px;
+    }
+    
+    .action-step {
+        padding: 8px 12px;
+        gap: 8px;
+    }
+    
+    .action-icon {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .action-icon i {
+        font-size: 12px;
+    }
+}
+
+/* Темная тема (опционально) */
+@media (prefers-color-scheme: dark) {
+    .system-message .message-bubble {
+        background: #2d3748;
+        color: #e2e8f0;
+        border-color: #4a5568;
+    }
+    
+    .system-message .message-bubble::before {
+        border-right-color: #2d3748;
+    }
+    
+    .user-message .message-avatar {
+        background: linear-gradient(135deg, #3182ce, #2c5282);
+    }
+    
+    .system-message .message-avatar {
+        background: linear-gradient(135deg, #38a169, #2f855a);
+    }
+    
+    .action-step {
+        background-color: #2d3748;
+        border-left-color: #4a5568;
+    }
+    
+    .action-step.active {
+        background-color: #2b6cb0;
+        border-left-color: #3182ce;
+    }
+    
+    .action-step.completed {
+        background-color: #22543d;
+        border-left-color: #38a169;
+    }
+    
+    .current-message {
+        background-color: #2b6cb0;
+        border-left-color: #3182ce;
+        color: #bee3f8;
+    }
+}

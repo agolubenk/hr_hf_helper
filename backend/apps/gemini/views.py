@@ -153,6 +153,8 @@ def chat_session(request, session_id=None):
         return redirect('gemini:dashboard')
 
 
+
+
 @login_required
 def settings(request):
     """
