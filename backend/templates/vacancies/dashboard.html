@@ -295,15 +295,15 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <small class="text-muted">Рекрутер: {{ vacancy.recruiter.get_full_name }}</small>
                                 
                                 <!-- Зарплатные вилки -->
-                                {% if vacancy.salary_ranges.all %}
+                                {% if vacancy.finance_salary_ranges.all %}
                                     <div class="mt-1">
-                                        {% for salary_range in vacancy.salary_ranges.all|slice:":2" %}
+                                        {% for salary_range in vacancy.finance_salary_ranges.all|slice:":2" %}
                                             <span class="badge bg-info me-1" style="font-size: 0.7em;">
                                                 {{ salary_range.grade.name }}: {{ salary_range.get_salary_display }}
                                             </span>
                                         {% endfor %}
-                                        {% if vacancy.salary_ranges.count > 2 %}
-                                            <small class="text-muted">+{{ vacancy.salary_ranges.count|add:"-2" }} еще</small>
+                                        {% if vacancy.finance_salary_ranges.count > 2 %}
+                                            <small class="text-muted">+{{ vacancy.finance_salary_ranges.count|add:"-2" }} еще</small>
                                         {% endif %}
                                     </div>
                                 {% else %}

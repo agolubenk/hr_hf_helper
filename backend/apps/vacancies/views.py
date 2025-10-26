@@ -6,7 +6,8 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
-from .models import Vacancy, SalaryRange
+from .models import Vacancy
+from apps.finance.models import SalaryRange
 from .forms import VacancyForm, VacancySearchForm, SalaryRangeForm, SalaryRangeSearchForm
 from apps.finance.models import Grade
 # from .logic.vacancy_handlers import VacancyHandler  # УДАЛЕНО - логика перенесена в logic/candidate/
@@ -225,6 +226,8 @@ def salary_ranges_list(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
+    from django.utils import timezone
+    
     context = {
         'page_obj': page_obj,
         'search_form': search_form,
@@ -232,10 +235,18 @@ def salary_ranges_list(request):
         'vacancy_filter': vacancy_filter,
         'grade_filter': grade_filter,
         'status_filter': status_filter,
-        'total_count': salary_ranges.count()
+        'total_count': salary_ranges.count(),
+        'page_generated_at': timezone.now()
     }
     
-    return render(request, 'vacancies/salary_ranges_list.html', context)
+    response = render(request, 'vacancies/salary_ranges_list.html', context)
+    
+    # Добавляем заголовки для предотвращения кэширования
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    
+    return response
 
 
 @login_required

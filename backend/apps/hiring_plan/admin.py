@@ -6,7 +6,9 @@ from django.db.models import Count, Sum
 
 from .models import (
     HiringPlan, HiringPlanPosition, PositionType, PlanPeriodType,
-    PositionSLA, PositionKPIOKR, PlanKPIOKRBlock, PlanMetrics
+    PositionKPIOKR, PlanKPIOKRBlock, PlanMetrics,
+    VacancySLA, HiringRequest, RecruitmentMetrics, DemandForecast, RecruiterCapacity,
+    HuntflowSync
 )
 
 
@@ -74,32 +76,6 @@ class PlanKPIOKRBlockAdmin(admin.ModelAdmin):
     grades_count.short_description = 'Грейдов'
 
 
-@admin.register(PositionSLA)
-class PositionSLAAdmin(admin.ModelAdmin):
-    list_display = ['vacancy', 'grade', 'target_time_to_fill', 'target_time_to_hire', 'is_active', 'created_at']
-    list_filter = ['vacancy', 'grade', 'is_active']
-    search_fields = ['vacancy__name']
-    ordering = ['vacancy__name', 'grade__name']
-    
-    fieldsets = (
-        ('Связи', {
-            'fields': ('vacancy', 'grade'),
-            'description': 'Если грейд не указан - SLA для всех грейдов вакансии'
-        }),
-        ('Целевые показатели', {
-            'fields': ('target_time_to_fill', 'target_time_to_hire', 'median_time_to_fill')
-        }),
-        ('Пороги', {
-            'fields': ('warning_threshold_percent', 'critical_threshold_percent'),
-            'classes': ('collapse',)
-        }),
-        ('Настройки', {
-            'fields': ('is_active',)
-        }),
-    )
-    
-    def get_queryset(self, request):
-        return super().get_queryset(request).select_related('vacancy', 'grade')
 
 
 @admin.register(PositionKPIOKR)
@@ -312,6 +288,235 @@ class PositionKPIOKRInline(admin.TabularInline):
 
 # Добавляем inline'ы к HiringPlan
 HiringPlanAdmin.inlines = [HiringPlanPositionInline, PositionKPIOKRInline]
+
+
+@admin.register(VacancySLA)
+class VacancySLAAdmin(admin.ModelAdmin):
+    list_display = ['vacancy', 'grade', 'time_to_offer', 'time_to_hire', 'is_active', 'created_at']
+    list_filter = ['vacancy', 'grade', 'is_active']
+    search_fields = ['vacancy__name', 'grade__name']
+    ordering = ['vacancy__name', 'grade__name']
+    
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('vacancy', 'grade')
+        }),
+        ('Целевые показатели', {
+            'fields': ('time_to_offer', 'time_to_hire')
+        }),
+        ('Настройки', {
+            'fields': ('is_active',)
+        }),
+    )
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('vacancy', 'grade')
+
+
+@admin.register(HiringRequest)
+class HiringRequestAdmin(admin.ModelAdmin):
+    list_display = ['vacancy', 'grade', 'project', 'status', 'priority', 'opening_date', 'sla_status_display', 'days_in_progress']
+    list_filter = ['status', 'priority', 'opening_reason', 'grade', 'vacancy', 'opening_date']
+    search_fields = ['vacancy__name', 'candidate_name', 'candidate_id', 'notes', 'project']
+    readonly_fields = ['sla_status_display', 'sla_compliance', 'days_in_progress', 'is_overdue', 'created_at', 'updated_at']
+    ordering = ['-opening_date', 'priority']
+    
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('vacancy', 'grade', 'project', 'priority', 'opening_reason')
+        }),
+        ('Статус и даты', {
+            'fields': ('status', 'opening_date', 'closed_date', 'sla_status_display', 'sla_compliance', 'days_in_progress', 'is_overdue')
+        }),
+        ('SLA', {
+            'fields': ('sla',),
+            'classes': ('collapse',)
+        }),
+        ('Кандидат', {
+            'fields': ('candidate_id', 'candidate_name'),
+            'classes': ('collapse',)
+        }),
+        ('Дополнительно', {
+            'fields': ('notes',),
+            'classes': ('collapse',)
+        }),
+        ('Метаданные', {
+            'fields': ('created_by', 'closed_by', 'created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def sla_status_display(self, obj):
+        status = obj.sla_status_display
+        status_colors = {
+            'В срок': 'green',
+            'С задержкой': 'orange',
+            'Просрочено': 'red',
+            'Нормально': 'blue',
+            'Риск просрочки': 'orange',
+            'Нет SLA': 'gray'
+        }
+        color = status_colors.get(status, 'gray')
+        return format_html('<span style="color: {};">{}</span>', color, status)
+    sla_status_display.short_description = 'SLA статус'
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related(
+            'vacancy', 'grade', 'sla', 'created_by', 'closed_by'
+        )
+
+
+@admin.register(RecruitmentMetrics)
+class RecruitmentMetricsAdmin(admin.ModelAdmin):
+    list_display = ['period_type', 'period_start', 'period_end', 'vacancy', 'grade', 'avg_time_to_offer', 'sla_compliance_rate', 'calculated_at']
+    list_filter = ['period_type', 'period_start', 'vacancy', 'grade']
+    search_fields = ['vacancy__name', 'grade__name', 'project']
+    readonly_fields = ['calculated_at']
+    ordering = ['-period_start']
+    
+    fieldsets = (
+        ('Период', {
+            'fields': ('period_type', 'period_start', 'period_end')
+        }),
+        ('Группировка', {
+            'fields': ('vacancy', 'grade', 'project'),
+            'classes': ('collapse',)
+        }),
+        ('Временные метрики', {
+            'fields': ('avg_time_to_offer', 'median_time_to_offer', 'avg_time_to_hire')
+        }),
+        ('Скорость найма', {
+            'fields': ('hires_count', 'hiring_velocity_weekly')
+        }),
+        ('SLA и отставание', {
+            'fields': ('sla_compliance_rate', 'avg_days_behind_schedule', 'overdue_requests_count')
+        }),
+        ('Общая статистика', {
+            'fields': ('total_requests', 'closed_requests', 'in_progress_requests', 'cancelled_requests')
+        }),
+    )
+
+
+@admin.register(DemandForecast)
+class DemandForecastAdmin(admin.ModelAdmin):
+    list_display = ['vacancy', 'grade', 'forecast_period', 'forecasted_demand', 'confidence_level', 'created_at']
+    list_filter = ['forecast_period', 'vacancy', 'grade', 'created_at']
+    search_fields = ['vacancy__name', 'grade__name', 'project', 'notes']
+    readonly_fields = ['created_at']
+    ordering = ['-forecast_start']
+    
+    fieldsets = (
+        ('Прогноз', {
+            'fields': ('forecast_period', 'forecast_start', 'forecast_end')
+        }),
+        ('Объект прогноза', {
+            'fields': ('vacancy', 'grade', 'project')
+        }),
+        ('Результат прогноза', {
+            'fields': ('forecasted_demand', 'confidence_level')
+        }),
+        ('Факторы', {
+            'fields': ('based_on_history', 'seasonality_factor', 'growth_factor'),
+            'classes': ('collapse',)
+        }),
+        ('Метаданные', {
+            'fields': ('created_by', 'notes', 'created_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(RecruiterCapacity)
+class RecruiterCapacityAdmin(admin.ModelAdmin):
+    list_display = ['recruiter', 'period_start', 'capacity_utilization', 'active_requests_count', 'is_overloaded', 'calculated_at']
+    list_filter = ['period_start', 'is_overloaded', 'recruiter']
+    search_fields = ['recruiter__username', 'recruiter__first_name', 'recruiter__last_name']
+    readonly_fields = ['calculated_at']
+    ordering = ['-period_start', 'recruiter']
+    
+    fieldsets = (
+        ('Период и рекрутер', {
+            'fields': ('recruiter', 'period_start', 'period_end')
+        }),
+        ('Загрузка', {
+            'fields': ('active_requests_count', 'planned_requests_count')
+        }),
+        ('Мощность', {
+            'fields': ('max_capacity', 'available_capacity', 'capacity_utilization', 'is_overloaded')
+        }),
+        ('Производительность', {
+            'fields': ('avg_time_per_request', 'closed_requests_count', 'success_rate'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(HuntflowSync)
+class HuntflowSyncAdmin(admin.ModelAdmin):
+    list_display = [
+        'huntflow_vacancy_id', 'huntflow_applicant_id',
+        'entity_type', 'sync_status', 'hiring_request',
+        'synced_at', 'created_at'
+    ]
+    list_filter = ['sync_status', 'entity_type', 'synced_at']
+    search_fields = [
+        'huntflow_vacancy_id', 'huntflow_applicant_id',
+        'hiring_request__vacancy__name'
+    ]
+    readonly_fields = ['created_at', 'updated_at', 'synced_at']
+    
+    fieldsets = (
+        ('HuntFlow IDs', {
+            'fields': (
+                'huntflow_vacancy_id', 'huntflow_applicant_id',
+                'huntflow_log_id', 'entity_type'
+            )
+        }),
+        ('Синхронизация', {
+            'fields': (
+                'hiring_request', 'sync_status', 'error_message'
+            )
+        }),
+        ('Данные', {
+            'fields': ('huntflow_data',),
+            'classes': ('collapse',)
+        }),
+        ('Метаданные', {
+            'fields': ('synced_at', 'created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    actions = ['retry_sync']
+    
+    def retry_sync(self, request, queryset):
+        """Повторить синхронизацию для выбранных записей"""
+        from .huntflow_services.huntflow_sync_service import HuntflowSyncService
+        from django.utils import timezone
+        
+        sync_service = HuntflowSyncService(request.user)
+        
+        for sync_record in queryset:
+            if sync_record.sync_status == 'failed':
+                # Повторяем синхронизацию
+                log_data = sync_record.huntflow_data.get('log', {})
+                
+                hiring_request = sync_service.sync_hired_applicant(
+                    sync_record.huntflow_vacancy_id,
+                    sync_record.huntflow_applicant_id,
+                    log_data
+                )
+                
+                if hiring_request:
+                    sync_record.sync_status = 'success'
+                    sync_record.hiring_request = hiring_request
+                    sync_record.synced_at = timezone.now()
+                    sync_record.error_message = ''
+                    sync_record.save()
+        
+        self.message_user(request, f"Повторно синхронизировано: {queryset.count()}")
+    
+    retry_sync.short_description = "Повторить синхронизацию"
 
 
 # Настройка админки

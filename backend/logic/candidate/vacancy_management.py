@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from logic.base.response_handler import UnifiedResponseHandler
 from logic.utilities.context_helpers import ContextHelper, DataHelper, PermissionHelper
-from apps.vacancies.models import Vacancy, SalaryRange
+from apps.vacancies.models import Vacancy
+from apps.finance.models import SalaryRange
 from apps.finance.models import Grade
 # from apps.vacancies.forms import VacancyForm  # Формы не используются
 

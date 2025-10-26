@@ -5,7 +5,7 @@ from decimal import Decimal
 
 from .models import (
     HiringPlan, HiringPlanPosition, PositionType, PlanPeriodType,
-    PositionSLA, PositionKPIOKR, PlanKPIOKRBlock, PlanMetrics
+    PositionKPIOKR, PlanKPIOKRBlock, PlanMetrics
 )
 
 
@@ -267,25 +267,8 @@ class HiringPlanServiceExtended(HiringPlanService):
     @staticmethod
     def create_sla_for_position_type(position_type, target_time_to_fill, target_time_to_hire, grade=None):
         """Создание SLA для типа позиции"""
-        # Получаем все вакансии, связанные с позициями этого типа
-        positions = HiringPlanPosition.objects.filter(position_type=position_type)
-        vacancies = set(pos.vacancy for pos in positions)
-        
+        # Метод удален - PositionSLA больше не используется
         created_sla_count = 0
-        
-        for vacancy in vacancies:
-            sla, created = PositionSLA.objects.get_or_create(
-                vacancy=vacancy,
-                grade=grade,
-                defaults={
-                    'target_time_to_fill': target_time_to_fill,
-                    'target_time_to_hire': target_time_to_hire,
-                    'is_active': True
-                }
-            )
-            
-            if created:
-                created_sla_count += 1
         
         return created_sla_count
     
@@ -377,7 +360,10 @@ class HiringPlanServiceExtended(HiringPlanService):
     @staticmethod
     def get_vacancy_kpi_okr_comparison(vacancy, grade=None):
         """Сравнить KPI/OKR vs SLA для вакансии"""
-        sla = PositionSLA.objects.filter(
+        # Метод обновлен - использует новую модель VacancySLA
+        from .models import VacancySLA
+        
+        sla = VacancySLA.objects.filter(
             vacancy=vacancy,
             grade=grade if grade else None,
             is_active=True

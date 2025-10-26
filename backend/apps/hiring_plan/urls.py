@@ -4,42 +4,71 @@ from . import views
 app_name = 'hiring_plan'
 
 urlpatterns = [
-    # Основные CRUD операции для планов
-    path('', views.HiringPlanListView.as_view(), name='plan_list'),
-    path('create/', views.HiringPlanCreateView.as_view(), name='plan_create'),
-    path('periodic/create/', views.PeriodicPlanCreateView.as_view(), name='periodic_plan_create'),
-    path('<int:pk>/', views.HiringPlanDetailView.as_view(), name='plan_detail'),
-    path('<int:pk>/edit/', views.HiringPlanUpdateView.as_view(), name='plan_update'),
-    path('<int:pk>/delete/', views.HiringPlanDeleteView.as_view(), name='plan_delete'),
+    # Основная страница - список всех заявок
+    path('', views.HiringRequestsListView.as_view(), name='hiring_requests_list'),
     
-    # Дополнительные функции планов
-    path('<int:pk>/dashboard/', views.HiringPlanDetailView.as_view(), name='plan_dashboard'),
-    path('<int:pk>/sla-compliance/', views.PlanSLAComplianceView.as_view(), name='plan_sla_compliance'),
-    path('<int:pk>/kpi-okr/', views.PlanKPIOKRDashboardView.as_view(), name='plan_kpi_okr'),
-    path('<int:pk>/auto-move-positions/', views.auto_move_unfilled_positions, name='auto_move_unfilled'),
-    path('<int:pk>/ajax-data/', views.plan_ajax_data, name='plan_ajax_data'),
+    # Детальный просмотр и редактирование заявки
+    path('requests/<int:pk>/', views.HiringRequestDetailView.as_view(), name='hiring_request_detail'),
+    path('requests/create/', views.HiringRequestCreateView.as_view(), name='hiring_request_create'),
+    path('requests/<int:pk>/edit/', views.HiringRequestUpdateView.as_view(), name='hiring_request_update'),
     
-    # Позиции в планах
-    path('<int:plan_pk>/positions/add/', views.HiringPlanPositionCreateView.as_view(), name='position_add'),
-    path('positions/<int:pk>/edit/', views.HiringPlanPositionUpdateView.as_view(), name='position_update'),
-    path('positions/<int:pk>/delete/', views.HiringPlanPositionDeleteView.as_view(), name='position_delete'),
-    path('positions/<int:pk>/update-headcount/', views.update_position_headcount, name='position_update_headcount'),
+    # SLA управление (оставляем для настройки SLA)
+    path('sla/', views.VacancySLAListView.as_view(), name='sla_list'),
+    path('sla/create/', views.VacancySLACreateView.as_view(), name='sla_create'),
+    path('sla/<int:pk>/edit/', views.VacancySLAUpdateView.as_view(), name='sla_update'),
+    path('sla/get-available-grades/', views.get_available_grades, name='get_available_grades'),
     
-    # SLA управление
-    path('sla/', views.PositionSLAListView.as_view(), name='sla_list'),
-    path('sla/create/', views.PositionSLACreateView.as_view(), name='sla_create'),
-    path('sla/<int:pk>/edit/', views.PositionSLAUpdateView.as_view(), name='sla_update'),
-    path('<int:plan_pk>/sla/create/', views.PlanSLACreateView.as_view(), name='plan_sla_create'),
+    # Метрики и KPI
+    path('metrics/', views.MetricsDashboardView.as_view(), name='metrics_dashboard'),
+    path('metrics/list/', views.MetricsListView.as_view(), name='metrics_list'),
+    path('forecasts/', views.ForecastsListView.as_view(), name='forecasts_list'),
+    path('capacity/', views.RecruiterCapacityListView.as_view(), name='recruiter_capacity_list'),
     
-    # KPI/OKR управление
-    path('<int:plan_pk>/kpi-okr/create/', views.PositionKPIOKRCreateView.as_view(), name='kpi_okr_create'),
-    path('kpi-okr/<int:pk>/edit/', views.PositionKPIOKRUpdateView.as_view(), name='kpi_okr_update'),
+    # Годовая таблица заявок
+    path('yearly/', views.YearlyHiringPlanView.as_view(), name='yearly_hiring_plan'),
     
-    # Блоки KPI/OKR
-    path('kpi-okr-blocks/', views.PlanKPIOKRBlockListView.as_view(), name='kpi_okr_block_list'),
-    path('kpi-okr-blocks/create/', views.PlanKPIOKRBlockCreateView.as_view(), name='kpi_okr_block_create'),
-    path('kpi-okr-blocks/<int:pk>/edit/', views.PlanKPIOKRBlockUpdateView.as_view(), name='kpi_okr_block_update'),
+    # HuntFlow webhook
+    path('huntflow/webhook/', views.huntflow_webhook, name='huntflow_webhook'),
     
-    # Применение блоков KPI/OKR к планам
-    path('<int:plan_pk>/apply-kpi-okr-block/<int:block_pk>/', views.apply_kpi_okr_block_to_plan, name='apply_kpi_okr_block'),
+    # HuntFlow импорт
+    path('huntflow/import/', views.HuntflowImportView.as_view(), name='huntflow_import'),
+    path('huntflow/import/applicant/', views.huntflow_import_applicant, name='huntflow_import_applicant'),
+    path('huntflow/vacancies/', views.huntflow_get_vacancies, name='huntflow_get_vacancies'),
+    path('huntflow/vacancies/<int:vacancy_id>/applicants/', views.huntflow_get_applicants, name='huntflow_get_applicants'),
+]
+
+app_name = 'hiring_plan'
+
+urlpatterns = [
+    # Основная страница - список всех заявок
+    path('', views.HiringRequestsListView.as_view(), name='hiring_requests_list'),
+    
+    # Детальный просмотр и редактирование заявки
+    path('requests/<int:pk>/', views.HiringRequestDetailView.as_view(), name='hiring_request_detail'),
+    path('requests/create/', views.HiringRequestCreateView.as_view(), name='hiring_request_create'),
+    path('requests/<int:pk>/edit/', views.HiringRequestUpdateView.as_view(), name='hiring_request_update'),
+    
+    # SLA управление (оставляем для настройки SLA)
+    path('sla/', views.VacancySLAListView.as_view(), name='sla_list'),
+    path('sla/create/', views.VacancySLACreateView.as_view(), name='sla_create'),
+    path('sla/<int:pk>/edit/', views.VacancySLAUpdateView.as_view(), name='sla_update'),
+    path('sla/get-available-grades/', views.get_available_grades, name='get_available_grades'),
+    
+    # Метрики и KPI
+    path('metrics/', views.MetricsDashboardView.as_view(), name='metrics_dashboard'),
+    path('metrics/list/', views.MetricsListView.as_view(), name='metrics_list'),
+    path('forecasts/', views.ForecastsListView.as_view(), name='forecasts_list'),
+    path('capacity/', views.RecruiterCapacityListView.as_view(), name='recruiter_capacity_list'),
+    
+    # Годовая таблица заявок
+    path('yearly/', views.YearlyHiringPlanView.as_view(), name='yearly_hiring_plan'),
+    
+    # HuntFlow webhook
+    path('huntflow/webhook/', views.huntflow_webhook, name='huntflow_webhook'),
+    
+    # HuntFlow импорт
+    path('huntflow/import/', views.HuntflowImportView.as_view(), name='huntflow_import'),
+    path('huntflow/import/applicant/', views.huntflow_import_applicant, name='huntflow_import_applicant'),
+    path('huntflow/vacancies/', views.huntflow_get_vacancies, name='huntflow_get_vacancies'),
+    path('huntflow/vacancies/<int:vacancy_id>/applicants/', views.huntflow_get_applicants, name='huntflow_get_applicants'),
 ]

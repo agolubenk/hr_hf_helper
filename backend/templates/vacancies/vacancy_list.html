@@ -160,14 +160,14 @@
                                         </p>
                                         
                                         <!-- Зарплатные вилки -->
-                                        {% if vacancy.salary_ranges.all %}
+                                        {% if vacancy.finance_salary_ranges.all %}
                                             <div class="mt-2">
                                                 <small class="text-muted">
                                                     <i class="fas fa-dollar-sign me-1"></i>
                                                     Зарплатные вилки:
                                                 </small>
                                                 <div class="mt-1">
-                                                    {% for salary_range in vacancy.salary_ranges.all %}
+                                                    {% for salary_range in vacancy.finance_salary_ranges.all %}
                                                         <span class="badge bg-info me-1 mb-1">
                                                             {{ salary_range.grade.name }}: {{ salary_range.get_salary_display }}
                                                         </span>

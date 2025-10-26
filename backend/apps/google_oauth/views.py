@@ -3807,6 +3807,18 @@ def chat_workflow(request, session_id=None):
     from apps.google_oauth.models import SlotsSettings
     slots_settings = SlotsSettings.get_or_create_for_user(request.user)
     
+    # Получаем фото пользователя из Google OAuth аккаунта
+    user_photo_url = None
+    try:
+        oauth_account = request.user.google_oauth_account
+        if oauth_account and oauth_account.picture_url:
+            user_photo_url = oauth_account.picture_url
+            print(f"🔍 DEBUG CHAT: Найдено фото пользователя: {user_photo_url}")
+        else:
+            print(f"🔍 DEBUG CHAT: Фото пользователя не найдено")
+    except Exception as e:
+        print(f"🔍 DEBUG CHAT: Ошибка получения фото пользователя: {e}")
+    
     context = {
         'form': form,
         'chat_session': chat_session,
@@ -3815,6 +3827,7 @@ def chat_workflow(request, session_id=None):
         'selected_vacancy': vacancy,
         'calendar_events_data': calendar_events_data,
         'slots_settings': slots_settings,
+        'user_photo_url': user_photo_url,
         'title': 'Чат-помощник',
     }
 

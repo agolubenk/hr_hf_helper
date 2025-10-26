@@ -142,6 +142,7 @@ def chat_session(request, session_id=None):
             'messages': messages_list,
             'all_sessions': all_sessions,
             'api_key_configured': True,
+            'user_photo_url': request.user.get_profile_photo_url(),
         }
         
         logger.info("Рендерим шаблон chat.html")
@@ -151,6 +152,8 @@ def chat_session(request, session_id=None):
         logger.error(f"Ошибка в chat_session: {str(e)}", exc_info=True)
         messages.error(request, f'Ошибка при загрузке чата: {str(e)}')
         return redirect('gemini:dashboard')
+
+
 
 
 @login_required

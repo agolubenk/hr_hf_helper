@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from .models import Vacancy, SalaryRange
+from .models import Vacancy
+from apps.finance.models import SalaryRange
 from apps.interviewers.models import Interviewer
 
 User = get_user_model()

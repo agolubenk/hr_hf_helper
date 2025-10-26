@@ -191,24 +191,36 @@
                                 {% for message in messages %}
                             <div class="message mb-3 {% if message.message_type == 'user' %}user-message{% elif message.message_type == 'hrscreening' %}system-message hr-screening-message{% elif message.message_type == 'invite' %}system-message invite-message{% elif message.message_type == 'delete' %}system-message delete-message{% else %}system-message{% endif %}">
                                         <div class="d-flex {% if message.message_type == 'user' %}justify-content-end{% else %}justify-content-start{% endif %}">
-                                            <div class="message-bubble {% if message.message_type == 'user' %}user-bubble{% else %}system-bubble{% endif %}">
                                         
                                         <!-- Пользовательское сообщение -->
                                                 {% if message.message_type == 'user' %}
-                                                    <div class="message-header">
-                                                        <i class="fas fa-user me-1"></i>
-                                                        <strong>Вы</strong>
-                                                        <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                    <div class="message-bubble user-bubble">
+                                                        <div class="message-header">
+                                                            <strong>Вы</strong>
+                                                            <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                        </div>
+                                                        <div class="message-content user-content">{{ message.content|linebreaks }}</div>
                                                     </div>
-                                            <div class="message-content user-content">{{ message.content|linebreaks }}</div>
+                                                    <div class="message-avatar">
+                                                        {% if user_photo_url %}
+                                                            <img src="{{ user_photo_url }}" alt="Фото пользователя" class="avatar-image">
+                                                        {% else %}
+                                                            <i class="fas fa-user"></i>
+                                                        {% endif %}
+                                                    </div>
                                                 
                                         <!-- HR-скрининг -->
                                                 {% elif message.message_type == 'hrscreening' %}
-                                                    <div class="message-header">
-                                                        <i class="fas fa-clipboard-list me-1"></i>
-                                                        <strong>HR-скрининг</strong>
-                                                        <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                    <div class="message-avatar">
+                                                        <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
+                                                        <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
                                                     </div>
+                                                    <div class="message-bubble system-bubble">
+                                                        <div class="message-header">
+                                                            <i class="fas fa-clipboard-list me-1"></i>
+                                                            <strong>HR-скрининг</strong>
+                                                            <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                        </div>
                                             <div class="message-content bot-content-fixed">
                                                 <!-- Контейнер с информацией и кнопками -->
                                                 <div class="message-body-with-buttons">
@@ -262,14 +274,20 @@
                                                         {% endif %}
                                                 </div>
                                                     </div>
+                                                    </div>
                                                 
                                         <!-- Инвайт -->
                                                 {% elif message.message_type == 'invite' %}
-                                                    <div class="message-header">
-                                                        <i class="fas fa-calendar-plus me-1"></i>
-                                                        <strong>Инвайт</strong>
-                                                        <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                    <div class="message-avatar">
+                                                        <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
+                                                        <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
                                                     </div>
+                                                    <div class="message-bubble system-bubble">
+                                                        <div class="message-header">
+                                                            <i class="fas fa-calendar-plus me-1"></i>
+                                                            <strong>Инвайт</strong>
+                                                            <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                        </div>
                                             <div class="message-content bot-content-fixed">
                                                 <!-- Контейнер с информацией и кнопками -->
                                                 <div class="message-body-with-buttons">
@@ -356,26 +374,37 @@
                                                         {% endif %}
                                                 </div>
                                                     </div>
+                                                    </div>
                                                 
                                         <!-- Сообщение об удалении -->
                                                 {% elif message.message_type == 'delete' %}
-                                                    <div class="message-header d-flex align-items-center mb-2">
-                                                        <i class="fas fa-trash-alt text-danger me-2"></i>
-                                                        <strong>Система</strong>
-                                                        <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                    <div class="message-avatar">
+                                                        <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
+                                                        <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
                                                     </div>
-                                                    <div class="message-content bot-content-fixed">{{ message.content|safe }}</div>
+                                                    <div class="message-bubble system-bubble">
+                                                        <div class="message-header d-flex align-items-center mb-2">
+                                                            <i class="fas fa-trash-alt text-danger me-2"></i>
+                                                            <strong>Система</strong>
+                                                            <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                        </div>
+                                                        <div class="message-content bot-content-fixed">{{ message.content|safe }}</div>
+                                                    </div>
                                                 
                                         <!-- Системное сообщение -->
                                                 {% else %}
-                                                    <div class="message-header">
-                                                        <i class="fas fa-robot me-1"></i>
-                                                        <strong>Система</strong>
-                                                        <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                    <div class="message-avatar">
+                                                        <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
+                                                        <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
                                                     </div>
-                                                    <div class="message-content">{{ message.content|linebreaks }}</div>
+                                                    <div class="message-bubble system-bubble">
+                                                        <div class="message-header">
+                                                            <strong>Система</strong>
+                                                            <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                        </div>
+                                                        <div class="message-content">{{ message.content|linebreaks }}</div>
+                                                    </div>
                                                 {% endif %}
-                                            </div>
                                         </div>
                                     </div>
                                 {% empty %}
@@ -550,6 +579,125 @@
     width: 100%;
 }
 
+/* === СТИЛИ ДЛЯ АВАТАРОВ === */
+.message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    margin-right: 12px;
+}
+
+.user-message .message-avatar {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    margin-right: 0;
+    margin-left: 12px;
+    order: 2; /* Аватар пользователя справа */
+}
+
+.user-message .message-bubble {
+    order: 1; /* Сообщение пользователя слева */
+    max-width: 75%; /* Ограничиваем ширину только для пользовательских сообщений */
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+}
+
+.user-message .message-content {
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+    hyphens: auto !important;
+}
+
+/* Обеспечиваем правильный перенос текста */
+.message-bubble {
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.message-content {
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.system-message .message-avatar {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+}
+
+/* Светлая тема - светло-малиновый фон для аватара бота */
+[data-theme="light"] .system-message .message-avatar {
+    background: linear-gradient(135deg, #ff69b4, #ff1493);
+    color: white;
+}
+
+.message-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Стили для изображения аватара */
+.avatar-image, .ai-avatar-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+    transition: all 0.3s ease;
+}
+
+/* Убираем фон для аватаров с изображениями */
+.message-avatar img {
+    background: none !important;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Светлая тема - показываем светлый логотип */
+[data-theme="light"] .light-theme-logo {
+    display: block;
+}
+
+[data-theme="light"] .dark-theme-logo {
+    display: none;
+}
+
+/* Темная тема - показываем темный логотип */
+[data-theme="dark"] .light-theme-logo {
+    display: none;
+}
+
+[data-theme="dark"] .dark-theme-logo {
+    display: block;
+}
+
+/* Мобильные стили для аватаров */
+@media (max-width: 768px) {
+    .message-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+        margin-right: 8px;
+    }
+    
+    .user-message .message-avatar {
+        margin-right: 0;
+        margin-left: 8px;
+    }
+    
+}
+
 /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: Единый размер шрифта для всех сообщений */
 .card .message-bubble {
     padding: 8px 12px;
@@ -715,15 +863,19 @@
 
 /* Пользовательские сообщения - остаются с ограничением */
 .card .user-message .message-bubble {
-    max-width: 75%;
+    max-width: 75% !important;
     min-width: 120px;
 }
 
-/* Системные сообщения - БЕЗ ОГРАНИЧЕНИЙ ШИРИНЫ */
+/* Системные сообщения - С ОГРАНИЧЕНИЕМ ШИРИНЫ */
 .card .system-message .message-bubble {
-    max-width: none !important;
+    max-width: 80% !important;
     min-width: fit-content !important;
     width: auto !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
 }
 
 .card .user-bubble {
@@ -2463,4 +2615,136 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                 window.sessionId = {{ chat_session.id }};
             </script>
             <script src="{% static 'js/chat_actions.js' %}"></script>
+            
+            <!-- ПРИНУДИТЕЛЬНЫЕ СТИЛИ ДЛЯ ОГРАНИЧЕНИЯ ШИРИНЫ СООБЩЕНИЙ -->
+            <style>
+                /* Максимально специфичные селекторы для принудительного ограничения ширины */
+                .card .chat-messages .message.user-message .message-bubble,
+                .card .chat-messages .user-message .message-bubble,
+                .card .user-message .message-bubble,
+                .user-message .message-bubble,
+                .message.user-message .message-bubble {
+                    max-width: 75% !important;
+                    width: 75% !important;
+                    min-width: 120px !important;
+                    word-wrap: break-word !important;
+                    word-break: break-word !important;
+                    overflow-wrap: break-word !important;
+                    white-space: normal !important;
+                    hyphens: auto !important;
+                    box-sizing: border-box !important;
+                }
+
+                .card .chat-messages .message.system-message .message-bubble,
+                .card .chat-messages .system-message .message-bubble,
+                .card .system-message .message-bubble,
+                .system-message .message-bubble,
+                .message.system-message .message-bubble {
+                    max-width: 80% !important;
+                    width: 80% !important;
+                    min-width: fit-content !important;
+                    word-wrap: break-word !important;
+                    word-break: break-word !important;
+                    overflow-wrap: break-word !important;
+                    white-space: normal !important;
+                    hyphens: auto !important;
+                    box-sizing: border-box !important;
+                }
+
+                /* Принудительные стили для содержимого сообщений */
+                .card .chat-messages .message .message-content,
+                .card .chat-messages .message-content,
+                .message .message-content,
+                .message-content {
+                    word-wrap: break-word !important;
+                    word-break: break-word !important;
+                    overflow-wrap: break-word !important;
+                    white-space: normal !important;
+                    hyphens: auto !important;
+                    max-width: 100% !important;
+                    overflow: hidden !important;
+                }
+
+                /* АДАПТИВНАЯ ШИРИНА ДЛЯ СООБЩЕНИЙ БОТА С ФУНКЦИОНАЛЬНЫМИ КНОПКАМИ */
+                .card .chat-messages .message.system-message .message-bubble,
+                .card .chat-messages .system-message .message-bubble,
+                .card .system-message .message-bubble,
+                .system-message .message-bubble,
+                .message.system-message .message-bubble {
+                    width: auto !important;
+                    max-width: 80% !important;
+                    min-width: fit-content !important;
+                }
+
+                /* Контейнер с информацией и кнопками - адаптивная ширина */
+                .card .message-body-with-buttons {
+                    display: flex !important;
+                    align-items: flex-start !important;
+                    gap: 12px !important;
+                    width: auto !important;
+                    min-width: fit-content !important;
+                    max-width: none !important;
+                }
+
+                /* Информационная часть - занимает только необходимое место */
+                .card .message-info {
+                    flex: 0 0 auto !important;
+                    min-width: fit-content !important;
+                    max-width: none !important;
+                }
+
+                /* Кнопки действий - фиксированный размер */
+                .card .action-buttons-right {
+                    display: flex !important;
+                    flex-direction: column !important;
+                    gap: 4px !important;
+                    flex-shrink: 0 !important;
+                    align-self: flex-start !important;
+                    margin-top: 2px !important;
+                    width: auto !important;
+                    min-width: fit-content !important;
+                }
+
+                /* Табличная структура - адаптивная ширина */
+                .card .candidate-info-table {
+                    display: table !important;
+                    width: auto !important;
+                    min-width: fit-content !important;
+                    max-width: none !important;
+                    border-spacing: 0 !important;
+                    border-collapse: collapse !important;
+                    margin-bottom: 6px !important;
+                }
+
+                /* Строки таблицы - адаптивная ширина */
+                .card .info-row-table {
+                    display: table-row !important;
+                    width: auto !important;
+                }
+
+                /* Лейблы - фиксированная ширина */
+                .card .info-label-table {
+                    display: table-cell !important;
+                    font-weight: 600 !important;
+                    color: var(--hr-text, #333) !important;
+                    padding-right: 8px !important;
+                    white-space: nowrap !important;
+                    vertical-align: top !important;
+                    line-height: 1.3 !important;
+                    font-size: 0.9rem !important;
+                    min-width: 65px !important;
+                    width: auto !important;
+                }
+
+                /* Значения - адаптивная ширина */
+                .card .info-value-table {
+                    display: table-cell !important;
+                    white-space: nowrap !important;
+                    vertical-align: top !important;
+                    line-height: 1.3 !important;
+                    font-size: 0.9rem !important;
+                    width: auto !important;
+                    min-width: fit-content !important;
+                }
+            </style>
             {% endblock %}

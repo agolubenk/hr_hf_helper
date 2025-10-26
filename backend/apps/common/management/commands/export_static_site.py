@@ -492,7 +492,8 @@ class Command(BaseCommand):
     def _create_vacancies_demo_data(self):
         """Создаем демо-данные для вакансий"""
         try:
-            from apps.vacancies.models import Vacancy, SalaryRange
+            from apps.vacancies.models import Vacancy
+            from apps.finance.models import SalaryRange
             from apps.finance.models import Grade
             
             # Создаем вакансии

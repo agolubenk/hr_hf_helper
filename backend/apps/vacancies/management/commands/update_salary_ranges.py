@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from apps.vacancies.models import SalaryRange
+from apps.finance.models import SalaryRange
 
 
 class Command(BaseCommand):
