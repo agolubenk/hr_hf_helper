@@ -235,11 +235,14 @@
                                     <div>
                                         <strong>{{ request.opening_date|date:"d.m.Y" }}</strong>
                                         {% if request.deadline %}
-                                            <span class="text-muted"> - {{ request.deadline|date:"d.m.Y" }}</span>
+                                            <span class="{{ request.deadline_color_class }}"> - {{ request.deadline|date:"d.m.Y" }}</span>
                                         {% else %}
                                             <span class="text-muted"> - Нет SLA</span>
                                         {% endif %}
                                     </div>
+                                    {% if request.closed_date %}
+                                        <small class="{{ request.closed_date_color_class }}">{{ request.closed_date|date:"d.m.Y" }}</small>
+                                    {% endif %}
                                     {% if request.is_overdue and request.deadline %}
                                         <small class="text-danger">Просрочено</small>
                                     {% endif %}

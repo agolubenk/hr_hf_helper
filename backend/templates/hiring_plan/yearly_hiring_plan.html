@@ -281,6 +281,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% if table_data %}
                         {% for row in table_data %}
                             <tr>
                                 <td class="vacancy-info" title="{{ row.vacancy }}">
@@ -399,41 +400,6 @@
                             </tr>
                         {% endfor %}
                         
-                        <!-- Строка со средними значениями -->
-                {% if table_data %}
-                <tr class="table-warning">
-                    <td class="vacancy-info">
-                        <strong><i class="fas fa-calculator me-2"></i>Средние</strong>
-                    </td>
-                    <td>
-                        <small class="text-muted">{{ medians.averages.grade }}</small>
-                    </td>
-                    <td>—</td>
-                    
-                    {% for month_num, month_name in months|enumerate_list %}
-                        {% with month_num|add:1 as month %}
-                            <td class="month-cell text-center">
-                                <small class="text-muted">
-                                    {% if medians.averages.monthly_days|get_item:month > 0 %}
-                                        {{ medians.averages.monthly_days|get_item:month|floatformat:0 }}д
-                                    {% else %}
-                                        —
-                                    {% endif %}
-                                </small>
-                            </td>
-                        {% endwith %}
-                    {% endfor %}
-                    
-                    <td>
-                        <small class="text-muted">{{ medians.averages.sla }}</small>
-                    </td>
-                    <td>
-                        <small class="text-muted">{{ medians.averages.work_days }}</small>
-                    </td>
-                    <td>—</td>
-                    <td>—</td>
-                </tr>
-                
                 <!-- Строка с медианными значениями -->
                 <tr class="table-info">
                     <td class="vacancy-info">
@@ -464,7 +430,51 @@
                     <td>
                         <strong>{{ medians.work_days }}</strong>
                     </td>
+                    <td>
+                        <div class="d-flex flex-column gap-1">
+                            <strong>{{ medians.time2hire }}</strong>
+                            <strong>{{ medians.sla_time2hire }}</strong>
+                        </div>
+                    </td>
                     <td>—</td>
+                </tr>
+                
+                <!-- Строка со средними значениями -->
+                <tr class="table-secondary">
+                    <td class="vacancy-info">
+                        <strong><i class="fas fa-chart-bar me-2"></i>Средние</strong>
+                    </td>
+                    <td>
+                        <strong>{{ medians.averages.grade }}</strong>
+                    </td>
+                    <td>—</td>
+                    
+                    {% for month_num, month_name in months|enumerate_list %}
+                        {% with month_num|add:1 as month %}
+                            <td class="month-cell text-center">
+                                <strong>
+                                    {% if medians.averages.monthly_days|get_item:month > 0 %}
+                                        {{ medians.averages.monthly_days|get_item:month|floatformat:0 }}д
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </strong>
+                            </td>
+                        {% endwith %}
+                    {% endfor %}
+                    
+                    <td>
+                        <strong>{{ medians.averages.sla }}</strong>
+                    </td>
+                    <td>
+                        <strong>{{ medians.averages.work_days }}</strong>
+                    </td>
+                    <td>
+                        <div class="d-flex flex-column gap-1">
+                            <strong>{{ medians.averages.time2hire }}</strong>
+                            <strong>{{ medians.averages.sla_time2hire }}</strong>
+                        </div>
+                    </td>
                     <td>—</td>
                 </tr>
                 {% endif %}

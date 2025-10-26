@@ -1065,6 +1065,39 @@ class HiringRequest(models.Model):
             else:
                 return 'Просрочено'
     
+    @property
+    def closed_date_color_class(self):
+        """CSS класс для цветового кодирования даты закрытия"""
+        if self.status == 'closed':
+            # Проверяем, была ли заявка закрыта в срок по SLA
+            if self.sla_compliance and self.sla_compliance >= 100:
+                return 'text-success'  # Зеленый для закрытых в срок
+            else:
+                return 'text-danger'  # Красный для просроченных
+        elif self.status == 'cancelled':
+            return 'text-dark'  # Черный для отмененных
+        else:
+            return 'text-muted'  # Серый для остальных
+    
+    @property
+    def deadline_color_class(self):
+        """CSS класс для цветового кодирования дедлайна"""
+        if self.status == 'planned':
+            return 'text-muted'  # Серый для будущих
+        elif self.is_overdue:
+            return 'text-danger'  # Красный для просроченных
+        elif self.status == 'in_progress':
+            if self.deadline:
+                days_to_deadline = (self.deadline - timezone.now().date()).days
+                if days_to_deadline <= 7:
+                    return 'text-warning'  # Желтый для тех, что скоро подойдут к дедлайну
+                else:
+                    return 'text-primary'  # Синий для тех, что в процессе и срок не наступил
+            else:
+                return 'text-primary'  # Синий для тех, что в процессе без дедлайна
+        else:
+            return 'text-muted'  # По умолчанию серый
+    
     def assign_recruiter(self, recruiter, user=None):
         """Назначить рекрутера на заявку"""
         from django.utils import timezone
