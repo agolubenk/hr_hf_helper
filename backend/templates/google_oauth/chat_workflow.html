@@ -508,21 +508,29 @@
                                 <strong class="ms-2">Инвайт</strong>
                             </div>
                             <div class="command-example mt-1">
-                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время]</code>
+                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] @пользователь</code>
                             </div>
                             <div class="command-details-hover">
                                 <div class="alert alert-info mb-0">
                                     <div class="d-flex align-items-start">
                                         <i class="fas fa-info-circle me-2 mt-1"></i>
                                         <div>
-                                            Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
-                                            <p class="mb-0 mt-2">
+                                            <strong>Создание приглашения на встречу:</strong>
+                                            <p class="mb-2 mt-2">
+                                                Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
+                                            </p>
+                                            <p class="mb-2">
                                                 <code>(1 час)</code> OR <code>(60 минут)</code> OR <code>(1h)</code><br>
                                                 <code>(30 минут)</code> OR <code>(30m)</code> OR <code>(полчаса)</code> etc.
                                             </p>
+                                            <p class="mb-2">
+                                                <strong>Упоминание пользователей:</strong><br>
+                                                Используйте <code>@username</code> или <code>@email</code> для упоминания участников встречи
+                                            </p>
                                             <div class="mt-2">
-                                                <strong>Пример:</strong><br>
-                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (1 ч)</code>
+                                                <strong>Примеры:</strong><br>
+                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (1 ч) @andrei.golubenko</code><br>
+                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] @user@company.com</code>
                                             </div>
                                         </div>
                                     </div>
@@ -536,21 +544,29 @@
                                 <strong class="ms-2">Техническое интервью</strong>
                             </div>
                             <div class="command-example mt-1">
-                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время]</code>
+                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] @пользователь</code>
                             </div>
                             <div class="command-details-hover">
                                 <div class="alert alert-info mb-0">
                                     <div class="d-flex align-items-start">
                                         <i class="fas fa-info-circle me-2 mt-1"></i>
                                         <div>
-                                            Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
-                                            <p class="mb-0 mt-2">
+                                            <strong>Создание технического интервью:</strong>
+                                            <p class="mb-2 mt-2">
+                                                Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
+                                            </p>
+                                            <p class="mb-2">
                                                 <code>(1 час)</code> OR <code>(60 минут)</code> OR <code>(1h)</code><br>
                                                 <code>(30 минут)</code> OR <code>(30m)</code> OR <code>(полчаса)</code> etc.
                                             </p>
+                                            <p class="mb-2">
+                                                <strong>Упоминание пользователей:</strong><br>
+                                                Используйте <code>@username</code> или <code>@email</code> для упоминания участников интервью
+                                            </p>
                                             <div class="mt-2">
-                                                <strong>Пример:</strong><br>
-                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (1 ч)</code>
+                                                <strong>Примеры:</strong><br>
+                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (1 ч) @andrei.golubenko</code><br>
+                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] @user@company.com</code>
                                             </div>
                                         </div>
                                     </div>
@@ -1930,16 +1946,14 @@
 }
 
 .command-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
+    display: inline-block;
+    padding: 4px 8px;
     border-radius: 4px;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: white;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    white-space: nowrap;
 }
 
 .command-description {
@@ -2790,23 +2804,20 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                 console.log('🔄 toggleCommandsCard вызвана');
                 const commandsCardBody = document.getElementById('commandsCardBody');
                 const toggleIcon = document.getElementById('commandsToggleIcon');
-                const additionalCommand1 = document.getElementById('additionalCommand1');
-                const additionalCommand2 = document.getElementById('additionalCommand2');
+                const commandsList = commandsCardBody ? commandsCardBody.querySelector('.commands-list') : null;
                 
-                if (commandsCardBody) {
-                    // Проверяем, свернута ли карточка (скрыты ли дополнительные команды)
-                    const isCollapsed = additionalCommand1.style.display === 'none';
+                if (commandsList) {
+                    // Проверяем, свернута ли карточка (есть ли класс collapsed)
+                    const isCollapsed = commandsList.classList.contains('collapsed');
                     
                     if (isCollapsed) {
                         // Разворачиваем - показываем все команды
-                        additionalCommand1.style.display = 'block';
-                        additionalCommand2.style.display = 'block';
+                        commandsList.classList.remove('collapsed');
                         toggleIcon.className = 'fas fa-chevron-up';
                         console.log('📖 Команды развернуты');
                     } else {
-                        // Сворачиваем - показываем только первые 2 команды
-                        additionalCommand1.style.display = 'none';
-                        additionalCommand2.style.display = 'none';
+                        // Сворачиваем - показываем 2.5 команды с градиентом
+                        commandsList.classList.add('collapsed');
                         toggleIcon.className = 'fas fa-chevron-down';
                         console.log('📕 Команды свернуты');
                     }
@@ -2892,14 +2903,13 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
             
             // Инициализация состояния карточки команд (свернутое состояние по умолчанию)
             document.addEventListener('DOMContentLoaded', function() {
-                const additionalCommand1 = document.getElementById('additionalCommand1');
-                const additionalCommand2 = document.getElementById('additionalCommand2');
+                const commandsCardBody = document.getElementById('commandsCardBody');
                 const toggleIcon = document.getElementById('commandsToggleIcon');
+                const commandsList = commandsCardBody ? commandsCardBody.querySelector('.commands-list') : null;
                 
-                if (additionalCommand1 && additionalCommand2 && toggleIcon) {
+                if (commandsList && toggleIcon) {
                     // Устанавливаем свернутое состояние по умолчанию
-                    additionalCommand1.style.display = 'none';
-                    additionalCommand2.style.display = 'none';
+                    commandsList.classList.add('collapsed');
                     toggleIcon.className = 'fas fa-chevron-down';
                     console.log('📕 Карточка команд инициализирована в свернутом состоянии');
                 }
@@ -3045,5 +3055,63 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                     width: auto !important;
                     min-width: fit-content !important;
                 }
+            }
+
+            /* === СТИЛИ ДЛЯ КАРТОЧКИ КОМАНД === */
+            .commands-list {
+                position: relative;
+                transition: all 0.3s ease;
+            }
+
+            /* Свернутое состояние - показываем 2.5 команды с градиентом */
+            .commands-list.collapsed {
+                max-height: 280px; /* Высота для 2.5 команд */
+                overflow: hidden;
+                position: relative;
+            }
+
+            /* Градиентный эффект внизу для показа, что есть еще контент */
+            .commands-list.collapsed::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 40px;
+                background: linear-gradient(transparent, rgba(255, 255, 255, 0.9));
+                pointer-events: none;
+                z-index: 1;
+            }
+
+            /* Темная тема - градиент для темного фона */
+            [data-theme="dark"] .commands-list.collapsed::after {
+                background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            }
+
+            /* Стили для команд */
+            .command-item {
+                transition: all 0.3s ease;
+            }
+
+
+            .command-header {
+                display: flex;
+                align-items: center;
+                margin-bottom: 8px;
+            }
+
+            .command-example code {
+                background-color: #f8f9fa;
+                padding: 4px 6px;
+                border-radius: 3px;
+                font-size: 0.85rem;
+                line-height: 1.4;
+            }
+
+            /* Темная тема для кода */
+            [data-theme="dark"] .command-example code {
+                background-color: #2d3748;
+                color: #e2e8f0;
+            }
             </style>
             {% endblock %}
