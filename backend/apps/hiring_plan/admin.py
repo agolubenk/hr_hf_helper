@@ -7,7 +7,8 @@ from django.db.models import Count, Sum
 from .models import (
     HiringPlan, HiringPlanPosition, PositionType, PlanPeriodType,
     PositionKPIOKR, PlanKPIOKRBlock, PlanMetrics,
-    VacancySLA, HiringRequest, RecruitmentMetrics, DemandForecast, RecruiterCapacity
+    VacancySLA, HiringRequest, RecruitmentMetrics, DemandForecast, RecruiterCapacity,
+    HuntflowSync
 )
 
 
@@ -340,7 +341,7 @@ class HiringRequestAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Метаданные', {
-            'fields': ('created_by', 'created_at', 'updated_at'),
+            'fields': ('created_by', 'closed_by', 'created_at', 'updated_at'),
             'classes': ('collapse',)
         }),
     )
@@ -361,7 +362,7 @@ class HiringRequestAdmin(admin.ModelAdmin):
     
     def get_queryset(self, request):
         return super().get_queryset(request).select_related(
-            'vacancy', 'grade', 'sla', 'created_by'
+            'vacancy', 'grade', 'sla', 'created_by', 'closed_by'
         )
 
 
@@ -448,6 +449,74 @@ class RecruiterCapacityAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+
+@admin.register(HuntflowSync)
+class HuntflowSyncAdmin(admin.ModelAdmin):
+    list_display = [
+        'huntflow_vacancy_id', 'huntflow_applicant_id',
+        'entity_type', 'sync_status', 'hiring_request',
+        'synced_at', 'created_at'
+    ]
+    list_filter = ['sync_status', 'entity_type', 'synced_at']
+    search_fields = [
+        'huntflow_vacancy_id', 'huntflow_applicant_id',
+        'hiring_request__vacancy__name'
+    ]
+    readonly_fields = ['created_at', 'updated_at', 'synced_at']
+    
+    fieldsets = (
+        ('HuntFlow IDs', {
+            'fields': (
+                'huntflow_vacancy_id', 'huntflow_applicant_id',
+                'huntflow_log_id', 'entity_type'
+            )
+        }),
+        ('Синхронизация', {
+            'fields': (
+                'hiring_request', 'sync_status', 'error_message'
+            )
+        }),
+        ('Данные', {
+            'fields': ('huntflow_data',),
+            'classes': ('collapse',)
+        }),
+        ('Метаданные', {
+            'fields': ('synced_at', 'created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    actions = ['retry_sync']
+    
+    def retry_sync(self, request, queryset):
+        """Повторить синхронизацию для выбранных записей"""
+        from .huntflow_services.huntflow_sync_service import HuntflowSyncService
+        from django.utils import timezone
+        
+        sync_service = HuntflowSyncService(request.user)
+        
+        for sync_record in queryset:
+            if sync_record.sync_status == 'failed':
+                # Повторяем синхронизацию
+                log_data = sync_record.huntflow_data.get('log', {})
+                
+                hiring_request = sync_service.sync_hired_applicant(
+                    sync_record.huntflow_vacancy_id,
+                    sync_record.huntflow_applicant_id,
+                    log_data
+                )
+                
+                if hiring_request:
+                    sync_record.sync_status = 'success'
+                    sync_record.hiring_request = hiring_request
+                    sync_record.synced_at = timezone.now()
+                    sync_record.error_message = ''
+                    sync_record.save()
+        
+        self.message_user(request, f"Повторно синхронизировано: {queryset.count()}")
+    
+    retry_sync.short_description = "Повторить синхронизацию"
 
 
 # Настройка админки

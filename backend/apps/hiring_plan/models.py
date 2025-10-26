@@ -880,6 +880,15 @@ class HiringRequest(models.Model):
         related_name='created_requests',
         verbose_name='Создано пользователем'
     )
+    closed_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='closed_requests',
+        verbose_name='Закрыто пользователем',
+        help_text='Рекрутер, который закрыл вакансию'
+    )
     
     class Meta:
         verbose_name = 'Заявка на найм'
@@ -1408,3 +1417,89 @@ def create_requests_on_position_save(sender, instance, created, **kwargs):
     if created or kwargs.get('update_fields') is None:
         # Создаем заявки только при создании или полном обновлении
         create_requests_for_position(instance)
+
+
+class HuntflowSync(models.Model):
+    """Синхронизация данных с HuntFlow"""
+    
+    ENTITY_TYPE_CHOICES = [
+        ('vacancy', 'Вакансия'),
+        ('applicant', 'Кандидат'),
+        ('status_change', 'Изменение статуса'),
+    ]
+    
+    SYNC_STATUS_CHOICES = [
+        ('pending', 'Ожидает'),
+        ('success', 'Успешно'),
+        ('failed', 'Ошибка'),
+        ('skipped', 'Пропущено'),
+    ]
+    
+    # Идентификаторы HuntFlow
+    huntflow_vacancy_id = models.IntegerField(
+        verbose_name='ID вакансии в HuntFlow',
+        db_index=True
+    )
+    huntflow_applicant_id = models.IntegerField(
+        null=True, blank=True,
+        verbose_name='ID кандидата в HuntFlow',
+        db_index=True
+    )
+    huntflow_log_id = models.IntegerField(
+        null=True, blank=True,
+        verbose_name='ID лога в HuntFlow'
+    )
+    
+    # Тип синхронизируемой сущности
+    entity_type = models.CharField(
+        max_length=20,
+        choices=ENTITY_TYPE_CHOICES,
+        verbose_name='Тип сущности'
+    )
+    
+    # Связь с HiringRequest
+    hiring_request = models.ForeignKey(
+        HiringRequest,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='huntflow_syncs',
+        verbose_name='Заявка на найм'
+    )
+    
+    # Данные из HuntFlow (JSON)
+    huntflow_data = models.JSONField(
+        verbose_name='Данные из HuntFlow',
+        help_text='Полные данные объекта из HuntFlow API'
+    )
+    
+    # Статус синхронизации
+    sync_status = models.CharField(
+        max_length=20,
+        choices=SYNC_STATUS_CHOICES,
+        default='pending',
+        verbose_name='Статус синхронизации'
+    )
+    error_message = models.TextField(
+        blank=True,
+        verbose_name='Сообщение об ошибке'
+    )
+    
+    # Метаданные
+    synced_at = models.DateTimeField(
+        null=True, blank=True,
+        verbose_name='Дата синхронизации'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Синхронизация HuntFlow'
+        verbose_name_plural = 'Синхронизации HuntFlow'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['huntflow_vacancy_id', 'huntflow_applicant_id']),
+            models.Index(fields=['sync_status']),
+        ]
+    
+    def __str__(self):
+        return f"HuntFlow Sync: Vacancy #{self.huntflow_vacancy_id} - {self.get_sync_status_display()}"

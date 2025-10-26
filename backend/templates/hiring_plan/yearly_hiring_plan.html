@@ -271,6 +271,7 @@
                             {% endfor %}
                             <th>SLA</th>
                             <th>В работе</th>
+                            <th>Рекрутер</th>
                             <th>Статус</th>
                         </tr>
                     </thead>
@@ -315,6 +316,14 @@
                                         <span class="text-muted">—</span>
                                     {% else %}
                                         <strong>{{ row.days_in_year }}</strong> дней
+                                    {% endif %}
+                                </td>
+                                
+                                <td>
+                                    {% if row.closed_by %}
+                                        <span class="badge bg-success">{{ row.closed_by.get_full_name|default:row.closed_by.username }}</span>
+                                    {% else %}
+                                        <span class="text-muted">—</span>
                                     {% endif %}
                                 </td>
                                 
@@ -373,6 +382,7 @@
                         <small class="text-muted">{{ medians.averages.work_days }}</small>
                     </td>
                     <td>—</td>
+                    <td>—</td>
                 </tr>
                 
                 <!-- Строка с медианными значениями -->
@@ -405,6 +415,7 @@
                     <td>
                         <small class="text-muted">{{ medians.work_days }}</small>
                     </td>
+                    <td>—</td>
                     <td>—</td>
                 </tr>
                 {% endif %}
