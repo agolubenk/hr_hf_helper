@@ -604,6 +604,19 @@
 
 .user-message .message-bubble {
     order: 1; /* Сообщение пользователя слева */
+    max-width: 75%; /* Ограничиваем ширину только для пользовательских сообщений */
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+}
+
+.user-message .message-content {
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+    hyphens: auto !important;
 }
 
 /* Обеспечиваем правильный перенос текста */
@@ -844,15 +857,19 @@
 
 /* Пользовательские сообщения - остаются с ограничением */
 .card .user-message .message-bubble {
-    max-width: 75%;
+    max-width: 75% !important;
     min-width: 120px;
 }
 
-/* Системные сообщения - БЕЗ ОГРАНИЧЕНИЙ ШИРИНЫ */
+/* Системные сообщения - С ОГРАНИЧЕНИЕМ ШИРИНЫ */
 .card .system-message .message-bubble {
-    max-width: none !important;
+    max-width: 80% !important;
     min-width: fit-content !important;
     width: auto !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
 }
 
 .card .user-bubble {
@@ -2592,4 +2609,54 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                 window.sessionId = {{ chat_session.id }};
             </script>
             <script src="{% static 'js/chat_actions.js' %}"></script>
+            
+            <!-- ПРИНУДИТЕЛЬНЫЕ СТИЛИ ДЛЯ ОГРАНИЧЕНИЯ ШИРИНЫ СООБЩЕНИЙ -->
+            <style>
+                /* Максимально специфичные селекторы для принудительного ограничения ширины */
+                .card .chat-messages .message.user-message .message-bubble,
+                .card .chat-messages .user-message .message-bubble,
+                .card .user-message .message-bubble,
+                .user-message .message-bubble,
+                .message.user-message .message-bubble {
+                    max-width: 75% !important;
+                    width: 75% !important;
+                    min-width: 120px !important;
+                    word-wrap: break-word !important;
+                    word-break: break-word !important;
+                    overflow-wrap: break-word !important;
+                    white-space: normal !important;
+                    hyphens: auto !important;
+                    box-sizing: border-box !important;
+                }
+
+                .card .chat-messages .message.system-message .message-bubble,
+                .card .chat-messages .system-message .message-bubble,
+                .card .system-message .message-bubble,
+                .system-message .message-bubble,
+                .message.system-message .message-bubble {
+                    max-width: 80% !important;
+                    width: 80% !important;
+                    min-width: fit-content !important;
+                    word-wrap: break-word !important;
+                    word-break: break-word !important;
+                    overflow-wrap: break-word !important;
+                    white-space: normal !important;
+                    hyphens: auto !important;
+                    box-sizing: border-box !important;
+                }
+
+                /* Принудительные стили для содержимого сообщений */
+                .card .chat-messages .message .message-content,
+                .card .chat-messages .message-content,
+                .message .message-content,
+                .message-content {
+                    word-wrap: break-word !important;
+                    word-break: break-word !important;
+                    overflow-wrap: break-word !important;
+                    white-space: normal !important;
+                    hyphens: auto !important;
+                    max-width: 100% !important;
+                    overflow: hidden !important;
+                }
+            </style>
             {% endblock %}
