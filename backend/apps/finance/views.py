@@ -893,7 +893,14 @@ def salary_ranges_list(request):
         'inactive_count': salary_ranges.filter(is_active=False).count(),
     }
     
-    return render(request, 'finance/salary_ranges_list.html', context)
+    response = render(request, 'finance/salary_ranges_list.html', context)
+    
+    # Добавляем заголовки для предотвращения кэширования
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    
+    return response
 
 
 @login_required

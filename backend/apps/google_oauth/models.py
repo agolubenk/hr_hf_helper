@@ -3536,7 +3536,8 @@ class HRScreening(models.Model):
     def _determine_grade_by_salary(self, salary_amount, currency):
         """Определяет грейд на основе зарплаты в указанной валюте"""
         try:
-            from apps.vacancies.models import SalaryRange, Vacancy
+            from apps.finance.models import SalaryRange
+            from apps.vacancies.models import Vacancy
             
             # Получаем вакансию
             vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))

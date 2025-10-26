@@ -17,6 +17,9 @@
                 <div class="card-header">
                     <h3 class="card-title">
                         <i class="fas fa-money-bill-wave"></i> Зарплатные вилки
+                        {% if page_generated_at %}
+                            <small class="text-muted">(обновлено: {{ page_generated_at|date:"d.m.Y H:i:s" }})</small>
+                        {% endif %}
                     </h3>
                     <div class="card-tools">
                         <a href="{% url 'vacancies:salary_range_create' %}" class="btn btn-primary btn-sm">

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Vacancy, SalaryRange, ScorecardUpdateHistory
+from .models import Vacancy, ScorecardUpdateHistory
+from apps.finance.models import SalaryRange
 
 
 @admin.register(Vacancy)
@@ -144,110 +145,7 @@ class VacancyAdmin(admin.ModelAdmin):
     update_activity_status.short_description = 'Обновить статус активности на основе заявок'
 
 
-@admin.register(SalaryRange)
-class SalaryRangeAdmin(admin.ModelAdmin):
-    list_display = [
-        'vacancy',
-        'grade',
-        'salary_display_usd',
-        'salary_display_byn',
-        'salary_display_pln',
-        'salary_display_eur',
-        'is_active_display',
-        'updated_at'
-    ]
-    
-    list_filter = [
-        'is_active',
-        'vacancy',
-        'grade',
-        'created_at',
-        'updated_at'
-    ]
-    
-    search_fields = [
-        'vacancy__name',
-        'grade__name'
-    ]
-    
-    readonly_fields = [
-        'salary_min_byn', 'salary_max_byn',
-        'salary_min_pln', 'salary_max_pln',
-        'salary_min_eur', 'salary_max_eur',
-        'created_at', 'updated_at'
-    ]
-    
-    fieldsets = (
-        ('Основная информация', {
-            'fields': ('vacancy', 'grade', 'is_active')
-        }),
-        ('Зарплата в USD (редактируемая)', {
-            'fields': ('salary_min_usd', 'salary_max_usd'),
-            'description': 'Введите зарплатную вилку в долларах США. Остальные валюты рассчитаются автоматически.'
-        }),
-        ('Зарплата в BYN (автоматически рассчитанная)', {
-            'fields': ('salary_min_byn', 'salary_max_byn'),
-            'classes': ('collapse',)
-        }),
-        ('Зарплата в PLN (автоматически рассчитанная)', {
-            'fields': ('salary_min_pln', 'salary_max_pln'),
-            'classes': ('collapse',)
-        }),
-        ('Зарплата в EUR (автоматически рассчитанная)', {
-            'fields': ('salary_min_eur', 'salary_max_eur'),
-            'classes': ('collapse',)
-        }),
-        ('Системная информация', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
-    
-    ordering = ['vacancy__name', 'grade__name']
-    
-    def salary_display_usd(self, obj):
-        """Отображение зарплаты в USD"""
-        return f"${obj.salary_min_usd} - ${obj.salary_max_usd}"
-    salary_display_usd.short_description = 'Зарплата (USD)'
-    
-    def salary_display_byn(self, obj):
-        """Отображение зарплаты в BYN"""
-        if obj.salary_min_byn and obj.salary_max_byn:
-            return f"{obj.salary_min_byn} - {obj.salary_max_byn} BYN"
-        return "Не рассчитано"
-    salary_display_byn.short_description = 'Зарплата (BYN)'
-    
-    def salary_display_pln(self, obj):
-        """Отображение зарплаты в PLN"""
-        if obj.salary_min_pln and obj.salary_max_pln:
-            return f"{obj.salary_min_pln} - {obj.salary_max_pln} PLN"
-        return "Не рассчитано"
-    salary_display_pln.short_description = 'Зарплата (PLN)'
-    
-    def salary_display_eur(self, obj):
-        """Отображение зарплаты в EUR"""
-        if obj.salary_min_eur and obj.salary_max_eur:
-            return f"{obj.salary_min_eur} - {obj.salary_max_eur} EUR"
-        return "Не рассчитано"
-    salary_display_eur.short_description = 'Зарплата (EUR)'
-    
-    
-    def is_active_display(self, obj):
-        """Отображение статуса активности"""
-        if obj.is_active:
-            return format_html(
-                '<span style="color: #28a745; font-weight: bold;">✅ Активна</span>'
-            )
-        else:
-            return format_html(
-                '<span style="color: #6c757d;">❌ Неактивна</span>'
-            )
-    is_active_display.short_description = 'Статус'
-    is_active_display.admin_order_field = 'is_active'
-    
-    def get_queryset(self, request):
-        """Оптимизация запросов"""
-        return super().get_queryset(request).select_related('vacancy', 'grade')
+# SalaryRangeAdmin удален - используется finance.SalaryRangeAdmin
 
 
 @admin.register(ScorecardUpdateHistory)

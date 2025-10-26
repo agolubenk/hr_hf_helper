@@ -937,3 +937,86 @@ class BenchmarkSettings(models.Model):
             raise ValidationError({
                 'max_daily_tasks': _('Максимальное количество задач должно быть от 1 до 10000')
             })
+
+
+# Сигналы для автоматического пересчета зарплатных вилок при обновлении курсов валют
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+@receiver(post_save, sender=CurrencyRate)
+def recalculate_salary_ranges_on_currency_update(sender, instance, created, **kwargs):
+    """
+    Автоматически пересчитывает зарплатные вилки при обновлении курсов валют
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - sender: CurrencyRate модель
+    - instance: обновленный объект CurrencyRate
+    - created: флаг создания нового объекта
+    - **kwargs: дополнительные параметры
+    
+    ИСТОЧНИКИ ДАННЫЕ:
+    - CurrencyRate: обновленный курс валюты
+    - SalaryRange: все зарплатные вилки в системе
+    
+    ОБРАБОТКА:
+    - Проверяет, что курс был обновлен (не создан)
+    - Получает все активные зарплатные вилки
+    - Пересчитывает зарплаты в других валютах
+    - Сохраняет обновленные вилки
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - Обновленные SalaryRange объекты в базе данных
+    
+    СВЯЗИ:
+    - Использует: SalaryRange._calculate_other_currencies()
+    - Передает: обновленные зарплатные вилки
+    - Может вызываться из: CurrencyRate.save()
+    """
+    # Пересчитываем только при обновлении существующего курса, не при создании
+    if not created:
+        try:
+            from django.apps import apps
+            
+            logger.info(f"🔄 Пересчитываем зарплатные вилки после обновления курса {instance.code}")
+            
+            # Получаем модель SalaryRange из finance приложения
+            SalaryRange = apps.get_model('finance', 'SalaryRange')
+            
+            # Получаем все активные зарплатные вилки
+            salary_ranges = SalaryRange.objects.filter(is_active=True)
+            updated_count = 0
+            
+            for salary_range in salary_ranges:
+                try:
+                    # Пересчитываем зарплаты в других валютах используя SalaryService
+                    from logic.finance.salary_service import SalaryService
+                    min_byn, max_byn = SalaryService.calculate_byn_amounts(salary_range.salary_min_usd, salary_range.salary_max_usd)
+                    min_pln, max_pln = SalaryService.calculate_pln_amounts(salary_range.salary_min_usd, salary_range.salary_max_usd)
+                    min_eur, max_eur = SalaryService.calculate_eur_amounts(salary_range.salary_min_usd, salary_range.salary_max_usd)
+                    
+                    salary_range.salary_min_byn = min_byn
+                    salary_range.salary_max_byn = max_byn
+                    salary_range.salary_min_pln = min_pln
+                    salary_range.salary_max_pln = max_pln
+                    salary_range.salary_min_eur = min_eur
+                    salary_range.salary_max_eur = max_eur
+                    
+                    salary_range.save(update_fields=[
+                        'salary_min_byn', 'salary_max_byn',
+                        'salary_min_pln', 'salary_max_pln', 
+                        'salary_min_eur', 'salary_max_eur',
+                        'updated_at'
+                    ])
+                    updated_count += 1
+                except Exception as e:
+                    logger.error(f"❌ Ошибка при пересчете вилки {salary_range}: {e}")
+                    continue
+            
+            logger.info(f"✅ Пересчитано {updated_count} зарплатных вилок после обновления курса {instance.code}")
+            
+        except Exception as e:
+            logger.error(f"❌ Ошибка при пересчете зарплатных вилок: {e}")

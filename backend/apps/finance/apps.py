@@ -8,4 +8,5 @@ class FinanceConfig(AppConfig):
     
     def ready(self):
         # import apps.finance.logic.signals  # УДАЛЕНО - логика перенесена
-        pass
+        # Импортируем сигналы для автоматического пересчета зарплатных вилок
+        import apps.finance.models  # Это загрузит сигналы из models.py
