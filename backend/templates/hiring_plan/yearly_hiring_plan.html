@@ -440,29 +440,29 @@
                         <strong><i class="fas fa-chart-line me-2"></i>Медианы</strong>
                     </td>
                     <td>
-                        <small class="text-muted">{{ medians.grade }}</small>
+                        <strong>{{ medians.grade }}</strong>
                     </td>
                     <td>—</td>
                     
                     {% for month_num, month_name in months|enumerate_list %}
                         {% with month_num|add:1 as month %}
                             <td class="month-cell text-center">
-                                <small class="text-muted">
+                                <strong>
                                     {% if medians.monthly_days|get_item:month > 0 %}
                                         {{ medians.monthly_days|get_item:month|floatformat:0 }}д
                                     {% else %}
                                         —
                                     {% endif %}
-                                </small>
+                                </strong>
                             </td>
                         {% endwith %}
                     {% endfor %}
                     
                     <td>
-                        <small class="text-muted">{{ medians.sla }}</small>
+                        <strong>{{ medians.sla }}</strong>
                     </td>
                     <td>
-                        <small class="text-muted">{{ medians.work_days }}</small>
+                        <strong>{{ medians.work_days }}</strong>
                     </td>
                     <td>—</td>
                     <td>—</td>
