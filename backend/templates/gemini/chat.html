@@ -105,7 +105,8 @@
                                     <i class="fas fa-user"></i>
                                 {% endif %}
                             {% else %}
-                                <i class="fas fa-robot"></i>
+                                <img src="{% static 'img/logo-light.png' %}" alt="Gemini AI" class="ai-avatar-image light-theme-logo">
+                                <img src="{% static 'img/logo-dark.png' %}" alt="Gemini AI" class="ai-avatar-image dark-theme-logo">
                             {% endif %}
                         </div>
                         <div class="message-bubble {% if message.role == 'user' %}user-bubble{% else %}system-bubble{% endif %}">
@@ -142,7 +143,8 @@
                 <div class="typing-indicator" id="typing-indicator" style="display: none;">
                     <div class="message system-message">
                         <div class="message-avatar">
-                            <i class="fas fa-robot"></i>
+                            <img src="{% static 'img/logo-light.png' %}" alt="Gemini AI" class="ai-avatar-image light-theme-logo">
+                            <img src="{% static 'img/logo-dark.png' %}" alt="Gemini AI" class="ai-avatar-image dark-theme-logo">
                         </div>
                         <div class="message-bubble system-bubble">
                             <div class="message-header">
@@ -258,7 +260,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 avatarDiv.innerHTML = '<i class="fas fa-user"></i>';
             {% endif %}
         } else {
-            avatarDiv.innerHTML = '<i class="fas fa-robot"></i>';
+            avatarDiv.innerHTML = '<img src="{% static 'img/logo-light.png' %}" alt="Gemini AI" class="ai-avatar-image light-theme-logo"><img src="{% static 'img/logo-dark.png' %}" alt="Gemini AI" class="ai-avatar-image dark-theme-logo">';
         }
         
         const bubbleDiv = document.createElement('div');

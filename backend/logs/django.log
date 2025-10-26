@@ -94,3 +94,24 @@ DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'n
 📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
 DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
 Watching for file changes with StatReloader
+[26/Oct/2025 17:34:33] "GET /gemini/chat/30/ HTTP/1.1" 200 135449
+[26/Oct/2025 17:34:33] "GET /static/css/enhanced_chat.css HTTP/1.1" 200 9887
+[26/Oct/2025 17:34:33] "GET /static/images/integrations/gemini.svg HTTP/1.1" 200 496
+[26/Oct/2025 17:34:57] "GET /gemini/chat/30/ HTTP/1.1" 200 135449
+[26/Oct/2025 17:34:57] "GET /static/css/enhanced_chat.css HTTP/1.1" 200 10687
+[26/Oct/2025 17:34:57] "GET /static/images/integrations/gemini.svg HTTP/1.1" 200 496
+[26/Oct/2025 17:34:57] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[26/Oct/2025 17:34:57] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[26/Oct/2025 17:34:57] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[26/Oct/2025 17:34:57] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[26/Oct/2025 17:34:57] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[26/Oct/2025 17:34:57] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[26/Oct/2025 17:34:57] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[26/Oct/2025 17:34:57] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[26/Oct/2025 17:34:57] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[26/Oct/2025 17:34:57] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[26/Oct/2025 17:35:15] "GET /gemini/chat/ HTTP/1.1" 302 0
+[26/Oct/2025 17:37:21] "GET /gemini/chat/ HTTP/1.1" 302 0
+[26/Oct/2025 17:37:27] "GET /gemini/chat/30/ HTTP/1.1" 200 136067
+[26/Oct/2025 17:37:27] "GET /static/css/enhanced_chat.css HTTP/1.1" 200 10979
+[26/Oct/2025 17:37:27] "GET /static/img/logo-light.png HTTP/1.1" 304 0

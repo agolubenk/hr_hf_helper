@@ -240,6 +240,45 @@
     border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Стили для AI аватара */
+.ai-avatar-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+    transition: all 0.3s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Убираем фон для AI аватара */
+.message-avatar:has(.ai-avatar-image) {
+    background: none !important;
+    color: inherit !important;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+}
+
+/* Светлая тема - показываем светлый логотип */
+[data-theme="light"] .light-theme-logo {
+    display: block;
+}
+
+[data-theme="light"] .dark-theme-logo {
+    display: none;
+}
+
+/* Темная тема - показываем темный логотип */
+[data-theme="dark"] .light-theme-logo {
+    display: none;
+}
+
+[data-theme="dark"] .dark-theme-logo {
+    display: block;
+}
+
 .message-bubble {
     max-width: 70%;
     padding: 16px 20px;
@@ -417,6 +456,16 @@
         height: 100%;
         border-radius: 50%;
         object-fit: cover;
+    }
+    
+    .ai-avatar-image {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
     }
     
     .message-bubble {
