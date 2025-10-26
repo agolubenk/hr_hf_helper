@@ -15,6 +15,20 @@
     transform: scale(1.1);
     transition: transform 0.2s ease;
 }
+.vacancy-name {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+}
+.project-name {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+}
 </style>
 <div class="row">
     <div class="col-12">
@@ -209,7 +223,7 @@
                                 </td>
                                 <td>
                                     <div>
-                                        <strong>{{ request.vacancy.name }}</strong>
+                                        <strong class="vacancy-name" title="{{ request.vacancy.name }}">{{ request.vacancy.name }}</strong>
                                         <br>
                                         <span class="badge bg-info">{{ request.grade.name }}</span>
                                     </div>

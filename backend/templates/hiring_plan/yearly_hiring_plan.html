@@ -29,6 +29,22 @@
         vertical-align: middle;
     }
     
+    /* Темная тема */
+    [data-bs-theme="dark"] .yearly-table th {
+        background-color: #343a40;
+        border-color: #495057;
+        color: #ffffff;
+    }
+    
+    [data-bs-theme="dark"] .yearly-table td {
+        border-color: #495057;
+        color: #ffffff;
+    }
+    
+    [data-bs-theme="dark"] .yearly-table {
+        background-color: #212529;
+    }
+    
     .yearly-table .vacancy-info {
         text-align: left;
         max-width: 210px;
@@ -50,6 +66,15 @@
     .yearly-table .vacancy-info a:hover {
         color: #007bff;
         text-decoration: underline;
+    }
+    
+    /* Темная тема для ссылок */
+    [data-bs-theme="dark"] .yearly-table .vacancy-info a {
+        color: #ffffff;
+    }
+    
+    [data-bs-theme="dark"] .yearly-table .vacancy-info a:hover {
+        color: #66b3ff;
     }
     
     .yearly-table .vacancy-info .vacancy-name {
@@ -106,14 +131,52 @@
         color: #856404;
     }
     
+    /* Темная тема для цветов ячеек */
+    [data-bs-theme="dark"] .cell-green {
+        background-color: #0f5132 !important;
+        color: #d1e7dd;
+    }
+    
+    [data-bs-theme="dark"] .cell-red {
+        background-color: #842029 !important;
+        color: #f8d7da;
+    }
+    
+    [data-bs-theme="dark"] .cell-blue {
+        background-color: #084298 !important;
+        color: #cce5ff;
+    }
+    
+    [data-bs-theme="dark"] .cell-lightblue {
+        background-color: #055160 !important;
+        color: #b3e5fc;
+    }
+    
+    [data-bs-theme="dark"] .cell-yellow {
+        background-color: #664d03 !important;
+        color: #fff3cd;
+    }
+    
     .cell-gray {
         background-color: #e9ecef !important;
         color: #495057;
     }
     
+    /* Темная тема для серых ячеек */
+    [data-bs-theme="dark"] .cell-gray {
+        background-color: #495057 !important;
+        color: #adb5bd;
+    }
+    
     .cell-lightgray {
         background-color: #f8f9fa !important;
         color: #6c757d;
+    }
+    
+    /* Темная тема для светло-серых ячеек */
+    [data-bs-theme="dark"] .cell-lightgray {
+        background-color: #343a40 !important;
+        color: #adb5bd;
     }
     
     .cell-transparent {
@@ -209,6 +272,53 @@
     .badge-cancelled {
         background-color: #e9ecef;
         color: #495057;
+    }
+    
+    /* Темная тема для бейджей статусов */
+    [data-bs-theme="dark"] .badge-planned {
+        background-color: #055160;
+        color: #b3e5fc;
+    }
+    
+    [data-bs-theme="dark"] .badge-in-progress {
+        background-color: #084298;
+        color: #cce5ff;
+    }
+    
+    [data-bs-theme="dark"] .badge-closed {
+        background-color: #0f5132;
+        color: #d1e7dd;
+    }
+    
+    [data-bs-theme="dark"] .badge-cancelled {
+        background-color: #495057;
+        color: #adb5bd;
+    }
+    
+    /* Выделение границ для строк медиан и средних */
+    .table-info {
+        border-top: 3px solid #0d6efd !important;
+        border-bottom: 3px solid #0d6efd !important;
+    }
+    
+    .table-secondary {
+        border-top: 3px solid #6c757d !important;
+        border-bottom: 3px solid #6c757d !important;
+    }
+    
+    /* Темная тема для строк медиан и средних */
+    [data-bs-theme="dark"] .table-info {
+        background-color: #0d6efd !important;
+        color: #ffffff;
+        border-top-color: #66b3ff !important;
+        border-bottom-color: #66b3ff !important;
+    }
+    
+    [data-bs-theme="dark"] .table-secondary {
+        background-color: #6c757d !important;
+        color: #ffffff;
+        border-top-color: #adb5bd !important;
+        border-bottom-color: #adb5bd !important;
     }
 </style>
 {% endblock %}
@@ -406,7 +516,7 @@
                         <strong><i class="fas fa-chart-line me-2"></i>Медианы</strong>
                     </td>
                     <td>
-                        <strong>{{ medians.grade }}</strong>
+                        <strong>{{ medians.grade|grade_short }}</strong>
                     </td>
                     <td>—</td>
                     
@@ -445,7 +555,7 @@
                         <strong><i class="fas fa-chart-bar me-2"></i>Средние</strong>
                     </td>
                     <td>
-                        <strong>{{ medians.averages.grade }}</strong>
+                        <strong>{{ medians.averages.grade|grade_short }}</strong>
                     </td>
                     <td>—</td>
                     
