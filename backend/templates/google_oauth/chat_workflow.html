@@ -2658,5 +2658,87 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                     max-width: 100% !important;
                     overflow: hidden !important;
                 }
+
+                /* АДАПТИВНАЯ ШИРИНА ДЛЯ СООБЩЕНИЙ БОТА С ФУНКЦИОНАЛЬНЫМИ КНОПКАМИ */
+                .card .chat-messages .message.system-message .message-bubble,
+                .card .chat-messages .system-message .message-bubble,
+                .card .system-message .message-bubble,
+                .system-message .message-bubble,
+                .message.system-message .message-bubble {
+                    width: auto !important;
+                    max-width: 80% !important;
+                    min-width: fit-content !important;
+                }
+
+                /* Контейнер с информацией и кнопками - адаптивная ширина */
+                .card .message-body-with-buttons {
+                    display: flex !important;
+                    align-items: flex-start !important;
+                    gap: 12px !important;
+                    width: auto !important;
+                    min-width: fit-content !important;
+                    max-width: none !important;
+                }
+
+                /* Информационная часть - занимает только необходимое место */
+                .card .message-info {
+                    flex: 0 0 auto !important;
+                    min-width: fit-content !important;
+                    max-width: none !important;
+                }
+
+                /* Кнопки действий - фиксированный размер */
+                .card .action-buttons-right {
+                    display: flex !important;
+                    flex-direction: column !important;
+                    gap: 4px !important;
+                    flex-shrink: 0 !important;
+                    align-self: flex-start !important;
+                    margin-top: 2px !important;
+                    width: auto !important;
+                    min-width: fit-content !important;
+                }
+
+                /* Табличная структура - адаптивная ширина */
+                .card .candidate-info-table {
+                    display: table !important;
+                    width: auto !important;
+                    min-width: fit-content !important;
+                    max-width: none !important;
+                    border-spacing: 0 !important;
+                    border-collapse: collapse !important;
+                    margin-bottom: 6px !important;
+                }
+
+                /* Строки таблицы - адаптивная ширина */
+                .card .info-row-table {
+                    display: table-row !important;
+                    width: auto !important;
+                }
+
+                /* Лейблы - фиксированная ширина */
+                .card .info-label-table {
+                    display: table-cell !important;
+                    font-weight: 600 !important;
+                    color: var(--hr-text, #333) !important;
+                    padding-right: 8px !important;
+                    white-space: nowrap !important;
+                    vertical-align: top !important;
+                    line-height: 1.3 !important;
+                    font-size: 0.9rem !important;
+                    min-width: 65px !important;
+                    width: auto !important;
+                }
+
+                /* Значения - адаптивная ширина */
+                .card .info-value-table {
+                    display: table-cell !important;
+                    white-space: nowrap !important;
+                    vertical-align: top !important;
+                    line-height: 1.3 !important;
+                    font-size: 0.9rem !important;
+                    width: auto !important;
+                    min-width: fit-content !important;
+                }
             </style>
             {% endblock %}
