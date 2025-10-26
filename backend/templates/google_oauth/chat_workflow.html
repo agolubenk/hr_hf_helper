@@ -413,11 +413,30 @@
                                         <p>Начните диалог, отправив сообщение</p>
                                     </div>
                                 {% endfor %}
+                                
+                                <!-- Индикатор печати -->
+                                <div class="typing-indicator" id="typing-indicator" style="display: none;">
+                                    <div class="message system-message">
+                                        <div class="message-avatar">
+                                            <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
+                                            <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
+                                        </div>
+                                        <div class="message-bubble system-bubble">
+                                            <div class="message-header">
+                                                <strong>HR-помощник</strong>
+                                            </div>
+                                            <div class="message-content">
+                                                <span class="loading-spinner me-2"></span>
+                                                Обрабатываю запрос...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             
                             <!-- Форма ввода -->
                             <div class="card-footer">
-                                <form method="post" id="chat-form">
+                                <form id="chat-form">
                                     {% csrf_token %}
                                     <input type="hidden" name="session_id" value="{{ chat_session.id }}">
                                     
@@ -1957,6 +1976,26 @@
     color: var(--color-primary, #3182ce);
 }
 
+/* Индикатор печати */
+.typing-indicator {
+    margin-bottom: 12px;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 </style>
 
 <script>
@@ -1984,21 +2023,33 @@ document.addEventListener('DOMContentLoaded', function() {
         resetTextareaSize();
     }, 100);
     
-    // Отправка формы
+    // Отправка формы через AJAX
     chatForm.addEventListener('submit', function(e) {
-        if (!messageInput.value.trim()) {
+        e.preventDefault();
+        
+        const message = messageInput.value.trim();
+        if (!message) return;
+        
+        // Добавляем сообщение пользователя в чат
+        addMessageToChat('user', message);
+        
+        // Очищаем поле ввода и сбрасываем высоту
+        messageInput.value = '';
+        resetTextareaSize();
+        
+        // Показываем индикатор печати
+        showTypingIndicator();
+        
+        // Отправляем запрос
+        sendMessage(message);
+    });
+    
+    // Отправка сообщения по Enter (но не Shift+Enter)
+    messageInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            return;
+            chatForm.dispatchEvent(new Event('submit'));
         }
-        
-        sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-        sendBtn.disabled = true;
-        messageInput.disabled = true;
-        
-        // Сбрасываем размер textarea после отправки
-        setTimeout(() => {
-            resetTextareaSize();
-        }, 100);
     });
     
     // Функция для сброса размера textarea к одной строке
@@ -2006,6 +2057,254 @@ document.addEventListener('DOMContentLoaded', function() {
         messageInput.style.height = 'auto';
         messageInput.style.height = '48px'; // Высота одной строки
         messageInput.scrollTop = 0;
+    }
+    
+    // Добавление сообщения в чат
+    function addMessageToChat(role, content) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message mb-3 ${role === 'user' ? 'user-message' : 'system-message'}`;
+        
+        const flexDiv = document.createElement('div');
+        flexDiv.className = `d-flex ${role === 'user' ? 'justify-content-end' : 'justify-content-start'}`;
+        
+        if (role === 'user') {
+            // Пользовательское сообщение
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'message-bubble user-bubble';
+            bubbleDiv.innerHTML = `
+                <div class="message-header">
+                    <strong>Вы</strong>
+                    <small class="text-muted ms-2">${new Date().toLocaleString('ru-RU')}</small>
+                </div>
+                <div class="message-content user-content">${content.replace(/\n/g, '<br>')}</div>
+            `;
+            
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'message-avatar';
+            // Используем реальный URL фото пользователя из Django контекста
+            const userPhotoUrl = '{{ user_photo_url|default:"" }}';
+            if (userPhotoUrl) {
+                avatarDiv.innerHTML = `<img src="${userPhotoUrl}" alt="Фото пользователя" class="avatar-image">`;
+            } else {
+                avatarDiv.innerHTML = '<i class="fas fa-user"></i>';
+            }
+            
+            flexDiv.appendChild(bubbleDiv);
+            flexDiv.appendChild(avatarDiv);
+        } else {
+            // Системное сообщение
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'message-avatar';
+            avatarDiv.innerHTML = `
+                <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
+                <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
+            `;
+            
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'message-bubble system-bubble';
+            bubbleDiv.innerHTML = `
+                <div class="message-header">
+                    <strong>HR-помощник</strong>
+                    <small class="text-muted ms-2">${new Date().toLocaleString('ru-RU')}</small>
+                </div>
+                <div class="message-content">${content.replace(/\n/g, '<br>')}</div>
+            `;
+            
+            flexDiv.appendChild(avatarDiv);
+            flexDiv.appendChild(bubbleDiv);
+        }
+        
+        messageDiv.appendChild(flexDiv);
+        chatMessages.insertBefore(messageDiv, document.getElementById('typing-indicator'));
+        
+        scrollToBottom();
+    }
+    
+    // Показать индикатор печати
+    function showTypingIndicator() {
+        const typingIndicator = document.getElementById('typing-indicator');
+        typingIndicator.style.display = 'block';
+        scrollToBottom();
+    }
+    
+    // Скрыть индикатор печати
+    function hideTypingIndicator() {
+        const typingIndicator = document.getElementById('typing-indicator');
+        typingIndicator.style.display = 'none';
+    }
+    
+    // Отправка сообщения через AJAX
+    function sendMessage(message) {
+        const sessionId = document.querySelector('input[name="session_id"]').value;
+        
+        fetch('{% url "google_oauth:send_chat_message" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                session_id: sessionId,
+                message: message
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideTypingIndicator();
+            
+            if (data.success) {
+                // Добавляем ответ системы в чат
+                if (data.message_type === 'hrscreening') {
+                    addHRScreeningMessage(data.metadata);
+                } else if (data.message_type === 'invite') {
+                    addInviteMessage(data.metadata);
+                } else {
+                    addMessageToChat('assistant', data.response || 'Сообщение обработано');
+                }
+            } else {
+                // Показываем более детальную информацию об ошибке
+                let errorMessage = '❌ Ошибка: ' + data.error;
+                
+                // Добавляем подсказки для специфических ошибок
+                if (data.error.includes('перегружена')) {
+                    errorMessage += '\n\n💡 Попробуйте отправить сообщение через несколько минут.';
+                } else if (data.error.includes('лимит запросов')) {
+                    errorMessage += '\n\n💡 Подождите немного перед отправкой следующего сообщения.';
+                } else if (data.error.includes('API ключ')) {
+                    errorMessage += '\n\n💡 Проверьте настройки API ключа в разделе "Настройки".';
+                }
+                
+                addMessageToChat('assistant', errorMessage);
+            }
+        })
+        .catch(error => {
+            hideTypingIndicator();
+            console.error('Ошибка отправки сообщения:', error);
+            addMessageToChat('assistant', '❌ Ошибка соединения с сервером');
+        });
+    }
+    
+    // Добавление сообщения HR-скрининга
+    function addHRScreeningMessage(metadata) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message mb-3 system-message hr-screening-message';
+        
+        const flexDiv = document.createElement('div');
+        flexDiv.className = 'd-flex justify-content-start';
+        
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'message-avatar';
+        avatarDiv.innerHTML = `
+            <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
+            <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
+        `;
+        
+        const bubbleDiv = document.createElement('div');
+        bubbleDiv.className = 'message-bubble system-bubble';
+        bubbleDiv.innerHTML = `
+            <div class="message-header">
+                <strong>HR-скрининг</strong>
+                <small class="text-muted ms-2">${new Date().toLocaleString('ru-RU')}</small>
+            </div>
+            <div class="message-content">
+                <div class="message-body-with-buttons">
+                    <div class="message-info">
+                        <div class="candidate-info-table">
+                            <div class="info-row-table">
+                                <div class="info-label-table">Кандидат:</div>
+                                <div class="info-value-table">${metadata.candidate_name}</div>
+                            </div>
+                            <div class="info-row-table">
+                                <div class="info-label-table">Вакансия:</div>
+                                <div class="info-value-table">${metadata.vacancy_name}</div>
+                            </div>
+                            <div class="info-row-table">
+                                <div class="info-label-table">Уровень:</div>
+                                <div class="info-value-table">
+                                    <span class="badge bg-primary">${metadata.determined_grade}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action-buttons-right">
+                        <a href="${metadata.candidate_url}" target="_blank" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-external-link-alt me-1"></i>Открыть
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        flexDiv.appendChild(avatarDiv);
+        flexDiv.appendChild(bubbleDiv);
+        messageDiv.appendChild(flexDiv);
+        chatMessages.insertBefore(messageDiv, document.getElementById('typing-indicator'));
+        
+        scrollToBottom();
+    }
+    
+    // Добавление сообщения инвайта
+    function addInviteMessage(metadata) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message mb-3 system-message invite-message';
+        
+        const flexDiv = document.createElement('div');
+        flexDiv.className = 'd-flex justify-content-start';
+        
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'message-avatar';
+        avatarDiv.innerHTML = `
+            <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
+            <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
+        `;
+        
+        const bubbleDiv = document.createElement('div');
+        bubbleDiv.className = 'message-bubble system-bubble';
+        bubbleDiv.innerHTML = `
+            <div class="message-header">
+                <strong>Инвайт</strong>
+                <small class="text-muted ms-2">${new Date().toLocaleString('ru-RU')}</small>
+            </div>
+            <div class="message-content">
+                <div class="message-body-with-buttons">
+                    <div class="message-info">
+                        <div class="candidate-info-table">
+                            <div class="info-row-table">
+                                <div class="info-label-table">Кандидат:</div>
+                                <div class="info-value-table">${metadata.candidate_name}</div>
+                            </div>
+                            <div class="info-row-table">
+                                <div class="info-label-table">Вакансия:</div>
+                                <div class="info-value-table">${metadata.vacancy_name}</div>
+                            </div>
+                            <div class="info-row-table">
+                                <div class="info-label-table">Интервьюер:</div>
+                                <div class="info-value-table">${metadata.interviewer_name || 'Не указан'}</div>
+                            </div>
+                            <div class="info-row-table">
+                                <div class="info-label-table">Дата интервью:</div>
+                                <div class="info-value-table">${metadata.interview_datetime ? new Date(metadata.interview_datetime).toLocaleString('ru-RU') : 'Не указана'}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action-buttons-right">
+                        <a href="${metadata.candidate_url}" target="_blank" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-external-link-alt me-1"></i>Открыть
+                        </a>
+                        ${metadata.calendar_event_url ? `<a href="${metadata.calendar_event_url}" target="_blank" class="btn btn-sm btn-outline-success">
+                            <i class="fas fa-calendar me-1"></i>Присоединиться
+                        </a>` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        flexDiv.appendChild(avatarDiv);
+        flexDiv.appendChild(bubbleDiv);
+        messageDiv.appendChild(flexDiv);
+        chatMessages.insertBefore(messageDiv, document.getElementById('typing-indicator'));
+        
+        scrollToBottom();
     }
     
     // Автоматическое изменение размера textarea (1-12 строк)

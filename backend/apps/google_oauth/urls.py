@@ -65,6 +65,9 @@ urlpatterns = [
     path('chat/<int:session_id>/ajax/', views.chat_ajax_handler, name='chat_ajax_handler'),
     path('chat/<int:session_id>/update-title/', views.update_chat_title, name='update_chat_title'),
     
+    # AJAX API для отправки сообщений
+    path('api/send-message/', views.send_chat_message, name='send_chat_message'),
+    
     # AJAX API для чат-воркфлоу
     # path('api/chat/vacancy/<int:vacancy_id>/', views.api_chat_vacancy_data, name='api_chat_vacancy_data'),
     # path('api/chat/sessions/', views.api_chat_sessions, name='api_chat_sessions'),
