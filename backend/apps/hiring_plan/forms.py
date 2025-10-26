@@ -1,7 +1,10 @@
 from django import forms
+from django.contrib.auth import get_user_model
 from .models import VacancySLA, HiringRequest
 from apps.vacancies.models import Vacancy
 from apps.finance.models import Grade
+
+User = get_user_model()
 
 
 class DateInput(forms.DateInput):
@@ -21,7 +24,7 @@ class HiringRequestForm(forms.ModelForm):
         model = HiringRequest
         fields = [
             'vacancy', 'grade', 'project', 'priority',
-            'opening_reason', 'opening_date', 'notes'
+            'opening_reason', 'opening_date', 'recruiter', 'notes'
         ]
         widgets = {
             'vacancy': forms.Select(attrs={'class': 'form-select'}),
@@ -30,6 +33,7 @@ class HiringRequestForm(forms.ModelForm):
             'priority': forms.Select(attrs={'class': 'form-select'}),
             'opening_reason': forms.Select(attrs={'class': 'form-select'}),
             'opening_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'recruiter': forms.Select(attrs={'class': 'form-select'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
         labels = {
@@ -39,21 +43,30 @@ class HiringRequestForm(forms.ModelForm):
             'priority': 'Приоритет',
             'opening_reason': 'Причина открытия',
             'opening_date': 'Дата открытия вакансии',
+            'recruiter': 'Рекрутер',
             'notes': 'Заметки',
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Фильтруем только активных пользователей для выбора рекрутера
+        self.fields['recruiter'].queryset = User.objects.filter(is_active=True).order_by('first_name', 'last_name')
+        self.fields['recruiter'].empty_label = "Выберите рекрутера..."
 
 
 class HiringRequestUpdateForm(forms.ModelForm):
     class Meta:
         model = HiringRequest
         fields = [
-            'opening_date', 'candidate_id', 'candidate_name', 'closed_date', 'notes'
+            'opening_date', 'candidate_id', 'candidate_name', 'closed_date', 'hire_date', 'recruiter', 'notes'
         ]
         widgets = {
             'opening_date': DateInput(attrs={'class': 'form-control'}),
             'candidate_id': forms.TextInput(attrs={'class': 'form-control'}),
             'candidate_name': forms.TextInput(attrs={'class': 'form-control'}),
             'closed_date': DateInput(attrs={'class': 'form-control'}),
+            'hire_date': DateInput(attrs={'class': 'form-control'}),
+            'recruiter': forms.Select(attrs={'class': 'form-select'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
         labels = {
@@ -61,16 +74,26 @@ class HiringRequestUpdateForm(forms.ModelForm):
             'candidate_id': 'ID кандидата',
             'candidate_name': 'Имя кандидата',
             'closed_date': 'Дата закрытия',
+            'hire_date': 'Дата выхода специалиста',
+            'recruiter': 'Рекрутер',
             'notes': 'Заметки',
         }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
+        # Фильтруем только активных пользователей для выбора рекрутера
+        self.fields['recruiter'].queryset = User.objects.filter(is_active=True).order_by('first_name', 'last_name')
+        self.fields['recruiter'].empty_label = "Выберите рекрутера..."
+
         # Показываем поле opening_date только для планируемых заявок
         if self.instance and self.instance.status != 'planned':
-            self.fields['opening_date'].widget = forms.HiddenInput()
+            # Для незапланированных заявок делаем поле только для чтения
+            self.fields['opening_date'].widget = forms.DateInput(attrs={'class': 'form-control', 'readonly': True})
             self.fields['opening_date'].required = False
+            # Устанавливаем текущее значение
+            if self.instance.opening_date:
+                self.fields['opening_date'].initial = self.instance.opening_date
 
 
 class VacancySLAForm(forms.ModelForm):

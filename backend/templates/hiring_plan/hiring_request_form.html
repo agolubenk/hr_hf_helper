@@ -33,7 +33,7 @@
                     
                     <!-- Основная информация -->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="card">
                                 <div class="card-header">
                                     <h6 class="card-title mb-0">
@@ -126,7 +126,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="card">
                                 <div class="card-header">
                                     <h6 class="card-title mb-0">
@@ -181,7 +181,31 @@
                                         <div class="form-text">Автоматически рассчитывается из SLA при выборе вакансии и грейда</div>
                                     </div>
                                     
+                                    <div class="mb-3">
+                                        <label for="{{ form.recruiter.id_for_label }}" class="form-label">Рекрутер</label>
+                                        {{ form.recruiter }}
+                                        {% if form.recruiter.errors %}
+                                            <div class="text-danger">{{ form.recruiter.errors.0 }}</div>
+                                        {% endif %}
+                                        <div class="form-text">
+                                            <i class="fas fa-user me-1"></i>
+                                            Ответственный рекрутер за данную заявку
+                                        </div>
+                                    </div>
+                                    
                                     {% if object %}
+                                    <div class="mb-3">
+                                        <label for="{{ form.opening_date.id_for_label }}" class="form-label">Дата открытия</label>
+                                        {{ form.opening_date }}
+                                        {% if form.opening_date.errors %}
+                                            <div class="text-danger">{{ form.opening_date.errors.0 }}</div>
+                                        {% endif %}
+                                        <div class="form-text">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            Дата открытия заявки (только для чтения)
+                                        </div>
+                                    </div>
+                                    
                                     <div class="mb-3">
                                         <label class="form-label">Статус</label>
                                         <div class="form-control-plaintext">
@@ -192,24 +216,15 @@
                                         <div class="form-text">Статус определяется автоматически на основе дат и данных кандидата</div>
                                     </div>
                                     
-                                    <div class="mb-3">
-                                        <label for="id_closed_date" class="form-label">Дата закрытия</label>
-                                        <input type="date" name="closed_date" id="id_closed_date" class="form-control" 
-                                               value="{% if form.closed_date.value %}{{ form.closed_date.value|date:'Y-m-d' }}{% endif %}">
-                                        {% if form.closed_date.errors %}
-                                            <div class="text-danger">{{ form.closed_date.errors.0 }}</div>
-                                        {% endif %}
-                                    </div>
                                     {% endif %}
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Кандидат (только для редактирования) -->
-                    {% if object %}
-                    <div class="row mt-4">
-                        <div class="col-md-6">
+                        <!-- Информация о кандидате (только для редактирования) -->
+                        {% if object %}
+                        <div class="col-md-4">
                             <div class="card">
                                 <div class="card-header">
                                     <h6 class="card-title mb-0">
@@ -242,6 +257,19 @@
                                             <div class="text-danger">{{ form.closed_date.errors.0 }}</div>
                                         {% endif %}
                                     </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="{{ form.hire_date.id_for_label }}" class="form-label">Дата выхода специалиста</label>
+                                        {{ form.hire_date }}
+                                        {% if form.hire_date.errors %}
+                                            <div class="text-danger">{{ form.hire_date.errors.0 }}</div>
+                                        {% endif %}
+                                        <div class="form-text">
+                                            <i class="fas fa-calendar-alt me-1"></i>
+                                            Дата, когда специалист вышел на работу (для расчета time2hire)
+                                        </div>
+                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>

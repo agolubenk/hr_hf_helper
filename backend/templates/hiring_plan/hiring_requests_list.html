@@ -171,14 +171,13 @@
                                 <th>Вакансия</th>
                                 <th>Грейд</th>
                                 <th>Проект</th>
+                                <th>Рекрутер</th>
                                 <th>Статус</th>
-                                <th>Открытие</th>
-                                <th>Дедлайн</th>
-                                <th>SLA</th>
-                                <th>В работе</th>
+                                <th>Сроки</th>
+                                <th>Факт/SLA</th>
+                                <th>Time2Hire</th>
                                 <th>Приоритет</th>
                                 <th>Кандидат</th>
-                                <th>Рекрутер</th>
                                 <th>Действия</th>
                             </tr>
                         </thead>
@@ -199,30 +198,69 @@
                                     {% endif %}
                                 </td>
                                 <td>
+                                    {% if request.recruiter %}
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-user me-2 text-muted"></i>
+                                            <span>{{ request.recruiter.get_full_name|default:request.recruiter.username }}</span>
+                                        </div>
+                                        {% if request.recruiter_work_days > 0 %}
+                                            <small class="text-muted">{{ request.recruiter_work_days }} дн.</small>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-muted">Не назначен</span>
+                                    {% endif %}
+                                </td>
+                                <td>
                                     {% if request.status == 'planned' %}
                                         <span class="badge bg-info">Планируется</span>
                                     {% elif request.status == 'in_progress' %}
                                         <span class="badge bg-warning">В процессе</span>
                                     {% elif request.status == 'closed' %}
-                                        <span class="badge bg-success">Закрыта</span>
+                                        <div>
+                                            <span class="badge bg-success">Закрыта</span>
+                                            {% if request.closed_date %}
+                                                <br><small class="text-muted">{{ request.closed_date|date:"d.m.Y" }}</small>
+                                            {% endif %}
+                                        </div>
                                     {% elif request.status == 'cancelled' %}
-                                        <span class="badge bg-secondary">Отменена</span>
+                                        <div>
+                                            <span class="badge bg-secondary">Отменена</span>
+                                            {% if request.closed_date %}
+                                                <br><small class="text-muted">{{ request.closed_date|date:"d.m.Y" }}</small>
+                                            {% endif %}
+                                        </div>
                                     {% endif %}
                                 </td>
-                                <td>{{ request.opening_date|date:"d.m.Y" }}</td>
                                 <td>
-                                    {% if request.deadline %}
-                                        {{ request.deadline|date:"d.m.Y" }}
-                                        {% if request.is_overdue %}
-                                            <br><small class="text-danger">Просрочено</small>
+                                    <div>
+                                        <strong>{{ request.opening_date|date:"d.m.Y" }}</strong>
+                                        {% if request.deadline %}
+                                            <span class="text-muted"> - {{ request.deadline|date:"d.m.Y" }}</span>
+                                        {% else %}
+                                            <span class="text-muted"> - Нет SLA</span>
                                         {% endif %}
-                                    {% else %}
-                                        <span class="text-muted">Нет SLA</span>
+                                    </div>
+                                    {% if request.is_overdue and request.deadline %}
+                                        <small class="text-danger">Просрочено</small>
                                     {% endif %}
                                 </td>
                                 <td>
                                     {% if request.sla %}
-                                        <span class="badge bg-secondary">{{ request.sla.time_to_offer }}д</span>
+                                        {% if request.status == 'planned' %}
+                                            <span class="text-muted">—</span>
+                                        {% else %}
+                                            {% if request.sla_status_display == 'В срок' %}
+                                                <span class="text-success"><strong>{{ request.days_in_progress }}</strong>/{{ request.sla.time_to_offer }}д</span>
+                                            {% elif request.sla_status_display == 'Просрочено' %}
+                                                <span class="text-danger"><strong>{{ request.days_in_progress }}</strong>/{{ request.sla.time_to_offer }}д</span>
+                                            {% elif request.sla_status_display == 'Нормально' %}
+                                                <span class="text-info"><strong>{{ request.days_in_progress }}</strong>/{{ request.sla.time_to_offer }}д</span>
+                                            {% elif request.sla_status_display == 'Риск просрочки' %}
+                                                <span class="text-warning"><strong>{{ request.days_in_progress }}</strong>/{{ request.sla.time_to_offer }}д</span>
+                                            {% else %}
+                                                <span class="text-secondary"><strong>{{ request.days_in_progress }}</strong>/{{ request.sla.time_to_offer }}д</span>
+                                            {% endif %}
+                                        {% endif %}
                                         <br>
                                         {% if request.sla_status_display == 'В срок' %}
                                             <span class="badge bg-success">В срок</span>
@@ -236,14 +274,25 @@
                                             <span class="badge bg-secondary">{{ request.sla_status_display }}</span>
                                         {% endif %}
                                     {% else %}
+                                        {% if request.status == 'planned' %}
+                                            <span class="text-muted">—</span>
+                                        {% else %}
+                                            <span class="text-muted"><strong>{{ request.days_in_progress }}</strong> дней</span>
+                                        {% endif %}
+                                        <br>
                                         <span class="text-muted">Нет SLA</span>
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if request.status == 'planned' %}
-                                        <span class="text-muted">—</span>
+                                    {% if request.time2hire %}
+                                        <span class="badge bg-primary">{{ request.time2hire }} дн.</span>
+                                    {% elif request.status == 'closed' %}
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                            НЕ ЗАПОЛНЕНО!!!
+                                        </span>
                                     {% else %}
-                                        <strong>{{ request.days_in_progress }}</strong> дней
+                                        <span class="text-muted">—</span>
                                     {% endif %}
                                 </td>
                                 <td>
@@ -268,13 +317,6 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if request.closed_by %}
-                                        <span class="badge bg-success">{{ request.closed_by.get_full_name|default:request.closed_by.username }}</span>
-                                    {% else %}
-                                        <span class="text-muted">—</span>
-                                    {% endif %}
-                                </td>
-                                <td>
                                     <div class="btn-group btn-group-sm" role="group">
                                         <a href="{% url 'hiring_plan:hiring_request_detail' request.pk %}" 
                                            class="btn btn-outline-primary" title="Просмотр">
@@ -289,7 +331,7 @@
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="12" class="text-center text-muted py-4">
+                                <td colspan="11" class="text-center text-muted py-4">
                                     <i class="fas fa-inbox fa-2x mb-2"></i><br>
                                     Заявки не найдены
                                 </td>

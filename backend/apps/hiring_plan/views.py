@@ -561,6 +561,11 @@ class HiringRequestCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         response = super().form_valid(form)
+        
+        # Если назначен рекрутер, создаем запись в истории назначений
+        if form.instance.recruiter:
+            form.instance.assign_recruiter(form.instance.recruiter, self.request.user)
+        
         messages.success(self.request, f'Заявка "{self.object}" успешно создана!')
         return response
 
@@ -575,14 +580,32 @@ class HiringRequestUpdateView(LoginRequiredMixin, UpdateView):
         return reverse('hiring_plan:hiring_requests_list')
     
     def form_valid(self, form):
-        # Сохраняем старую дату открытия для сравнения
+        # Сохраняем старые значения для сравнения
         old_opening_date = self.object.opening_date
+        old_recruiter = self.object.recruiter
+        
+        # Если поле opening_date скрыто (для незапланированных заявок), 
+        # сохраняем текущее значение
+        if self.object.status != 'planned':
+            if self.object.opening_date:
+                form.instance.opening_date = self.object.opening_date
+            else:
+                # Если по какой-то причине opening_date отсутствует, устанавливаем текущую дату
+                from django.utils import timezone
+                form.instance.opening_date = timezone.now().date()
         
         response = super().form_valid(form)
         
         # Если изменилась дата открытия, пересчитываем статус
         if old_opening_date != self.object.opening_date:
             self.object.save()  # Это вызовет post_save сигнал, который пересчитает статус
+        
+        # Если изменился рекрутер, обновляем назначение
+        if old_recruiter != self.object.recruiter:
+            if self.object.recruiter:
+                self.object.assign_recruiter(self.object.recruiter, self.request.user)
+            else:
+                self.object.unassign_recruiter(self.request.user)
         
         messages.success(self.request, f'Заявка "{self.object}" успешно обновлена!')
         return response
@@ -863,7 +886,7 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
                 opening_date__year__lt=year,  # Открытые до этого года
                 status__in=['in_progress', 'planned']  # Но не закрытые
             )
-        ).select_related('vacancy', 'grade', 'sla', 'closed_by').order_by('vacancy__name', 'grade__name')
+        ).select_related('vacancy', 'grade', 'sla', 'closed_by', 'recruiter').order_by('vacancy__name', 'grade__name')
         
         # Создаем данные для таблицы
         table_data = []
@@ -904,11 +927,15 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
                 'grade': request.grade.name,
                 'project': request.project or '-',
                 'sla_days': request.sla.time_to_offer if request.sla else '-',
+                'sla_time2hire': request.sla.time_to_hire if request.sla else '-',
+                'opening_date': request.opening_date,
                 'deadline': request.deadline,
                 'status': request.status,
                 'days_in_year': days_in_year,
                 'months': self._get_monthly_data(request, year),
-                'closed_by': request.closed_by
+                'closed_by': request.closed_by,
+                'recruiter': request.recruiter,
+                'time2hire': request.time2hire
             }
             table_data.append(row_data)
         
@@ -1902,6 +1929,11 @@ class HiringRequestCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         response = super().form_valid(form)
+        
+        # Если назначен рекрутер, создаем запись в истории назначений
+        if form.instance.recruiter:
+            form.instance.assign_recruiter(form.instance.recruiter, self.request.user)
+        
         messages.success(self.request, f'Заявка "{self.object}" успешно создана!')
         return response
 
@@ -1916,14 +1948,32 @@ class HiringRequestUpdateView(LoginRequiredMixin, UpdateView):
         return reverse('hiring_plan:hiring_requests_list')
     
     def form_valid(self, form):
-        # Сохраняем старую дату открытия для сравнения
+        # Сохраняем старые значения для сравнения
         old_opening_date = self.object.opening_date
+        old_recruiter = self.object.recruiter
+        
+        # Если поле opening_date скрыто (для незапланированных заявок), 
+        # сохраняем текущее значение
+        if self.object.status != 'planned':
+            if self.object.opening_date:
+                form.instance.opening_date = self.object.opening_date
+            else:
+                # Если по какой-то причине opening_date отсутствует, устанавливаем текущую дату
+                from django.utils import timezone
+                form.instance.opening_date = timezone.now().date()
         
         response = super().form_valid(form)
         
         # Если изменилась дата открытия, пересчитываем статус
         if old_opening_date != self.object.opening_date:
             self.object.save()  # Это вызовет post_save сигнал, который пересчитает статус
+        
+        # Если изменился рекрутер, обновляем назначение
+        if old_recruiter != self.object.recruiter:
+            if self.object.recruiter:
+                self.object.assign_recruiter(self.object.recruiter, self.request.user)
+            else:
+                self.object.unassign_recruiter(self.request.user)
         
         messages.success(self.request, f'Заявка "{self.object}" успешно обновлена!')
         return response
@@ -2204,7 +2254,7 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
                 opening_date__year__lt=year,  # Открытые до этого года
                 status__in=['in_progress', 'planned']  # Но не закрытые
             )
-        ).select_related('vacancy', 'grade', 'sla', 'closed_by').order_by('vacancy__name', 'grade__name')
+        ).select_related('vacancy', 'grade', 'sla', 'closed_by', 'recruiter').order_by('vacancy__name', 'grade__name')
         
         # Создаем данные для таблицы
         table_data = []
@@ -2245,11 +2295,15 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
                 'grade': request.grade.name,
                 'project': request.project or '-',
                 'sla_days': request.sla.time_to_offer if request.sla else '-',
+                'sla_time2hire': request.sla.time_to_hire if request.sla else '-',
+                'opening_date': request.opening_date,
                 'deadline': request.deadline,
                 'status': request.status,
                 'days_in_year': days_in_year,
                 'months': self._get_monthly_data(request, year),
-                'closed_by': request.closed_by
+                'closed_by': request.closed_by,
+                'recruiter': request.recruiter,
+                'time2hire': request.time2hire
             }
             table_data.append(row_data)
         

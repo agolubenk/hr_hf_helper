@@ -71,9 +71,13 @@
     }
     
     .yearly-table .month-cell {
-        width: 40px;
+        width: 35px;
+        min-width: 35px;
+        max-width: 35px;
         height: 30px;
+        min-height: 30px;
         position: relative;
+        padding: 2px;
     }
     
     /* Цвета для статусов */
@@ -270,7 +274,8 @@
                                 <th class="month-cell">{{ month }}</th>
                             {% endfor %}
                             <th>SLA</th>
-                            <th>В работе</th>
+                            <th>Факт</th>
+                            <th>T2H | SLA</th>
                             <th>Рекрутер</th>
                             <th>Статус</th>
                         </tr>
@@ -288,7 +293,7 @@
                                         <i class="fas fa-external-link-alt external-icon"></i>
                                     </a>
                                 </td>
-                                <td>{{ row.grade }}</td>
+                                <td>{{ row.grade|grade_short }}</td>
                                 <td>{{ row.project }}</td>
                                 
                                 {% for month_num, month_name in months|enumerate_list %}
@@ -315,13 +320,47 @@
                                     {% if row.status == 'planned' %}
                                         <span class="text-muted">—</span>
                                     {% else %}
-                                        <strong>{{ row.days_in_year }}</strong> дней
+                                        <span class="badge bg-secondary">{{ row.days_in_year }}д</span>
                                     {% endif %}
                                 </td>
                                 
                                 <td>
-                                    {% if row.closed_by %}
-                                        <span class="badge bg-success">{{ row.closed_by.get_full_name|default:row.closed_by.username }}</span>
+                                    <div class="d-flex flex-column gap-1">
+                                        <!-- T2H бейдж -->
+                                        {% if row.time2hire %}
+                                            <span class="badge bg-primary">{{ row.time2hire }} дн.</span>
+                                        {% elif row.status == 'closed' %}
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                        
+                                        <!-- SLA бейдж -->
+                                        {% if row.sla_time2hire != '-' and row.status != 'planned' %}
+                                            {% if row.status == 'closed' %}
+                                                {% if row.time2hire and row.time2hire <= row.sla_time2hire %}
+                                                    <span class="badge bg-success">{{ row.sla_time2hire }} дн.</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">{{ row.sla_time2hire }} дн.</span>
+                                                {% endif %}
+                                            {% else %}
+                                                {% if row.time2hire and row.time2hire > row.sla_time2hire %}
+                                                    <span class="badge bg-warning">{{ row.sla_time2hire }} дн.</span>
+                                                {% else %}
+                                                    <span class="badge bg-info">{{ row.sla_time2hire }} дн.</span>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% elif row.status == 'planned' %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                
+                                <td>
+                                    {% if row.recruiter %}
+                                        {{ row.recruiter|recruiter_short }}
                                     {% else %}
                                         <span class="text-muted">—</span>
                                     {% endif %}
@@ -333,9 +372,19 @@
                                     {% elif row.status == 'in_progress' %}
                                         <span class="status-badge badge-in-progress">В работе</span>
                                     {% elif row.status == 'closed' %}
-                                        <span class="status-badge badge-closed">Закрыто</span>
+                                        <div>
+                                            <span class="status-badge badge-closed">Закрыто</span>
+                                            {% if row.request.closed_date %}
+                                                <br><small class="text-muted">{{ row.request.closed_date|date:"d.m.Y" }}</small>
+                                            {% endif %}
+                                        </div>
                                     {% elif row.status == 'cancelled' %}
-                                        <span class="status-badge badge-cancelled">Отменено</span>
+                                        <div>
+                                            <span class="status-badge badge-cancelled">Отменено</span>
+                                            {% if row.request.closed_date %}
+                                                <br><small class="text-muted">{{ row.request.closed_date|date:"d.m.Y" }}</small>
+                                            {% endif %}
+                                        </div>
                                     {% else %}
                                         <span class="status-badge">{{ row.status }}</span>
                                     {% endif %}
@@ -343,7 +392,7 @@
                             </tr>
                         {% empty %}
                             <tr>
-                                <td colspan="15" class="text-center text-muted py-4">
+                                <td colspan="16" class="text-center text-muted py-4">
                                     <i class="fas fa-info-circle me-2"></i>
                                     Нет заявок за {{ year }} год
                                 </td>

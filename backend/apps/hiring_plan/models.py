@@ -771,6 +771,53 @@ class VacancySLA(models.Model):
         return f"SLA: {self.vacancy.name} - {self.grade.name} ({self.time_to_offer} дней)"
 
 
+class RecruiterAssignment(models.Model):
+    """История назначения рекрутеров на заявки"""
+    
+    hiring_request = models.ForeignKey(
+        'HiringRequest',
+        on_delete=models.CASCADE,
+        related_name='recruiter_assignments',
+        verbose_name='Заявка'
+    )
+    recruiter = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Рекрутер'
+    )
+    assigned_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Назначен'
+    )
+    unassigned_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name='Снят с заявки'
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name='Активно',
+        help_text='Активно ли назначение'
+    )
+    
+    class Meta:
+        verbose_name = 'Назначение рекрутера'
+        verbose_name_plural = 'Назначения рекрутеров'
+        ordering = ['-assigned_at']
+    
+    def __str__(self):
+        return f"{self.hiring_request} - {self.recruiter} ({self.assigned_at.strftime('%d.%m.%Y')})"
+    
+    @property
+    def duration_days(self):
+        """Количество дней работы рекрутера над заявкой"""
+        if self.unassigned_at:
+            return (self.unassigned_at - self.assigned_at).days
+        else:
+            from django.utils import timezone
+            return (timezone.now() - self.assigned_at).days
+
+
 class HiringRequest(models.Model):
     """Заявка на найм одного специалиста"""
     
@@ -841,6 +888,12 @@ class HiringRequest(models.Model):
         blank=True,
         verbose_name='Дата закрытия'
     )
+    hire_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name='Дата выхода специалиста',
+        help_text='Дата, когда специалист вышел на работу (для расчета time2hire)'
+    )
     
     # === SLA (автоматически подтягивается) ===
     sla = models.ForeignKey(
@@ -864,6 +917,16 @@ class HiringRequest(models.Model):
         blank=True,
         verbose_name='Имя кандидата',
         help_text='Имя найденного кандидата'
+    )
+    
+    # === РЕКРУТЕР ===
+    recruiter = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name='Рекрутер',
+        help_text='Ответственный рекрутер за данную заявку'
     )
     
     # === ЗАМЕТКИ ===
@@ -950,6 +1013,13 @@ class HiringRequest(models.Model):
             return (timezone.now().date() - self.opening_date).days
     
     @property
+    def time2hire(self):
+        """Количество дней от получения заявки до выхода специалиста"""
+        if self.hire_date:
+            return (self.hire_date - self.opening_date).days
+        return None
+    
+    @property
     def is_overdue(self):
         """Проверка просрочки"""
         if self.status == 'closed':
@@ -994,6 +1064,63 @@ class HiringRequest(models.Model):
                 return 'Риск просрочки'
             else:
                 return 'Просрочено'
+    
+    def assign_recruiter(self, recruiter, user=None):
+        """Назначить рекрутера на заявку"""
+        from django.utils import timezone
+        
+        # Деактивируем предыдущие назначения
+        self.recruiter_assignments.filter(is_active=True).update(
+            is_active=False,
+            unassigned_at=timezone.now()
+        )
+        
+        # Создаем новое назначение
+        assignment = RecruiterAssignment.objects.create(
+            hiring_request=self,
+            recruiter=recruiter
+        )
+        
+        # Обновляем текущего рекрутера
+        self.recruiter = recruiter
+        self.save()
+        
+        return assignment
+    
+    def unassign_recruiter(self, user=None):
+        """Снять рекрутера с заявки"""
+        from django.utils import timezone
+        
+        # Деактивируем текущее назначение
+        self.recruiter_assignments.filter(is_active=True).update(
+            is_active=False,
+            unassigned_at=timezone.now()
+        )
+        
+        # Убираем рекрутера
+        self.recruiter = None
+        self.save()
+    
+    @property
+    def current_recruiter_assignment(self):
+        """Текущее активное назначение рекрутера"""
+        return self.recruiter_assignments.filter(is_active=True).first()
+    
+    @property
+    def recruiter_work_days(self):
+        """Количество дней работы текущего рекрутера над заявкой"""
+        assignment = self.current_recruiter_assignment
+        if assignment:
+            return assignment.duration_days
+        return 0
+    
+    @property
+    def total_recruiter_work_days(self):
+        """Общее количество дней работы всех рекрутеров над заявкой"""
+        return sum(
+            assignment.duration_days 
+            for assignment in self.recruiter_assignments.all()
+        )
 
 
 class RecruitmentMetrics(models.Model):

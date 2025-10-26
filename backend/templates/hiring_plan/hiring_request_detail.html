@@ -57,6 +57,22 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td><strong>Рекрутер:</strong></td>
+                                        <td>
+                                            {% if request.recruiter %}
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-user me-2 text-muted"></i>
+                                                    <span>{{ request.recruiter.get_full_name|default:request.recruiter.username }}</span>
+                                                </div>
+                                                {% if request.recruiter_work_days > 0 %}
+                                                    <small class="text-muted">Работает {{ request.recruiter_work_days }} дней</small>
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="text-muted">Не назначен</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td><strong>Приоритет:</strong></td>
                                         <td>
                                             {% if request.priority == 1 %}
@@ -78,9 +94,19 @@
                                             {% elif request.status == 'in_progress' %}
                                                 <span class="badge bg-warning">В процессе</span>
                                             {% elif request.status == 'closed' %}
-                                                <span class="badge bg-success">Закрыта</span>
+                                                <div>
+                                                    <span class="badge bg-success">Закрыта</span>
+                                                    {% if request.closed_date %}
+                                                        <br><small class="text-muted">{{ request.closed_date|date:"d.m.Y" }}</small>
+                                                    {% endif %}
+                                                </div>
                                             {% elif request.status == 'cancelled' %}
-                                                <span class="badge bg-secondary">Отменена</span>
+                                                <div>
+                                                    <span class="badge bg-secondary">Отменена</span>
+                                                    {% if request.closed_date %}
+                                                        <br><small class="text-muted">{{ request.closed_date|date:"d.m.Y" }}</small>
+                                                    {% endif %}
+                                                </div>
                                             {% endif %}
                                         </td>
                                     </tr>
