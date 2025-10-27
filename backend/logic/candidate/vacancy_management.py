@@ -58,8 +58,8 @@ def vacancy_dashboard(request):
         total_grades = Grade.objects.count()
         
         # Получаем последние вакансии с зарплатными вилками (приоритет вакансиям с вилками)
-        recent_vacancies_with_salary = user_vacancies.filter(salary_ranges__isnull=False).select_related('recruiter').prefetch_related('salary_ranges__grade').distinct().order_by('-created_at')[:3]
-        recent_vacancies_without_salary = user_vacancies.filter(salary_ranges__isnull=True).select_related('recruiter').prefetch_related('salary_ranges__grade').order_by('-created_at')[:2]
+        recent_vacancies_with_salary = user_vacancies.filter(finance_salary_ranges__isnull=False).select_related('recruiter').prefetch_related('finance_salary_ranges__grade').distinct().order_by('-created_at')[:3]
+        recent_vacancies_without_salary = user_vacancies.filter(finance_salary_ranges__isnull=True).select_related('recruiter').prefetch_related('finance_salary_ranges__grade').order_by('-created_at')[:2]
         recent_vacancies = list(recent_vacancies_with_salary) + list(recent_vacancies_without_salary)
         
         # Получаем последние зарплатные вилки
@@ -129,7 +129,7 @@ def vacancy_list(request):
         
         # Получаем вакансии с фильтрацией по пользователю и загружаем связанные данные
         vacancies = PermissionHelper.get_user_accessible_objects(
-            Vacancy.objects.select_related('recruiter').prefetch_related('salary_ranges__grade').order_by('-created_at'), 
+            Vacancy.objects.select_related('recruiter').prefetch_related('finance_salary_ranges__grade').order_by('-created_at'), 
             request.user, 
             'recruiter'
         )

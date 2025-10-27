@@ -52,6 +52,25 @@
                     alert(hierarchyMessage);
                 }
                 
+                // Функция для показа текущей структуры из input-ов
+                function showCurrentHierarchy() {
+                    const pathParts = folderInputs.map(folder => folder.value || '').filter(value => value.trim() !== '');
+                    
+                    let hierarchyMessage = 'Текущая иерархическая структура папок:\n\n';
+                    pathParts.forEach((part, index) => {
+                        hierarchyMessage += `${index + 1}. ${part.trim()}`;
+                        if (index < pathParts.length - 1) {
+                            hierarchyMessage += ' /';
+                        }
+                        hierarchyMessage += '\n';
+                    });
+                    
+                    const fullPath = 'G-Drive/' + pathParts.join('/') + ' | Scorecard FE.gsheet';
+                    hierarchyMessage += '\nПолный путь: ' + fullPath;
+                    
+                    alert(hierarchyMessage);
+                }
+                
                 // Функция для заполнения карточки с иерархической структурой
                 function updateHierarchyCard() {
                     console.log('🔄 updateHierarchyCard called');
@@ -115,19 +134,31 @@
                 
                 <!-- Предварительный просмотр -->
                 <div class="alert alert-info mb-4">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h6 class="mb-0"><i class="fas fa-eye me-2"></i>Предварительный просмотр структуры папок:</h6>
-                        <button type="button" class="btn btn-info btn-sm" onclick="showHierarchyAlert()">
-                            <i class="fas fa-info-circle me-1"></i>
-                            Показать иерархическую структуру
-                        </button>
-                    </div>
-                    <code id="path-preview">{{ path_preview }}</code>
-                    <div class="mt-2">
-                        <small class="text-muted">
-                            <i class="fas fa-info-circle me-1"></i>
-                            Каждый элемент в структуре создает отдельную папку. Для комбинирования добавляйте элементы в одной папке.
-                        </small>
+                    <div class="row">
+                        <!-- Левая колонка: заголовок и путь -->
+                        <div class="col-md-8">
+                            <h6 class="mb-2"><i class="fas fa-eye me-2"></i>Предварительный просмотр структуры папок:</h6>
+                            <code id="path-preview">{{ path_preview }}</code>
+                            <div class="mt-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Каждый элемент в структуре создает отдельную папку. Для комбинирования добавляйте элементы в одной папке.
+                                </small>
+                            </div>
+                        </div>
+                        <!-- Правая колонка: кнопки -->
+                        <div class="col-md-4">
+                            <div class="d-flex flex-column gap-2">
+                                <button type="button" class="btn btn-info btn-sm" onclick="showHierarchyAlert()">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Показать иерархическую структуру
+                                </button>
+                                <button type="button" class="btn btn-outline-info btn-sm" onclick="showCurrentHierarchy()">
+                                    <i class="fas fa-list me-1"></i>
+                                    Показать текущую структуру
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
