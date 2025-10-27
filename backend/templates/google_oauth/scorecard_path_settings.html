@@ -257,16 +257,6 @@
                                 }
                             </style>
                         </div>
-                        <div class="d-flex gap-2 flex-wrap mb-3">
-                            <button type="button" class="btn btn-primary" onclick="saveStructure()">
-                                <i class="fas fa-save me-1"></i>
-                                Сохранить структуру
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary" onclick="resetStructure()">
-                                <i class="fas fa-undo me-1"></i>
-                                Сбросить
-                            </button>
-                        </div>
                     </div>
                     
                     <div class="col-md-6">
@@ -386,9 +376,27 @@
                                 <i class="fas fa-lightbulb me-1"></i>
                                 Показать пример
                             </button>
-                            <button type="button" class="btn btn-outline-warning w-100 mb-2" onclick="showCurrentHierarchy()">
-                                <i class="fas fa-list me-1"></i>
-                                Показать текущую структуру
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ряд кнопок действий -->
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-outline-secondary w-100" data-bs-toggle="modal" data-bs-target="#additionalSettingsModal">
+                            <i class="fas fa-cog me-1"></i>
+                            Дополнительные настройки
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-secondary flex-fill" onclick="resetStructure()">
+                                <i class="fas fa-undo me-1"></i>
+                                Сбросить
+                            </button>
+                            <button type="button" class="btn btn-primary flex-fill" onclick="saveStructure()">
+                                <i class="fas fa-save me-1"></i>
+                                Сохранить структуру
                             </button>
                         </div>
                     </div>
@@ -1326,6 +1334,55 @@ function addPatternToFolder(folderIndex, type, value = '') {
 }
 
 </script>
+
+<!-- Модальное окно "Дополнительные настройки" -->
+<div class="modal fade" id="additionalSettingsModal" tabindex="-1" aria-labelledby="additionalSettingsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="additionalSettingsModalLabel">
+                    <i class="fas fa-cog me-2"></i>
+                    Дополнительные настройки
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-list me-2"></i>Текущая структура папок</h6>
+                        <p class="text-muted">Показать текущую иерархическую структуру папок</p>
+                        <button type="button" class="btn btn-outline-info w-100 mb-3" onclick="showCurrentHierarchy()">
+                            <i class="fas fa-list me-1"></i>
+                            Показать текущую структуру
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-info-circle me-2"></i>Иерархическая структура</h6>
+                        <p class="text-muted">Показать структуру из настроек</p>
+                        <button type="button" class="btn btn-outline-primary w-100 mb-3" onclick="showHierarchyAlert()">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Показать иерархическую структуру
+                        </button>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-12">
+                        <h6><i class="fas fa-lightbulb me-2"></i>Примеры использования</h6>
+                        <p class="text-muted">Посмотреть примеры структуры папок</p>
+                        <button type="button" class="btn btn-outline-success w-100" onclick="showExampleStructure()">
+                            <i class="fas fa-lightbulb me-1"></i>
+                            Показать пример
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% load static %}
 <link href="{% static 'css/google-oauth.css' %}" rel="stylesheet">
