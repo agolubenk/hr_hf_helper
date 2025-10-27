@@ -982,18 +982,50 @@ class HiringRequest(models.Model):
         today = timezone.now().date()
         
         if self.closed_date:
-            # Если есть дата закрытия - статус "закрыта"
-            self.status = 'closed'
-        elif self.opening_date > today:
+            # Если есть дата закрытия - проверяем наличие данных кандидата
+            if self.candidate_name or self.candidate_id:
+                # Если есть данные кандидата - статус "закрыта"
+                self.status = 'closed'
+            else:
+                # Если нет данных кандидата - статус "отменена"
+                self.status = 'cancelled'
+        elif self.opening_date and self.opening_date > today:
             # Если дата открытия в будущем - статус "планируется"
             self.status = 'planned'
-        else:
+        elif self.opening_date:
             # Если дата открытия в прошлом или сегодня - статус "в процессе"
             # Наличие candidate_id или candidate_name не влияет на статус
             # Статус "отменена" должен устанавливаться вручную
             self.status = 'in_progress'
+        else:
+            # Если дата открытия не указана - статус "планируется" по умолчанию
+            self.status = 'planned'
         
         super().save(*args, **kwargs)
+    
+    def _update_status(self):
+        """
+        Обновляет статус заявки на основе текущих данных
+        """
+        today = timezone.now().date()
+        
+        if self.closed_date:
+            # Если есть дата закрытия - проверяем наличие данных кандидата
+            if self.candidate_name or self.candidate_id:
+                # Если есть данные кандидата - статус "закрыта"
+                self.status = 'closed'
+            else:
+                # Если нет данных кандидата - статус "отменена"
+                self.status = 'cancelled'
+        elif self.opening_date and self.opening_date > today:
+            # Если дата открытия в будущем - статус "планируется"
+            self.status = 'planned'
+        elif self.opening_date:
+            # Если дата открытия в прошлом или сегодня - статус "в процессе"
+            self.status = 'in_progress'
+        else:
+            # Если дата открытия не указана - статус "планируется" по умолчанию
+            self.status = 'planned'
     
     @property
     def deadline(self):

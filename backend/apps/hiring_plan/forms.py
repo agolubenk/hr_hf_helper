@@ -94,6 +94,10 @@ class HiringRequestUpdateForm(forms.ModelForm):
             # Устанавливаем текущее значение
             if self.instance.opening_date:
                 self.fields['opening_date'].initial = self.instance.opening_date
+                # Также устанавливаем значение в data для POST запроса
+                if 'opening_date' not in self.data:
+                    self.data = self.data.copy()
+                    self.data['opening_date'] = self.instance.opening_date
         
         # Поле candidate_name только для чтения - заполняется автоматически из Huntflow
         self.fields['candidate_name'].widget = forms.TextInput(attrs={'class': 'form-control', 'readonly': True})

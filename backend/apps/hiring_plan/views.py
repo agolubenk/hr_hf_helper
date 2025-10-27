@@ -604,15 +604,9 @@ class HiringRequestUpdateView(LoginRequiredMixin, UpdateView):
         old_recruiter = self.object.recruiter
         old_candidate_id = self.object.candidate_id
         
-        # Если поле opening_date скрыто (для незапланированных заявок), 
-        # сохраняем текущее значение
-        if self.object.status != 'planned':
-            if self.object.opening_date:
-                form.instance.opening_date = self.object.opening_date
-            else:
-                # Если по какой-то причине opening_date отсутствует, устанавливаем текущую дату
-                from django.utils import timezone
-                form.instance.opening_date = timezone.now().date()
+        # Для незапланированных заявок сохраняем исходную дату открытия
+        if self.object.status != 'planned' and self.object.opening_date:
+            form.instance.opening_date = self.object.opening_date
         
         response = super().form_valid(form)
         
