@@ -1333,11 +1333,65 @@ function addPatternToFolder(folderIndex, type, value = '') {
     updatePreview();
 }
 
+// Функции для работы с дополнительными настройками
+function enableAllPatterns() {
+    const checkboxes = document.querySelectorAll('#additionalSettingsModal input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = true;
+    });
+}
+
+function disableAllPatterns() {
+    const checkboxes = document.querySelectorAll('#additionalSettingsModal input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+}
+
+function savePatternSettings() {
+    const patterns = {};
+    const checkboxes = document.querySelectorAll('#additionalSettingsModal input[type="checkbox"]');
+    
+    checkboxes.forEach(checkbox => {
+        const patternId = checkbox.id.replace('pattern-', '');
+        patterns[patternId] = checkbox.checked;
+    });
+    
+    // Сохраняем настройки в localStorage для демонстрации
+    localStorage.setItem('patternSettings', JSON.stringify(patterns));
+    
+    // Показываем уведомление
+    alert('Настройки паттернов сохранены!');
+    
+    // Закрываем модальное окно
+    const modal = bootstrap.Modal.getInstance(document.getElementById('additionalSettingsModal'));
+    modal.hide();
+}
+
+// Загружаем сохраненные настройки при открытии модального окна
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('additionalSettingsModal');
+    if (modal) {
+        modal.addEventListener('show.bs.modal', function() {
+            const savedSettings = localStorage.getItem('patternSettings');
+            if (savedSettings) {
+                const patterns = JSON.parse(savedSettings);
+                Object.keys(patterns).forEach(patternId => {
+                    const checkbox = document.getElementById(`pattern-${patternId}`);
+                    if (checkbox) {
+                        checkbox.checked = patterns[patternId];
+                    }
+                });
+            }
+        });
+    }
+});
+
 </script>
 
 <!-- Модальное окно "Дополнительные настройки" -->
 <div class="modal fade" id="additionalSettingsModal" tabindex="-1" aria-labelledby="additionalSettingsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="additionalSettingsModalLabel">
@@ -1347,38 +1401,119 @@ function addPatternToFolder(folderIndex, type, value = '') {
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6><i class="fas fa-list me-2"></i>Текущая структура папок</h6>
-                        <p class="text-muted">Показать текущую иерархическую структуру папок</p>
-                        <button type="button" class="btn btn-outline-info w-100 mb-3" onclick="showCurrentHierarchy()">
-                            <i class="fas fa-list me-1"></i>
-                            Показать текущую структуру
-                        </button>
-                    </div>
-                    <div class="col-md-6">
-                        <h6><i class="fas fa-info-circle me-2"></i>Иерархическая структура</h6>
-                        <p class="text-muted">Показать структуру из настроек</p>
-                        <button type="button" class="btn btn-outline-primary w-100 mb-3" onclick="showHierarchyAlert()">
-                            <i class="fas fa-info-circle me-1"></i>
-                            Показать иерархическую структуру
-                        </button>
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
+                <!-- Настройки замены паттернов -->
+                <div class="row mb-4">
                     <div class="col-12">
-                        <h6><i class="fas fa-lightbulb me-2"></i>Примеры использования</h6>
-                        <p class="text-muted">Посмотреть примеры структуры папок</p>
-                        <button type="button" class="btn btn-outline-success w-100" onclick="showExampleStructure()">
-                            <i class="fas fa-lightbulb me-1"></i>
-                            Показать пример
-                        </button>
+                        <h6><i class="fas fa-exchange-alt me-2"></i>Настройки замены паттернов</h6>
+                        <p class="text-muted">Настройте, какие данные будут использоваться для замены паттернов в структуре папок</p>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th width="20%">Паттерн</th>
+                                        <th width="40%">Описание</th>
+                                        <th width="30%">Пример замены</th>
+                                        <th width="10%" class="text-center">Включено</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>[GRADE]</code></td>
+                                        <td>Грейд кандидата</td>
+                                        <td><span class="text-success">Senior</span></td>
+                                        <td class="text-center">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="pattern-grade" checked>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>[LINK]</code></td>
+                                        <td>Ссылка на кандидата в Huntflow</td>
+                                        <td><span class="text-info">huntflow.ru/.../id/123</span></td>
+                                        <td class="text-center">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="pattern-link" checked>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>[NAME]</code></td>
+                                        <td>Имя кандидата</td>
+                                        <td><span class="text-primary">Иван</span></td>
+                                        <td class="text-center">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="pattern-name" checked>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>[SONAME]</code></td>
+                                        <td>Фамилия кандидата</td>
+                                        <td><span class="text-primary">Петров</span></td>
+                                        <td class="text-center">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="pattern-soname" checked>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>[EMAIL]</code></td>
+                                        <td>Email кандидата</td>
+                                        <td><span class="text-warning">ivan.petrov@email.com</span></td>
+                                        <td class="text-center">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="pattern-email" checked>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>[PHONE]</code></td>
+                                        <td>Телефон кандидата</td>
+                                        <td><span class="text-secondary">+7 (999) 123-45-67</span></td>
+                                        <td class="text-center">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="pattern-phone">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>[TELEGRAM]</code></td>
+                                        <td>Telegram кандидата</td>
+                                        <td><span class="text-info">@ivan_petrov</span></td>
+                                        <td class="text-center">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="pattern-telegram">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <div class="d-flex justify-content-between w-100">
+                    <div>
+                        <button type="button" class="btn btn-outline-success me-2" onclick="enableAllPatterns()">
+                            <i class="fas fa-check-double me-1"></i>
+                            Включить все
+                        </button>
+                        <button type="button" class="btn btn-outline-warning me-2" onclick="disableAllPatterns()">
+                            <i class="fas fa-times me-1"></i>
+                            Выключить все
+                        </button>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Отмена</button>
+                        <button type="button" class="btn btn-primary" onclick="savePatternSettings()">
+                            <i class="fas fa-save me-1"></i>
+                            Сохранить
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
