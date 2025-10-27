@@ -1161,6 +1161,15 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
         else:
             medians['sla_time2hire'] = "—"
         
+        # 8. Процент закрытых вакансий
+        total_requests = len(requests)
+        closed_requests = len([r for r in requests if r.status == 'closed'])
+        if total_requests > 0:
+            closed_percentage = (closed_requests / total_requests) * 100
+            medians['closed_percentage'] = f"{closed_percentage:.1f}%"
+        else:
+            medians['closed_percentage'] = "0%"
+        
         # Добавляем средние значения в результат
         medians['averages'] = averages
         

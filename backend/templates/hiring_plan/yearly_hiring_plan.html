@@ -36,6 +36,18 @@
         color: #ffffff;
     }
     
+    /* Темная тема для thead */
+    [data-bs-theme="dark"] .yearly-table thead {
+        background-color: #343a40;
+    }
+    
+    [data-bs-theme="dark"] .yearly-table thead th {
+        background-color: #343a40 !important;
+        border-color: #495057 !important;
+        color: #ffffff !important;
+        font-weight: 600;
+    }
+    
     [data-bs-theme="dark"] .yearly-table td {
         border-color: #495057;
         color: #ffffff;
@@ -187,6 +199,11 @@
         background-color: #f8f9fa !important;
     }
     
+    /* Темная тема для hover эффектов */
+    [data-bs-theme="dark"] .yearly-table tbody tr:hover td {
+        background-color: #495057 !important;
+    }
+    
     .yearly-table tbody tr:hover td.cell-green {
         background-color: #d4edda !important;
     }
@@ -213,6 +230,35 @@
     
     .yearly-table tbody tr:hover td.cell-lightgray {
         background-color: #e9ecef !important;
+    }
+    
+    /* Темная тема для hover эффектов цветных ячеек */
+    [data-bs-theme="dark"] .yearly-table tbody tr:hover td.cell-green {
+        background-color: #0f5132 !important;
+    }
+    
+    [data-bs-theme="dark"] .yearly-table tbody tr:hover td.cell-red {
+        background-color: #842029 !important;
+    }
+    
+    [data-bs-theme="dark"] .yearly-table tbody tr:hover td.cell-blue {
+        background-color: #084298 !important;
+    }
+    
+    [data-bs-theme="dark"] .yearly-table tbody tr:hover td.cell-yellow {
+        background-color: #664d03 !important;
+    }
+    
+    [data-bs-theme="dark"] .yearly-table tbody tr:hover td.cell-lightblue {
+        background-color: #055160 !important;
+    }
+    
+    [data-bs-theme="dark"] .yearly-table tbody tr:hover td.cell-gray {
+        background-color: #495057 !important;
+    }
+    
+    [data-bs-theme="dark"] .yearly-table tbody tr:hover td.cell-lightgray {
+        background-color: #343a40 !important;
     }
     
     .legend {
@@ -319,6 +365,215 @@
         color: #ffffff;
         border-top-color: #adb5bd !important;
         border-bottom-color: #adb5bd !important;
+    }
+    
+    /* Стили для легенды */
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: center;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.9rem;
+    }
+    
+    .legend-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 3px;
+        border: 1px solid #dee2e6;
+    }
+    
+    /* Темная тема для легенды */
+    [data-bs-theme="dark"] .legend {
+        background-color: #343a40;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #495057;
+    }
+    
+    [data-bs-theme="dark"] .legend-item {
+        color: #ffffff;
+    }
+    
+    [data-bs-theme="dark"] .legend-color {
+        border-color: #495057;
+    }
+    
+    /* Стили для селектора года */
+    .year-selector {
+        min-width: 150px;
+    }
+    
+    /* Темная тема для селектора года */
+    [data-bs-theme="dark"] .form-select {
+        background-color: #343a40;
+        border-color: #495057;
+        color: #ffffff;
+    }
+    
+    [data-bs-theme="dark"] .form-select:focus {
+        background-color: #343a40;
+        border-color: #66b3ff;
+        color: #ffffff;
+        box-shadow: 0 0 0 0.2rem rgba(102, 179, 255, 0.25);
+    }
+    
+    /* Темная тема для контейнера и карточки */
+    [data-bs-theme="dark"] .container-fluid {
+        background-color: #212529;
+    }
+    
+    [data-bs-theme="dark"] .card {
+        background-color: #343a40;
+        border-color: #495057;
+    }
+    
+    [data-bs-theme="dark"] .card-header {
+        background-color: #495057;
+        border-bottom-color: #6c757d;
+        color: #ffffff;
+    }
+    
+    [data-bs-theme="dark"] .card-body {
+        background-color: #343a40;
+        color: #ffffff;
+    }
+    
+    /* Улучшенные стили для таблицы в темной теме */
+    [data-bs-theme="dark"] .table {
+        color: #ffffff;
+    }
+    
+    [data-bs-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) > td {
+        background-color: #2d3338;
+    }
+    
+    [data-bs-theme="dark"] .table-hover > tbody > tr:hover > td {
+        background-color: #495057;
+    }
+    
+    /* Стили для текста в темной теме */
+    [data-bs-theme="dark"] .text-muted {
+        color: #adb5bd !important;
+    }
+    
+    [data-bs-theme="dark"] .text-center {
+        color: #ffffff;
+    }
+    
+    /* Темная тема для Bootstrap бейджей */
+    [data-bs-theme="dark"] .badge {
+        color: #ffffff;
+    }
+    
+    [data-bs-theme="dark"] .badge.bg-secondary {
+        background-color: #6c757d !important;
+        color: #ffffff !important;
+    }
+    
+    [data-bs-theme="dark"] .badge.bg-primary {
+        background-color: #0d6efd !important;
+        color: #ffffff !important;
+    }
+    
+    [data-bs-theme="dark"] .badge.bg-danger {
+        background-color: #dc3545 !important;
+        color: #ffffff !important;
+    }
+    
+    [data-bs-theme="dark"] .badge.bg-success {
+        background-color: #198754 !important;
+        color: #ffffff !important;
+    }
+    
+    [data-bs-theme="dark"] .badge.bg-warning {
+        background-color: #ffc107 !important;
+        color: #000000 !important;
+    }
+    
+    [data-bs-theme="dark"] .badge.bg-info {
+        background-color: #0dcaf0 !important;
+        color: #000000 !important;
+    }
+    
+    /* Темная тема для иконок */
+    [data-bs-theme="dark"] .fas {
+        color: inherit;
+    }
+    
+    /* Темная тема для ссылок */
+    [data-bs-theme="dark"] .text-decoration-none {
+        color: #ffffff;
+    }
+    
+    [data-bs-theme="dark"] .text-decoration-none:hover {
+        color: #66b3ff;
+    }
+    
+    /* Темная тема для элементов с белым фоном */
+    [data-bs-theme="dark"] .py-4 {
+        background-color: transparent;
+    }
+    
+    [data-bs-theme="dark"] .month-cell {
+        background-color: transparent;
+    }
+    
+    [data-bs-theme="dark"] .vacancy-info {
+        background-color: transparent;
+    }
+    
+    /* Темная тема для элементов таблицы */
+    [data-bs-theme="dark"] .table > tbody > tr > td {
+        background-color: transparent;
+    }
+    
+    [data-bs-theme="dark"] .table > tbody > tr > th {
+        background-color: #343a40;
+    }
+    
+    /* Темная тема для элементов с белым текстом */
+    [data-bs-theme="dark"] .vacancy-name {
+        color: #ffffff;
+    }
+    
+    [data-bs-theme="dark"] .external-icon {
+        color: #ffffff;
+    }
+    
+    /* Темная тема для элементов с белым фоном в ячейках */
+    [data-bs-theme="dark"] .d-flex {
+        background-color: transparent;
+    }
+    
+    [data-bs-theme="dark"] .gap-1 {
+        background-color: transparent;
+    }
+    
+    [data-bs-theme="dark"] .flex-column {
+        background-color: transparent;
+    }
+    
+    /* Исправление белого текста на белом фоне */
+    [data-bs-theme="dark"] .table-info td,
+    [data-bs-theme="dark"] .table-secondary td {
+        color: #ffffff !important;
+    }
+    
+    [data-bs-theme="dark"] .table-info strong,
+    [data-bs-theme="dark"] .table-secondary strong {
+        color: #ffffff !important;
+    }
+    
+    [data-bs-theme="dark"] .table-info .text-muted,
+    [data-bs-theme="dark"] .table-secondary .text-muted {
+        color: #adb5bd !important;
     }
 </style>
 {% endblock %}
@@ -546,7 +801,11 @@
                             <strong>{{ medians.sla_time2hire }}</strong>
                         </div>
                     </td>
-                    <td>—</td>
+                    <td rowspan="2" class="text-center">
+                        <strong>{{ medians.closed_percentage }}</strong>
+                        <br>
+                        <small class="text-muted">закрыто</small>
+                    </td>
                 </tr>
                 
                 <!-- Строка со средними значениями -->
@@ -585,7 +844,6 @@
                             <strong>{{ medians.averages.sla_time2hire }}</strong>
                         </div>
                     </td>
-                    <td>—</td>
                 </tr>
                 {% endif %}
                     </tbody>
