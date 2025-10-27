@@ -1027,6 +1027,29 @@ class HiringRequest(models.Model):
             # Если дата открытия не указана - статус "планируется" по умолчанию
             self.status = 'planned'
     
+    def sync_recruiter_with_vacancy(self):
+        """
+        Синхронизирует рекрутера заявки с рекрутером вакансии
+        """
+        if self.vacancy and self.recruiter:
+            try:
+                # Обновляем рекрутера в вакансии
+                self.vacancy.recruiter = self.recruiter
+                self.vacancy.save(update_fields=['recruiter'])
+                print(f"✅ Рекрутер {self.recruiter.username} синхронизирован с вакансией {self.vacancy.name}")
+            except Exception as e:
+                print(f"❌ Ошибка синхронизации рекрутера: {e}")
+                # Если рекрутер не может быть назначен (например, не в группе Рекрутер),
+                # оставляем вакансию без изменений
+        elif self.vacancy and not self.recruiter:
+            try:
+                # Если рекрутер не назначен, очищаем рекрутера в вакансии
+                self.vacancy.recruiter = None
+                self.vacancy.save(update_fields=['recruiter'])
+                print(f"ℹ️ Рекрутер очищен в вакансии {self.vacancy.name}")
+            except Exception as e:
+                print(f"❌ Ошибка очистки рекрутера: {e}")
+    
     @property
     def deadline(self):
         """Автоматически рассчитываемый дедлайн на основе SLA"""

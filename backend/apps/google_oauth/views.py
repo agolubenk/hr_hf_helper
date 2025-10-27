@@ -3615,22 +3615,22 @@ def chat_workflow(request, session_id=None):
     # Получаем выбранную вакансию из параметров
     vacancy_id = request.GET.get('vacancy_id')
     if not vacancy_id:
-        # Если вакансия не указана, берем первую активную вакансию
+        # Если вакансия не указана, берем первую активную вакансию пользователя
         from apps.vacancies.models import Vacancy
-        active_vacancies = Vacancy.objects.filter(is_active=True).order_by('name')
+        active_vacancies = Vacancy.objects.filter(is_active=True, recruiter=request.user).order_by('name')
         if not active_vacancies.exists():
-            messages.error(request, 'Нет активных вакансий для создания чата')
+            messages.error(request, 'Нет активных вакансий, назначенных вам для создания чата')
             return redirect('google_oauth:chat_workflow')
         
-        # Берем первую активную вакансию
+        # Берем первую активную вакансию пользователя
         vacancy = active_vacancies.first()
         return redirect(f'{request.path}?vacancy_id={vacancy.id}')
     
     try:
         from apps.vacancies.models import Vacancy
-        vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True)
+        vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True, recruiter=request.user)
     except Vacancy.DoesNotExist:
-        messages.error(request, 'Выбранная вакансия не найдена или неактивна')
+        messages.error(request, 'Выбранная вакансия не найдена, неактивна или не назначена вам')
         return redirect('google_oauth:chat_workflow')
     
     # Получаем или создаем сессию чата для конкретной вакансии
@@ -3913,9 +3913,9 @@ def chat_workflow(request, session_id=None):
     print(f"🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: {request.user.username}")
     
     
-    # Получаем все активные вакансии для выбора
+    # Получаем все активные вакансии пользователя для выбора
     from apps.vacancies.models import Vacancy
-    active_vacancies = Vacancy.objects.filter(is_active=True).order_by('name')
+    active_vacancies = Vacancy.objects.filter(is_active=True, recruiter=request.user).order_by('name')
     
     # Получаем данные о событиях календаря для JavaScript (как на странице gdata_automation)
     calendar_events_data = []

@@ -566,6 +566,9 @@ class HiringRequestCreateView(LoginRequiredMixin, CreateView):
         if form.instance.recruiter:
             form.instance.assign_recruiter(form.instance.recruiter, self.request.user)
         
+        # Синхронизируем рекрутера с вакансией
+        self.object.sync_recruiter_with_vacancy()
+        
         # Если есть candidate_id, пытаемся получить данные кандидата из Huntflow
         if self.object.candidate_id:
             success = self.object.fetch_candidate_data_from_huntflow(self.request.user)
@@ -599,27 +602,47 @@ class HiringRequestUpdateView(LoginRequiredMixin, UpdateView):
         return reverse('hiring_plan:hiring_requests_list')
     
     def form_valid(self, form):
-        # Сохраняем старые значения для сравнения
-        old_opening_date = self.object.opening_date
-        old_recruiter = self.object.recruiter
-        old_candidate_id = self.object.candidate_id
+        print(f"🔍 FORM_VALID: Начало обработки формы для заявки {self.object.id}")
+        
+        # Получаем старые значения из базы данных для точного сравнения
+        from apps.hiring_plan.models import HiringRequest
+        old_request = HiringRequest.objects.get(id=self.object.id)
+        old_opening_date = old_request.opening_date
+        old_recruiter = old_request.recruiter
+        old_candidate_id = old_request.candidate_id
+        
+        print(f"🔍 FORM_VALID: Старый рекрутер из БД: {old_recruiter}")
+        print(f"🔍 FORM_VALID: Новый рекрутер из формы: {form.instance.recruiter}")
+        
+        # Сохраняем форму (это обновит self.object)
+        response = super().form_valid(form)
+        
+        print(f"🔍 FORM_VALID: После сохранения - рекрутер: {self.object.recruiter}")
         
         # Для незапланированных заявок сохраняем исходную дату открытия
         if self.object.status != 'planned' and self.object.opening_date:
             form.instance.opening_date = self.object.opening_date
-        
-        response = super().form_valid(form)
         
         # Если изменилась дата открытия, пересчитываем статус
         if old_opening_date != self.object.opening_date:
             self.object.save()  # Это вызовет post_save сигнал, который пересчитает статус
         
         # Если изменился рекрутер, обновляем назначение
-        if old_recruiter != self.object.recruiter:
-            if self.object.recruiter:
-                self.object.assign_recruiter(self.object.recruiter, self.request.user)
+        old_recruiter_id = old_recruiter.id if old_recruiter else None
+        new_recruiter_id = form.instance.recruiter.id if form.instance.recruiter else None
+        
+        if old_recruiter_id != new_recruiter_id:
+            print(f"🔄 Рекрутер изменился с {old_recruiter} (ID: {old_recruiter_id}) на {form.instance.recruiter} (ID: {new_recruiter_id})")
+            if form.instance.recruiter:
+                self.object.assign_recruiter(form.instance.recruiter, self.request.user)
             else:
                 self.object.unassign_recruiter(self.request.user)
+            
+            # Синхронизируем рекрутера с вакансией
+            print(f"🔄 Вызываем синхронизацию рекрутера с вакансией")
+            self.object.sync_recruiter_with_vacancy()
+        else:
+            print(f"ℹ️ Рекрутер не изменился: {form.instance.recruiter} (ID: {new_recruiter_id})")
         
         # Если есть candidate_id, пытаемся получить данные кандидата из Huntflow
         if self.object.candidate_id:
