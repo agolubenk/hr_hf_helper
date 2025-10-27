@@ -28,3 +28,4 @@ urlpatterns = [
     path('yearly/', views.YearlyHiringPlanView.as_view(), name='yearly_hiring_plan'),
     
 ]
+

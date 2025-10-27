@@ -566,6 +566,25 @@ class HiringRequestCreateView(LoginRequiredMixin, CreateView):
         if form.instance.recruiter:
             form.instance.assign_recruiter(form.instance.recruiter, self.request.user)
         
+        # Если есть candidate_id, пытаемся получить данные кандидата из Huntflow
+        if self.object.candidate_id:
+            success = self.object.fetch_candidate_data_from_huntflow(self.request.user)
+            if success:
+                updated_info = []
+                if self.object.candidate_name:
+                    updated_info.append(f'имя: {self.object.candidate_name}')
+                if self.object.closed_date:
+                    updated_info.append(f'дата принятия оффера: {self.object.closed_date.strftime("%d.%m.%Y")}')
+                if self.object.hire_date:
+                    updated_info.append(f'дата выхода: {self.object.hire_date.strftime("%d.%m.%Y")}')
+                
+                if updated_info:
+                    messages.info(self.request, f'Данные кандидата автоматически получены из Huntflow: {", ".join(updated_info)}')
+                else:
+                    messages.info(self.request, 'Данные кандидата проверены в Huntflow, но новых данных не найдено')
+            else:
+                messages.warning(self.request, 'Не удалось получить данные кандидата из Huntflow. Проверьте ID кандидата.')
+        
         messages.success(self.request, f'Заявка "{self.object}" успешно создана!')
         return response
 
@@ -583,6 +602,7 @@ class HiringRequestUpdateView(LoginRequiredMixin, UpdateView):
         # Сохраняем старые значения для сравнения
         old_opening_date = self.object.opening_date
         old_recruiter = self.object.recruiter
+        old_candidate_id = self.object.candidate_id
         
         # Если поле opening_date скрыто (для незапланированных заявок), 
         # сохраняем текущее значение
@@ -606,6 +626,25 @@ class HiringRequestUpdateView(LoginRequiredMixin, UpdateView):
                 self.object.assign_recruiter(self.object.recruiter, self.request.user)
             else:
                 self.object.unassign_recruiter(self.request.user)
+        
+        # Если есть candidate_id, пытаемся получить данные кандидата из Huntflow
+        if self.object.candidate_id:
+            success = self.object.fetch_candidate_data_from_huntflow(self.request.user)
+            if success:
+                updated_info = []
+                if self.object.candidate_name:
+                    updated_info.append(f'имя: {self.object.candidate_name}')
+                if self.object.closed_date:
+                    updated_info.append(f'дата принятия оффера: {self.object.closed_date.strftime("%d.%m.%Y")}')
+                if self.object.hire_date:
+                    updated_info.append(f'дата выхода: {self.object.hire_date.strftime("%d.%m.%Y")}')
+                
+                if updated_info:
+                    messages.info(self.request, f'Данные кандидата автоматически получены из Huntflow: {", ".join(updated_info)}')
+                else:
+                    messages.info(self.request, 'Данные кандидата проверены в Huntflow, но новых данных не найдено')
+            else:
+                messages.warning(self.request, 'Не удалось получить данные кандидата из Huntflow. Проверьте ID кандидата.')
         
         messages.success(self.request, f'Заявка "{self.object}" успешно обновлена!')
         return response

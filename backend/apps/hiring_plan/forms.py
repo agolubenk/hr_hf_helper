@@ -94,6 +94,11 @@ class HiringRequestUpdateForm(forms.ModelForm):
             # Устанавливаем текущее значение
             if self.instance.opening_date:
                 self.fields['opening_date'].initial = self.instance.opening_date
+        
+        # Поле candidate_name только для чтения - заполняется автоматически из Huntflow
+        self.fields['candidate_name'].widget = forms.TextInput(attrs={'class': 'form-control', 'readonly': True})
+        self.fields['candidate_name'].required = False
+        self.fields['candidate_name'].help_text = "Заполняется автоматически из Huntflow по ID кандидата"
 
 
 class VacancySLAForm(forms.ModelForm):

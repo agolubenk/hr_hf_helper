@@ -5,6 +5,120 @@
 {% block page_title %}{% if object %}Редактирование заявки{% else %}Создание заявки{% endif %}{% endblock %}
 
 {% block content %}
+<style>
+/* Стили для формы редактирования заявки */
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.card-header h6 {
+    color: #495057;
+    font-weight: 600;
+}
+
+/* Темная тема для формы */
+[data-bs-theme="dark"] .card-header {
+    background-color: #495057;
+    border-bottom-color: #6c757d;
+}
+
+[data-bs-theme="dark"] .card-header h6 {
+    color: #ffffff;
+}
+
+[data-bs-theme="dark"] .card {
+    background-color: #343a40;
+    border-color: #495057;
+}
+
+[data-bs-theme="dark"] .card-body {
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+[data-bs-theme="dark"] .form-control {
+    background-color: #495057;
+    border-color: #6c757d;
+    color: #ffffff;
+}
+
+[data-bs-theme="dark"] .form-control:focus {
+    background-color: #495057;
+    border-color: #66b3ff;
+    color: #ffffff;
+    box-shadow: 0 0 0 0.2rem rgba(102, 179, 255, 0.25);
+}
+
+[data-bs-theme="dark"] .form-control-plaintext {
+    color: #ffffff;
+}
+
+[data-bs-theme="dark"] .form-label {
+    color: #ffffff;
+}
+
+[data-bs-theme="dark"] .form-text {
+    color: #adb5bd;
+}
+
+[data-bs-theme="dark"] .text-muted {
+    color: #adb5bd !important;
+}
+
+[data-bs-theme="dark"] .badge {
+    color: #ffffff;
+}
+
+[data-bs-theme="dark"] .badge.bg-info {
+    background-color: #0dcaf0 !important;
+    color: #000000 !important;
+}
+
+[data-bs-theme="dark"] .badge.bg-warning {
+    background-color: #ffc107 !important;
+    color: #000000 !important;
+}
+
+[data-bs-theme="dark"] .badge.bg-success {
+    background-color: #198754 !important;
+    color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .badge.bg-secondary {
+    background-color: #6c757d !important;
+    color: #ffffff !important;
+}
+
+/* Стили для заметок */
+.notes-card {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+}
+
+[data-bs-theme="dark"] .notes-card {
+    background-color: #343a40;
+    border-color: #495057;
+}
+
+.notes-card .card-header {
+    background-color: #e3f2fd;
+    border-bottom-color: #bbdefb;
+}
+
+[data-bs-theme="dark"] .notes-card .card-header {
+    background-color: #1e3a8a;
+    border-bottom-color: #3b82f6;
+}
+
+.notes-card .card-header h6 {
+    color: #1565c0;
+}
+
+[data-bs-theme="dark"] .notes-card .card-header h6 {
+    color: #93c5fd;
+}
+</style>
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -88,14 +202,7 @@
                                     <div class="mb-3">
                                         <label class="form-label">Вакансия</label>
                                         <div class="form-control-plaintext">
-                                            <strong>{{ object.vacancy.name }}</strong>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label class="form-label">Грейд</label>
-                                        <div class="form-control-plaintext">
-                                            <strong>{{ object.grade.name }}</strong>
+                                            <strong>{{ object.grade.name }} {{ object.vacancy.name }}</strong>
                                         </div>
                                     </div>
                                     
@@ -106,19 +213,34 @@
                                         </div>
                                     </div>
                                     
-                                    <div class="mb-3">
-                                        <label class="form-label">Приоритет</label>
-                                        <div class="form-control-plaintext">
-                                            <span class="badge bg-{% if object.priority == 1 %}danger{% elif object.priority == 2 %}warning{% elif object.priority == 3 %}info{% else %}secondary{% endif %}">
-                                                {{ object.get_priority_display }}
-                                            </span>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Приоритет</label>
+                                                <div class="form-control-plaintext">
+                                                    <span class="badge bg-{% if object.priority == 1 %}danger{% elif object.priority == 2 %}warning{% elif object.priority == 3 %}info{% else %}secondary{% endif %}">
+                                                        {{ object.get_priority_display }}
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label class="form-label">Причина открытия</label>
-                                        <div class="form-control-plaintext">
-                                            {{ object.get_opening_reason_display }}
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Статус</label>
+                                                <div class="form-control-plaintext">
+                                                    <span class="badge bg-{% if object.status == 'planned' %}info{% elif object.status == 'in_progress' %}warning{% elif object.status == 'closed' %}success{% else %}secondary{% endif %}">
+                                                        {{ object.get_status_display }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Причина открытия</label>
+                                                <div class="form-control-plaintext">
+                                                    {{ object.get_opening_reason_display }}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     {% endif %}
@@ -192,36 +314,10 @@
                                             Ответственный рекрутер за данную заявку
                                         </div>
                                     </div>
-                                    
-                                    {% if object %}
-                                    <div class="mb-3">
-                                        <label for="{{ form.opening_date.id_for_label }}" class="form-label">Дата открытия</label>
-                                        {{ form.opening_date }}
-                                        {% if form.opening_date.errors %}
-                                            <div class="text-danger">{{ form.opening_date.errors.0 }}</div>
-                                        {% endif %}
-                                        <div class="form-text">
-                                            <i class="fas fa-info-circle me-1"></i>
-                                            Дата открытия заявки (только для чтения)
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label class="form-label">Статус</label>
-                                        <div class="form-control-plaintext">
-                                            <span class="badge bg-{% if object.status == 'planned' %}info{% elif object.status == 'in_progress' %}warning{% elif object.status == 'closed' %}success{% else %}secondary{% endif %}">
-                                                {{ object.get_status_display }}
-                                            </span>
-                                        </div>
-                                        <div class="form-text">Статус определяется автоматически на основе дат и данных кандидата</div>
-                                    </div>
-                                    
-                                    {% endif %}
                                 </div>
                             </div>
                         </div>
-                    </div>
-
+                        
                         <!-- Информация о кандидате (только для редактирования) -->
                         {% if object %}
                         <div class="col-md-4">
@@ -248,6 +344,10 @@
                                         {% if form.candidate_name.errors %}
                                             <div class="text-danger">{{ form.candidate_name.errors.0 }}</div>
                                         {% endif %}
+                                        <div class="form-text">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            Заполняется автоматически из Huntflow по ID кандидата
+                                        </div>
                                     </div>
                                     
                                     <div class="mb-3">
@@ -273,13 +373,13 @@
                                 </div>
                             </div>
                         </div>
+                        {% endif %}
                     </div>
-                    {% endif %}
 
                     <!-- Заметки -->
                     <div class="row mt-4">
                         <div class="col-12">
-                            <div class="card">
+                            <div class="card notes-card">
                                 <div class="card-header">
                                     <h6 class="card-title mb-0">
                                         <i class="fas fa-sticky-note me-2"></i>
