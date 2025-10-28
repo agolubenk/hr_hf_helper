@@ -20,105 +20,107 @@
                                     <div class="copy-buttons">
                                         <div class="d-flex gap-2 flex-wrap justify-content-between align-items-center">
                                             <!-- Кнопки копирования слева -->
-                                            <div class="d-flex gap-2 flex-wrap">
-                                                <!-- Кнопки копирования для Беларуси -->
-                                                <button class="btn-copy btn-copy-vacancy-link-belarus position-relative" 
-                                                        onclick="window.copyVacancyLink('belarus')"
-                                                        {% if not selected_vacancy.vacancy_link_belarus %}disabled{% endif %}
-                                                        title="Скопировать ссылку на вакансию (Беларусь)">
-                                                    <i class="fas fa-link"></i>
-                                                    <div class="position-absolute top-0 start-100 translate-middle">
-                                                        <span class="flag-emoji">🇧🇾</span>
-                                                    </div>
-                                                    <div class="copy-tooltip">Скопировать ссылку на вакансию (Беларусь)</div>
-                                                </button>
-                                                
-                                                <button class="btn-copy btn-copy-belarus position-relative" 
-                                                        onclick="copyQuestions('belarus')"
-                                                        {% if not selected_vacancy.questions_belarus %}disabled{% endif %}
-                                                        title="Скопировать вопросы для Беларуси">
-                                                    <i class="fas fa-question"></i>
-                                                    <div class="position-absolute top-0 start-100 translate-middle">
-                                                        <span class="flag-emoji">🇧🇾</span>
-                                                    </div>
-                                                    <div class="copy-tooltip">Скопировать вопросы для Беларуси</div>
-                                                </button>
-                                                
-                                                <!-- Кнопки копирования для Польши -->
-                                                <button class="btn-copy btn-copy-vacancy-link-poland position-relative" 
-                                                        onclick="window.copyVacancyLink('poland')"
-                                                        {% if not selected_vacancy.vacancy_link_poland %}disabled{% endif %}
-                                                        title="Скопировать ссылку на вакансию (Польша)">
-                                                    <i class="fas fa-link"></i>
-                                                    <div class="position-absolute top-0 start-100 translate-middle">
-                                                        <span class="flag-emoji">🇵🇱</span>
-                                                    </div>
-                                                    <div class="copy-tooltip">Скопировать ссылку на вакансию (Польша)</div>
-                                                </button>
-                                                
-                                                <button class="btn-copy btn-copy-poland position-relative" 
-                                                        onclick="copyQuestions('poland')"
-                                                        {% if not selected_vacancy.questions_poland %}disabled{% endif %}
-                                                        title="Скопировать вопросы для Польши">
-                                                    <i class="fas fa-question"></i>
-                                                    <div class="position-absolute top-0 start-100 translate-middle">
-                                                        <span class="flag-emoji">🇵🇱</span>
-                                                    </div>
-                                                    <div class="copy-tooltip">Скопировать вопросы для Польши</div>
-                                                </button>
-                                                
-                                                <!-- Кнопки копирования слотов -->
-                                                <button class="btn-copy btn-copy-current-week" 
-                                                        onclick="window.copyWeekSlots('current')"
-                                                        title="Скопировать слоты текущей недели">
-                                                    <i class="fas fa-calendar-week"></i>
-                                                    <div class="copy-tooltip">Скопировать слоты текущей недели</div>
-                                                </button>
-                                                
-                                                <button class="btn-copy btn-copy-next-week" 
-                                                        onclick="window.copyWeekSlots('next')"
-                                                        title="Скопировать слоты следующей недели">
-                                                    <i class="fas fa-calendar-plus"></i>
-                                                    <div class="copy-tooltip">Скопировать слоты следующей недели</div>
-                                                </button>
-                                                
-                                                <button class="btn-copy btn-copy-all-slots" 
-                                                        onclick="window.copyAllSlots()"
-                                                        title="Скопировать все слоты">
-                                                    <i class="fas fa-copy"></i>
-                                                    <div class="copy-tooltip">Скопировать все слоты</div>
-                                                </button>
-                                                
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <!-- Кнопки копирования для Беларуси -->
+                                            <button class="btn-copy btn-copy-vacancy-link-belarus position-relative" 
+                                                    onclick="window.copyVacancyLink('belarus')"
+                                                    {% if not selected_vacancy.vacancy_link_belarus %}disabled{% endif %}
+                                                    title="Скопировать ссылку на вакансию (Беларусь)">
+                                                <i class="fas fa-link"></i>
+                                                <div class="position-absolute top-0 start-100 translate-middle">
+                                                    <span class="flag-emoji">🇧🇾</span>
+                                                </div>
+                                                <div class="copy-tooltip">Скопировать ссылку на вакансию (Беларусь)</div>
+                                            </button>
+                                            
+                                            <button class="btn-copy btn-copy-belarus position-relative" 
+                                                    onclick="copyQuestions('belarus')"
+                                                    {% if not selected_vacancy.questions_belarus %}disabled{% endif %}
+                                                    title="Скопировать вопросы для Беларуси">
+                                                <i class="fas fa-question"></i>
+                                                <div class="position-absolute top-0 start-100 translate-middle">
+                                                    <span class="flag-emoji">🇧🇾</span>
+                                                </div>
+                                                <div class="copy-tooltip">Скопировать вопросы для Беларуси</div>
+                                            </button>
+                                            
+                                            <!-- Кнопки копирования для Польши -->
+                                            <button class="btn-copy btn-copy-vacancy-link-poland position-relative" 
+                                                    onclick="window.copyVacancyLink('poland')"
+                                                    {% if not selected_vacancy.vacancy_link_poland %}disabled{% endif %}
+                                                    title="Скопировать ссылку на вакансию (Польша)">
+                                                <i class="fas fa-link"></i>
+                                                <div class="position-absolute top-0 start-100 translate-middle">
+                                                    <span class="flag-emoji">🇵🇱</span>
+                                                </div>
+                                                <div class="copy-tooltip">Скопировать ссылку на вакансию (Польша)</div>
+                                            </button>
+                                            
+                                            <button class="btn-copy btn-copy-poland position-relative" 
+                                                    onclick="copyQuestions('poland')"
+                                                    {% if not selected_vacancy.questions_poland %}disabled{% endif %}
+                                                    title="Скопировать вопросы для Польши">
+                                                <i class="fas fa-question"></i>
+                                                <div class="position-absolute top-0 start-100 translate-middle">
+                                                    <span class="flag-emoji">🇵🇱</span>
+                                                </div>
+                                                <div class="copy-tooltip">Скопировать вопросы для Польши</div>
+                                            </button>
+                                            
+                                            <!-- Кнопки копирования слотов -->
+                                            <button class="btn-copy btn-copy-current-week" 
+                                                    onclick="window.copyWeekSlots('current')"
+                                                    title="Скопировать слоты текущей недели">
+                                                <i class="fas fa-calendar-week"></i>
+                                                <div class="copy-tooltip">Скопировать слоты текущей недели</div>
+                                            </button>
+                                            
+                                            <button class="btn-copy btn-copy-next-week" 
+                                                    onclick="window.copyWeekSlots('next')"
+                                                    title="Скопировать слоты следующей недели">
+                                                <i class="fas fa-calendar-plus"></i>
+                                                <div class="copy-tooltip">Скопировать слоты следующей недели</div>
+                                            </button>
+                                            
+                                            <button class="btn-copy btn-copy-all-slots" 
+                                                    onclick="window.copyAllSlots()"
+                                                    title="Скопировать все слоты">
+                                                <i class="fas fa-copy"></i>
+                                                <div class="copy-tooltip">Скопировать все слоты</div>
+                                            </button>
+                                            
                                             <button class="btn-copy btn-refresh-slots" 
                                                     onclick="window.refreshSlots()"
                                                     title="Обновить слоты">
                                                 <i class="fas fa-sync-alt"></i>
                                                 <div class="copy-tooltip">Обновить слоты</div>
                                             </button>
-                                            
-                                            <!-- Свитчер типа встречи -->
-                                            <button class="btn-meeting-type position-relative active" 
-                                                    id="btnScreening" 
-                                                    onclick="switchMeetingType('screening')"
-                                                    title="Скрининг: {{ selected_vacancy.screening_duration|default:45 }} мин">
-                                                <i class="fas fa-clipboard-list"></i>
-                                                <div class="meeting-type-text">
-                                                    <div class="meeting-type-name">Скрининг</div>
-                                                    <div class="meeting-type-duration">{{ selected_vacancy.screening_duration|default:45 }} мин</div>
-                                                </div>
-                                            </button>
-                                            
-                                            <button class="btn-meeting-type position-relative" 
-                                                    id="btnInterview" 
-                                                    onclick="switchMeetingType('interview')"
-                                                    title="Интервью: {{ selected_vacancy.tech_interview_duration|default:90 }} мин">
-                                                <i class="fas fa-users"></i>
-                                                <div class="meeting-type-text">
-                                                    <div class="meeting-type-name">Интервью</div>
-                                                    <div class="meeting-type-duration">{{ selected_vacancy.tech_interview_duration|default:90 }} мин</div>
-                                                </div>
-                                            </button>
                                         </div>
+                                            
+                                            <!-- Свитчер типа встречи справа -->
+                                            <div class="d-flex gap-3 flex-wrap">
+                                                <button class="btn-meeting-type position-relative active" 
+                                                        id="btnScreening" 
+                                                        onclick="switchMeetingType('screening')"
+                                                        title="Скрининг: {{ selected_vacancy.screening_duration|default:45 }} мин">
+                                                    <i class="fas fa-clipboard-list"></i>
+                                                    <div class="meeting-type-text">
+                                                        <div class="meeting-type-name">Скрининг</div>
+                                                        <div class="meeting-type-duration">{{ selected_vacancy.screening_duration|default:45 }} мин</div>
+                                    </div>
+                                                </button>
+                                                
+                                                <button class="btn-meeting-type position-relative" 
+                                                        id="btnInterview" 
+                                                        onclick="switchMeetingType('interview')"
+                                                        title="Интервью: {{ selected_vacancy.tech_interview_duration|default:90 }} мин">
+                                                    <i class="fas fa-users"></i>
+                                                    <div class="meeting-type-text">
+                                                        <div class="meeting-type-name">Интервью</div>
+                                                        <div class="meeting-type-duration">{{ selected_vacancy.tech_interview_duration|default:90 }} мин</div>
+                                                    </div>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -221,20 +223,20 @@
                                         
                                         <!-- Пользовательское сообщение -->
                                                 {% if message.message_type == 'user' %}
-                                                    <div class="message-header">
+                                                        <div class="message-header">
                                                         <i class="fas fa-user me-1"></i>
-                                                        <strong>Вы</strong>
-                                                        <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
-                                                    </div>
-                                            <div class="message-content user-content">{{ message.content|linebreaks }}</div>
+                                                            <strong>Вы</strong>
+                                                            <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                        </div>
+                                                        <div class="message-content user-content">{{ message.content|linebreaks }}</div>
                                                 
                                         <!-- HR-скрининг -->
                                                 {% elif message.message_type == 'hrscreening' %}
-                                                    <div class="message-header">
-                                                        <i class="fas fa-clipboard-list me-1"></i>
-                                                        <strong>HR-скрининг</strong>
-                                                        <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
-                                                    </div>
+                                                        <div class="message-header">
+                                                            <i class="fas fa-clipboard-list me-1"></i>
+                                                            <strong>HR-скрининг</strong>
+                                                            <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                        </div>
                                             <div class="message-content bot-content-fixed">
                                                 <!-- Контейнер с информацией и кнопками -->
                                                 <div class="message-body-with-buttons">
@@ -286,16 +288,16 @@
                                                                     {% endif %}
                                                             </div>
                                                         {% endif %}
-                                                </div>
+                                                    </div>
                                                     </div>
                                                 
                                         <!-- Инвайт -->
                                                 {% elif message.message_type == 'invite' %}
-                                                    <div class="message-header">
-                                                        <i class="fas fa-calendar-plus me-1"></i>
-                                                        <strong>Инвайт</strong>
-                                                        <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
-                                                    </div>
+                                                        <div class="message-header">
+                                                            <i class="fas fa-calendar-plus me-1"></i>
+                                                            <strong>Инвайт</strong>
+                                                            <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                        </div>
                                             <div class="message-content bot-content-fixed">
                                                 <!-- Контейнер с информацией и кнопками -->
                                                 <div class="message-body-with-buttons">
@@ -380,26 +382,26 @@
                                                                     {% endif %}
                                                             </div>
                                                         {% endif %}
-                                                </div>
+                                                    </div>
                                                     </div>
                                                 
                                         <!-- Сообщение об удалении -->
                                                 {% elif message.message_type == 'delete' %}
-                                                    <div class="message-header d-flex align-items-center mb-2">
-                                                        <i class="fas fa-trash-alt text-danger me-2"></i>
-                                                        <strong>Система</strong>
-                                                        <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
-                                                    </div>
-                                                    <div class="message-content bot-content-fixed">{{ message.content|safe }}</div>
+                                                        <div class="message-header d-flex align-items-center mb-2">
+                                                            <i class="fas fa-trash-alt text-danger me-2"></i>
+                                                            <strong>Система</strong>
+                                                            <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                        </div>
+                                                        <div class="message-content bot-content-fixed">{{ message.content|safe }}</div>
                                                 
                                         <!-- Системное сообщение -->
                                                 {% else %}
-                                                    <div class="message-header">
+                                                        <div class="message-header">
                                                         <i class="fas fa-robot me-1"></i>
-                                                        <strong>Система</strong>
-                                                        <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
-                                                    </div>
-                                                    <div class="message-content">{{ message.content|linebreaks }}</div>
+                                                            <strong>Система</strong>
+                                                            <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                        </div>
+                                                        <div class="message-content">{{ message.content|linebreaks }}</div>
                                                 {% endif %}
                                             </div>
                                         </div>
@@ -493,7 +495,7 @@
                                     <div class="d-flex align-items-start">
                                         <i class="fas fa-info-circle me-2 mt-1"></i>
                                         <div>
-                                            Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
+                                                Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
                                             <p class="mb-0 mt-2">
                                                 <code>(1 час)</code> OR <code>(60 минут)</code> OR <code>(1h)</code><br>
                                                 <code>(30 минут)</code> OR <code>(30m)</code> OR <code>(полчаса)</code> etc.
@@ -521,7 +523,7 @@
                                     <div class="d-flex align-items-start">
                                         <i class="fas fa-info-circle me-2 mt-1"></i>
                                         <div>
-                                            Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
+                                                Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
                                             <p class="mb-0 mt-2">
                                                 <code>(1 час)</code> OR <code>(60 минут)</code> OR <code>(1h)</code><br>
                                                 <code>(30 минут)</code> OR <code>(30m)</code> OR <code>(полчаса)</code> etc.
@@ -2081,7 +2083,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Прокручиваем чат к последним сообщениям при загрузке (только внутри контейнера чата)
     setTimeout(() => {
-    scrollToBottom();
+        scrollToBottom();
         // Инициализируем размер textarea в одну строку
         resetTextareaSize();
     }, 100);
@@ -2105,9 +2107,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Функция для сброса размера textarea к одной строке
     function resetTextareaSize() {
-        messageInput.style.height = 'auto';
-        messageInput.style.height = '48px'; // Высота одной строки
-        messageInput.scrollTop = 0;
+            messageInput.style.height = 'auto';
+            messageInput.style.height = '48px'; // Высота одной строки
+            messageInput.scrollTop = 0;
     }
     
     // Автоматическое изменение размера textarea (1-12 строк)
