@@ -98,30 +98,28 @@
                                             </div>
                                             
                                             <!-- Свитчер типа встречи справа -->
-                                            <div class="meeting-type-switcher">
-                                                <div class="d-flex gap-2 flex-wrap">
-                                                    <button class="btn-copy btn-meeting-type position-relative active" 
-                                                            id="btnScreening" 
-                                                            onclick="switchMeetingType('screening')"
-                                                            title="Скрининг: {{ selected_vacancy.screening_duration|default:45 }} мин">
-                                                        <i class="fas fa-clipboard-list"></i>
-                                                        <div class="meeting-type-text">
-                                                            <div class="meeting-type-name">Скрининг</div>
-                                                            <div class="meeting-type-duration">{{ selected_vacancy.screening_duration|default:45 }} мин</div>
-                                                        </div>
-                                                    </button>
-                                                    
-                                                    <button class="btn-copy btn-meeting-type position-relative" 
-                                                            id="btnInterview" 
-                                                            onclick="switchMeetingType('interview')"
-                                                            title="Интервью: {{ selected_vacancy.tech_interview_duration|default:90 }} мин">
-                                                        <i class="fas fa-users"></i>
-                                                        <div class="meeting-type-text">
-                                                            <div class="meeting-type-name">Интервью</div>
-                                                            <div class="meeting-type-duration">{{ selected_vacancy.tech_interview_duration|default:90 }} мин</div>
-                                                        </div>
-                                                    </button>
-                                                </div>
+                                            <div class="d-flex gap-2 flex-wrap">
+                                                <button class="btn-meeting-type position-relative active" 
+                                                        id="btnScreening" 
+                                                        onclick="switchMeetingType('screening')"
+                                                        title="Скрининг: {{ selected_vacancy.screening_duration|default:45 }} мин">
+                                                    <i class="fas fa-clipboard-list"></i>
+                                                    <div class="meeting-type-text">
+                                                        <div class="meeting-type-name">Скрининг</div>
+                                                        <div class="meeting-type-duration">{{ selected_vacancy.screening_duration|default:45 }} мин</div>
+                                                    </div>
+                                                </button>
+                                                
+                                                <button class="btn-meeting-type position-relative" 
+                                                        id="btnInterview" 
+                                                        onclick="switchMeetingType('interview')"
+                                                        title="Интервью: {{ selected_vacancy.tech_interview_duration|default:90 }} мин">
+                                                    <i class="fas fa-users"></i>
+                                                    <div class="meeting-type-text">
+                                                        <div class="meeting-type-name">Интервью</div>
+                                                        <div class="meeting-type-duration">{{ selected_vacancy.tech_interview_duration|default:90 }} мин</div>
+                                                    </div>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -221,36 +219,24 @@
                                 {% for message in messages %}
                             <div class="message mb-3 {% if message.message_type == 'user' %}user-message{% elif message.message_type == 'hrscreening' %}system-message hr-screening-message{% elif message.message_type == 'invite' %}system-message invite-message{% elif message.message_type == 'delete' %}system-message delete-message{% else %}system-message{% endif %}">
                                         <div class="d-flex {% if message.message_type == 'user' %}justify-content-end{% else %}justify-content-start{% endif %}">
+                                            <div class="message-bubble {% if message.message_type == 'user' %}user-bubble{% else %}system-bubble{% endif %}">
                                         
                                         <!-- Пользовательское сообщение -->
                                                 {% if message.message_type == 'user' %}
-                                                    <div class="message-bubble user-bubble">
-                                                        <div class="message-header">
-                                                            <strong>Вы</strong>
-                                                            <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
-                                                        </div>
-                                                        <div class="message-content user-content">{{ message.content|linebreaks }}</div>
+                                                    <div class="message-header">
+                                                        <i class="fas fa-user me-1"></i>
+                                                        <strong>Вы</strong>
+                                                        <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
                                                     </div>
-                                                    <div class="message-avatar">
-                                                        {% if user_photo_url %}
-                                                            <img src="{{ user_photo_url }}" alt="Фото пользователя" class="avatar-image">
-                                                        {% else %}
-                                                            <i class="fas fa-user"></i>
-                                                        {% endif %}
-                                                    </div>
+                                            <div class="message-content user-content">{{ message.content|linebreaks }}</div>
                                                 
                                         <!-- HR-скрининг -->
                                                 {% elif message.message_type == 'hrscreening' %}
-                                                    <div class="message-avatar">
-                                                        <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
-                                                        <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
+                                                    <div class="message-header">
+                                                        <i class="fas fa-clipboard-list me-1"></i>
+                                                        <strong>HR-скрининг</strong>
+                                                        <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
                                                     </div>
-                                                    <div class="message-bubble system-bubble">
-                                                        <div class="message-header">
-                                                            <i class="fas fa-clipboard-list me-1"></i>
-                                                            <strong>HR-скрининг</strong>
-                                                            <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
-                                                        </div>
                                             <div class="message-content bot-content-fixed">
                                                 <!-- Контейнер с информацией и кнопками -->
                                                 <div class="message-body-with-buttons">
@@ -304,20 +290,14 @@
                                                         {% endif %}
                                                 </div>
                                                     </div>
-                                                    </div>
                                                 
                                         <!-- Инвайт -->
                                                 {% elif message.message_type == 'invite' %}
-                                                    <div class="message-avatar">
-                                                        <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
-                                                        <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
+                                                    <div class="message-header">
+                                                        <i class="fas fa-calendar-plus me-1"></i>
+                                                        <strong>Инвайт</strong>
+                                                        <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
                                                     </div>
-                                                    <div class="message-bubble system-bubble">
-                                                        <div class="message-header">
-                                                            <i class="fas fa-calendar-plus me-1"></i>
-                                                            <strong>Инвайт</strong>
-                                                            <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
-                                                        </div>
                                             <div class="message-content bot-content-fixed">
                                                 <!-- Контейнер с информацией и кнопками -->
                                                 <div class="message-body-with-buttons">
@@ -404,37 +384,26 @@
                                                         {% endif %}
                                                 </div>
                                                     </div>
-                                                    </div>
                                                 
                                         <!-- Сообщение об удалении -->
                                                 {% elif message.message_type == 'delete' %}
-                                                    <div class="message-avatar">
-                                                        <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
-                                                        <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
+                                                    <div class="message-header d-flex align-items-center mb-2">
+                                                        <i class="fas fa-trash-alt text-danger me-2"></i>
+                                                        <strong>Система</strong>
+                                                        <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
                                                     </div>
-                                                    <div class="message-bubble system-bubble">
-                                                        <div class="message-header d-flex align-items-center mb-2">
-                                                            <i class="fas fa-trash-alt text-danger me-2"></i>
-                                                            <strong>Система</strong>
-                                                            <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
-                                                        </div>
-                                                        <div class="message-content bot-content-fixed">{{ message.content|safe }}</div>
-                                                    </div>
+                                                    <div class="message-content bot-content-fixed">{{ message.content|safe }}</div>
                                                 
                                         <!-- Системное сообщение -->
                                                 {% else %}
-                                                    <div class="message-avatar">
-                                                        <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
-                                                        <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
+                                                    <div class="message-header">
+                                                        <i class="fas fa-robot me-1"></i>
+                                                        <strong>Система</strong>
+                                                        <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
                                                     </div>
-                                                    <div class="message-bubble system-bubble">
-                                                        <div class="message-header">
-                                                            <strong>Система</strong>
-                                                            <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
-                                                        </div>
-                                                        <div class="message-content">{{ message.content|linebreaks }}</div>
-                                                    </div>
+                                                    <div class="message-content">{{ message.content|linebreaks }}</div>
                                                 {% endif %}
+                                            </div>
                                         </div>
                                     </div>
                                 {% empty %}
@@ -443,30 +412,11 @@
                                         <p>Начните диалог, отправив сообщение</p>
                                     </div>
                                 {% endfor %}
-                                
-                                <!-- Индикатор печати -->
-                                <div class="typing-indicator" id="typing-indicator" style="display: none;">
-                                    <div class="message system-message">
-                                        <div class="message-avatar">
-                                            <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
-                                            <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
-                                        </div>
-                                        <div class="message-bubble system-bubble">
-                                            <div class="message-header">
-                                                <strong>HR-помощник</strong>
-                                            </div>
-                                            <div class="message-content">
-                                                <span class="loading-spinner me-2"></span>
-                                                Обрабатываю запрос...
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                             
                             <!-- Форма ввода -->
                             <div class="card-footer">
-                                <form id="chat-form">
+                                <form method="post" id="chat-form">
                                     {% csrf_token %}
                                     <input type="hidden" name="session_id" value="{{ chat_session.id }}">
                                     
@@ -538,29 +488,21 @@
                                 <strong class="ms-2">Инвайт</strong>
                             </div>
                             <div class="command-example mt-1">
-                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] @пользователь</code>
+                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время]</code>
                             </div>
                             <div class="command-details-hover">
                                 <div class="alert alert-info mb-0">
                                     <div class="d-flex align-items-start">
                                         <i class="fas fa-info-circle me-2 mt-1"></i>
                                         <div>
-                                            <strong>Создание приглашения на встречу:</strong>
-                                            <p class="mb-2 mt-2">
-                                                Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
-                                            </p>
-                                            <p class="mb-2">
+                                            Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
+                                            <p class="mb-0 mt-2">
                                                 <code>(1 час)</code> OR <code>(60 минут)</code> OR <code>(1h)</code><br>
                                                 <code>(30 минут)</code> OR <code>(30m)</code> OR <code>(полчаса)</code> etc.
                                             </p>
-                                            <p class="mb-2">
-                                                <strong>Упоминание пользователей:</strong><br>
-                                                Используйте <code>@username</code> или <code>@email</code> для упоминания участников встречи
-                                            </p>
                                             <div class="mt-2">
-                                                <strong>Примеры:</strong><br>
-                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (1 ч) @andrei.golubenko</code><br>
-                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] @user@company.com</code>
+                                                <strong>Пример:</strong><br>
+                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (1 ч)</code>
                                             </div>
                                         </div>
                                     </div>
@@ -574,29 +516,21 @@
                                 <strong class="ms-2">Техническое интервью</strong>
                             </div>
                             <div class="command-example mt-1">
-                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] @пользователь</code>
+                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время]</code>
                             </div>
                             <div class="command-details-hover">
                                 <div class="alert alert-info mb-0">
                                     <div class="d-flex align-items-start">
                                         <i class="fas fa-info-circle me-2 mt-1"></i>
                                         <div>
-                                            <strong>Создание технического интервью:</strong>
-                                            <p class="mb-2 mt-2">
-                                                Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
-                                            </p>
-                                            <p class="mb-2">
+                                            Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
+                                            <p class="mb-0 mt-2">
                                                 <code>(1 час)</code> OR <code>(60 минут)</code> OR <code>(1h)</code><br>
                                                 <code>(30 минут)</code> OR <code>(30m)</code> OR <code>(полчаса)</code> etc.
                                             </p>
-                                            <p class="mb-2">
-                                                <strong>Упоминание пользователей:</strong><br>
-                                                Используйте <code>@username</code> или <code>@email</code> для упоминания участников интервью
-                                            </p>
                                             <div class="mt-2">
-                                                <strong>Примеры:</strong><br>
-                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (1 ч) @andrei.golubenko</code><br>
-                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] @user@company.com</code>
+                                                <strong>Пример:</strong><br>
+                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (1 ч)</code>
                                             </div>
                                         </div>
                                     </div>
@@ -642,125 +576,6 @@
 
 .card .message > .d-flex {
     width: 100%;
-}
-
-/* === СТИЛИ ДЛЯ АВАТАРОВ === */
-.message-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s ease;
-    margin-right: 12px;
-}
-
-.user-message .message-avatar {
-    background: linear-gradient(135deg, #007bff, #0056b3);
-    color: white;
-    margin-right: 0;
-    margin-left: 12px;
-    order: 2; /* Аватар пользователя справа */
-}
-
-.user-message .message-bubble {
-    order: 1; /* Сообщение пользователя слева */
-    max-width: 75%; /* Ограничиваем ширину только для пользовательских сообщений */
-    word-wrap: break-word !important;
-    word-break: break-word !important;
-    overflow-wrap: break-word !important;
-    white-space: normal !important;
-}
-
-.user-message .message-content {
-    word-wrap: break-word !important;
-    word-break: break-word !important;
-    overflow-wrap: break-word !important;
-    white-space: normal !important;
-    hyphens: auto !important;
-}
-
-/* Обеспечиваем правильный перенос текста */
-.message-bubble {
-    word-wrap: break-word;
-    word-break: break-word;
-    overflow-wrap: break-word;
-}
-
-.message-content {
-    word-wrap: break-word;
-    word-break: break-word;
-    overflow-wrap: break-word;
-}
-
-.system-message .message-avatar {
-    background: linear-gradient(135deg, #28a745, #20c997);
-    color: white;
-}
-
-/* Светлая тема - светло-малиновый фон для аватара бота */
-[data-theme="light"] .system-message .message-avatar {
-    background: linear-gradient(135deg, #ff69b4, #ff1493);
-    color: white;
-}
-
-.message-avatar:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* Стили для изображения аватара */
-.avatar-image, .ai-avatar-image {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    object-position: center;
-    transition: all 0.3s ease;
-}
-
-/* Убираем фон для аватаров с изображениями */
-.message-avatar img {
-    background: none !important;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-}
-
-/* Светлая тема - показываем светлый логотип */
-[data-theme="light"] .light-theme-logo {
-    display: block;
-}
-
-[data-theme="light"] .dark-theme-logo {
-    display: none;
-}
-
-/* Темная тема - показываем темный логотип */
-[data-theme="dark"] .light-theme-logo {
-    display: none;
-}
-
-[data-theme="dark"] .dark-theme-logo {
-    display: block;
-}
-
-/* Мобильные стили для аватаров */
-@media (max-width: 768px) {
-    .message-avatar {
-        width: 32px;
-        height: 32px;
-        font-size: 14px;
-        margin-right: 8px;
-    }
-    
-    .user-message .message-avatar {
-        margin-right: 0;
-        margin-left: 8px;
-    }
-    
 }
 
 /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: Единый размер шрифта для всех сообщений */
@@ -928,19 +743,15 @@
 
 /* Пользовательские сообщения - остаются с ограничением */
 .card .user-message .message-bubble {
-    max-width: 75% !important;
+    max-width: 75%;
     min-width: 120px;
 }
 
-/* Системные сообщения - С ОГРАНИЧЕНИЕМ ШИРИНЫ */
+/* Системные сообщения - БЕЗ ОГРАНИЧЕНИЙ ШИРИНЫ */
 .card .system-message .message-bubble {
-    max-width: 80% !important;
+    max-width: none !important;
     min-width: fit-content !important;
     width: auto !important;
-    word-wrap: break-word !important;
-    word-break: break-word !important;
-    overflow-wrap: break-word !important;
-    white-space: normal !important;
 }
 
 .card .user-bubble {
@@ -1795,153 +1606,6 @@
      filter: grayscale(0.8) !important;
  }
 
-/* ====== СТИЛИ СВИТЧЕРА ТИПА ВСТРЕЧИ ====== */
-.meeting-type-switcher .btn-meeting-type {
-    background: linear-gradient(135deg, #6c757d, #495057) !important;
-    color: white !important;
-    border: 2px solid #fff !important;
-    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3) !important;
-    padding: 8px 16px !important;
-    border-radius: 8px !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    font-size: 14px !important;
-    transition: all 0.3s ease !important;
-    cursor: pointer !important;
-    min-width: 120px !important;
-    opacity: 0.5 !important;
-    filter: grayscale(0.3) !important;
-}
-
-.meeting-type-switcher .btn-meeting-type:hover:not(.active) {
-    opacity: 0.8 !important;
-    filter: grayscale(0.1) !important;
-    transform: scale(1.02) !important;
-}
-
-.meeting-type-switcher .btn-meeting-type.active {
-    opacity: 1 !important;
-    background: linear-gradient(135deg, #28a745, #20c997) !important;
-    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.7) !important;
-    transform: scale(1.1) !important;
-    border: 4px solid #fff !important;
-    position: relative !important;
-    z-index: 10 !important;
-    animation: pulse-active 2s infinite !important;
-}
-
-.meeting-type-switcher .btn-meeting-type.active::before {
-    content: "✓" !important;
-    position: absolute !important;
-    top: -10px !important;
-    right: -10px !important;
-    background: #fff !important;
-    color: #28a745 !important;
-    border-radius: 50% !important;
-    width: 24px !important;
-    height: 24px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 14px !important;
-    font-weight: bold !important;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.3) !important;
-    border: 2px solid #28a745 !important;
-    z-index: 11 !important;
-}
-
-.meeting-type-switcher .btn-meeting-type.active::after {
-    content: "" !important;
-    position: absolute !important;
-    top: -2px !important;
-    left: -2px !important;
-    right: -2px !important;
-    bottom: -2px !important;
-    background: linear-gradient(45deg, #28a745, #20c997, #28a745) !important;
-    border-radius: 10px !important;
-    z-index: -1 !important;
-    animation: border-glow 2s infinite !important;
-}
-
-@keyframes pulse-active {
-    0% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.7); }
-    50% { box-shadow: 0 8px 25px rgba(40, 167, 69, 0.9); }
-    100% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.7); }
-}
-
-@keyframes border-glow {
-    0% { opacity: 0.5; }
-    50% { opacity: 1; }
-    100% { opacity: 0.5; }
-}
-
-.meeting-type-switcher .btn-meeting-type:hover {
-    transform: scale(1.05) !important;
-    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.5) !important;
-}
-
-.meeting-type-switcher .btn-meeting-type.active:hover {
-    background: linear-gradient(135deg, #20c997, #17a2b8) !important;
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.7) !important;
-}
-
-.meeting-type-text {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    line-height: 1.2 !important;
-}
-
-.meeting-type-name {
-    font-weight: 600 !important;
-    font-size: 14px !important;
-}
-
-.meeting-type-duration {
-    font-size: 11px !important;
-    opacity: 0.9 !important;
-    font-weight: 400 !important;
-}
-
-/* Темная тема для свитчера */
-[data-theme="dark"] .meeting-type-switcher .btn-meeting-type {
-    background: linear-gradient(135deg, #495057, #343a40) !important;
-    border: 2px solid #2c2c2c !important;
-    box-shadow: 0 2px 8px rgba(73, 80, 87, 0.4) !important;
-}
-
-[data-theme="dark"] .meeting-type-switcher .btn-meeting-type.active {
-    background: linear-gradient(135deg, #28a745, #20c997) !important;
-    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.8) !important;
-    border: 4px solid #fff !important;
-    animation: pulse-active-dark 2s infinite !important;
-}
-
-[data-theme="dark"] .meeting-type-switcher .btn-meeting-type.active::before {
-    background: #fff !important;
-    color: #28a745 !important;
-    border: 2px solid #28a745 !important;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.5) !important;
-}
-
-[data-theme="dark"] .meeting-type-switcher .btn-meeting-type.active::after {
-    background: linear-gradient(45deg, #28a745, #20c997, #28a745) !important;
-    animation: border-glow-dark 2s infinite !important;
-}
-
-@keyframes pulse-active-dark {
-    0% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.8); }
-    50% { box-shadow: 0 8px 25px rgba(40, 167, 69, 1); }
-    100% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.8); }
-}
-
-@keyframes border-glow-dark {
-    0% { opacity: 0.6; }
-    50% { opacity: 1; }
-    100% { opacity: 0.6; }
-}
-
  .copy-buttons .btn-copy .copy-tooltip {
      position: absolute !important;
      bottom: -35px !important;
@@ -2123,14 +1787,16 @@
 }
 
 .command-badge {
-    display: inline-block;
-    padding: 4px 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
     border-radius: 4px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: white;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    white-space: nowrap;
 }
 
 .command-description {
@@ -2167,24 +1833,124 @@
     color: var(--color-primary, #3182ce);
 }
 
-/* Индикатор печати */
-.typing-indicator {
-    margin-bottom: 12px;
+/* ====== СТИЛИ СВИТЧЕРА ТИПА ВСТРЕЧИ ====== */
+.btn-meeting-type {
+    background: linear-gradient(135deg, #007bff, #0056b3) !important;
+    color: white !important;
+    border: 2px solid #fff !important;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3) !important;
+    padding: 8px 12px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 12px !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    min-width: 100px !important;
+    height: 48px !important;
+    opacity: 0.7 !important;
+    filter: grayscale(0.2) !important;
 }
 
-.loading-spinner {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border: 2px solid #f3f3f3;
-    border-top: 2px solid #007bff;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+.btn-meeting-type:hover:not(.active) {
+    opacity: 0.8 !important;
+    filter: grayscale(0.1) !important;
+    transform: scale(1.02) !important;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.btn-meeting-type.active {
+    opacity: 1 !important;
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.7) !important;
+    transform: scale(1.1) !important;
+    border: 4px solid #fff !important;
+    position: relative !important;
+    z-index: 10 !important;
+    animation: pulse-active 2s infinite !important;
+}
+
+.btn-meeting-type.active::before {
+    content: "✓" !important;
+    position: absolute !important;
+    top: -8px !important;
+    right: -8px !important;
+    background: #fff !important;
+    color: #28a745 !important;
+    border-radius: 50% !important;
+    width: 20px !important;
+    height: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3) !important;
+    border: 2px solid #28a745 !important;
+    z-index: 11 !important;
+}
+
+.meeting-type-text {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    line-height: 1.1 !important;
+}
+
+.meeting-type-name {
+    font-weight: 600 !important;
+    font-size: 12px !important;
+}
+
+.meeting-type-duration {
+    font-size: 10px !important;
+    opacity: 0.9 !important;
+    font-weight: 400 !important;
+}
+
+@keyframes pulse-active {
+    0% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.7); }
+    50% { box-shadow: 0 8px 25px rgba(40, 167, 69, 0.9); }
+    100% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.7); }
+}
+
+@keyframes border-glow {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
+
+/* Темная тема для свитчера */
+[data-theme="dark"] .btn-meeting-type {
+    background: linear-gradient(135deg, #495057, #343a40) !important;
+    border: 2px solid #2c2c2c !important;
+    box-shadow: 0 2px 8px rgba(73, 80, 87, 0.4) !important;
+}
+
+[data-theme="dark"] .btn-meeting-type.active {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.8) !important;
+    border: 4px solid #fff !important;
+    animation: pulse-active-dark 2s infinite !important;
+}
+
+[data-theme="dark"] .btn-meeting-type.active::before {
+    background: #fff !important;
+    color: #28a745 !important;
+    border: 2px solid #28a745 !important;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.5) !important;
+}
+
+@keyframes pulse-active-dark {
+    0% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.8); }
+    50% { box-shadow: 0 8px 25px rgba(40, 167, 69, 1); }
+    100% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.8); }
+}
+
+@keyframes border-glow-dark {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
 }
 
 </style>
@@ -2209,293 +1975,33 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Прокручиваем чат к последним сообщениям при загрузке (только внутри контейнера чата)
     setTimeout(() => {
-        scrollToBottom();
+    scrollToBottom();
         // Инициализируем размер textarea в одну строку
         resetTextareaSize();
     }, 100);
     
-    // Отправка формы через AJAX
+    // Отправка формы
     chatForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const message = messageInput.value.trim();
-        if (!message) return;
-        
-        // Добавляем сообщение пользователя в чат
-        addMessageToChat('user', message);
-        
-        // Очищаем поле ввода и сбрасываем высоту
-        messageInput.value = '';
-        resetTextareaSize();
-        
-        // Показываем индикатор печати
-        showTypingIndicator();
-        
-        // Отправляем запрос
-        sendMessage(message);
-    });
-    
-    // Отправка сообщения по Enter (но не Shift+Enter)
-    messageInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
+        if (!messageInput.value.trim()) {
             e.preventDefault();
-            chatForm.dispatchEvent(new Event('submit'));
+            return;
         }
+        
+        sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        sendBtn.disabled = true;
+        messageInput.disabled = true;
+        
+        // Сбрасываем размер textarea после отправки
+        setTimeout(() => {
+            resetTextareaSize();
+        }, 100);
     });
     
     // Функция для сброса размера textarea к одной строке
     function resetTextareaSize() {
-            messageInput.style.height = 'auto';
-            messageInput.style.height = '48px'; // Высота одной строки
-            messageInput.scrollTop = 0;
-        }
-    
-    // Добавление сообщения в чат
-    function addMessageToChat(role, content) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message mb-3 ${role === 'user' ? 'user-message' : 'system-message'}`;
-        
-        const flexDiv = document.createElement('div');
-        flexDiv.className = `d-flex ${role === 'user' ? 'justify-content-end' : 'justify-content-start'}`;
-        
-        if (role === 'user') {
-            // Пользовательское сообщение
-            const bubbleDiv = document.createElement('div');
-            bubbleDiv.className = 'message-bubble user-bubble';
-            bubbleDiv.innerHTML = `
-                <div class="message-header">
-                    <strong>Вы</strong>
-                    <small class="text-muted ms-2">${new Date().toLocaleString('ru-RU')}</small>
-                </div>
-                <div class="message-content user-content">${content.replace(/\n/g, '<br>')}</div>
-            `;
-            
-            const avatarDiv = document.createElement('div');
-            avatarDiv.className = 'message-avatar';
-            // Используем реальный URL фото пользователя из Django контекста
-            const userPhotoUrl = '{{ user_photo_url|default:"" }}';
-            if (userPhotoUrl) {
-                avatarDiv.innerHTML = `<img src="${userPhotoUrl}" alt="Фото пользователя" class="avatar-image">`;
-            } else {
-                avatarDiv.innerHTML = '<i class="fas fa-user"></i>';
-            }
-            
-            flexDiv.appendChild(bubbleDiv);
-            flexDiv.appendChild(avatarDiv);
-        } else {
-            // Системное сообщение
-            const avatarDiv = document.createElement('div');
-            avatarDiv.className = 'message-avatar';
-            avatarDiv.innerHTML = `
-                <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
-                <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
-            `;
-            
-            const bubbleDiv = document.createElement('div');
-            bubbleDiv.className = 'message-bubble system-bubble';
-            bubbleDiv.innerHTML = `
-                <div class="message-header">
-                    <strong>HR-помощник</strong>
-                    <small class="text-muted ms-2">${new Date().toLocaleString('ru-RU')}</small>
-                </div>
-                <div class="message-content">${content.replace(/\n/g, '<br>')}</div>
-            `;
-            
-            flexDiv.appendChild(avatarDiv);
-            flexDiv.appendChild(bubbleDiv);
-        }
-        
-        messageDiv.appendChild(flexDiv);
-        chatMessages.insertBefore(messageDiv, document.getElementById('typing-indicator'));
-        
-        scrollToBottom();
-    }
-    
-    // Показать индикатор печати
-    function showTypingIndicator() {
-        const typingIndicator = document.getElementById('typing-indicator');
-        typingIndicator.style.display = 'block';
-        scrollToBottom();
-    }
-    
-    // Скрыть индикатор печати
-    function hideTypingIndicator() {
-        const typingIndicator = document.getElementById('typing-indicator');
-        typingIndicator.style.display = 'none';
-    }
-    
-    // Отправка сообщения через AJAX
-    function sendMessage(message) {
-        const sessionId = document.querySelector('input[name="session_id"]').value;
-        
-        fetch('{% url "google_oauth:send_chat_message" %}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            },
-            body: JSON.stringify({
-                session_id: sessionId,
-                message: message
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            hideTypingIndicator();
-            
-            if (data.success) {
-                // Добавляем ответ системы в чат
-                if (data.message_type === 'hrscreening') {
-                    addHRScreeningMessage(data.metadata);
-                } else if (data.message_type === 'invite') {
-                    addInviteMessage(data.metadata);
-                } else {
-                    addMessageToChat('assistant', data.response || 'Сообщение обработано');
-                }
-            } else {
-                // Показываем более детальную информацию об ошибке
-                let errorMessage = '❌ Ошибка: ' + data.error;
-                
-                // Добавляем подсказки для специфических ошибок
-                if (data.error.includes('перегружена')) {
-                    errorMessage += '\n\n💡 Попробуйте отправить сообщение через несколько минут.';
-                } else if (data.error.includes('лимит запросов')) {
-                    errorMessage += '\n\n💡 Подождите немного перед отправкой следующего сообщения.';
-                } else if (data.error.includes('API ключ')) {
-                    errorMessage += '\n\n💡 Проверьте настройки API ключа в разделе "Настройки".';
-                }
-                
-                addMessageToChat('assistant', errorMessage);
-            }
-        })
-        .catch(error => {
-            hideTypingIndicator();
-            console.error('Ошибка отправки сообщения:', error);
-            addMessageToChat('assistant', '❌ Ошибка соединения с сервером');
-        });
-    }
-    
-    // Добавление сообщения HR-скрининга
-    function addHRScreeningMessage(metadata) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'message mb-3 system-message hr-screening-message';
-        
-        const flexDiv = document.createElement('div');
-        flexDiv.className = 'd-flex justify-content-start';
-        
-        const avatarDiv = document.createElement('div');
-        avatarDiv.className = 'message-avatar';
-        avatarDiv.innerHTML = `
-            <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
-            <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
-        `;
-        
-        const bubbleDiv = document.createElement('div');
-        bubbleDiv.className = 'message-bubble system-bubble';
-        bubbleDiv.innerHTML = `
-            <div class="message-header">
-                <strong>HR-скрининг</strong>
-                <small class="text-muted ms-2">${new Date().toLocaleString('ru-RU')}</small>
-            </div>
-            <div class="message-content">
-                <div class="message-body-with-buttons">
-                    <div class="message-info">
-                        <div class="candidate-info-table">
-                            <div class="info-row-table">
-                                <div class="info-label-table">Кандидат:</div>
-                                <div class="info-value-table">${metadata.candidate_name}</div>
-                            </div>
-                            <div class="info-row-table">
-                                <div class="info-label-table">Вакансия:</div>
-                                <div class="info-value-table">${metadata.vacancy_name}</div>
-                            </div>
-                            <div class="info-row-table">
-                                <div class="info-label-table">Уровень:</div>
-                                <div class="info-value-table">
-                                    <span class="badge bg-primary">${metadata.determined_grade}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="action-buttons-right">
-                        <a href="${metadata.candidate_url}" target="_blank" class="btn btn-sm btn-outline-primary">
-                            <i class="fas fa-external-link-alt me-1"></i>Открыть
-                        </a>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        flexDiv.appendChild(avatarDiv);
-        flexDiv.appendChild(bubbleDiv);
-        messageDiv.appendChild(flexDiv);
-        chatMessages.insertBefore(messageDiv, document.getElementById('typing-indicator'));
-        
-        scrollToBottom();
-    }
-    
-    // Добавление сообщения инвайта
-    function addInviteMessage(metadata) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'message mb-3 system-message invite-message';
-        
-        const flexDiv = document.createElement('div');
-        flexDiv.className = 'd-flex justify-content-start';
-        
-        const avatarDiv = document.createElement('div');
-        avatarDiv.className = 'message-avatar';
-        avatarDiv.innerHTML = `
-            <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
-            <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
-        `;
-        
-        const bubbleDiv = document.createElement('div');
-        bubbleDiv.className = 'message-bubble system-bubble';
-        bubbleDiv.innerHTML = `
-            <div class="message-header">
-                <strong>Инвайт</strong>
-                <small class="text-muted ms-2">${new Date().toLocaleString('ru-RU')}</small>
-            </div>
-            <div class="message-content">
-                <div class="message-body-with-buttons">
-                    <div class="message-info">
-                        <div class="candidate-info-table">
-                            <div class="info-row-table">
-                                <div class="info-label-table">Кандидат:</div>
-                                <div class="info-value-table">${metadata.candidate_name}</div>
-                            </div>
-                            <div class="info-row-table">
-                                <div class="info-label-table">Вакансия:</div>
-                                <div class="info-value-table">${metadata.vacancy_name}</div>
-                            </div>
-                            <div class="info-row-table">
-                                <div class="info-label-table">Интервьюер:</div>
-                                <div class="info-value-table">${metadata.interviewer_name || 'Не указан'}</div>
-                            </div>
-                            <div class="info-row-table">
-                                <div class="info-label-table">Дата интервью:</div>
-                                <div class="info-value-table">${metadata.interview_datetime ? new Date(metadata.interview_datetime).toLocaleString('ru-RU') : 'Не указана'}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="action-buttons-right">
-                        <a href="${metadata.candidate_url}" target="_blank" class="btn btn-sm btn-outline-primary">
-                            <i class="fas fa-external-link-alt me-1"></i>Открыть
-                        </a>
-                        ${metadata.calendar_event_url ? `<a href="${metadata.calendar_event_url}" target="_blank" class="btn btn-sm btn-outline-success">
-                            <i class="fas fa-calendar me-1"></i>Присоединиться
-                        </a>` : ''}
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        flexDiv.appendChild(avatarDiv);
-        flexDiv.appendChild(bubbleDiv);
-        messageDiv.appendChild(flexDiv);
-        chatMessages.insertBefore(messageDiv, document.getElementById('typing-indicator'));
-        
-        scrollToBottom();
+        messageInput.style.height = 'auto';
+        messageInput.style.height = '48px'; // Высота одной строки
+        messageInput.scrollTop = 0;
     }
     
     // Автоматическое изменение размера textarea (1-12 строк)
@@ -2984,20 +2490,23 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                 console.log('🔄 toggleCommandsCard вызвана');
                 const commandsCardBody = document.getElementById('commandsCardBody');
                 const toggleIcon = document.getElementById('commandsToggleIcon');
-                const commandsList = commandsCardBody ? commandsCardBody.querySelector('.commands-list') : null;
+                const additionalCommand1 = document.getElementById('additionalCommand1');
+                const additionalCommand2 = document.getElementById('additionalCommand2');
                 
-                if (commandsList) {
-                    // Проверяем, свернута ли карточка (есть ли класс collapsed)
-                    const isCollapsed = commandsList.classList.contains('collapsed');
+                if (commandsCardBody) {
+                    // Проверяем, свернута ли карточка (скрыты ли дополнительные команды)
+                    const isCollapsed = additionalCommand1.style.display === 'none';
                     
                     if (isCollapsed) {
                         // Разворачиваем - показываем все команды
-                        commandsList.classList.remove('collapsed');
+                        additionalCommand1.style.display = 'block';
+                        additionalCommand2.style.display = 'block';
                         toggleIcon.className = 'fas fa-chevron-up';
                         console.log('📖 Команды развернуты');
                     } else {
-                        // Сворачиваем - показываем 2.5 команды с градиентом
-                        commandsList.classList.add('collapsed');
+                        // Сворачиваем - показываем только первые 2 команды
+                        additionalCommand1.style.display = 'none';
+                        additionalCommand2.style.display = 'none';
                         toggleIcon.className = 'fas fa-chevron-down';
                         console.log('📕 Команды свернуты');
                     }
@@ -3083,13 +2592,14 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
             
             // Инициализация состояния карточки команд (свернутое состояние по умолчанию)
             document.addEventListener('DOMContentLoaded', function() {
-                const commandsCardBody = document.getElementById('commandsCardBody');
+                const additionalCommand1 = document.getElementById('additionalCommand1');
+                const additionalCommand2 = document.getElementById('additionalCommand2');
                 const toggleIcon = document.getElementById('commandsToggleIcon');
-                const commandsList = commandsCardBody ? commandsCardBody.querySelector('.commands-list') : null;
                 
-                if (commandsList && toggleIcon) {
+                if (additionalCommand1 && additionalCommand2 && toggleIcon) {
                     // Устанавливаем свернутое состояние по умолчанию
-                    commandsList.classList.add('collapsed');
+                    additionalCommand1.style.display = 'none';
+                    additionalCommand2.style.display = 'none';
                     toggleIcon.className = 'fas fa-chevron-down';
                     console.log('📕 Карточка команд инициализирована в свернутом состоянии');
                 }
@@ -3104,193 +2614,4 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                 window.sessionId = {{ chat_session.id }};
             </script>
             <script src="{% static 'js/chat_actions.js' %}"></script>
-            
-            <!-- ПРИНУДИТЕЛЬНЫЕ СТИЛИ ДЛЯ ОГРАНИЧЕНИЯ ШИРИНЫ СООБЩЕНИЙ -->
-            <style>
-                /* Максимально специфичные селекторы для принудительного ограничения ширины */
-                .card .chat-messages .message.user-message .message-bubble,
-                .card .chat-messages .user-message .message-bubble,
-                .card .user-message .message-bubble,
-                .user-message .message-bubble,
-                .message.user-message .message-bubble {
-                    max-width: 75% !important;
-                    width: 75% !important;
-                    min-width: 120px !important;
-                    word-wrap: break-word !important;
-                    word-break: break-word !important;
-                    overflow-wrap: break-word !important;
-                    white-space: normal !important;
-                    hyphens: auto !important;
-                    box-sizing: border-box !important;
-                }
-
-                .card .chat-messages .message.system-message .message-bubble,
-                .card .chat-messages .system-message .message-bubble,
-                .card .system-message .message-bubble,
-                .system-message .message-bubble,
-                .message.system-message .message-bubble {
-                    max-width: 80% !important;
-                    width: 80% !important;
-                    min-width: fit-content !important;
-                    word-wrap: break-word !important;
-                    word-break: break-word !important;
-                    overflow-wrap: break-word !important;
-                    white-space: normal !important;
-                    hyphens: auto !important;
-                    box-sizing: border-box !important;
-                }
-
-                /* Принудительные стили для содержимого сообщений */
-                .card .chat-messages .message .message-content,
-                .card .chat-messages .message-content,
-                .message .message-content,
-                .message-content {
-                    word-wrap: break-word !important;
-                    word-break: break-word !important;
-                    overflow-wrap: break-word !important;
-                    white-space: normal !important;
-                    hyphens: auto !important;
-                    max-width: 100% !important;
-                    overflow: hidden !important;
-                }
-
-                /* АДАПТИВНАЯ ШИРИНА ДЛЯ СООБЩЕНИЙ БОТА С ФУНКЦИОНАЛЬНЫМИ КНОПКАМИ */
-                .card .chat-messages .message.system-message .message-bubble,
-                .card .chat-messages .system-message .message-bubble,
-                .card .system-message .message-bubble,
-                .system-message .message-bubble,
-                .message.system-message .message-bubble {
-                    width: auto !important;
-                    max-width: 80% !important;
-                    min-width: fit-content !important;
-                }
-
-                /* Контейнер с информацией и кнопками - адаптивная ширина */
-                .card .message-body-with-buttons {
-                    display: flex !important;
-                    align-items: flex-start !important;
-                    gap: 12px !important;
-                    width: auto !important;
-                    min-width: fit-content !important;
-                    max-width: none !important;
-                }
-
-                /* Информационная часть - занимает только необходимое место */
-                .card .message-info {
-                    flex: 0 0 auto !important;
-                    min-width: fit-content !important;
-                    max-width: none !important;
-                }
-
-                /* Кнопки действий - фиксированный размер */
-                .card .action-buttons-right {
-                    display: flex !important;
-                    flex-direction: column !important;
-                    gap: 4px !important;
-                    flex-shrink: 0 !important;
-                    align-self: flex-start !important;
-                    margin-top: 2px !important;
-                    width: auto !important;
-                    min-width: fit-content !important;
-                }
-
-                /* Табличная структура - адаптивная ширина */
-                .card .candidate-info-table {
-                    display: table !important;
-                    width: auto !important;
-                    min-width: fit-content !important;
-                    max-width: none !important;
-                    border-spacing: 0 !important;
-                    border-collapse: collapse !important;
-                    margin-bottom: 6px !important;
-                }
-
-                /* Строки таблицы - адаптивная ширина */
-                .card .info-row-table {
-                    display: table-row !important;
-                    width: auto !important;
-                }
-
-                /* Лейблы - фиксированная ширина */
-                .card .info-label-table {
-                    display: table-cell !important;
-                    font-weight: 600 !important;
-                    color: var(--hr-text, #333) !important;
-                    padding-right: 8px !important;
-                    white-space: nowrap !important;
-                    vertical-align: top !important;
-                    line-height: 1.3 !important;
-                    font-size: 0.9rem !important;
-                    min-width: 65px !important;
-                    width: auto !important;
-                }
-
-                /* Значения - адаптивная ширина */
-                .card .info-value-table {
-                    display: table-cell !important;
-                    white-space: nowrap !important;
-                    vertical-align: top !important;
-                    line-height: 1.3 !important;
-                    font-size: 0.9rem !important;
-                    width: auto !important;
-                    min-width: fit-content !important;
-                }
-
-            /* === СТИЛИ ДЛЯ КАРТОЧКИ КОМАНД === */
-            .commands-list {
-                position: relative;
-                transition: all 0.3s ease;
-            }
-
-            /* Свернутое состояние - показываем 2.5 команды с градиентом */
-            .commands-list.collapsed {
-                max-height: 280px; /* Высота для 2.5 команд */
-                overflow: hidden;
-                position: relative;
-            }
-
-            /* Градиентный эффект внизу для показа, что есть еще контент */
-            .commands-list.collapsed::after {
-                content: '';
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                height: 40px;
-                background: linear-gradient(transparent, rgba(255, 255, 255, 0.9));
-                pointer-events: none;
-                z-index: 1;
-            }
-
-            /* Темная тема - градиент для темного фона */
-            [data-theme="dark"] .commands-list.collapsed::after {
-                background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
-            }
-
-            /* Стили для команд */
-            .command-item {
-                transition: all 0.3s ease;
-            }
-
-
-            .command-header {
-                display: flex;
-                align-items: center;
-                margin-bottom: 8px;
-            }
-
-            .command-example code {
-                background-color: #f8f9fa;
-                padding: 4px 6px;
-                border-radius: 3px;
-                font-size: 0.85rem;
-                line-height: 1.4;
-            }
-
-            /* Темная тема для кода */
-            [data-theme="dark"] .command-example code {
-                background-color: #2d3748;
-                color: #e2e8f0;
-            }
-            </style>
             {% endblock %}

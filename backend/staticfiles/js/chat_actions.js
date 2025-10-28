@@ -12,6 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('  - sendButton:', sendButton);
     console.log('  - chatForm:', chatForm);
     
+    // Проверяем что форма найдена
+    if (!chatForm) {
+        console.error('❌ Chat form not found! Cannot add event listener.');
+        return;
+    }
+    
     // Передаем переменную sessionId из шаблона в глобальный scope
     const sessionId = window.sessionId;
     console.log('🔍 Session ID from window:', sessionId);
@@ -20,20 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const COMMANDS = {
         '/s':      'hrscreening',
         '/hr':     'hrscreening',
-        '/screen': 'hrscreening',
         '/in':     'invite',
-        '/inv':    'invite',
-        '/prigl':  'invite',
-        '/пригл':  'invite'
+        '/invite': 'invite'
     };
-
-    // Функция для получения CSRF токена
-    function getCSRFToken() {
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
-        console.log('🔍 CSRF Token element:', csrfToken);
-        console.log('🔍 CSRF Token value:', csrfToken ? csrfToken.value : 'NOT FOUND');
-        return csrfToken ? csrfToken.value : '';
-    }
 
     /**
      * Добавляет новое сообщение в чат без перезагрузки страницы
@@ -60,12 +55,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const messageElement = tempDiv.firstElementChild;
         
         if (!messageElement) {
-            console.error('❌ Не удалось создать элемент сообщения');
+            console.error('❌ Не удалось создать элемент сообщения из HTML');
             return;
         }
         
-        // Вставляем сообщение ПЕРЕД индикатором печати (если он есть)
-        // или в конец контейнера
+        // Вставляем сообщение перед индикатором печати (если есть) или в конец
         if (typingIndicator) {
             chatMessages.insertBefore(messageElement, typingIndicator);
         } else {
@@ -88,13 +82,60 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    /**
+     * Добавляет пользовательское сообщение в чат
+     */
+    function addUserMessageToChat(text, actionType) {
+        console.log('👤 Добавление пользовательского сообщения в чат');
+        
+        const chatMessages = document.getElementById('chat-messages');
+        if (!chatMessages) {
+            console.error('❌ Контейнер chat-messages не найден!');
+            return;
+        }
+        
+        // Создаем HTML для пользовательского сообщения
+        const messageHtml = `
+            <div class="message mb-3 user-message">
+                <div class="d-flex justify-content-end">
+                    <div class="message-bubble user-bubble">
+                        <div class="message-content">${text}</div>
+                    </div>
+                    <div class="message-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Создаем временный контейнер для парсинга HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = messageHtml;
+        
+        // Получаем первое дочернее сообщение
+        const messageElement = tempDiv.firstElementChild;
+        
+        if (messageElement) {
+            // Добавляем сообщение в чат
+            chatMessages.appendChild(messageElement);
+            
+            // Прокручиваем вниз
+            scrollToBottom();
+            
+            console.log('✅ Пользовательское сообщение добавлено');
+        } else {
+            console.error('❌ Не удалось создать элемент пользовательского сообщения');
+        }
+    }
+
     // Обработчик ввода в textarea
     if (textarea) {
         textarea.addEventListener('input', () => {
             const val = textarea.value;
             console.log('🔍 TEXTAREA INPUT: Value:', val);
             
-            const match = val.match(/^\/\w+\s*/);
+            // Проверяем команды
+            const match = val.match(/^\/(\w+)/);
             if (match) {
                 const cmd = match[0].toLowerCase().trim();
                 const action = COMMANDS[cmd];
@@ -112,122 +153,81 @@ document.addEventListener('DOMContentLoaded', () => {
                         tagLabel.className = 'tag-label badge bg-warning me-2';
                     }
                     
-                    // Устанавливаем значение в скрытое поле
+                    // Устанавливаем action_type
                     actionTypeInput.value = action;
                     console.log('🔍 ACTION TYPE SET:', action);
                     
-                    // Удаляем команду из поля ввода, оставляя только текст после команды
-                    const textAfterCommand = val.substring(match[0].length);
-                    textarea.value = textAfterCommand;
-                    
-                    // Устанавливаем курсор в конец
-                    const cursorPos = textAfterCommand.length;
-                    textarea.setSelectionRange(cursorPos, cursorPos);
-                    
-                    console.log('🔍 COMMAND REMOVED: Text after command:', textAfterCommand);
+                    // Убираем команду из поля ввода
+                    textarea.value = val.replace(match[0], '').trim();
                 } else {
-                    // Скрываем метку для неизвестных команд
-                    tagLabel.style.display = 'none';
-                    actionTypeInput.value = 'hrscreening'; // По умолчанию
                     console.log('🔍 UNKNOWN COMMAND, using default');
                 }
             } else {
-                // Скрываем метку, если команда не начинается с /
-                tagLabel.style.display = 'none';
-                actionTypeInput.value = 'hrscreening'; // По умолчанию
                 console.log('🔍 NO COMMAND, using default');
             }
         });
     }
 
-    // Перехватываем отправку формы для AJAX запроса
+    // ЕДИНСТВЕННЫЙ обработчик submit
     if (chatForm) {
         console.log('🔍 Chat form found:', chatForm);
-        chatForm.addEventListener('submit', (e) => {
-            console.log('🔍 FORM SUBMIT: Event triggered');
+        
+        chatForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            e.stopPropagation();
-            console.log('🔍 FORM SUBMIT: PreventDefault and stopPropagation called');
             
             const actionType = actionTypeInput.value;
             const text = textarea.value.trim();
             
-            console.log('🔍 FORM SUBMIT: Action type:', actionType);
-            console.log('🔍 FORM SUBMIT: Text:', text);
-            console.log('🔍 FORM SUBMIT: Session ID:', sessionId);
-            console.log('🔍 FORM SUBMIT: ActionTypeInput element:', actionTypeInput);
-            console.log('🔍 FORM SUBMIT: Textarea element:', textarea);
-            
             if (!text) {
-                console.log('🔍 FORM SUBMIT: Empty text, returning');
                 return;
             }
             
-            // Показываем индикатор загрузки
+            // Добавляем сообщение пользователя
+            addUserMessageToChat(text, actionType);
+            
+            // Блокируем кнопки
             sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             sendButton.disabled = true;
             textarea.disabled = true;
             
-            // Отправляем AJAX запрос
-            console.log(`🔍 JS: Отправляем AJAX запрос на /google-oauth/chat/${sessionId}/ajax/`);
+            // AJAX запрос
             fetch(`/google-oauth/chat/${sessionId}/ajax/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': getCSRFToken()
                 },
-                body: JSON.stringify({ 
-                    action_type: actionType, 
-                    text: text,
-                    session_id: sessionId
+                body: JSON.stringify({
+                    'action_type': actionType,
+                    'text': text,
+                    'session_id': sessionId
                 })
             })
-            .then(response => {
-                console.log('🔍 AJAX RESPONSE: Status:', response.status);
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
-                console.log('🔍 AJAX RESPONSE: Data:', data);
-                
                 if (data.success) {
-                    console.log('✅ Сообщение успешно отправлено');
-                    console.log('🔍 RESPONSE: message_html present:', !!data.message_html);
-                    console.log('🔍 RESPONSE: message_type:', data.message_type);
-                    console.log('🔍 RESPONSE: message_id:', data.message_id);
-                    
-                    // Очищаем поле ввода
+                    // Очищаем поле
                     textarea.value = '';
-                    
-                    // Скрываем тег
                     tagLabel.style.display = 'none';
-                    
-                    // Сбрасываем высоту textarea
-                    textarea.style.height = 'auto';
                     textarea.style.height = '48px';
                     
-                    // Если сервер вернул HTML сообщения - добавляем его в чат
+                    // Добавляем ответ
                     if (data.message_html) {
-                        console.log('📨 Получен HTML сообщения, добавляем в чат');
-                        console.log('🔍 HTML LENGTH:', data.message_html.length);
                         addMessageToChat(data.message_html);
-                    } else {
-                        console.warn('⚠️ Сервер не вернул HTML сообщения');
                     }
                 } else {
-                    console.error('❌ Ошибка сервера:', data.error);
-                    alert(`Ошибка: ${data.error || 'Неизвестная ошибка'}`);
+                    alert(data.error || 'Ошибка отправки');
                 }
                 
-                // Восстанавливаем кнопку
+                // Разблокируем кнопки
                 sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
                 sendButton.disabled = false;
                 textarea.disabled = false;
             })
             .catch(error => {
-                console.error('Ошибка отправки сообщения:', error);
-                alert('Ошибка отправки сообщения. Попробуйте еще раз.');
+                console.error('Ошибка:', error);
+                alert('Ошибка отправки сообщения');
                 
-                // Восстанавливаем кнопку
                 sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
                 sendButton.disabled = false;
                 textarea.disabled = false;
@@ -235,3 +235,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// Функция для получения CSRF токена
+function getCSRFToken() {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+    if (csrfToken) {
+        console.log('🔍 CSRF Token element:', csrfToken);
+        console.log('🔍 CSRF Token value:', csrfToken.value);
+        return csrfToken.value;
+    }
+    return '';
+}
