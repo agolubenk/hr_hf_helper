@@ -89,38 +89,36 @@
                                                     <div class="copy-tooltip">Скопировать все слоты</div>
                                                 </button>
                                                 
-                                                <button class="btn-copy btn-refresh-slots" 
-                                                        onclick="window.refreshSlots()"
-                                                        title="Обновить слоты">
-                                                    <i class="fas fa-sync-alt"></i>
-                                                    <div class="copy-tooltip">Обновить слоты</div>
-                                                </button>
-                                            </div>
+                                            <button class="btn-copy btn-refresh-slots" 
+                                                    onclick="window.refreshSlots()"
+                                                    title="Обновить слоты">
+                                                <i class="fas fa-sync-alt"></i>
+                                                <div class="copy-tooltip">Обновить слоты</div>
+                                            </button>
                                             
-                                            <!-- Свитчер типа встречи справа -->
-                                            <div class="d-flex gap-2 flex-wrap">
-                                                <button class="btn-meeting-type position-relative active" 
-                                                        id="btnScreening" 
-                                                        onclick="switchMeetingType('screening')"
-                                                        title="Скрининг: {{ selected_vacancy.screening_duration|default:45 }} мин">
-                                                    <i class="fas fa-clipboard-list"></i>
-                                                    <div class="meeting-type-text">
-                                                        <div class="meeting-type-name">Скрининг</div>
-                                                        <div class="meeting-type-duration">{{ selected_vacancy.screening_duration|default:45 }} мин</div>
-                                                    </div>
-                                                </button>
-                                                
-                                                <button class="btn-meeting-type position-relative" 
-                                                        id="btnInterview" 
-                                                        onclick="switchMeetingType('interview')"
-                                                        title="Интервью: {{ selected_vacancy.tech_interview_duration|default:90 }} мин">
-                                                    <i class="fas fa-users"></i>
-                                                    <div class="meeting-type-text">
-                                                        <div class="meeting-type-name">Интервью</div>
-                                                        <div class="meeting-type-duration">{{ selected_vacancy.tech_interview_duration|default:90 }} мин</div>
-                                                    </div>
-                                                </button>
-                                            </div>
+                                            <!-- Свитчер типа встречи -->
+                                            <button class="btn-meeting-type position-relative active" 
+                                                    id="btnScreening" 
+                                                    onclick="switchMeetingType('screening')"
+                                                    title="Скрининг: {{ selected_vacancy.screening_duration|default:45 }} мин">
+                                                <i class="fas fa-clipboard-list"></i>
+                                                <div class="meeting-type-text">
+                                                    <div class="meeting-type-name">Скрининг</div>
+                                                    <div class="meeting-type-duration">{{ selected_vacancy.screening_duration|default:45 }} мин</div>
+                                                </div>
+                                            </button>
+                                            
+                                            <button class="btn-meeting-type position-relative" 
+                                                    id="btnInterview" 
+                                                    onclick="switchMeetingType('interview')"
+                                                    title="Интервью: {{ selected_vacancy.tech_interview_duration|default:90 }} мин">
+                                                <i class="fas fa-users"></i>
+                                                <div class="meeting-type-text">
+                                                    <div class="meeting-type-name">Интервью</div>
+                                                    <div class="meeting-type-duration">{{ selected_vacancy.tech_interview_duration|default:90 }} мин</div>
+                                                </div>
+                                            </button>
+                                        </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1951,6 +1949,114 @@
     0% { opacity: 0.6; }
     50% { opacity: 1; }
     100% { opacity: 0.6; }
+}
+
+/* ====== СТИЛИ СВИТЧЕРА ТИПА ВСТРЕЧИ ====== */
+.btn-meeting-type {
+    background: linear-gradient(135deg, #007bff, #0056b3) !important;
+    color: white !important;
+    border: 2px solid #fff !important;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3) !important;
+    padding: 8px 12px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 12px !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    min-width: 100px !important;
+    height: 48px !important;
+    opacity: 0.7 !important;
+    filter: grayscale(0.2) !important;
+}
+
+.btn-meeting-type:hover:not(.active) {
+    opacity: 0.8 !important;
+    filter: grayscale(0.1) !important;
+    transform: scale(1.02) !important;
+}
+
+.btn-meeting-type.active {
+    opacity: 1 !important;
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.7) !important;
+    transform: scale(1.1) !important;
+    border: 4px solid #fff !important;
+    position: relative !important;
+    z-index: 10 !important;
+    animation: pulse-active 2s infinite !important;
+}
+
+.btn-meeting-type.active::before {
+    content: "✓" !important;
+    position: absolute !important;
+    top: -8px !important;
+    right: -8px !important;
+    background: #fff !important;
+    color: #28a745 !important;
+    border-radius: 50% !important;
+    width: 20px !important;
+    height: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3) !important;
+    border: 2px solid #28a745 !important;
+    z-index: 11 !important;
+}
+
+.meeting-type-text {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    line-height: 1.1 !important;
+}
+
+.meeting-type-name {
+    font-weight: 600 !important;
+    font-size: 12px !important;
+}
+
+.meeting-type-duration {
+    font-size: 10px !important;
+    opacity: 0.9 !important;
+    font-weight: 400 !important;
+}
+
+@keyframes pulse-active {
+    0% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.7); }
+    50% { box-shadow: 0 8px 25px rgba(40, 167, 69, 0.9); }
+    100% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.7); }
+}
+
+/* Темная тема для свитчера */
+[data-theme="dark"] .btn-meeting-type {
+    background: linear-gradient(135deg, #495057, #343a40) !important;
+    border: 2px solid #2c2c2c !important;
+    box-shadow: 0 2px 8px rgba(73, 80, 87, 0.4) !important;
+}
+
+[data-theme="dark"] .btn-meeting-type.active {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.8) !important;
+    border: 4px solid #fff !important;
+    animation: pulse-active-dark 2s infinite !important;
+}
+
+[data-theme="dark"] .btn-meeting-type.active::before {
+    background: #fff !important;
+    color: #28a745 !important;
+    border: 2px solid #28a745 !important;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.5) !important;
+}
+
+@keyframes pulse-active-dark {
+    0% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.8); }
+    50% { box-shadow: 0 8px 25px rgba(40, 167, 69, 1); }
+    100% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.8); }
 }
 
 </style>

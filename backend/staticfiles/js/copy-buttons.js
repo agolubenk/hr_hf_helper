@@ -4,7 +4,21 @@
 
 // Функции для копирования вопросов
 window.copyQuestions = function(country) {
-    const text = country === 'belarus' ? window.questionsBelarus : window.questionsPoland;
+    let text = country === 'belarus' ? window.questionsBelarus : window.questionsPoland;
+    
+    // Добавляем информацию о времени встречи
+    if (text && window.vacancyData) {
+        const duration = country === 'belarus' ? 
+            (window.vacancyData.screening_duration || 45) : 
+            (window.vacancyData.tech_interview_duration || 90);
+        
+        const timeInfo = country === 'belarus' ? 
+            `\n\nПо времени нужно будет примерно ${duration} минут.\nКогда комфортнее?` :
+            `\n\nThe interview will take approximately ${duration} minutes.\nWhen would be convenient for you?`;
+        
+        text = text + timeInfo;
+    }
+    
     if (text) {
         navigator.clipboard.writeText(text).then(() => {
             showCopySuccess();
