@@ -1,10 +1,133 @@
 {% extends 'common/base.html' %}
 {% load static %}
+{% load hiring_plan_extras %}
 
 {% block title %}Заявки на найм - HR Helper{% endblock %}
 {% block page_title %}Заявки на найм{% endblock %}
 
 {% block content %}
+<style>
+.priority-icon {
+    font-size: 1.2em;
+    cursor: help;
+}
+.priority-icon:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}
+.vacancy-name {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+}
+.project-name {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+/* Темная тема для главной страницы заявок */
+[data-bs-theme="dark"] .card {
+    background-color: #343a40;
+    border-color: #495057;
+}
+
+[data-bs-theme="dark"] .card-header {
+    background-color: #495057;
+    border-bottom-color: #6c757d;
+    color: #ffffff;
+}
+
+[data-bs-theme="dark"] .card-body {
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+[data-bs-theme="dark"] .table {
+    color: #ffffff;
+}
+
+[data-bs-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) > td {
+    background-color: #2d3338;
+}
+
+[data-bs-theme="dark"] .table-hover > tbody > tr:hover > td {
+    background-color: #495057;
+}
+
+[data-bs-theme="dark"] .table th {
+    background-color: #343a40;
+    border-color: #495057;
+    color: #ffffff;
+}
+
+[data-bs-theme="dark"] .table td {
+    border-color: #495057;
+    color: #ffffff;
+}
+
+[data-bs-theme="dark"] .text-muted {
+    color: #adb5bd !important;
+}
+
+[data-bs-theme="dark"] .badge {
+    color: #ffffff;
+}
+
+[data-bs-theme="dark"] .badge.bg-secondary {
+    background-color: #6c757d !important;
+    color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .badge.bg-primary {
+    background-color: #0d6efd !important;
+    color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .badge.bg-danger {
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .badge.bg-success {
+    background-color: #198754 !important;
+    color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .badge.bg-warning {
+    background-color: #ffc107 !important;
+    color: #000000 !important;
+}
+
+[data-bs-theme="dark"] .badge.bg-info {
+    background-color: #0dcaf0 !important;
+    color: #000000 !important;
+}
+
+[data-bs-theme="dark"] .text-decoration-none {
+    color: #ffffff;
+}
+
+[data-bs-theme="dark"] .text-decoration-none:hover {
+    color: #66b3ff;
+}
+
+[data-bs-theme="dark"] .vacancy-name {
+    color: #ffffff;
+}
+
+[data-bs-theme="dark"] .project-name {
+    color: #ffffff;
+}
+
+[data-bs-theme="dark"] .fas {
+    color: inherit;
+}
+</style>
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -168,28 +291,40 @@
                     <table class="table table-striped table-hover">
                         <thead class="table-dark">
                             <tr>
-                                <th>Вакансия</th>
-                                <th>Грейд</th>
+                                <th class="text-center" title="Приоритет заявки"></th>
+                                <th>Вакансия / Грейд</th>
                                 <th>Проект</th>
-                                <th>Статус</th>
-                                <th>Открытие</th>
-                                <th>Дедлайн</th>
-                                <th>SLA</th>
-                                <th>В работе</th>
-                                <th>Приоритет</th>
-                                <th>Кандидат</th>
                                 <th>Рекрутер</th>
+                                <th>Статус</th>
+                                <th>Сроки</th>
+                                <th>Факт/SLA</th>
+                                <th>T2H | SLA</th>
+                                <th>Кандидат</th>
                                 <th>Действия</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for request in requests %}
                             <tr>
-                                <td>
-                                    <strong>{{ request.vacancy.name }}</strong>
+                                <td class="text-center">
+                                    {% if request.priority == 1 %}
+                                        <i class="fas fa-exclamation-triangle text-danger priority-icon" title="Критический приоритет"></i>
+                                    {% elif request.priority == 2 %}
+                                        <i class="fas fa-exclamation-circle text-warning priority-icon" title="Высокий приоритет"></i>
+                                    {% elif request.priority == 3 %}
+                                        <i class="fas fa-info-circle text-info priority-icon" title="Средний приоритет"></i>
+                                    {% elif request.priority == 4 %}
+                                        <i class="fas fa-minus-circle text-secondary priority-icon" title="Низкий приоритет"></i>
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
                                 </td>
                                 <td>
-                                    <span class="badge bg-info">{{ request.grade.name }}</span>
+                                    <div>
+                                        <strong class="vacancy-name" title="{{ request.vacancy.name }}">{{ request.vacancy.name }}</strong>
+                                        <br>
+                                        <span class="badge bg-info">{{ request.grade.name }}</span>
+                                    </div>
                                 </td>
                                 <td>
                                     {% if request.project %}
@@ -199,30 +334,68 @@
                                     {% endif %}
                                 </td>
                                 <td>
+                                    {% if request.recruiter %}
+                                        <div>
+                                            <span>{{ request.recruiter|recruiter_short }}</span>
+                                            {% if request.recruiter_work_days > 0 %}
+                                                <br><small class="text-muted">{{ request.recruiter_work_days }} дн.</small>
+                                            {% endif %}
+                                        </div>
+                                    {% else %}
+                                        <span class="text-muted">Не назначен</span>
+                                    {% endif %}
+                                </td>
+                                <td>
                                     {% if request.status == 'planned' %}
                                         <span class="badge bg-info">Планируется</span>
                                     {% elif request.status == 'in_progress' %}
                                         <span class="badge bg-warning">В процессе</span>
                                     {% elif request.status == 'closed' %}
-                                        <span class="badge bg-success">Закрыта</span>
+                                        <div>
+                                            <span class="badge bg-success">Закрыта</span>
+                                            {% if request.closed_date %}
+                                                <br><small class="{{ request.closed_date_color_class }}">{{ request.closed_date|date:"d.m.Y" }}</small>
+                                            {% endif %}
+                                        </div>
                                     {% elif request.status == 'cancelled' %}
-                                        <span class="badge bg-secondary">Отменена</span>
+                                        <div>
+                                            <span class="badge bg-secondary">Отменена</span>
+                                            {% if request.closed_date %}
+                                                <br><small class="{{ request.closed_date_color_class }}">{{ request.closed_date|date:"d.m.Y" }}</small>
+                                            {% endif %}
+                                        </div>
                                     {% endif %}
                                 </td>
-                                <td>{{ request.opening_date|date:"d.m.Y" }}</td>
                                 <td>
-                                    {% if request.deadline %}
-                                        {{ request.deadline|date:"d.m.Y" }}
-                                        {% if request.is_overdue %}
-                                            <br><small class="text-danger">Просрочено</small>
+                                    <div>
+                                        <strong>{{ request.opening_date|date:"d.m.Y" }}</strong>
+                                        {% if request.deadline %}
+                                            <span class="{{ request.deadline_color_class }}"> - {{ request.deadline|date:"d.m.Y" }}</span>
+                                        {% else %}
+                                            <span class="text-muted"> - Нет SLA</span>
                                         {% endif %}
-                                    {% else %}
-                                        <span class="text-muted">Нет SLA</span>
+                                    </div>
+                                    {% if request.is_overdue and request.deadline %}
+                                        <small class="text-danger">Просрочено</small>
                                     {% endif %}
                                 </td>
                                 <td>
                                     {% if request.sla %}
-                                        <span class="badge bg-secondary">{{ request.sla.time_to_offer }}д</span>
+                                        {% if request.status == 'planned' %}
+                                            <span class="text-muted">—</span>
+                                        {% else %}
+                                            {% if request.sla_status_display == 'В срок' %}
+                                                <span class="text-success"><strong>{{ request.days_in_progress }}</strong>/{{ request.sla.time_to_offer }}д</span>
+                                            {% elif request.sla_status_display == 'Просрочено' %}
+                                                <span class="text-danger"><strong>{{ request.days_in_progress }}</strong>/{{ request.sla.time_to_offer }}д</span>
+                                            {% elif request.sla_status_display == 'Нормально' %}
+                                                <span class="text-info"><strong>{{ request.days_in_progress }}</strong>/{{ request.sla.time_to_offer }}д</span>
+                                            {% elif request.sla_status_display == 'Риск просрочки' %}
+                                                <span class="text-warning"><strong>{{ request.days_in_progress }}</strong>/{{ request.sla.time_to_offer }}д</span>
+                                            {% else %}
+                                                <span class="text-secondary"><strong>{{ request.days_in_progress }}</strong>/{{ request.sla.time_to_offer }}д</span>
+                                            {% endif %}
+                                        {% endif %}
                                         <br>
                                         {% if request.sla_status_display == 'В срок' %}
                                             <span class="badge bg-success">В срок</span>
@@ -236,26 +409,47 @@
                                             <span class="badge bg-secondary">{{ request.sla_status_display }}</span>
                                         {% endif %}
                                     {% else %}
+                                        {% if request.status == 'planned' %}
+                                            <span class="text-muted">—</span>
+                                        {% else %}
+                                            <span class="text-muted"><strong>{{ request.days_in_progress }}</strong> дней</span>
+                                        {% endif %}
+                                        <br>
                                         <span class="text-muted">Нет SLA</span>
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if request.status == 'planned' %}
-                                        <span class="text-muted">—</span>
-                                    {% else %}
-                                        <strong>{{ request.days_in_progress }}</strong> дней
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if request.priority == 1 %}
-                                        <span class="badge bg-danger">Критический</span>
-                                    {% elif request.priority == 2 %}
-                                        <span class="badge bg-warning">Высокий</span>
-                                    {% elif request.priority == 3 %}
-                                        <span class="badge bg-info">Средний</span>
-                                    {% elif request.priority == 4 %}
-                                        <span class="badge bg-secondary">Низкий</span>
-                                    {% endif %}
+                                    <div class="d-flex flex-column gap-1">
+                                        <!-- T2H бейдж -->
+                                        {% if request.time2hire %}
+                                            <span class="badge bg-primary">{{ request.time2hire }} дн.</span>
+                                        {% elif request.status == 'closed' %}
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                        
+                                        <!-- SLA бейдж -->
+                                        {% if request.sla and request.sla.time_to_hire and request.status != 'planned' %}
+                                            {% if request.status == 'closed' %}
+                                                {% if request.time2hire and request.time2hire <= request.sla.time_to_hire %}
+                                                    <span class="badge bg-success">{{ request.sla.time_to_hire }} дн.</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">{{ request.sla.time_to_hire }} дн.</span>
+                                                {% endif %}
+                                            {% else %}
+                                                {% if request.time2hire and request.time2hire > request.sla.time_to_hire %}
+                                                    <span class="badge bg-warning">{{ request.sla.time_to_hire }} дн.</span>
+                                                {% else %}
+                                                    <span class="badge bg-info">{{ request.sla.time_to_hire }} дн.</span>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% elif request.status == 'planned' %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </div>
                                 </td>
                                 <td>
                                     {% if request.candidate_name %}
@@ -263,13 +457,6 @@
                                         {% if request.candidate_id %}
                                             <br><small class="text-muted">ID: {{ request.candidate_id }}</small>
                                         {% endif %}
-                                    {% else %}
-                                        <span class="text-muted">—</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if request.closed_by %}
-                                        <span class="badge bg-success">{{ request.closed_by.get_full_name|default:request.closed_by.username }}</span>
                                     {% else %}
                                         <span class="text-muted">—</span>
                                     {% endif %}
@@ -289,7 +476,7 @@
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="12" class="text-center text-muted py-4">
+                                <td colspan="10" class="text-center text-muted py-4">
                                     <i class="fas fa-inbox fa-2x mb-2"></i><br>
                                     Заявки не найдены
                                 </td>

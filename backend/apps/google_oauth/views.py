@@ -7,13 +7,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.template.loader import render_to_string
 from datetime import datetime, timedelta
 from django.contrib.auth import get_user_model, login
 from django import forms
 from django.db import models
 import json
 
-from .models import GoogleOAuthAccount, ScorecardPathSettings, SlotsSettings
+from .models import GoogleOAuthAccount, ScorecardPathSettings, SlotsSettings, ChatSession, ChatMessage
 from logic.integration.oauth.oauth_services import (
     GoogleOAuthService, 
     GoogleCalendarService, 
@@ -3328,7 +3329,7 @@ def chat_ajax_handler(request, session_id):
                     
                     ChatMessage.objects.create(
                         session=chat_session,
-                        message_type='hrscreening',
+                        message_type='hr_screening',
                         content=response_content,
                         hr_screening=hr_screening,
                         metadata={
@@ -3387,7 +3388,7 @@ def chat_ajax_handler(request, session_id):
                             'action_type': 'invite',
                             'invite_id': invite.id,
                             'candidate_name': invite.candidate_name,
-                            'vacancy_name': invite.vacancy_name,
+                            'vacancy_name': invite.vacancy_title,
                             'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
                             'interviewer_email': invite.interviewer.email if invite.interviewer else None,
                             'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
@@ -3415,13 +3416,219 @@ def chat_ajax_handler(request, session_id):
                     content=error_content
                 )
         
-        return JsonResponse({'success': True})
+        # Получаем последнее сообщение из чата (то, что только что создали)
+        last_message = ChatMessage.objects.filter(session=chat_session).order_by('-created_at').first()
+        print(f"🔍 CHAT AJAX: Последнее сообщение: {last_message}")
+        
+        # Формируем HTML для нового сообщения
+        if last_message:
+            print(f"🔍 CHAT AJAX: Рендерим HTML для сообщения типа: {last_message.message_type}")
+            try:
+                message_html = render_to_string('google_oauth/partials/chat_message.html', {
+                    'message': last_message,
+                    'user': request.user
+                })
+                print(f"🔍 CHAT AJAX: HTML сгенерирован, длина: {len(message_html)}")
+                
+                return JsonResponse({
+                    "success": True,
+                    "message_html": message_html,
+                    "message_type": last_message.message_type,
+                    "message_id": last_message.id
+                })
+            except Exception as e:
+                print(f"🔍 CHAT AJAX: Ошибка рендеринга HTML: {str(e)}")
+                return JsonResponse({"success": True})
+        else:
+            print(f"🔍 CHAT AJAX: Сообщение не найдено")
+            return JsonResponse({"success": True})
         
     except json.JSONDecodeError:
         return JsonResponse({'success': False, 'error': 'Неверный JSON'})
     except Exception as e:
         print(f"🔍 CHAT AJAX: Ошибка обработки действия: {str(e)}")
         return JsonResponse({'success': False, 'error': str(e)})
+
+
+@login_required
+@permission_required('google_oauth.view_hrscreening', raise_exception=True)
+@csrf_exempt
+@require_http_methods(["POST"])
+def send_chat_message(request):
+    """
+    AJAX endpoint для отправки сообщения в Google OAuth чат
+    """
+    try:
+        data = json.loads(request.body)
+        session_id = data.get('session_id')
+        message_text = data.get('message', '').strip()
+        
+        if not message_text:
+            return JsonResponse({'success': False, 'error': 'Пустое сообщение'})
+        
+        if not session_id:
+            return JsonResponse({'success': False, 'error': 'ID сессии не указан'})
+        
+        # Получаем сессию чата
+        try:
+            chat_session = ChatSession.objects.get(id=session_id, user=request.user)
+        except ChatSession.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Сессия чата не найдена'})
+        
+        # Получаем вакансию из сессии чата
+        vacancy = chat_session.vacancy
+        if not vacancy:
+            return JsonResponse({'success': False, 'error': 'Вакансия не найдена для данного чата'})
+        
+        # Сохраняем пользовательское сообщение
+        user_message = ChatMessage.objects.create(
+            session=chat_session,
+            message_type='user',
+            content=message_text
+        )
+        
+        # Определяем тип действия
+        action_type = 'hrscreening'  # По умолчанию HR-скрининг
+        if message_text.startswith('/in '):
+            action_type = 'invite'
+        elif message_text.startswith('/s '):
+            action_type = 'hrscreening'
+        
+        # Обрабатываем действие
+        if action_type == 'hrscreening':
+            # Создаем HR-скрининг
+            screening_form_data = {'combined_data': message_text}
+            screening_form = HRScreeningCombinedForm(screening_form_data, user=request.user)
+            
+            if screening_form.is_valid():
+                try:
+                    screening = screening_form.save()
+                    
+                    response_content = ""  # Пустой контент, данные будут браться из metadata
+                    
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='hrscreening',
+                        content=response_content,
+                        hr_screening=screening,
+                        metadata={
+                            'action_type': 'hrscreening',
+                            'screening_id': screening.id,
+                            'candidate_name': screening.candidate_name,
+                            'vacancy_name': screening.vacancy_name,
+                            'determined_grade': screening.determined_grade,
+                            'candidate_url': screening.candidate_url
+                        }
+                    )
+                    
+                    return JsonResponse({
+                        'success': True,
+                        'message_type': 'hrscreening',
+                        'metadata': {
+                            'action_type': 'hrscreening',
+                            'screening_id': screening.id,
+                            'candidate_name': screening.candidate_name,
+                            'vacancy_name': screening.vacancy_name,
+                            'determined_grade': screening.determined_grade,
+                            'candidate_url': screening.candidate_url
+                        }
+                    })
+                    
+                except Exception as e:
+                    print(f"❌ CHAT AJAX: Ошибка создания HR-скрининга: {e}")
+                    error_content = f"Ошибка при обработке HR-скрининга: {str(e)}"
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content=error_content
+                    )
+                    return JsonResponse({'success': False, 'error': error_content})
+            else:
+                error_content = f"Ошибка валидации HR-скрининга: {screening_form.errors}"
+                ChatMessage.objects.create(
+                    session=chat_session,
+                    message_type='system',
+                    content=error_content
+                )
+                return JsonResponse({'success': False, 'error': error_content})
+        
+        elif action_type == 'invite':
+            # Создаем инвайт
+            invite_form_data = {'combined_data': message_text}
+            
+            # Передаем данные об интервьюере, если они есть
+            if 'selected_interviewer' in data:
+                invite_form_data['selected_interviewer'] = data['selected_interviewer']
+            
+            invite_form = InviteCombinedForm(invite_form_data, user=request.user)
+            
+            if invite_form.is_valid():
+                try:
+                    invite = invite_form.save()
+                    
+                    response_content = ""  # Пустой контент, данные будут браться из metadata
+                    
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='invite',
+                        content=response_content,
+                        invite=invite,
+                        metadata={
+                            'action_type': 'invite',
+                            'invite_id': invite.id,
+                            'candidate_name': invite.candidate_name,
+                            'vacancy_name': invite.vacancy_title,
+                            'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
+                            'interviewer_email': invite.interviewer.email if invite.interviewer else None,
+                            'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
+                            'candidate_url': invite.candidate_url,
+                            'calendar_event_url': invite.calendar_event_url,
+                            'google_drive_file_url': invite.google_drive_file_url
+                        }
+                    )
+                    
+                    return JsonResponse({
+                        'success': True,
+                        'message_type': 'invite',
+                        'metadata': {
+                            'action_type': 'invite',
+                            'invite_id': invite.id,
+                            'candidate_name': invite.candidate_name,
+                            'vacancy_name': invite.vacancy_title,
+                            'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
+                            'interviewer_email': invite.interviewer.email if invite.interviewer else None,
+                            'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
+                            'candidate_url': invite.candidate_url,
+                            'calendar_event_url': invite.calendar_event_url,
+                            'google_drive_file_url': invite.google_drive_file_url
+                        }
+                    })
+                    
+                except Exception as e:
+                    print(f"❌ CHAT AJAX: Ошибка создания инвайта: {e}")
+                    error_content = f"Ошибка при обработке инвайта: {str(e)}"
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content=error_content
+                    )
+                    return JsonResponse({'success': False, 'error': error_content})
+            else:
+                error_content = f"Ошибка валидации инвайта: {invite_form.errors}"
+                ChatMessage.objects.create(
+                    session=chat_session,
+                    message_type='system',
+                    content=error_content
+                )
+                return JsonResponse({'success': False, 'error': error_content})
+        
+        return JsonResponse({'success': False, 'error': 'Неизвестный тип действия'})
+        
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Неверный JSON в запросе'})
+    except Exception as e:
+        print(f"❌ CHAT AJAX: Общая ошибка: {e}")
+        return JsonResponse({'success': False, 'error': f'Внутренняя ошибка сервера: {str(e)}'})
 
 
 @login_required
@@ -3434,22 +3641,22 @@ def chat_workflow(request, session_id=None):
     # Получаем выбранную вакансию из параметров
     vacancy_id = request.GET.get('vacancy_id')
     if not vacancy_id:
-        # Если вакансия не указана, берем первую активную вакансию
+        # Если вакансия не указана, берем первую активную вакансию пользователя
         from apps.vacancies.models import Vacancy
-        active_vacancies = Vacancy.objects.filter(is_active=True).order_by('name')
+        active_vacancies = Vacancy.objects.filter(is_active=True, recruiter=request.user).order_by('name')
         if not active_vacancies.exists():
-            messages.error(request, 'Нет активных вакансий для создания чата')
+            messages.error(request, 'Нет активных вакансий, назначенных вам для создания чата')
             return redirect('google_oauth:chat_workflow')
         
-        # Берем первую активную вакансию
+        # Берем первую активную вакансию пользователя
         vacancy = active_vacancies.first()
         return redirect(f'{request.path}?vacancy_id={vacancy.id}')
     
     try:
         from apps.vacancies.models import Vacancy
-        vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True)
+        vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True, recruiter=request.user)
     except Vacancy.DoesNotExist:
-        messages.error(request, 'Выбранная вакансия не найдена или неактивна')
+        messages.error(request, 'Выбранная вакансия не найдена, неактивна или не назначена вам')
         return redirect('google_oauth:chat_workflow')
     
     # Получаем или создаем сессию чата для конкретной вакансии
@@ -3732,9 +3939,9 @@ def chat_workflow(request, session_id=None):
     print(f"🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: {request.user.username}")
     
     
-    # Получаем все активные вакансии для выбора
+    # Получаем все активные вакансии пользователя для выбора
     from apps.vacancies.models import Vacancy
-    active_vacancies = Vacancy.objects.filter(is_active=True).order_by('name')
+    active_vacancies = Vacancy.objects.filter(is_active=True, recruiter=request.user).order_by('name')
     
     # Получаем данные о событиях календаря для JavaScript (как на странице gdata_automation)
     calendar_events_data = []

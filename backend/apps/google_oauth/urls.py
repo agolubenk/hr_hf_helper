@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from . import views_simple
+from . import views_new
 
 app_name = 'google_oauth'
 
@@ -64,6 +65,14 @@ urlpatterns = [
     path('chat/<int:session_id>/', views.chat_workflow, name='chat_workflow_session'),
     path('chat/<int:session_id>/ajax/', views.chat_ajax_handler, name='chat_ajax_handler'),
     path('chat/<int:session_id>/update-title/', views.update_chat_title, name='update_chat_title'),
+    
+    # Новый чат-интерфейс
+    path('chat-new/', views_new.chat_workflow_new, name='chat_workflow_new'),
+    path('chat-new/<int:vacancy_id>/', views_new.chat_workflow_new, name='chat_workflow_new_vacancy'),
+    path('chat-new/<int:session_id>/ajax/', views_new.chat_ajax_handler_new, name='chat_ajax_handler_new'),
+    
+    # AJAX API для отправки сообщений
+    path('api/send-message/', views.send_chat_message, name='send_chat_message'),
     
     # AJAX API для чат-воркфлоу
     # path('api/chat/vacancy/<int:vacancy_id>/', views.api_chat_vacancy_data, name='api_chat_vacancy_data'),

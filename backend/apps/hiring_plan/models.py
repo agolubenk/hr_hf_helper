@@ -771,6 +771,53 @@ class VacancySLA(models.Model):
         return f"SLA: {self.vacancy.name} - {self.grade.name} ({self.time_to_offer} дней)"
 
 
+class RecruiterAssignment(models.Model):
+    """История назначения рекрутеров на заявки"""
+    
+    hiring_request = models.ForeignKey(
+        'HiringRequest',
+        on_delete=models.CASCADE,
+        related_name='recruiter_assignments',
+        verbose_name='Заявка'
+    )
+    recruiter = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Рекрутер'
+    )
+    assigned_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Назначен'
+    )
+    unassigned_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name='Снят с заявки'
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name='Активно',
+        help_text='Активно ли назначение'
+    )
+    
+    class Meta:
+        verbose_name = 'Назначение рекрутера'
+        verbose_name_plural = 'Назначения рекрутеров'
+        ordering = ['-assigned_at']
+    
+    def __str__(self):
+        return f"{self.hiring_request} - {self.recruiter} ({self.assigned_at.strftime('%d.%m.%Y')})"
+    
+    @property
+    def duration_days(self):
+        """Количество дней работы рекрутера над заявкой"""
+        if self.unassigned_at:
+            return (self.unassigned_at - self.assigned_at).days
+        else:
+            from django.utils import timezone
+            return (timezone.now() - self.assigned_at).days
+
+
 class HiringRequest(models.Model):
     """Заявка на найм одного специалиста"""
     
@@ -841,6 +888,12 @@ class HiringRequest(models.Model):
         blank=True,
         verbose_name='Дата закрытия'
     )
+    hire_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name='Дата выхода специалиста',
+        help_text='Дата, когда специалист вышел на работу (для расчета time2hire)'
+    )
     
     # === SLA (автоматически подтягивается) ===
     sla = models.ForeignKey(
@@ -864,6 +917,16 @@ class HiringRequest(models.Model):
         blank=True,
         verbose_name='Имя кандидата',
         help_text='Имя найденного кандидата'
+    )
+    
+    # === РЕКРУТЕР ===
+    recruiter = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name='Рекрутер',
+        help_text='Ответственный рекрутер за данную заявку'
     )
     
     # === ЗАМЕТКИ ===
@@ -919,19 +982,73 @@ class HiringRequest(models.Model):
         today = timezone.now().date()
         
         if self.closed_date:
-            # Если есть дата закрытия - статус "закрыта"
-            self.status = 'closed'
-        elif self.candidate_id or self.candidate_name:
-            # Если есть данные кандидата, но нет даты закрытия - статус "отменена"
-            self.status = 'cancelled'
-        elif self.opening_date > today:
+            # Если есть дата закрытия - проверяем наличие данных кандидата
+            if self.candidate_name or self.candidate_id:
+                # Если есть данные кандидата - статус "закрыта"
+                self.status = 'closed'
+            else:
+                # Если нет данных кандидата - статус "отменена"
+                self.status = 'cancelled'
+        elif self.opening_date and self.opening_date > today:
             # Если дата открытия в будущем - статус "планируется"
             self.status = 'planned'
-        else:
+        elif self.opening_date:
             # Если дата открытия в прошлом или сегодня - статус "в процессе"
+            # Наличие candidate_id или candidate_name не влияет на статус
+            # Статус "отменена" должен устанавливаться вручную
             self.status = 'in_progress'
+        else:
+            # Если дата открытия не указана - статус "планируется" по умолчанию
+            self.status = 'planned'
         
         super().save(*args, **kwargs)
+    
+    def _update_status(self):
+        """
+        Обновляет статус заявки на основе текущих данных
+        """
+        today = timezone.now().date()
+        
+        if self.closed_date:
+            # Если есть дата закрытия - проверяем наличие данных кандидата
+            if self.candidate_name or self.candidate_id:
+                # Если есть данные кандидата - статус "закрыта"
+                self.status = 'closed'
+            else:
+                # Если нет данных кандидата - статус "отменена"
+                self.status = 'cancelled'
+        elif self.opening_date and self.opening_date > today:
+            # Если дата открытия в будущем - статус "планируется"
+            self.status = 'planned'
+        elif self.opening_date:
+            # Если дата открытия в прошлом или сегодня - статус "в процессе"
+            self.status = 'in_progress'
+        else:
+            # Если дата открытия не указана - статус "планируется" по умолчанию
+            self.status = 'planned'
+    
+    def sync_recruiter_with_vacancy(self):
+        """
+        Синхронизирует рекрутера заявки с рекрутером вакансии
+        """
+        if self.vacancy and self.recruiter:
+            try:
+                # Обновляем рекрутера в вакансии
+                self.vacancy.recruiter = self.recruiter
+                self.vacancy.save(update_fields=['recruiter'])
+                print(f"✅ Рекрутер {self.recruiter.username} синхронизирован с вакансией {self.vacancy.name}")
+            except Exception as e:
+                print(f"❌ Ошибка синхронизации рекрутера: {e}")
+                # Если рекрутер не может быть назначен (например, не в группе Рекрутер),
+                # оставляем вакансию без изменений
+        elif self.vacancy and not self.recruiter:
+            try:
+                # Если рекрутер не назначен, очищаем рекрутера в вакансии
+                self.vacancy.recruiter = None
+                self.vacancy.save(update_fields=['recruiter'])
+                print(f"ℹ️ Рекрутер очищен в вакансии {self.vacancy.name}")
+            except Exception as e:
+                print(f"❌ Ошибка очистки рекрутера: {e}")
     
     @property
     def deadline(self):
@@ -948,6 +1065,13 @@ class HiringRequest(models.Model):
             return (self.closed_date - self.opening_date).days
         else:
             return (timezone.now().date() - self.opening_date).days
+    
+    @property
+    def time2hire(self):
+        """Количество дней от получения заявки до выхода специалиста"""
+        if self.hire_date:
+            return (self.hire_date - self.opening_date).days
+        return None
     
     @property
     def is_overdue(self):
@@ -994,6 +1118,358 @@ class HiringRequest(models.Model):
                 return 'Риск просрочки'
             else:
                 return 'Просрочено'
+    
+    @property
+    def closed_date_color_class(self):
+        """CSS класс для цветового кодирования даты закрытия"""
+        if self.status == 'closed':
+            # Проверяем, была ли заявка закрыта в срок по SLA
+            if self.sla_compliance and self.sla_compliance >= 100:
+                return 'text-success'  # Зеленый для закрытых в срок
+            else:
+                return 'text-danger'  # Красный для просроченных
+        elif self.status == 'cancelled':
+            return 'text-dark'  # Черный для отмененных
+        else:
+            return 'text-muted'  # Серый для остальных
+    
+    @property
+    def deadline_color_class(self):
+        """CSS класс для цветового кодирования дедлайна"""
+        if self.status == 'planned':
+            return 'text-muted'  # Серый для будущих
+        elif self.is_overdue:
+            return 'text-danger'  # Красный для просроченных
+        elif self.status == 'in_progress':
+            if self.deadline:
+                days_to_deadline = (self.deadline - timezone.now().date()).days
+                if days_to_deadline <= 7:
+                    return 'text-warning'  # Желтый для тех, что скоро подойдут к дедлайну
+                else:
+                    return 'text-primary'  # Синий для тех, что в процессе и срок не наступил
+            else:
+                return 'text-primary'  # Синий для тех, что в процессе без дедлайна
+        else:
+            return 'text-muted'  # По умолчанию серый
+    
+    def assign_recruiter(self, recruiter, user=None):
+        """Назначить рекрутера на заявку"""
+        from django.utils import timezone
+        
+        # Деактивируем предыдущие назначения
+        self.recruiter_assignments.filter(is_active=True).update(
+            is_active=False,
+            unassigned_at=timezone.now()
+        )
+        
+        # Создаем новое назначение
+        assignment = RecruiterAssignment.objects.create(
+            hiring_request=self,
+            recruiter=recruiter
+        )
+        
+        # Обновляем текущего рекрутера
+        self.recruiter = recruiter
+        self.save()
+        
+        return assignment
+    
+    def unassign_recruiter(self, user=None):
+        """Снять рекрутера с заявки"""
+        from django.utils import timezone
+        
+        # Деактивируем текущее назначение
+        self.recruiter_assignments.filter(is_active=True).update(
+            is_active=False,
+            unassigned_at=timezone.now()
+        )
+        
+        # Убираем рекрутера
+        self.recruiter = None
+        self.save()
+    
+    @property
+    def current_recruiter_assignment(self):
+        """Текущее активное назначение рекрутера"""
+        return self.recruiter_assignments.filter(is_active=True).first()
+    
+    @property
+    def recruiter_work_days(self):
+        """Количество дней работы текущего рекрутера над заявкой"""
+        assignment = self.current_recruiter_assignment
+        if assignment:
+            return assignment.duration_days
+        return 0
+    
+    @property
+    def total_recruiter_work_days(self):
+        """Общее количество дней работы всех рекрутеров над заявкой"""
+        return sum(
+            assignment.duration_days 
+            for assignment in self.recruiter_assignments.all()
+        )
+    
+    def fetch_candidate_data_from_huntflow(self, user=None):
+        """
+        Автоматически получает данные кандидата из Huntflow по candidate_id:
+        - Имя и фамилию (candidate_name)
+        - Дату перевода в статус "Offer accepted" (closed_date)
+        - Дату выхода на работу (hire_date)
+        """
+        if not self.candidate_id:
+            return False
+        
+        try:
+            from apps.huntflow.services import HuntflowService
+            from datetime import datetime
+            
+            # Получаем аккаунт Huntflow для пользователя
+            if not user:
+                return False
+            
+            # Создаем сервис Huntflow
+            huntflow_service = HuntflowService(user)
+            
+            # Получаем список аккаунтов и берем первый
+            accounts = huntflow_service.get_accounts()
+            if not accounts or 'items' not in accounts or not accounts['items']:
+                print("❌ Не удалось получить аккаунты Huntflow")
+                return False
+            
+            account_id = accounts['items'][0]['id']
+            print(f"🔍 Используем account_id: {account_id}")
+            
+            # Получаем информацию о кандидате
+            candidate_data = huntflow_service.get_applicant(
+                account_id=account_id,
+                applicant_id=int(self.candidate_id)
+            )
+            
+            if not candidate_data:
+                print("❌ Не удалось получить данные кандидата из Huntflow")
+                # Если имя уже есть, считаем это частичным успехом
+                if self.candidate_name:
+                    print("ℹ️ Кандидат не найден в Huntflow, но имя уже заполнено")
+                    return True
+                return False
+            
+            print(f"✅ Получены данные кандидата: {candidate_data}")
+            
+            # Получаем логи кандидата для поиска дат (только статусы)
+            try:
+                logs_data = huntflow_service.get_applicant_logs(
+                    account_id=account_id,
+                    applicant_id=int(self.candidate_id)
+                )
+                print(f"🔍 Получены логи кандидата: {logs_data}")
+                if logs_data and 'items' in logs_data:
+                    print(f"📋 Количество логов: {len(logs_data['items'])}")
+                    # Выводим первые несколько логов для отладки
+                    for i, log in enumerate(logs_data['items'][:3]):
+                        print(f"📝 Лог {i+1}: {log}")
+                else:
+                    print("⚠️ Логи не найдены или пусты")
+            except Exception as e:
+                print(f"⚠️ Не удалось получить логи кандидата: {e}")
+                logs_data = None
+            
+            updated_fields = []
+            
+            # 1. Получаем имя кандидата
+            if not self.candidate_name:
+                first_name = candidate_data.get('first_name', '').strip()
+                last_name = candidate_data.get('last_name', '').strip()
+                
+                if first_name and last_name:
+                    full_name = f"{first_name} {last_name}"
+                    self.candidate_name = full_name
+                    updated_fields.append('candidate_name')
+                    print(f"✅ Сохранено полное имя: {full_name}")
+                elif first_name:
+                    self.candidate_name = first_name
+                    updated_fields.append('candidate_name')
+                    print(f"✅ Сохранено имя: {first_name}")
+                elif last_name:
+                    self.candidate_name = last_name
+                    updated_fields.append('candidate_name')
+                    print(f"✅ Сохранена фамилия: {last_name}")
+            
+            # 2. Получаем дату перевода в статус "Offer accepted" (closed_date)
+            if not self.closed_date and logs_data and 'items' in logs_data:
+                offer_accepted_date = self._find_offer_accepted_date(logs_data['items'])
+                if offer_accepted_date:
+                    self.closed_date = offer_accepted_date
+                    updated_fields.append('closed_date')
+                    print(f"✅ Сохранена дата закрытия (Offer accepted): {offer_accepted_date}")
+            
+            # 3. Получаем дату выхода на работу (hire_date)
+            if not self.hire_date and logs_data and 'items' in logs_data:
+                hire_date = self._find_hire_date(logs_data['items'])
+                if hire_date:
+                    self.hire_date = hire_date
+                    updated_fields.append('hire_date')
+                    print(f"✅ Сохранена дата выхода: {hire_date}")
+            
+            # Сохраняем изменения
+            if updated_fields:
+                # Используем полное сохранение для вызова сигналов и пересчета статуса
+                self.save()
+                print(f"✅ Обновлены поля: {', '.join(updated_fields)}")
+                
+                # Принудительно пересчитываем статус после получения данных кандидата
+                old_status = self.status
+                self._update_status()
+                if old_status != self.status:
+                    self.save(update_fields=['status'])
+                    print(f"🔄 Статус заявки изменен с '{old_status}' на '{self.status}'")
+                else:
+                    print(f"🔄 Статус заявки пересчитан: '{self.status}'")
+                
+                return True
+            else:
+                print("ℹ️ Нет новых данных для обновления")
+                return True
+            
+        except Exception as e:
+            print(f"❌ Ошибка при получении данных кандидата из Huntflow: {e}")
+            import traceback
+            traceback.print_exc()
+            return False
+    
+    def _find_offer_accepted_date(self, logs):
+        """
+        Ищет дату перевода в статус 186507 (Offer accepted) в логах кандидата
+        Согласно Huntflow API: ищем в логах с type=STATUS
+        """
+        from datetime import datetime
+        
+        print(f"🔍 Поиск даты принятия оффера в {len(logs)} логах")
+        
+        # Сортируем логи по дате создания (от старых к новым)
+        sorted_logs = sorted(logs, key=lambda x: x.get('created', ''), reverse=False)
+        
+        for i, log in enumerate(sorted_logs):
+            print(f"📝 Проверяем лог {i+1}: type={log.get('type')}, status={log.get('status')}")
+            
+            # Проверяем тип лога и статус (согласно Huntflow API)
+            if log.get('type') == 'STATUS' and log.get('status'):
+                status_id = log.get('status')
+                
+                print(f"🔍 Статус ID: {status_id}")
+                
+                # Ищем статус принятия оффера (186507)
+                if status_id == 186507:
+                    created_at = log.get('created')
+                    print(f"🎯 Найден подходящий статус! Дата: {created_at}")
+                    
+                    if created_at:
+                        try:
+                            # Парсим дату из ISO формата
+                            if 'T' in created_at:
+                                date_obj = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+                            else:
+                                date_obj = datetime.fromisoformat(created_at)
+                            
+                            print(f"✅ Найдена дата принятия оффера (статус {status_id}): {date_obj.date()}")
+                            return date_obj.date()
+                        except ValueError as e:
+                            print(f"❌ Ошибка парсинга даты {created_at}: {e}")
+                            continue
+        
+        print("ℹ️ Дата принятия оффера (статус 186507) не найдена в логах")
+        return None
+    
+    def _find_hire_date(self, logs):
+        """
+        Ищет дату выхода на работу в логах кандидата
+        Согласно Huntflow API: ищем поле employment_date в логах со статусом "Hired"
+        """
+        from datetime import datetime
+        import re
+        
+        print(f"🔍 Поиск даты выхода в {len(logs)} логах")
+        
+        # Сортируем логи по дате создания (от старых к новым)
+        sorted_logs = sorted(logs, key=lambda x: x.get('created', ''), reverse=False)
+        
+        # Ищем в логах со статусом "Hired" поле employment_date
+        for i, log in enumerate(sorted_logs):
+            print(f"📝 Проверяем лог {i+1}: type={log.get('type')}, status={log.get('status')}")
+            
+            if log.get('type') == 'STATUS' and log.get('status'):
+                status_id = log.get('status')
+                employment_date = log.get('employment_date')
+                
+                print(f"🔍 Статус ID: {status_id}, employment_date: {employment_date}")
+                
+                # Ищем статус "Hired" (принят на работу) с полем employment_date
+                if employment_date:
+                    print(f"🎯 Найдена дата выхода! employment_date: {employment_date}")
+                    
+                    try:
+                        # Парсим дату из ISO формата
+                        if 'T' in employment_date:
+                            date_obj = datetime.fromisoformat(employment_date.replace('Z', '+00:00'))
+                        else:
+                            date_obj = datetime.fromisoformat(employment_date)
+                        
+                        print(f"✅ Найдена дата выхода (employment_date): {date_obj.date()}")
+                        return date_obj.date()
+                    except ValueError as e:
+                        print(f"❌ Ошибка парсинга даты {employment_date}: {e}")
+                        continue
+        
+        # Если не найдено по статусам, ищем в комментариях и полях
+        date_patterns = [
+            r'выход.*?(\d{1,2}[./]\d{1,2}[./]\d{4})',
+            r'start.*?(\d{1,2}[./]\d{1,2}[./]\d{4})',
+            r'hire.*?(\d{1,2}[./]\d{1,2}[./]\d{4})',
+            r'приступил.*?(\d{1,2}[./]\d{1,2}[./]\d{4})',
+            r'начал.*?(\d{1,2}[./]\d{1,2}[./]\d{4})',
+            r'дата выхода.*?(\d{1,2}[./]\d{1,2}[./]\d{4})',
+        ]
+        
+        for log in logs:
+            # Проверяем комментарии
+            comment = log.get('comment', '')
+            if comment:
+                for pattern in date_patterns:
+                    match = re.search(pattern, comment.lower())
+                    if match:
+                        date_str = match.group(1)
+                        try:
+                            # Пробуем разные форматы даты
+                            for fmt in ['%d.%m.%Y', '%d/%m/%Y', '%d-%m-%Y', '%Y-%m-%d']:
+                                try:
+                                    date_obj = datetime.strptime(date_str, fmt)
+                                    print(f"✅ Найдена дата выхода в комментарии: {date_obj.date()}")
+                                    return date_obj.date()
+                                except ValueError:
+                                    continue
+                        except ValueError:
+                            continue
+            
+            # Проверяем дополнительные поля
+            if 'fields' in log:
+                for field in log['fields']:
+                    field_name = field.get('name', '').lower()
+                    field_value = field.get('value', '')
+                    
+                    if any(keyword in field_name for keyword in ['выход', 'start', 'hire', 'дата выхода', 'дата начала работы']):
+                        if field_value and re.match(r'\d{1,2}[./]\d{1,2}[./]\d{4}', field_value):
+                            try:
+                                for fmt in ['%d.%m.%Y', '%d/%m/%Y', '%d-%m-%Y', '%Y-%m-%d']:
+                                    try:
+                                        date_obj = datetime.strptime(field_value, fmt)
+                                        print(f"✅ Найдена дата выхода в поле {field_name}: {date_obj.date()}")
+                                        return date_obj.date()
+                                    except ValueError:
+                                        continue
+                            except ValueError:
+                                continue
+        
+        print("ℹ️ Дата выхода на работу не найдена в логах")
+        return None
 
 
 class RecruitmentMetrics(models.Model):

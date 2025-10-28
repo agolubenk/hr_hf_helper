@@ -306,6 +306,8 @@ function calculateAvailableSlots(dayEvents, date) {
     // Получаем требуемую продолжительность встречи
     const requiredDuration = getMeetingDuration();
     console.log(`⏱️ Требуемая продолжительность встречи: ${requiredDuration} минут`);
+    console.log(`🔍 [SLOTS] Проверяем window.vacancyData:`, window.vacancyData);
+    console.log(`🔍 [SLOTS] Текущий тип встречи:`, window.getCurrentMeetingType ? window.getCurrentMeetingType() : 'не определен');
     
     // Формируем строку доступных слотов
     const availableRanges = [];
@@ -344,19 +346,38 @@ function formatTime(date) {
 
 // Функция для получения продолжительности встречи
 function getMeetingDuration() {
-    // Получаем данные вакансии
+    console.log('🔍 [DURATION] Получаем длительность встречи...');
+    
+    // Сначала проверяем новую глобальную переменную
+    if (typeof window !== 'undefined' && window.currentMeetingDuration) {
+        console.log(`✅ [DURATION] Используем window.currentMeetingDuration: ${window.currentMeetingDuration}`);
+        return window.currentMeetingDuration;
+    }
+    
+    // Затем проверяем глобальную переменную window.vacancyData
+    if (typeof window !== 'undefined' && window.vacancyData && window.vacancyData.duration) {
+        console.log(`✅ [DURATION] Используем window.vacancyData.duration: ${window.vacancyData.duration}`);
+        return window.vacancyData.duration;
+    }
+    
+    // Затем проверяем локальную переменную vacancyData
     if (typeof vacancyData !== 'undefined' && vacancyData) {
+        console.log('🔍 [DURATION] vacancyData найден:', vacancyData);
+        
         // Пытаемся получить продолжительность из данных вакансии
         // Это может быть поле duration, meeting_duration или аналогичное
         if (vacancyData.duration) {
+            console.log(`✅ [DURATION] Используем vacancyData.duration: ${vacancyData.duration}`);
             return vacancyData.duration;
         }
         if (vacancyData.meeting_duration) {
+            console.log(`✅ [DURATION] Используем vacancyData.meeting_duration: ${vacancyData.meeting_duration}`);
             return vacancyData.meeting_duration;
         }
     }
     
     // Если нет данных о продолжительности, используем значение по умолчанию
+    console.log('⚠️ [DURATION] Данные не найдены, используем значение по умолчанию: 60 мин');
     return 60; // 60 минут по умолчанию
 }
 
@@ -411,17 +432,33 @@ function generateWeekSlots(weekOffset) {
                 return isMatch;
             });
             
-            // Исключаем встречи с названием "Обед" для подсчета встреч
+            // ПРАВИЛЬНАЯ ФИЛЬТРАЦИЯ встреч
             const meetingsWithoutLunch = dayEvents.filter(event => {
-                const title = event.title.toLowerCase();
-                const isLunch = title.includes('обед') || title.includes('lunch');
-                if (isLunch) {
+                const title = (event.title || '').toLowerCase();
+                
+                // Исключаем обеды
+                if (title.includes('обед') || title.includes('lunch')) {
                     console.log(`  🍽️ Исключаем обед: "${event.title}"`);
+                    return false;
                 }
-                return !isLunch;
+                
+                // Исключаем события "весь день"
+                if (event.isallday === true) {
+                    console.log(`  📅 Исключаем событие "весь день": "${event.title}"`);
+                    return false;
+                }
+                
+                // Исключаем нерабочие события
+                if (title.includes('отпуск') || title.includes('vacation') || 
+                    title.includes('выходной') || title.includes('day off')) {
+                    console.log(`  🏖️ Исключаем нерабочее событие: "${event.title}"`);
+                    return false;
+                }
+                
+                return true;
             });
             
-            meetingsCount = meetingsWithoutLunch.length;
+            meetingsCount = meetingsWithoutLunch.length; // ПРАВИЛЬНЫЙ ПОДСЧЕТ
             
             // Вычисляем доступные слоты времени (11-18, исключая обед)
             availableSlots = calculateAvailableSlots(dayEvents, date);
@@ -448,46 +485,48 @@ function generateWeekSlots(weekOffset) {
     return slots;
 }
 
+/**
+ * Инициализация системы слотов с полной валидацией
+ */
 function initializeSlots() {
-    console.log('🎯 Инициализация слотов...');
-    console.log('📊 Доступные данные календаря:', typeof calendarEvents, calendarEvents ? calendarEvents.length : 'не определено');
+    console.log('📊 [SLOTS] ===== ИНИЦИАЛИЗАЦИЯ =====');
     
-    // Проверяем наличие контейнеров
-    const currentWeekSection = document.querySelector('.week-section.current-week');
-    const nextWeekSection = document.querySelector('.week-section.next-week');
-    console.log('📅 Секция текущей недели:', currentWeekSection);
-    console.log('📅 Секция следующей недели:', nextWeekSection);
+    // 1. ПРОВЕРКА calendarEvents
+    if (!window.calendarEvents) {
+        console.warn('⚠️ [SLOTS] calendarEvents undefined, создаём []');
+        window.calendarEvents = [];
+    }
+    if (!Array.isArray(window.calendarEvents)) {
+        console.error('❌ [SLOTS] calendarEvents не массив!', typeof window.calendarEvents);
+        window.calendarEvents = [];
+    }
+    console.log(`✅ [SLOTS] calendarEvents: ${window.calendarEvents.length} событий`);
     
-    if (!currentWeekSection || !nextWeekSection) {
-        console.error('❌ Секции недель не найдены!');
+    // 2. ПРОВЕРКА DOM элементов
+    const currentSection = document.querySelector('.week-section.current-week .collapse .row');
+    const nextSection = document.querySelector('.week-section.next-week .collapse .row');
+    
+    if (!currentSection || !nextSection) {
+        console.error('❌ [SLOTS] Секции слотов не найдены в DOM!');
+        console.error('   .current-week:', !!currentSection);
+        console.error('   .next-week:', !!nextSection);
         return;
     }
     
-    // Проверяем наличие calendarEvents
-    if (!calendarEvents || !Array.isArray(calendarEvents)) {
-        console.error('❌ calendarEvents не определен или не является массивом!');
-        return;
-    }
+    // 3. ГЕНЕРАЦИЯ СЛОТОВ
+    console.log('⚙️ [SLOTS] Генерация слотов текущей недели...');
+    const currentSlots = generateWeekSlots(0);
+    console.log(`✅ [SLOTS] Текущая неделя: ${currentSlots.length} дней`);
     
-    console.log('📊 calendarEvents содержит', calendarEvents.length, 'событий');
+    console.log('⚙️ [SLOTS] Генерация слотов следующей недели...');
+    const nextSlots = generateWeekSlots(1);
+    console.log(`✅ [SLOTS] Следующая неделя: ${nextSlots.length} дней`);
     
-    // Генерируем слоты для текущей и следующей недели
-    console.log('🔄 Генерируем слоты для текущей недели...');
-    const currentWeekSlots = generateWeekSlots(0);
-    console.log('🔄 Генерируем слоты для следующей недели...');
-    const nextWeekSlots = generateWeekSlots(1);
-    
-    console.log('📅 Сгенерированные слоты для текущей недели:', currentWeekSlots);
-    console.log('📅 Сгенерированные слоты для следующей недели:', nextWeekSlots);
-    
-    // Обновляем DOM с данными слотов
-    console.log('🔄 Обновляем отображение слотов...');
-    updateSlotsDisplay(currentWeekSlots, nextWeekSlots);
-    
-    console.log('✅ Слоты инициализированы');
-    
-    // Обновляем время последнего обновления
+    // 4. ОТОБРАЖЕНИЕ
+    updateSlotsDisplay(currentSlots, nextSlots);
     updateLastUpdateTime();
+    
+    console.log('✅ [SLOTS] ===== ГОТОВО =====');
 }
 
 // Функция обновления времени последнего обновления
@@ -707,20 +746,31 @@ window.copyWeekSlots = function(weekType) {
         weekSection = document.querySelector('.week-section.next-week');
     }
     
+    console.log('🔍 Найденная секция недели:', weekSection);
+    
     if (!weekSection) {
+        console.error('❌ Секция недели не найдена');
         showNotification('Секция недели не найдена', 'error');
         return;
     }
     
+    const slotCards = weekSection.querySelectorAll('.slot-card');
+    console.log('🔍 Найдено карточек слотов:', slotCards.length);
+    
     const slots = [];
-    weekSection.querySelectorAll('.slot-card').forEach(card => {
+    slotCards.forEach((card, index) => {
+        console.log(`🔍 Обрабатываем карточку ${index + 1}:`, card);
         const slotData = extractSlotData(card);
+        console.log(`🔍 Данные слота ${index + 1}:`, slotData);
         if (slotData) {
             slots.push(slotData);
         }
     });
     
+    console.log('🔍 Итого слотов для копирования:', slots.length);
+    
     if (slots.length === 0) {
+        console.warn('⚠️ Нет слотов для копирования в этой неделе');
         showNotification('Нет слотов для копирования в этой неделе', 'warning');
         return;
     }
@@ -764,12 +814,22 @@ window.copyWeekSlots = function(weekType) {
 
 function extractSlotData(card) {
     try {
+        console.log('🔍 Извлекаем данные из карточки:', card);
+        
         const dateElement = card.querySelector('.fw-bold');
         const weekdayElement = card.querySelector('.text-muted');
-        const slotsElement = card.querySelector('.text-primary, .text-info');
+        const slotsElement = card.querySelector('.text-primary');
+        
+        console.log('🔍 Найденные элементы:');
+        console.log('  - dateElement:', dateElement);
+        console.log('  - weekdayElement:', weekdayElement);
+        console.log('  - slotsElement:', slotsElement);
         
         if (!dateElement || !weekdayElement || !slotsElement) {
             console.warn('⚠️ Не все элементы найдены в карточке слота');
+            console.warn('  - dateElement:', !!dateElement);
+            console.warn('  - weekdayElement:', !!weekdayElement);
+            console.warn('  - slotsElement:', !!slotsElement);
             return null;
         }
         
@@ -822,3 +882,11 @@ function fallbackCopySlotsToClipboard(text) {
     
     document.body.removeChild(textArea);
 }
+
+// Функция для обновления слотов
+window.refreshSlots = function() {
+    console.log('🔄 Обновление слотов...');
+    // Перезагружаем слоты
+    initializeSlots();
+    showNotification('Слоты обновлены', 'success');
+};

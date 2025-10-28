@@ -7,7 +7,7 @@ from django.db.models import Count, Sum
 from .models import (
     HiringPlan, HiringPlanPosition, PositionType, PlanPeriodType,
     PositionKPIOKR, PlanKPIOKRBlock, PlanMetrics,
-    VacancySLA, HiringRequest, RecruitmentMetrics, DemandForecast, RecruiterCapacity,
+    VacancySLA, HiringRequest, RecruiterAssignment, RecruitmentMetrics, DemandForecast, RecruiterCapacity,
     HuntflowSync
 )
 
@@ -315,18 +315,18 @@ class VacancySLAAdmin(admin.ModelAdmin):
 
 @admin.register(HiringRequest)
 class HiringRequestAdmin(admin.ModelAdmin):
-    list_display = ['vacancy', 'grade', 'project', 'status', 'priority', 'opening_date', 'sla_status_display', 'days_in_progress']
+    list_display = ['vacancy', 'grade', 'project', 'status', 'priority', 'opening_date', 'sla_status_display', 'days_in_progress', 'time2hire_display']
     list_filter = ['status', 'priority', 'opening_reason', 'grade', 'vacancy', 'opening_date']
     search_fields = ['vacancy__name', 'candidate_name', 'candidate_id', 'notes', 'project']
-    readonly_fields = ['sla_status_display', 'sla_compliance', 'days_in_progress', 'is_overdue', 'created_at', 'updated_at']
+    readonly_fields = ['sla_status_display', 'sla_compliance', 'days_in_progress', 'is_overdue', 'time2hire_display', 'created_at', 'updated_at']
     ordering = ['-opening_date', 'priority']
     
     fieldsets = (
         ('Основная информация', {
-            'fields': ('vacancy', 'grade', 'project', 'priority', 'opening_reason')
+            'fields': ('vacancy', 'grade', 'project', 'priority', 'opening_reason', 'recruiter')
         }),
         ('Статус и даты', {
-            'fields': ('status', 'opening_date', 'closed_date', 'sla_status_display', 'sla_compliance', 'days_in_progress', 'is_overdue')
+            'fields': ('status', 'opening_date', 'closed_date', 'hire_date', 'sla_status_display', 'sla_compliance', 'days_in_progress', 'is_overdue', 'time2hire_display')
         }),
         ('SLA', {
             'fields': ('sla',),
@@ -359,6 +359,15 @@ class HiringRequestAdmin(admin.ModelAdmin):
         color = status_colors.get(status, 'gray')
         return format_html('<span style="color: {};">{}</span>', color, status)
     sla_status_display.short_description = 'SLA статус'
+    
+    def time2hire_display(self, obj):
+        if obj.time2hire is not None:
+            return f"{obj.time2hire} дн."
+        elif obj.status == 'closed':
+            return format_html('<span style="color: red;">НЕ ЗАПОЛНЕНО</span>')
+        else:
+            return "—"
+    time2hire_display.short_description = 'Time2Hire'
     
     def get_queryset(self, request):
         return super().get_queryset(request).select_related(
@@ -517,6 +526,31 @@ class HuntflowSyncAdmin(admin.ModelAdmin):
         self.message_user(request, f"Повторно синхронизировано: {queryset.count()}")
     
     retry_sync.short_description = "Повторить синхронизацию"
+
+
+@admin.register(RecruiterAssignment)
+class RecruiterAssignmentAdmin(admin.ModelAdmin):
+    list_display = ['hiring_request', 'recruiter', 'assigned_at', 'unassigned_at', 'is_active', 'duration_days']
+    list_filter = ['is_active', 'assigned_at', 'unassigned_at', 'recruiter']
+    search_fields = ['hiring_request__vacancy__name', 'recruiter__username', 'recruiter__first_name', 'recruiter__last_name']
+    ordering = ['-assigned_at']
+    readonly_fields = ['assigned_at', 'duration_days']
+    
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('hiring_request', 'recruiter')
+        }),
+        ('Временные рамки', {
+            'fields': ('assigned_at', 'unassigned_at', 'is_active')
+        }),
+        ('Статистика', {
+            'fields': ('duration_days',)
+        }),
+    )
+    
+    def duration_days(self, obj):
+        return f"{obj.duration_days} дней"
+    duration_days.short_description = 'Продолжительность'
 
 
 # Настройка админки
