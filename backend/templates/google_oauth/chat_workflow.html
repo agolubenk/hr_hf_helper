@@ -472,6 +472,43 @@
                 </div>
                 <div class="card-body p-3" id="commandsCardBody">
                     <div class="commands-list">
+                        <!-- Функциональность чата -->
+                        <div class="command-item mb-3 command-hover-card">
+                            <div class="command-header">
+                                <span class="command-badge bg-primary">📝</span>
+                                <strong class="ms-2">Функциональность чата</strong>
+                            </div>
+                            <div class="command-example mt-1">
+                                <code class="text-primary small">[дата время] (45 мин) @Иван Петров<br>Управление временем и интервьюерами</code>
+                            </div>
+                            <div class="command-details-hover">
+                                <div class="alert alert-info mb-0">
+                                    <div class="d-flex align-items-start">
+                                        <i class="fas fa-info-circle me-2 mt-1"></i>
+                                        <div>
+                                            <strong>Управление временем встречи (скобочки):</strong><br>
+                                            Добавьте в скобочках после даты и времени:
+                                            <p class="mb-0 mt-2">
+                                                <code>(45 мин)</code> OR <code>(1 час)</code> OR <code>(1h)</code><br>
+                                                <code>(30 минут)</code> OR <code>(30m)</code> OR <code>(полчаса)</code>
+                                            </p>
+                                            <div class="mt-2">
+                                                <strong>Добавление интервьюера (символ @):</strong><br>
+                                                <code>@Иван Петров</code> OR <code>@Анна Сидорова</code><br>
+                                                <code>@john.doe</code> OR <code>@jane_smith</code>
+                                            </div>
+                                            <div class="mt-2">
+                                                <strong>Примеры комбинаций:</strong><br>
+                                                <code>[15.11.2024 14:00] (1 ч) @Иван Петров</code><br>
+                                                <code>[16.11.2024 10:30] (45 мин) @Анна Сидорова</code>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Команды чата -->
                         <div class="command-item mb-3">
                             <div class="command-header">
                                 <span class="command-badge bg-success">/s</span>
@@ -482,59 +519,23 @@
                             </div>
                         </div>
                         
-                        <div class="command-item mb-3 command-hover-card">
+                        <div class="command-item mb-3">
                             <div class="command-header">
                                 <span class="command-badge bg-warning">/in</span>
                                 <strong class="ms-2">Инвайт</strong>
                             </div>
                             <div class="command-example mt-1">
-                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время]</code>
-                            </div>
-                            <div class="command-details-hover">
-                                <div class="alert alert-info mb-0">
-                                    <div class="d-flex align-items-start">
-                                        <i class="fas fa-info-circle me-2 mt-1"></i>
-                                        <div>
-                                                Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
-                                            <p class="mb-0 mt-2">
-                                                <code>(1 час)</code> OR <code>(60 минут)</code> OR <code>(1h)</code><br>
-                                                <code>(30 минут)</code> OR <code>(30m)</code> OR <code>(полчаса)</code> etc.
-                                            </p>
-                                            <div class="mt-2">
-                                                <strong>Пример:</strong><br>
-                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (1 ч)</code>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (время) @интервьюер</code>
                             </div>
                         </div>
                         
-                        <div class="command-item mb-3 command-hover-card" id="additionalCommand1">
+                        <div class="command-item mb-3" id="additionalCommand1">
                             <div class="command-header">
                                 <span class="command-badge bg-info">/t</span>
                                 <strong class="ms-2">Техническое интервью</strong>
                             </div>
                             <div class="command-example mt-1">
-                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время]</code>
-                            </div>
-                            <div class="command-details-hover">
-                                <div class="alert alert-info mb-0">
-                                    <div class="d-flex align-items-start">
-                                        <i class="fas fa-info-circle me-2 mt-1"></i>
-                                        <div>
-                                                Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
-                                            <p class="mb-0 mt-2">
-                                                <code>(1 час)</code> OR <code>(60 минут)</code> OR <code>(1h)</code><br>
-                                                <code>(30 минут)</code> OR <code>(30m)</code> OR <code>(полчаса)</code> etc.
-                                            </p>
-                                            <div class="mt-2">
-                                                <strong>Пример:</strong><br>
-                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (1 ч)</code>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (время) @интервьюер</code>
                             </div>
                         </div>
                         
