@@ -306,6 +306,8 @@ function calculateAvailableSlots(dayEvents, date) {
     // Получаем требуемую продолжительность встречи
     const requiredDuration = getMeetingDuration();
     console.log(`⏱️ Требуемая продолжительность встречи: ${requiredDuration} минут`);
+    console.log(`🔍 [SLOTS] Проверяем window.vacancyData:`, window.vacancyData);
+    console.log(`🔍 [SLOTS] Текущий тип встречи:`, window.getCurrentMeetingType ? window.getCurrentMeetingType() : 'не определен');
     
     // Формируем строку доступных слотов
     const availableRanges = [];
@@ -344,19 +346,38 @@ function formatTime(date) {
 
 // Функция для получения продолжительности встречи
 function getMeetingDuration() {
-    // Получаем данные вакансии
+    console.log('🔍 [DURATION] Получаем длительность встречи...');
+    
+    // Сначала проверяем новую глобальную переменную
+    if (typeof window !== 'undefined' && window.currentMeetingDuration) {
+        console.log(`✅ [DURATION] Используем window.currentMeetingDuration: ${window.currentMeetingDuration}`);
+        return window.currentMeetingDuration;
+    }
+    
+    // Затем проверяем глобальную переменную window.vacancyData
+    if (typeof window !== 'undefined' && window.vacancyData && window.vacancyData.duration) {
+        console.log(`✅ [DURATION] Используем window.vacancyData.duration: ${window.vacancyData.duration}`);
+        return window.vacancyData.duration;
+    }
+    
+    // Затем проверяем локальную переменную vacancyData
     if (typeof vacancyData !== 'undefined' && vacancyData) {
+        console.log('🔍 [DURATION] vacancyData найден:', vacancyData);
+        
         // Пытаемся получить продолжительность из данных вакансии
         // Это может быть поле duration, meeting_duration или аналогичное
         if (vacancyData.duration) {
+            console.log(`✅ [DURATION] Используем vacancyData.duration: ${vacancyData.duration}`);
             return vacancyData.duration;
         }
         if (vacancyData.meeting_duration) {
+            console.log(`✅ [DURATION] Используем vacancyData.meeting_duration: ${vacancyData.meeting_duration}`);
             return vacancyData.meeting_duration;
         }
     }
     
     // Если нет данных о продолжительности, используем значение по умолчанию
+    console.log('⚠️ [DURATION] Данные не найдены, используем значение по умолчанию: 60 мин');
     return 60; // 60 минут по умолчанию
 }
 

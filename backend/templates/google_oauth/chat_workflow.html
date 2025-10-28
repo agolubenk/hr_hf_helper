@@ -18,107 +18,110 @@
                                 <div class="col-12">
                                     <!-- Кнопки копирования вопросов и слотов -->
                                     <div class="copy-buttons">
-                                        <div class="d-flex gap-2 flex-wrap">
-                                            <!-- Кнопки копирования для Беларуси -->
-                                            <button class="btn-copy btn-copy-vacancy-link-belarus position-relative" 
-                                                    onclick="window.copyVacancyLink('belarus')"
-                                                    {% if not selected_vacancy.vacancy_link_belarus %}disabled{% endif %}
-                                                    title="Скопировать ссылку на вакансию (Беларусь)">
-                                                <i class="fas fa-link"></i>
-                                                <div class="position-absolute top-0 start-100 translate-middle">
-                                                    <span class="flag-emoji">🇧🇾</span>
-                                                </div>
-                                                <div class="copy-tooltip">Скопировать ссылку на вакансию (Беларусь)</div>
-                                            </button>
-                                            
-                                            <button class="btn-copy btn-copy-belarus position-relative" 
-                                                    onclick="copyQuestions('belarus')"
-                                                    {% if not selected_vacancy.questions_belarus %}disabled{% endif %}
-                                                    title="Скопировать вопросы для Беларуси">
-                                                <i class="fas fa-question"></i>
-                                                <div class="position-absolute top-0 start-100 translate-middle">
-                                                    <span class="flag-emoji">🇧🇾</span>
-                                                </div>
-                                                <div class="copy-tooltip">Скопировать вопросы для Беларуси</div>
-                                            </button>
-                                            
-                                            <!-- Кнопки копирования для Польши -->
-                                            <button class="btn-copy btn-copy-vacancy-link-poland position-relative" 
-                                                    onclick="window.copyVacancyLink('poland')"
-                                                    {% if not selected_vacancy.vacancy_link_poland %}disabled{% endif %}
-                                                    title="Скопировать ссылку на вакансию (Польша)">
-                                                <i class="fas fa-link"></i>
-                                                <div class="position-absolute top-0 start-100 translate-middle">
-                                                    <span class="flag-emoji">🇵🇱</span>
-                                                </div>
-                                                <div class="copy-tooltip">Скопировать ссылку на вакансию (Польша)</div>
-                                            </button>
-                                            
-                                            <button class="btn-copy btn-copy-poland position-relative" 
-                                                    onclick="copyQuestions('poland')"
-                                                    {% if not selected_vacancy.questions_poland %}disabled{% endif %}
-                                                    title="Скопировать вопросы для Польши">
-                                                <i class="fas fa-question"></i>
-                                                <div class="position-absolute top-0 start-100 translate-middle">
-                                                    <span class="flag-emoji">🇵🇱</span>
-                                                </div>
-                                                <div class="copy-tooltip">Скопировать вопросы для Польши</div>
-                                            </button>
-                                            
-                                            <!-- Кнопки копирования слотов -->
-                                            <button class="btn-copy btn-copy-current-week" 
-                                                    onclick="window.copyWeekSlots('current')"
-                                                    title="Скопировать слоты текущей недели">
-                                                <i class="fas fa-calendar-week"></i>
-                                                <div class="copy-tooltip">Скопировать слоты текущей недели</div>
-                                            </button>
-                                            
-                                            <button class="btn-copy btn-copy-next-week" 
-                                                    onclick="window.copyWeekSlots('next')"
-                                                    title="Скопировать слоты следующей недели">
-                                                <i class="fas fa-calendar-plus"></i>
-                                                <div class="copy-tooltip">Скопировать слоты следующей недели</div>
-                                            </button>
-                                            
-                                            <button class="btn-copy btn-copy-all-slots" 
-                                                    onclick="window.copyAllSlots()"
-                                                    title="Скопировать все слоты">
-                                                <i class="fas fa-copy"></i>
-                                                <div class="copy-tooltip">Скопировать все слоты</div>
-                                            </button>
-                                            
-                                            <button class="btn-copy btn-refresh-slots" 
-                                                    onclick="window.refreshSlots()"
-                                                    title="Обновить слоты">
-                                                <i class="fas fa-sync-alt"></i>
-                                                <div class="copy-tooltip">Обновить слоты</div>
-                                            </button>
-                                        </div>
-                                        
-                                        <!-- ====== СВИТЧЕР ТИПА ВСТРЕЧИ ====== -->
-                                        <div class="meeting-type-switcher mt-3">
+                                        <div class="d-flex gap-2 flex-wrap justify-content-between align-items-center">
+                                            <!-- Кнопки копирования слева -->
                                             <div class="d-flex gap-2 flex-wrap">
-                                                <button class="btn-copy btn-meeting-type position-relative" 
-                                                        id="btnScreening" 
-                                                        onclick="switchMeetingType('screening')"
-                                                        title="Скрининг: {{ selected_vacancy.screening_duration|default:45 }} мин">
-                                                    <i class="fas fa-clipboard-list"></i>
-                                                    <div class="meeting-type-text">
-                                                        <div class="meeting-type-name">Скрининг</div>
-                                                        <div class="meeting-type-duration">{{ selected_vacancy.screening_duration|default:45 }} мин</div>
-                                    </div>
+                                                <!-- Кнопки копирования для Беларуси -->
+                                                <button class="btn-copy btn-copy-vacancy-link-belarus position-relative" 
+                                                        onclick="window.copyVacancyLink('belarus')"
+                                                        {% if not selected_vacancy.vacancy_link_belarus %}disabled{% endif %}
+                                                        title="Скопировать ссылку на вакансию (Беларусь)">
+                                                    <i class="fas fa-link"></i>
+                                                    <div class="position-absolute top-0 start-100 translate-middle">
+                                                        <span class="flag-emoji">🇧🇾</span>
+                                                    </div>
+                                                    <div class="copy-tooltip">Скопировать ссылку на вакансию (Беларусь)</div>
                                                 </button>
                                                 
-                                                <button class="btn-copy btn-meeting-type position-relative" 
-                                                        id="btnInterview" 
-                                                        onclick="switchMeetingType('interview')"
-                                                        title="Интервью: {{ selected_vacancy.tech_interview_duration|default:90 }} мин">
-                                                    <i class="fas fa-users"></i>
-                                                    <div class="meeting-type-text">
-                                                        <div class="meeting-type-name">Интервью</div>
-                                                        <div class="meeting-type-duration">{{ selected_vacancy.tech_interview_duration|default:90 }} мин</div>
+                                                <button class="btn-copy btn-copy-belarus position-relative" 
+                                                        onclick="copyQuestions('belarus')"
+                                                        {% if not selected_vacancy.questions_belarus %}disabled{% endif %}
+                                                        title="Скопировать вопросы для Беларуси">
+                                                    <i class="fas fa-question"></i>
+                                                    <div class="position-absolute top-0 start-100 translate-middle">
+                                                        <span class="flag-emoji">🇧🇾</span>
                                                     </div>
+                                                    <div class="copy-tooltip">Скопировать вопросы для Беларуси</div>
                                                 </button>
+                                                
+                                                <!-- Кнопки копирования для Польши -->
+                                                <button class="btn-copy btn-copy-vacancy-link-poland position-relative" 
+                                                        onclick="window.copyVacancyLink('poland')"
+                                                        {% if not selected_vacancy.vacancy_link_poland %}disabled{% endif %}
+                                                        title="Скопировать ссылку на вакансию (Польша)">
+                                                    <i class="fas fa-link"></i>
+                                                    <div class="position-absolute top-0 start-100 translate-middle">
+                                                        <span class="flag-emoji">🇵🇱</span>
+                                                    </div>
+                                                    <div class="copy-tooltip">Скопировать ссылку на вакансию (Польша)</div>
+                                                </button>
+                                                
+                                                <button class="btn-copy btn-copy-poland position-relative" 
+                                                        onclick="copyQuestions('poland')"
+                                                        {% if not selected_vacancy.questions_poland %}disabled{% endif %}
+                                                        title="Скопировать вопросы для Польши">
+                                                    <i class="fas fa-question"></i>
+                                                    <div class="position-absolute top-0 start-100 translate-middle">
+                                                        <span class="flag-emoji">🇵🇱</span>
+                                                    </div>
+                                                    <div class="copy-tooltip">Скопировать вопросы для Польши</div>
+                                                </button>
+                                                
+                                                <!-- Кнопки копирования слотов -->
+                                                <button class="btn-copy btn-copy-current-week" 
+                                                        onclick="window.copyWeekSlots('current')"
+                                                        title="Скопировать слоты текущей недели">
+                                                    <i class="fas fa-calendar-week"></i>
+                                                    <div class="copy-tooltip">Скопировать слоты текущей недели</div>
+                                                </button>
+                                                
+                                                <button class="btn-copy btn-copy-next-week" 
+                                                        onclick="window.copyWeekSlots('next')"
+                                                        title="Скопировать слоты следующей недели">
+                                                    <i class="fas fa-calendar-plus"></i>
+                                                    <div class="copy-tooltip">Скопировать слоты следующей недели</div>
+                                                </button>
+                                                
+                                                <button class="btn-copy btn-copy-all-slots" 
+                                                        onclick="window.copyAllSlots()"
+                                                        title="Скопировать все слоты">
+                                                    <i class="fas fa-copy"></i>
+                                                    <div class="copy-tooltip">Скопировать все слоты</div>
+                                                </button>
+                                                
+                                                <button class="btn-copy btn-refresh-slots" 
+                                                        onclick="window.refreshSlots()"
+                                                        title="Обновить слоты">
+                                                    <i class="fas fa-sync-alt"></i>
+                                                    <div class="copy-tooltip">Обновить слоты</div>
+                                                </button>
+                                            </div>
+                                            
+                                            <!-- Свитчер типа встречи справа -->
+                                            <div class="meeting-type-switcher">
+                                                <div class="d-flex gap-2 flex-wrap">
+                                                    <button class="btn-copy btn-meeting-type position-relative active" 
+                                                            id="btnScreening" 
+                                                            onclick="switchMeetingType('screening')"
+                                                            title="Скрининг: {{ selected_vacancy.screening_duration|default:45 }} мин">
+                                                        <i class="fas fa-clipboard-list"></i>
+                                                        <div class="meeting-type-text">
+                                                            <div class="meeting-type-name">Скрининг</div>
+                                                            <div class="meeting-type-duration">{{ selected_vacancy.screening_duration|default:45 }} мин</div>
+                                                        </div>
+                                                    </button>
+                                                    
+                                                    <button class="btn-copy btn-meeting-type position-relative" 
+                                                            id="btnInterview" 
+                                                            onclick="switchMeetingType('interview')"
+                                                            title="Интервью: {{ selected_vacancy.tech_interview_duration|default:90 }} мин">
+                                                        <i class="fas fa-users"></i>
+                                                        <div class="meeting-type-text">
+                                                            <div class="meeting-type-name">Интервью</div>
+                                                            <div class="meeting-type-duration">{{ selected_vacancy.tech_interview_duration|default:90 }} мин</div>
+                                                        </div>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1807,12 +1810,70 @@
     transition: all 0.3s ease !important;
     cursor: pointer !important;
     min-width: 120px !important;
+    opacity: 0.5 !important;
+    filter: grayscale(0.3) !important;
+}
+
+.meeting-type-switcher .btn-meeting-type:hover:not(.active) {
+    opacity: 0.8 !important;
+    filter: grayscale(0.1) !important;
+    transform: scale(1.02) !important;
 }
 
 .meeting-type-switcher .btn-meeting-type.active {
+    opacity: 1 !important;
     background: linear-gradient(135deg, #28a745, #20c997) !important;
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.5) !important;
-    transform: scale(1.05) !important;
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.7) !important;
+    transform: scale(1.1) !important;
+    border: 4px solid #fff !important;
+    position: relative !important;
+    z-index: 10 !important;
+    animation: pulse-active 2s infinite !important;
+}
+
+.meeting-type-switcher .btn-meeting-type.active::before {
+    content: "✓" !important;
+    position: absolute !important;
+    top: -10px !important;
+    right: -10px !important;
+    background: #fff !important;
+    color: #28a745 !important;
+    border-radius: 50% !important;
+    width: 24px !important;
+    height: 24px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3) !important;
+    border: 2px solid #28a745 !important;
+    z-index: 11 !important;
+}
+
+.meeting-type-switcher .btn-meeting-type.active::after {
+    content: "" !important;
+    position: absolute !important;
+    top: -2px !important;
+    left: -2px !important;
+    right: -2px !important;
+    bottom: -2px !important;
+    background: linear-gradient(45deg, #28a745, #20c997, #28a745) !important;
+    border-radius: 10px !important;
+    z-index: -1 !important;
+    animation: border-glow 2s infinite !important;
+}
+
+@keyframes pulse-active {
+    0% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.7); }
+    50% { box-shadow: 0 8px 25px rgba(40, 167, 69, 0.9); }
+    100% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.7); }
+}
+
+@keyframes border-glow {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
 }
 
 .meeting-type-switcher .btn-meeting-type:hover {
@@ -1852,7 +1913,33 @@
 
 [data-theme="dark"] .meeting-type-switcher .btn-meeting-type.active {
     background: linear-gradient(135deg, #28a745, #20c997) !important;
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.6) !important;
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.8) !important;
+    border: 4px solid #fff !important;
+    animation: pulse-active-dark 2s infinite !important;
+}
+
+[data-theme="dark"] .meeting-type-switcher .btn-meeting-type.active::before {
+    background: #fff !important;
+    color: #28a745 !important;
+    border: 2px solid #28a745 !important;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.5) !important;
+}
+
+[data-theme="dark"] .meeting-type-switcher .btn-meeting-type.active::after {
+    background: linear-gradient(45deg, #28a745, #20c997, #28a745) !important;
+    animation: border-glow-dark 2s infinite !important;
+}
+
+@keyframes pulse-active-dark {
+    0% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.8); }
+    50% { box-shadow: 0 8px 25px rgba(40, 167, 69, 1); }
+    100% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.8); }
+}
+
+@keyframes border-glow-dark {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
 }
 
  .copy-buttons .btn-copy .copy-tooltip {
@@ -2808,6 +2895,7 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
 </script>
 
             <script src="{% static 'js/vacancy-slots.js' %}"></script>
+            <script src="{% static 'js/meeting-type-switcher.js' %}"></script>
             
             <script>
             // Настройки пользователя для рабочих часов
@@ -3147,7 +3235,6 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                     width: auto !important;
                     min-width: fit-content !important;
                 }
-            }
 
             /* === СТИЛИ ДЛЯ КАРТОЧКИ КОМАНД === */
             .commands-list {
