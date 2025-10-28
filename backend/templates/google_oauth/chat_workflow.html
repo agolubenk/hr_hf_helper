@@ -94,6 +94,33 @@
                                                 <div class="copy-tooltip">Обновить слоты</div>
                                             </button>
                                         </div>
+                                        
+                                        <!-- ====== СВИТЧЕР ТИПА ВСТРЕЧИ ====== -->
+                                        <div class="meeting-type-switcher mt-3">
+                                            <div class="d-flex gap-2 flex-wrap">
+                                                <button class="btn-copy btn-meeting-type position-relative" 
+                                                        id="btnScreening" 
+                                                        onclick="switchMeetingType('screening')"
+                                                        title="Скрининг: {{ selected_vacancy.screening_duration|default:45 }} мин">
+                                                    <i class="fas fa-clipboard-list"></i>
+                                                    <div class="meeting-type-text">
+                                                        <div class="meeting-type-name">Скрининг</div>
+                                                        <div class="meeting-type-duration">{{ selected_vacancy.screening_duration|default:45 }} мин</div>
+                                    </div>
+                                                </button>
+                                                
+                                                <button class="btn-copy btn-meeting-type position-relative" 
+                                                        id="btnInterview" 
+                                                        onclick="switchMeetingType('interview')"
+                                                        title="Интервью: {{ selected_vacancy.tech_interview_duration|default:90 }} мин">
+                                                    <i class="fas fa-users"></i>
+                                                    <div class="meeting-type-text">
+                                                        <div class="meeting-type-name">Интервью</div>
+                                                        <div class="meeting-type-duration">{{ selected_vacancy.tech_interview_duration|default:90 }} мин</div>
+                                                    </div>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1765,6 +1792,69 @@
      filter: grayscale(0.8) !important;
  }
 
+/* ====== СТИЛИ СВИТЧЕРА ТИПА ВСТРЕЧИ ====== */
+.meeting-type-switcher .btn-meeting-type {
+    background: linear-gradient(135deg, #6c757d, #495057) !important;
+    color: white !important;
+    border: 2px solid #fff !important;
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3) !important;
+    padding: 8px 16px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 14px !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    min-width: 120px !important;
+}
+
+.meeting-type-switcher .btn-meeting-type.active {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.5) !important;
+    transform: scale(1.05) !important;
+}
+
+.meeting-type-switcher .btn-meeting-type:hover {
+    transform: scale(1.05) !important;
+    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.5) !important;
+}
+
+.meeting-type-switcher .btn-meeting-type.active:hover {
+    background: linear-gradient(135deg, #20c997, #17a2b8) !important;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.7) !important;
+}
+
+.meeting-type-text {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    line-height: 1.2 !important;
+}
+
+.meeting-type-name {
+    font-weight: 600 !important;
+    font-size: 14px !important;
+}
+
+.meeting-type-duration {
+    font-size: 11px !important;
+    opacity: 0.9 !important;
+    font-weight: 400 !important;
+}
+
+/* Темная тема для свитчера */
+[data-theme="dark"] .meeting-type-switcher .btn-meeting-type {
+    background: linear-gradient(135deg, #495057, #343a40) !important;
+    border: 2px solid #2c2c2c !important;
+    box-shadow: 0 2px 8px rgba(73, 80, 87, 0.4) !important;
+}
+
+[data-theme="dark"] .meeting-type-switcher .btn-meeting-type.active {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.6) !important;
+}
+
  .copy-buttons .btn-copy .copy-tooltip {
      position: absolute !important;
      bottom: -35px !important;
@@ -2032,7 +2122,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Прокручиваем чат к последним сообщениям при загрузке (только внутри контейнера чата)
     setTimeout(() => {
-    scrollToBottom();
+        scrollToBottom();
         // Инициализируем размер textarea в одну строку
         resetTextareaSize();
     }, 100);
@@ -2068,10 +2158,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Функция для сброса размера textarea к одной строке
     function resetTextareaSize() {
-        messageInput.style.height = 'auto';
-        messageInput.style.height = '48px'; // Высота одной строки
-        messageInput.scrollTop = 0;
-    }
+            messageInput.style.height = 'auto';
+            messageInput.style.height = '48px'; // Высота одной строки
+            messageInput.scrollTop = 0;
+        }
     
     // Добавление сообщения в чат
     function addMessageToChat(role, content) {
@@ -2653,7 +2743,9 @@ if (calendarEventsScript) {
     "vacancy_link_poland": "{{ selected_vacancy.vacancy_link_poland|escapejs }}",
     "questions_belarus": "{{ selected_vacancy.questions_belarus|escapejs }}",
     "questions_poland": "{{ selected_vacancy.questions_poland|escapejs }}",
-    "duration": {{ selected_vacancy.screening_duration|default:60 }}
+    "duration": {{ selected_vacancy.screening_duration|default:60 }},
+    "screening_duration": {{ selected_vacancy.screening_duration|default:45 }},
+    "tech_interview_duration": {{ selected_vacancy.tech_interview_duration|default:90 }}
 }
 </script>
 

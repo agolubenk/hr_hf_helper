@@ -1,117 +1,948 @@
 Watching for file changes with StatReloader
-[26/Oct/2025 17:23:14] "GET / HTTP/1.1" 302 0
-[26/Oct/2025 17:23:20] "GET /gemini/chat/ HTTP/1.1" 302 0
-[26/Oct/2025 17:23:21] "GET /hiring-plans/metrics/ HTTP/1.1" 200 114665
-[26/Oct/2025 17:23:32] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 235789
-[26/Oct/2025 17:23:41] "GET /gemini/chat/30/ HTTP/1.1" 200 134327
-[26/Oct/2025 17:23:41] "GET /static/css/enhanced_chat.css HTTP/1.1" 304 0
-[26/Oct/2025 17:23:50] "GET /gemini/chat/27/ HTTP/1.1" 200 132674
-/Users/agolubenko/hrhelper/fullstack/backend/apps/gemini/views.py changed, reloading.
+[28/Oct/2025 12:08:38] "GET / HTTP/1.1" 302 0
+[28/Oct/2025 12:08:57] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 278530
+[28/Oct/2025 12:08:57] "GET /static/js/vacancy-slots.js HTTP/1.1" 200 38296
+[28/Oct/2025 12:09:04] "GET /google-oauth/chat/38/?vacancy_id=1 HTTP/1.1" 200 865578
+[28/Oct/2025 12:09:22] "GET /google-oauth/chat/38/?csrfmiddlewaretoken=mDrZhrnqGq3ybaHCl0JQ3Fexaqy87sPeqVSkNLgA9VjvSiX4wg1eRrQsUAqDJwUk&session_id=38&message=%2Fin%0D%0Ahttps%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2F186507%2Fid%2F75458119%0D%0A%D0%9F%D0%A2+14&action_type=hrscreening HTTP/1.1" 302 0
+[28/Oct/2025 12:09:22] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 278530
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[28/Oct/2025 12:10:41] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3921
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
 Performing system checks...
 
 System check identified no issues (0 silenced).
-October 26, 2025 - 17:23:13
+October 28, 2025 - 12:08:33
 Django version 4.2.16, using settings 'config.settings'
 Starting development server at http://127.0.0.1:8000/
 Quit the server with CONTROL-C.
 
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 34 событий
+🔍 DEBUG CHAT: Получено 34 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 34 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кагукин Вадим в 2025-10-28T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Interview | Богданович Александр в 2025-10-28T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Волков Вадим в 2025-10-28T14:45:00+03:00
 🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
 📥 Ответ API: 200
 📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
 DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
 🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
 🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
-💾 Сохранены события календаря в кэш: 36 событий
-🔍 DEBUG CHAT: Получено 36 событий из API
-🔍 DEBUG CHAT: Передаем 36 событий в шаблон
-🔍 DEBUG CHAT: Событие: A2+ в 2025-10-27T09:00:00+03:00
-🔍 DEBUG CHAT: Событие: Recruitment Meeting в 2025-10-27T10:30:00+03:00
-🔍 DEBUG CHAT: Событие: JS Tech Screening | Полячинский Алексей в 2025-10-27T12:00:00+03:00
+📦 Получены события календаря из кэша: 34 событий
+🔍 DEBUG CHAT: Получено 34 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 34 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кагукин Вадим в 2025-10-28T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Interview | Богданович Александр в 2025-10-28T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Волков Вадим в 2025-10-28T14:45:00+03:00
 🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
 📥 Ответ API: 200
 📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
 DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
-🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
-📥 Ответ API: 200
-📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
-DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 34 событий
+🔍 DEBUG CHAT: Получено 34 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 34 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кагукин Вадим в 2025-10-28T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Interview | Богданович Александр в 2025-10-28T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Волков Вадим в 2025-10-28T14:45:00+03:00
 🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
 📥 Ответ API: 200
 📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
 DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
 Watching for file changes with StatReloader
-/Users/agolubenko/hrhelper/fullstack/backend/apps/gemini/views.py changed, reloading.
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
 Performing system checks...
 
 System check identified no issues (0 silenced).
-October 26, 2025 - 17:24:07
+October 28, 2025 - 12:14:58
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+Watching for file changes with StatReloader
+[28/Oct/2025 12:15:42] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[28/Oct/2025 12:15:42] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3921
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[28/Oct/2025 12:15:42] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3921
+[28/Oct/2025 12:15:49] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 277025
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[28/Oct/2025 12:15:49] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[28/Oct/2025 12:15:49] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[28/Oct/2025 12:15:49] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3921
+[28/Oct/2025 12:15:49] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[28/Oct/2025 12:15:49] "GET /static/js/chat_actions.js HTTP/1.1" 200 10555
+[28/Oct/2025 12:15:49] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[28/Oct/2025 12:15:49] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[28/Oct/2025 12:15:49] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[28/Oct/2025 12:15:49] "GET /static/js/vacancy-slots.js HTTP/1.1" 200 38296
+[28/Oct/2025 12:15:49] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[28/Oct/2025 12:15:49] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[28/Oct/2025 12:15:49] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[28/Oct/2025 12:15:49] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[28/Oct/2025 12:15:50] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[28/Oct/2025 12:16:09] "POST /google-oauth/chat/34/ajax/ HTTP/1.1" 200 64
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 28, 2025 - 12:15:41
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 34 событий
+🔍 DEBUG CHAT: Получено 34 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 34 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кагукин Вадим в 2025-10-28T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Interview | Богданович Александр в 2025-10-28T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Волков Вадим в 2025-10-28T14:45:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 CHAT AJAX HANDLER: Получен запрос на session_id=34
+🔍 CHAT AJAX HANDLER: Метод=POST, Content-Type=application/json
+🔍 CHAT AJAX: Ошибка обработки действия: name 'ChatSession' is not defined
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 28, 2025 - 12:18:06
 Django version 4.2.16, using settings 'config.settings'
 Starting development server at http://127.0.0.1:8000/
 Quit the server with CONTROL-C.
 
 Watching for file changes with StatReloader
-[26/Oct/2025 17:28:09] "GET /gemini/chat/27/ HTTP/1.1" 200 132674
-[26/Oct/2025 17:28:09] "GET /static/css/enhanced_chat.css HTTP/1.1" 304 0
-[26/Oct/2025 17:29:16] "GET /gemini/chat/27/ HTTP/1.1" 200 133060
-[26/Oct/2025 17:29:40] "GET /gemini/chat/ HTTP/1.1" 302 0
-[26/Oct/2025 17:29:45] "GET /gemini/chat/27/ HTTP/1.1" 200 133060
-[26/Oct/2025 17:29:45] "GET /static/css/enhanced_chat.css HTTP/1.1" 200 9887
-[26/Oct/2025 17:29:45] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
-[26/Oct/2025 17:29:45] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
-[26/Oct/2025 17:29:45] "GET /static/css/all.min.css HTTP/1.1" 200 102025
-[26/Oct/2025 17:29:45] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
-[26/Oct/2025 17:29:45] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
-[26/Oct/2025 17:29:45] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
-[26/Oct/2025 17:29:45] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
-[26/Oct/2025 17:29:45] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
-[26/Oct/2025 17:29:45] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
-[26/Oct/2025 17:29:45] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
-[26/Oct/2025 17:29:52] "GET /gemini/chat/30/ HTTP/1.1" 200 135139
-[26/Oct/2025 17:29:52] "GET /static/css/enhanced_chat.css HTTP/1.1" 304 0
-/Users/agolubenko/hrhelper/fullstack/backend/apps/gemini/views.py changed, reloading.
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
 Performing system checks...
 
 System check identified no issues (0 silenced).
-October 26, 2025 - 17:27:54
+October 28, 2025 - 12:18:48
 Django version 4.2.16, using settings 'config.settings'
 Starting development server at http://127.0.0.1:8000/
 Quit the server with CONTROL-C.
 
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+Watching for file changes with StatReloader
+[28/Oct/2025 12:19:57] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 272317
+[28/Oct/2025 12:19:57] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[28/Oct/2025 12:19:57] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[28/Oct/2025 12:19:57] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[28/Oct/2025 12:19:57] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[28/Oct/2025 12:19:57] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[28/Oct/2025 12:19:57] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[28/Oct/2025 12:19:57] "GET /static/js/vacancy-slots.js HTTP/1.1" 200 38296
+[28/Oct/2025 12:19:57] "GET /static/js/chat_actions.js HTTP/1.1" 200 11117
+[28/Oct/2025 12:19:57] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[28/Oct/2025 12:19:57] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[28/Oct/2025 12:19:57] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[28/Oct/2025 12:19:57] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[28/Oct/2025 12:19:57] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 28, 2025 - 12:19:43
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 34 событий
+🔍 DEBUG CHAT: Получено 34 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 34 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кагукин Вадим в 2025-10-28T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Interview | Богданович Александр в 2025-10-28T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Волков Вадим в 2025-10-28T14:45:00+03:00
 🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
 📥 Ответ API: 200
 📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
 DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 CHAT AJAX HANDLER: Получен запрос на session_id=34
+🔍 CHAT AJAX HANDLER: Метод=POST, Content-Type=application/json
+🔍 CHAT AJAX: Анализируем сообщение: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186507/id/75458119
+ПТ 14'
+🔍 CHAT AJAX: action_type_from_js: 'invite'
+🔍 CHAT AJAX: Используем тип действия из JS: invite
+🔍 CHAT AJAX: ФИНАЛЬНЫЙ action_type: invite
+🔍 CLEAN_COMBINED_DATA: combined_data = 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186507/id/75458119
+ПТ 14'
+🔍 CLEAN_COMBINED_DATA: Найдено URLs: ['https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186507/id/75458119']
+✅ CLEAN_COMBINED_DATA: URL извлечен: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186507/id/75458119
+✅ CLEAN_COMBINED_DATA: Весь текст сохранен для парсера: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186507/id/75458119
+ПТ 14'
+🔍 COMBINED_FORM_CLEAN: Начинаем очистку формы
+🔍 COMBINED_FORM_CLEAN: cleaned_data keys: ['candidate_url', 'interview_datetime', 'combined_data', 'selected_interviewer']
+🔍 COMBINED_FORM_CLEAN: combined_data: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186507/id/75458119
+ПТ 14
+🔍 COMBINED_FORM_CLEAN: URL извлечен, дату обработает парсер
+🔍 COMBINED_FORM_CLEAN: Финальные cleaned_data: {'candidate_url': 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186507/id/75458119', 'interview_datetime': None, 'combined_data': 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186507/id/75458119\nПТ 14', 'selected_interviewer': ''}
+🔍 COMBINED_FORM_SAVE: Начинаем сохранение инвайта...
+🔍 COMBINED_FORM_SAVE: Установлен email пользователя: andrei.golubenko@softnetix.io
+🔍 COMBINED_FORM_SAVE: Сохранены исходные данные: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186507/id/75458119
+ПТ 14...
+🔍 COMBINED_FORM_SAVE: Инвайт создан, user: andrei.golubenko
+🔍 COMBINED_FORM_SAVE: Парсим URL...
 🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
 📥 Ответ API: 200
 📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
-DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 PARSE_URL: Используем первый доступный account_id: 291341
+✅ COMBINED_FORM_SAVE: URL распарсен успешно
+🔍 COMBINED_FORM_SAVE: Получаем информацию о кандидате...
 🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
 📥 Ответ API: 200
 📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
-DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 GET_CANDIDATE_INFO: Автоматически получен account_id: 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75458119
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Test","last_name":"Preboarding","middle_name":null,"money":null,"phone":null,"email":null,"skype":null,"position":null,"company":null,"photo":null,"id":75458119,"account":291341,"photo_url":null,"birthday":null,"created":"2025-10-26T19:54:17+03:00","tags":[],"links":[{"id":70904559,"status":186507,"updated":"2025-10-27T18:32:00+03:00","changed":"2025-10-27T18:32:00+03:00","vacancy":3936868}],"external":[{"id":75287022,"auth_type":"NATIVE","account_source":null,"updated":"2025-10-2...
+💾 Сохранены данные кандидата в кэш: 75458119
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75458119/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":null,"n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":null,"DoOdxUlwbb0nILXQGBDaT":null,"ICXvQX-WT9eleJW-QlVa9":null,"RMLxfRH9raQtHItMcdeq-":null,"X6qYbAqZnb0q1R3VMumbH":null,"bfPBtccRoL5s_7xyLXuia":null}...
+РЕАЛЬНЫЕ ДАННЫЕ: Доступные грейды в системе: ['Head', 'Junior', 'Junior+', 'Lead', 'Middle', 'Middle+', 'Senior', 'Senior+']
+РЕАЛЬНЫЕ ДАННЫЕ: Не удалось получить схему анкеты: HuntflowService.get_applicant_questionary_schema() takes 2 positional arguments but 3 were given
+РЕАЛЬНЫЕ ДАННЫЕ: Уровень не найден среди доступных грейдов: ['Head', 'Junior', 'Junior+', 'Lead', 'Middle', 'Middle+', 'Senior', 'Senior+']
+РЕАЛЬНЫЕ ДАННЫЕ: ⚠️ Уровень кандидата не найден в анкете, используем 'Не указан'
+РЕАЛЬНЫЕ ДАННЫЕ: Получена информация о кандидате 75458119
+РЕАЛЬНЫЕ ДАННЫЕ: Имя: Preboarding Test
+РЕАЛЬНЫЕ ДАННЫЕ: Уровень: Не указан
+✅ COMBINED_FORM_SAVE: Информация о кандидате получена
+🔍 COMBINED_FORM_SAVE: Получаем информацию о вакансии...
+ЛОКАЛЬНЫЕ ДАННЫЕ: Найдена вакансия в локальной БД: Frontend Engineer (React)
+ЛОКАЛЬНЫЕ ДАННЫЕ: Шаблон scorecard: https://docs.google.com/spreadsheets/d/1Zz61HtsXAWvfHtlTucfJQnJEDCKLwcVRybmT9BHfZqg/edit?gid=1164423222#gid=1164423222
+ЛОКАЛЬНЫЕ ДАННЫЕ: Длительность скринингов: 40 минут
+✅ COMBINED_FORM_SAVE: Информация о вакансии получена
+🤖 COMBINED_FORM_SAVE: Анализируем время с помощью парсера...
+🔍 [ENHANCED_PARSER] Анализируем текст пользователя andrei.golubenko
+🔍 [ENHANCED_PARSER] Текст для анализа: ПТ 14...
+📅 [BOOKINGS] Получаем существующие бронирования...
+💾 Сохранены события календаря в кэш: 55 событий
+✅ [BOOKINGS] Найдено событий: 55
+✅ [PARSER_INIT] Загружены полные словари: 194 дней недели, 3156 месяцев
+[ENHANCED_PARSER] Исходный текст: ПТ 14
+[ENHANCED_PARSER] Нормализованный текст: пт 14
+[ENHANCED_PARSER] Найден день недели: 4 -> 2025-10-31 12:20:46.018346+03:00
+[ENHANCED_PARSER] Найдено время: (14, 0)
+⚠️ [SLOT_CHECK] Слот 31.10 14:00 занят событием: Обед
+⚠️ [ENHANCED_PARSER] Слот 31.10 14:00 занят, ищем альтернативу...
+⚠️ [SLOT_CHECK] Слот 07.11 14:00 занят событием: Обед
+⚠️ [SLOT_CHECK] Слот 14.11 14:00 занят событием: Обед
+⚠️ [SLOT_CHECK] Слот 21.11 14:00 занят событием: Обед
+✅ [SLOT_CHECK] Слот 28.11 14:00 свободен
+✅ [ENHANCED_PARSER] Найден свободный слот: 28.11 14:00
+[ENHANCED_PARSER] Итоговый результат: 28.11.2025 14:00
+[ENHANCED_PARSER] Уверенность: 0.77
+[ENHANCED_PARSER] Исправлений: 1
+✅ [ENHANCED_PARSER] Определена дата/время: 28.11.2025 14:00
+📊 [ENHANCED_PARSER] Уверенность: 0.77
+🔧 [ENHANCED_PARSER] Исправлений: 1
+✔️ [ENHANCED_PARSER] Валидация: Пройдена
+  🔧 slot_occupied_correction: 31.10 14:00 → 28.11 14:00
+📅 [ENHANCED_PARSER] Альтернативные слоты:
+  - 05.12.2025 14:00 (уверенность: 0.85)
+  - 01.12.2025 14:00 (уверенность: 0.80)
+✅ COMBINED_FORM_SAVE: Время проанализировано с помощью парсера
+✅ COMBINED_FORM_SAVE: Дата интервью установлена из парсера: 2025-11-28 14:00:00+03:00
+🔍 COMBINED_FORM_SAVE: Извлекаем кастомную длительность...
+ℹ️ COMBINED_FORM_SAVE: Кастомная длительность не найдена, будет использована стандартная
+🔍 COMBINED_FORM_SAVE: Создаем структуру Google Drive...
+ЛОКАЛЬНЫЕ ДАННЫЕ: Используем scorecard из локальной БД: | Scorecard FE
+ЛОКАЛЬНЫЕ ДАННЫЕ: Ссылка на шаблон: https://docs.google.com/spreadsheets/d/1Zz61HtsXAWvfHtlTucfJQnJEDCKLwcVRybmT9BHfZqg/edit?gid=1164423222#gid=1164423222
+🔍 SAMPLE_DATA: Подготавливаем данные для генерации пути папок
+🔍 SAMPLE_DATA: candidate_name = 'Preboarding Test'
+🔍 SAMPLE_DATA: vacancy_title = 'Frontend Engineer (React)'
+🔍 SAMPLE_DATA: interview_datetime = '2025-11-28 14:00:00+03:00'
+🔍 SAMPLE_DATA: Подготовленные данные:
+🔍 SAMPLE_DATA:   date = '28.11.2025'
+🔍 SAMPLE_DATA:   day = '28'
+🔍 SAMPLE_DATA:   week_number = '48'
+🔍 SAMPLE_DATA:   week_short_en = 'W48'
+🔍 SAMPLE_DATA:   week_short_ru = 'Н48'
+🔍 SAMPLE_DATA:   week_full_en = 'Week 48'
+🔍 SAMPLE_DATA:   week_full_ru = 'Неделя 48'
+🔍 SAMPLE_DATA:   month_num = '11'
+🔍 SAMPLE_DATA:   month_short_ru = 'ноя'
+🔍 SAMPLE_DATA:   month_short_en = 'Nov'
+🔍 SAMPLE_DATA:   month_full_ru = 'ноябрь'
+🔍 SAMPLE_DATA:   month_full_en = 'November'
+🔍 SAMPLE_DATA:   weekday_short_ru = 'ПТ'
+🔍 SAMPLE_DATA:   weekday_short_en = 'Fri'
+🔍 SAMPLE_DATA:   weekday_full_ru = 'Пятница'
+🔍 SAMPLE_DATA:   weekday_full_en = 'Friday'
+🔍 SAMPLE_DATA:   year_short = '25'
+🔍 SAMPLE_DATA:   year_full = '2025'
+🔍 SAMPLE_DATA:   candidate_first_name = 'Test'
+🔍 SAMPLE_DATA:   candidate_last_name = 'Preboarding'
+🔍 SAMPLE_DATA:   candidate_middle_name = ''
+🔍 SAMPLE_DATA:   candidate_id = '75458119'
+🔍 SAMPLE_DATA:   vacancy_title = 'Frontend Engineer (React)'
+🔍 SAMPLE_DATA:   vacancy_id = '3936868'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=text, value='automations'
+🔍 FOLDER_GEN: Text элемент: 'automations'
+🔍 FOLDER_GEN: Добавлена папка: 'automations'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[vacancy_title]'
+🔍 FOLDER_GEN: Mixed элемент: '[vacancy_title]' -> 'Frontend Engineer (React)'
+🔍 FOLDER_GEN: Добавлена папка: 'Frontend Engineer (React)'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[year_full]'
+🔍 FOLDER_GEN: Mixed элемент: '[year_full]' -> '2025'
+🔍 FOLDER_GEN: Добавлена папка: '2025'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[month_num] [month_full_ru]'
+🔍 FOLDER_GEN: Mixed элемент: '[month_num] [month_full_ru]' -> '11 ноябрь'
+🔍 FOLDER_GEN: Добавлена папка: '11 ноябрь'
+🔍 FOLDER_GEN: Обрабатываем элемент: type=mixed, value='[day] [month_full_ru] ([weekday_short_ru])'
+🔍 FOLDER_GEN: Mixed элемент: '[day] [month_full_ru] ([weekday_short_ru])' -> '28 ноябрь (ПТ)'
+🔍 FOLDER_GEN: Добавлена папка: '28 ноябрь (ПТ)'
+НАСТРОЙКИ ПАПОК: Структура папок: automations/Frontend Engineer (React)/2025/11 ноябрь/28 ноябрь (ПТ)
+НАСТРОЙКИ ПАПОК: База названия файла: Preboarding Test
+РЕАЛЬНЫЕ ДАННЫЕ: Создана структура папок: automations/Frontend Engineer (React)/2025/11 ноябрь/28 ноябрь (ПТ)
+РЕАЛЬНЫЕ ДАННЫЕ: ID папки: 11sHb1qk6GoA4-reNA-1_b4qMilzC48QR
+РЕАЛЬНЫЕ ДАННЫЕ: ID файла: 1OBiiVMTTDaRaEMuLJel5d7m8iz8QkwCPMOY6kzd9ayk
+РЕАЛЬНЫЕ ДАННЫЕ: Ссылка: https://docs.google.com/spreadsheets/d/1OBiiVMTTDaRaEMuLJel5d7m8iz8QkwCPMOY6kzd9ayk/edit
+РЕАЛЬНЫЕ ДАННЫЕ: Название файла: Preboarding Test | Scorecard FE
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"account":291341,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"account":291341,"is_archived":false,"search_field":"string_field_7",...
+🔍 Найдено поле Scorecard в схеме: oMvUCpzbKSzzhPLUCwmGW = Scorecard (тип: url)
+📝 Обновляем поле Scorecard oMvUCpzbKSzzhPLUCwmGW со ссылкой: https://docs.google.com/spreadsheets/d/1OBiiVMTTDaRaEMuLJel5d7m8iz8QkwCPMOY6kzd9ayk/edit
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/75458119/questionary с данными {'oMvUCpzbKSzzhPLUCwmGW': 'https://docs.google.com/spreadsheets/d/1OBiiVMTTDaRaEMuLJel5d7m8iz8QkwCPMOY6kzd9ayk/edit'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/75458119/questionary
+📤 JSON данные: {'oMvUCpzbKSzzhPLUCwmGW': 'https://docs.google.com/spreadsheets/d/1OBiiVMTTDaRaEMuLJel5d7m8iz8QkwCPMOY6kzd9ayk/edit'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1OBiiVMTTDaRaEMuLJel5d7m8iz8QkwCPMOY6kzd9ayk/edit","CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":null,"n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":null,"DoOdxUlwbb0nILXQGBDaT":null,"ICXvQX-WT9eleJW-QlVa9":null,"RMLxfRH9raQtHItMcdeq-":null,"X6qYbAqZnb0q1R3VMumbH":null,"bfPBtccRoL5s_7xyLXuia":null}...
+🗑️ Сброшен кэш для кандидата: 75458119
+✅ Поле Scorecard обновлено со ссылкой на scorecard
+✅ Поле 'Scorecard' в Huntflow обновлено со ссылкой на scorecard
+🔍 Создаем календарное событие...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75458119WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[28/Oct/2025 12:20:57] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3921
+
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Test","last_name":"Preboarding","middle_name":null,"money":null,"phone":null,"email":null,"skype":null,"position":null,"company":null,"photo":null,"id":75458119,"account":291341,"photo_url":null,"birthday":null,"created":"2025-10-26T19:54:17+03:00","tags":[],"links":[{"id":70904559,"status":186507,"updated":"2025-10-27T18:32:00+03:00","changed":"2025-10-27T18:32:00+03:00","vacancy":3936868}],"external":[{"id":75287022,"auth_type":"NATIVE","account_source":null,"updated":"2025-10-2...
+💾 Сохранены данные кандидата в кэш: 75458119
+❌ Email кандидата не найден в Huntflow
+📅 Сгенерировано название события: JS Tech Screening | Preboarding Test
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 40 минут
+⏱️ Используем длительность скринингов: 40 минут
+📝 Найден телеграм рекрутера: talent_softnetix
+📝 Ссылка на телеграм: https://t.me/talent_softnetix
+📝 Сопроводительный текст: Попрошу быть с камерой. Технический скрининг будет с секцией лайв-кодинга (нужно будет шарить экран)...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔗 Сгенерирована ссылка на Huntflow (prod): https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/75458119
+👥 Добавляем пользователя в участники: andrei.golubenko@softnetix.io
+🔍 Время с timezone: 2025-11-28 14:00:00+03:00
+🔍 Время начала (UTC): 2025-11-28 11:00:00+00:00
+🔍 Время окончания (UTC): 2025-11-28 11:40:00+00:00
+🔍 Строка времени начала: 2025-11-28T11:00:00
+🔍 Строка времени окончания: 2025-11-28T11:40:00
+📅 Создаем событие: JS Tech Screening | Preboarding Test
+📅 Время начала: 2025-11-28T11:00:00
+📅 Время окончания: 2025-11-28T11:40:00
+📅 Данные события: {'summary': 'JS Tech Screening | Preboarding Test', 'description': 'Попрошу быть с камерой. Технический скрининг будет с секцией лайв-кодинга (нужно будет шарить экран). Если возникнут вопросы - на связи в телеграм https://t.me/talent_softnetix\n\nДля интервьюеров:\nhttps://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/75458119', 'location': '', 'start': {'dateTime': '2025-11-28T11:00:00', 'timeZone': 'UTC'}, 'end': {'dateTime': '2025-11-28T11:40:00', 'timeZone': 'UTC'}, 'attendees': [{'email': 'andrei.golubenko@softnetix.io'}], 'conferenceData': {'createRequest': {'requestId': 'meet-202511281400', 'conferenceSolutionKey': {'type': 'hangoutsMeet'}}}, 'reminders': {'useDefault': False, 'overrides': [{'method': 'email', 'minutes': 1440}, {'method': 'popup', 'minutes': 10}]}}
+✅ Событие создано: JS Tech Screening | Preboarding Test (2025-11-28 14:00:00+03:00 - 2025-11-28 14:40:00+03:00)
+⏱️ Длительность: 40 минут
+🔗 Ссылка на событие: https://www.google.com/calendar/event?eid=ODU0MTJwNjNxcW10aGxxamtza2x1dGlla28gYW5kcmVpLmdvbHViZW5rb0Bzb2Z0bmV0aXguaW8
+🔗 Google Meet ссылка: https://meet.google.com/jiu-qaph-hcn
+✅ Календарное событие создано: JS Tech Screening | Preboarding Test
+🔗 Ссылка на событие: https://www.google.com/calendar/event?eid=ODU0MTJwNjNxcW10aGxxamtza2x1dGlla28gYW5kcmVpLmdvbHViZW5rb0Bzb2Z0bmV0aXguaW8
+🔍 Результат создания календарного события: True
+[TECH_SCREENING_UPDATE] Календарное событие создано успешно, обновляем статус...
+[TECH_SCREENING] Начинаем обновление статуса кандидата 75458119
+[TECH_SCREENING] Импорты выполнены успешно
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+[TECH_SCREENING] Получен account_id: 291341
+🔍 TECH_SCREENING: Используем статус из вакансии: 186503
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 40 минут
+[TECH_SCREENING] Кандидат: 75458119 -> Tech Screening
+[TECH_SCREENING] Комментарий: Пятница, 28 ноября⋅14:00–14:40
+[TECH_SCREENING] Используем статус ID: 186503
+[TECH_SCREENING] Вызываем update_applicant_status...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75458119
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Test","last_name":"Preboarding","middle_name":null,"money":null,"phone":null,"email":null,"skype":null,"position":null,"company":null,"photo":null,"id":75458119,"account":291341,"photo_url":null,"birthday":null,"created":"2025-10-26T19:54:17+03:00","tags":[],"links":[{"id":70904559,"status":186507,"updated":"2025-10-27T18:32:00+03:00","changed":"2025-10-27T18:32:00+03:00","vacancy":3936868}],"external":[{"id":75287022,"auth_type":"NATIVE","account_source":null,"updated":"2025-10-2...
+DEBUG: Обновляем статус кандидата 75458119 на статус 186503 для вакансии 3936868 с комментарием: Пятница, 28 ноября⋅14:00–14:40
+DEBUG: Пробуем эндпоинт /accounts/291341/applicants/75458119/vacancy с данными {'vacancy': 3936868, 'status': 186503, 'comment': 'Пятница, 28 ноября⋅14:00–14:40'}
+🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/applicants/75458119/vacancy
+📤 JSON данные: {'vacancy': 3936868, 'status': 186503, 'comment': 'Пятница, 28 ноября⋅14:00–14:40'}
+📥 Ответ API: 200
+📥 Тело ответа: {"id":70904559,"changed":"2025-10-28T12:20:59+03:00","vacancy":3936868,"status":186503,"rejection_reason":null}...
+DEBUG: Статус успешно обновлен через /accounts/291341/applicants/75458119/vacancy
+🗑️ Сброшен кэш для кандидата: 75458119
+[TECH_SCREENING] Результат update_applicant_status: {'id': 70904559, 'changed': '2025-10-28T12:20:59+03:00', 'vacancy': 3936868, 'status': 186503, 'rejection_reason': None}
+[TECH_SCREENING] Успешно обновлен статус на Tech Screening
+[TECH_SCREENING_UPDATE] Статус обновлен: True
+✅ COMBINED_FORM_SAVE: Структура Google Drive создана
+🔍 COMBINED_FORM_SAVE: Обрабатываем scorecard...
+РЕАЛЬНЫЕ ДАННЫЕ: Уровень кандидата не указан, оставляем все листы с уровнями
+РЕАЛЬНЫЕ ДАННЫЕ: Сохраняем лист с уровнем: Junior
+РЕАЛЬНЫЕ ДАННЫЕ: Сохраняем лист с уровнем: Junior+
+РЕАЛЬНЫЕ ДАННЫЕ: Сохраняем лист с уровнем: Middle
+РЕАЛЬНЫЕ ДАННЫЕ: Сохраняем лист с уровнем: Middle+
+РЕАЛЬНЫЕ ДАННЫЕ: Сохраняем лист с уровнем: Senior
+РЕАЛЬНЫЕ ДАННЫЕ: Обработка scorecard завершена
+РЕАЛЬНЫЕ ДАННЫЕ: Сохранены листы: all, score
+РЕАЛЬНЫЕ ДАННЫЕ: Удалены листы: 
+✅ COMBINED_FORM_SAVE: Scorecard обработан
+🔍 COMBINED_FORM_SAVE: Добавляем метку интервьюера в Huntflow...
+🔍 INTERVIEWER_TAG: Начинаем добавление метки интервьюера...[28/Oct/2025 12:21:00] "POST /google-oauth/chat/34/ajax/ HTTP/1.1" 200 1153
+[28/Oct/2025 12:21:26] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 275817
+[28/Oct/2025 12:21:26] "GET /static/js/chat_actions.js HTTP/1.1" 304 0
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
+
+ℹ️ INTERVIEWER_TAG: Нет интервьюера для добавления метки в Huntflow
+✅ COMBINED_FORM_SAVE: Метка интервьюера добавлена
+✅ COMBINED_FORM_SAVE: Инвайт сохранен с ID: 305
+🔍 CHAT AJAX: Ошибка сохранения инвайта: 'Invite' object has no attribute 'vacancy_name'
+🔍 CHAT AJAX: Последнее сообщение: Система - 28.10.2025 09:21
+🔍 CHAT AJAX: Рендерим HTML для сообщения типа: system
+🔍 CHAT AJAX: HTML сгенерирован, длина: 861
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 34 событий
+🔍 DEBUG CHAT: Получено 34 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 34 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кагукин Вадим в 2025-10-28T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Interview | Богданович Александр в 2025-10-28T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Волков Вадим в 2025-10-28T14:45:00+03:00
 🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
 📥 Ответ API: 200
 📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
 DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
 Watching for file changes with StatReloader
-[26/Oct/2025 17:34:33] "GET /gemini/chat/30/ HTTP/1.1" 200 135449
-[26/Oct/2025 17:34:33] "GET /static/css/enhanced_chat.css HTTP/1.1" 200 9887
-[26/Oct/2025 17:34:33] "GET /static/images/integrations/gemini.svg HTTP/1.1" 200 496
-[26/Oct/2025 17:34:57] "GET /gemini/chat/30/ HTTP/1.1" 200 135449
-[26/Oct/2025 17:34:57] "GET /static/css/enhanced_chat.css HTTP/1.1" 200 10687
-[26/Oct/2025 17:34:57] "GET /static/images/integrations/gemini.svg HTTP/1.1" 200 496
-[26/Oct/2025 17:34:57] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
-[26/Oct/2025 17:34:57] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
-[26/Oct/2025 17:34:57] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
-[26/Oct/2025 17:34:57] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
-[26/Oct/2025 17:34:57] "GET /static/css/all.min.css HTTP/1.1" 200 102025
-[26/Oct/2025 17:34:57] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
-[26/Oct/2025 17:34:57] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
-[26/Oct/2025 17:34:57] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
-[26/Oct/2025 17:34:57] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
-[26/Oct/2025 17:34:57] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
-[26/Oct/2025 17:35:15] "GET /gemini/chat/ HTTP/1.1" 302 0
-[26/Oct/2025 17:37:21] "GET /gemini/chat/ HTTP/1.1" 302 0
-[26/Oct/2025 17:37:27] "GET /gemini/chat/30/ HTTP/1.1" 200 136067
-[26/Oct/2025 17:37:27] "GET /static/css/enhanced_chat.css HTTP/1.1" 200 10979
-[26/Oct/2025 17:37:27] "GET /static/img/logo-light.png HTTP/1.1" 304 0
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 28, 2025 - 12:24:02
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[28/Oct/2025 12:25:32] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 252686
+[28/Oct/2025 12:25:32] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[28/Oct/2025 12:25:32] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[28/Oct/2025 12:25:32] "GET /static/js/vacancy-slots.js HTTP/1.1" 200 38296
+[28/Oct/2025 12:25:32] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[28/Oct/2025 12:25:32] "GET /static/js/chat_actions.js HTTP/1.1" 200 11020
+[28/Oct/2025 12:25:32] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[28/Oct/2025 12:25:32] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[28/Oct/2025 12:25:32] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[28/Oct/2025 12:25:32] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[28/Oct/2025 12:25:32] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[28/Oct/2025 12:25:32] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[28/Oct/2025 12:25:32] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[28/Oct/2025 12:25:32] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 28, 2025 - 12:24:20
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 34 событий
+🔍 DEBUG CHAT: Получено 34 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 34 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кагукин Вадим в 2025-10-28T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Interview | Богданович Александр в 2025-10-28T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Волков Вадим в 2025-10-28T14:45:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 CHAT AJAX HANDLER: Получен запрос на session_id=34
+🔍 CHAT AJAX HANDLER: Метод=POST, Content-Type=application/json
+🔍 CHAT AJAX: Анализируем сообщение: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186507/id/75458119
+ПТ 14'
+🔍 CHAT AJAX: action_type_from_js: 'hrscreening'
+🔍 CHAT AJAX: Используем тип действия из JS: hrscreening
+🔍 CHAT AJAX: ФИНАЛЬНЫЙ action_type: hrscreening
+🔍 HR_SCREENING_FORM_SAVE: Начинаем сохранение HR-скрининга...
+🔍 HR_SCREENING_FORM_SAVE: HR-скрининг создан, user: andrei.golubenko
+🔍 HR_SCREENING_FORM_SAVE: Извлекаем URL...
+✅ HR_SCREENING_FORM_SAVE: URL извлечен: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186507/id/75458119
+🔍 HR_SCREENING_FORM_SAVE: Парсим URL...
+✅ HR_SCREENING_FORM_SAVE: URL распарсен успешно
+🔍 HR_SCREENING_FORM_SAVE: Получаем информацию о кандидате...
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Начинаем получение информации о кандидате 75458119
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Используем аккаунт 291341
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Запрашиваем данные кандидата 75458119 из аккаунта 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75458119
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Test","last_name":"Preboarding","middle_name":null,"money":null,"phone":null,"email":null,"skype":null,"position":null,"company":null,"photo":null,"id":75458119,"account":291341,"photo_url":null,"birthday":null,"created":"2025-10-26T19:54:17+03:00","tags":[],"links":[{"id":70904559,"status":186503,"updated":"2025-10-28T12:20:59+03:00","changed":"2025-10-28T12:20:59+03:00","vacancy":3936868}],"external":[{"id":75287022,"auth_type":"NATIVE","account_source":null,"updated":"2025-10-2...
+💾 Сохранены данные кандидата в кэш: 75458119
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Получены данные кандидата: {'first_name': 'Test', 'last_name': 'Preboarding', 'middle_name': None, 'money': None, 'phone': None, 'email': None, 'skype': None, 'position': None, 'company': None, 'photo': None, 'id': 75458119, 'account': 291341, 'photo_url': None, 'birthday': None, 'created': '2025-10-26T19:54:17+03:00', 'tags': [], 'links': [{'id': 70904559, 'status': 186503, 'updated': '2025-10-28T12:20:59+03:00', 'changed': '2025-10-28T12:20:59+03:00', 'vacancy': 3936868}], 'external': [{'id': 75287022, 'auth_type': 'NATIVE', 'account_source': None, 'updated': '2025-10-26T19:54:17+03:00'}], 'agreement': None, 'doubles': [], 'social': []}
+✅ HR_SCREENING_GET_CANDIDATE_INFO: Информация о кандидате получена: Test Preboarding
+✅ HR_SCREENING_FORM_SAVE: Информация о кандидате получена
+🔍 HR_SCREENING_FORM_SAVE: Получаем информацию о вакансии...
+🔍 HR_SCREENING_GET_VACANCY_INFO: Начинаем получение информации о вакансии 3936868
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_VACANCY_INFO: Используем аккаунт 291341
+🔍 HR_SCREENING_GET_VACANCY_INFO: Запрашиваем данные вакансии 3936868 из аккаунта 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies/3936868
+📥 Ответ API: 200
+📥 Тело ответа: {"account_division":333519,"account_region":null,"position":"Frontend Engineer","company":null,"money":"600-3500","priority":1,"hidden":false,"state":"OPEN","id":3936868,"created":"2025-03-19T12:01:01+03:00","additional_fields_list":[],"multiple":false,"parent":null,"account_vacancy_status_group":null,"updated":"2025-10-23T16:52:07+03:00","body":"<p><strong>Описание проектов:</strong></p><p>Проект в области спортивной статистики, киберспорта, гемблинга. Кодовая база новая, legacy отсутствует.</p...
+💾 Сохранены данные вакансии в кэш: 3936868
+🔍 HR_SCREENING_GET_VACANCY_INFO: Получены данные вакансии: {'account_division': 333519, 'account_region': None, 'position': 'Frontend Engineer', 'company': None, 'money': '600-3500', 'priority': 1, 'hidden': False, 'state': 'OPEN', 'id': 3936868, 'created': '2025-03-19T12:01:01+03:00', 'additional_fields_list': [], 'multiple': False, 'parent': None, 'account_vacancy_status_group': None, 'updated': '2025-10-23T16:52:07+03:00', 'body': '<p><strong>Описание проектов:</strong></p><p>Проект в области спортивной статистики, киберспорта, гемблинга. Кодовая база новая, legacy отсутствует.</p><p>Разработка проектов идёт на <strong>React</strong>/<strong>Redux</strong> с использование Redux-Epics. Используется GraphqQL, Websocket, RxJS, WebGL.</p><p>Проекты высоконагруженные, требуют внимания к производительности, необходимо обрабатывать и отображать большое количество данных в реальном времени.</p><p>Для CI/CD используется GitLab.</p>', 'requirements': '<p><strong>Что нужно знать/уметь/иметь?</strong></p><ul><li>Опыт коммерческой разработки от 1-ого года;</li><li>JavaScript (ES6), Promise, ES6 Generators;</li><li>Flux архитектуру.</li></ul><p>\u200b\u200b\u200b\u200b\u200b<strong>Преимуществами будут:</strong></p><ul><li>Typescript;</li><li>React, Redux, React-router , Redux-Saga/Redux-Epic (RxJs), Reselect, Webpack/Rollup;</li><li>Глубокое понимание асинхронного программирования (Callback, Event Loop, Promise, Observable);</li><li>Понимание основ функционального программирования;</li><li>WebGL, PixiJS, Babylon.js;</li><li>Опыт в game dev.</li></ul>', 'conditions': '<ul><li>Ежегодные Performance Review и частые пересмотры ЗП.</li><li>Чёткий план карьерного и профессионального роста.</li><li>Комфортный офис в центре Минска (ст.м. Немига).</li><li>Официальное трудоустройство по ТК РБ.</li><li>Полностью оплачиваемые больничные.</li><li>Отпуск 28 дней, возможность брать отпуск по частям.</li><li>Корпоративные курсы английского языка.</li></ul>', 'files': [], 'source': None, 'blocks': []}Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/forms.py", line 698, in save
+    raise forms.ValidationError(f'Ошибка анализа с Gemini: {message}')
+django.core.exceptions.ValidationError: ['Ошибка анализа с Gemini: Ошибка Gemini API: Неизвестная ошибка']
+[28/Oct/2025 12:25:46] "POST /google-oauth/chat/34/ajax/ HTTP/1.1" 200 1362
+[28/Oct/2025 12:26:03] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 256239
+[28/Oct/2025 12:26:03] "GET /static/js/chat_actions.js HTTP/1.1" 304 0
+[28/Oct/2025 12:28:04] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 253900
+[28/Oct/2025 12:28:04] "GET /static/js/chat_actions.js HTTP/1.1" 304 0
+[28/Oct/2025 12:28:04] "GET /static/js/copy-buttons.js HTTP/1.1" 200 4965
+[28/Oct/2025 12:28:07] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 253900
+[28/Oct/2025 12:28:07] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[28/Oct/2025 12:28:07] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[28/Oct/2025 12:28:07] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[28/Oct/2025 12:28:07] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[28/Oct/2025 12:28:07] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[28/Oct/2025 12:28:07] "GET /static/js/copy-buttons.js HTTP/1.1" 200 4965
+[28/Oct/2025 12:28:07] "GET /static/js/chat_actions.js HTTP/1.1" 200 11020
+[28/Oct/2025 12:28:07] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[28/Oct/2025 12:28:07] "GET /static/js/vacancy-slots.js HTTP/1.1" 200 38590
+[28/Oct/2025 12:28:07] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[28/Oct/2025 12:28:07] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[28/Oct/2025 12:28:07] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[28/Oct/2025 12:28:07] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[28/Oct/2025 12:28:07] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[28/Oct/2025 12:28:12] "GET /google-oauth/chat/38/?vacancy_id=25 HTTP/1.1" 200 224776
+[28/Oct/2025 12:28:12] "GET /static/js/copy-buttons.js HTTP/1.1" 304 0
+[28/Oct/2025 12:28:12] "GET /static/js/vacancy-slots.js HTTP/1.1" 304 0
+
+✅ HR_SCREENING_GET_VACANCY_INFO: Информация о вакансии получена: Frontend Engineer
+✅ HR_SCREENING_FORM_SAVE: Информация о вакансии получена
+🤖 HR_SCREENING_FORM_SAVE: Анализируем данные с помощью Gemini AI...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 Получен account_id из API: 291341
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Получаем схему полей кандидата
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Используем аккаунт 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"search_field":"string_field_1","disableAutofill":true,"is_archived":false,"account":291341},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"search_field":"string_field_7","placeholder":"","is_archived":false,...
+✅ HR_SCREENING_GET_FIELDS_SCHEMA: Схема полей получена: 13 полей
+❌ HR_SCREENING_FORM_SAVE: Ошибка при анализе с Gemini: Ошибка Gemini API: Неизвестная ошибка
+❌ HR_SCREENING_FORM_SAVE: Исключение в save(): ['Ошибка анализа с Gemini: Ошибка Gemini API: Неизвестная ошибка']
+🔍 CHAT AJAX: Ошибка сохранения HR: ['Ошибка анализа с Gemini: Ошибка Gemini API: Неизвестная ошибка']
+🔍 CHAT AJAX: Последнее сообщение: Система - 28.10.2025 09:25
+🔍 CHAT AJAX: Рендерим HTML для сообщения типа: system
+🔍 CHAT AJAX: HTML сгенерирован, длина: 875
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 34 событий
+🔍 DEBUG CHAT: Получено 34 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 34 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кагукин Вадим в 2025-10-28T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Interview | Богданович Александр в 2025-10-28T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Волков Вадим в 2025-10-28T14:45:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 34 событий
+🔍 DEBUG CHAT: Получено 34 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 34 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кагукин Вадим в 2025-10-28T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Interview | Богданович Александр в 2025-10-28T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Волков Вадим в 2025-10-28T14:45:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 34 событий
+🔍 DEBUG CHAT: Получено 34 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 34 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кагукин Вадим в 2025-10-28T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Interview | Богданович Александр в 2025-10-28T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Волков Вадим в 2025-10-28T14:45:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 34 событий
+🔍 DEBUG CHAT: Получено 34 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 34 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кагукин Вадим в 2025-10-28T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Interview | Богданович Александр в 2025-10-28T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Волков Вадим в 2025-10-28T14:45:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 34 событий
+🔍 DEBUG CHAT: Получено 34 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c[28/Oct/2025 12:30:38] "GET /google-oauth/chat/38/?vacancy_id=25 HTTP/1.1" 200 224821
+[28/Oct/2025 12:30:38] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[28/Oct/2025 12:30:38] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[28/Oct/2025 12:30:38] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[28/Oct/2025 12:30:38] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[28/Oct/2025 12:30:38] "GET /static/js/chat_actions.js HTTP/1.1" 200 11020
+[28/Oct/2025 12:30:38] "GET /static/js/copy-buttons.js HTTP/1.1" 200 4994
+[28/Oct/2025 12:30:38] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[28/Oct/2025 12:30:38] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[28/Oct/2025 12:30:38] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[28/Oct/2025 12:30:38] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[28/Oct/2025 12:30:38] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[28/Oct/2025 12:30:38] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[28/Oct/2025 12:30:38] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[28/Oct/2025 12:30:55] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3921
+[28/Oct/2025 12:31:15] "GET /google-oauth/chat/38/?vacancy_id=1 HTTP/1.1" 200 754459
+[28/Oct/2025 12:31:15] "GET /static/js/copy-buttons.js HTTP/1.1" 200 4994
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[28/Oct/2025 12:31:15] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3921
+[28/Oct/2025 19:25:06] "GET /google-oauth/chat/38/?vacancy_id=1 HTTP/1.1" 200 750608
+[28/Oct/2025 19:25:06] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[28/Oct/2025 19:25:06] "GET /static/js/copy-buttons.js HTTP/1.1" 304 0
+[28/Oct/2025 19:25:06] "GET /static/js/chat_actions.js HTTP/1.1" 304 0
+[28/Oct/2025 20:13:37] "POST /google-oauth/invites/304/invitation-text/ HTTP/1.1" 200 1082
+[28/Oct/2025 21:32:37] "GET /hiring-plans/ HTTP/1.1" 200 167902
+WARNING Not Found: /admin/google_oauth/patternsettings/1/change/
+Not Found: /admin/google_oauth/patternsettings/1/change/
+[28/Oct/2025 21:33:02] "GET /admin/google_oauth/patternsettings/1/change/ HTTP/1.1" 404 14540
+WARNING Not Found: /favicon.ico
+Not Found: /favicon.ico
+[28/Oct/2025 21:33:03] "GET /favicon.ico HTTP/1.1" 404 3810
+WARNING Not Found: /admin/google_oauth/patternsettings/1/change/
+Not Found: /admin/google_oauth/patternsettings/1/change/
+[28/Oct/2025 21:33:05] "GET /admin/google_oauth/patternsettings/1/change/ HTTP/1.1" 404 14540
+[28/Oct/2025 21:38:36] "GET /google-oauth/chat/38/?vacancy_id=1 HTTP/1.1" 200 745448
+[28/Oct/2025 21:38:36] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[28/Oct/2025 21:38:36] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[28/Oct/2025 21:38:36] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[28/Oct/2025 21:38:36] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[28/Oct/2025 21:38:36] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[28/Oct/2025 21:38:36] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[28/Oct/2025 21:38:36] "GET /static/js/chat_actions.js HTTP/1.1" 200 11020
+[28/Oct/2025 21:38:36] "GET /static/js/vacancy-slots.js HTTP/1.1" 200 40293
+[28/Oct/2025 21:38:36] "GET /static/js/copy-buttons.js HTTP/1.1" 200 4994
+[28/Oct/2025 21:38:36] "GET /static/js/meeting-type-switcher.js HTTP/1.1" 200 2023
+[28/Oct/2025 21:38:36] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[28/Oct/2025 21:38:36] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[28/Oct/2025 21:38:36] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[28/Oct/2025 21:38:36] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[28/Oct/2025 21:38:37] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[28/Oct/2025 21:38:55] "GET /google-oauth/chat/38/?vacancy_id=1 HTTP/1.1" 200 745448
+[28/Oct/2025 21:38:55] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[28/Oct/2025 21:38:55] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[28/Oct/2025 21:38:55] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[28/Oct/2025 21:38:55] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[28/Oct/2025 21:38:55] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[28/Oct/2025 21:38:55] "GET /static/js/chat_actions.js HTTP/1.1" 200 11020
+[28/Oct/2025 21:38:55] "GET /static/js/meeting-type-switcher.js HTTP/1.1" 200 2023
+[28/Oct/2025 21:38:55] "GET /static/js/copy-buttons.js HTTP/1.1" 200 4994
+[28/Oct/2025 21:38:55] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[28/Oct/2025 21:38:55] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[28/Oct/2025 21:38:55] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[28/Oct/2025 21:38:55] "GET /static/js/vacancy-slots.js HTTP/1.1" 200 40293
+[28/Oct/2025 21:38:55] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[28/Oct/2025 21:38:55] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[28/Oct/2025 21:38:56] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[28/Oct/2025 21:42:18] "GET /google-oauth/chat/38/?vacancy_id=1 HTTP/1.1" 200 846645
+[28/Oct/2025 21:42:18] "GET /static/js/vacancy-slots.js HTTP/1.1" 304 0
+
+🔍 DEBUG CHAT: Передаем 34 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кагукин Вадим в 2025-10-28T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Interview | Богданович Александр в 2025-10-28T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Волков Вадим в 2025-10-28T14:45:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 34 событий
+🔍 DEBUG CHAT: Получено 34 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 34 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кагукин Вадим в 2025-10-28T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Interview | Богданович Александр в 2025-10-28T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Волков Вадим в 2025-10-28T14:45:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 31 событий
+🔍 DEBUG CHAT: Получено 31 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 31 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Rykunov Dmitry в 2025-10-29T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: No-meet's в 2025-10-29T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | BYTSKO ALEXEY в 2025-10-29T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+✅ Найдена длительность скринингов для вакансии 'Frontend Engineer (React)': 40 минут
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 31 событий
+🔍 DEBUG CHAT: Получено 31 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 31 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Rykunov Dmitry в 2025-10-29T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: No-meet's в 2025-10-29T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | BYTSKO ALEXEY в 2025-10-29T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 31 событий
+🔍 DEBUG CHAT: Получено 31 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 31 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Rykunov Dmitry в 2025-10-29T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: No-meet's в 2025-10-29T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | BYTSKO ALEXEY в 2025-10-29T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 31 событий
+🔍 DEBUG CHAT: Получено 31 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 31 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Rykunov Dmitry в 2025-10-29T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: No-meet's в 2025-10-29T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | BYTSKO ALEXEY в 2025-10-29T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 31 событий
+🔍 DEBUG CHAT: Получено 31 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 31 событий в шаблон[28/Oct/2025 21:42:37] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 266650
+[28/Oct/2025 21:43:25] "GET /hiring-plans/ HTTP/1.1" 200 167902
+[28/Oct/2025 21:44:47] "POST /google-oauth/api/send-message/ HTTP/1.1" 200 218
+[28/Oct/2025 21:44:47] "GET /google-oauth/chat/38/?csrfmiddlewaretoken=Gemjg7KSQGYZIZ7zb76hCUHjH8CEYKY2gnxFLT5yQhVuhNjdqRx9xnySUK6cSbcl&session_id=34&message=&action_type=hrscreening HTTP/1.1" 302 0
+[28/Oct/2025 21:44:48] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 270518
+[28/Oct/2025 21:44:48] "GET /static/js/meeting-type-switcher.js HTTP/1.1" 304 0
+[28/Oct/2025 21:44:48] "GET /static/js/vacancy-slots.js HTTP/1.1" 304 0
+[28/Oct/2025 21:44:58] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 270518
+[28/Oct/2025 21:44:59] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[28/Oct/2025 21:44:59] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[28/Oct/2025 21:44:59] "GET /static/js/meeting-type-switcher.js HTTP/1.1" 200 2023
+[28/Oct/2025 21:44:59] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[28/Oct/2025 21:44:59] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[28/Oct/2025 21:44:59] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[28/Oct/2025 21:44:59] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[28/Oct/2025 21:44:59] "GET /static/js/vacancy-slots.js HTTP/1.1" 200 40293
+[28/Oct/2025 21:44:59] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[28/Oct/2025 21:44:59] "GET /static/js/chat_actions.js HTTP/1.1" 200 11020
+[28/Oct/2025 21:44:59] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[28/Oct/2025 21:44:59] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[28/Oct/2025 21:44:59] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[28/Oct/2025 21:44:59] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[28/Oct/2025 21:46:15] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 270446
+[28/Oct/2025 21:46:16] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[28/Oct/2025 21:46:16] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[28/Oct/2025 21:46:16] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[28/Oct/2025 21:46:16] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[28/Oct/2025 21:46:16] "GET /static/js/chat_actions.js HTTP/1.1" 200 11020
+[28/Oct/2025 21:46:16] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[28/Oct/2025 21:46:16] "GET /static/js/vacancy-slots.js HTTP/1.1" 200 40293
+[28/Oct/2025 21:46:16] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[28/Oct/2025 21:46:16] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[28/Oct/2025 21:46:16] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[28/Oct/2025 21:46:16] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[28/Oct/2025 21:46:16] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[28/Oct/2025 21:46:16] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[28/Oct/2025 21:46:25] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 270518
+[28/Oct/2025 21:46:25] "GET /static/js/meeting-type-switcher.js HTTP/1.1" 304 0
+[28/Oct/2025 21:46:55] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 270446
+[28/Oct/2025 21:46:55] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[28/Oct/2025 21:46:55] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[28/Oct/2025 21:46:55] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[28/Oct/2025 21:46:55] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[28/Oct/2025 21:46:55] "GET /static/js/chat_actions.js HTTP/1.1" 200 11020
+[28/Oct/2025 21:46:55] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[28/Oct/2025 21:46:55] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[28/Oct/2025 21:46:55] "GET /static/js/vacancy-slots.js HTTP/1.1" 200 40293
+[28/Oct/2025 21:46:55] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[28/Oct/2025 21:46:55] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[28/Oct/2025 21:46:55] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[28/Oct/2025 21:46:55] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[28/Oct/2025 21:46:55] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Rykunov Dmitry в 2025-10-29T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: No-meet's в 2025-10-29T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | BYTSKO ALEXEY в 2025-10-29T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+❌ CHAT AJAX: Общая ошибка: name 'HRScreeningCombinedForm' is not defined
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 31 событий
+🔍 DEBUG CHAT: Получено 31 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 31 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Rykunov Dmitry в 2025-10-29T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: No-meet's в 2025-10-29T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | BYTSKO ALEXEY в 2025-10-29T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 31 событий
+🔍 DEBUG CHAT: Получено 31 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 31 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Rykunov Dmitry в 2025-10-29T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: No-meet's в 2025-10-29T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | BYTSKO ALEXEY в 2025-10-29T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 31 событий
+🔍 DEBUG CHAT: Получено 31 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 31 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Rykunov Dmitry в 2025-10-29T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: No-meet's в 2025-10-29T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | BYTSKO ALEXEY в 2025-10-29T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 31 событий
+🔍 DEBUG CHAT: Получено 31 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 31 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Rykunov Dmitry в 2025-10-29T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: No-meet's в 2025-10-29T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | BYTSKO ALEXEY в 2025-10-29T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 31 событий
+🔍 DEBUG CHAT: Получено 31 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 31 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Rykunov Dmitry в 2025-10-29T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: No-meet's в 2025-10-29T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | BYTSKO ALEXEY в 2025-10-29T14:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+📦 Получены события календаря из кэша: 31 событий
+🔍 DEBUG CHAT: Получено 31 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🔍 DEBUG CHAT: Передаем 31 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Rykunov Dmitry в 2025-10-29T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: No-meet's в 2025-10-29T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | BYTSKO ALEXEY в 2025-10-29T14:00:00+03:00[28/Oct/2025 21:47:02] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 270518
+[28/Oct/2025 21:47:02] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[28/Oct/2025 21:47:02] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[28/Oct/2025 21:47:02] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[28/Oct/2025 21:47:02] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[28/Oct/2025 21:47:02] "GET /static/js/vacancy-slots.js HTTP/1.1" 200 40293
+[28/Oct/2025 21:47:02] "GET /static/js/meeting-type-switcher.js HTTP/1.1" 200 2023
+[28/Oct/2025 21:47:02] "GET /static/js/chat_actions.js HTTP/1.1" 200 11020
+[28/Oct/2025 21:47:02] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[28/Oct/2025 21:47:02] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[28/Oct/2025 21:47:02] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[28/Oct/2025 21:47:02] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[28/Oct/2025 21:47:02] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[28/Oct/2025 21:47:02] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[28/Oct/2025 21:47:03] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[28/Oct/2025 21:48:52] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 270446
+[28/Oct/2025 21:48:52] "GET /static/js/vacancy-slots.js HTTP/1.1" 304 0
+[28/Oct/2025 21:49:41] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 270678
+[28/Oct/2025 21:49:58] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 272733
+[28/Oct/2025 21:49:58] "GET /static/js/vacancy-slots.js HTTP/1.1" 304 0
+[28/Oct/2025 21:52:07] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 272721
+[28/Oct/2025 21:52:07] "GET /static/js/vacancy-slots.js HTTP/1.1" 304 0
+[28/Oct/2025 21:52:13] "GET /google-oauth/chat/38/?vacancy_id=1 HTTP/1.1" 200 850907

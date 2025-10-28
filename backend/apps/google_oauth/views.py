@@ -7,13 +7,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.template.loader import render_to_string
 from datetime import datetime, timedelta
 from django.contrib.auth import get_user_model, login
 from django import forms
 from django.db import models
 import json
 
-from .models import GoogleOAuthAccount, ScorecardPathSettings, SlotsSettings
+from .models import GoogleOAuthAccount, ScorecardPathSettings, SlotsSettings, ChatSession, ChatMessage
 from logic.integration.oauth.oauth_services import (
     GoogleOAuthService, 
     GoogleCalendarService, 
@@ -3328,7 +3329,7 @@ def chat_ajax_handler(request, session_id):
                     
                     ChatMessage.objects.create(
                         session=chat_session,
-                        message_type='hrscreening',
+                        message_type='hr_screening',
                         content=response_content,
                         hr_screening=hr_screening,
                         metadata={
@@ -3387,7 +3388,7 @@ def chat_ajax_handler(request, session_id):
                             'action_type': 'invite',
                             'invite_id': invite.id,
                             'candidate_name': invite.candidate_name,
-                            'vacancy_name': invite.vacancy_name,
+                            'vacancy_name': invite.vacancy_title,
                             'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
                             'interviewer_email': invite.interviewer.email if invite.interviewer else None,
                             'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
@@ -3415,7 +3416,32 @@ def chat_ajax_handler(request, session_id):
                     content=error_content
                 )
         
-        return JsonResponse({'success': True})
+        # Получаем последнее сообщение из чата (то, что только что создали)
+        last_message = ChatMessage.objects.filter(session=chat_session).order_by('-created_at').first()
+        print(f"🔍 CHAT AJAX: Последнее сообщение: {last_message}")
+        
+        # Формируем HTML для нового сообщения
+        if last_message:
+            print(f"🔍 CHAT AJAX: Рендерим HTML для сообщения типа: {last_message.message_type}")
+            try:
+                message_html = render_to_string('google_oauth/partials/chat_message.html', {
+                    'message': last_message,
+                    'user': request.user
+                })
+                print(f"🔍 CHAT AJAX: HTML сгенерирован, длина: {len(message_html)}")
+                
+                return JsonResponse({
+                    "success": True,
+                    "message_html": message_html,
+                    "message_type": last_message.message_type,
+                    "message_id": last_message.id
+                })
+            except Exception as e:
+                print(f"🔍 CHAT AJAX: Ошибка рендеринга HTML: {str(e)}")
+                return JsonResponse({"success": True})
+        else:
+            print(f"🔍 CHAT AJAX: Сообщение не найдено")
+            return JsonResponse({"success": True})
         
     except json.JSONDecodeError:
         return JsonResponse({'success': False, 'error': 'Неверный JSON'})
@@ -3551,7 +3577,7 @@ def send_chat_message(request):
                             'action_type': 'invite',
                             'invite_id': invite.id,
                             'candidate_name': invite.candidate_name,
-                            'vacancy_name': invite.vacancy_name,
+                            'vacancy_name': invite.vacancy_title,
                             'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
                             'interviewer_email': invite.interviewer.email if invite.interviewer else None,
                             'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
@@ -3568,7 +3594,7 @@ def send_chat_message(request):
                             'action_type': 'invite',
                             'invite_id': invite.id,
                             'candidate_name': invite.candidate_name,
-                            'vacancy_name': invite.vacancy_name,
+                            'vacancy_name': invite.vacancy_title,
                             'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
                             'interviewer_email': invite.interviewer.email if invite.interviewer else None,
                             'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,

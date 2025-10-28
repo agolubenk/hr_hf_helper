@@ -711,57 +711,9 @@ function toggleSlotsCard() {
     }
 }
 
-// Функции для копирования
-function copyQuestions(country) {
-    const text = country === 'belarus' ? window.questionsBelarus : window.questionsPoland;
-    if (text) {
-        navigator.clipboard.writeText(text).then(() => {
-            showCopySuccess();
-        }).catch(err => {
-            console.error('Ошибка копирования:', err);
-        });
-    }
-}
-
-function showCopySuccess() {
-    // Показываем уведомление об успешном копировании
-    const notification = document.createElement('div');
-    notification.className = 'alert alert-success position-fixed';
-    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999;';
-    notification.innerHTML = '<i class="fas fa-check"></i> Скопировано в буфер обмена!';
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.remove();
-    }, 2000);
-}
-
-// Глобальные функции для копирования слотов
-window.copyVacancyLink = function(country) {
-    const link = country === 'belarus' ? window.vacancyLinkBelarus : window.vacancyLinkPoland;
-    if (link) {
-        navigator.clipboard.writeText(link).then(() => {
-            showCopySuccess();
-        }).catch(err => {
-            console.error('Ошибка копирования:', err);
-        });
-    }
-};
-
-window.copyWeekSlots = function(week) {
-    // Эта функция будет реализована в vacancy-slots.js
-    console.log('Копирование слотов недели:', week);
-};
-
-window.copyAllSlots = function() {
-    // Эта функция будет реализована в vacancy-slots.js
-    console.log('Копирование всех слотов');
-};
-
-window.refreshSlots = function() {
-    // Эта функция будет реализована в vacancy-slots.js
-    console.log('Обновление слотов');
-};
+// Функции копирования теперь находятся в copy-buttons.js
 </script>
+
+<script src="{% static 'js/copy-buttons.js' %}"></script>
 
 {% endblock %}
