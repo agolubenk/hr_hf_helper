@@ -157,13 +157,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     actionTypeInput.value = action;
                     console.log('🔍 ACTION TYPE SET:', action);
                     
-                    // Убираем команду из поля ввода
-                    textarea.value = val.replace(match[0], '').trim();
+                    // Убираем команду из текста для лучшего UX (пользователь видит только текст)
+                    const textAfterCommand = val.replace(/^\/(\w+)\s*/, '').trim();
+                    if (textAfterCommand !== val) {
+                        // Удаляем команду если она найдена (даже если текст пустой)
+                        textarea.value = textAfterCommand;
+                    }
                 } else {
                     console.log('🔍 UNKNOWN COMMAND, using default');
+                    // Скрываем метку для неизвестных команд
+                    tagLabel.style.display = 'none';
                 }
             } else {
                 console.log('🔍 NO COMMAND, using default');
+                // Скрываем метку, если нет команды
+                tagLabel.style.display = 'none';
             }
         });
     }
@@ -176,14 +184,23 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             
             const actionType = actionTypeInput.value;
-            const text = textarea.value.trim();
+            let text = textarea.value.trim();
             
             if (!text) {
                 return;
             }
             
-            // Добавляем сообщение пользователя
-            addUserMessageToChat(text, actionType);
+            // Восстанавливаем команду в тексте для отправки на backend
+            // если была выбрана команда через actionType
+            if (actionType === 'hrscreening' && !text.startsWith('/s')) {
+                text = '/s ' + text;
+            } else if (actionType === 'invite' && !text.startsWith('/in')) {
+                text = '/in ' + text;
+            }
+            
+            // Добавляем сообщение пользователя (без команды для UX)
+            const displayText = textarea.value.trim();
+            addUserMessageToChat(displayText, actionType);
             
             // Блокируем кнопки
             sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
@@ -199,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 body: JSON.stringify({
                     'action_type': actionType,
-                    'text': text,
+                    'text': text, // Текст с командой для backend
                     'session_id': sessionId
                 })
             })

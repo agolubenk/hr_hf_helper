@@ -2089,21 +2089,14 @@ document.addEventListener('DOMContentLoaded', function() {
         resetTextareaSize();
     }, 100);
     
-    // Отправка формы
+    // Отправка формы обрабатывается в chat_actions.js через AJAX
+    // Здесь оставляем только базовую валидацию
     chatForm.addEventListener('submit', function(e) {
         if (!messageInput.value.trim()) {
             e.preventDefault();
             return;
         }
-        
-        sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-        sendBtn.disabled = true;
-        messageInput.disabled = true;
-        
-        // Сбрасываем размер textarea после отправки
-        setTimeout(() => {
-            resetTextareaSize();
-        }, 100);
+        // AJAX обработка в chat_actions.js
     });
     
     // Функция для сброса размера textarea к одной строке
@@ -2120,18 +2113,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const newHeight = Math.min(this.scrollHeight, maxHeight);
         this.style.height = newHeight + 'px';
         
-        // Обработка команд (только рабочие команды)
-        const message = this.value.trim();
-        const actionTypeField = document.getElementById('actionType');
-        
-        if (message.startsWith('/s ')) {
-            actionTypeField.value = 'hrscreening';
-        } else if (message.startsWith('/in ')) {
-            actionTypeField.value = 'invite';
-        } else {
-            // Не устанавливаем значение по умолчанию - пусть backend сам определит
-            actionTypeField.value = '';
-        }
+        // Обработка команд вынесена в chat_actions.js
     });
     
     // Отправка по Enter (без Shift)
@@ -2722,5 +2704,5 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                 // Передаем sessionId из контекста шаблона в глобальный scope
                 window.sessionId = {{ chat_session.id }};
             </script>
-            <script src="{% static 'js/chat_actions.js' %}"></script>
+            <script src="{% static 'js/chat_actions.js' %}?v={{ timestamp }}"></script>
             {% endblock %}

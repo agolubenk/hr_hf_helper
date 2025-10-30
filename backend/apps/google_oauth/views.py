@@ -13,6 +13,8 @@ from django.contrib.auth import get_user_model, login
 from django import forms
 from django.db import models
 import json
+import re
+from time import time
 
 from .models import GoogleOAuthAccount, ScorecardPathSettings, SlotsSettings, ChatSession, ChatMessage
 from logic.integration.oauth.oauth_services import (
@@ -47,8 +49,6 @@ def determine_action_type_from_text(text):
     """
     if not text:
         return "hrscreening"
-    
-    import re
     
     # Паттерны для дат
     date_patterns = [
@@ -2843,7 +2843,6 @@ def gdata_automation(request):
                             # Очищаем description от HTML-тегов для безопасного использования в JavaScript
                             description = event_data.get('description', '')
                             if description:
-                                import re
                                 # Удаляем HTML-теги
                                 description = re.sub(r'<[^>]+>', '', description)
                                 # Заменяем кавычки на безопасные символы
@@ -2895,7 +2894,6 @@ def api_calendar_events(request):
         import json
         from datetime import datetime, timedelta
         import pytz
-        import re
         
         # Получаем OAuth аккаунт
         oauth_service = GoogleOAuthService(request.user)
@@ -3201,17 +3199,21 @@ def chat_ajax_handler(request, session_id):
         print(f"🔍 CHAT AJAX: Анализируем сообщение: '{message_text}'")
         print(f"🔍 CHAT AJAX: action_type_from_js: '{action_type_from_js}'")
         
-        if message_text.strip().lower().startswith('/del'):
+        # Проверяем команды строго с границами слов или пробелами
+        message_lower = message_text.strip().lower()
+        
+        if re.match(r'^/del(\s|$)', message_lower):
             action_type = 'delete_last'
             print(f"🔍 CHAT AJAX: Команда /del обнаружена - удаление последнего действия")
-        elif message_text.strip().lower().startswith('/s'):
+            message_text = re.sub(r'^/del\s*', '', message_text, flags=re.IGNORECASE).strip()
+        elif re.match(r'^/s(\s|$)', message_lower):
             action_type = 'hrscreening'
             print(f"🔍 CHAT AJAX: Команда /s обнаружена - принудительный HR-скрининг")
-            message_text = message_text[2:].strip()
-        elif message_text.strip().lower().startswith('/in'):
+            message_text = re.sub(r'^/s\s*', '', message_text, flags=re.IGNORECASE).strip()
+        elif re.match(r'^/in(\s|$)', message_lower):
             action_type = 'invite'
             print(f"🔍 CHAT AJAX: Команда /in обнаружена - принудительный инвайт")
-            message_text = message_text[3:].strip()
+            message_text = re.sub(r'^/in\s*', '', message_text, flags=re.IGNORECASE).strip()
         else:
             # Только если НЕТ команд, используем JavaScript или автоматическое определение
             if action_type_from_js:
@@ -3700,22 +3702,20 @@ def chat_workflow(request, session_id=None):
             )
 
             # Определяем тип действия (с приоритетом команд)
-            if message_text.strip().lower().startswith('/del'):
-                # Команда удаления последнего действия
+            message_lower = message_text.strip().lower()
+            
+            if re.match(r'^/del(\s|$)', message_lower):
                 action_type = 'delete_last'
                 print(f"🔍 CHAT: Команда /del обнаружена - удаление последнего действия")
-            elif message_text.strip().lower().startswith('/s'):
-                # Принудительно обрабатываем как HR-скрининг
+                message_text = re.sub(r'^/del\s*', '', message_text, flags=re.IGNORECASE).strip()
+            elif re.match(r'^/s(\s|$)', message_lower):
                 action_type = 'hrscreening'
                 print(f"🔍 CHAT: Команда /s обнаружена - принудительный HR-скрининг")
-                # Убираем команду /s из текста для обработки
-                message_text = message_text[2:].strip()
-            elif message_text.strip().lower().startswith('/in'):
-                # Принудительно обрабатываем как инвайт
+                message_text = re.sub(r'^/s\s*', '', message_text, flags=re.IGNORECASE).strip()
+            elif re.match(r'^/in(\s|$)', message_lower):
                 action_type = 'invite'
                 print(f"🔍 CHAT: Команда /in обнаружена - принудительный инвайт")
-                # Убираем команду /in из текста для обработки
-                message_text = message_text[3:].strip()
+                message_text = re.sub(r'^/in\s*', '', message_text, flags=re.IGNORECASE).strip()
             else:
                 # Определяем тип действия автоматически
                 action_type = determine_action_type_from_text(message_text)
@@ -3989,7 +3989,6 @@ def chat_workflow(request, session_id=None):
                             # Очищаем description от HTML-тегов для безопасного использования в JavaScript
                             description = event_data.get('description', '')
                             if description:
-                                import re
                                 # Удаляем HTML-теги
                                 description = re.sub(r'<[^>]+>', '', description)
                                 # Заменяем кавычки на безопасные символы
@@ -4032,6 +4031,7 @@ def chat_workflow(request, session_id=None):
         'messages': messages,
         'active_vacancies': active_vacancies,
         'selected_vacancy': vacancy,
+        'timestamp': int(time()),
         'calendar_events_data': calendar_events_data,
         'slots_settings': slots_settings,
         'user_photo_url': user_photo_url,
