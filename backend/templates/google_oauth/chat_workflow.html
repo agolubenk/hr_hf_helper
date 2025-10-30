@@ -247,12 +247,10 @@
                                         
                                         <!-- Пользовательское сообщение -->
                                                 {% if message.message_type == 'user' %}
-                                                        <div class="message-header">
-                                                        <i class="fas fa-user me-1"></i>
-                                                            <strong>Вы</strong>
-                                                            <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
-                                                        </div>
                                                         <div class="message-content user-content">{{ message.content|linebreaks }}</div>
+                                                        <div class="message-footer">
+                                                            <small class="text-muted">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                        </div>
                                                 
                                         <!-- HR-скрининг -->
                                                 {% elif message.message_type == 'hrscreening' %}
@@ -1003,7 +1001,20 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Футер сообщения пользователя */
+.card .user-message .message-footer {
+    text-align: right;
+    margin-top: -16px;
+    padding-right: 21px;
+}
+
+.card .user-message .message-footer small {
+    opacity: 0.6;
+    font-size: 0.75rem;
 }
 
 /* Специальные цвета для типов сообщений */
