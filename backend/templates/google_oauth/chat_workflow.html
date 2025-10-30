@@ -89,6 +89,14 @@
                                                 <div class="copy-tooltip">Скопировать все слоты</div>
                                             </button>
                                             
+                                            <!-- Кнопка добавления третьей недели -->
+                                            <button class="btn-copy btn-add-week" 
+                                                    onclick="window.addThirdWeek()"
+                                                    title="Загрузить слоты третьей недели">
+                                                <i class="fas fa-plus"></i>
+                                                <div class="copy-tooltip">Загрузить слоты третьей недели</div>
+                                            </button>
+                                            
                                             <button class="btn-copy btn-refresh-slots" 
                                                     onclick="window.refreshSlots()"
                                                     title="Обновить слоты">
@@ -188,6 +196,22 @@
                     </button>
                 </h6>
                 <div class="collapse show" id="nextWeekSlots">
+                    <div class="row">
+                        <!-- Слоты будут добавлены через JavaScript -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Третья неделя (скрыта по умолчанию) -->
+            <div class="week-section third-week" id="thirdWeekSection" style="display: none;">
+                <h6 class="text-success mb-3">
+                    <i class="fas fa-calendar-check me-2"></i>
+                    Третья неделя
+                    <button class="btn btn-sm btn-outline-success float-end btn-collapse" type="button" data-bs-toggle="collapse" data-bs-target="#thirdWeekSlots" aria-expanded="true" aria-controls="thirdWeekSlots">
+                        <i class="fas fa-chevron-up"></i>
+                    </button>
+                </h6>
+                <div class="collapse show" id="thirdWeekSlots">
                     <div class="row">
                         <!-- Слоты будут добавлены через JavaScript -->
                     </div>
@@ -1585,12 +1609,38 @@
      box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3) !important;
  }
 
- .copy-buttons .btn-refresh-slots:hover {
+.copy-buttons .btn-refresh-slots:hover {
      background: linear-gradient(135deg, #138496, #0f6674) !important;
      box-shadow: 0 4px 15px rgba(23, 162, 184, 0.5) !important;
      transform: scale(1.1) !important;
  }
-
+ 
+ .copy-buttons .btn-add-week {
+     background: linear-gradient(135deg, #00b894, #00cec9) !important;
+     color: white !important;
+     border: 2px solid #fff !important;
+     box-shadow: 0 2px 8px rgba(0, 184, 148, 0.3) !important;
+ }
+ 
+ .copy-buttons .btn-add-week:hover {
+     background: linear-gradient(135deg, #00cec9, #00b894) !important;
+     box-shadow: 0 4px 15px rgba(0, 184, 148, 0.5) !important;
+     transform: scale(1.1) !important;
+ }
+ 
+ .copy-buttons .btn-copy-third-week {
+     background: linear-gradient(135deg, #55a3ff, #00b894) !important;
+     color: white !important;
+     border: 2px solid #fff !important;
+     box-shadow: 0 2px 8px rgba(85, 163, 255, 0.3) !important;
+ }
+ 
+ .copy-buttons .btn-copy-third-week:hover {
+     background: linear-gradient(135deg, #00b894, #55a3ff) !important;
+     box-shadow: 0 4px 15px rgba(85, 163, 255, 0.5) !important;
+     transform: scale(1.1) !important;
+ }
+ 
  .copy-buttons .btn-copy:disabled {
      opacity: 0.4 !important;
      cursor: not-allowed !important;
@@ -1605,6 +1655,39 @@
      transform: none !important;
      box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2) !important;
      filter: grayscale(0.8) !important;
+ }
+ 
+ /* Анимация загрузки для кнопки третьей недели */
+ .btn-loading {
+     position: relative;
+     overflow: hidden;
+ }
+ 
+ .btn-loading::before {
+     content: '';
+     position: absolute;
+     top: 0;
+     left: -100%;
+     width: 100%;
+     height: 100%;
+     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+     animation: loading 1.5s infinite;
+ }
+ 
+ @keyframes loading {
+     0% { left: -100%; }
+     100% { left: 100%; }
+ }
+ 
+ /* Плавное появление кнопки */
+ .btn-copy-fade-in {
+     opacity: 0;
+     animation: fadeIn 1s forwards;
+ }
+ 
+ @keyframes fadeIn {
+     from { opacity: 0; }
+     to { opacity: 1; }
  }
 
  .copy-buttons .btn-copy .copy-tooltip {

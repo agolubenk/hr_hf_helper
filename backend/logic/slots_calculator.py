@@ -42,7 +42,7 @@ class SlotsCalculator:
         
         # Вычисляем начало недели (понедельник)
         days_since_monday = today.weekday()
-        start_of_week = today - timedelta(days=days_since_monday)
+        start_of_week = today.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=days_since_monday)
         
         # Добавляем смещение недели
         start_of_week = start_of_week + timedelta(weeks=week_offset)
@@ -128,10 +128,22 @@ class SlotsCalculator:
         date_end = date.replace(hour=23, minute=59, second=59, microsecond=999999)
         
         day_events = []
+        parsed_count = 0
+        filtered_count = 0
+        
         for event in events_data:
             event_start = self._parse_event_start(event)
-            if event_start and date_start <= event_start <= date_end:
-                day_events.append(event)
+            parsed_count += 1
+            
+            if event_start:
+                # Логируем первые несколько событий для отладки
+                if filtered_count < 3:
+                    print(f"🔍 FILTER: event_start={event_start}, date_start={date_start}, date_end={date_end}")
+                    print(f"🔍 FILTER: event_start.tzinfo={event_start.tzinfo}, date_start.tzinfo={date_start.tzinfo}")
+                
+                if date_start <= event_start <= date_end:
+                    day_events.append(event)
+                    filtered_count += 1
         
         return day_events
     
@@ -149,8 +161,13 @@ class SlotsCalculator:
         if event.get('is_all_day') or event.get('isallday'):
             return False
         
-        # Проверяем название события
-        title = event.get('title', '').lower()
+        # Проверяем наличие dateTime (события на весь день имеют только date)
+        start = event.get('start')
+        if isinstance(start, dict) and 'dateTime' not in start and 'date' in start:
+            return False
+        
+        # Проверяем название события (используем summary для Google Calendar API)
+        title = (event.get('title') or event.get('summary') or '').lower()
         
         # Исключаем обеды
         if 'обед' in title or 'lunch' in title:
@@ -180,8 +197,13 @@ class SlotsCalculator:
         occupied_intervals = []
         
         for event in day_events:
-            # Пропускаем события на весь день
+            # Проверяем, не является ли событие на весь день
             if event.get('is_all_day') or event.get('isallday'):
+                continue
+            
+            # Проверяем наличие dateTime (события на весь день имеют только date)
+            start = event.get('start')
+            if isinstance(start, dict) and 'dateTime' not in start and 'date' in start:
                 continue
             
             event_start = self._parse_event_start(event)
@@ -297,13 +319,20 @@ class SlotsCalculator:
         Returns:
             datetime объект или None
         """
-        start_str = event.get('start')
-        if not start_str:
+        start = event.get('start')
+        if not start:
             return None
         
         try:
-            if isinstance(start_str, datetime):
-                return start_str
+            # Google Calendar API возвращает {'dateTime': '...', 'timeZone': '...'}
+            if isinstance(start, dict):
+                start_str = start.get('dateTime') or start.get('date')
+                if not start_str:
+                    return None
+            elif isinstance(start, datetime):
+                return start
+            else:
+                start_str = start
             
             # Парсим ISO формат
             if 'T' in start_str:
@@ -328,13 +357,20 @@ class SlotsCalculator:
         Returns:
             datetime объект или None
         """
-        end_str = event.get('end')
-        if not end_str:
+        end = event.get('end')
+        if not end:
             return None
         
         try:
-            if isinstance(end_str, datetime):
-                return end_str
+            # Google Calendar API возвращает {'dateTime': '...', 'timeZone': '...'}
+            if isinstance(end, dict):
+                end_str = end.get('dateTime') or end.get('date')
+                if not end_str:
+                    return None
+            elif isinstance(end, datetime):
+                return end
+            else:
+                end_str = end
             
             # Парсим ISO формат
             if 'T' in end_str:

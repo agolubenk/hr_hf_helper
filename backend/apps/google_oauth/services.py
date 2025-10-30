@@ -305,17 +305,19 @@ class GoogleCalendarService:
             print(f"Ошибка поиска календаря по email: {e}")
             return None
     
-    def get_events(self, calendar_id='primary', max_results=100, days_ahead=100):
+    def get_events(self, calendar_id='primary', max_results=100, days_ahead=100, force_refresh=False):
         """Получить события календаря (ближайшие события на указанное количество дней вперед)"""
-        # Сначала проверяем кэш
         user_id = self.oauth_service.user.id
-        cached_events = GoogleAPICache.get_calendar_events(user_id, calendar_id, days_ahead)
         
-        if cached_events is not None:
-            print(f"📦 Получены события календаря из кэша: {len(cached_events)} событий")
-            return cached_events
+        # Проверяем кэш только если не принудительное обновление
+        if not force_refresh:
+            cached_events = GoogleAPICache.get_calendar_events(user_id, calendar_id, days_ahead)
+            
+            if cached_events is not None:
+                print(f"📦 Получены события календаря из кэша: {len(cached_events)} событий")
+                return cached_events
         
-        # Если в кэше нет, получаем из API
+        # Если в кэше нет или принудительное обновление, получаем из API
         service = self._get_service()
         if not service:
             return []

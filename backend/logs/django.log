@@ -1,108 +1,1373 @@
 Watching for file changes with StatReloader
-[30/Oct/2025 14:34:47] "GET / HTTP/1.1" 302 0
-[30/Oct/2025 14:35:04,168] - Broken pipe from ('127.0.0.1', 61834)
-[30/Oct/2025 14:35:05] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 262158
-[30/Oct/2025 14:35:05] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
-[30/Oct/2025 14:35:05] "GET /static/js/meeting-type-switcher.js HTTP/1.1" 200 9925
-[30/Oct/2025 14:35:05] "GET /static/js/vacancy-slots.js HTTP/1.1" 200 42067
-[30/Oct/2025 14:35:05] "GET /static/css/all.min.css HTTP/1.1" 200 102025
-[30/Oct/2025 14:35:05] "GET /static/js/chat_actions.js?v=1761824105 HTTP/1.1" 200 11217
-[30/Oct/2025 14:35:05] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
-[30/Oct/2025 14:35:05] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
-[30/Oct/2025 14:35:05] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
-[30/Oct/2025 14:35:05] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
-[30/Oct/2025 14:35:05] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
-[30/Oct/2025 14:35:05] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
-[30/Oct/2025 14:35:05] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
-[30/Oct/2025 14:35:06] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
-[30/Oct/2025 14:35:21] "GET /google-oauth/api/calendar-events/?vacancy_id=13&meeting_type=screening HTTP/1.1" 200 15827
-WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
-Not Found: /.well-known/appspecific/com.chrome.devtools.json
-[30/Oct/2025 14:35:25] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 3921
-[30/Oct/2025 14:35:29] "GET /google-oauth/api/calendar-events/?vacancy_id=13&meeting_type=interview HTTP/1.1" 200 43471
-[30/Oct/2025 14:35:30] "GET /google-oauth/api/calendar-events/?vacancy_id=13&meeting_type=interview HTTP/1.1" 200 43471
-/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
+[30/Oct/2025 21:45:54] "GET / HTTP/1.1" 302 0
 Performing system checks...
 
 System check identified no issues (0 silenced).
-October 30, 2025 - 14:34:43
+October 30, 2025 - 21:45:50
 Django version 4.2.16, using settings 'config.settings'
 Starting development server at http://127.0.0.1:8000/
 Quit the server with CONTROL-C.
 
 🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
 🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
-🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
-🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
-💾 Сохранены события календаря в кэш: 29 событий
-🔍 DEBUG CHAT: Получено 29 событий из API
-🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
-🔍 DEBUG CHAT: Передаем 29 событий в шаблон
-🔍 DEBUG CHAT: Событие: JS Tech Screening | Baranouski Artsiom в 2025-10-30T14:00:00+03:00
-🔍 DEBUG CHAT: Событие: Обед в 2025-10-30T15:00:00+03:00
-🔍 DEBUG CHAT: Событие: Discuss ScoreCard в 2025-10-30T16:00:00+03:00
-🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
-📥 Ответ API: 200
-📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
-DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
-💾 Сохранены события календаря в кэш: 29 событий
-🔍 DEBUG CHAT: Получено 29 событий из API
-🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
-🔍 DEBUG CHAT: Передаем 29 событий в шаблон
-🔍 DEBUG CHAT: Событие: JS Tech Screening | Baranouski Artsiom в 2025-10-30T14:00:00+03:00
-🔍 DEBUG CHAT: Событие: Обед в 2025-10-30T15:00:00+03:00
-🔍 DEBUG CHAT: Событие: Discuss ScoreCard в 2025-10-30T16:00:00+03:00
-🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
-📥 Ответ API: 200
-📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
-DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
-📦 Получены события календаря из кэша: 29 событий
-🔍 API: Параметры запроса - vacancy_id=13, meeting_type=interview, include_interviewers=True
-🔍 API: Найдено 3 обязательных интервьюеров
-🔍 API: Обработка интервьюера rb@softnetix.io, calendar_link=https://calendar.google.com/calendar/embed?src=rb@softnetix.io
-🔍 API: Извлечен calendar_id=rb@softnetix.io
-🔍 API: Получение событий для интервьюера rb@softnetix.io, calendar_id=rb@softnetix.io
 💾 Сохранены события календаря в кэш: 27 событий
-🔍 API: Получено 27 событий от rb@softnetix.io
-🔍 API: Добавлено 27 событий от rb@softnetix.io, всего событий: 56
-🔍 API: Обработка интервьюера alena.koipash@softnetix.io, calendar_link=https://calendar.google.com/calendar/embed?src=alena.koipash@softnetix.io
-🔍 API: Извлечен calendar_id=alena.koipash@softnetix.io
-🔍 API: Получение событий для интервьюера alena.koipash@softnetix.io, calendar_id=alena.koipash@softnetix.io
-📦 Получены события календаря из кэша: 29 событий
-🔍 API CALENDAR EVENTS: Получено 29 событий из API
-🔍 API CALENDAR EVENTS: Передаем 29 событий в ответе
+🔍 DEBUG CHAT: Получено 27 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🕐 НАСТРОЙКИ: Рабочие часы 12:00-18:00, интервал 15 мин
+📅 СЛОТЫ СКРИНИНГОВ: Начинаем поиск доступных слотов
+📅 СЛОТЫ СКРИНИНГОВ: Длительность встречи: 40 минут
+📅 СЛОТЫ СКРИНИНГОВ: События календаря: 27
+📅 СЛОТЫ СКРИНИНГОВ: Календарь - только пользователь andrei.golubenko@softnetix.io
+⏭️ Пропускаем прошедший день: 27.10.2025
+⏭️ Пропускаем прошедший день: 28.10.2025
+⏭️ Пропускаем прошедший день: 29.10.2025
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 09:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 09:20:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Чт 30.10.2025: 0 встреч, слоты: Нет свободных слотов
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пт 31.10.2025: 3 встреч, слоты: 12.45-14.30, 16.55-18.00
+📅 Итого дней со слотами в неделе: 2
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пн 03.11.2025: 7 встреч, слоты: Нет свободных слотов
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Вт 04.11.2025: 2 встреч, слоты: 12.55-13.45, 14.45-15.45, 16.45-18.00
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 09:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 09:20:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Ср 05.11.2025: 0 встреч, слоты: 12.00-13.45, 14.45-18.00
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Чт 06.11.2025: 3 встреч, слоты: 14.45-18.00
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 09:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 09:20:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пт 07.11.2025: 0 встреч, слоты: 12.00-13.45, 14.45-18.00
+📅 Итого дней со слотами в неделе: 5
+📅 СЛОТЫ СКРИНИНГОВ: Рассчитано 7 дней со слотами
+📅 СЛОТЫ ИНТЕРВЬЮ: Начинаем поиск доступных слотов
+📅 СЛОТЫ ИНТЕРВЬЮ: Базовые события от пользователя: 27
+📅 СЛОТЫ ИНТЕРВЬЮ: Найдено 3 обязательных интервьюеров
+📅 СЛОТЫ ИНТЕРВЬЮ: Интервьюер rb@softnetix.io - извлечен calendar_id из ссылки: rb@softnetix.io
+📅 СЛОТЫ ИНТЕРВЬЮ: Загружаем события для rb@softnetix.io, calendar_id=rb@softnetix.io
+💾 Сохранены события календаря в кэш: 28 событий
+📅 СЛОТЫ ИНТЕРВЬЮ: Получено 28 событий от rb@softnetix.io
+📅 СЛОТЫ ИНТЕРВЬЮ: Добавлено 28 событий от rb@softnetix.io
+📅 СЛОТЫ ИНТЕРВЬЮ: Интервьюер alena.koipash@softnetix.io - извлечен calendar_id из ссылки: alena.koipash@softnetix.io
+📅 СЛОТЫ ИНТЕРВЬЮ: Загружаем события для alena.koipash@softnetix.io, calendar_id=alena.koipash@softnetix.io
 💾 Сохранены события календаря в кэш: 22 событий
-🔍 API: Получено 22 событий от alena.koipash@softnetix.io
-🔍 API: Добавлено 22 событий от alena.koipash@softnetix.io, всего событий: 78
-🔍 API: Обработка интервьюера mikita.torap@softnetix.io, calendar_link=https://calendar.google.com/calendar/embed?src=mikita.torap@softnetix.io
-🔍 API: Извлечен calendar_id=mikita.torap@softnetix.io
-🔍 API: Получение событий для интервьюера mikita.torap@softnetix.io, calendar_id=mikita.torap@softnetix.io
-💾 Сохранены события календаря в кэш: 33 событий
-🔍 API: Получено 33 событий от mikita.torap@softnetix.io
-🔍 API: Добавлено 33 событий от mikita.torap@softnetix.io, всего событий: 111
-🔍 API CALENDAR EVENTS: Получено 111 событий из API
-🔍 API CALENDAR EVENTS: Передаем 111 событий в ответе
-📦 Получены события календаря из кэша: 29 событий
-🔍 API: Параметры запроса - vacancy_id=13, meeting_type=interview, include_interviewers=True
-🔍 API: Найдено 3 обязательных интервьюеров
-🔍 API: Обработка интервьюера rb@softnetix.io, calendar_link=https://calendar.google.com/calendar/embed?src=rb@softnetix.io
-🔍 API: Извлечен calendar_id=rb@softnetix.io
-🔍 API: Получение событий для интервьюера rb@softnetix.io, calendar_id=rb@softnetix.io
-📦 Получены события календаря из кэша: 27 событий
-🔍 API: Получено 27 событий от rb@softnetix.io
-🔍 API: Добавлено 27 событий от rb@softnetix.io, всего событий: 56
-🔍 API: Обработка интервьюера alena.koipash@softnetix.io, calendar_link=https://calendar.google.com/calendar/embed?src=alena.koipash@softnetix.io
-🔍 API: Извлечен calendar_id=alena.koipash@softnetix.io
-🔍 API: Получение событий для интервьюера alena.koipash@softnetix.io, calendar_id=alena.koipash@softnetix.io
-📦 Получены события календаря из кэша: 22 событий
-🔍 API: Получено 22 событий от alena.koipash@softnetix.io
-🔍 API: Добавлено 22 событий от alena.koipash@softnetix.io, всего событий: 78
-🔍 API: Обработка интервьюера mikita.torap@softnetix.io, calendar_link=https://calendar.google.com/calendar/embed?src=mikita.torap@softnetix.io
-🔍 API: Извлечен calendar_id=mikita.torap@softnetix.io
-🔍 API: Получение событий для интервьюера mikita.torap@softnetix.io, calendar_id=mikita.torap@softnetix.io
-📦 Получены события календаря из кэша: 33 событий
-🔍 API: Получено 33 событий от mikita.torap@softnetix.io
-🔍 API: Добавлено 33 событий от mikita.torap@softnetix.io, всего событий: 111
-🔍 API CALENDAR EVENTS: Получено 111 событий из API
-🔍 API CALENDAR EVENTS: Передаем 111 событий в ответе
-Watching for file changes with StatReloader
+📅 СЛОТЫ ИНТЕРВЬЮ: Получено 22 событий от alena.koipash@softnetix.io
+📅 СЛОТЫ ИНТЕРВЬЮ: Добавлено 22 событий от alena.koipash@softnetix.io
+📅 СЛОТЫ ИНТЕРВЬЮ: Интервьюер mikita.torap@softnetix.io - извлечен calendar_id из ссылки: mikita.torap@softnetix.io
+📅 СЛОТЫ ИНТЕРВЬЮ: Загружаем события для mikita.torap@softnetix.io, calendar_id=mikita.torap@softnetix.io
+💾 Сохранены события календаря в кэш: 32 событий
+📅 СЛОТЫ ИНТЕРВЬЮ: Получено 32 событий от mikita.torap@softnetix.io
+📅 СЛОТЫ ИНТЕРВЬЮ: Добавлено 32 событий от mikita.torap@softnetix.io
+📅 СЛОТЫ ИНТЕРВЬЮ: Итого событий для расчета слотов: 109
+📅 СЛОТЫ ИНТЕРВЬЮ: Использованные календари: rb@softnetix.io (rb@softnetix.io), alena.koipash@softnetix.io (alena.koipash@softnetix.io), mikita.torap@softnetix.io (mikita.torap@softnetix.io)
+📅 СЛОТЫ ИНТЕРВЬЮ: Длительность встречи: 90 минут
+⏭️ Пропускаем прошедший день: 27.10.2025
+⏭️ Пропускаем прошедший день: 28.10.2025
+⏭️ Пропускаем прошедший день: 29.10.2025
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 09:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 09:20:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 15:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:15:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 12:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 17:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 11:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 11:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 12:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 11:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 16:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 11:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 15:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:15:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 12:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 17:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 00:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 16:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 16:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 15:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 17:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 20:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 20:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 20:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 20:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 17:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 20:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 20:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 20:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 20:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 20:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 11:30:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 20:00:00+03:00, date_start=2025-10-30 00:00:00+03:00, date_end=2025-10-30 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Чт 30.10.2025: 0 встреч, слоты: Нет свободных слотов
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пт 31.10.2025: 7 встреч, слоты: Нет свободных слотов
+📅 Итого дней со слотами в неделе: 2
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пн 03.11.2025: 16 встреч, слоты: Нет свободных слотов
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Вт 04.11.2025: 13 встреч, слоты: Нет свободных слотов
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 09:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 09:20:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:30:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:30:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 15:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:15:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Ср 05.11.2025: 9 встреч, слоты: 14.45-18.00
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Чт 06.11.2025: 19 встреч, слоты: Нет свободных слотов
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 09:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 09:20:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 15:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:15:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 17:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 15:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk[30/Oct/2025 21:46:26] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 269281
+[30/Oct/2025 21:46:26] "GET /static/js/meeting-type-switcher.js HTTP/1.1" 200 8648
+[30/Oct/2025 21:46:26] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[30/Oct/2025 21:46:26] "GET /static/js/chat_actions.js?v=1761849985 HTTP/1.1" 200 11217
+[30/Oct/2025 21:46:26] "GET /static/js/vacancy-slots.js HTTP/1.1" 200 54787
+[30/Oct/2025 21:46:26] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[30/Oct/2025 21:46:26] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[30/Oct/2025 21:46:26] "GET /static/css/hrhelper.css HTTP/1.1" 200 117223
+[30/Oct/2025 21:46:26] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[30/Oct/2025 21:46:26] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[30/Oct/2025 21:46:26] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[30/Oct/2025 21:46:26] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[30/Oct/2025 21:46:26] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[30/Oct/2025 21:46:26] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:15:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 17:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 00:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 15:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 17:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 20:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 20:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 20:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 20:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 17:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 20:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пт 07.11.2025: 3 встреч, слоты: Нет свободных слотов
+📅 Итого дней со слотами в неделе: 5
+📅 СЛОТЫ ИНТЕРВЬЮ: Рассчитано 7 дней со слотами
+🔍 DEBUG CHAT: Передаем 27 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Олексюк Евгений в 2025-10-31T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Мясковский Ярослав в 2025-10-31T14:45:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Сайков Павел в 2025-10-31T16:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+📅 API THIRD WEEK: vacancy_id=13, meeting_type=interview
+🕐 THIRD WEEK: Рабочие часы 12:00-18:00, интервал 15 мин
+📅 THIRD WEEK: Получение слотов для интервью
+💾 Сохранены события календаря в кэш: 36 событий
+📅 THIRD WEEK: Найдено 3 обязательных интервьюеров
+💾 Сохранены события календаря в кэш: 39 событий
+📅 THIRD WEEK: Добавлено 39 событий от rb@softnetix.io
+💾 Сохранены события календаря в кэш: 29 событий
+📅 THIRD WEEK: Добавлено 29 событий от alena.koipash@softnetix.io
+💾 Сохранены события календаря в кэш: 47 событий
+📅 THIRD WEEK: Добавлено 47 событий от mikita.torap@softnetix.io
+📅 THIRD WEEK: Всего получено 151 событий
+📅 THIRD WEEK: Событие 1: JS Tech Screening | Олексюк Евгений - 2025-10-31T12:00:00+03:00
+📅 THIRD WEEK: Событие 2: JS Tech Screening | Мясковский Ярослав - 2025-10-31T14:45:00+03:00
+📅 THIRD WEEK: Событие 3: JS Tech Screening | Сайков Павел - 2025-10-31T16:00:00+03:00
+📅 THIRD WEEK: Событие 4: A2+ - 2025-11-03T09:00:00+03:00
+📅 THIRD WEEK: Событие 5: Recruitment Meeting - 2025-11-03T10:30:00+03:00
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 14:00:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 14:00:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 09:00:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 14:00:00+03:00, date_start=2025-11-10 00:00:00+03:00, date_end=2025-11-10 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пн 10.11.2025: 8 встреч, слоты: 12.00-13.45, 14.45-18.00
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 14:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 14:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 09:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 14:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 14:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 09:20:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 14:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-14 10:30:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-14 14:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-17 09:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-17 10:30:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-17 14:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-18 14:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-19 14:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-20 09:20:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-20 14:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:30:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:30:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 15:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:15:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:30:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 12:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:30:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 17:30:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 11:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 11:30:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 11:00:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 11:30:00+03:00, date_start=2025-11-11 00:00:00+03:00, date_end=2025-11-11 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Вт 11.11.2025: 7 встреч, слоты: Нет свободных слотов
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 14:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 14:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 09:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 14:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 14:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 09:20:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 14:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-14 10:30:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-14 14:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-17 09:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-17 10:30:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-17 14:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-18 14:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-19 14:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-20 09:20:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-20 14:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:30:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:30:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 15:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:15:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:30:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 12:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:30:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 17:30:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 11:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 11:30:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 11:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 11:30:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 12:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 11:00:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 11:30:00+03:00, date_start=2025-11-12 00:00:00+03:00, date_end=2025-11-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Ср 12.11.2025: 9 встреч, слоты: 12.00-13.45
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 14:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 14:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 09:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 14:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 14:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 09:20:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 14:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-14 10:30:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-14 14:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-17 09:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-17 10:30:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-17 14:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-18 14:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-19 14:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-20 09:20:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-20 14:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:30:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:30:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 15:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:15:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:30:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 12:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:30:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 17:30:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 11:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 11:30:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 11:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 11:30:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 12:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 11:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 11:30:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 16:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 11:00:00+03:00, date_start=2025-11-13 00:00:00+03:00, date_end=2025-11-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Чт 13.11.2025: 9 встреч, слоты: 12.00-13.45
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 14:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 14:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 09:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 14:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 14:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 09:20:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 14:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-14 10:30:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-14 14:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-17 09:00:00+03:00, date_start=2025-11-14 00:00:00+03:00, date_end=2025-11-14 23:59:59.999999+03:00[30/Oct/2025 21:47:08] "GET /google-oauth/api/third-week-slots/?vacancy_id=13&meeting_type=interview HTTP/1.1" 200 860

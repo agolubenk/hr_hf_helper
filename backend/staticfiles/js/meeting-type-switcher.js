@@ -77,6 +77,13 @@ window.switchMeetingType = function(newType) {
         console.error('❌ [SWITCHER] switchSlotsByMeetingType функция не найдена!');
     }
     
+    // Проверяем, загружена ли третья неделя, и если да - перезагружаем слоты
+    const thirdWeekSection = document.getElementById('thirdWeekSection');
+    if (thirdWeekSection && thirdWeekSection.style.display !== 'none') {
+        console.log('🔄 [SWITCHER] Перезагрузка слотов третьей недели для типа:', newType);
+        reloadThirdWeekSlots();
+    }
+    
     console.log(`✅ [SWITCHER] Тип: ${newType}, длительность: ${conf.defaultDuration} мин`);
 };
 

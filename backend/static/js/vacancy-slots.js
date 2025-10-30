@@ -726,6 +726,7 @@ window.copyAllSlots = function() {
     
     const currentWeekSlots = [];
     const nextWeekSlots = [];
+    const thirdWeekSlots = [];
     
     // Копируем слоты из текущей недели
     const currentWeekSection = document.querySelector('.week-section.current-week');
@@ -749,7 +750,18 @@ window.copyAllSlots = function() {
         });
     }
     
-    if (currentWeekSlots.length === 0 && nextWeekSlots.length === 0) {
+    // Копируем слоты из третьей недели, если она загружена
+    const thirdWeekSection = document.querySelector('.week-section.third-week');
+    if (thirdWeekSection && thirdWeekSection.style.display !== 'none') {
+        thirdWeekSection.querySelectorAll('.slot-card').forEach(card => {
+            const slotData = extractSlotData(card);
+            if (slotData) {
+                thirdWeekSlots.push(slotData);
+            }
+        });
+    }
+    
+    if (currentWeekSlots.length === 0 && nextWeekSlots.length === 0 && thirdWeekSlots.length === 0) {
         showNotification('Нет слотов для копирования', 'warning');
         return;
     }
@@ -789,6 +801,24 @@ window.copyAllSlots = function() {
         });
     }
     
+    // Добавляем слоты третьей недели, если они есть
+    if (thirdWeekSlots.length > 0) {
+        // Добавляем разделяющий текст между неделями, если настроен
+        if (slotsSettings.separatorText) {
+            text += `\n${slotsSettings.separatorText}\n`;
+        } else {
+            text += '\n';
+        }
+        
+        // Добавляем только слоты третьей недели с доступными временами
+        thirdWeekSlots.forEach(slot => {
+            // Пропускаем дни без свободных слотов
+            if (slot.slots && slot.slots !== 'Нет свободных слотов') {
+                text += `${slot.weekday} (${slot.date}) ${slot.slots}\n`;
+            }
+        });
+    }
+    
     // Добавляем информацию о продолжительности встречи
     const meetingDuration = getMeetingDuration();
     if (meetingDuration) {
@@ -807,6 +837,8 @@ window.copyWeekSlots = function(weekType) {
         weekSection = document.querySelector('.week-section.current-week');
     } else if (weekType === 'next') {
         weekSection = document.querySelector('.week-section.next-week');
+    } else if (weekType === 'third') {
+        weekSection = document.querySelector('.week-section.third-week');
     }
     
     console.log('🔍 Найденная секция недели:', weekSection);
@@ -859,6 +891,13 @@ window.copyWeekSlots = function(weekType) {
         }
         // Формат для следующей недели: ПН (15.09) 11-14, 15
         // Пропускаем дни без свободных слотов
+        slots.forEach(slot => {
+            if (slot.slots && slot.slots !== 'Нет свободных слотов') {
+                text += `${slot.weekday} (${slot.date}) ${slot.slots}\n`;
+            }
+        });
+    } else if (weekType === 'third') {
+        // Для третьей недели используем тот же формат, что и для следующей
         slots.forEach(slot => {
             if (slot.slots && slot.slots !== 'Нет свободных слотов') {
                 text += `${slot.weekday} (${slot.date}) ${slot.slots}\n`;
@@ -953,3 +992,161 @@ window.refreshSlots = function() {
     initializeSlots();
     showNotification('Слоты обновлены', 'success');
 };
+
+// Функция для добавления третьей недели
+window.addThirdWeek = function() {
+    console.log('➕ Добавление третьей недели...');
+    
+    // Находим ВСЕ кнопки +
+    const btnAdds = document.querySelectorAll('.btn-add-week');
+    console.log('🔍 Найдено кнопок +:', btnAdds.length);
+    
+    if (btnAdds.length === 0) {
+        console.error('❌ Не найдена кнопка добавления недели');
+        return;
+    }
+    
+    // Берем первую кнопку
+    const btnAdd = btnAdds[0];
+    console.log('🔍 btnAdd:', btnAdd);
+    
+    // Проверяем, не скрыта ли уже кнопка
+    if (btnAdd.style.display === 'none') {
+        console.log('⚠️ Кнопка + уже скрыта');
+        return;
+    }
+    
+    // Находим контейнер, в котором находится кнопка +
+    const copyButtonsContainer = btnAdd.parentElement;
+    console.log('🔍 copyButtonsContainer:', copyButtonsContainer);
+    
+    if (!copyButtonsContainer) {
+        console.error('❌ Не найден контейнер для кнопки добавления недели');
+        return;
+    }
+    
+    // Создаем кнопку копирования третьей недели ДО скрытия кнопки +
+    const thirdWeekBtn = document.createElement('button');
+    thirdWeekBtn.className = 'btn-copy btn-copy-third-week btn-loading';
+    thirdWeekBtn.disabled = true;
+    thirdWeekBtn.setAttribute('onclick', 'window.copyWeekSlots(\'third\')');
+    thirdWeekBtn.title = 'Копировать слоты третьей недели';
+    thirdWeekBtn.innerHTML = `
+        <i class="fas fa-calendar-check"></i>
+        <div class="copy-tooltip">Копировать слоты третьей недели</div>
+    `;
+    
+    // Вставляем кнопку перед кнопкой +
+    console.log('📥 Вставляем кнопку перед btnAdd');
+    copyButtonsContainer.insertBefore(thirdWeekBtn, btnAdd);
+    
+    // Только ПОСЛЕ вставки скрываем все кнопки +
+    console.log('🙈 Скрываем все кнопки +');
+    btnAdds.forEach(btn => {
+        btn.style.setProperty('display', 'none', 'important');
+    });
+    console.log('✅ Все кнопки + скрыты');
+    
+    // Показываем секцию третьей недели
+    const thirdWeekSection = document.getElementById('thirdWeekSection');
+    if (thirdWeekSection) {
+        thirdWeekSection.style.display = 'block';
+    }
+    
+    // Получаем параметры для запроса
+    const meetingType = document.querySelector('.btn-meeting-type.active')?.id === 'btnInterview' ? 'interview' : 'screening';
+    const vacancyId = new URLSearchParams(window.location.search).get('vacancy_id');
+    
+    console.log(`📡 Запрос слотов третьей недели: meetingType=${meetingType}, vacancyId=${vacancyId}`);
+    
+    // Делаем AJAX запрос на бэкенд
+    fetch(`/google-oauth/api/third-week-slots/?vacancy_id=${vacancyId}&meeting_type=${meetingType}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('✅ Получены слоты третьей недели:', data);
+            
+            if (data.slots && data.slots.length > 0) {
+                // Очищаем анимацию загрузки
+                setTimeout(() => {
+                    thirdWeekBtn.classList.remove('btn-loading');
+                    thirdWeekBtn.classList.add('btn-copy-fade-in');
+                }, 100);
+                
+                // Делаем кнопку активной через секунду
+                setTimeout(() => {
+                    thirdWeekBtn.disabled = false;
+                }, 1000);
+                
+                // Отображаем слоты
+                displayThirdWeekSlots(data.slots);
+                
+                showNotification('Слоты третьей недели загружены', 'success');
+            } else {
+                showNotification('Нет доступных слотов на третьей неделе', 'info');
+                thirdWeekBtn.disabled = true;
+                thirdWeekBtn.classList.remove('btn-loading');
+            }
+        })
+        .catch(error => {
+            console.error('❌ Ошибка при загрузке слотов третьей недели:', error);
+            showNotification('Ошибка при загрузке слотов', 'error');
+            
+            // Убираем кнопку, если была ошибка
+            thirdWeekBtn.remove();
+            
+            // Показываем все кнопки + снова
+            btnAdds.forEach(btn => {
+                btn.style.removeProperty('display');
+            });
+            
+            // Скрываем секцию третьей недели
+            if (thirdWeekSection) {
+                thirdWeekSection.style.display = 'none';
+            }
+        });
+};
+
+// Функция для отображения слотов третьей недели
+function displayThirdWeekSlots(slots) {
+    console.log('📅 Отображение слотов третьей недели:', slots);
+    
+    const thirdWeekSection = document.querySelector('.week-section.third-week #thirdWeekSlots .row');
+    if (!thirdWeekSection) {
+        console.error('❌ Секция третьей недели не найдена');
+        return;
+    }
+    
+    // Очищаем существующие слоты
+    thirdWeekSection.innerHTML = '';
+    
+    // Отображаем слоты
+    slots.forEach(slot => {
+        const slotHtml = createSlotCard(slot);
+        thirdWeekSection.insertAdjacentHTML('beforeend', slotHtml);
+    });
+    
+    console.log(`✅ Отображено ${slots.length} слотов третьей недели`);
+}
+
+// Функция для перезагрузки слотов третьей недели при смене типа встречи
+function reloadThirdWeekSlots() {
+    const meetingType = document.querySelector('.btn-meeting-type.active')?.id === 'btnInterview' ? 'interview' : 'screening';
+    const vacancyId = new URLSearchParams(window.location.search).get('vacancy_id');
+    
+    console.log(`📡 Перезагрузка слотов третьей недели: meetingType=${meetingType}, vacancyId=${vacancyId}`);
+    
+    // Делаем AJAX запрос на бэкенд
+    fetch(`/google-oauth/api/third-week-slots/?vacancy_id=${vacancyId}&meeting_type=${meetingType}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('✅ Получены слоты третьей недели:', data);
+            
+            if (data.slots && data.slots.length > 0) {
+                // Отображаем слоты
+                displayThirdWeekSlots(data.slots);
+            }
+        })
+        .catch(error => {
+            console.error('❌ Ошибка при перезагрузке слотов третьей недели:', error);
+        });
+}

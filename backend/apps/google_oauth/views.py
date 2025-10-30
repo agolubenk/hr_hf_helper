@@ -3136,6 +3136,136 @@ def api_interviewers_autocomplete(request):
 
 
 @login_required
+def api_third_week_slots(request):
+    """API для расчета слотов третьей недели"""
+    try:
+        vacancy_id = request.GET.get('vacancy_id')
+        meeting_type = request.GET.get('meeting_type', 'screening')
+        
+        print(f"📅 API THIRD WEEK: vacancy_id={vacancy_id}, meeting_type={meeting_type}")
+        
+        if not vacancy_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Не указан ID вакансии'
+            })
+        
+        # Получаем вакансию
+        from apps.vacancies.models import Vacancy
+        try:
+            vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True, recruiter=request.user)
+        except Vacancy.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Вакансия не найдена'
+            })
+        
+        # Получаем настройки рабочего времени из профиля пользователя
+        work_start = 11
+        work_end = 18
+        meeting_interval = 15
+        
+        if hasattr(request.user, 'interview_start_time') and request.user.interview_start_time:
+            if isinstance(request.user.interview_start_time, str):
+                work_start = dt_time.fromisoformat(request.user.interview_start_time).hour
+            else:
+                work_start = request.user.interview_start_time.hour
+        
+        if hasattr(request.user, 'interview_end_time') and request.user.interview_end_time:
+            if isinstance(request.user.interview_end_time, str):
+                work_end = dt_time.fromisoformat(request.user.interview_end_time).hour
+            else:
+                work_end = request.user.interview_end_time.hour
+        
+        if hasattr(request.user, 'meeting_interval_minutes') and request.user.meeting_interval_minutes:
+            meeting_interval = request.user.meeting_interval_minutes
+        
+        print(f"🕐 THIRD WEEK: Рабочие часы {work_start}:00-{work_end}:00, интервал {meeting_interval} мин")
+        
+        from logic.slots_calculator import SlotsCalculator
+        calculator = SlotsCalculator(
+            work_start_hour=work_start,
+            work_end_hour=work_end,
+            meeting_interval_minutes=meeting_interval
+        )
+        
+        # Получаем события календаря
+        from apps.google_oauth.services import GoogleOAuthService, GoogleCalendarService
+        oauth_service = GoogleOAuthService(request.user)
+        calendar_service = GoogleCalendarService(oauth_service)
+        
+        events_data = []
+        
+        if meeting_type == 'screening':
+            # Для скринингов только календарь пользователя
+            print(f"📅 THIRD WEEK: Получение слотов для скринингов")
+            events_data = calendar_service.get_events(days_ahead=21, force_refresh=True)  # Получаем на 3 недели
+            duration = vacancy.screening_duration if hasattr(vacancy, 'screening_duration') and vacancy.screening_duration else 45
+        else:
+            # Для интервью календарь пользователя + интервьюеров
+            print(f"📅 THIRD WEEK: Получение слотов для интервью")
+            events_data = calendar_service.get_events(days_ahead=21, force_refresh=True)
+            
+            mandatory_interviewers = vacancy.mandatory_tech_interviewers.filter(is_active=True)
+            print(f"📅 THIRD WEEK: Найдено {len(mandatory_interviewers)} обязательных интервьюеров")
+            
+            for interviewer in mandatory_interviewers:
+                calendar_id = None
+                
+                if interviewer.calendar_link:
+                    calendar_id = _extract_calendar_id_from_link(interviewer.calendar_link)
+                
+                if not calendar_id:
+                    calendar = calendar_service.get_calendar_by_email(interviewer.email)
+                    if calendar:
+                        calendar_id = calendar['id']
+                
+                if not calendar_id:
+                    calendar_id = interviewer.email
+                
+                if calendar_id:
+                    try:
+                        interviewer_events = calendar_service.get_events(calendar_id=calendar_id, days_ahead=21, force_refresh=True)
+                        events_data.extend(interviewer_events)
+                        print(f"📅 THIRD WEEK: Добавлено {len(interviewer_events)} событий от {interviewer.email}")
+                    except Exception as e:
+                        print(f"⚠️ THIRD WEEK: Ошибка получения событий для {interviewer.email}: {e}")
+            
+            duration = vacancy.tech_interview_duration if hasattr(vacancy, 'tech_interview_duration') and vacancy.tech_interview_duration else 90
+        
+        # Логируем события для отладки
+        print(f"📅 THIRD WEEK: Всего получено {len(events_data)} событий")
+        if events_data:
+            for i, event in enumerate(events_data[:5]):  # Показываем первые 5 событий
+                start_str = event.get('start', {}).get('dateTime', event.get('start', 'N/A'))
+                title = event.get('summary', 'N/A')
+                print(f"📅 THIRD WEEK: Событие {i+1}: {title} - {start_str}")
+        
+        # Рассчитываем слоты для третьей недели
+        third_week_slots = calculator.calculate_slots_for_week(
+            events_data,
+            required_duration_minutes=duration,
+            week_offset=2  # Третья неделя
+        )
+        
+        print(f"📅 THIRD WEEK: Рассчитано {len(third_week_slots)} дней")
+        
+        return JsonResponse({
+            'success': True,
+            'slots': third_week_slots
+        })
+        
+    except Exception as e:
+        print(f"❌ THIRD WEEK: Ошибка: {e}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка расчета слотов: {str(e)}'
+        })
+
+
+@login_required
 @permission_required('google_oauth.view_hrscreening', raise_exception=True)
 def combined_workflow(request):
     """Объединенная страница для HR-скрининга и инвайтов"""
