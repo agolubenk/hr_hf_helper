@@ -603,6 +603,11 @@
     width: 100%;
 }
 
+/* Для пользовательских сообщений - ограничиваем ширину контейнера */
+.card .user-message > .d-flex {
+    width: 65% !important;
+}
+
 /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: Единый размер шрифта для всех сообщений */
 .card .message-bubble {
     padding: 8px 12px;
@@ -768,7 +773,7 @@
 
 /* Пользовательские сообщения - остаются с ограничением */
 .card .user-message .message-bubble {
-    max-width: 75%;
+    max-width: 65% !important;
     min-width: 120px;
 }
 
@@ -961,7 +966,7 @@
 .card .user-message {
     display: flex;
     justify-content: flex-end;
-    width: 100%;
+    width: auto;
 }
 
 .card .system-message {
