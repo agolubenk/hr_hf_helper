@@ -2472,8 +2472,10 @@ console.log('🔍 DEBUG: Начинаем загрузку событий...');
 console.log('🔍 DEBUG: Количество событий в контексте:', {{ calendar_events_data|length|default:"0" }});
 
 // Загружаем реальные данные событий
-const calendarEvents = JSON.parse(document.getElementById('calendar-events').textContent);
+let calendarEvents = JSON.parse(document.getElementById('calendar-events').textContent);
 console.log('🔍 DEBUG: Загружены реальные события, количество:', calendarEvents.length);
+// Делаем переменную глобальной для изменения в других скриптах
+window.calendarEvents = calendarEvents;
 
 // Настройки слотов из Django контекста
 let slotsSettings = {{ slots_settings.to_dict|default:"{}"|safe }};
@@ -2489,6 +2491,12 @@ window.vacancyLinkPoland = "{{ selected_vacancy.vacancy_link_poland|escapejs }}"
 window.questionsBelarus = "{{ selected_vacancy.questions_belarus|escapejs }}";
 window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
 {% endif %}
+
+// Предрассчитанные слоты с backend
+window.screeningSlots = {{ screening_slots_json|safe|default:"[]" }};
+window.interviewSlots = {{ interview_slots_json|safe|default:"[]" }};
+console.log('📊 Слоты для скринингов:', window.screeningSlots);
+console.log('📊 Слоты для интервью:', window.interviewSlots);
 </script>
 
             <script src="{% static 'js/vacancy-slots.js' %}"></script>

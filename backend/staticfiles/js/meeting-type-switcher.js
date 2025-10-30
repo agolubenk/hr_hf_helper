@@ -68,42 +68,13 @@ window.switchMeetingType = function(newType) {
     window.currentMeetingDuration = conf.defaultDuration;
     console.log(`✅ [SWITCHER] Установлена глобальная переменная: window.currentMeetingDuration = ${conf.defaultDuration}`);
     
-    // Пересчитать слоты
-    if (typeof initializeSlots === 'function') {
-        console.log('🔄 [SWITCHER] Пересчет слотов...');
-        
-        // Принудительно обновляем слоты
-        setTimeout(() => {
-            console.log('🔄 [SWITCHER] Принудительный пересчет слотов через 100ms...');
-            
-            // Показываем индикатор загрузки
-            const switcher = document.querySelector('.meeting-type-switcher');
-            if (switcher) {
-                const loadingDiv = document.createElement('div');
-                loadingDiv.innerHTML = '🔄 Пересчет слотов...';
-                loadingDiv.style.cssText = 'position: absolute; top: -30px; left: 50%; transform: translateX(-50%); background: #007bff; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; z-index: 1000;';
-                switcher.style.position = 'relative';
-                switcher.appendChild(loadingDiv);
-                
-                setTimeout(() => {
-                    if (loadingDiv.parentNode) {
-                        loadingDiv.parentNode.removeChild(loadingDiv);
-                    }
-                }, 2000);
-            }
-            
-            initializeSlots();
-            
-            // Дополнительно обновляем отображение
-            if (typeof window.refreshSlots === 'function') {
-                console.log('🔄 [SWITCHER] Вызываем refreshSlots...');
-                window.refreshSlots();
-            }
-        }, 100);
-        
-        console.log('✅ [SWITCHER] Слоты пересчитаны');
+    // Обновляем отображение слотов с использованием предрассчитанных данных
+    if (typeof window.switchSlotsByMeetingType === 'function') {
+        console.log('🔄 [SWITCHER] Обновление отображения слотов для типа:', newType);
+        window.switchSlotsByMeetingType(newType);
+        console.log('✅ [SWITCHER] Слоты обновлены');
     } else {
-        console.error('❌ [SWITCHER] initializeSlots функция не найдена!');
+        console.error('❌ [SWITCHER] switchSlotsByMeetingType функция не найдена!');
     }
     
     console.log(`✅ [SWITCHER] Тип: ${newType}, длительность: ${conf.defaultDuration} мин`);
@@ -122,6 +93,55 @@ function loadMeetingConfigFromVacancy() {
     } else {
         console.warn('⚠️ [SWITCHER] Данные вакансии не найдены, используем значения по умолчанию');
     }
+}
+
+// Функция для загрузки событий календаря с учетом типа встречи
+function loadCalendarEventsForMeetingType(meetingType, callback) {
+    console.log(`🔍 [SWITCHER] Загрузка событий для типа: ${meetingType}`);
+    
+    // Получаем URL с параметрами
+    const urlParams = new URLSearchParams(window.location.search);
+    const vacancyId = urlParams.get('vacancy_id');
+    const sessionId = urlParams.get('session_id') || window.sessionId;
+    
+    if (!vacancyId) {
+        console.warn('⚠️ [SWITCHER] vacancy_id не найден в URL, события не загружены');
+        if (callback) callback();
+        return;
+    }
+    
+    // Формируем URL для API
+    const apiUrl = `/google-oauth/api/calendar-events/?vacancy_id=${vacancyId}&meeting_type=${meetingType}`;
+    console.log(`🔍 [SWITCHER] Запрос к API: ${apiUrl}`);
+    
+    // Запрашиваем данные с сервера
+    fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        console.log(`🔍 [SWITCHER] Ответ от API, status: ${response.status}`);
+        return response.json();
+    })
+    .then(data => {
+        console.log(`🔍 [SWITCHER] Данные от API:`, data);
+        if (data.success && data.events) {
+            console.log(`✅ [SWITCHER] Получено ${data.events.length} событий от API`);
+            // Обновляем глобальную переменную calendarEvents
+            window.calendarEvents = data.events;
+            console.log(`🔍 [SWITCHER] Обновлена переменная calendarEvents, количество: ${window.calendarEvents.length}`);
+            if (callback) callback();
+        } else {
+            console.error('❌ [SWITCHER] Ошибка загрузки событий:', data.message || data);
+            if (callback) callback();
+        }
+    })
+    .catch(error => {
+        console.error('❌ [SWITCHER] Ошибка при запросе к API:', error);
+        if (callback) callback();
+    });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -144,6 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Экспорт в глобальную область
     window.getCurrentMeetingType = () => currentMeetingType;
     window.getCurrentMeetingConfig = () => MEETING_CONFIG[currentMeetingType];
+    window.loadCalendarEventsForMeetingType = loadCalendarEventsForMeetingType;
     
     console.log('✅ [SWITCHER] Инициализация завершена');
 });

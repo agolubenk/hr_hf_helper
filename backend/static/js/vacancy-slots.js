@@ -27,11 +27,21 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('🔍 DEBUG: Настройки слотов:', slotsSettings);
     console.log('🔍 DEBUG: Данные вакансии:', vacancyData);
     
+    // Проверяем наличие предрассчитанных слотов
+    console.log('🔍 DEBUG: Слоты для скринингов:', window.screeningSlots);
+    console.log('🔍 DEBUG: Слоты для интервью:', window.interviewSlots);
+    
     // Настраиваем обработчики для кнопок сворачивания
     setupCollapseButtons();
     
-    // Инициализируем слоты
-    initializeSlots();
+    // Если есть предрассчитанные слоты, используем их, иначе генерируем на клиенте
+    if (window.screeningSlots && window.screeningSlots.length > 0) {
+        console.log('✅ [SLOTS] Используем предрассчитанные слоты с backend');
+        window.switchSlotsByMeetingType('screening');
+    } else {
+        console.log('⚠️ [SLOTS] Предрассчитанные слоты не найдены, генерируем на клиенте');
+        initializeSlots();
+    }
 });
 
 // Настройка обработчиков для кнопок сворачивания
@@ -230,7 +240,7 @@ function calculateAvailableSlots(dayEvents, date) {
     
     dayEvents.forEach(event => {
         // Пропускаем события на весь день
-        if (event.is_all_day) {
+        if (event.is_all_day || event.isallday) {
             return;
         }
         
@@ -443,7 +453,7 @@ function generateWeekSlots(weekOffset) {
                 }
                 
                 // Исключаем события "весь день"
-                if (event.isallday === true) {
+                if (event.is_all_day === true || event.isallday === true) {
                     console.log(`  📅 Исключаем событие "весь день": "${event.title}"`);
                     return false;
                 }
@@ -460,7 +470,8 @@ function generateWeekSlots(weekOffset) {
             
             meetingsCount = meetingsWithoutLunch.length; // ПРАВИЛЬНЫЙ ПОДСЧЕТ
             
-            // Вычисляем доступные слоты времени (11-18, исключая обед)
+            // Вычисляем доступные слоты времени (11-18, исключая обед и события на весь день)
+            // Используем все dayEvents для расчета занятых интервалов
             availableSlots = calculateAvailableSlots(dayEvents, date);
             
             console.log(`📅 Дата ${dateStr}: ${meetingsWithoutLunch.length} встреч (исключая обед из ${dayEvents.length} общих), слоты: ${availableSlots}`);
@@ -576,6 +587,58 @@ function updateSlotsDisplay(currentWeekSlots, nextWeekSlots) {
     // Проверяем наличие слотов и деактивируем кнопки при необходимости
     updateSlotButtons(currentWeekSlots, nextWeekSlots);
 }
+
+// Новая функция для переключения между предрассчитанными слотами
+function switchSlotsByMeetingType(meetingType) {
+    console.log(`🔄 [SLOTS] Переключение на слоты для типа: ${meetingType}`);
+    
+    // Определяем какие слоты использовать
+    let slots = [];
+    if (meetingType === 'screening' && window.screeningSlots) {
+        slots = window.screeningSlots;
+        console.log(`✅ [SLOTS] Используем слоты для скринингов: ${slots.length} дней`);
+    } else if (meetingType === 'interview' && window.interviewSlots) {
+        slots = window.interviewSlots;
+        console.log(`✅ [SLOTS] Используем слоты для интервью: ${slots.length} дней`);
+    } else {
+        console.warn(`⚠️ [SLOTS] Слоты для типа ${meetingType} не найдены, используем пустой массив`);
+        slots = [];
+    }
+    
+    // Обновляем отображение
+    // Разделяем слоты на текущую и следующую неделю
+    // Используем дату, чтобы определить, где заканчивается текущая неделя
+    if (slots.length > 0) {
+        const today = new Date();
+        const currentWeekSlots = [];
+        const nextWeekSlots = [];
+        
+        // Определяем начало следующей недели (следующий понедельник)
+        const daysUntilMonday = (8 - today.getDay()) % 7; // Количество дней до следующего понедельника
+        const nextMonday = new Date(today);
+        nextMonday.setDate(today.getDate() + daysUntilMonday);
+        nextMonday.setHours(0, 0, 0, 0);
+        
+        // Разделяем слоты по неделям
+        slots.forEach(slot => {
+            const slotDate = new Date(slot.date);
+            if (slotDate < nextMonday) {
+                currentWeekSlots.push(slot);
+            } else {
+                nextWeekSlots.push(slot);
+            }
+        });
+        
+        console.log(`📅 Разделение слотов: текущая неделя = ${currentWeekSlots.length} дней, следующая = ${nextWeekSlots.length} дней`);
+        updateSlotsDisplay(currentWeekSlots, nextWeekSlots);
+    } else {
+        // Если слотов нет, очищаем отображение
+        updateSlotsDisplay([], []);
+    }
+}
+
+// Экспортируем функцию в глобальную область
+window.switchSlotsByMeetingType = switchSlotsByMeetingType;
 
 // Функция обновления состояния кнопок слотов
 function updateSlotButtons(currentWeekSlots, nextWeekSlots) {
