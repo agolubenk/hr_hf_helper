@@ -1,3 +1,11 @@
+"""
+Документация по проблемным импортам (линтер):
+- django.shortcuts, django.contrib.*, django.http, django.views.*, django.urls, django.db, django.utils
+
+Влияние: все представления и AJAX-эндпоинты модуля `hiring_plan` (списки/детали/формы планов,
+SLA, KPI/OKR, метрики, годовой план) завязаны на эти импорты. Если импорты реально не доступны
+в окружении, весь UI и API этого приложения перестанут работать.
+"""
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required

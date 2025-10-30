@@ -1,3 +1,10 @@
+"""
+Документация по проблемным импортам (линтер):
+- django.urls — маршрутизация URL для Google OAuth
+
+Влияние: подключение путей (login/callback/drive/calendar/chat) не будет работать
+при отсутствии модуля, что делает весь набор URL недоступным.
+"""
 from django.urls import path
 from . import views
 from . import views_simple

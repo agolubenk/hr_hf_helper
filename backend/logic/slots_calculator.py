@@ -1,9 +1,9 @@
 """
 Модуль для расчета доступных слотов на основе событий календаря
 """
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta, time, timezone
 from typing import List, Dict, Optional, Any
-import pytz
+from zoneinfo import ZoneInfo
 
 
 class SlotsCalculator:
@@ -22,7 +22,7 @@ class SlotsCalculator:
         self.work_start_hour = work_start_hour
         self.work_end_hour = work_end_hour
         self.meeting_interval_minutes = meeting_interval_minutes
-        self.minsk_tz = pytz.timezone('Europe/Minsk')
+        self.minsk_tz = ZoneInfo('Europe/Minsk')
     
     def calculate_slots_for_week(self, events_data: List[Dict], 
                                   required_duration_minutes: int = 45,
@@ -254,17 +254,17 @@ class SlotsCalculator:
         # Если это текущий день - начинаем с текущего момента, иначе с начала рабочего дня
         today = datetime.now(self.minsk_tz)
         work_start = date.replace(hour=self.work_start_hour, minute=0, second=0, microsecond=0)
+        work_end = date.replace(hour=self.work_end_hour, minute=0, second=0, microsecond=0)
         
         if date.date() == today.date():
-            # Если это сегодня - начинаем с текущего момента
-            # Округляем до следующего интервала
-            current_minute = today.minute
-            rounded_minute = ((current_minute // 15) + 1) * 15
-            if rounded_minute >= 60:
-                current_time = today.replace(hour=today.hour + 1, minute=0, second=0, microsecond=0)
+            # Если это сегодня - начинаем с текущей минуты без округления по 15 минутам
+            # Сбрасываем секунды/микросекунды, чтобы получить точное минутное значение
+            tentative = today.replace(second=0, microsecond=0)
+            # Если уже за пределами рабочего дня — считать, что слотов больше нет
+            if tentative >= work_end:
+                current_time = work_end
             else:
-                current_time = today.replace(minute=rounded_minute, second=0, microsecond=0)
-            current_time = max(current_time, work_start)
+                current_time = max(tentative, work_start)
         else:
             # Если это будущий день - начинаем с начала рабочего дня
             current_time = work_start
@@ -279,7 +279,6 @@ class SlotsCalculator:
             current_time = max(current_time, interval['end'])
         
         # Проверяем, есть ли свободное время после последнего занятого интервала
-        work_end = date.replace(hour=self.work_end_hour, minute=0, second=0, microsecond=0)
         if current_time < work_end:
             free_intervals.append({
                 'start': current_time,
@@ -339,7 +338,7 @@ class SlotsCalculator:
                 dt = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
                 # Конвертируем в Minsk timezone если необходимо
                 if dt.tzinfo is None:
-                    dt = pytz.UTC.localize(dt)
+                    dt = dt.replace(tzinfo=timezone.utc)
                 dt = dt.astimezone(self.minsk_tz)
                 return dt
         except Exception as e:
@@ -377,7 +376,7 @@ class SlotsCalculator:
                 dt = datetime.fromisoformat(end_str.replace('Z', '+00:00'))
                 # Конвертируем в Minsk timezone если необходимо
                 if dt.tzinfo is None:
-                    dt = pytz.UTC.localize(dt)
+                    dt = dt.replace(tzinfo=timezone.utc)
                 dt = dt.astimezone(self.minsk_tz)
                 return dt
         except Exception as e:

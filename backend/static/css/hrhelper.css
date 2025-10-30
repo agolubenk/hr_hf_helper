@@ -1873,6 +1873,8 @@ a:hover {
     color: white;
     border: none;
     margin-right: -32px;
+    position: relative;
+    z-index: 1;
 }
 
 .card .system-bubble {
@@ -1956,6 +1958,8 @@ a:hover {
     height: 40px;
     flex-shrink: 0;
     margin-bottom: -18px;
+    position: relative;
+    z-index: 100;
 }
 
 .card .message-avatar img {

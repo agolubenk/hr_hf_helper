@@ -1,3 +1,14 @@
+"""
+Документация по проблемным импортам (линтер):
+- django.shortcuts, django.contrib.*, django.http, django.views.decorators.*, django.conf,
+  django.utils, django.template.loader, django.db, django.core.paginator, django.urls
+- google.oauth2.credentials, googleapiclient.discovery
+- pytz (обработка таймзон)
+
+Влияние: все представления Google OAuth (аутентификация, календарь, чат, пагинация) и
+интеграции с Google API зависят от этих импортов. При их недоступности авторизация Google,
+чтение календаря/Drive, постраничная навигация и корректная работа времени перестанут работать.
+"""
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
@@ -1052,7 +1063,7 @@ def sync_all(request):
 from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import SyncSettings, Invite, HRScreening
-from .forms import SyncSettingsForm, InviteForm, InviteUpdateForm, InviteCombinedForm, HRScreeningForm, CombinedForm
+from .forms import SyncSettingsForm, InviteForm, InviteUpdateForm, InviteCombinedForm, HRScreeningForm
 
 
 @login_required
@@ -3268,122 +3279,8 @@ def api_third_week_slots(request):
 @login_required
 @permission_required('google_oauth.view_hrscreening', raise_exception=True)
 def combined_workflow(request):
-    """Объединенная страница для HR-скрининга и инвайтов"""
-    print(f"🔍 COMBINED_WORKFLOW: Метод запроса: {request.method}")
-    print(f"🔍 COMBINED_WORKFLOW: Пользователь: {request.user}")
-    
-    if request.method == 'POST':
-        print(f"🔍 COMBINED_WORKFLOW: POST запрос получен!")
-        print(f"🔍 COMBINED_WORKFLOW: POST данные: {request.POST}")
-        
-        form = CombinedForm(request.POST, user=request.user)
-        print(f"🔍 COMBINED_WORKFLOW: Форма создана")
-        
-        is_valid = form.is_valid()
-        print(f"🔍 COMBINED_WORKFLOW: Форма валидна: {is_valid}")
-        
-        if not is_valid:
-            print(f"❌ COMBINED_WORKFLOW: Ошибки формы: {form.errors}")
-            print(f"❌ COMBINED_WORKFLOW: Ошибки полей: {form.errors.as_data()}")
-        
-        if is_valid:
-            print(f"✅ COMBINED_WORKFLOW: Форма валидна, обрабатываем...")
-            try:
-                combined_data = form.cleaned_data['combined_data']
-                action_type = form.determine_action_type()
-                
-                print(f"🔍 COMBINED_WORKFLOW: Автоматически определен тип действия: {action_type}")
-                
-                hr_screening = None
-                invite = None
-                
-                # Создаем HR-скрининг если нужно - используем существующую форму
-                if action_type in ['hrscreening', 'both']:
-                    print(f"🔍 COMBINED_WORKFLOW: Создаем HR-скрининг через HRScreeningForm...")
-                    
-                    # Создаем данные для HRScreeningForm
-                    hr_form_data = {'input_data': combined_data}
-                    hr_form = HRScreeningForm(hr_form_data, user=request.user)
-                    
-                    if hr_form.is_valid():
-                        hr_screening = hr_form.save()
-                        print(f"✅ COMBINED_WORKFLOW: HR-скрининг создан с ID: {hr_screening.id}")
-                    else:
-                        print(f"❌ COMBINED_WORKFLOW: Ошибки HR-скрининга: {hr_form.errors}")
-                        raise forms.ValidationError(f'Ошибка создания HR-скрининга: {hr_form.errors}')
-                
-                # Создаем инвайт если нужно - используем InviteCombinedForm (полная функциональность)
-                if action_type in ['invite', 'both']:
-                    print(f"🔍 COMBINED_WORKFLOW: Создаем инвайт через InviteCombinedForm...")
-                    
-                    # Создаем данные для InviteCombinedForm
-                    invite_form_data = {'combined_data': combined_data}
-                    
-                    # Передаем данные об интервьюере, если они есть
-                    if 'selected_interviewer' in request.POST:
-                        invite_form_data['selected_interviewer'] = request.POST['selected_interviewer']
-                        print(f"🔍 COMBINED_WORKFLOW: Передаем данные об интервьюере: {request.POST['selected_interviewer']}")
-                    
-                    invite_form = InviteCombinedForm(invite_form_data, user=request.user)
-                    
-                    if invite_form.is_valid():
-                        invite = invite_form.save()
-                        print(f"✅ COMBINED_WORKFLOW: Инвайт создан с ID: {invite.id}")
-                    else:
-                        print(f"❌ COMBINED_WORKFLOW: Ошибки инвайта: {invite_form.errors}")
-                        raise forms.ValidationError(f'Ошибка создания инвайта: {invite_form.errors}')
-                
-                # Формируем сообщение об успехе
-                success_messages = []
-                if hr_screening:
-                    success_messages.append(f'HR-скрининг создан (ID: {hr_screening.id})')
-                if invite:
-                    success_messages.append(f'Инвайт создан (ID: {invite.id})')
-                
-                messages.success(request, ' | '.join(success_messages))
-                
-                # Перенаправляем на соответствующую страницу
-                if action_type == 'hrscreening' and hr_screening:
-                    return redirect('google_oauth:hr_screening_detail', pk=hr_screening.pk)
-                elif action_type == 'invite' and invite:
-                    return redirect('google_oauth:invite_detail', pk=invite.pk)
-                elif action_type == 'both':
-                    # Если созданы оба, перенаправляем на HR-скрининг
-                    if hr_screening:
-                        return redirect('google_oauth:hr_screening_detail', pk=hr_screening.pk)
-                    elif invite:
-                        return redirect('google_oauth:invite_detail', pk=invite.pk)
-                
-            except Exception as e:
-                print(f"❌ COMBINED_WORKFLOW: Ошибка при обработке: {e}")
-                import traceback
-                traceback.print_exc()
-                messages.error(request, f'Ошибка при обработке: {str(e)}')
-        else:
-            print(f"❌ COMBINED_WORKFLOW: Форма невалидна")
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f'{field}: {error}')
-    else:
-        print(f"🔍 COMBINED_WORKFLOW: GET запрос, создаем пустую форму")
-        form = CombinedForm(user=request.user)
-    
-    # Получаем настройки структуры папок для отображения
-    try:
-        from apps.google_oauth.models import ScorecardPathSettings
-        path_settings = ScorecardPathSettings.get_or_create_for_user(request.user)
-        path_preview = path_settings.get_path_preview()
-    except Exception as e:
-        print(f"❌ COMBINED_WORKFLOW: Ошибка получения настроек пути: {e}")
-        path_preview = "Ошибка получения настроек"
-    
-    context = {
-        'form': form,
-        'title': 'Объединенный рабочий процесс',
-        'path_preview': path_preview,
-    }
-    
-    return render(request, 'google_oauth/combined_workflow.html', context)
+    from django.http import Http404
+    raise Http404("Combined workflow отключен администратором")
 
 
 @login_required
@@ -3444,15 +3341,12 @@ def chat_ajax_handler(request, session_id):
             print(f"🔍 CHAT AJAX: Команда /in обнаружена - принудительный инвайт")
             message_text = re.sub(r'^/in\s*', '', message_text, flags=re.IGNORECASE).strip()
         else:
-            # Только если НЕТ команд, используем JavaScript или автоматическое определение
+            # Комбинированный/автоматический режим отключен, но допускаем явный тип из JS
             if action_type_from_js:
-                # Используем тип действия из JavaScript
                 action_type = action_type_from_js
-                print(f"🔍 CHAT AJAX: Используем тип действия из JS: {action_type}")
+                print(f"🔍 CHAT AJAX: Используем тип действия из JS (скрытое поле): {action_type}")
             else:
-                # Определяем тип действия автоматически
-                action_type = determine_action_type_from_text(message_text)
-                print(f"🔍 CHAT AJAX: Определен тип действия автоматически: {action_type}")
+                return JsonResponse({'success': False, 'error': 'Укажи команду: /s для HR-скрининга или /in для инвайта'})
         
         print(f"🔍 CHAT AJAX: ФИНАЛЬНЫЙ action_type: {action_type}")
 
@@ -3728,8 +3622,8 @@ def send_chat_message(request):
         # Обрабатываем действие
         if action_type == 'hrscreening':
             # Создаем HR-скрининг
-            screening_form_data = {'combined_data': message_text}
-            screening_form = HRScreeningCombinedForm(screening_form_data, user=request.user)
+            screening_form_data = {'input_data': message_text}
+            screening_form = HRScreeningForm(screening_form_data, user=request.user)
             
             if screening_form.is_valid():
                 try:
@@ -3910,7 +3804,31 @@ def chat_workflow(request, session_id=None):
         )
 
     # Получаем все сообщения в этой сессии
-    messages = chat_session.messages.all().order_by('created_at')
+    messages_queryset = chat_session.messages.all().order_by('created_at')
+    
+    # Добавляем информацию о команде для каждого пользовательского сообщения
+    messages_list = list(messages_queryset)
+    for i, msg in enumerate(messages_list):
+        if msg.message_type == 'user':
+            command_used = None
+            # Проверяем следующее сообщение
+            if i + 1 < len(messages_list):
+                next_msg = messages_list[i + 1]
+                if next_msg.message_type == 'hrscreening':
+                    command_used = '/s'
+                elif next_msg.message_type == 'invite':
+                    command_used = '/in'
+            # Если не нашли по следующему сообщению, проверяем текст
+            if not command_used:
+                content = msg.content or ''
+                if content.startswith('/s ') or content.startswith('/hr '):
+                    command_used = '/s'
+                elif content.startswith('/in ') or content.startswith('/invite '):
+                    command_used = '/in'
+            # Добавляем атрибут к объекту сообщения для использования в шаблоне
+            msg.command_used = command_used
+    
+    messages = messages_list
     form = ChatForm(user=request.user)
 
     if request.method == 'POST':
@@ -3946,9 +3864,14 @@ def chat_workflow(request, session_id=None):
                 print(f"🔍 CHAT: Команда /in обнаружена - принудительный инвайт")
                 message_text = re.sub(r'^/in\s*', '', message_text, flags=re.IGNORECASE).strip()
             else:
-                # Определяем тип действия автоматически
-                action_type = determine_action_type_from_text(message_text)
-                print(f"🔍 CHAT: Определен тип действия автоматически: {action_type}")
+                # Комбинированный/автоматический режим отключен: требуем явные команды
+                ChatMessage.objects.create(
+                    session=chat_session,
+                    message_type='system',
+                    content='Укажи команду: /s для HR-скрининга или /in для инвайта'
+                )
+                # Возвращаемся на исходный URL с сохранением query-параметров
+                return redirect(request.get_full_path())
 
             try:
                 if action_type == 'delete_last':
