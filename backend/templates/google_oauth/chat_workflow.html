@@ -242,7 +242,7 @@
                     <div id="chat-messages" class="chat-messages" style="overflow-y: auto;">
                                 {% for message in messages %}
                             <div class="message mb-3 {% if message.message_type == 'user' %}user-message{% elif message.message_type == 'hrscreening' %}system-message hr-screening-message{% elif message.message_type == 'invite' %}system-message invite-message{% elif message.message_type == 'delete' %}system-message delete-message{% else %}system-message{% endif %}">
-                                        <div class="d-flex {% if message.message_type == 'user' %}justify-content-end{% else %}justify-content-start{% endif %}">
+                                        <div class="d-flex {% if message.message_type == 'user' %}justify-content-end{% else %}justify-content-start{% endif %} align-items-end">
                                             <div class="message-bubble {% if message.message_type == 'user' %}user-bubble{% else %}system-bubble{% endif %}">
                                         
                                         <!-- Пользовательское сообщение -->
@@ -428,6 +428,12 @@
                                                         <div class="message-content">{{ message.content|linebreaks }}</div>
                                                 {% endif %}
                                             </div>
+                                            <!-- Аватар пользователя -->
+                                            {% if message.message_type == 'user' and user_photo_url %}
+                                            <div class="message-avatar ms-2" style="margin-bottom: -18px;">
+                                                <img src="{{ user_photo_url }}" alt="User Avatar" class="rounded-circle">
+                                            </div>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 {% empty %}
@@ -788,6 +794,7 @@
     background: var(--hr-gradient, linear-gradient(135deg, #007bff 0%, #0056b3 100%));
     color: white;
     border: none;
+    margin-right: -32px;
 }
 
 .card .system-bubble {
@@ -982,6 +989,21 @@
 
 .card .system-message .message-bubble {
     border-bottom-left-radius: 3px;
+}
+
+/* Аватар пользователя */
+.card .message-avatar {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    margin-bottom: -18px;
+}
+
+.card .message-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Специальные цвета для типов сообщений */
