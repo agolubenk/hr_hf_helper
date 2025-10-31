@@ -5,6 +5,22 @@
 
 {% block content %}
 <div class="container-fluid">
+    <!-- Предупреждение о календаре компании -->
+    {% if company_calendar_warning %}
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Внимание!</strong> {{ company_calendar_warning }}
+                <a href="{% url 'company_settings:company_settings' %}" class="alert-link ms-2">
+                    <i class="fas fa-cog me-1"></i>Перейти к настройкам
+                </a>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
     <!-- Селектор вакансии и свободные слоты -->
     <div class="row" style="margin-bottom: -5px;">
         <div class="col-12">
