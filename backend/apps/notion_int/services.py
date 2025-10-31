@@ -252,6 +252,9 @@ class NotionService:
                             text_parts.append(text_item['plain_text'])
                     comment_text = ''.join(text_parts)
                 
+                # Конвертируем datetime в ISO строку для JSON сериализации
+                created_time_iso = created_time_dt.isoformat() if created_time_dt else created_time_str
+                
                 processed_comment = {
                     'id': comment.get('id', ''),
                     'text': comment_text,
@@ -263,7 +266,8 @@ class NotionService:
                     'author_name': author_name,  # Для удобства доступа
                     'author_email': author_email,  # Для удобства доступа
                     'created_time': created_time_str,
-                    'created_time_dt': created_time_dt,  # Parsed datetime объект
+                    'created_time_dt': created_time_iso,  # Конвертировано в ISO строку для JSON
+                    'formatted_time': created_time_iso,  # Для отображения
                     'rich_text': comment.get('rich_text', [])
                 }
                 
@@ -713,24 +717,47 @@ class NotionService:
                         'value': value
                     }
             
+            # Конвертируем datetime объекты в строки ISO формата для JSON сериализации
+            # Это нужно для custom_properties и других JSONField полей
+            import json
+            from datetime import datetime as dt
+            
+            # Функция для конвертации datetime в строку
+            def convert_datetime_for_json(obj):
+                """Конвертирует datetime объекты в ISO строки для JSON"""
+                if isinstance(obj, dt):
+                    return obj.isoformat()
+                elif isinstance(obj, dict):
+                    return {k: convert_datetime_for_json(v) for k, v in obj.items()}
+                elif isinstance(obj, list):
+                    return [convert_datetime_for_json(item) for item in obj]
+                return obj
+            
+            # Обрабатываем custom_properties, чтобы убрать datetime объекты
+            custom_properties_clean = convert_datetime_for_json(custom_properties)
+            
+            # Обрабатываем comments, attachments и другие JSON поля
+            comments_clean = convert_datetime_for_json(page_comments)
+            attachments_clean = convert_datetime_for_json(attachments)
+            
             return {
                 'page_id': page_id,
                 'title': title,
                 'content': page_content_html,  # Содержимое страницы в HTML формате
-                'comments': page_comments,  # Комментарии к странице
+                'comments': comments_clean,  # Комментарии с конвертированными datetime
                 'status': status,
                 'priority': priority,
-                'date_created': date_created,
-                'date_updated': date_updated,
-                'due_date': due_date,
+                'date_created': date_created,  # Оставляем как datetime для DateTimeField
+                'date_updated': date_updated,  # Оставляем как datetime для DateTimeField
+                'due_date': due_date,  # Оставляем как datetime для DateTimeField
                 'url': url,
                 'assignees': assignees,
                 'tags': tags,
-                'attachments': attachments,
-                'custom_properties': custom_properties,
+                'attachments': attachments_clean,  # Вложения с конвертированными datetime
+                'custom_properties': custom_properties_clean,  # Свойства с конвертированными datetime
                 # Новые поля
                 'interviewer': interviewer,
-                'interview_date': interview_date
+                'interview_date': interview_date  # Оставляем как datetime для DateTimeField
             }
             
         except Exception as e:
@@ -791,11 +818,30 @@ class NotionService:
         elif prop_type == 'checkbox' and prop.get('checkbox') is not None:
             return 'Да' if prop['checkbox'] else 'Нет'
         elif prop_type == 'url' and prop.get('url'):
-            return prop['url']
+            url_value = prop['url']
+            logger.debug(f"  ✅ URL '{property_name}': значение='{url_value}'")
+            return url_value
         elif prop_type == 'email' and prop.get('email'):
             return prop['email']
         elif prop_type == 'phone_number' and prop.get('phone_number'):
             return prop['phone_number']
+        elif prop_type == 'files' and prop.get('files'):
+            # Для файлового поля возвращаем первый файл как словарь для дальнейшей обработки
+            files_list = prop['files']
+            if files_list and len(files_list) > 0:
+                first_file = files_list[0]
+                # Если это external файл
+                if first_file.get('type') == 'external' and first_file.get('external'):
+                    file_url = first_file['external'].get('url', '')
+                    file_name = first_file.get('name', 'Файл')
+                    logger.debug(f"  ✅ Files '{property_name}': external файл '{file_name}', URL='{file_url[:50]}'")
+                    return {'url': file_url, 'name': file_name, 'type': 'external'}
+                # Если это внутренний файл Notion
+                elif first_file.get('type') == 'file' and first_file.get('file'):
+                    file_url = first_file['file'].get('url', '')
+                    file_name = first_file.get('name', 'Файл')
+                    logger.debug(f"  ✅ Files '{property_name}': файл '{file_name}', URL='{file_url[:50]}'")
+                    return {'url': file_url, 'name': file_name, 'type': 'file'}
         
         return ''
     
