@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import NotionSettings, NotionPage, NotionSyncLog, NotionBulkImport
+from .models import NotionSettings, NotionPage, NotionSyncLog, NotionBulkImport, NotionHuntflowMapping
 
 
 @admin.register(NotionSettings)
@@ -71,6 +71,24 @@ class NotionSyncLogAdmin(admin.ModelAdmin):
         }),
         ('Ошибки', {
             'fields': ('error_message',),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(NotionHuntflowMapping)
+class NotionHuntflowMappingAdmin(admin.ModelAdmin):
+    list_display = ['user', 'mapping_type', 'notion_value', 'huntflow_value', 'huntflow_account_id', 'created_at']
+    list_filter = ['mapping_type', 'created_at']
+    search_fields = ['user__username', 'notion_value', 'huntflow_value']
+    readonly_fields = ['created_at', 'updated_at']
+    
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('user', 'mapping_type', 'notion_value', 'huntflow_value', 'huntflow_account_id')
+        }),
+        ('Метаданные', {
+            'fields': ('created_at', 'updated_at'),
             'classes': ('collapse',)
         }),
     )

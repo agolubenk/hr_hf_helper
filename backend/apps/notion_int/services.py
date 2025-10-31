@@ -95,6 +95,39 @@ class NotionService:
         """Получает информацию о базе данных"""
         return self._make_request('GET', f'/databases/{database_id}')
     
+    def get_database_property_options(self, database_id: str, property_name: str) -> List[str]:
+        """Получает все опции из свойства базы данных (select, multi_select, status)"""
+        try:
+            database = self.get_database(database_id)
+            properties = database.get('properties', {})
+            
+            if property_name not in properties:
+                logger.warning(f"Свойство '{property_name}' не найдено в базе данных")
+                return []
+            
+            prop = properties[property_name]
+            prop_type = prop.get('type', '')
+            
+            options = []
+            if prop_type == 'status':
+                # Для типа status опции находятся в status.options
+                status_options = prop.get('status', {}).get('options', [])
+                options = [opt.get('name', '') for opt in status_options if opt.get('name')]
+            elif prop_type == 'select':
+                # Для типа select опции находятся в select.options
+                select_options = prop.get('select', {}).get('options', [])
+                options = [opt.get('name', '') for opt in select_options if opt.get('name')]
+            elif prop_type == 'multi_select':
+                # Для типа multi_select опции находятся в multi_select.options
+                multi_select_options = prop.get('multi_select', {}).get('options', [])
+                options = [opt.get('name', '') for opt in multi_select_options if opt.get('name')]
+            
+            logger.info(f"Получены опции для свойства '{property_name}' (тип {prop_type}): {options}")
+            return options
+        except Exception as e:
+            logger.error(f"Ошибка получения опций свойства '{property_name}': {e}")
+            return []
+    
     def query_database(self, database_id: str, filter_dict: Dict = None, sorts: List[Dict] = None, page_size: int = 100) -> List[Dict]:
         """Запрашивает страницы из базы данных"""
         data = {}

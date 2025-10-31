@@ -19,7 +19,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from .models import NotionSettings, NotionPage, NotionSyncLog, NotionBulkImport
+from .models import NotionSettings, NotionPage, NotionSyncLog, NotionBulkImport, NotionHuntflowMapping
 from .forms import NotionSettingsForm, NotionTestConnectionForm
 from .services import NotionService, NotionCacheService, NotionAPIError
 
@@ -87,14 +87,216 @@ def settings(request):
     else:
         form = NotionSettingsForm(instance=settings_obj, user=user)
     
+    # Получаем данные для связок
+    notion_languages = []
+    notion_nuances = []
+    notion_statuses = []
+    huntflow_vacancies = []
+    huntflow_fields = []
+    huntflow_statuses = []
+    
+    # Получаем данные из Notion, если база данных настроена
+    if settings_obj and settings_obj.database_id and user.notion_integration_token:
+        try:
+            notion_service = NotionService(user.notion_integration_token)
+            
+            # Получаем опции для Language
+            notion_languages = notion_service.get_database_property_options(
+                settings_obj.database_id, 
+                'Language'
+            )
+            
+            # Получаем опции для Нюансы (пробуем разные названия)
+            notion_nuances = notion_service.get_database_property_options(
+                settings_obj.database_id, 
+                'Нюансы'
+            ) or notion_service.get_database_property_options(
+                settings_obj.database_id, 
+                'Nuances'
+            )
+            
+            # Получаем опции для Status
+            notion_statuses = notion_service.get_database_property_options(
+                settings_obj.database_id, 
+                'Status'
+            ) or notion_service.get_database_property_options(
+                settings_obj.database_id, 
+                'Статус'
+            )
+        except Exception as e:
+            logger.error(f"Ошибка получения данных из Notion: {e}")
+    
+    # Получаем данные из Huntflow
+    try:
+        from apps.huntflow.services import HuntflowService
+        huntflow_service = HuntflowService(user)
+        accounts = huntflow_service.get_accounts()
+        
+        if accounts and accounts.get('items'):
+            # Берем первый аккаунт
+            account_id = accounts['items'][0]['id']
+            
+            # Получаем вакансии
+            vacancies_data = huntflow_service.get_vacancies(account_id, count=100)
+            if vacancies_data and vacancies_data.get('items'):
+                huntflow_vacancies = [
+                    {'id': v.get('id'), 'name': v.get('position', f'Вакансия {v.get("id")}')}
+                    for v in vacancies_data['items']
+                ]
+            
+            # Получаем схему анкеты кандидата для дополнительных полей
+            questionary_schema = huntflow_service.get_applicant_questionary_schema(account_id)
+            logger.info(f"🔍 Questionary schema structure: {list(questionary_schema.keys()) if questionary_schema else 'None'}")
+            
+            if questionary_schema:
+                # Схема может быть словарем, где ключи - это ID полей
+                if isinstance(questionary_schema, dict):
+                    # Если это словарь с полями (не списком)
+                    if 'fields' in questionary_schema:
+                        # Если есть ключ 'fields'
+                        fields_list = questionary_schema.get('fields', [])
+                    else:
+                        # Если сам словарь содержит поля (ключи - это ID полей)
+                        fields_list = []
+                        for field_id, field_data in questionary_schema.items():
+                            if isinstance(field_data, dict):
+                                field_data['id'] = field_id
+                                fields_list.append(field_data)
+                            else:
+                                fields_list.append({'id': field_id, 'name': str(field_data)})
+                    
+                    huntflow_fields = []
+                    for idx, f in enumerate(fields_list):
+                        if isinstance(f, dict):
+                            # Пытаемся получить название поля из разных возможных ключей
+                            field_name = f.get('name') or f.get('title') or f.get('label') or f'Поле {f.get("id", idx)}'
+                            
+                            # Получаем ID поля
+                            field_id = f.get('id')
+                            if not field_id:
+                                # Если ID нет в поле, но это словарь с ключами как ID
+                                if 'fields' not in questionary_schema:
+                                    # Значит ключи словаря и есть ID полей
+                                    field_id = list(questionary_schema.keys())[idx] if idx < len(questionary_schema) else str(idx)
+                                else:
+                                    field_id = str(idx)
+                            
+                            field_type = f.get('type', 'text')
+                            
+                            # Включаем все типы полей, которые можно заполнить
+                            huntflow_fields.append({
+                                'id': str(field_id),
+                                'name': field_name,
+                                'type': field_type
+                            })
+                        elif isinstance(f, str):
+                            # Если это просто строка (название поля)
+                            huntflow_fields.append({
+                                'id': str(idx),
+                                'name': f,
+                                'type': 'text'
+                            })
+                    
+                    logger.info(f"✅ Получено {len(huntflow_fields)} дополнительных полей из Huntflow: {[(f['id'], f['name']) for f in huntflow_fields[:5]]}")
+                else:
+                    logger.warning(f"⚠️ Неожиданная структура questionary_schema: {type(questionary_schema)}")
+            
+            # Получаем статусы кандидатов
+            statuses_data = huntflow_service.get_vacancy_statuses(account_id)
+            if statuses_data and statuses_data.get('items'):
+                huntflow_statuses = [
+                    {'id': s.get('id'), 'name': s.get('name', f'Статус {s.get("id")}')}
+                    for s in statuses_data['items']
+                ]
+    except Exception as e:
+        logger.error(f"Ошибка получения данных из Huntflow: {e}")
+    
+    # Получаем существующие связки
+    language_mappings = NotionHuntflowMapping.objects.filter(
+        user=user,
+        mapping_type='language_vacancy'
+    ).order_by('notion_value')
+    
+    nuances_mappings = NotionHuntflowMapping.objects.filter(
+        user=user,
+        mapping_type='nuances_field'
+    ).order_by('notion_value')
+    
+    status_mappings = NotionHuntflowMapping.objects.filter(
+        user=user,
+        mapping_type='status_status'
+    ).order_by('notion_value')
+    
     context = {
         'form': form,
         'settings': settings_obj,
         'settings_cleared': settings_cleared,
         'user': user,
+        # Notion данные
+        'notion_languages': notion_languages,
+        'notion_nuances': notion_nuances,
+        'notion_statuses': notion_statuses,
+        # Huntflow данные
+        'huntflow_vacancies': huntflow_vacancies,
+        'huntflow_fields': huntflow_fields,
+        'huntflow_statuses': huntflow_statuses,
+        # Существующие связки
+        'language_mappings': language_mappings,
+        'nuances_mappings': nuances_mappings,
+        'status_mappings': status_mappings,
     }
     
     return render(request, 'notion_int/settings.html', context)
+
+
+@login_required
+@require_POST
+def save_mapping(request):
+    """Сохранение связки Notion-Huntflow"""
+    try:
+        mapping_type = request.POST.get('mapping_type')
+        notion_value = request.POST.get('notion_value')
+        huntflow_value = request.POST.get('huntflow_value')
+        account_id = request.POST.get('account_id')
+        
+        if not all([mapping_type, notion_value, huntflow_value]):
+            return JsonResponse({'success': False, 'error': 'Не все поля заполнены'})
+        
+        # Создаем или обновляем связку
+        mapping, created = NotionHuntflowMapping.objects.update_or_create(
+            user=request.user,
+            mapping_type=mapping_type,
+            notion_value=notion_value,
+            defaults={
+                'huntflow_value': huntflow_value,
+                'huntflow_account_id': account_id if account_id else None,
+            }
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Связка сохранена успешно',
+            'created': created,
+            'mapping_id': mapping.id
+        })
+    except Exception as e:
+        logger.error(f"Ошибка сохранения связки: {e}")
+        return JsonResponse({'success': False, 'error': str(e)})
+
+
+@login_required
+@require_POST
+def delete_mapping(request, mapping_id):
+    """Удаление связки Notion-Huntflow"""
+    try:
+        mapping = NotionHuntflowMapping.objects.get(id=mapping_id, user=request.user)
+        mapping.delete()
+        return JsonResponse({'success': True, 'message': 'Связка удалена'})
+    except NotionHuntflowMapping.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Связка не найдена'})
+    except Exception as e:
+        logger.error(f"Ошибка удаления связки: {e}")
+        return JsonResponse({'success': False, 'error': str(e)})
 
 
 @login_required

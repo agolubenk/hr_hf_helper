@@ -12,6 +12,8 @@ urlpatterns = [
     path('settings/save/', views.save_settings, name='save_settings'),
     path('settings/test/', views.test_connection, name='test_connection'),
     path('settings/databases/', views.get_databases, name='get_databases'),
+    path('settings/mapping/save/', views.save_mapping, name='save_mapping'),
+    path('settings/mapping/<int:mapping_id>/delete/', views.delete_mapping, name='delete_mapping'),
     
     # Страницы
     path('pages/', views.pages_list, name='pages_list'),

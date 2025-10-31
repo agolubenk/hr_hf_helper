@@ -86,6 +86,60 @@ class NotionSettings(models.Model):
         return settings
 
 
+class NotionHuntflowMapping(models.Model):
+    """Связки между полями Notion и Huntflow"""
+    
+    MAPPING_TYPE_CHOICES = [
+        ('language_vacancy', 'Language → Вакансия'),
+        ('nuances_field', 'Нюансы → Поля кандидата'),
+        ('status_status', 'Status Notion → Status Huntflow'),
+    ]
+    
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь',
+        related_name='notion_huntflow_mappings'
+    )
+    
+    mapping_type = models.CharField(
+        max_length=50,
+        choices=MAPPING_TYPE_CHOICES,
+        verbose_name='Тип связки'
+    )
+    
+    # Notion значения
+    notion_value = models.CharField(
+        max_length=200,
+        verbose_name='Значение из Notion'
+    )
+    
+    # Huntflow значения
+    huntflow_value = models.CharField(
+        max_length=200,
+        verbose_name='ID/Значение в Huntflow'
+    )
+    
+    # Дополнительная информация
+    huntflow_account_id = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name='ID аккаунта Huntflow'
+    )
+    
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создано')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Обновлено')
+    
+    class Meta:
+        verbose_name = 'Связка Notion-Huntflow'
+        verbose_name_plural = 'Связки Notion-Huntflow'
+        unique_together = ['user', 'mapping_type', 'notion_value']
+        db_table = 'notion_huntflow_mapping'
+    
+    def __str__(self):
+        return f'{self.get_mapping_type_display()}: {self.notion_value} → {self.huntflow_value}'
+
+
 class NotionPage(models.Model):
     """Кэшированные страницы из Notion"""
     
