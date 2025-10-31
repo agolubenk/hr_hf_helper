@@ -23,6 +23,11 @@ urlpatterns = [
     path('api/sync/', views.sync_pages, name='sync_pages'),
     path('api/clear-cache/', views.clear_cache, name='clear_cache'),
     path('api/transfer-to-huntflow/', views.transfer_to_huntflow, name='transfer_to_huntflow'),
+    path('api/bulk-import/', views.bulk_import, name='bulk_import_api'),
+    
+    # Массовый импорт
+    path('bulk-import/', views.bulk_import_view, name='bulk_import'),
+    path('bulk-import/<int:bulk_import_id>/', views.bulk_import_status, name='bulk_import_status'),
     
     # Логи
     path('logs/', views.sync_logs, name='sync_logs'),

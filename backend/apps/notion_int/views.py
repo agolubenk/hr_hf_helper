@@ -1,7 +1,7 @@
 # Импорты из новых модулей
 from logic.integration.notion.notion_service import (
     settings, dashboard, pages_list, page_detail,
-    test_connection, sync_pages, sync_logs, bulk_import, bulk_import_status
+    test_connection, sync_pages, sync_logs, bulk_import_view, bulk_import, bulk_import_status
 )
 from logic.base.response_handler import UnifiedResponseHandler
 
