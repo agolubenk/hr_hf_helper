@@ -3543,9 +3543,24 @@ def chat_ajax_handler(request, session_id):
                     content=error_content
                 )
         
-        # Получаем последнее сообщение из чата (то, что только что создали)
-        last_message = ChatMessage.objects.filter(session=chat_session).order_by('-created_at').first()
-        print(f"🔍 CHAT AJAX: Последнее сообщение: {last_message}")
+        # Получаем последнее СИСТЕМНОЕ сообщение из чата (то, что только что создали)
+        # Исключаем пользовательские сообщения, чтобы получить именно результат обработки
+        last_message = ChatMessage.objects.filter(
+            session=chat_session,
+            message_type__in=['hr_screening', 'invite', 'system', 'delete']
+        ).order_by('-created_at').first()
+        
+        # Если не нашли системное, пытаемся найти любое сообщение кроме пользовательского
+        if not last_message:
+            last_message = ChatMessage.objects.filter(
+                session=chat_session
+            ).exclude(message_type='user').order_by('-created_at').first()
+        
+        # Если всё ещё не нашли, берём просто последнее
+        if not last_message:
+            last_message = ChatMessage.objects.filter(session=chat_session).order_by('-created_at').first()
+        
+        print(f"🔍 CHAT AJAX: Последнее системное сообщение: {last_message} (type: {last_message.message_type if last_message else None})")
         
         # Формируем HTML для нового сообщения
         if last_message:
@@ -3564,11 +3579,21 @@ def chat_ajax_handler(request, session_id):
                     "message_id": last_message.id
                 })
             except Exception as e:
-                print(f"🔍 CHAT AJAX: Ошибка рендеринга HTML: {str(e)}")
-                return JsonResponse({"success": True})
+                import traceback
+                error_trace = traceback.format_exc()
+                print(f"❌ CHAT AJAX: Ошибка рендеринга HTML: {str(e)}")
+                print(f"❌ CHAT AJAX: Traceback: {error_trace}")
+                return JsonResponse({
+                    "success": False,
+                    "error": f"Ошибка отображения сообщения: {str(e)}",
+                    "message_type": last_message.message_type if last_message else None
+                })
         else:
-            print(f"🔍 CHAT AJAX: Сообщение не найдено")
-            return JsonResponse({"success": True})
+            print(f"❌ CHAT AJAX: Сообщение не найдено после обработки")
+            return JsonResponse({
+                "success": False,
+                "error": "Сообщение не было создано"
+            })
         
     except json.JSONDecodeError:
         return JsonResponse({'success': False, 'error': 'Неверный JSON'})

@@ -47,8 +47,11 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {string} messageHtml - HTML-код сообщения
      */
     function addMessageToChat(messageHtml) {
+        console.log('🔍 addMessageToChat: Вызвана с HTML длиной:', messageHtml ? messageHtml.length : 0);
+        
         const chatMessages = document.getElementById('chat-messages');
         if (!chatMessages) {
+            console.error('❌ addMessageToChat: chat-messages не найден');
             return;
         }
         
@@ -58,16 +61,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const messageElement = tempDiv.firstElementChild;
         
         if (!messageElement) {
+            console.error('❌ addMessageToChat: Не удалось распарсить HTML');
+            console.log('🔍 addMessageToChat: HTML:', messageHtml.substring(0, 500));
             return;
         }
         
+        console.log('✅ addMessageToChat: Элемент успешно создан:', messageElement.tagName, messageElement.className);
+        
         if (typingIndicator) {
             chatMessages.insertBefore(messageElement, typingIndicator);
+            console.log('✅ addMessageToChat: Сообщение добавлено перед typing-indicator');
         } else {
             chatMessages.appendChild(messageElement);
+            console.log('✅ addMessageToChat: Сообщение добавлено в конец');
         }
         
         scrollToBottom();
+        console.log('✅ addMessageToChat: Скролл выполнен');
     }
 
     /**
@@ -406,7 +416,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Добавляем ответ
                 if (data.message_html) {
+                    console.log('✅ SUBMIT: Добавляем HTML сообщение, длина:', data.message_html.length);
+                    console.log('✅ SUBMIT: Тип сообщения:', data.message_type);
+                    console.log('✅ SUBMIT: HTML превью:', data.message_html.substring(0, 200));
                     addMessageToChat(data.message_html);
+                } else {
+                    console.warn('⚠️ SUBMIT: message_html отсутствует в ответе');
+                    console.log('✅ SUBMIT: Полный ответ:', JSON.stringify(data, null, 2));
                 }
             } else {
                 const errorMsg = data.error || 'Ошибка отправки';

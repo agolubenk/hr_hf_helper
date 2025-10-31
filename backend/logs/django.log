@@ -41095,3 +41095,1595 @@ DEBUG: Статус успешно обновлен через /accounts/291341/
 🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
 🔍 FILTER: event_start=2025-11-10 09:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00[31/Oct/2025 10:42:31] "GET /google-oauth/chat/38/?vacancy_id=1 HTTP/1.1" 200 1128680
 [31/Oct/2025 10:42:31] "GET /static/js/chat_actions.js?v=1761896551 HTTP/1.1" 200 21505
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
+
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 15:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 09:20:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-14 10:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:45:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 15:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пт 07.11.2025: 0 встреч, слоты: 12.00-13.45, 14.45-18.00
+📅 Итого дней со слотами в неделе: 5
+📅 СЛОТЫ ИНТЕРВЬЮ: Рассчитано 6 дней со слотами
+🔍 DEBUG CHAT: Передаем 29 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Олексюк Евгений в 2025-10-31T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Мясковский Ярослав в 2025-10-31T14:45:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Сайков Павел в 2025-10-31T16:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 31, 2025 - 10:45:00
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 31, 2025 - 10:45:16
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 31, 2025 - 10:45:27
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 CHAT AJAX HANDLER: Получен запрос на session_id=38
+🔍 CHAT AJAX HANDLER: Метод=POST, Content-Type=application/json
+🔍 CHAT AJAX: Анализируем сообщение: '/s https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186500/id/75651831
+1. Около 2800
+2. Локация: Гомель, переехать пока возможности нет, но готов переодически посещать офис
+3. Да
+4. Нет
+5. Военный билет на руках
+6. Пока нет
+7. Повышение заработной платы
+8. Около 2-ух месяцев
+9. Корпоративные ai агенты
+10. Думаю ближе к Senior'
+🔍 CHAT AJAX: action_type_from_js: 'hrscreening' (type: <class 'str'>, bool: True)
+🔍 CHAT AJAX: Команда /s обнаружена в тексте - принудительный HR-скрининг
+🔍 CHAT AJAX: ФИНАЛЬНЫЙ action_type: 'hrscreening'
+🔍 HR_SCREENING_FORM_SAVE: Начинаем сохранение HR-скрининга...
+🔍 HR_SCREENING_FORM_SAVE: HR-скрининг создан, user: andrei.golubenko
+🔍 HR_SCREENING_FORM_SAVE: Извлекаем URL...
+✅ HR_SCREENING_FORM_SAVE: URL извлечен: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186500/id/75651831
+🔍 HR_SCREENING_FORM_SAVE: Парсим URL...
+✅ HR_SCREENING_FORM_SAVE: URL распарсен успешно
+🔍 HR_SCREENING_FORM_SAVE: Получаем информацию о кандидате...
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Начинаем получение информации о кандидате 75651831
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Используем аккаунт 291341
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Запрашиваем данные кандидата 75651831 из аккаунта 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75651831
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Dzmitry","last_name":"Lanhe","middle_name":null,"money":"","phone":"+375291476808","email":"lanhedmitriy@gmail.com","skype":null,"position":"Front-end developer","company":"EPAM Systems Inc (Беларусь)","photo":98272227,"id":75651831,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/1/6/7/16735e51a4093c5165b40bcf92e7a759.png?s=WRubtIbIMZiwp385yRh8Jw&e=1764489436","birthday":null,"created":"2025-10-29T17:36:50+03:00","tags":[],"links":[{"id":71113057,"status":187026,"...
+💾 Сохранены данные кандидата в кэш: 75651831
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Получены данные кандидата: {'first_name': 'Dzmitry', 'last_name': 'Lanhe', 'middle_name': None, 'money': '', 'phone': '+375291476808', 'email': 'lanhedmitriy@gmail.com', 'skype': None, 'position': 'Front-end developer', 'company': 'EPAM Systems Inc (Беларусь)', 'photo': 98272227, 'id': 75651831, 'account': 291341, 'photo_url': 'https://store.huntflow.ru/uploads3/1/6/7/16735e51a4093c5165b40bcf92e7a759.png?s=WRubtIbIMZiwp385yRh8Jw&e=1764489436', 'birthday': None, 'created': '2025-10-29T17:36:50+03:00', 'tags': [], 'links': [{'id': 71113057, 'status': 187026, 'updated': '2025-10-30T15:43:19+03:00', 'changed': '2025-10-30T15:43:19+03:00', 'vacancy': 3936868}], 'external': [{'id': 75480734, 'auth_type': 'NATIVE', 'account_source': None, 'updated': '2025-10-30T15:42:39+03:00'}, {'id': 75443031, 'auth_type': 'RABOTABY', 'account_source': 551951, 'updated': '2025-10-29T17:36:50+03:00'}], 'agreement': None, 'doubles': [], 'social': [{'id': 4090399, 'social_type': 'TELEGRAM', 'value': 'Dzmitry_Lanhe', 'verified': False, 'verification_date': None}]}
+✅ HR_SCREENING_GET_CANDIDATE_INFO: Информация о кандидате получена: Dzmitry Lanhe
+✅ HR_SCREENING_FORM_SAVE: Информация о кандидате получена
+🔍 HR_SCREENING_FORM_SAVE: Получаем информацию о вакансии...
+🔍 HR_SCREENING_GET_VACANCY_INFO: Начинаем получение информации о вакансии 3936868
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_VACANCY_INFO: Используем аккаунт 291341
+🔍 HR_SCREENING_GET_VACANCY_INFO: Запрашиваем данные вакансии 3936868 из аккаунта 291341
+📦 Получены данные вакансии из кэша: 3936868
+🔍 HR_SCREENING_GET_VACANCY_INFO: Получены данные вакансии: {'account_division': 333519, 'account_region': None, 'position': 'Frontend Engineer', 'company': None, 'money': '600-3500', 'priority': 1, 'hidden': False, 'state': 'OPEN', 'id': 3936868, 'created': '2025-03-19T12:01:01+03:00', 'additional_fields_list': [], 'multiple': False, 'parent': None, 'account_vacancy_status_group': None, 'updated': '2025-10-23T16:52:07+03:00', 'body': '<p><strong>Описание проектов:</strong></p><p>Проект в области спортивной статистики, киберспорта, гемблинга. Кодовая база новая, legacy отсутствует.</p><p>Разработка проектов идёт на <strong>React</strong>/<strong>Redux</strong> с использование Redux-Epics. Используется GraphqQL, Websocket, RxJS, WebGL.</p><p>Проекты высоконагруженные, требуют внимания к производительности, необходимо обрабатывать и отображать большое количество данных в реальном времени.</p><p>Для CI/CD используется GitLab.</p>', 'requirements': '<p><strong>Что нужно знать/уметь/иметь?</strong></p><ul><li>Опыт коммерческой разработки от 1-ого года;</li><li>JavaScript (ES6), Promise, ES6 Generators;</li><li>Flux архитектуру.</li></ul><p>\u200b\u200b\u200b\u200b\u200b<strong>Преимуществами будут:</strong></p><ul><li>Typescript;</li><li>React, Redux, React-router , Redux-Saga/Redux-Epic (RxJs), Reselect, Webpack/Rollup;</li><li>Глубокое понимание асинхронного программирования (Callback, Event Loop, Promise, Observable);</li><li>Понимание основ функционального программирования;</li><li>WebGL, PixiJS, Babylon.js;</li><li>Опыт в game dev.</li></ul>', 'conditions': '<ul><li>Ежегодные Performance Review и частые пересмотры ЗП.</li><li>Чёткий план карьерного и профессионального роста.</li><li>Комфортный офис в центре Минска (ст.м. Немига).</li><li>Официальное трудоустройство по ТК РБ.</li><li>Полностью оплачиваемые больничные.</li><li>Отпуск 28 дней, возможность брать отпуск по частям.</li><li>Корпоративные курсы английского языка.</li></ul>', 'files': [], 'source': None, 'blocks': []}
+✅ HR_SCREENING_GET_VACANCY_INFO: Информация о вакансии получена: Frontend Engineer
+✅ HR_SCREENING_FORM_SAVE: Информация о вакансии получена
+🤖 HR_SCREENING_FORM_SAVE: Анализируем данные с помощью Gemini AI...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 Получен account_id из API: 291341
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Получаем схему полей кандидата
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Используем аккаунт 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"is_archived":false,"disableAutofill":true,"account":291341,"search_filter":true,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"account":291341,"search_filter":true,"placeholder":"","search_field":...
+✅ HR_SCREENING_GET_FIELDS_SCHEMA: Схема полей получена: 13 полей
+🔍 HR_SCREENING_ANALYSIS: Вызываем _extract_salary_and_determine_grade
+✅ Извлечена зарплата: 2800
+✅ Определена валюта: USD
+🔍 HR_SCREENING_GRADE: Определяем грейд для зарплаты 2800 USD
+✅ Найдена подходящая зарплатная вилка: Senior (2800 USD)
+✅ Определен грейд: Senior
+🔍 HR_SCREENING_LEVEL: Получаем ID уровня для грейда 'Senior'
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_filter":true,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_filter":true,"placeholder":"","is_archived":false,"search_field":...
+✅ Найден точный уровень 'Senior' в Huntflow (индекс: 4)
+✅ ID уровня в Huntflow: 4
+🔍 HR_SCREENING_LEVEL: ID уровня сохранен, обновление произойдет в update_candidate_in_huntflow
+🔍 HR_SCREENING_ANALYSIS: Метод _extract_salary_and_determine_grade завершен успешно
+✅ HR_SCREENING_FORM_SAVE: Анализ завершен с помощью Gemini AI
+✅ HR_SCREENING_FORM_SAVE: HR-скрининг сохранен с ID: 221
+🔍 HR_SCREENING_FORM_SAVE: Данные кандидата: Dzmitry Lanhe
+🔍 HR_SCREENING_FORM_SAVE: Данные вакансии: Frontend Engineer
+🔍 HR_SCREENING_FORM_SAVE: Анализ Gemini: {
+  "money": {
+    "value": "2800 USD",
+    "quote": "Около 2800",
+    "field_key": "money"
+  },
+  "...
+🔄 HR_SCREENING_FORM_SAVE: Автоматически обновляем кандидата в Huntflow...
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Начинаем обновление кандидата 75651831
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Используем аккаунт 291341
+📸 HR_SCREENING_UPDATE_CANDIDATE: Создаем снимок состояния кандидата
+📦 Получены данные кандидата из кэша: 75651831
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75651831/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":null,"n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":null,"DoOdxUlwbb0nILXQGBDaT":null,"ICXvQX-WT9eleJW-QlVa9":null,"RMLxfRH9raQtHItMcdeq-":null,"X6qYbAqZnb0q1R3VMumbH":null,"bfPBtccRoL5s_7xyLXuia":null}...
+✅ HR_SCREENING_UPDATE_CANDIDATE: Снимок состояния сохранен
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Получаем схему полей кандидата
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Используем аккаунт 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"search_field":"string_field_1","disableAutofill":true,"is_archived":false,"account":291341},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"search_field":"string_field_7","placeholder":"","is_archived":false,...
+✅ HR_SCREENING_GET_FIELDS_SCHEMA: Схема полей получена: 13 полей
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле money = 2800 USD
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле CsWOTYehY2IkL3I7myfwM = Нет
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле YAMd8vkvLFq5KLmIkiLVf = Да. | Офис: переехать пока возможности нет, но готов переодически посещать офис. Полный рабочий день: Да
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле n-U2tU6G5iBoxSPkXFN7F = Нет
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле S58S9DFqO7w-JzDbF2HJA = Военный билет на руках
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле c8wID33nTMvoCpJmtngyq = Пока нет
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле Ew3LqHTK8SL67j2VQ-n6y = Повышение заработной платы
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле DoOdxUlwbb0nILXQGBDaT = Около 2-ух месяцев
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем основные поля
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/75651831
+📤 JSON данные: {'money': '2800 USD'}
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Dzmitry","last_name":"Lanhe","middle_name":null,"money":"2800 USD","phone":"+375291476808","email":"lanhedmitriy@gmail.com","skype":null,"position":"Front-end developer","company":"EPAM Systems Inc (Беларусь)","photo":98272227,"id":75651831,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/1/6/7/16735e51a4093c5165b40bcf92e7a759.png?s=SzITjVAER6vAHv3Z24Nolw&e=1764489444","birthday":null,"created":"2025-10-29T17:36:50+03:00","tags":[],"links":[{"id":71113057,"status":...
+🗑️ Сброшен кэш для кандидата: 75651831
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75651831
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Dzmitry","last_name":"Lanhe","middle_name":null,"money":"2800 USD","phone":"+375291476808","email":"lanhedmitriy@gmail.com","skype":null,"position":"Front-end developer","company":"EPAM Systems Inc (Беларусь)","photo":98272227,"id":75651831,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/1/6/7/16735e51a4093c5165b40bcf92e7a759.png?s=nqGcTmLHJyf8zK6oOmLWIA&e=1764489445","birthday":null,"created":"2025-10-29T17:36:50+03:00","tags":[],"links":[{"id":71113057,"status":...[31/Oct/2025 10:57:27] "POST /google-oauth/chat/38/ajax/ HTTP/1.1" 200 3848
+
+💾 Обновлены данные кандидата в кэше: 75651831
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем дополнительные поля
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/75651831/questionary с данными {'CsWOTYehY2IkL3I7myfwM': 'Нет', 'YAMd8vkvLFq5KLmIkiLVf': 'Да. | Офис: переехать пока возможности нет, но готов переодически посещать офис. Полный рабочий день: Да', 'n-U2tU6G5iBoxSPkXFN7F': 'Нет', 'S58S9DFqO7w-JzDbF2HJA': 'Военный билет на руках', 'c8wID33nTMvoCpJmtngyq': 'Пока нет', 'Ew3LqHTK8SL67j2VQ-n6y': 'Повышение заработной платы', 'DoOdxUlwbb0nILXQGBDaT': 'Около 2-ух месяцев'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/75651831/questionary
+📤 JSON данные: {'CsWOTYehY2IkL3I7myfwM': 'Нет', 'YAMd8vkvLFq5KLmIkiLVf': 'Да. | Офис: переехать пока возможности нет, но готов переодически посещать офис. Полный рабочий день: Да', 'n-U2tU6G5iBoxSPkXFN7F': 'Нет', 'S58S9DFqO7w-JzDbF2HJA': 'Военный билет на руках', 'c8wID33nTMvoCpJmtngyq': 'Пока нет', 'Ew3LqHTK8SL67j2VQ-n6y': 'Повышение заработной платы', 'DoOdxUlwbb0nILXQGBDaT': 'Около 2-ух месяцев'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":"Нет","YAMd8vkvLFq5KLmIkiLVf":"Да. | Офис: переехать пока возможности нет, но готов переодически посещать офис. Полный рабочий день: Да","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"Военный билет на руках","c8wID33nTMvoCpJmtngyq":"Пока нет","Ew3LqHTK8SL67j2VQ-n6y":"Повышение заработной платы","DoOdxUlwbb0nILXQGBDaT":"Около 2-ух месяцев","ICXvQX-WT9eleJW-QlVa9":null,"RMLxfRH9raQtHItMcdeq-":null,"X6qYbAqZn...
+🗑️ Сброшен кэш для кандидата: 75651831
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем уровень кандидата: 4
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","is_archived":false,"search_filter":true,"disableAutofill":true,"account":291341},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","is_archived":false,"search_filter":true,"placeholder":"",...
+🔍 HR_SCREENING_LEVEL_UPDATE: Индекс 4 соответствует значению 'Senior'
+🔍 HR_SCREENING_LEVEL_UPDATE: Обновляем поле kIbah4MN0iHussXm3n2Ar значением 'Senior'
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/75651831/questionary с данными {'kIbah4MN0iHussXm3n2Ar': 'Senior'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/75651831/questionary
+📤 JSON данные: {'kIbah4MN0iHussXm3n2Ar': 'Senior'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":"Нет","YAMd8vkvLFq5KLmIkiLVf":"Да. | Офис: переехать пока возможности нет, но готов переодически посещать офис. Полный рабочий день: Да","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"Военный билет на руках","c8wID33nTMvoCpJmtngyq":"Пока нет","Ew3LqHTK8SL67j2VQ-n6y":"Повышение заработной платы","DoOdxUlwbb0nILXQGBDaT":"Около 2-ух месяцев","ICXvQX-WT9eleJW-QlVa9":null,"RMLxfRH9raQtHItMcdeq-":null,"X6qYb...
+🗑️ Сброшен кэш для кандидата: 75651831
+✅ Уровень кандидата обновлен в Huntflow: Senior
+✅ HR_SCREENING_UPDATE_CANDIDATE: Уровень кандидата обновлен
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем статус и добавляем комментарий
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Используем статус из вакансии: 186502
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75651831
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Dzmitry","last_name":"Lanhe","middle_name":null,"money":"2800 USD","phone":"+375291476808","email":"lanhedmitriy@gmail.com","skype":null,"position":"Front-end developer","company":"EPAM Systems Inc (Беларусь)","photo":98272227,"id":75651831,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/1/6/7/16735e51a4093c5165b40bcf92e7a759.png?s=AhvXc4YFkAh43rudUx2bDw&e=1764489447","birthday":null,"created":"2025-10-29T17:36:50+03:00","tags":[],"links":[{"id":71113057,"status":...
+DEBUG: Обновляем статус кандидата 75651831 на статус 186502 для вакансии 3936868 с комментарием: Доп. инфо: Корпоративные ai агенты. Думаю ближе к Senior
+DEBUG: Пробуем эндпоинт /accounts/291341/applicants/75651831/vacancy с данными {'vacancy': 3936868, 'status': 186502, 'comment': 'Доп. инфо: Корпоративные ai агенты. Думаю ближе к Senior'}
+🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/applicants/75651831/vacancy
+📤 JSON данные: {'vacancy': 3936868, 'status': 186502, 'comment': 'Доп. инфо: Корпоративные ai агенты. Думаю ближе к Senior'}
+📥 Ответ API: 200
+📥 Тело ответа: {"id":71113057,"changed":"2025-10-31T10:57:27+03:00","vacancy":3936868,"status":186502,"rejection_reason":null}...
+DEBUG: Статус успешно обновлен через /accounts/291341/applicants/75651831/vacancy
+🗑️ Сброшен кэш для кандидата: 75651831
+✅ HR_SCREENING_UPDATE_CANDIDATE: Статус обновлен на HR Screening
+🗑️ HR_SCREENING_UPDATE_CANDIDATE: Кэш очищен для кандидата 75651831
+✅ HR_SCREENING_UPDATE_CANDIDATE: Кандидат успешно обновлен
+✅ HR_SCREENING_FORM_SAVE: Кандидат успешно обновлен в Huntflow: Кандидат успешно обновлен в Huntflow
+✅ HR_SCREENING_FORM_SAVE: HR-скрининг завершен БЕЗ создания инвайта
+🔍 CHAT AJAX: Последнее системное сообщение: HR-скрининг - 31.10.2025 07:57 (type: hr_screening)
+🔍 CHAT AJAX: Рендерим HTML для сообщения типа: hr_screening
+🔍 CHAT AJAX: HTML сгенерирован, длина: 3255
+🔍 CHAT AJAX HANDLER: Получен запрос на session_id=38
+🔍 CHAT AJAX HANDLER: Метод=POST, Content-Type=application/json
+🔍 CHAT AJAX: Анализируем сообщение: '/s https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/71606206
+1. 3000-3500$
+2. Более предпочтителен, конечно, удаленный формат, но готов обсуждать условия. Живу в Минске 
+3. Да
+4. Нет
+5. Все хорошо, не призовут
+6. Не планирую
+7. Компания устраивает во всем, кроме зп
+8. Думаю в течении месяца, чтобы закончить текущую работу
+9. Некст, МобХ, ai-assisted development, prompt engineering
+10. Middle+ - Senior'
+🔍 CHAT AJAX: action_type_from_js: 'hrscreening' (type: <class 'str'>, bool: True)
+🔍 CHAT AJAX: Команда /s обнаружена в тексте - принудительный HR-скрининг
+🔍 CHAT AJAX: ФИНАЛЬНЫЙ action_type: 'hrscreening'
+🔍 HR_SCREENING_FORM_SAVE: Начинаем сохранение HR-скрининга...
+🔍 HR_SCREENING_FORM_SAVE: HR-скрининг создан, user: andrei.golubenko
+🔍 HR_SCREENING_FORM_SAVE: Извлекаем URL...
+✅ HR_SCREENING_FORM_SAVE: URL извлечен: https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/71606206
+🔍 HR_SCREENING_FORM_SAVE: Парсим URL...
+✅ HR_SCREENING_FORM_SAVE: URL распарсен успешно
+🔍 HR_SCREENING_FORM_SAVE: Получаем информацию о кандидате...
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Начинаем получение информации о кандидате 71606206
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Используем аккаунт 291341
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Запрашиваем данные кандидата 71606206 из аккаунта 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/71606206
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Илья","last_name":"Хвалько","middle_name":"Александрович","money":null,"phone":"+375291474231","email":"khvalko.ilya@gmail.com","skype":null,"position":"Software engineer","company":"EPAM Systems Inc (Беларусь)","photo":null,"id":71606206,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/a/3/a/a3a6df23f70a9bef46e3ff42e42b1510.jpeg?s=UUxql0mqngK4yv94Niyhwg&e=1764492893","birthday":"2001-06-12","created":"2025-07-21T19:07:33+03:00","tags":[],"links":[{"id":66989332,"s...
+💾 Сохранены данные кандидата в кэш: 71606206
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Получены данные кандидата: {'first_name': 'Илья', 'last_name': 'Хвалько', 'middle_name': 'Александрович', 'money': None, 'phone': '+375291474231', 'email': 'khvalko.ilya@gmail.com', 'skype': None, 'position': 'Software engineer', 'company': 'EPAM Systems Inc (Беларусь)', 'photo': None, 'id': 71606206, 'account': 291341, 'photo_url': 'https://store.huntflow.ru/uploads3/a/3/a/a3a6df23f70a9bef46e3ff42e42b1510.jpeg?s=UUxql0mqngK4yv94Niyhwg&e=1764492893', 'birthday': '2001-06-12', 'created': '2025-07-21T19:07:33+03:00', 'tags': [], 'links': [{'id': 66989332, 'status': 187026, 'updated': '2025-10-30T11:33:33+03:00', 'changed': '2025-10-30T11:33:33+03:00', 'vacancy': 3936868}], 'external': [{'id': 71435108, 'auth_type': 'RABOTABY', 'account_source': 551946, 'updated': '2025-07-21T19:07:33+03:00'}], 'agreement': None, 'doubles': [], 'social': [{'id': 4007400, 'social_type': 'TELEGRAM', 'value': 'chval9', 'verified': False, 'verification_date': None}]}
+✅ HR_SCREENING_GET_CANDIDATE_INFO: Информация о кандидате получена: Илья Хвалько
+✅ HR_SCREENING_FORM_SAVE: Информация о кандидате получена
+🔍 HR_SCREENING_FORM_SAVE: Получаем информацию о вакансии...
+🔍 HR_SCREENING_GET_VACANCY_INFO: Начинаем получение информации о вакансии 3936868
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_VACANCY_INFO: Используем аккаунт 291341
+🔍 HR_SCREENING_GET_VACANCY_INFO: Запрашиваем данные вакансии 3936868 из аккаунта 291341
+📦 Получены данные вакансии из кэша: 3936868
+🔍 HR_SCREENING_GET_VACANCY_INFO: Получены данные вакансии: {'account_division': 333519, 'account_region': None, 'position': 'Frontend Engineer', 'company': None, 'money': '600-3500', 'priority': 1, 'hidden': False, 'state': 'OPEN', 'id': 3936868, 'created': '2025-03-19T12:01:01+03:00', 'additional_fields_list': [], 'multiple': False, 'parent': None, 'account_vacancy_status_group': None, 'updated': '2025-10-23T16:52:07+03:00', 'body': '<p><strong>Описание проектов:</strong></p><p>Проект в области спортивной статистики, киберспорта, гемблинга. Кодовая база новая, legacy отсутствует.</p><p>Разработка проектов идёт на <strong>React</strong>/<strong>Redux</strong> с использование Redux-Epics. Используется GraphqQL, Websocket, RxJS, WebGL.</p><p>Проекты высоконагруженные, требуют внимания к производительности, необходимо обрабатывать и отображать большое количество данных в реальном времени.</p><p>Для CI/CD используется GitLab.</p>', 'requirements': '<p><strong>Что нужно знать/уметь/иметь?</strong></p><ul><li>Опыт коммерческой разработки от 1-ого года;</li><li>JavaScript (ES6), Promise, ES6 Generators;</li><li>Flux архитектуру.</li></ul><p>\u200b\u200b\u200b\u200b\u200b<strong>Преимуществами будут:</strong></p><ul><li>Typescript;</li><li>React, Redux, React-router , Redux-Saga/Redux-Epic (RxJs), Reselect, Webpack/Rollup;</li><li>Глубокое понимание асинхронного программирования (Callback, Event Loop, Promise, Observable);</li><li>Понимание основ функционального программирования;</li><li>WebGL, PixiJS, Babylon.js;</li><li>Опыт в game dev.</li></ul>', 'conditions': '<ul><li>Ежегодные Performance Review и частые пересмотры ЗП.</li><li>Чёткий план карьерного и профессионального роста.</li><li>Комфортный офис в центре Минска (ст.м. Немига).</li><li>Официальное трудоустройство по ТК РБ.</li><li>Полностью оплачиваемые больничные.</li><li>Отпуск 28 дней, возможность брать отпуск по частям.</li><li>Корпоративные курсы английского языка.</li></ul>', 'files': [], 'source': None, 'blocks': []}
+✅ HR_SCREENING_GET_VACANCY_INFO: Информация о вакансии получена: Frontend Engineer
+✅ HR_SCREENING_FORM_SAVE: Информация о вакансии получена
+🤖 HR_SCREENING_FORM_SAVE: Анализируем данные с помощью Gemini AI...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 Получен account_id из API: 291341
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Получаем схему полей кандидата
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Используем аккаунт 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"search_filter":true,"account":291341,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"account":291341,"is_archived":false,"search_field":"string_field_7",...
+✅ HR_SCREENING_GET_FIELDS_SCHEMA: Схема полей получена: 13 полей
+🔍 HR_SCREENING_ANALYSIS: Вызываем _extract_salary_and_determine_grade
+✅ Извлечена зарплата: 3000
+✅ Определена валюта: USD
+🔍 HR_SCREENING_GRADE: Определяем грейд для зарплаты 3000 USD
+✅ Найдена подходящая зарплатная вилка: Senior (3000 USD)
+✅ Определен грейд: Senior
+🔍 HR_SCREENING_LEVEL: Получаем ID уровня для грейда 'Senior'
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_filter":true,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_filter":true,"placeholder":"","is_archived":false,"search_field":...
+✅ Найден точный уровень 'Senior' в Huntflow (индекс: 4)
+✅ ID уровня в Huntflow: 4
+🔍 HR_SCREENING_LEVEL: ID уровня сохранен, обновление произойдет в update_candidate_in_huntflow
+🔍 HR_SCREENING_ANALYSIS: Метод _extract_salary_and_determine_grade завершен успешно
+✅ HR_SCREENING_FORM_SAVE: Анализ завершен с помощью Gemini AI
+✅ HR_SCREENING_FORM_SAVE: HR-скрининг сохранен с ID: 222
+🔍 HR_SCREENING_FORM_SAVE: Данные кандидата: Илья Хвалько
+🔍 HR_SCREENING_FORM_SAVE: Данные вакансии: Frontend Engineer
+🔍 HR_SCREENING_FORM_SAVE: Анализ Gemini: {
+  "money": {
+    "value": "3000-3500 USD",
+    "quote": "3000-3500$",
+    "field_key": "money"
+  }...
+🔄 HR_SCREENING_FORM_SAVE: Автоматически обновляем кандидата в Huntflow...
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Начинаем обновление кандидата 71606206
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Используем аккаунт 291341
+📸 HR_SCREENING_UPDATE_CANDIDATE: Создаем снимок состояния кандидата
+📦 Получены данные кандидата из кэша: 71606206
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/71606206/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {}...
+✅ HR_SCREENING_UPDATE_CANDIDATE: Снимок состояния сохранен
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Получаем схему полей кандидата
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Используем аккаунт 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"account":291341,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"account":291341,"placeholder":"","is_archived":false,"search_field":...
+✅ HR_SCREENING_GET_FIELDS_SCHEMA: Схема полей получена: 13 полей
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле money = 3000-3500 USD
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле YAMd8vkvLFq5KLmIkiLVf = Да. | Офис: Более предпочтителен, конечно, удаленный формат, но готов обсуждать условия. Живу в Минске. Полный рабочий день: Да
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле n-U2tU6G5iBoxSPkXFN7F = Нет
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле S58S9DFqO7w-JzDbF2HJA = Все хорошо, не призовут
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле c8wID33nTMvoCpJmtngyq = Не планирую
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле Ew3LqHTK8SL67j2VQ-n6y = Компания устраивает во всем, кроме зп
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле DoOdxUlwbb0nILXQGBDaT = Думаю в течении месяца, чтобы закончить текущую работу
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем основные поля
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/71606206
+📤 JSON данные: {'money': '3000-3500 USD'}
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Илья","last_name":"Хвалько","middle_name":"Александрович","money":"3000-3500 USD","phone":"+375291474231","email":"khvalko.ilya@gmail.com","skype":null,"position":"Software engineer","company":"EPAM Systems Inc (Беларусь)","photo":null,"id":71606206,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/a/3/a/a3a6df23f70a9bef46e3ff42e42b1510.jpeg?s=I2r_10sQ9ARt3eV3LVE0Lw&e=1764492902","birthday":"2001-06-12","created":"2025-07-21T19:07:33+03:00","tags":[],"links":[{"id":...
+🗑️ Сброшен кэш для кандидата: 71606206
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/71606206
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Илья","last_name":"Хвалько","middle_name":"Александрович","money":"3000-3500 USD","phone":"+375291474231","email":"khvalko.ilya@gmail.com","skype":null,"position":"Software engineer","company":"EPAM Systems Inc (Беларусь)","photo":null,"id":71606206,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/a/3/a/a3a6df23f70a9bef46e3ff42e42b1510.jpeg?s=y1gCA__lfdymbWCaZITPlQ&e=1764492903","birthday":"2001-06-12","created":"2025-07-21T19:07:33+03:00","tags":[],"links":[{"id":...
+💾 Обновлены данные кандидата в кэше: 71606206
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем дополнительные поля
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/71606206/questionary с данными {'YAMd8vkvLFq5KLmIkiLVf': 'Да. | Офис: Более предпочтителен, конечно, удаленный формат, но готов обсуждать условия. Живу в Минске. Полный рабочий день: Да', 'n-U2tU6G5iBoxSPkXFN7F': 'Нет', 'S58S9DFqO7w-JzDbF2HJA': 'Все хорошо, не призовут', 'c8wID33nTMvoCpJmtngyq': 'Не планирую', 'Ew3LqHTK8SL67j2VQ-n6y': 'Компания устраивает во всем, кроме зп', 'DoOdxUlwbb0nILXQGBDaT': 'Думаю в течении месяца, чтобы закончить текущую работу'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/71606206/questionary
+📤 JSON данные: {'YAMd8vkvLFq5KLmIkiLVf': 'Да. | Офис: Более предпочтителен, конечно, удаленный формат, но готов обсуждать условия. Живу в Минске. Полный рабочий день: Да', 'n-U2tU6G5iBoxSPkXFN7F': 'Нет', 'S58S9DFqO7w-JzDbF2HJA': 'Все хорошо, не призовут', 'c8wID33nTMvoCpJmtngyq': 'Не планирую', 'Ew3LqHTK8SL67j2VQ-n6y': 'Компания устраивает во всем, кроме зп', 'DoOdxUlwbb0nILXQGBDaT': 'Думаю в течении месяца, чтобы закончить текущую работу'}[31/Oct/2025 11:55:06] "POST /google-oauth/chat/38/ajax/ HTTP/1.1" 200 3902
+
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Да. | Офис: Более предпочтителен, конечно, удаленный формат, но готов обсуждать условия. Живу в Минске. Полный рабочий день: Да","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"Все хорошо, не призовут","c8wID33nTMvoCpJmtngyq":"Не планирую","Ew3LqHTK8SL67j2VQ-n6y":"Компания устраивает во всем, кроме зп","DoOdxUlwbb0nILXQGBDaT":"Думаю в течении месяца, чтобы закончить текущую раб...
+🗑️ Сброшен кэш для кандидата: 71606206
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем уровень кандидата: 4
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"account":291341,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"account":291341,"placeholder":"","is_archived":false,"search_field":...
+🔍 HR_SCREENING_LEVEL_UPDATE: Индекс 4 соответствует значению 'Senior'
+🔍 HR_SCREENING_LEVEL_UPDATE: Обновляем поле kIbah4MN0iHussXm3n2Ar значением 'Senior'
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/71606206/questionary с данными {'kIbah4MN0iHussXm3n2Ar': 'Senior'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/71606206/questionary
+📤 JSON данные: {'kIbah4MN0iHussXm3n2Ar': 'Senior'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Да. | Офис: Более предпочтителен, конечно, удаленный формат, но готов обсуждать условия. Живу в Минске. Полный рабочий день: Да","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"Все хорошо, не призовут","c8wID33nTMvoCpJmtngyq":"Не планирую","Ew3LqHTK8SL67j2VQ-n6y":"Компания устраивает во всем, кроме зп","DoOdxUlwbb0nILXQGBDaT":"Думаю в течении месяца, чтобы закончить текущую...
+🗑️ Сброшен кэш для кандидата: 71606206
+✅ Уровень кандидата обновлен в Huntflow: Senior
+✅ HR_SCREENING_UPDATE_CANDIDATE: Уровень кандидата обновлен
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем статус и добавляем комментарий
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Используем статус из вакансии: 186502
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/71606206
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Илья","last_name":"Хвалько","middle_name":"Александрович","money":"3000-3500 USD","phone":"+375291474231","email":"khvalko.ilya@gmail.com","skype":null,"position":"Software engineer","company":"EPAM Systems Inc (Беларусь)","photo":null,"id":71606206,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/a/3/a/a3a6df23f70a9bef46e3ff42e42b1510.jpeg?s=y4a7Xil_bsFggHaDqn3FIg&e=1764492905","birthday":"2001-06-12","created":"2025-07-21T19:07:33+03:00","tags":[],"links":[{"id":...
+DEBUG: Обновляем статус кандидата 71606206 на статус 186502 для вакансии 3936868 с комментарием: Доп. инфо: Некст, МобХ, ai-assisted development, prompt engineering
+Middle+ - Senior
+DEBUG: Пробуем эндпоинт /accounts/291341/applicants/71606206/vacancy с данными {'vacancy': 3936868, 'status': 186502, 'comment': 'Доп. инфо: Некст, МобХ, ai-assisted development, prompt engineering\nMiddle+ - Senior'}
+🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/applicants/71606206/vacancy
+📤 JSON данные: {'vacancy': 3936868, 'status': 186502, 'comment': 'Доп. инфо: Некст, МобХ, ai-assisted development, prompt engineering\nMiddle+ - Senior'}
+📥 Ответ API: 200
+📥 Тело ответа: {"id":66989332,"changed":"2025-10-31T11:55:06+03:00","vacancy":3936868,"status":186502,"rejection_reason":null}...
+DEBUG: Статус успешно обновлен через /accounts/291341/applicants/71606206/vacancy
+🗑️ Сброшен кэш для кандидата: 71606206
+✅ HR_SCREENING_UPDATE_CANDIDATE: Статус обновлен на HR Screening
+🗑️ HR_SCREENING_UPDATE_CANDIDATE: Кэш очищен для кандидата 71606206
+✅ HR_SCREENING_UPDATE_CANDIDATE: Кандидат успешно обновлен
+✅ HR_SCREENING_FORM_SAVE: Кандидат успешно обновлен в Huntflow: Кандидат успешно обновлен в Huntflow
+✅ HR_SCREENING_FORM_SAVE: HR-скрининг завершен БЕЗ создания инвайта
+🔍 CHAT AJAX: Последнее системное сообщение: HR-скрининг - 31.10.2025 08:55 (type: hr_screening)
+🔍 CHAT AJAX: Рендерим HTML для сообщения типа: hr_screening
+🔍 CHAT AJAX: HTML сгенерирован, длина: 3254
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 28 событий
+🔍 DEBUG CHAT: Получено 28 событий из API
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🕐 НАСТРОЙКИ: Рабочие часы 12:00-18:00, интервал 15 мин
+📅 СЛОТЫ СКРИНИНГОВ: Начинаем поиск доступных слотов
+📅 СЛОТЫ СКРИНИНГОВ: Длительность встречи: 40 минут
+📅 СЛОТЫ СКРИНИНГОВ: События календаря: 28
+📅 СЛОТЫ СКРИНИНГОВ: Календарь - только пользователь andrei.golubenko@softnetix.io
+⏭️ Пропускаем прошедший день: 27.10.2025
+⏭️ Пропускаем прошедший день: 28.10.2025
+⏭️ Пропускаем прошедший день: 29.10.2025
+⏭️ Пропускаем прошедший день: 30.10.2025
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 09:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 15:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 09:20:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-14 10:30:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пт 31.10.2025: 2 встреч, слоты: 12.45-15.45, 16.55-18.00
+📅 Итого дней со слотами в неделе: 1
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пн 03.11.2025: 8 встреч, слоты: Нет свободных слотов
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Вт 04.11.2025: 2 встреч, слоты: 12.55-13.45, 14.45-15.45, 16.45-18.00
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 09:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 15:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 09:20:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-14 10:30:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Ср 05.11.2025: 0 встреч, слоты: 12.00-13.45, 14.45-18.00
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Чт 06.11.2025: 3 встреч, слоты: 14.45-18.00
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 09:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 15:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 09:20:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-14 10:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пт 07.11.2025: 0 встреч, слоты: 12.00-13.45, 14.45-18.00
+📅 Итого дней со слотами в неделе: 5
+📅 СЛОТЫ СКРИНИНГОВ: Рассчитано 6 дней со слотами
+📅 СЛОТЫ ИНТЕРВЬЮ: Начинаем поиск доступных слотов
+📅 СЛОТЫ ИНТЕРВЬЮ: Базовые события от пользователя: 28
+📅 СЛОТЫ ИНТЕРВЬЮ: Найдено 3 обязательных интервьюеров
+📅 СЛОТЫ ИНТЕРВЬЮ: Интервьюер rb@softnetix.io - извлечен calendar_id из ссылки: rb@softnetix.io
+📅 СЛОТЫ ИНТЕРВЬЮ: Загружаем события для rb@softnetix.io, calendar_id=rb@softnetix.io
+💾 Сохранены события календаря в кэш: 29 событий
+📅 СЛОТЫ ИНТЕРВЬЮ: Получено 29 событий от rb@softnetix.io
+📅 СЛОТЫ ИНТЕРВЬЮ: Добавлено 29 событий от rb@softnetix.io
+📅 СЛОТЫ ИНТЕРВЬЮ: Интервьюер alena.koipash@softnetix.io - извлечен calendar_id из ссылки: alena.koipash@softnetix.io
+📅 СЛОТЫ ИНТЕРВЬЮ: Загружаем события для alena.koipash@softnetix.io, calendar_id=alena.koipash@softnetix.io
+💾 Сохранены события календаря в кэш: 24 событий
+📅 СЛОТЫ ИНТЕРВЬЮ: Получено 24 событий от alena.koipash@softnetix.io
+📅 СЛОТЫ ИНТЕРВЬЮ: Добавлено 24 событий от alena.koipash@softnetix.io
+📅 СЛОТЫ ИНТЕРВЬЮ: Интервьюер mikita.torap@softnetix.io - извлечен calendar_id из ссылки: mikita.torap@softnetix.io
+📅 СЛОТЫ ИНТЕРВЬЮ: Загружаем события для mikita.torap@softnetix.io, calendar_id=mikita.torap@softnetix.io
+💾 Сохранены события календаря в кэш: 32 событий
+📅 СЛОТЫ ИНТЕРВЬЮ: Получено 32 событий от mikita.torap@softnetix.io
+📅 СЛОТЫ ИНТЕРВЬЮ: Добавлено 32 событий от mikita.torap@softnetix.io
+📅 СЛОТЫ ИНТЕРВЬЮ: Итого событий для расчета слотов: 113
+📅 СЛОТЫ ИНТЕРВЬЮ: Использованные календари: rb@softnetix.io (rb@softnetix.io), alena.koipash@softnetix.io (alena.koipash@softnetix.io), mikita.torap@softnetix.io (mikita.torap@softnetix.io)
+📅 СЛОТЫ ИНТЕРВЬЮ: Длительность встречи: 90 минут
+⏭️ Пропускаем прошедший день: 27.10.2025
+⏭️ Пропускаем прошедший день: 28.10.2025
+⏭️ Пропускаем прошедший день: 29.10.2025
+⏭️ Пропускаем прошедший день: 30.10.2025
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 09:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 15:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 09:20:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-14 10:30:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:30:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:30:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 15:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:15:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:30:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 12:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:30:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 17:30:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 11:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 11:30:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 11:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 11:30:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 12:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 11:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 11:30:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 16:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 11:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 11:30:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 15:30:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-14 11:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-10-31 00:00:00+03:00, date_end=2025-10-31 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пт 31.10.2025: 5 встреч, слоты: Нет свободных слотов
+📅 Итого дней со слотами в неделе: 1
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-03 00:00:00+03:00, date_end=2025-11-03 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пн 03.11.2025: 17 встреч, слоты: Нет свободных слотов
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-04 00:00:00+03:00, date_end=2025-11-04 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Вт 04.11.2025: 13 встреч, слоты: Нет свободных слотов
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 09:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 15:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 09:20:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-14 10:30:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:30:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:30:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 15:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:00:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:15:00+03:00, date_start=2025-11-05 00:00:00+03:00, date_end=2025-11-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Ср 05.11.2025: 9 встреч, слоты: 14.45-18.00
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-06 00:00:00+03:00, date_end=2025-11-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Чт 06.11.2025: 19 встреч, слоты: Нет свободных слотов
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 09:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 15:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 17:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 09:20:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 09:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 15:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 09:20:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-14 10:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 15:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:15:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 17:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 15:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-14 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 10:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 13:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 16:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:15:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 10:45:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 15:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 17:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 00:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-10 10:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-11 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-12 16:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 15:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-13 17:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-14 10:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-14 11:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-10-31 20:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-03 20:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 14:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-04 20:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-05 20:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00[31/Oct/2025 11:55:50] "GET /google-oauth/chat/38/?vacancy_id=13 HTTP/1.1" 200 277424
+[31/Oct/2025 11:55:50] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[31/Oct/2025 11:55:50] "GET /static/js/chat_actions.js?v=1761900950 HTTP/1.1" 200 22910
+
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 12:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 17:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-06 20:00:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2025-11-07 11:30:00+03:00, date_start=2025-11-07 00:00:00+03:00, date_end=2025-11-07 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пт 07.11.2025: 3 встреч, слоты: Нет свободных слотов
+📅 Итого дней со слотами в неделе: 5
+📅 СЛОТЫ ИНТЕРВЬЮ: Рассчитано 6 дней со слотами
+🔍 DEBUG CHAT: Передаем 28 событий в шаблон
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Олексюк Евгений в 2025-10-31T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Сайков Павел в 2025-10-31T16:00:00+03:00
+🔍 DEBUG CHAT: Событие: A2+ в 2025-11-03T09:00:00+03:00
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 CHAT AJAX HANDLER: Получен запрос на session_id=34
+🔍 CHAT AJAX HANDLER: Метод=POST, Content-Type=application/json
+🔍 CHAT AJAX: Анализируем сообщение: '/s https://huntflow.ru/my/softnetix#/vacancy/3979419/filter/186501/id/75663525
+1. хотелось бы от 3000 по курсу в USD
+2. да
+3. да
+4. нет
+5. свободен от нее
+6. нет
+7. нахожусь в холодном поиске, у вас есть возможность по описанию вакансии развиться в технологиях с которыми не работал. Это мне интересно
+8. Приблизительно в течении месяца. Контракт у меня до 23 декабря.
+9. Начал изучать машин лернинг но пока в самом начале
+10. Мидл +'
+🔍 CHAT AJAX: action_type_from_js: 'hrscreening' (type: <class 'str'>, bool: True)
+🔍 CHAT AJAX: Команда /s обнаружена в тексте - принудительный HR-скрининг
+🔍 CHAT AJAX: ФИНАЛЬНЫЙ action_type: 'hrscreening'
+🔍 HR_SCREENING_FORM_SAVE: Начинаем сохранение HR-скрининга...
+🔍 HR_SCREENING_FORM_SAVE: HR-скрининг создан, user: andrei.golubenko
+🔍 HR_SCREENING_FORM_SAVE: Извлекаем URL...
+✅ HR_SCREENING_FORM_SAVE: URL извлечен: https://huntflow.ru/my/softnetix#/vacancy/3979419/filter/186501/id/75663525
+🔍 HR_SCREENING_FORM_SAVE: Парсим URL...
+✅ HR_SCREENING_FORM_SAVE: URL распарсен успешно
+🔍 HR_SCREENING_FORM_SAVE: Получаем информацию о кандидате...
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Начинаем получение информации о кандидате 75663525
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Используем аккаунт 291341
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Запрашиваем данные кандидата 75663525 из аккаунта 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75663525
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Anton","last_name":"Dediulia","middle_name":null,"money":null,"phone":null,"email":"antotoshh@gmail.com","skype":null,"position":"DevOps Engineer","company":"Unic Lab","photo":null,"id":75663525,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/7/b/5/7b5ddb88a9cedc104fe4a075d0e91b83.jpeg?s=MwDJRWzJeWS2ClvW8PFEig&e=1764494202","birthday":null,"created":"2025-10-30T19:34:19+03:00","tags":[],"links":[{"id":71126743,"status":186501,"updated":"2025-10-31T10:20:17+03:00",...
+💾 Сохранены данные кандидата в кэш: 75663525
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Получены данные кандидата: {'first_name': 'Anton', 'last_name': 'Dediulia', 'middle_name': None, 'money': None, 'phone': None, 'email': 'antotoshh@gmail.com', 'skype': None, 'position': 'DevOps Engineer', 'company': 'Unic Lab', 'photo': None, 'id': 75663525, 'account': 291341, 'photo_url': 'https://store.huntflow.ru/uploads3/7/b/5/7b5ddb88a9cedc104fe4a075d0e91b83.jpeg?s=MwDJRWzJeWS2ClvW8PFEig&e=1764494202', 'birthday': None, 'created': '2025-10-30T19:34:19+03:00', 'tags': [], 'links': [{'id': 71126743, 'status': 186501, 'updated': '2025-10-31T10:20:17+03:00', 'changed': '2025-10-31T10:20:17+03:00', 'vacancy': 3979419}], 'external': [{'id': 75492428, 'auth_type': 'LI', 'account_source': 551922, 'updated': '2025-10-30T19:34:50+03:00'}], 'agreement': None, 'doubles': [], 'social': [{'id': 4091468, 'social_type': 'TELEGRAM', 'value': 'Old_Owl_Toshh', 'verified': False, 'verification_date': None}]}
+✅ HR_SCREENING_GET_CANDIDATE_INFO: Информация о кандидате получена: Anton Dediulia
+✅ HR_SCREENING_FORM_SAVE: Информация о кандидате получена
+🔍 HR_SCREENING_FORM_SAVE: Получаем информацию о вакансии...
+🔍 HR_SCREENING_GET_VACANCY_INFO: Начинаем получение информации о вакансии 3979419
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_VACANCY_INFO: Используем аккаунт 291341
+🔍 HR_SCREENING_GET_VACANCY_INFO: Запрашиваем данные вакансии 3979419 из аккаунта 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies/3979419
+📥 Ответ API: 200
+📥 Тело ответа: {"account_division":345962,"account_region":null,"position":"DevOps Engineer","company":null,"money":"1500 - 5000 USD","priority":0,"hidden":false,"state":"OPEN","id":3979419,"created":"2025-05-20T12:38:18+03:00","additional_fields_list":[],"multiple":false,"parent":null,"account_vacancy_status_group":10700,"updated":"2025-10-09T17:53:34+03:00","body":"<ul><li>Разворачивание и поддержка&nbsp;<strong>Kubernetes</strong>&nbsp;<strong>on-premises</strong></li><li>Поддержка и развитие IaC (Infrastru...
+💾 Сохранены данные вакансии в кэш: 3979419
+🔍 HR_SCREENING_GET_VACANCY_INFO: Получены данные вакансии: {'account_division': 345962, 'account_region': None, 'position': 'DevOps Engineer', 'company': None, 'money': '1500 - 5000 USD', 'priority': 0, 'hidden': False, 'state': 'OPEN', 'id': 3979419, 'created': '2025-05-20T12:38:18+03:00', 'additional_fields_list': [], 'multiple': False, 'parent': None, 'account_vacancy_status_group': 10700, 'updated': '2025-10-09T17:53:34+03:00', 'body': '<ul><li>Разворачивание и поддержка&nbsp;<strong>Kubernetes</strong>&nbsp;<strong>on-premises</strong></li><li>Поддержка и развитие IaC (Infrastructure As Code)</li><li>Поддержка и развитие CI/CD на основе Gitlab;</li><li>Поддержка и развитие Observability (Prometheus, Grafana)</li></ul>', 'requirements': '<ul><li>Опыт работы с Kubernetes&nbsp;<strong>on-premises </strong>или<strong> </strong>хорошие понимание как это устроено;</li><li>Знание хотя бы одного языка программирования со статической типизацией (Java, Kotlin, Typescript, Golang, C# и тд);</li><li>Знание модели OSI / модели TCP/IP;</li><li>Понимание маршрутизации L2 L3, TCP/UDP, DNS, VPN;</li><li>Опыт работы с системами контроля версий (Git).</li></ul><p>&nbsp;</p><p><strong>Преимуществом будет:</strong></p><ul><li>Опыт в разработке.</li><li>Опыт работы с Talos Linux, Cilium, Containerd, Terraform;</li><li>Опыт работы с одним из облачных провайдеров: AWS, GCP, Azure;</li><li>Опыт работы с CDN (Cloudflare, Amazon CloudFront)</li><li>Опыт настройки LoadBalancer (MetalLB, OpenELB);</li><li>Опыт администрирования и развертывания PostgreSQL (Citus Data, YugabyteDB), Kafka, Redis, ClickHouse;</li><li>Тюнинг и мониторинг TCP стека linux;</li><li>Умение работать с eBPF, tcpdump, strace;</li><li>Понимание сетей: Ingres, macvlan, ipvlan;</li><li>Знание сетевых протоколов: IP, BGP.</li></ul>', 'conditions': '<ul><li>Годовые Performance Review и частые пересмотры ЗП (привязана к курсу валюты).</li><li>Чёткий план карьерного и профессионального роста.</li><li>Tech Assessments по развитию hard skills.</li><li>Мощное корпоративное железо.</li><li>Гибкое начало рабочего дня (до 10:30 по Минску), официальное трудоустройство.</li><li>28 календарных дней отпуска, возможность брать по частям.</li><li>Полностью оплачиваемые больничные.</li><li>Корпоративные курсы английского языка (мини-группы 1-4 человека).</li><li>Комфортный офис в центре Минска (ст.м. Немига).</li><li>Паркинг.</li></ul>', 'files': [], 'source': None, 'blocks': []}
+✅ HR_SCREENING_GET_VACANCY_INFO: Информация о вакансии получена: DevOps Engineer
+✅ HR_SCREENING_FORM_SAVE: Информация о вакансии получена
+🤖 HR_SCREENING_FORM_SAVE: Анализируем данные с помощью Gemini AI...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 Получен account_id из API: 291341
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Получаем схему полей кандидата
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Используем аккаунт 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"search_filter":true,"account":291341,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"account":291341,"is_archived":false,"search_field":"string_field_7",...
+✅ HR_SCREENING_GET_FIELDS_SCHEMA: Схема полей получена: 13 полей
+🔍 HR_SCREENING_ANALYSIS: Вызываем _extract_salary_and_determine_grade
+✅ Извлечена зарплата: 3000
+✅ Определена валюта: USD
+🔍 HR_SCREENING_GRADE: Определяем грейд для зарплаты 3000 USD
+✅ Найдена подходящая зарплатная вилка: Middle+ (3000 USD)
+✅ Определен грейд: Middle+
+🔍 HR_SCREENING_LEVEL: Получаем ID уровня для грейда 'Middle+'
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","disableAutofill":true,"account":291341,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","account":291341,"placeholder":"","search_filter":true,"is...
+✅ Найден точный уровень 'Middle+' в Huntflow (индекс: 3)
+✅ ID уровня в Huntflow: 3
+🔍 HR_SCREENING_LEVEL: ID уровня сохранен, обновление произойдет в update_candidate_in_huntflow
+🔍 HR_SCREENING_ANALYSIS: Метод _extract_salary_and_determine_grade завершен успешно
+✅ HR_SCREENING_FORM_SAVE: Анализ завершен с помощью Gemini AI
+✅ HR_SCREENING_FORM_SAVE: HR-скрининг сохранен с ID: 223
+🔍 HR_SCREENING_FORM_SAVE: Данные кандидата: Anton Dediulia
+🔍 HR_SCREENING_FORM_SAVE: Данные вакансии: DevOps Engineer
+🔍 HR_SCREENING_FORM_SAVE: Анализ Gemini: {
+    "money": {
+        "value": "3000 USD (хотелось бы от 3000 по курсу в USD)",
+        "quote": ...
+🔄 HR_SCREENING_FORM_SAVE: Автоматически обновляем кандидата в Huntflow...
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Начинаем обновление кандидата 75663525
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Используем аккаунт 291341
+📸 HR_SCREENING_UPDATE_CANDIDATE: Создаем снимок состояния кандидата
+📦 Получены данные кандидата из кэша: 75663525
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75663525/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {}...
+✅ HR_SCREENING_UPDATE_CANDIDATE: Снимок состояния сохранен
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Получаем схему полей кандидата
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Используем аккаунт 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"search_filter":true,"account":291341,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"account":291341,"is_archived":false,"search_field":"string_field_7",...
+✅ HR_SCREENING_GET_FIELDS_SCHEMA: Схема полей получена: 13 полей
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле money = 3000 USD (хотелось бы от 3000 по курсу в USD)
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле CsWOTYehY2IkL3I7myfwM = Да
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле YAMd8vkvLFq5KLmIkiLVf = Офис: да. | Полный рабочий день: да
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле n-U2tU6G5iBoxSPkXFN7F = нет
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле S58S9DFqO7w-JzDbF2HJA = свободен от нее
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле c8wID33nTMvoCpJmtngyq = нет
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле Ew3LqHTK8SL67j2VQ-n6y = нахожусь в холодном поиске, у вас есть возможность по описанию вакансии развиться в технологиях с которыми не работал. Это мне интересно
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле DoOdxUlwbb0nILXQGBDaT = Приблизительно в течении месяца. Контракт у меня до 23 декабря.
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем основные поля
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/75663525
+📤 JSON данные: {'money': '3000 USD (хотелось бы от 3000 по курсу в USD)'}
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Anton","last_name":"Dediulia","middle_name":null,"money":"3000 USD (хотелось бы от 3000 по курсу в USD)","phone":null,"email":"antotoshh@gmail.com","skype":null,"position":"DevOps Engineer","company":"Unic Lab","photo":null,"id":75663525,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/7/b/5/7b5ddb88a9cedc104fe4a075d0e91b83.jpeg?s=X13kMwSbQ58eoD6Y2UiMFg&e=1764494211","birthday":null,"created":"2025-10-30T19:34:19+03:00","tags":[],"links":[{"id":71126743,"status":18...
+🗑️ Сброшен кэш для кандидата: 75663525
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75663525
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Anton","last_name":"Dediulia","middle_name":null,"money":"3000 USD (хотелось бы от 3000 по курсу в USD)","phone":null,"email":"antotoshh@gmail.com","skype":null,"position":"DevOps Engineer","company":"Unic Lab","photo":null,"id":75663525,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/7/b/5/7b5ddb88a9cedc104fe4a075d0e91b83.jpeg?s=X13kMwSbQ58eoD6Y2UiMFg&e=1764494211","birthday":null,"created":"2025-10-30T19:34:19+03:00","tags":[],"links":[{"id":71126743,"status":18...
+💾 Обновлены данные кандидата в кэше: 75663525
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем дополнительные поля
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/75663525/questionary с данными {'CsWOTYehY2IkL3I7myfwM': 'Да', 'YAMd8vkvLFq5KLmIkiLVf': 'Офис: да. | Полный рабочий день: да', 'n-U2tU6G5iBoxSPkXFN7F': 'нет', 'S58S9DFqO7w-JzDbF2HJA': 'свободен от нее', 'c8wID33nTMvoCpJmtngyq': 'нет', 'Ew3LqHTK8SL67j2VQ-n6y': 'нахожусь в холодном поиске, у вас есть возможность по описанию вакансии развиться в технологиях с которыми не работал. Это мне интересно', 'DoOdxUlwbb0nILXQGBDaT': 'Приблизительно в течении месяца. Контракт у меня до 23 декабря.'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/75663525/questionary
+📤 JSON данные: {'CsWOTYehY2IkL3I7myfwM': 'Да', 'YAMd8vkvLFq5KLmIkiLVf': 'Офис: да. | Полный рабочий день: да', 'n-U2tU6G5iBoxSPkXFN7F': 'нет', 'S58S9DFqO7w-JzDbF2HJA': 'свободен от нее', 'c8wID33nTMvoCpJmtngyq': 'нет', 'Ew3LqHTK8SL67j2VQ-n6y': 'нахожусь в холодном поиске, у вас есть возможность по описанию вакансии развиться в технологиях с которыми не работал. Это мне интересно', 'DoOdxUlwbb0nILXQGBDaT': 'Приблизительно в течении месяца. Контракт у меня до 23 декабря.'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Офис: да. | Полный рабочий день: да","n-U2tU6G5iBoxSPkXFN7F":"нет","S58S9DFqO7w-JzDbF2HJA":"свободен от нее","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"нахожусь в холодном поиске, у вас есть возможность по описанию вакансии развиться в технологиях с которыми не работал. Это мне интересно","DoOdxUlwbb0nILXQGBDaT":"Приблизительно в течении месяца. Контракт у меня до 23 декаб...
+🗑️ Сброшен кэш для кандидата: 75663525
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем уровень кандидата: 3
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"search_field":"string_field_1","disableAutofill":true,"is_archived":false,"account":291341},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"search_field":"string_field_7","placeholder":"","is_archived":false,...
+🔍 HR_SCREENING_LEVEL_UPDATE: Индекс 3 соответствует значению 'Middle+'
+🔍 HR_SCREENING_LEVEL_UPDATE: Обновляем поле kIbah4MN0iHussXm3n2Ar значением 'Middle+'
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/75663525/questionary с данными {'kIbah4MN0iHussXm3n2Ar': 'Middle+'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/75663525/questionary
+📤 JSON данные: {'kIbah4MN0iHussXm3n2Ar': 'Middle+'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle+","oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Офис: да. | Полный рабочий день: да","n-U2tU6G5iBoxSPkXFN7F":"нет","S58S9DFqO7w-JzDbF2HJA":"свободен от нее","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"нахожусь в холодном поиске, у вас есть возможность по описанию вакансии развиться в технологиях с которыми не работал. Это мне интересно","DoOdxUlwbb0nILXQGBDaT":"Приблизительно в течении месяца. Контракт у меня до 23 ...
+🗑️ Сброшен кэш для кандидата: 75663525
+✅ Уровень кандидата обновлен в Huntflow: Middle+
+✅ HR_SCREENING_UPDATE_CANDIDATE: Уровень кандидата обновлен
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем статус и добавляем комментарий
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Используем статус из вакансии: 186502
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75663525
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Anton","last_name":"Dediulia","middle_name":null,"money":"3000 USD (хотелось бы от 3000 по курсу в USD)","phone":null,"email":"antotoshh@gmail.com","skype":null,"position":"DevOps Engineer","company":"Unic Lab","photo":null,"id":75663525,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/7/b/5/7b5ddb88a9cedc104fe4a075d0e91b83.jpeg?s=51Dq2we4gy1igusrHBuj6g&e=1764494213","birthday":null,"created":"2025-10-30T19:34:19+03:00","tags":[],"links":[{"id":71126743,"status":18...
+DEBUG: Обновляем статус кандидата 75663525 на статус 186502 для вакансии 3979419 с комментарием: Доп. инфо: Начал изучать машин лернинг но пока в самом начале
+Мидл +
+DEBUG: Пробуем эндпоинт /accounts/291341/applicants/75663525/vacancy с данными {'vacancy': 3979419, 'status': 186502, 'comment': 'Доп. инфо: Начал изучать машин лернинг но пока в самом начале\nМидл +'}
+🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/applicants/75663525/vacancy
+📤 JSON данные: {'vacancy': 3979419, 'status': 186502, 'comment': 'Доп. инфо: Начал изучать машин лернинг но пока в самом начале\nМидл +'}
+📥 Ответ API: 200
+📥 Тело ответа: {"id":71126743,"changed":"2025-10-31T12:16:54+03:00","vacancy":3979419,"status":186502,"rejection_reason":null}...
+DEBUG: Статус успешно обновлен через /accounts/291341/applicants/75663525/vacancy
+🗑️ Сброшен кэш для кандидата: 75663525
+✅ HR_SCREENING_UPDATE_CANDIDATE: Статус обновлен на HR Screening
+🗑️ HR_SCREENING_UPDATE_CANDIDATE: Кэш очищен для кандидата 75663525
+✅ HR_SCREENING_UPDATE_CANDIDATE: Кандидат успешно обновлен
+✅ HR_SCREENING_FORM_SAVE: Кандидат успешно обновлен в Huntflow: Кандидат успешно обновлен в Huntflow
+✅ HR_SCREENING_FORM_SAVE: HR-скрининг завершен БЕЗ создания инвайта[31/Oct/2025 12:16:54] "POST /google-oauth/chat/34/ajax/ HTTP/1.1" 200 3848
+
+🔍 CHAT AJAX: Последнее системное сообщение: HR-скрининг - 31.10.2025 09:16 (type: hr_screening)
+🔍 CHAT AJAX: Рендерим HTML для сообщения типа: hr_screening
+🔍 CHAT AJAX: HTML сгенерирован, длина: 3255
+🔍 CHAT AJAX HANDLER: Получен запрос на session_id=34
+🔍 CHAT AJAX HANDLER: Метод=POST, Content-Type=application/json
+🔍 CHAT AJAX: Анализируем сообщение: '/s https://huntflow.ru/my/softnetix#/vacancy/3979419/filter/workon/id/75679568
+1. 5000$ (в резюме указана не желаемая сумма, а текущий доход 6000$, и терять на старте практичеки $1000 немного печально, я буду ожидать что-то положительное в противовес убыткам)
+2.Офис - не проблема
+3 да
+4 нет
+5 нет. мной может заинтересоваться разве что армия РФ
+6 нет, двое детей школьного возраста, не хочу вырывать их из привычной среды
+7 комплексные
+8 после окончания текущего контракта (9 января 26)
+9 за последние пару месяцев изучил elixir для создания небольшого приложения (в компании он используется как язык для критичных к ресурсам и скорости работы сервисов), CAPI для автоматизации создания кластеров на площадках клиентов, linux VTI для создания VPN туннелей с клиентами на базе оборудования Cisco
+10 Senior+, Lead'
+🔍 CHAT AJAX: action_type_from_js: 'hrscreening' (type: <class 'str'>, bool: True)
+🔍 CHAT AJAX: Команда /s обнаружена в тексте - принудительный HR-скрининг
+🔍 CHAT AJAX: ФИНАЛЬНЫЙ action_type: 'hrscreening'
+🔍 HR_SCREENING_FORM_SAVE: Начинаем сохранение HR-скрининга...
+🔍 HR_SCREENING_FORM_SAVE: HR-скрининг создан, user: andrei.golubenko
+🔍 HR_SCREENING_FORM_SAVE: Извлекаем URL...
+✅ HR_SCREENING_FORM_SAVE: URL извлечен: https://huntflow.ru/my/softnetix#/vacancy/3979419/filter/workon/id/75679568
+🔍 HR_SCREENING_FORM_SAVE: Парсим URL...
+✅ HR_SCREENING_FORM_SAVE: URL распарсен успешно
+🔍 HR_SCREENING_FORM_SAVE: Получаем информацию о кандидате...
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Начинаем получение информации о кандидате 75679568
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Используем аккаунт 291341
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Запрашиваем данные кандидата 75679568 из аккаунта 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75679568
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Артём","last_name":"Нистратов","middle_name":null,"money":"6000 USD","phone":"+375333522329","email":"nistratov.artem@gmail.com","skype":null,"position":"DevOps Lead","company":"BePaid","photo":null,"id":75679568,"account":291341,"photo_url":null,"birthday":"1990-05-23","created":"2025-10-31T11:40:24+03:00","tags":[],"links":[{"id":71144151,"status":187026,"updated":"2025-10-31T11:42:37+03:00","changed":"2025-10-31T11:42:37+03:00","vacancy":3979419}],"external":[{"id":75508471,"au...
+💾 Сохранены данные кандидата в кэш: 75679568
+🔍 HR_SCREENING_GET_CANDIDATE_INFO: Получены данные кандидата: {'first_name': 'Артём', 'last_name': 'Нистратов', 'middle_name': None, 'money': '6000 USD', 'phone': '+375333522329', 'email': 'nistratov.artem@gmail.com', 'skype': None, 'position': 'DevOps Lead', 'company': 'BePaid', 'photo': None, 'id': 75679568, 'account': 291341, 'photo_url': None, 'birthday': '1990-05-23', 'created': '2025-10-31T11:40:24+03:00', 'tags': [], 'links': [{'id': 71144151, 'status': 187026, 'updated': '2025-10-31T11:42:37+03:00', 'changed': '2025-10-31T11:42:37+03:00', 'vacancy': 3979419}], 'external': [{'id': 75508471, 'auth_type': 'RABOTABY', 'account_source': 551946, 'updated': '2025-10-31T11:40:33+03:00'}], 'agreement': None, 'doubles': [], 'social': []}
+✅ HR_SCREENING_GET_CANDIDATE_INFO: Информация о кандидате получена: Артём Нистратов
+✅ HR_SCREENING_FORM_SAVE: Информация о кандидате получена
+🔍 HR_SCREENING_FORM_SAVE: Получаем информацию о вакансии...
+🔍 HR_SCREENING_GET_VACANCY_INFO: Начинаем получение информации о вакансии 3979419
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_VACANCY_INFO: Используем аккаунт 291341
+🔍 HR_SCREENING_GET_VACANCY_INFO: Запрашиваем данные вакансии 3979419 из аккаунта 291341
+📦 Получены данные вакансии из кэша: 3979419
+🔍 HR_SCREENING_GET_VACANCY_INFO: Получены данные вакансии: {'account_division': 345962, 'account_region': None, 'position': 'DevOps Engineer', 'company': None, 'money': '1500 - 5000 USD', 'priority': 0, 'hidden': False, 'state': 'OPEN', 'id': 3979419, 'created': '2025-05-20T12:38:18+03:00', 'additional_fields_list': [], 'multiple': False, 'parent': None, 'account_vacancy_status_group': 10700, 'updated': '2025-10-09T17:53:34+03:00', 'body': '<ul><li>Разворачивание и поддержка&nbsp;<strong>Kubernetes</strong>&nbsp;<strong>on-premises</strong></li><li>Поддержка и развитие IaC (Infrastructure As Code)</li><li>Поддержка и развитие CI/CD на основе Gitlab;</li><li>Поддержка и развитие Observability (Prometheus, Grafana)</li></ul>', 'requirements': '<ul><li>Опыт работы с Kubernetes&nbsp;<strong>on-premises </strong>или<strong> </strong>хорошие понимание как это устроено;</li><li>Знание хотя бы одного языка программирования со статической типизацией (Java, Kotlin, Typescript, Golang, C# и тд);</li><li>Знание модели OSI / модели TCP/IP;</li><li>Понимание маршрутизации L2 L3, TCP/UDP, DNS, VPN;</li><li>Опыт работы с системами контроля версий (Git).</li></ul><p>&nbsp;</p><p><strong>Преимуществом будет:</strong></p><ul><li>Опыт в разработке.</li><li>Опыт работы с Talos Linux, Cilium, Containerd, Terraform;</li><li>Опыт работы с одним из облачных провайдеров: AWS, GCP, Azure;</li><li>Опыт работы с CDN (Cloudflare, Amazon CloudFront)</li><li>Опыт настройки LoadBalancer (MetalLB, OpenELB);</li><li>Опыт администрирования и развертывания PostgreSQL (Citus Data, YugabyteDB), Kafka, Redis, ClickHouse;</li><li>Тюнинг и мониторинг TCP стека linux;</li><li>Умение работать с eBPF, tcpdump, strace;</li><li>Понимание сетей: Ingres, macvlan, ipvlan;</li><li>Знание сетевых протоколов: IP, BGP.</li></ul>', 'conditions': '<ul><li>Годовые Performance Review и частые пересмотры ЗП (привязана к курсу валюты).</li><li>Чёткий план карьерного и профессионального роста.</li><li>Tech Assessments по развитию hard skills.</li><li>Мощное корпоративное железо.</li><li>Гибкое начало рабочего дня (до 10:30 по Минску), официальное трудоустройство.</li><li>28 календарных дней отпуска, возможность брать по частям.</li><li>Полностью оплачиваемые больничные.</li><li>Корпоративные курсы английского языка (мини-группы 1-4 человека).</li><li>Комфортный офис в центре Минска (ст.м. Немига).</li><li>Паркинг.</li></ul>', 'files': [], 'source': None, 'blocks': []}
+✅ HR_SCREENING_GET_VACANCY_INFO: Информация о вакансии получена: DevOps Engineer
+✅ HR_SCREENING_FORM_SAVE: Информация о вакансии получена
+🤖 HR_SCREENING_FORM_SAVE: Анализируем данные с помощью Gemini AI...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 Получен account_id из API: 291341
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Получаем схему полей кандидата
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Используем аккаунт 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_filter":true,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_filter":true,"placeholder":"","is_archived":false,"search_field":...
+✅ HR_SCREENING_GET_FIELDS_SCHEMA: Схема полей получена: 13 полей
+🔍 HR_SCREENING_ANALYSIS: Вызываем _extract_salary_and_determine_grade
+✅ Извлечена зарплата: 5000
+✅ Определена валюта: USD
+🔍 HR_SCREENING_GRADE: Определяем грейд для зарплаты 5000 USD
+✅ Найдена подходящая зарплатная вилка: Senior (5000 USD)
+✅ Определен грейд: Senior
+🔍 HR_SCREENING_LEVEL: Получаем ID уровня для грейда 'Senior'
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"search_field":"string_field_1","disableAutofill":true,"is_archived":false,"account":291341},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"search_field":"string_field_7","placeholder":"","is_archived":false,...
+✅ Найден точный уровень 'Senior' в Huntflow (индекс: 4)
+✅ ID уровня в Huntflow: 4
+🔍 HR_SCREENING_LEVEL: ID уровня сохранен, обновление произойдет в update_candidate_in_huntflow
+🔍 HR_SCREENING_ANALYSIS: Метод _extract_salary_and_determine_grade завершен успешно
+✅ HR_SCREENING_FORM_SAVE: Анализ завершен с помощью Gemini AI
+✅ HR_SCREENING_FORM_SAVE: HR-скрининг сохранен с ID: 224
+🔍 HR_SCREENING_FORM_SAVE: Данные кандидата: Артём Нистратов
+🔍 HR_SCREENING_FORM_SAVE: Данные вакансии: DevOps Engineer
+🔍 HR_SCREENING_FORM_SAVE: Анализ Gemini: {
+    "money": {
+        "value": "5000 USD (5000$ (в резюме указана не желаемая сумма, а текущий до...
+🔄 HR_SCREENING_FORM_SAVE: Автоматически обновляем кандидата в Huntflow...
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Начинаем обновление кандидата 75679568
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Используем аккаунт 291341
+📸 HR_SCREENING_UPDATE_CANDIDATE: Создаем снимок состояния кандидата
+📦 Получены данные кандидата из кэша: 75679568
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75679568/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {}...
+✅ HR_SCREENING_UPDATE_CANDIDATE: Снимок состояния сохранен
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Получаем схему полей кандидата
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Используем аккаунт 291341
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"account":291341,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"account":291341,"is_archived":false,"search_field":"string_field_7",...
+✅ HR_SCREENING_GET_FIELDS_SCHEMA: Схема полей получена: 13 полей
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле money = 5000 USD (5000$ (в резюме указана не желаемая сумма, а текущий доход 6000$, и терять на старте практичеки $1000 немного печально, я буду ожидать что-то положительное в противовес убыткам))
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле CsWOTYehY2IkL3I7myfwM = Да
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле YAMd8vkvLFq5KLmIkiLVf = Офис: Офис - не проблема. | Полный рабочий день: да
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле n-U2tU6G5iBoxSPkXFN7F = нет
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле S58S9DFqO7w-JzDbF2HJA = нет. мной может заинтересоваться разве что армия РФ
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле c8wID33nTMvoCpJmtngyq = нет, двое детей школьного возраста, не хочу вырывать их из привычной среды
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле Ew3LqHTK8SL67j2VQ-n6y = комплексные
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле DoOdxUlwbb0nILXQGBDaT = после окончания текущего контракта (9 января 26)
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем основные поля
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/75679568
+📤 JSON данные: {'money': '5000 USD (5000$ (в резюме указана не желаемая сумма, а текущий доход 6000$, и терять на старте практичеки $1000 немного печально, я буду ожидать что-то положительное в противовес убыткам))'}
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Артём","last_name":"Нистратов","middle_name":null,"money":"5000 USD (5000$ (в резюме указана не желаемая сумма, а текущий доход 6000$, и терять на старте практичеки $1000 немного печально, я буду ожидать что-то положительное в противовес убыткам))","phone":"+375333522329","email":"nistratov.artem@gmail.com","skype":null,"position":"DevOps Lead","company":"BePaid","photo":null,"id":75679568,"account":291341,"photo_url":null,"birthday":"1990-05-23","created":"2025-10-31T11:40:24+03:...
+🗑️ Сброшен кэш для кандидата: 75679568
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75679568
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Артём","last_name":"Нистратов","middle_name":null,"money":"5000 USD (5000$ (в резюме указана не желаемая сумма, а текущий доход 6000$, и терять на старте практичеки $1000 немного печально, я буду ожидать что-то положительное в противовес убыткам))","phone":"+375333522329","email":"nistratov.artem@gmail.com","skype":null,"position":"DevOps Lead","company":"BePaid","photo":null,"id":75679568,"account":291341,"photo_url":null,"birthday":"1990-05-23","created":"2025-10-31T11:40:24+03:...
+💾 Обновлены данные кандидата в кэше: 75679568
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем дополнительные поля
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/75679568/questionary с данными {'CsWOTYehY2IkL3I7myfwM': 'Да', 'YAMd8vkvLFq5KLmIkiLVf': 'Офис: Офис - не проблема. | Полный рабочий день: да', 'n-U2tU6G5iBoxSPkXFN7F': 'нет', 'S58S9DFqO7w-JzDbF2HJA': 'нет. мной может заинтересоваться разве что армия РФ', 'c8wID33nTMvoCpJmtngyq': 'нет, двое детей школьного возраста, не хочу вырывать их из привычной среды', 'Ew3LqHTK8SL67j2VQ-n6y': 'комплексные', 'DoOdxUlwbb0nILXQGBDaT': 'после окончания текущего контракта (9 января 26)'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/75679568/questionary
+📤 JSON данные: {'CsWOTYehY2IkL3I7myfwM': 'Да', 'YAMd8vkvLFq5KLmIkiLVf': 'Офис: Офис - не проблема. | Полный рабочий день: да', 'n-U2tU6G5iBoxSPkXFN7F': 'нет', 'S58S9DFqO7w-JzDbF2HJA': 'нет. мной может заинтересоваться разве что армия РФ', 'c8wID33nTMvoCpJmtngyq': 'нет, двое детей школьного возраста, не хочу вырывать их из привычной среды', 'Ew3LqHTK8SL67j2VQ-n6y': 'комплексные', 'DoOdxUlwbb0nILXQGBDaT': 'после окончания текущего контракта (9 января 26)'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Офис: Офис - не проблема. | Полный рабочий день: да","n-U2tU6G5iBoxSPkXFN7F":"нет","S58S9DFqO7w-JzDbF2HJA":"нет. мной может заинтересоваться разве что армия РФ","c8wID33nTMvoCpJmtngyq":"нет, двое детей школьного возраста, не хочу вырывать их из привычной среды","Ew3LqHTK8SL67j2VQ-n6y":"комплексные","DoOdxUlwbb0nILXQGBDaT":"после окончания текущего контракта (9 января 26)","ICXvQX-WT9e...
+🗑️ Сброшен кэш для кандидата: 75679568
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем уровень кандидата: 4
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","disableAutofill":true,"account":291341,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","account":291341,"placeholder":"","search_filter":true,"is...
+🔍 HR_SCREENING_LEVEL_UPDATE: Индекс 4 соответствует значению 'Senior'
+🔍 HR_SCREENING_LEVEL_UPDATE: Обновляем поле kIbah4MN0iHussXm3n2Ar значением 'Senior'
+DEBUG: Пробуем обновить анкету через /accounts/291341/applicants/75679568/questionary с данными {'kIbah4MN0iHussXm3n2Ar': 'Senior'}
+🔍 API запрос: PATCH https://api.huntflow.ru/v2/accounts/291341/applicants/75679568/questionary
+📤 JSON данные: {'kIbah4MN0iHussXm3n2Ar': 'Senior'}
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":null,"CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Офис: Офис - не проблема. | Полный рабочий день: да","n-U2tU6G5iBoxSPkXFN7F":"нет","S58S9DFqO7w-JzDbF2HJA":"нет. мной может заинтересоваться разве что армия РФ","c8wID33nTMvoCpJmtngyq":"нет, двое детей школьного возраста, не хочу вырывать их из привычной среды","Ew3LqHTK8SL67j2VQ-n6y":"комплексные","DoOdxUlwbb0nILXQGBDaT":"после окончания текущего контракта (9 января 26)","ICXvQX-...
+🗑️ Сброшен кэш для кандидата: 75679568
+✅ Уровень кандидата обновлен в Huntflow: Senior
+✅ HR_SCREENING_UPDATE_CANDIDATE: Уровень кандидата обновлен
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем статус и добавляем комментарий
+🔍 HR_SCREENING_UPDATE_CANDIDATE: Используем статус из вакансии: 186502
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/75679568
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Артём","last_name":"Нистратов","middle_name":null,"money":"5000 USD (5000$ (в резюме указана не желаемая сумма, а текущий доход 6000$, и терять на старте практичеки $1000 немного печально, я буду ожидать что-то положительное в противовес убыткам))","phone":"+375333522329","email":"nistratov.artem@gmail.com","skype":null,"position":"DevOps Lead","company":"BePaid","photo":null,"id":75679568,"account":291341,"photo_url":null,"birthday":"1990-05-23","created":"2025-10-31T11:40:24+03:...
+DEBUG: Обновляем статус кандидата 75679568 на статус 186502 для вакансии 3979419 с комментарием: Доп. инфо: за последние пару месяцев изучил elixir для создания небольшого приложения (в компании он используется как язык для критичных к ресурсам и скорости работы сервисов), CAPI для автоматизации создания кластеров на площадках клиентов, linux VTI для создания VPN туннелей с клиентами на базе оборудования Cisco
+10 Senior+, Lead
+DEBUG: Пробуем эндпоинт /accounts/291341/applicants/75679568/vacancy с данными {'vacancy': 3979419, 'status': 186502, 'comment': 'Доп. инфо: за последние пару месяцев изучил elixir для создания небольшого приложения (в компании он используется как язык для критичных к ресурсам и скорости работы сервисов), CAPI для автоматизации создания кластеров на площадках клиентов, linux VTI для создания VPN туннелей с клиентами на базе оборудования Cisco\n10 Senior+, Lead'}[31/Oct/2025 12:27:16] "POST /google-oauth/chat/34/ajax/ HTTP/1.1" 200 3918
+[31/Oct/2025 12:31:53] "GET /vacancies/13/edit/ HTTP/1.1" 200 156337
+[31/Oct/2025 12:31:53] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[31/Oct/2025 12:32:47] "POST /vacancies/13/edit/ HTTP/1.1" 302 0
+[31/Oct/2025 12:32:48] "GET /vacancies/13/ HTTP/1.1" 200 127025
+[31/Oct/2025 12:32:52] "GET /vacancies/list/ HTTP/1.1" 200 153700
+[31/Oct/2025 12:32:56] "GET /vacancies/1/ HTTP/1.1" 200 134185
+[31/Oct/2025 12:33:02] "GET /vacancies/1/edit/ HTTP/1.1" 200 159958
+[31/Oct/2025 12:33:07] "POST /vacancies/1/edit/ HTTP/1.1" 302 0
+
+🔍 API запрос: POST https://api.huntflow.ru/v2/accounts/291341/applicants/75679568/vacancy
+📤 JSON данные: {'vacancy': 3979419, 'status': 186502, 'comment': 'Доп. инфо: за последние пару месяцев изучил elixir для создания небольшого приложения (в компании он используется как язык для критичных к ресурсам и скорости работы сервисов), CAPI для автоматизации создания кластеров на площадках клиентов, linux VTI для создания VPN туннелей с клиентами на базе оборудования Cisco\n10 Senior+, Lead'}
+📥 Ответ API: 200
+📥 Тело ответа: {"id":71144151,"changed":"2025-10-31T12:27:16+03:00","vacancy":3979419,"status":186502,"rejection_reason":null}...
+DEBUG: Статус успешно обновлен через /accounts/291341/applicants/75679568/vacancy
+🗑️ Сброшен кэш для кандидата: 75679568
+✅ HR_SCREENING_UPDATE_CANDIDATE: Статус обновлен на HR Screening
+🗑️ HR_SCREENING_UPDATE_CANDIDATE: Кэш очищен для кандидата 75679568
+✅ HR_SCREENING_UPDATE_CANDIDATE: Кандидат успешно обновлен
+✅ HR_SCREENING_FORM_SAVE: Кандидат успешно обновлен в Huntflow: Кандидат успешно обновлен в Huntflow
+✅ HR_SCREENING_FORM_SAVE: HR-скрининг завершен БЕЗ создания инвайта
+🔍 CHAT AJAX: Последнее системное сообщение: HR-скрининг - 31.10.2025 09:27 (type: hr_screening)
+🔍 CHAT AJAX: Рендерим HTML для сообщения типа: hr_screening
+🔍 CHAT AJAX: HTML сгенерирован, длина: 3255
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies/statuses
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":186500,"type":"user","name":"New","removed":null,"order":1,"stay_duration":null},{"id":187026,"type":"user","name":"Message","removed":null,"order":2,"stay_duration":null},{"id":186501,"type":"user","name":"Contact","removed":null,"order":3,"stay_duration":null},{"id":187027,"type":"user","name":"Portfolio Review","removed":null,"order":4,"stay_duration":null},{"id":186502,"type":"user","name":"HR Screening","removed":null,"order":5,"stay_duration":null},{"id":189774,"type":"user...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies/statuses
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":186500,"type":"user","name":"New","removed":null,"order":1,"stay_duration":null},{"id":187026,"type":"user","name":"Message","removed":null,"order":2,"stay_duration":null},{"id":186501,"type":"user","name":"Contact","removed":null,"order":3,"stay_duration":null},{"id":187027,"type":"user","name":"Portfolio Review","removed":null,"order":4,"stay_duration":null},{"id":186502,"type":"user","name":"HR Screening","removed":null,"order":5,"stay_duration":null},{"id":189774,"type":"user...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+DEBUG: get_stage_name called with stage_id=186502
+DEBUG: Returning stage name: HR Screening
+DEBUG: get_stage_name called with stage_id=189774
+DEBUG: Returning stage name: Этап 189774
+DEBUG: get_stage_name called with stage_id=186504
+DEBUG: Returning stage name: Tech Interview
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+DEBUG: get_stage_name called with stage_id=186502
+DEBUG: Returning stage name: HR Screening
+DEBUG: get_stage_name called with stage_id=186503
+DEBUG: Returning stage name: Tech Screening
+DEBUG: get_stage_name called with stage_id=186504
+DEBUG: Returning stage name: Tech Interview
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies/statuses
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":186500,"type":"user","name":"New","removed":null,"order":1,"stay_duration":null},{"id":187026,"type":"user","name":"Message","removed":null,"order":2,"stay_duration":null},{"id":186501,"type":"user","name":"Contact","removed":null,"order":3,"stay_duration":null},{"id":187027,"type":"user","name":"Portfolio Review","removed":null,"order":4,"stay_duration":null},{"id":186502,"type":"user","name":"HR Screening","removed":null,"order":5,"stay_duration":null},{"id":189774,"type":"user...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies/statuses
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":186500,"type":"user","name":"New","removed":null,"order":1,"stay_duration":null},{"id":187026,"type":"user","name":"Message","removed":null,"order":2,"stay_duration":null},{"id":186501,"type":"user","name":"Contact","removed":null,"order":3,"stay_duration":null},{"id":187027,"type":"user","name":"Portfolio Review","removed":null,"order":4,"stay_duration":null},{"id":186502,"type":"user","name":"HR Screening","removed":null,"order":5,"stay_duration":null},{"id":189774,"type":"user...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}][31/Oct/2025 12:33:08] "GET /vacancies/1/ HTTP/1.1" 200 134947
+[31/Oct/2025 12:33:09] "GET /vacancies/list/ HTTP/1.1" 200 153700
+[31/Oct/2025 12:33:18] "GET /vacancies/13/ HTTP/1.1" 200 126508
