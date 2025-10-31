@@ -14,35 +14,32 @@ document.addEventListener('DOMContentLoaded', () => {
      * 4) Команда, вставленная через копирование/вставку, НЕ считается введённой — 
      *    требуется именно набор с клавиатуры.
      */
+    
+    // Переменные состояния для отслеживания команд
+    let pendingCommandStart = -1;
+    let actionLocked = false;
     const textarea = document.getElementById('id_message');
     const tagLabel = document.getElementById('selectedTag');
     const actionTypeInput = document.getElementById('actionType');
     const sendButton = document.getElementById('send-btn');
     const chatForm = document.getElementById('chat-form');
     
-    console.log('🔍 DOM Elements found:');
-    console.log('  - textarea:', textarea);
-    console.log('  - tagLabel:', tagLabel);
-    console.log('  - actionTypeInput:', actionTypeInput);
-    console.log('  - sendButton:', sendButton);
-    console.log('  - chatForm:', chatForm);
-    
     // Проверяем что форма найдена
     if (!chatForm) {
-        console.error('❌ Chat form not found! Cannot add event listener.');
         return;
     }
     
     // Передаем переменную sessionId из шаблона в глобальный scope
     const sessionId = window.sessionId;
-    console.log('🔍 Session ID from window:', sessionId);
 
     // Сопоставление команды → action_type
     const COMMANDS = {
         '/s':      'hrscreening',
         '/hr':     'hrscreening',
+        '/screen': 'hrscreening',
         '/in':     'invite',
-        '/invite': 'invite'
+        '/invite': 'invite',
+        '/inv':    'invite'
     };
 
     /**
@@ -50,41 +47,27 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {string} messageHtml - HTML-код сообщения
      */
     function addMessageToChat(messageHtml) {
-        console.log('📨 Добавление нового сообщения в чат');
-        
-        // Находим контейнер с сообщениями
         const chatMessages = document.getElementById('chat-messages');
         if (!chatMessages) {
-            console.error('❌ Контейнер chat-messages не найден!');
             return;
         }
         
-        // Находим индикатор печати (typing-indicator)
         const typingIndicator = document.getElementById('typing-indicator');
-        
-        // Создаём временный контейнер для HTML
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = messageHtml.trim();
-        
-        // Извлекаем элемент сообщения
         const messageElement = tempDiv.firstElementChild;
         
         if (!messageElement) {
-            console.error('❌ Не удалось создать элемент сообщения из HTML');
             return;
         }
         
-        // Вставляем сообщение перед индикатором печати (если есть) или в конец
         if (typingIndicator) {
             chatMessages.insertBefore(messageElement, typingIndicator);
         } else {
             chatMessages.appendChild(messageElement);
         }
         
-        // Прокручиваем чат вниз
         scrollToBottom();
-        
-        console.log('✅ Сообщение успешно добавлено');
     }
 
     /**
@@ -104,16 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {string} commandUsed - Использованная команда (/s, /in и т.д.)
      */
     function addUserMessageToChat(text, actionType, commandUsed) {
-        console.log('👤 Добавление пользовательского сообщения в чат');
-        console.log('👤 Text:', text);
-        console.log('👤 ActionType:', actionType);
-        console.log('👤 Command used:', commandUsed);
-        console.log('👤 Command used type:', typeof commandUsed);
-        console.log('👤 Command used truthy?', !!commandUsed);
-        
         const chatMessages = document.getElementById('chat-messages');
         if (!chatMessages) {
-            console.error('❌ Контейнер chat-messages не найден!');
             return;
         }
         
@@ -128,9 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 badgeClass = 'bg-warning';
             }
             commandBadge = `<span class="command-indicator badge ${badgeClass}" style="position: absolute; bottom: 4px; left: 4px; font-size: 0.7em; z-index: 10;">${commandUsed}</span>`;
-            console.log('👤 Command badge created:', commandBadge);
-        } else {
-            console.log('👤 No command badge - commandUsed is falsy');
         }
         
         // Создаем HTML для пользовательского сообщения с меткой команды
@@ -161,25 +133,43 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Прокручиваем вниз
             scrollToBottom();
-            
-            console.log('✅ Пользовательское сообщение добавлено');
-        } else {
-            console.error('❌ Не удалось создать элемент пользовательского сообщения');
         }
     }
 
-    // Служебные флаги для фиксации/переключения команды
-    let actionLocked = false;              // Команда зафиксирована до явного ввода новой
-    let pendingCommandStart = -1;          // Индекс начала потенциальной новой команды ('/' введён с клавиатуры)
 
     // Обработчик ввода в textarea (только UX: авто-высота и т.п.)
     if (textarea) {
         textarea.addEventListener('input', () => {
             const val = textarea.value;
-            console.log('🔍 TEXTAREA INPUT: Value:', val);
-            // Здесь БОЛЬШЕ НЕ парсим команды — логика перенесена в keydown, чтобы
-            // реагировать только на ввод с клавиатуры. Это сохраняет команду зафиксированной,
-            // пока пользователь явно не введёт новую.
+            
+            // Проверяем, начинается ли текст с команды (простая логика из оригинальной версии)
+            const match = val.match(/^\/\w+/);
+            if (match) {
+                const cmd = match[0].toLowerCase();
+                const action = COMMANDS[cmd];
+                
+                if (action && actionTypeInput && tagLabel) {
+                    // Показываем метку
+                    tagLabel.textContent = `#${action}`;
+                    tagLabel.style.display = 'inline-block';
+                    
+                    // Меняем цвет метки в зависимости от типа
+                    if (action === 'hrscreening') {
+                        tagLabel.className = 'tag-label badge bg-success me-2';
+                    } else if (action === 'invite') {
+                        tagLabel.className = 'tag-label badge bg-warning me-2';
+                    } else {
+                        tagLabel.className = 'tag-label badge bg-info me-2';
+                    }
+                    
+                    // Заполняем скрытое поле
+                    actionTypeInput.value = action;
+                    
+                    // Удаляем команду из текста, оставляя только остальной контент
+                    textarea.value = val.slice(cmd.length).trimStart();
+                    return;
+                }
+            }
         });
 
         // Ловим начало потенциальной команды при вводе '/'
@@ -190,9 +180,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 actionLocked = false; // откроем возможность переключения при подтверждении
             }
 
-            // Подтверждение команды пробелом или Enter
-            if ((e.key === ' ' || e.key === 'Enter') && pendingCommandStart !== -1) {
-                const cursorPos = textarea.selectionStart; // позиция ДО вставки пробела/Enter
+            // Подтверждение команды пробелом
+            if (e.key === ' ' && pendingCommandStart !== -1) {
+                e.preventDefault(); // Предотвращаем вставку пробела до обработки команды
+                
+                const cursorPos = textarea.selectionStart; // позиция ДО вставки пробела
                 const text = textarea.value;
                 // Команда должна быть сразу после pendingCommandStart и до cursorPos: 
                 // например "/s" или "/in" и т.п.
@@ -212,124 +204,252 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         // Удаляем команду из текста, оставляя контент
                         const before = text.substring(0, pendingCommandStart);
-                        const after = text.substring(cursorPos); // пробел/enter будет обработан самим браузером
-                        textarea.value = (before + after).replace(/[ \t]+/g, ' ').replace(/^\s+/, '');
+                        const after = text.substring(cursorPos); // текст после команды
+                        // Соединяем части, убирая лишние пробелы
+                        const parts = [before.trimEnd(), after.trimStart()].filter(p => p);
+                        const newValue = parts.join(' ');
+                        textarea.value = newValue;
+                        
                         // Ставим курсор в конец
                         const end = textarea.value.length;
                         textarea.selectionStart = textarea.selectionEnd = end;
 
                         actionLocked = true;           // команда зафиксирована
                         pendingCommandStart = -1;       // сброс
-                        return; // не препятствуем вставке пробела/Enter — уже удалили команду
+                        return false; // предотвращаем дальнейшую обработку
                     }
                 }
                 // Если не распознали — сбрасываем ожидание
                 pendingCommandStart = -1;
             }
+            
+            // Обработка Enter для отправки формы
+            if (e.key === 'Enter' && !e.shiftKey) {
+                // Если есть активная команда, обрабатываем её
+                if (pendingCommandStart !== -1) {
+                    const cursorPos = textarea.selectionStart;
+                    const text = textarea.value;
+                    const raw = text.substring(pendingCommandStart, cursorPos).toLowerCase();
+                    const cmdMatch = raw.match(/^\/(s|hr|in|invite)$/);
+                    if (cmdMatch) {
+                        const token = '/' + cmdMatch[1];
+                        const action = COMMANDS[token];
+                        if (action) {
+                            e.preventDefault();
+                            // Применяем команду
+                            actionTypeInput.value = action;
+                            tagLabel.textContent = `#${action}`;
+                            tagLabel.style.display = 'inline-block';
+                            tagLabel.className = action === 'hrscreening'
+                                ? 'tag-label badge bg-success me-2'
+                                : (action === 'invite' ? 'tag-label badge bg-warning me-2' : 'tag-label badge bg-info me-2');
+
+                            // Удаляем команду из текста
+                            const before = text.substring(0, pendingCommandStart);
+                            const after = text.substring(cursorPos);
+                            const parts = [before.trimEnd(), after.trimStart()].filter(p => p);
+                            textarea.value = parts.join(' ');
+                            
+                            const end = textarea.value.length;
+                            textarea.selectionStart = textarea.selectionEnd = end;
+                            actionLocked = true;
+                            pendingCommandStart = -1;
+                            // После обработки команды отправляем форму
+                            if (textarea.value.trim()) {
+                                submitChatForm();
+                            }
+                            return false;
+                        }
+                    }
+                    pendingCommandStart = -1;
+                }
+                
+                // Если команды нет или она обработана, отправляем форму
+                if (textarea.value.trim()) {
+                    e.preventDefault();
+                    submitChatForm();
+                }
+            }
+        });
+    }
+
+    // Функция отправки сообщения
+    function submitChatForm() {
+        if (!chatForm || !textarea) {
+            console.error('❌ SUBMIT: chatForm или textarea не найдены');
+            return;
+        }
+        
+        if (!sessionId) {
+            console.error('❌ SUBMIT: sessionId не определён:', sessionId);
+            alert('Ошибка: ID сессии чата не найден. Перезагрузите страницу.');
+            return;
+        }
+        
+        console.log('✅ SUBMIT: Handler triggered, sessionId:', sessionId);
+        
+        const actionType = actionTypeInput ? actionTypeInput.value : '';
+        let text = textarea.value.trim();
+        console.log('✅ SUBMIT: actionType:', actionType, 'text:', text);
+        
+        if (!text) {
+            console.warn('⚠️ SUBMIT: Пустой текст сообщения');
+            return;
+        }
+        
+        // Определяем, какая команда будет использована
+        let commandUsed = null;
+        let finalActionType = actionType;
+        
+        // Сначала проверяем, есть ли команда в самом тексте
+        const cmdMatchStart = text.match(/^\/(s|hr|in|invite)(?=\s|$)/i);
+        const cmdMatchSpace = text.match(/(^|\s)\/(s|hr|in|invite)(?=\s|$)/i);
+        const cmdMatch = cmdMatchStart || cmdMatchSpace;
+        
+        if (cmdMatch) {
+            // Команда найдена в тексте — определяем её
+            const cmdToken = '/' + (cmdMatch[1] || cmdMatch[2]).toLowerCase();
+            commandUsed = cmdToken;
+            // Обновляем actionType на основе найденной команды
+            if (cmdToken === '/s' || cmdToken === '/hr') {
+                finalActionType = 'hrscreening';
+            } else if (cmdToken === '/in' || cmdToken === '/invite') {
+                finalActionType = 'invite';
+            }
+            
+            // Обновляем скрытое поле, если оно не совпадает
+            if (actionTypeInput && actionTypeInput.value !== finalActionType) {
+                actionTypeInput.value = finalActionType;
+            }
+        } else if (actionType) {
+            // Команды нет в тексте, но есть в скрытом поле — добавляем команду в текст
+            if (actionType === 'hrscreening') {
+                text = '/s ' + text;
+                commandUsed = '/s';
+            } else if (actionType === 'invite') {
+                text = '/in ' + text;
+                commandUsed = '/in';
+            }
+            finalActionType = actionType;
+        }
+        
+        // Добавляем сообщение пользователя (без команды для UX)
+        const displayText = textarea.value.trim();
+        addUserMessageToChat(displayText, finalActionType, commandUsed);
+        
+        // Блокируем кнопки
+        if (sendButton) {
+            sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            sendButton.disabled = true;
+        }
+        textarea.disabled = true;
+        
+        // AJAX запрос
+        const payload = {
+            'action_type': finalActionType || actionType,
+            'text': text,
+            'session_id': sessionId
+        };
+        console.log('✅ SUBMIT: Sending payload:', payload);
+        
+        const csrfToken = getCSRFToken();
+        if (!csrfToken) {
+            console.error('❌ SUBMIT: CSRF токен не найден');
+            alert('Ошибка: CSRF токен не найден. Перезагрузите страницу.');
+            // Разблокируем кнопки
+            if (sendButton) {
+                sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                sendButton.disabled = false;
+            }
+            textarea.disabled = false;
+            return;
+        }
+        
+        const url = `/google-oauth/chat/${sessionId}/ajax/`;
+        console.log('✅ SUBMIT: URL:', url);
+        console.log('✅ SUBMIT: CSRF токен:', csrfToken ? 'найден' : 'не найден');
+        
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify(payload),
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            console.log('✅ SUBMIT: Response status:', response.status);
+            if (!response.ok) {
+                return response.text().then(text => {
+                    console.error('❌ SUBMIT: Response error:', text);
+                    throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('✅ SUBMIT: Response data:', data);
+            if (data.success) {
+                // Очищаем поле
+                textarea.value = '';
+                if (tagLabel) {
+                    tagLabel.style.display = 'none';
+                }
+                textarea.style.height = '48px';
+                // Сбрасываем команду
+                if (actionTypeInput) {
+                    actionTypeInput.value = '';
+                }
+                actionLocked = false;
+                pendingCommandStart = -1;
+                
+                // Добавляем ответ
+                if (data.message_html) {
+                    addMessageToChat(data.message_html);
+                }
+            } else {
+                const errorMsg = data.error || 'Ошибка отправки';
+                console.error('❌ SUBMIT: Server error:', errorMsg);
+                alert(errorMsg);
+            }
+            
+            // Разблокируем кнопки
+            if (sendButton) {
+                sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                sendButton.disabled = false;
+            }
+            textarea.disabled = false;
+        })
+        .catch(error => {
+            console.error('❌ SUBMIT: Catch error:', error);
+            let errorMsg = 'Ошибка отправки сообщения';
+            if (error.message) {
+                errorMsg += ': ' + error.message;
+            }
+            alert(errorMsg);
+            
+            if (sendButton) {
+                sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                sendButton.disabled = false;
+            }
+            textarea.disabled = false;
         });
     }
 
     // ЕДИНСТВЕННЫЙ обработчик submit
     if (chatForm) {
-        console.log('🔍 Chat form found:', chatForm);
-        
         chatForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            const actionType = actionTypeInput ? actionTypeInput.value : '';
-            let text = textarea.value.trim();
-            
-            console.log('🔍 SUBMIT: actionType from hidden input:', actionType);
-            console.log('🔍 SUBMIT: textarea value:', text);
-            
-            if (!text) {
-                return;
-            }
-            
-            // Определяем, какая команда будет использована
-            let commandUsed = null;
-            const explicitCmdRe = /(^|\s)\/(s|hr|in|invite)(?=\s|$)/i;
-            const cmdMatch = text.match(/^\/(s|hr|in|invite)(?=\s|$)/i) || text.match(/(^|\s)\/(s|hr|in|invite)(?=\s|$)/i);
-            
-            if (cmdMatch) {
-                // Команда найдена в тексте
-                commandUsed = '/' + (cmdMatch[1] || cmdMatch[2]).toLowerCase();
-                console.log('🔍 SUBMIT: Command found in text:', commandUsed);
-            } else {
-                // Команды нет в тексте — добавляем из actionType
-                if (actionType === 'hrscreening') {
-                    text = '/s ' + text;
-                    commandUsed = '/s';
-                    console.log('🔍 SUBMIT: Command added from actionType (hrscreening):', commandUsed);
-                } else if (actionType === 'invite') {
-                    text = '/in ' + text;
-                    commandUsed = '/in';
-                    console.log('🔍 SUBMIT: Command added from actionType (invite):', commandUsed);
-                } else {
-                    console.log('🔍 SUBMIT: No command found and no actionType set');
-                }
-            }
-            
-            console.log('🔍 SUBMIT: Final text with command:', text);
-            console.log('🔍 SUBMIT: Command used for badge:', commandUsed);
-            
-            // Добавляем сообщение пользователя (без команды для UX)
-            const displayText = textarea.value.trim();
-            addUserMessageToChat(displayText, actionType, commandUsed);
-            
-            // Блокируем кнопки
-            sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            sendButton.disabled = true;
-            textarea.disabled = true;
-            
-            // AJAX запрос
-            fetch(`/google-oauth/chat/${sessionId}/ajax/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCSRFToken()
-                },
-                body: JSON.stringify({
-                    'action_type': actionType || (commandUsed ? (commandUsed === '/s' || commandUsed === '/hr' ? 'hrscreening' : (commandUsed === '/in' || commandUsed === '/invite' ? 'invite' : '')) : ''),
-                    'text': text, // Текст с командой для backend
-                    'session_id': sessionId
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Очищаем поле
-                    textarea.value = '';
-                    tagLabel.style.display = 'none';
-                    textarea.style.height = '48px';
-                    // Сбрасываем команду
-                    if (actionTypeInput) {
-                        actionTypeInput.value = '';
-                    }
-                    actionLocked = false;
-                    pendingCommandStart = -1;
-                    
-                    // Добавляем ответ
-                    if (data.message_html) {
-                        addMessageToChat(data.message_html);
-                    }
-                } else {
-                    alert(data.error || 'Ошибка отправки');
-                }
-                
-                // Разблокируем кнопки
-                sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
-                sendButton.disabled = false;
-                textarea.disabled = false;
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                alert('Ошибка отправки сообщения');
-                
-                sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
-                sendButton.disabled = false;
-                textarea.disabled = false;
-            });
+            submitChatForm();
+        });
+    }
+    
+    // Обработчик клика на кнопку отправки
+    if (sendButton) {
+        sendButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            submitChatForm();
         });
     }
 });
@@ -338,8 +458,6 @@ document.addEventListener('DOMContentLoaded', () => {
 function getCSRFToken() {
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
     if (csrfToken) {
-        console.log('🔍 CSRF Token element:', csrfToken);
-        console.log('🔍 CSRF Token value:', csrfToken.value);
         return csrfToken.value;
     }
     return '';

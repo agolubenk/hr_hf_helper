@@ -480,7 +480,7 @@
                                         <input type="hidden"
                                                id="actionType"
                                                name="action_type"
-                                               value="hrscreening">
+                                               value="">
                                     </div>
                                     
                                     {% if form.message.errors %}
@@ -2218,15 +2218,7 @@ document.addEventListener('DOMContentLoaded', function() {
         resetTextareaSize();
     }, 100);
     
-    // Отправка формы обрабатывается в chat_actions.js через AJAX
-    // Здесь оставляем только базовую валидацию
-    chatForm.addEventListener('submit', function(e) {
-        if (!messageInput.value.trim()) {
-            e.preventDefault();
-            return;
-        }
-        // AJAX обработка в chat_actions.js
-    });
+    // Отправка формы полностью обрабатывается в chat_actions.js через AJAX
     
     // Функция для сброса размера textarea к одной строке
     function resetTextareaSize() {
@@ -2245,13 +2237,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Обработка команд вынесена в chat_actions.js
     });
     
-    // Отправка по Enter (без Shift)
-    messageInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            chatForm.submit();
-        }
-    });
+    // Отправка по Enter обрабатывается в chat_actions.js
     
     // Автодополнение интервьюеров
     let autocompleteTimeout;

@@ -3323,7 +3323,7 @@ def chat_ajax_handler(request, session_id):
 
         # Определяем тип действия (с приоритетом команд)
         print(f"🔍 CHAT AJAX: Анализируем сообщение: '{message_text}'")
-        print(f"🔍 CHAT AJAX: action_type_from_js: '{action_type_from_js}'")
+        print(f"🔍 CHAT AJAX: action_type_from_js: '{action_type_from_js}' (type: {type(action_type_from_js)}, bool: {bool(action_type_from_js)})")
         
         # Проверяем команды строго с границами слов или пробелами
         message_lower = message_text.strip().lower()
@@ -3334,21 +3334,23 @@ def chat_ajax_handler(request, session_id):
             message_text = re.sub(r'^/del\s*', '', message_text, flags=re.IGNORECASE).strip()
         elif re.match(r'^/s(\s|$)', message_lower):
             action_type = 'hrscreening'
-            print(f"🔍 CHAT AJAX: Команда /s обнаружена - принудительный HR-скрининг")
+            print(f"🔍 CHAT AJAX: Команда /s обнаружена в тексте - принудительный HR-скрининг")
             message_text = re.sub(r'^/s\s*', '', message_text, flags=re.IGNORECASE).strip()
         elif re.match(r'^/in(\s|$)', message_lower):
             action_type = 'invite'
-            print(f"🔍 CHAT AJAX: Команда /in обнаружена - принудительный инвайт")
+            print(f"🔍 CHAT AJAX: Команда /in обнаружена в тексте - принудительный инвайт")
             message_text = re.sub(r'^/in\s*', '', message_text, flags=re.IGNORECASE).strip()
         else:
             # Комбинированный/автоматический режим отключен, но допускаем явный тип из JS
-            if action_type_from_js:
-                action_type = action_type_from_js
-                print(f"🔍 CHAT AJAX: Используем тип действия из JS (скрытое поле): {action_type}")
+            # ВАЖНО: проверяем что action_type_from_js не пустая строка и не None
+            if action_type_from_js and action_type_from_js.strip():
+                action_type = action_type_from_js.strip()
+                print(f"🔍 CHAT AJAX: Используем тип действия из JS (скрытое поле): '{action_type}'")
             else:
+                print(f"❌ CHAT AJAX: НЕТ КОМАНДЫ! message_text: '{message_text}', action_type_from_js: '{action_type_from_js}'")
                 return JsonResponse({'success': False, 'error': 'Укажи команду: /s для HR-скрининга или /in для инвайта'})
         
-        print(f"🔍 CHAT AJAX: ФИНАЛЬНЫЙ action_type: {action_type}")
+        print(f"🔍 CHAT AJAX: ФИНАЛЬНЫЙ action_type: '{action_type}'")
 
         # Обрабатываем действие
         if action_type == 'delete_last':
