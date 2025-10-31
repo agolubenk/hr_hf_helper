@@ -407,12 +407,23 @@ def page_detail(request, page_id):
                 parsed_data = service.parse_page_data(page_data)
                 
                 # Обновляем страницу в базе данных актуальными данными
+                logger.info(f"📊 NOTION UPDATE: Получены данные из parse_page_data. Ключи: {list(parsed_data.keys())}")
+                logger.info(f"📊 NOTION UPDATE: Статус в parsed_data: '{parsed_data.get('status', 'НЕ НАЙДЕН')}'")
+                
                 for field, value in parsed_data.items():
                     if hasattr(page, field):
+                        old_value = getattr(page, field, None)
                         setattr(page, field, value)
-                page.save()
+                        if field == 'status':
+                            logger.info(f"📝 NOTION UPDATE: Обновлено поле {field}: '{old_value}' -> '{value}'")
+                        else:
+                            logger.debug(f"📝 NOTION UPDATE: Обновлено поле {field} = {value}")
+                    else:
+                        logger.warning(f"⚠️ NOTION UPDATE: Поле {field} отсутствует в модели NotionPage")
                 
-                logger.info(f"Данные страницы {page_id} обновлены через API")
+                page.save()
+                logger.info(f"✅ NOTION UPDATE: Страница сохранена в БД")
+                logger.info(f"📊 NOTION UPDATE: Status={page.status}, Interviewer={page.interviewer}, Interview Date={page.interview_date}, Comments count={len(page.comments) if page.comments else 0}")
                 
             except NotionAPIError as e:
                 logger.warning(f"Не удалось получить данные страницы {page_id}: {e}")

@@ -25,9 +25,9 @@ class NotionSettingsAdmin(admin.ModelAdmin):
 
 @admin.register(NotionPage)
 class NotionPageAdmin(admin.ModelAdmin):
-    list_display = ['title', 'user', 'status', 'priority', 'date_updated', 'created_at']
-    list_filter = ['status', 'priority', 'date_created', 'date_updated', 'created_at']
-    search_fields = ['title', 'content', 'user__username', 'page_id']
+    list_display = ['title', 'user', 'status', 'priority', 'interviewer', 'interview_date', 'date_updated', 'created_at']
+    list_filter = ['status', 'priority', 'date_created', 'date_updated', 'created_at', 'interview_date']
+    search_fields = ['title', 'content', 'user__username', 'page_id', 'interviewer']
     readonly_fields = ['page_id', 'created_at', 'updated_at']
     
     fieldsets = (
@@ -36,6 +36,9 @@ class NotionPageAdmin(admin.ModelAdmin):
         }),
         ('Свойства', {
             'fields': ('status', 'priority', 'date_created', 'date_updated', 'due_date')
+        }),
+        ('Интервью', {
+            'fields': ('interviewer', 'interview_date')
         }),
         ('Ссылки и файлы', {
             'fields': ('url', 'attachments', 'assignees', 'tags'),
