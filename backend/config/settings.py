@@ -86,6 +86,7 @@ INSTALLED_APPS = [
     'apps.clickup_int',
     'apps.notion_int',
     'apps.hiring_plan',
+    'apps.company_settings',
     
     
     # Django REST Framework

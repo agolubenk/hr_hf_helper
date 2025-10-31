@@ -58,6 +58,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link{% if request.resolver_match.url_name == 'company_settings' %} active{% endif %}" href="{% url 'company_settings:company_settings' %}">
+                                <i class="fas fa-building me-2"></i>
+                                Настройки компании
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link{% if request.resolver_match.namespace == 'admin' %} active{% endif %}" href="{% url 'admin:index' %}">
                                 <i class="fas fa-cog me-2"></i>
                                 Admin-панель
