@@ -166,12 +166,16 @@
                         </form>
                         {% if selected_vacancy %}
                         <div class="mt-2 text-end">
-                            <a href="{% url 'vacancies:vacancy_detail' selected_vacancy.id %}" target="_blank" class="badge bg-primary fs-6 me-2 clickable-badge" style="text-decoration: none; cursor: pointer;">
-                                <i class="fas fa-briefcase me-2"></i> Вакансия
+                            <a href="https://calendar.google.com/calendar/u/0/r/week" target="_blank" class="badge bg-info fs-6 me-2 clickable-badge" style="text-decoration: none; cursor: pointer;" title="Календарь">
+                                <i class="fas fa-calendar"></i>
                                 <i class="fas fa-external-link-alt ms-1"></i>
                             </a>
+                            <a href="{% url 'vacancies:vacancy_detail' selected_vacancy.id %}" target="_blank" class="badge bg-primary fs-6 me-2 clickable-badge" style="text-decoration: none; cursor: pointer;">
+                                <i class="fas fa-briefcase me-md-2"></i> <span class="d-none d-md-inline">Вакансия</span>
+                                <i class="fas fa-external-link-alt ms-md-1"></i>
+                            </a>
                             <span class="badge bg-success fs-6 clickable-badge" onclick="toggleSlotsCard()" style="cursor: pointer;">
-                                <i class="fas fa-clock me-2"></i> Свободные слоты
+                                <i class="fas fa-clock me-md-2"></i> <span class="d-inline d-md-none">Свободные </span><span class="d-inline">слоты</span>
                             </span>
                         </div>
                         {% endif %}
