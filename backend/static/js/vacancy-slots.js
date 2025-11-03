@@ -614,7 +614,8 @@ function switchSlotsByMeetingType(meetingType) {
         const nextWeekSlots = [];
         
         // Определяем начало следующей недели (следующий понедельник)
-        const daysUntilMonday = (8 - today.getDay()) % 7; // Количество дней до следующего понедельника
+        const dayOfWeek = today.getDay(); // 0 = воскресенье, 1 = понедельник, ..., 6 = суббота
+        const daysUntilMonday = dayOfWeek === 0 ? 1 : (7 - dayOfWeek + 1); // Количество дней до следующего понедельника
         const nextMonday = new Date(today);
         nextMonday.setDate(today.getDate() + daysUntilMonday);
         nextMonday.setHours(0, 0, 0, 0);
