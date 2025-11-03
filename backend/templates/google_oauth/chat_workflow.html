@@ -112,13 +112,6 @@
                                                 <i class="fas fa-plus"></i>
                                                 <div class="copy-tooltip">Загрузить слоты третьей недели</div>
                                             </button>
-                                            
-                                            <button class="btn-copy btn-refresh-slots" 
-                                                    onclick="window.refreshSlots()"
-                                                    title="Обновить слоты">
-                                                <i class="fas fa-sync-alt"></i>
-                                                <div class="copy-tooltip">Обновить слоты</div>
-                                            </button>
                                         </div>
                                             
                                             <!-- Свитчер типа встречи справа -->
@@ -177,6 +170,15 @@
                             <span class="badge bg-success fs-6 clickable-badge" onclick="toggleSlotsCard()" style="cursor: pointer;">
                                 <i class="fas fa-clock me-md-2"></i> <span class="d-inline d-md-none">Свободные </span><span class="d-inline">слоты</span>
                             </span>
+                            <button class="btn-copy btn-refresh-slots ms-2 position-relative" 
+                                    onclick="window.refreshSlots()"
+                                    title="Обновить слоты"
+                                    style="width: 32px; height: 32px; border-radius: 50%; border: none; background: #0d6efd; color: white; padding: 0; margin: 0; vertical-align: middle; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"
+                                    onmouseover="this.style.background='#0b5ed7'; this.style.transform='scale(1.1)';"
+                                    onmouseout="this.style.background='#0d6efd'; this.style.transform='scale(1)';">
+                                <i class="fas fa-sync-alt"></i>
+                                <div class="copy-tooltip">Обновить слоты</div>
+                            </button>
                         </div>
                         {% endif %}
                     </div>
