@@ -2632,6 +2632,13 @@ window.screeningSlots = {{ screening_slots_json|safe|default:"[]" }};
 window.interviewSlots = {{ interview_slots_json|safe|default:"[]" }};
 console.log('📊 Слоты для скринингов:', window.screeningSlots);
 console.log('📊 Слоты для интервью:', window.interviewSlots);
+
+// URL фото пользователя для аватара в AJAX-сообщениях
+{% if user_photo_url %}
+window.userPhotoUrl = "{{ user_photo_url|escapejs }}";
+{% else %}
+window.userPhotoUrl = null;
+{% endif %}
 </script>
 
             <script src="{% static 'js/vacancy-slots.js' %}"></script>

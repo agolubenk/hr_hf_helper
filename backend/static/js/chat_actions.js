@@ -102,6 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
+        // Обрабатываем переносы строк: заменяем \n на <br>
+        const processedText = text.replace(/\n/g, '<br>');
+        
         // Формируем метку команды в левом нижнем углу
         let commandBadge = '';
         if (commandUsed && commandUsed !== null && commandUsed !== '') {
@@ -115,16 +118,30 @@ document.addEventListener('DOMContentLoaded', () => {
             commandBadge = `<span class="command-indicator badge ${badgeClass}" style="position: absolute; bottom: 4px; left: 4px; font-size: 0.7em; z-index: 10;">${commandUsed}</span>`;
         }
         
+        // Получаем URL фото пользователя (если доступен)
+        const userPhotoUrl = window.userPhotoUrl || null;
+        
+        // Формируем HTML для аватара
+        let avatarHtml = '';
+        if (userPhotoUrl) {
+            avatarHtml = `<img src="${userPhotoUrl}" alt="User Avatar" class="rounded-circle">`;
+        } else {
+            avatarHtml = `<i class="fas fa-user"></i>`;
+        }
+        
         // Создаем HTML для пользовательского сообщения с меткой команды
         const messageHtml = `
             <div class="message mb-3 user-message">
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-end align-items-end">
                     <div class="message-bubble user-bubble" style="position: relative;">
-                        <div class="message-content">${text}</div>
+                        <div class="message-content user-content">${processedText}</div>
                         ${commandBadge}
+                        <div class="message-footer">
+                            <small class="text-muted">${new Date().toLocaleString('ru-RU', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'})}</small>
+                        </div>
                     </div>
-                    <div class="message-avatar">
-                        <i class="fas fa-user"></i>
+                    <div class="message-avatar ms-2" style="margin-bottom: -18px; position: relative; z-index: 100;">
+                        ${avatarHtml}
                     </div>
                 </div>
             </div>
