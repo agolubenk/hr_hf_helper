@@ -1321,11 +1321,12 @@ class Invite(models.Model):
                         if telegram_username.startswith('@'):
                             telegram_username = telegram_username[1:]
                         telegram_link = f"https://t.me/{telegram_username}"
+                        telegram_text_link = f'<a href="{telegram_link}">@{telegram_username}</a>'
                         
-                        # Заменяем [телеграм рекрутера] на прямую ссылку
+                        # Заменяем [телеграм рекрутера] на текст-ссылку
                         invite_text = re.sub(
                             r'\[телеграм рекрутера\]', 
-                            telegram_link, 
+                            telegram_text_link, 
                             invite_text, 
                             flags=re.IGNORECASE
                         )
@@ -1845,12 +1846,12 @@ class Invite(models.Model):
                         # Убираем @ если есть
                         if telegram_username.startswith('@'):
                             telegram_username = telegram_username[1:]
-                        telegram_link = f"https://t.me/{telegram_username}"
+                        telegram_text = f"@{telegram_username}"
                         
-                        # Заменяем [телеграм рекрутера] на прямую ссылку
+                        # Заменяем [телеграм рекрутера] на текст с @
                         invite_text = re.sub(
                             r'\[телеграм рекрутера\]', 
-                            telegram_link, 
+                            telegram_text, 
                             invite_text, 
                             flags=re.IGNORECASE
                         )
