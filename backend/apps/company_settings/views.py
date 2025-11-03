@@ -7,41 +7,26 @@ from django.core.exceptions import PermissionDenied
 import json
 
 from .models import CompanySettings, RejectionTemplate
-from .forms import CompanySettingsForm
+from .forms import CompanySettingsForm, RejectionTemplateForm
 
 
-@login_required
-@require_http_methods(["GET", "POST"])
-def company_settings_view(request):
-    """Страница настроек компании"""
-    # Проверяем права доступа (можем добавить проверку на суперпользователя или группу)
-    if not request.user.is_staff:
+def check_staff_permission(user):
+    """Проверка прав доступа"""
+    if not user.is_staff:
         raise PermissionDenied("Только сотрудники могут изменять настройки компании")
-    
-    # Получаем или создаем настройки
-    settings_obj = CompanySettings.get_settings()
-    
-    if request.method == 'POST':
-        form = CompanySettingsForm(request.POST, instance=settings_obj)
-        
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Настройки компании успешно сохранены')
-            return redirect('company_settings:company_settings')
-        else:
-            messages.error(request, 'Ошибка при сохранении настроек. Проверьте введенные данные.')
-    else:
-        form = CompanySettingsForm(instance=settings_obj)
-    
-    # Получаем список доступных календарей для выбора
+
+
+def get_available_calendars(user):
+    """Получает список доступных календарей для пользователя"""
     available_calendars = []
     available_calendar_ids = []
-    if hasattr(request.user, 'google_oauth_account'):
+    
+    if hasattr(user, 'google_oauth_account'):
         try:
             from apps.google_oauth.models import GoogleOAuthAccount
             from apps.google_oauth.services import GoogleCalendarService
             
-            oauth_account = GoogleOAuthAccount.objects.filter(user=request.user).first()
+            oauth_account = GoogleOAuthAccount.objects.filter(user=user).first()
             if oauth_account and oauth_account.is_token_valid():
                 calendar_service = GoogleCalendarService(oauth_account)
                 calendars = calendar_service.get_calendar_list()
@@ -59,12 +44,79 @@ def company_settings_view(request):
         except Exception as e:
             print(f"Ошибка получения календарей: {e}")
     
-    # Проверяем, есть ли сохраненный ID календаря в списке доступных
+    return available_calendars, available_calendar_ids
+
+
+@login_required
+def company_settings_overview(request):
+    """Главная страница настроек компании - обзор по блокам"""
+    check_staff_permission(request.user)
+    
+    settings_obj = CompanySettings.get_settings()
+    available_calendars, available_calendar_ids = get_available_calendars(request.user)
     calendar_id_in_list = settings_obj.main_calendar_id in available_calendar_ids if settings_obj.main_calendar_id else False
     
-    # Получаем все доступные грейды для выбора
+    # Получаем информацию о шаблонах отказов
     from apps.finance.models import Grade
-    all_grades = Grade.objects.all().order_by('name')
+    active_grades = settings_obj.active_grades.all()
+    
+    # Подсчитываем шаблоны по типам
+    templates_stats = {
+        'office_format': RejectionTemplate.objects.filter(is_active=True, rejection_type='office_format', grade__isnull=True).count(),
+        'finance': RejectionTemplate.objects.filter(is_active=True, rejection_type='finance', grade__isnull=True).count(),
+        'finance_more': RejectionTemplate.objects.filter(is_active=True, rejection_type='finance_more', grade__isnull=True).count(),
+        'finance_less': RejectionTemplate.objects.filter(is_active=True, rejection_type='finance_less', grade__isnull=True).count(),
+        'general': RejectionTemplate.objects.filter(is_active=True, rejection_type='general', grade__isnull=True).count(),
+        'grade': {}
+    }
+    
+    # Подсчитываем шаблоны для каждого активного грейда
+    for grade in active_grades:
+        templates_stats['grade'][grade.id] = {
+            'name': grade.name,
+            'count': RejectionTemplate.objects.filter(is_active=True, rejection_type='grade', grade=grade).count()
+        }
+    
+    context = {
+        'settings': settings_obj,
+        'available_calendars': available_calendars,
+        'calendar_id_in_list': calendar_id_in_list,
+        'active_grades': active_grades,
+        'templates_stats': templates_stats,
+    }
+    
+    return render(request, 'company_settings/overview.html', context)
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def company_settings_basic(request):
+    """Страница базовых настроек компании"""
+    check_staff_permission(request.user)
+    
+    settings_obj = CompanySettings.get_settings()
+    
+    if request.method == 'POST':
+        form = CompanySettingsForm(request.POST, instance=settings_obj)
+        
+        if form.is_valid():
+            # Сохраняем только базовые поля
+            settings_obj.company_name = form.cleaned_data['company_name']
+            settings_obj.theme = form.cleaned_data['theme']
+            settings_obj.main_calendar_id = form.cleaned_data['main_calendar_id']
+            settings_obj.org_structure = form.cleaned_data['org_structure']
+            settings_obj.save()
+            
+            messages.success(request, 'Базовые настройки успешно сохранены')
+            return redirect('company_settings:basic')
+        else:
+            messages.error(request, 'Ошибка при сохранении настроек. Проверьте введенные данные.')
+    else:
+        # Создаем форму только с базовыми полями
+        form = CompanySettingsForm(instance=settings_obj)
+    
+    available_calendars, available_calendar_ids = get_available_calendars(request.user)
+    calendar_id_in_list = settings_obj.main_calendar_id in available_calendar_ids if settings_obj.main_calendar_id else False
     
     context = {
         'form': form,
@@ -72,11 +124,85 @@ def company_settings_view(request):
         'available_calendars': available_calendars,
         'calendar_id_in_list': calendar_id_in_list,
         'org_structure_json': json.dumps(settings_obj.org_structure, ensure_ascii=False, indent=2) if settings_obj.org_structure else '{}',
+    }
+    
+    return render(request, 'company_settings/basic.html', context)
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def company_settings_grades(request):
+    """Страница настроек грейдов компании"""
+    check_staff_permission(request.user)
+    
+    settings_obj = CompanySettings.get_settings()
+    
+    if request.method == 'POST':
+        from apps.finance.models import Grade
+        grade_ids = request.POST.getlist('active_grades')
+        settings_obj.active_grades.set(Grade.objects.filter(id__in=grade_ids))
+        settings_obj.save()
+        messages.success(request, 'Настройки грейдов успешно сохранены')
+        return redirect('company_settings:grades')
+    
+    from apps.finance.models import Grade
+    all_grades = Grade.objects.all().order_by('name')
+    
+    context = {
+        'settings': settings_obj,
         'all_grades': all_grades,
         'active_grades': settings_obj.active_grades.all()
     }
     
-    return render(request, 'company_settings/settings.html', context)
+    return render(request, 'company_settings/grades.html', context)
+
+
+@login_required
+@require_http_methods(["GET"])
+def company_settings_templates(request):
+    """Страница настроек шаблонов отказов"""
+    check_staff_permission(request.user)
+    
+    settings_obj = CompanySettings.get_settings()
+    active_grades = settings_obj.active_grades.all()
+    
+    # Получаем все шаблоны по типам (включая неактивные для редактирования)
+    templates_by_type = {
+        'office_format': RejectionTemplate.objects.filter(rejection_type='office_format', grade__isnull=True).order_by('title'),
+        'finance': RejectionTemplate.objects.filter(rejection_type='finance', grade__isnull=True).order_by('title'),
+        'finance_more': RejectionTemplate.objects.filter(rejection_type='finance_more', grade__isnull=True).order_by('title'),
+        'finance_less': RejectionTemplate.objects.filter(rejection_type='finance_less', grade__isnull=True).order_by('title'),
+        'general': RejectionTemplate.objects.filter(rejection_type='general', grade__isnull=True).order_by('title'),
+    }
+    
+    # Получаем шаблоны для каждого активного грейда
+    grade_templates = {}
+    for grade in active_grades:
+        grade_templates[grade.id] = {
+            'grade': grade,
+            'templates': RejectionTemplate.objects.filter(rejection_type='grade', grade=grade).order_by('title')
+        }
+    
+    # Форма для создания нового шаблона
+    form = RejectionTemplateForm()
+    
+    context = {
+        'settings': settings_obj,
+        'active_grades': active_grades,
+        'templates_by_type': templates_by_type,
+        'grade_templates': grade_templates,
+        'form': form,
+    }
+    
+    return render(request, 'company_settings/templates.html', context)
+
+
+# Оставляем старую функцию для обратной совместимости
+@login_required
+@require_http_methods(["GET", "POST"])
+def company_settings_view(request):
+    """Страница настроек компании (старая версия - редирект на обзор)"""
+    return redirect('company_settings:overview')
 
 
 @login_required
@@ -173,4 +299,186 @@ def active_grades_api(request):
         'success': True,
         'active_grades': grades_data
     })
+
+
+@login_required
+@require_http_methods(["POST"])
+def rejection_template_create_api(request):
+    """API для создания шаблона отказа через AJAX"""
+    if not request.user.is_staff:
+        return JsonResponse({'success': False, 'error': 'Недостаточно прав'})
+    
+    try:
+        data = json.loads(request.body)
+        # Обрабатываем поле grade - если rejection_type не 'grade', устанавливаем grade в None
+        if data.get('rejection_type') != 'grade':
+            data['grade'] = None
+        elif 'grade' in data and not data['grade']:
+            return JsonResponse({
+                'success': False,
+                'error': 'Для типа отказа "Грейд" обязательно укажите грейд',
+                'errors': {'grade': ['Для типа отказа "Грейд" обязательно укажите грейд']}
+            })
+        
+        form = RejectionTemplateForm(data)
+        
+        if form.is_valid():
+            template = form.save(commit=False)
+            template.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Шаблон успешно создан',
+                'template': {
+                    'id': template.id,
+                    'rejection_type': template.rejection_type,
+                    'rejection_type_display': template.get_rejection_type_display(),
+                    'grade_id': template.grade.id if template.grade else None,
+                    'grade_name': template.grade.name if template.grade else None,
+                    'title': template.title,
+                    'message': template.message,
+                    'is_active': template.is_active,
+                }
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'error': 'Ошибка валидации',
+                'errors': form.errors
+            })
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'error': 'Неверный формат JSON'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })
+
+
+@login_required
+@require_http_methods(["POST"])
+def rejection_template_update_api(request, template_id):
+    """API для обновления шаблона отказа через AJAX"""
+    if not request.user.is_staff:
+        return JsonResponse({'success': False, 'error': 'Недостаточно прав'})
+    
+    try:
+        template = RejectionTemplate.objects.get(id=template_id)
+        data = json.loads(request.body)
+        # Обрабатываем поле grade - если rejection_type не 'grade', устанавливаем grade в None
+        if data.get('rejection_type') != 'grade':
+            data['grade'] = None
+        elif 'grade' in data and not data['grade']:
+            return JsonResponse({
+                'success': False,
+                'error': 'Для типа отказа "Грейд" обязательно укажите грейд',
+                'errors': {'grade': ['Для типа отказа "Грейд" обязательно укажите грейд']}
+            })
+        
+        form = RejectionTemplateForm(data, instance=template)
+        
+        if form.is_valid():
+            template = form.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Шаблон успешно обновлен',
+                'template': {
+                    'id': template.id,
+                    'rejection_type': template.rejection_type,
+                    'rejection_type_display': template.get_rejection_type_display(),
+                    'grade_id': template.grade.id if template.grade else None,
+                    'grade_name': template.grade.name if template.grade else None,
+                    'title': template.title,
+                    'message': template.message,
+                    'is_active': template.is_active,
+                }
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'error': 'Ошибка валидации',
+                'errors': form.errors
+            })
+    except RejectionTemplate.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Шаблон не найден'
+        })
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'error': 'Неверный формат JSON'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })
+
+
+@login_required
+@require_http_methods(["DELETE", "POST"])
+def rejection_template_delete_api(request, template_id):
+    """API для удаления шаблона отказа через AJAX"""
+    if not request.user.is_staff:
+        return JsonResponse({'success': False, 'error': 'Недостаточно прав'})
+    
+    try:
+        template = RejectionTemplate.objects.get(id=template_id)
+        template_title = template.title
+        template.delete()
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Шаблон "{template_title}" успешно удален'
+        })
+    except RejectionTemplate.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Шаблон не найден'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })
+
+
+@login_required
+@require_http_methods(["GET"])
+def rejection_template_get_api(request, template_id):
+    """API для получения данных шаблона отказа"""
+    if not request.user.is_staff:
+        return JsonResponse({'success': False, 'error': 'Недостаточно прав'})
+    
+    try:
+        template = RejectionTemplate.objects.get(id=template_id)
+        
+        return JsonResponse({
+            'success': True,
+            'template': {
+                'id': template.id,
+                'rejection_type': template.rejection_type,
+                'rejection_type_display': template.get_rejection_type_display(),
+                'grade_id': template.grade.id if template.grade else None,
+                'grade_name': template.grade.name if template.grade else None,
+                'title': template.title,
+                'message': template.message,
+                'is_active': template.is_active,
+            }
+        })
+    except RejectionTemplate.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Шаблон не найден'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })
 

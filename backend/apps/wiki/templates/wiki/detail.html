@@ -1,0 +1,264 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block title %}{{ page.title }} - Вики{% endblock %}
+
+{% block page_title %}{{ page.title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'wiki:list' %}">Вики</a></li>
+                    {% if page.category %}
+                        <li class="breadcrumb-item"><a href="{% url 'wiki:list' %}?category={{ page.category }}">{{ page.category }}</a></li>
+                    {% endif %}
+                    {% if page.related_app %}
+                        <li class="breadcrumb-item"><a href="{% url 'wiki:list' %}?app={{ page.related_app }}">{{ page.get_related_app_display }}</a></li>
+                    {% endif %}
+                    <li class="breadcrumb-item active">{{ page.title }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-9">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0">{{ page.title }}</h3>
+                        {% if can_edit %}
+                            <div>
+                                <a href="{% url 'wiki:page_edit' slug=page.slug %}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-edit me-2"></i>
+                                    Редактировать
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        {% if page.category %}
+                            <span class="badge bg-secondary me-1">{{ page.category }}</span>
+                        {% endif %}
+                        {% if page.related_app %}
+                            <span class="badge bg-info me-1">
+                                <i class="fas fa-cube me-1"></i>{{ page.get_related_app_display }}
+                            </span>
+                        {% endif %}
+                        {% for tag in page.tags.all %}
+                            <a href="{% url 'wiki:list' %}?tag={{ tag.name }}" class="badge me-1 text-decoration-none" style="background-color: {{ tag.color }}; color: white;">
+                                #{{ tag.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                    
+                    {{ page.content|json_script:"wiki-markdown-content" }}
+                    <div class="wiki-content" id="wiki-content-md">
+                        <!-- Содержимое будет заменено JavaScript -->
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small>
+                                <i class="fas fa-user me-1"></i>
+                                Автор: {% if page.author %}{{ page.author.get_full_name|default:page.author.username }}{% else %}Неизвестен{% endif %}
+                            </small>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <small>
+                                <i class="fas fa-clock me-1"></i>
+                                Обновлено: {{ page.updated_at|date:"d.m.Y H:i" }}
+                                {% if page.last_edited_by %}
+                                    ({{ page.last_edited_by.get_full_name|default:page.last_edited_by.username }})
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- История изменений -->
+            {% if history %}
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-history me-2"></i>
+                            История изменений
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            {% for entry in history %}
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <strong>{{ entry.created_at|date:"d.m.Y H:i" }}</strong>
+                                            {% if entry.edited_by %}
+                                                <span class="text-muted"> - {{ entry.edited_by.get_full_name|default:entry.edited_by.username }}</span>
+                                            {% endif %}
+                                            {% if entry.change_note %}
+                                                <br><small class="text-muted">{{ entry.change_note }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-3">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h6 class="mb-0">Действия</h6>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'wiki:list' %}" class="btn btn-outline-secondary w-100 mb-2">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Вернуться к списку
+                    </a>
+                    {% if can_edit %}
+                        <a href="{% url 'wiki:page_edit' slug=page.slug %}" class="btn btn-primary w-100 mb-2">
+                            <i class="fas fa-edit me-2"></i>
+                            Редактировать
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Связанные страницы -->
+            {% if related_pages %}
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Связанные страницы</h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            {% for related in related_pages %}
+                                <li class="mb-2">
+                                    <a href="{% url 'wiki:page_detail' slug=related.slug %}" class="text-decoration-none">
+                                        {{ related.title }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.wiki-content {
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+
+.wiki-content p {
+    margin-bottom: 1rem;
+}
+
+.wiki-content h1, .wiki-content h2, .wiki-content h3 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.wiki-content ul, .wiki-content ol {
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+}
+
+.wiki-content code {
+    background-color: #f8f9fa;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+}
+
+.wiki-content pre {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+}
+
+.wiki-content a {
+    color: #0d6efd;
+    text-decoration: underline;
+}
+
+.wiki-content a:hover {
+    color: #0a58ca;
+}
+
+.wiki-content table {
+    width: 100%;
+    margin-bottom: 1rem;
+    border-collapse: collapse;
+}
+
+.wiki-content table th,
+.wiki-content table td {
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+}
+
+.wiki-content table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.wiki-content blockquote {
+    border-left: 4px solid #0d6efd;
+    padding-left: 1rem;
+    margin-left: 0;
+    color: #6c757d;
+    font-style: italic;
+}
+</style>
+
+<!-- Marked.js для обработки Markdown -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const wikiContent = document.getElementById('wiki-content-md');
+    if (wikiContent && typeof marked !== 'undefined') {
+        // Получаем исходный Markdown текст из JSON скрипта
+        const markdownScript = document.getElementById('wiki-markdown-content');
+        const originalText = markdownScript ? JSON.parse(markdownScript.textContent) : '';
+        
+        if (originalText) {
+            // Настраиваем marked.js
+            marked.setOptions({
+                breaks: true,
+                gfm: true,
+                headerIds: true,
+                mangle: false
+            });
+            
+            // Конвертируем Markdown в HTML
+            const html = marked.parse(originalText);
+            
+            // Заменяем содержимое
+            wikiContent.innerHTML = html;
+            
+            // Обрабатываем внутренние ссылки на вики
+            const links = wikiContent.querySelectorAll('a[href^="/wiki/page/"]');
+            links.forEach(link => {
+                link.classList.add('wiki-link');
+            });
+        }
+    }
+});
+</script>
+{% endblock %}
+

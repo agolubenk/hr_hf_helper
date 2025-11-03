@@ -140,6 +140,8 @@ class RejectionTemplate(models.Model):
     REJECTION_TYPE_CHOICES = [
         ('office_format', _('Офисный формат')),
         ('finance', _('Финансы')),
+        ('finance_more', _('Финансы - больше')),
+        ('finance_less', _('Финансы - меньше')),
         ('grade', _('Грейд')),
         ('general', _('Общий отказ')),
     ]

@@ -1,6 +1,6 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from .models import CompanySettings
+from .models import CompanySettings, RejectionTemplate
 from apps.finance.models import Grade
 
 
@@ -58,4 +58,87 @@ class CompanySettingsForm(forms.ModelForm):
                 raise forms.ValidationError('Неверный формат JSON для оргструктуры')
         
         return org_structure
+
+
+class RejectionTemplateForm(forms.ModelForm):
+    """Форма для создания и редактирования шаблонов отказов"""
+    
+    class Meta:
+        model = RejectionTemplate
+        fields = ['rejection_type', 'grade', 'title', 'message', 'is_active']
+        widgets = {
+            'rejection_type': forms.Select(attrs={
+                'class': 'form-select',
+                'id': 'id_rejection_type'
+            }),
+            'grade': forms.Select(attrs={
+                'class': 'form-select',
+                'id': 'id_grade'
+            }),
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Введите название шаблона'
+            }),
+            'message': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 5,
+                'placeholder': 'Введите текст ответа для отказа'
+            }),
+            'is_active': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            }),
+        }
+        labels = {
+            'rejection_type': 'Тип отказа',
+            'grade': 'Грейд',
+            'title': 'Название шаблона',
+            'message': 'Текст ответа',
+            'is_active': 'Активен',
+        }
+        help_texts = {
+            'rejection_type': 'Тип причины отказа',
+            'grade': 'Грейд (заполняется только для типа "Грейд")',
+            'title': 'Краткое название шаблона для идентификации',
+            'message': 'Текст стандартного ответа для отказа',
+            'is_active': 'Используется ли этот шаблон',
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Фильтруем грейды только активными для компании
+        from .models import CompanySettings
+        settings = CompanySettings.get_settings()
+        active_grades = settings.active_grades.all()
+        
+        self.fields['grade'].queryset = active_grades
+        self.fields['grade'].required = False
+        
+        # Если редактируем существующий шаблон
+        if self.instance and self.instance.pk:
+            # Если тип не "grade", очищаем поле
+            if self.instance.rejection_type != 'grade':
+                self.fields['grade'].widget.attrs['disabled'] = True
+        # При создании нового шаблона или если данные не переданы
+        elif not self.data or self.data.get('rejection_type') != 'grade':
+            # Поле будет скрыто через JavaScript
+            pass
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        rejection_type = cleaned_data.get('rejection_type')
+        grade = cleaned_data.get('grade')
+        
+        # Для типа "grade" обязательно должно быть указано поле grade
+        if rejection_type == 'grade' and not grade:
+            raise forms.ValidationError({
+                'grade': 'Для типа отказа "Грейд" обязательно укажите грейд'
+            })
+        
+        # Для других типов grade должен быть пустым
+        if rejection_type != 'grade' and grade:
+            raise forms.ValidationError({
+                'grade': 'Поле "Грейд" заполняется только для типа отказа "Грейд"'
+            })
+        
+        return cleaned_data
 

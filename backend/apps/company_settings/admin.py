@@ -73,6 +73,8 @@ class RejectionTemplateAdmin(admin.ModelAdmin):
         colors = {
             'office_format': '#ffc107',  # желтый
             'finance': '#dc3545',  # красный
+            'finance_more': '#c82333',  # темно-красный
+            'finance_less': '#bd2130',  # очень темно-красный
             'grade': '#17a2b8',  # синий
             'general': '#6c757d',  # серый
         }

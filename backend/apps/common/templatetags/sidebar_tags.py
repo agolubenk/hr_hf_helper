@@ -221,6 +221,12 @@ SIDEBAR_MENU = {
                 }
             }
         }
+    },
+    'wiki': {
+        'title': 'Вики',
+        'icon': 'fas fa-book',
+        'url': 'wiki:list',
+        'submenu': {}
     }
 }
 
@@ -323,3 +329,32 @@ def render_sidebar_menu(context):
     html += '</ul>'
     
     return mark_safe(html)
+
+
+@register.simple_tag(takes_context=True)
+def get_admin_url(context):
+    """Возвращает URL админки для текущего приложения"""
+    request = context['request']
+    namespace = request.resolver_match.namespace if request.resolver_match else None
+    
+    # Маппинг namespace -> admin app name
+    namespace_to_admin = {
+        'wiki': 'wiki',
+        'company_settings': 'company_settings',
+        'finance': 'finance',
+        'vacancies': 'vacancies',
+        'hiring_plan': 'hiring_plan',
+        'google_oauth': 'google_oauth',
+        'gemini': 'gemini',
+        'interviewers': 'interviewers',
+        'accounts': 'accounts',
+        'clickup_int': 'clickup_int',
+        'notion_int': 'notion_int',
+        'huntflow': 'huntflow',
+    }
+    
+    if namespace and namespace in namespace_to_admin:
+        admin_app = namespace_to_admin[namespace]
+        return f'/admin/{admin_app}/'
+    
+    return '/admin/'

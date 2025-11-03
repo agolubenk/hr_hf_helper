@@ -87,6 +87,7 @@ INSTALLED_APPS = [
     'apps.notion_int',
     'apps.hiring_plan',
     'apps.company_settings',
+    'apps.wiki',
     
     
     # Django REST Framework

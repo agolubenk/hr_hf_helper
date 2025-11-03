@@ -1,0 +1,204 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block title %}Вики - Список страниц{% endblock %}
+
+{% block page_title %}Вики{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Список страниц вики</h2>
+                {% if user.is_staff %}
+                    <a href="{% url 'wiki:page_create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>
+                        Создать страницу
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Поиск и фильтры -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form method="get" class="d-flex">
+                <input type="text" 
+                       name="q" 
+                       class="form-control me-2" 
+                       placeholder="Поиск по названию или содержимому..." 
+                       value="{{ search_query }}">
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="fas fa-search"></i>
+                </button>
+                {% if search_query or current_category or current_tag or current_app %}
+                    <a href="{% url 'wiki:list' %}" class="btn btn-outline-secondary ms-2" title="Сбросить фильтры">
+                        <i class="fas fa-times"></i>
+                    </a>
+                {% endif %}
+                {% if current_category %}<input type="hidden" name="category" value="{{ current_category }}">{% endif %}
+                {% if current_tag %}<input type="hidden" name="tag" value="{{ current_tag }}">{% endif %}
+                {% if current_app %}<input type="hidden" name="app" value="{{ current_app }}">{% endif %}
+            </form>
+        </div>
+        <div class="col-md-2">
+            {% if categories %}
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="categoryDropdown" data-bs-toggle="dropdown">
+                        {% if current_category %}
+                            {{ current_category }}
+                        {% else %}
+                            Все категории
+                        {% endif %}
+                    </button>
+                    <ul class="dropdown-menu w-100" aria-labelledby="categoryDropdown">
+                        <li><a class="dropdown-item" href="?{% if current_tag %}tag={{ current_tag }}&{% endif %}{% if current_app %}app={{ current_app }}&{% endif %}{% if search_query %}q={{ search_query }}{% endif %}">Все категории</a></li>
+                        {% for cat in categories %}
+                            <li><a class="dropdown-item" href="?category={{ cat }}{% if current_tag %}&tag={{ current_tag }}{% endif %}{% if current_app %}&app={{ current_app }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}">{{ cat }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-2">
+            {% if apps %}
+                <div class="dropdown">
+                    <button class="btn btn-outline-info dropdown-toggle w-100" type="button" id="appDropdown" data-bs-toggle="dropdown">
+                        {% if current_app %}
+                            {% for app_code, app_name in apps %}
+                                {% if app_code == current_app %}{{ app_name }}{% endif %}
+                            {% endfor %}
+                        {% else %}
+                            Все приложения
+                        {% endif %}
+                    </button>
+                    <ul class="dropdown-menu w-100" aria-labelledby="appDropdown">
+                        <li><a class="dropdown-item" href="?{% if current_category %}category={{ current_category }}&{% endif %}{% if current_tag %}tag={{ current_tag }}&{% endif %}{% if search_query %}q={{ search_query }}{% endif %}">Все приложения</a></li>
+                        {% for app_code, app_name in apps %}
+                            {% if app_code %}
+                                <li><a class="dropdown-item" href="?app={{ app_code }}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_tag %}&tag={{ current_tag }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}">{{ app_name }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-2">
+            {% if tags %}
+                <div class="dropdown">
+                    <button class="btn btn-outline-success dropdown-toggle w-100" type="button" id="tagDropdown" data-bs-toggle="dropdown">
+                        {% if current_tag %}
+                            #{{ current_tag }}
+                        {% else %}
+                            Все теги
+                        {% endif %}
+                    </button>
+                    <ul class="dropdown-menu w-100" aria-labelledby="tagDropdown">
+                        <li><a class="dropdown-item" href="?{% if current_category %}category={{ current_category }}&{% endif %}{% if current_app %}app={{ current_app }}&{% endif %}{% if search_query %}q={{ search_query }}{% endif %}">Все теги</a></li>
+                        {% for tag in tags %}
+                            <li><a class="dropdown-item" href="?tag={{ tag.name }}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_app %}&app={{ current_app }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}">
+                                <span style="background-color: {{ tag.color }}; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px;">#{{ tag.name }}</span>
+                            </a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Активные фильтры -->
+    {% if current_category or current_tag or current_app %}
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <span class="text-muted">Активные фильтры:</span>
+                    {% if current_category %}
+                        <span class="badge bg-secondary">
+                            Категория: {{ current_category }}
+                            <a href="?{% if current_tag %}tag={{ current_tag }}&{% endif %}{% if current_app %}app={{ current_app }}&{% endif %}{% if search_query %}q={{ search_query }}{% endif %}" class="text-white ms-1" style="text-decoration: none;">×</a>
+                        </span>
+                    {% endif %}
+                    {% if current_app %}
+                        {% for app_code, app_name in apps %}
+                            {% if app_code == current_app %}
+                                <span class="badge bg-info">
+                                    Приложение: {{ app_name }}
+                                    <a href="?{% if current_category %}category={{ current_category }}&{% endif %}{% if current_tag %}tag={{ current_tag }}&{% endif %}{% if search_query %}q={{ search_query }}{% endif %}" class="text-white ms-1" style="text-decoration: none;">×</a>
+                                </span>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    {% if current_tag %}
+                        <span class="badge" style="background-color: {% for tag in tags %}{% if tag.name == current_tag %}{{ tag.color }}{% endif %}{% endfor %};">
+                            #{{ current_tag }}
+                            <a href="?{% if current_category %}category={{ current_category }}&{% endif %}{% if current_app %}app={{ current_app }}&{% endif %}{% if search_query %}q={{ search_query }}{% endif %}" class="text-white ms-1" style="text-decoration: none;">×</a>
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Список страниц -->
+    <div class="row">
+        {% if pages %}
+            {% for page in pages %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{% url 'wiki:page_detail' slug=page.slug %}" class="text-decoration-none">
+                                    {{ page.title }}
+                                </a>
+                            </h5>
+                            <div class="mb-2">
+                                {% if page.category %}
+                                    <span class="badge bg-secondary me-1">{{ page.category }}</span>
+                                {% endif %}
+                                {% if page.related_app %}
+                                    <span class="badge bg-info me-1">{{ page.get_related_app_display }}</span>
+                                {% endif %}
+                                {% for tag in page.tags.all %}
+                                    <span class="badge me-1" style="background-color: {{ tag.color }}; color: white;">#{{ tag.name }}</span>
+                                {% endfor %}
+                            </div>
+                            {% if page.description %}
+                                <p class="card-text text-muted">{{ page.description|truncatewords:20 }}</p>
+                            {% else %}
+                                <p class="card-text text-muted">{{ page.content|truncatewords:20|striptags }}</p>
+                            {% endif %}
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    Обновлено: {{ page.updated_at|date:"d.m.Y" }}
+                                </small>
+                                {% if user.is_staff %}
+                                    <a href="{% url 'wiki:page_edit' slug=page.slug %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    {% if search_query %}
+                        Страницы не найдены по запросу "{{ search_query }}"
+                    {% elif current_category %}
+                        Нет страниц в категории "{{ current_category }}"
+                    {% else %}
+                        Нет опубликованных страниц вики
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
