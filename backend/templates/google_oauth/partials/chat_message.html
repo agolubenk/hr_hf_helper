@@ -8,7 +8,7 @@
     {% elif message.message_type == 'delete' %}system-message delete-message
     {% else %}system-message{% endif %}">
     
-    <div class="d-flex {% if message.message_type == 'user' %}justify-content-end{% else %}justify-content-start{% endif %}">
+    <div class="d-flex {% if message.message_type == 'user' %}justify-content-end{% else %}justify-content-start{% endif %} align-items-end">
         
         {% if message.message_type == 'user' %}
             {# Сообщение пользователя #}
@@ -29,7 +29,7 @@
             
         {% elif message.message_type == 'hrscreening' %}
             {# HR-скрининг #}
-            <div class="message-avatar">
+            <div class="message-avatar me-2" style="margin-bottom: -18px; position: relative; z-index: 100;">
                 <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
                 <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
             </div>
@@ -88,7 +88,7 @@
             
         {% elif message.message_type == 'invite' %}
             {# Приглашение #}
-            <div class="message-avatar">
+            <div class="message-avatar me-2" style="margin-bottom: -18px; position: relative; z-index: 100;">
                 <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
                 <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
             </div>
@@ -177,7 +177,7 @@
             
         {% elif message.message_type == 'delete' %}
             {# Сообщение об удалении #}
-            <div class="message-avatar">
+            <div class="message-avatar me-2" style="margin-bottom: -18px; position: relative; z-index: 100;">
                 <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
                 <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
             </div>
@@ -192,7 +192,7 @@
             
         {% else %}
             {# Системное сообщение #}
-            <div class="message-avatar">
+            <div class="message-avatar me-2" style="margin-bottom: -18px; position: relative; z-index: 100;">
                 <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
                 <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
             </div>
