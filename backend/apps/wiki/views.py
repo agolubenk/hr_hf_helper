@@ -17,7 +17,7 @@ def wiki_list(request):
     app = request.GET.get('app', '')
     search_query = request.GET.get('q', '')
     
-    pages = WikiPage.get_published_pages().prefetch_related('tags')
+    pages = WikiPage.get_published_pages().prefetch_related('tags').order_by('category', 'order', 'title')
     
     if category:
         pages = pages.filter(category=category)
@@ -46,8 +46,30 @@ def wiki_list(request):
     # Получаем список приложений
     apps = WikiPage.RELATED_APP_CHOICES
     
+    # Группируем страницы по категориям
+    pages_by_category = {}
+    pages_without_category = []
+    
+    for page in pages:
+        if page.category:
+            if page.category not in pages_by_category:
+                pages_by_category[page.category] = []
+            pages_by_category[page.category].append(page)
+        else:
+            pages_without_category.append(page)
+    
+    # Сортируем категории согласно порядку в CATEGORY_CHOICES
+    category_order = {cat[0]: idx for idx, cat in enumerate(WikiPage.CATEGORY_CHOICES)}
+    sorted_categories = sorted(
+        pages_by_category.keys(),
+        key=lambda x: category_order.get(x, 999)
+    )
+    
     context = {
         'pages': pages,
+        'pages_by_category': pages_by_category,
+        'pages_without_category': pages_without_category,
+        'sorted_categories': sorted_categories,
         'categories': categories,
         'tags': tags,
         'apps': apps,
