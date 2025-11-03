@@ -265,6 +265,13 @@
                                 {% for message in messages %}
                             <div class="message mb-3 {% if message.message_type == 'user' %}user-message{% elif message.message_type == 'hrscreening' %}system-message hr-screening-message{% elif message.message_type == 'invite' %}system-message invite-message{% elif message.message_type == 'delete' %}system-message delete-message{% else %}system-message{% endif %}">
                                         <div class="d-flex {% if message.message_type == 'user' %}justify-content-end{% else %}justify-content-start{% endif %} align-items-end">
+                                            {% if message.message_type != 'user' %}
+                                            <!-- Аватар системы слева -->
+                                            <div class="message-avatar me-2" style="margin-bottom: -18px; position: relative; z-index: 100;">
+                                                <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
+                                                <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
+                                            </div>
+                                            {% endif %}
                                             <div class="message-bubble {% if message.message_type == 'user' %}user-bubble{% else %}system-bubble{% endif %}" {% if message.message_type == 'user' %}style="position: relative;"{% endif %}>
                                         
                                         <!-- Пользовательское сообщение -->
@@ -1033,6 +1040,34 @@
     object-fit: cover;
     border: 2px solid white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+}
+
+/* Аватары системных сообщений */
+.card .message-avatar .ai-avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+}
+
+/* Показываем правильный логотип в зависимости от темы */
+.card .message-avatar .light-theme-logo {
+    display: block;
+}
+
+.card .message-avatar .dark-theme-logo {
+    display: none;
+}
+
+[data-theme="dark"] .card .message-avatar .light-theme-logo {
+    display: none;
+}
+
+[data-theme="dark"] .card .message-avatar .dark-theme-logo {
+    display: block;
 }
 
 /* Футер сообщения пользователя */
