@@ -3,7 +3,7 @@
 
 <div class="message mb-3 
     {% if message.message_type == 'user' %}user-message
-    {% elif message.message_type == 'hr_screening' %}system-message hr-screening-message
+    {% elif message.message_type == 'hrscreening' %}system-message hr-screening-message
     {% elif message.message_type == 'invite' %}system-message invite-message
     {% elif message.message_type == 'delete' %}system-message delete-message
     {% else %}system-message{% endif %}">
@@ -27,7 +27,7 @@
                 {% endif %}
             </div>
             
-        {% elif message.message_type == 'hr_screening' %}
+        {% elif message.message_type == 'hrscreening' %}
             {# HR-скрининг #}
             <div class="message-avatar">
                 <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">

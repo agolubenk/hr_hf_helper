@@ -3539,7 +3539,7 @@ def chat_ajax_handler(request, session_id):
                     
                     ChatMessage.objects.create(
                         session=chat_session,
-                        message_type='hr_screening',
+                        message_type='hrscreening',
                         content=response_content,
                         hr_screening=hr_screening,
                         metadata={
@@ -3630,7 +3630,7 @@ def chat_ajax_handler(request, session_id):
         # Исключаем пользовательские сообщения, чтобы получить именно результат обработки
         last_message = ChatMessage.objects.filter(
             session=chat_session,
-            message_type__in=['hr_screening', 'invite', 'system', 'delete']
+            message_type__in=['hrscreening', 'invite', 'system', 'delete']
         ).order_by('-created_at').first()
         
         # Если не нашли системное, пытаемся найти любое сообщение кроме пользовательского

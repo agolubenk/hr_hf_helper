@@ -3999,7 +3999,7 @@ class ChatMessage(models.Model):
     MESSAGE_TYPES = [
         ('user', 'Пользователь'),
         ('system', 'Система'),
-        ('hr_screening', 'HR-скрининг'),
+        ('hrscreening', 'HR-скрининг'),
         ('invite', 'Инвайт'),
     ]
     
