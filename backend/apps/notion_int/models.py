@@ -86,6 +86,60 @@ class NotionSettings(models.Model):
         return settings
 
 
+class NotionHuntflowMapping(models.Model):
+    """Связки между полями Notion и Huntflow"""
+    
+    MAPPING_TYPE_CHOICES = [
+        ('language_vacancy', 'Language → Вакансия'),
+        ('nuances_field', 'Нюансы → Поля кандидата'),
+        ('status_status', 'Status Notion → Status Huntflow'),
+    ]
+    
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь',
+        related_name='notion_huntflow_mappings'
+    )
+    
+    mapping_type = models.CharField(
+        max_length=50,
+        choices=MAPPING_TYPE_CHOICES,
+        verbose_name='Тип связки'
+    )
+    
+    # Notion значения
+    notion_value = models.CharField(
+        max_length=200,
+        verbose_name='Значение из Notion'
+    )
+    
+    # Huntflow значения
+    huntflow_value = models.CharField(
+        max_length=200,
+        verbose_name='ID/Значение в Huntflow'
+    )
+    
+    # Дополнительная информация
+    huntflow_account_id = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name='ID аккаунта Huntflow'
+    )
+    
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создано')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Обновлено')
+    
+    class Meta:
+        verbose_name = 'Связка Notion-Huntflow'
+        verbose_name_plural = 'Связки Notion-Huntflow'
+        unique_together = ['user', 'mapping_type', 'notion_value']
+        db_table = 'notion_huntflow_mapping'
+    
+    def __str__(self):
+        return f'{self.get_mapping_type_display()}: {self.notion_value} → {self.huntflow_value}'
+
+
 class NotionPage(models.Model):
     """Кэшированные страницы из Notion"""
     
@@ -123,6 +177,20 @@ class NotionPage(models.Model):
         max_length=50,
         blank=True,
         verbose_name='Приоритет'
+    )
+    
+    # Интервьюер и дата интервью
+    interviewer = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name='Интервьюер',
+        help_text='Имя или email интервьюера'
+    )
+    
+    interview_date = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name='Дата интервью'
     )
     
     # Даты
@@ -244,12 +312,61 @@ class NotionPage(models.Model):
             result = []
             for comment in comments:
                 if isinstance(comment, dict):
+                    # Извлекаем автора (поддерживаем разные форматы)
+                    author_name = 'Неизвестно'
+                    author_email = ''
+                    
+                    if comment.get('author_name'):
+                        author_name = comment['author_name']
+                        author_email = comment.get('author_email', '')
+                    elif comment.get('author'):
+                        author_data = comment['author']
+                        if isinstance(author_data, dict):
+                            author_name = author_data.get('name', author_data.get('email', 'Неизвестно'))
+                            author_email = author_data.get('email', '')
+                        else:
+                            author_name = str(author_data)
+                    
+                    # Извлекаем дату и время (поддерживаем разные форматы)
+                    created_time = comment.get('created_time', '')
+                    created_time_dt = comment.get('created_time_dt')
+                    
+                    # Форматируем дату, если есть datetime объект
+                    formatted_time = ''
+                    if created_time_dt:
+                        try:
+                            formatted_time = created_time_dt.strftime('%d.%m.%Y %H:%M')
+                        except:
+                            formatted_time = str(created_time_dt)
+                    elif created_time:
+                        # Пытаемся распарсить строку даты
+                        try:
+                            from datetime import datetime
+                            if created_time.endswith('Z'):
+                                dt = datetime.fromisoformat(created_time.replace('Z', '+00:00'))
+                            else:
+                                dt = datetime.fromisoformat(created_time)
+                            formatted_time = dt.strftime('%d.%m.%Y %H:%M')
+                        except:
+                            formatted_time = created_time
+                    
+                    # Формируем formatted_time если его нет, но есть created_time_dt или created_time
+                    if not formatted_time and created_time_dt:
+                        try:
+                            formatted_time = created_time_dt.strftime('%d.%m.%Y %H:%M')
+                        except:
+                            formatted_time = ''
+                    
                     # Если комментарий - это словарь, извлекаем данные
                     result.append({
                         'id': comment.get('id', ''),
                         'text': comment.get('text', ''),
-                        'author': comment.get('author', {}).get('name', 'Неизвестно'),
-                        'created_time': comment.get('created_time', ''),
+                        'author': author_name,
+                        'author_name': author_name,  # Для удобства
+                        'author_email': author_email,  # Для удобства
+                        'created_time': created_time,  # Сохраняем исходное время
+                        'created_time_dt': created_time_dt,  # Сохраняем datetime объект
+                        'formatted_time': formatted_time,  # Форматированная дата для отображения
                         'rich_text': comment.get('rich_text', [])
                     })
                 else:
@@ -258,12 +375,19 @@ class NotionPage(models.Model):
                         'id': '',
                         'text': str(comment),
                         'author': 'Неизвестно',
+                        'author_name': 'Неизвестно',
+                        'author_email': '',
                         'created_time': '',
+                        'created_time_dt': None,
+                        'formatted_time': '',
                         'rich_text': []
                     })
             
             return result
-        except (json.JSONDecodeError, TypeError):
+        except (json.JSONDecodeError, TypeError) as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Ошибка обработки комментариев: {e}")
             return []
     
     def get_attachments_display(self):

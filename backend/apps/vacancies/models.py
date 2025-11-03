@@ -1,3 +1,12 @@
+"""
+Документация по проблемным импортам (линтер):
+- django.db, django.contrib.auth, django.core.exceptions, django.utils
+- apps.huntflow.utils (вспомогательные функции для интеграции)
+
+Влияние: модели вакансий, валидация и интеграции с Huntflow (получение статусов,
+связанная логика активностей) зависят от этих импортов. При их недоступности сохранение
+моделей, расчёт активности и отображение связанных данных могут не работать.
+"""
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError

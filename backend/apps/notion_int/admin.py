@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import NotionSettings, NotionPage, NotionSyncLog, NotionBulkImport
+from .models import NotionSettings, NotionPage, NotionSyncLog, NotionBulkImport, NotionHuntflowMapping
 
 
 @admin.register(NotionSettings)
@@ -25,9 +25,9 @@ class NotionSettingsAdmin(admin.ModelAdmin):
 
 @admin.register(NotionPage)
 class NotionPageAdmin(admin.ModelAdmin):
-    list_display = ['title', 'user', 'status', 'priority', 'date_updated', 'created_at']
-    list_filter = ['status', 'priority', 'date_created', 'date_updated', 'created_at']
-    search_fields = ['title', 'content', 'user__username', 'page_id']
+    list_display = ['title', 'user', 'status', 'priority', 'interviewer', 'interview_date', 'date_updated', 'created_at']
+    list_filter = ['status', 'priority', 'date_created', 'date_updated', 'created_at', 'interview_date']
+    search_fields = ['title', 'content', 'user__username', 'page_id', 'interviewer']
     readonly_fields = ['page_id', 'created_at', 'updated_at']
     
     fieldsets = (
@@ -36,6 +36,9 @@ class NotionPageAdmin(admin.ModelAdmin):
         }),
         ('Свойства', {
             'fields': ('status', 'priority', 'date_created', 'date_updated', 'due_date')
+        }),
+        ('Интервью', {
+            'fields': ('interviewer', 'interview_date')
         }),
         ('Ссылки и файлы', {
             'fields': ('url', 'attachments', 'assignees', 'tags'),
@@ -68,6 +71,24 @@ class NotionSyncLogAdmin(admin.ModelAdmin):
         }),
         ('Ошибки', {
             'fields': ('error_message',),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(NotionHuntflowMapping)
+class NotionHuntflowMappingAdmin(admin.ModelAdmin):
+    list_display = ['user', 'mapping_type', 'notion_value', 'huntflow_value', 'huntflow_account_id', 'created_at']
+    list_filter = ['mapping_type', 'created_at']
+    search_fields = ['user__username', 'notion_value', 'huntflow_value']
+    readonly_fields = ['created_at', 'updated_at']
+    
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('user', 'mapping_type', 'notion_value', 'huntflow_value', 'huntflow_account_id')
+        }),
+        ('Метаданные', {
+            'fields': ('created_at', 'updated_at'),
             'classes': ('collapse',)
         }),
     )

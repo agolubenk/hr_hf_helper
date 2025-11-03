@@ -20,6 +20,7 @@ from .models import Interviewer, InterviewRule
 from .forms import InterviewerForm, InterviewerSearchForm, InterviewRuleForm, InterviewRuleSearchForm
 from .logic.interviewers_handlers import InterviewerHandler
 from .logic.rules_handlers import RuleHandler
+from .logic.calendar_handlers import CalendarHandler
 
 
 @login_required

@@ -95,6 +95,39 @@ class NotionService:
         """Получает информацию о базе данных"""
         return self._make_request('GET', f'/databases/{database_id}')
     
+    def get_database_property_options(self, database_id: str, property_name: str) -> List[str]:
+        """Получает все опции из свойства базы данных (select, multi_select, status)"""
+        try:
+            database = self.get_database(database_id)
+            properties = database.get('properties', {})
+            
+            if property_name not in properties:
+                logger.warning(f"Свойство '{property_name}' не найдено в базе данных")
+                return []
+            
+            prop = properties[property_name]
+            prop_type = prop.get('type', '')
+            
+            options = []
+            if prop_type == 'status':
+                # Для типа status опции находятся в status.options
+                status_options = prop.get('status', {}).get('options', [])
+                options = [opt.get('name', '') for opt in status_options if opt.get('name')]
+            elif prop_type == 'select':
+                # Для типа select опции находятся в select.options
+                select_options = prop.get('select', {}).get('options', [])
+                options = [opt.get('name', '') for opt in select_options if opt.get('name')]
+            elif prop_type == 'multi_select':
+                # Для типа multi_select опции находятся в multi_select.options
+                multi_select_options = prop.get('multi_select', {}).get('options', [])
+                options = [opt.get('name', '') for opt in multi_select_options if opt.get('name')]
+            
+            logger.info(f"Получены опции для свойства '{property_name}' (тип {prop_type}): {options}")
+            return options
+        except Exception as e:
+            logger.error(f"Ошибка получения опций свойства '{property_name}': {e}")
+            return []
+    
     def query_database(self, database_id: str, filter_dict: Dict = None, sorts: List[Dict] = None, page_size: int = 100) -> List[Dict]:
         """Запрашивает страницы из базы данных"""
         data = {}
@@ -134,6 +167,15 @@ class NotionService:
         
         return all_blocks
     
+    def get_user_info(self, user_id: str) -> Dict:
+        """Получает информацию о пользователе по ID"""
+        try:
+            response = self._make_request('GET', f'/users/{user_id}')
+            return response
+        except Exception as e:
+            logger.warning(f"Не удалось получить информацию о пользователе {user_id}: {e}")
+            return {}
+    
     def get_page_comments(self, page_id: str) -> List[Dict]:
         """Получает комментарии к странице"""
         try:
@@ -143,21 +185,91 @@ class NotionService:
             # Обрабатываем комментарии
             processed_comments = []
             for comment in comments:
-                processed_comment = {
-                    'id': comment.get('id', ''),
-                    'text': '',
-                    'author': comment.get('created_by', {}),
-                    'created_time': comment.get('created_time', ''),
-                    'rich_text': comment.get('rich_text', [])
-                }
+                # Извлекаем информацию об авторе
+                created_by = comment.get('created_by', {})
+                author_name = ''
+                author_email = ''
+                author_id = ''
+                
+                if isinstance(created_by, dict):
+                    # Notion API возвращает объект пользователя
+                    author_id = created_by.get('id', '')
+                    
+                    # Пытаемся извлечь имя из объекта created_by
+                    if created_by.get('name'):
+                        author_name = created_by['name']
+                    elif created_by.get('object') == 'user':
+                        # Если это user объект, может быть имя в person или bot
+                        person = created_by.get('person', {})
+                        if person:
+                            author_email = person.get('email', '')
+                            if author_email:
+                                # Пытаемся извлечь имя из email или использовать часть email
+                                author_name = author_email.split('@')[0]
+                        
+                        # Если имя все еще пустое, пытаемся получить через API
+                        if not author_name and author_id:
+                            try:
+                                user_info = self.get_user_info(author_id)
+                                logger.debug(f"🔍 USER INFO для {author_id}: {user_info}")
+                                if user_info.get('name'):
+                                    author_name = user_info['name']
+                                elif user_info.get('person', {}).get('email'):
+                                    author_email = user_info['person']['email']
+                                    author_name = author_email.split('@')[0]
+                            except Exception as e:
+                                logger.debug(f"⚠️ Не удалось получить информацию о пользователе {author_id}: {e}")
+                                pass
+                    
+                    # Если имя все еще пустое, используем email или ID (но скрываем UUID)
+                    if not author_name:
+                        if author_email:
+                            author_name = author_email.split('@')[0]
+                        elif author_id:
+                            # Если это UUID (36 символов с дефисами), не показываем его
+                            if len(author_id) > 20:
+                                author_name = 'Пользователь'
+                            else:
+                                author_name = author_id
+                        else:
+                            author_name = 'Неизвестно'
+                
+                # Извлекаем дату и время
+                created_time_str = comment.get('created_time', '')
+                created_time_dt = None
+                if created_time_str:
+                    try:
+                        created_time_dt = self._parse_datetime(created_time_str)
+                    except Exception as e:
+                        logger.warning(f"Не удалось распарсить дату комментария: {created_time_str}, ошибка: {e}")
                 
                 # Извлекаем текст из rich_text
+                comment_text = ''
                 if comment.get('rich_text'):
                     text_parts = []
                     for text_item in comment['rich_text']:
                         if text_item.get('plain_text'):
                             text_parts.append(text_item['plain_text'])
-                    processed_comment['text'] = ''.join(text_parts)
+                    comment_text = ''.join(text_parts)
+                
+                # Конвертируем datetime в ISO строку для JSON сериализации
+                created_time_iso = created_time_dt.isoformat() if created_time_dt else created_time_str
+                
+                processed_comment = {
+                    'id': comment.get('id', ''),
+                    'text': comment_text,
+                    'author': {
+                        'id': author_id,
+                        'name': author_name,
+                        'email': author_email
+                    },
+                    'author_name': author_name,  # Для удобства доступа
+                    'author_email': author_email,  # Для удобства доступа
+                    'created_time': created_time_str,
+                    'created_time_dt': created_time_iso,  # Конвертировано в ISO строку для JSON
+                    'formatted_time': created_time_iso,  # Для отображения
+                    'rich_text': comment.get('rich_text', [])
+                }
                 
                 processed_comments.append(processed_comment)
             
@@ -393,9 +505,166 @@ class NotionService:
             
             # Извлекаем дополнительные свойства
             properties = page_data.get('properties', {})
+            logger.info(f"🔍 NOTION PARSE: Доступные свойства: {list(properties.keys())}")
+            
+            # Логируем все поля типа select и status для отладки
+            select_fields = []
+            status_fields = []
+            for prop_name, prop_data in properties.items():
+                prop_type = prop_data.get('type', 'unknown')
+                logger.debug(f"  - {prop_name}: тип={prop_type}")
+                if prop_type == 'status':
+                    # Статус - это специальный тип в Notion API
+                    status_value = prop_data.get('status', {})
+                    status_name = status_value.get('name', '') if status_value else ''
+                    logger.info(f"  🎯 STATUS поле: '{prop_name}' = '{status_name}'")
+                    status_fields.append({
+                        'name': prop_name,
+                        'value': status_name,
+                        'full_data': prop_data
+                    })
+                elif prop_type == 'select':
+                    select_value = prop_data.get('select', {})
+                    select_name = select_value.get('name', '') if select_value else ''
+                    logger.info(f"  📌 SELECT поле: '{prop_name}' = '{select_name}'")
+                    select_fields.append({
+                        'name': prop_name,
+                        'value': select_name,
+                        'full_data': prop_data
+                    })
+            
+            # Пробуем разные варианты названия поля Status (точное совпадение)
+            logger.info(f"🔍 NOTION PARSE: Ищем статус по точному названию...")
             status = self._extract_property_value(properties, 'Status')
+            if status:
+                logger.info(f"✅ NOTION PARSE: Статус найден в поле 'Status': '{status}'")
+            else:
+                status = self._extract_property_value(properties, 'Статус')
+                if status:
+                    logger.info(f"✅ NOTION PARSE: Статус найден в поле 'Статус': '{status}'")
+                else:
+                    status = self._extract_property_value(properties, 'status')
+                    if status:
+                        logger.info(f"✅ NOTION PARSE: Статус найден в поле 'status': '{status}'")
+                    else:
+                        logger.warning(f"⚠️ NOTION PARSE: Статус не найден по точным названиям (Status, Статус, status)")
+            
+            # Если статус все еще не найден, ищем поле типа "status" (специальный тип в Notion)
+            if not status:
+                logger.info(f"🔍 NOTION PARSE: Ищем поле типа 'status' (специальный тип Notion)...")
+                # Сначала ищем поле типа "status" (это правильный тип для статусов в Notion)
+                for prop_name, prop_data in properties.items():
+                    prop_type = prop_data.get('type', '')
+                    if prop_type == 'status' and prop_data.get('status'):
+                        status = prop_data['status'].get('name', '')
+                        if status:
+                            logger.info(f"✅ NOTION PARSE: Найден статус в поле типа 'status' '{prop_name}': '{status}'")
+                            break
+                
+                # Если все еще не найден, ищем поле типа select (fallback)
+                if not status:
+                    logger.info(f"🔍 NOTION PARSE: Ищем поле типа 'select' как fallback...")
+                    # Список полей, которые точно НЕ являются статусом
+                    excluded_fields = [
+                        'priority', 'приоритет', 'assignee', 'tags', 'interviewer', 'интервьюер',
+                        'owner', 'screening owner', 'screening_owner', 'screeningowner',
+                        'due date', 'due_date', 'duedate', 'срок',
+                        'date', 'дата', 'created', 'updated', 'created_at', 'updated_at',
+                        'created time', 'updated time', 'created_time', 'updated_time',
+                        'interview date', 'interview_date', 'дата интервью'
+                    ]
+                    
+                    # Список ключевых слов, которые могут указывать на статус
+                    status_keywords = ['status', 'state', 'stage', 'phase']
+                    
+                    # Сначала пытаемся найти по ключевым словам в названии
+                    for prop_name, prop_data in properties.items():
+                        prop_type = prop_data.get('type', '')
+                        prop_name_lower = prop_name.lower().replace(' ', '_').replace('-', '_')
+                        
+                        # Ищем только поля типа select
+                        if prop_type == 'select' and prop_data.get('select'):
+                            # Проверяем, не является ли это исключенным полем
+                            is_excluded = any(
+                                excluded in prop_name_lower 
+                                for excluded in excluded_fields
+                            )
+                            
+                            # Проверяем, содержит ли название ключевые слова статуса
+                            is_status_like = any(
+                                keyword in prop_name_lower 
+                                for keyword in status_keywords
+                            )
+                            
+                            # Если это НЕ исключенное поле И похоже на статус, берем его
+                            if not is_excluded and is_status_like:
+                                status = prop_data['select'].get('name', '')
+                                if status:
+                                    logger.info(f"🔍 NOTION PARSE: Найден статус в поле 'select' '{prop_name}': '{status}' (по ключевым словам в названии)")
+                                    break
+                    
+                    # Если все еще не найден, берем первое поле типа select, которое не исключено
+                    # (это может быть поле статуса с другим названием)
+                    if not status:
+                        for prop_name, prop_data in properties.items():
+                            prop_type = prop_data.get('type', '')
+                            prop_name_lower = prop_name.lower().replace(' ', '_').replace('-', '_')
+                            
+                            # Ищем только поля типа select
+                            if prop_type == 'select' and prop_data.get('select'):
+                                # Проверяем, не является ли это исключенным полем
+                                is_excluded = any(
+                                    excluded in prop_name_lower 
+                                    for excluded in excluded_fields
+                                )
+                                
+                                # Если это НЕ исключенное поле, берем его как статус
+                                if not is_excluded:
+                                    status = prop_data['select'].get('name', '')
+                                    if status:
+                                        logger.info(f"🔍 NOTION PARSE: Найден статус в поле 'select' '{prop_name}': '{status}' (первое доступное поле select, не исключенное)")
+                                        break
+            
+            if not status:
+                logger.error(f"❌ NOTION PARSE: Статус НЕ найден!")
+                if status_fields:
+                    logger.error(f"❌ NOTION PARSE: Доступные STATUS поля: {[f['name'] for f in status_fields]} с значениями: {[(f['name'], f['value']) for f in status_fields]}")
+                if select_fields:
+                    logger.error(f"❌ NOTION PARSE: Доступные SELECT поля: {[f['name'] for f in select_fields]} с значениями: {[(f['name'], f['value']) for f in select_fields]}")
+                if not status_fields and not select_fields:
+                    logger.error(f"❌ NOTION PARSE: Нет ни STATUS, ни SELECT полей в свойствах страницы!")
+            else:
+                logger.info(f"✅ NOTION PARSE: Извлечен Status: '{status}' (из {len(properties)} свойств)")
+                logger.info(f"✅ NOTION PARSE: Статус будет сохранен в parsed_data['status'] = '{status}'")
+            
             priority = self._extract_property_value(properties, 'Priority')
             due_date = self._extract_date_property(properties, 'Due Date')
+            
+            # Извлекаем поля Interviewer и Interview Date (пробуем разные варианты названий)
+            interviewer = self._extract_people_property(properties, 'Interviewer')
+            if not interviewer:
+                interviewer = self._extract_people_property(properties, 'Интервьюер')
+            if not interviewer:
+                interviewer = self._extract_people_property(properties, 'interviewer')
+            
+            logger.info(f"🔍 NOTION PARSE: Interviewer (raw): {interviewer}")
+            
+            # Если Interviewer - это single person, берем первого
+            if interviewer and len(interviewer) > 0:
+                interviewer = interviewer[0]  # Берем первого интервьюера как строку
+            else:
+                interviewer = ''
+            
+            logger.info(f"🔍 NOTION PARSE: Извлечен Interviewer: '{interviewer}'")
+            
+            # Пробуем разные варианты названия поля Interview Date
+            interview_date = self._extract_date_property(properties, 'Interview Date')
+            if not interview_date:
+                interview_date = self._extract_date_property(properties, 'Дата интервью')
+            if not interview_date:
+                interview_date = self._extract_date_property(properties, 'Interview date')
+            
+            logger.info(f"🔍 NOTION PARSE: Извлечен Interview Date: {interview_date}")
             
             # Извлекаем исполнителей
             assignees = self._extract_people_property(properties, 'Assignee')
@@ -432,7 +701,8 @@ class NotionService:
             custom_properties = {}
             for prop_name, prop_data in properties.items():
                 # Исключаем основные поля, но включаем файловые поля в дополнительные свойства
-                if prop_name not in ['Status', 'Priority', 'Due Date', 'Assignee', 'Tags']:
+                excluded_fields = ['Status', 'Priority', 'Due Date', 'Assignee', 'Tags', 'Interviewer', 'Interview Date']
+                if prop_name not in excluded_fields:
                     prop_type = prop_data.get('type', 'text')
                     
                     # Для multi_select полей сохраняем массив, а не строку
@@ -447,21 +717,47 @@ class NotionService:
                         'value': value
                     }
             
+            # Конвертируем datetime объекты в строки ISO формата для JSON сериализации
+            # Это нужно для custom_properties и других JSONField полей
+            import json
+            from datetime import datetime as dt
+            
+            # Функция для конвертации datetime в строку
+            def convert_datetime_for_json(obj):
+                """Конвертирует datetime объекты в ISO строки для JSON"""
+                if isinstance(obj, dt):
+                    return obj.isoformat()
+                elif isinstance(obj, dict):
+                    return {k: convert_datetime_for_json(v) for k, v in obj.items()}
+                elif isinstance(obj, list):
+                    return [convert_datetime_for_json(item) for item in obj]
+                return obj
+            
+            # Обрабатываем custom_properties, чтобы убрать datetime объекты
+            custom_properties_clean = convert_datetime_for_json(custom_properties)
+            
+            # Обрабатываем comments, attachments и другие JSON поля
+            comments_clean = convert_datetime_for_json(page_comments)
+            attachments_clean = convert_datetime_for_json(attachments)
+            
             return {
                 'page_id': page_id,
                 'title': title,
                 'content': page_content_html,  # Содержимое страницы в HTML формате
-                'comments': page_comments,  # Комментарии к странице
+                'comments': comments_clean,  # Комментарии с конвертированными datetime
                 'status': status,
                 'priority': priority,
-                'date_created': date_created,
-                'date_updated': date_updated,
-                'due_date': due_date,
+                'date_created': date_created,  # Оставляем как datetime для DateTimeField
+                'date_updated': date_updated,  # Оставляем как datetime для DateTimeField
+                'due_date': due_date,  # Оставляем как datetime для DateTimeField
                 'url': url,
                 'assignees': assignees,
                 'tags': tags,
-                'attachments': attachments,
-                'custom_properties': custom_properties
+                'attachments': attachments_clean,  # Вложения с конвертированными datetime
+                'custom_properties': custom_properties_clean,  # Свойства с конвертированными datetime
+                # Новые поля
+                'interviewer': interviewer,
+                'interview_date': interview_date  # Оставляем как datetime для DateTimeField
             }
             
         except Exception as e:
@@ -486,15 +782,35 @@ class NotionService:
     def _extract_property_value(self, properties: Dict, property_name: str) -> str:
         """Извлекает значение свойства"""
         if property_name not in properties:
+            logger.debug(f"  ⚠️ Поле '{property_name}' отсутствует в свойствах")
             return ''
         
         prop = properties[property_name]
         prop_type = prop.get('type', '')
         
+        logger.debug(f"  🔍 Извлекаем '{property_name}': тип={prop_type}")
+        
         if prop_type == 'rich_text' and prop.get('rich_text'):
             return ''.join([text.get('plain_text', '') for text in prop['rich_text']])
-        elif prop_type == 'select' and prop.get('select'):
-            return prop['select'].get('name', '')
+        elif prop_type == 'status':
+            # Статус - это специальный тип в Notion API (не select!)
+            status_data = prop.get('status')
+            if status_data:
+                status_name = status_data.get('name', '')
+                logger.debug(f"  ✅ Status '{property_name}': значение='{status_name}'")
+                return status_name
+            else:
+                logger.debug(f"  ⚠️ Status '{property_name}': значение пустое (null)")
+                return ''
+        elif prop_type == 'select':
+            select_data = prop.get('select')
+            if select_data:
+                select_name = select_data.get('name', '')
+                logger.debug(f"  ✅ Select '{property_name}': значение='{select_name}'")
+                return select_name
+            else:
+                logger.debug(f"  ⚠️ Select '{property_name}': значение пустое (null)")
+                return ''
         elif prop_type == 'multi_select' and prop.get('multi_select'):
             return ', '.join([item.get('name', '') for item in prop['multi_select']])
         elif prop_type == 'number' and prop.get('number') is not None:
@@ -502,11 +818,30 @@ class NotionService:
         elif prop_type == 'checkbox' and prop.get('checkbox') is not None:
             return 'Да' if prop['checkbox'] else 'Нет'
         elif prop_type == 'url' and prop.get('url'):
-            return prop['url']
+            url_value = prop['url']
+            logger.debug(f"  ✅ URL '{property_name}': значение='{url_value}'")
+            return url_value
         elif prop_type == 'email' and prop.get('email'):
             return prop['email']
         elif prop_type == 'phone_number' and prop.get('phone_number'):
             return prop['phone_number']
+        elif prop_type == 'files' and prop.get('files'):
+            # Для файлового поля возвращаем первый файл как словарь для дальнейшей обработки
+            files_list = prop['files']
+            if files_list and len(files_list) > 0:
+                first_file = files_list[0]
+                # Если это external файл
+                if first_file.get('type') == 'external' and first_file.get('external'):
+                    file_url = first_file['external'].get('url', '')
+                    file_name = first_file.get('name', 'Файл')
+                    logger.debug(f"  ✅ Files '{property_name}': external файл '{file_name}', URL='{file_url[:50]}'")
+                    return {'url': file_url, 'name': file_name, 'type': 'external'}
+                # Если это внутренний файл Notion
+                elif first_file.get('type') == 'file' and first_file.get('file'):
+                    file_url = first_file['file'].get('url', '')
+                    file_name = first_file.get('name', 'Файл')
+                    logger.debug(f"  ✅ Files '{property_name}': файл '{file_name}', URL='{file_url[:50]}'")
+                    return {'url': file_url, 'name': file_name, 'type': 'file'}
         
         return ''
     

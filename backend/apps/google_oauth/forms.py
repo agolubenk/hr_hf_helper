@@ -1,3 +1,11 @@
+"""
+Документация по проблемным импортам (линтер):
+- django.*, django.utils.translation, pytz (локализация дат/времени)
+
+Влияние: формы Google OAuth (синхронизация, инвайты, чат, поиск) используют Django формы и
+таймзоны. При недоступности импортов — формы, валидация и обработка даты/времени работать не будут,
+включая анализ даты интервью и ограничения по времени.
+"""
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone

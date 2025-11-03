@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 import logging
 
-from .models import NotionSettings, NotionBulkImport, NotionSyncLog
+from .models import NotionSettings, NotionBulkImport, NotionSyncLog, NotionPage, NotionHuntflowMapping
 from .services import NotionService, NotionAPIError
 
 User = get_user_model()
@@ -11,34 +11,96 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task(bind=True)
-def bulk_import_notion_pages(self, user_id, database_id, max_pages=100):
+def bulk_import_notion_pages(self, user_id, database_id, bulk_import_id=None, max_pages=100):
     """
     Массовый импорт страниц из Notion
     
     Args:
         user_id: ID пользователя
         database_id: ID базы данных Notion
+        bulk_import_id: ID существующей записи массового импорта (если None, создается новая)
         max_pages: Максимальное количество страниц для импорта
     """
+    logger.info(f"🚀 [CELERY TASK] Начало массового импорта: user_id={user_id}, database_id={database_id}, bulk_import_id={bulk_import_id}, max_pages={max_pages}")
+    
     try:
         user = User.objects.get(id=user_id)
+        logger.info(f"✅ [CELERY TASK] Пользователь найден: {user.username} (ID: {user.id})")
+        
         settings = NotionSettings.objects.get(user=user)
+        logger.info(f"✅ [CELERY TASK] Настройки Notion найдены, database_id={settings.database_id}")
         
-        # Создаем запись о массовом импорте
-        bulk_import = NotionBulkImport.objects.create(
-            user=user,
-            status='running',
-            total_pages=0,  # Будет обновлено позже
-            celery_task_id=self.request.id
-        )
+        # Используем существующую запись или создаем новую
+        if bulk_import_id:
+            try:
+                bulk_import = NotionBulkImport.objects.get(id=bulk_import_id, user=user)
+                # Обновляем celery_task_id
+                bulk_import.celery_task_id = self.request.id
+                bulk_import.status = 'running'
+                bulk_import.save()
+                logger.info(f"✅ [CELERY TASK] Используем существующую запись массового импорта #{bulk_import_id}, статус обновлен на 'running'")
+            except NotionBulkImport.DoesNotExist:
+                logger.warning(f"Запись массового импорта #{bulk_import_id} не найдена, создаем новую")
+                bulk_import = NotionBulkImport.objects.create(
+                    user=user,
+                    status='running',
+                    total_pages=0,
+                    celery_task_id=self.request.id
+                )
+        else:
+            # Создаем новую запись (для обратной совместимости)
+            bulk_import = NotionBulkImport.objects.create(
+                user=user,
+                status='running',
+                total_pages=0,
+                celery_task_id=self.request.id
+            )
         
-        logger.info(f"Начинаем массовый импорт для пользователя {user.username}")
+        logger.info(f"📋 [CELERY TASK] Начинаем массовый импорт для пользователя {user.username} (bulk_import_id={bulk_import.id})")
         
         # Инициализируем сервис
-        service = NotionService(user.notion_integration_token)
+        if not user.notion_integration_token:
+            logger.error(f"❌ [CELERY TASK] У пользователя {user.username} отсутствует notion_integration_token")
+            bulk_import.status = 'failed'
+            bulk_import.error_message = 'Integration токен Notion не настроен'
+            bulk_import.completed_at = timezone.now()
+            bulk_import.save()
+            return {'status': 'failed', 'message': 'Integration токен Notion не настроен'}
         
-        # Получаем все страницы из базы данных
-        all_pages = service.get_pages_from_database(database_id)
+        service = NotionService(user.notion_integration_token)
+        logger.info(f"✅ [CELERY TASK] NotionService инициализирован")
+        
+        # Получаем все страницы из базы данных (используем ту же логику, что и в sync_pages)
+        logger.info(f"🔍 [CELERY TASK] Получаем страницы из базы данных Notion: {database_id}")
+        all_pages = []
+        has_more = True
+        start_cursor = None
+        page_count = 0
+        
+        while has_more and len(all_pages) < max_pages:
+            data = {'page_size': 100}
+            if start_cursor:
+                data['start_cursor'] = start_cursor
+            
+            try:
+                response = service._make_request('POST', f'/databases/{database_id}/query', data=data)
+                pages = response.get('results', [])
+                all_pages.extend(pages)
+                page_count += 1
+                logger.info(f"Получена страница {page_count}, найдено {len(pages)} страниц, всего: {len(all_pages)}")
+                
+                has_more = response.get('has_more', False)
+                start_cursor = response.get('next_cursor')
+            except Exception as e:
+                logger.error(f"Ошибка получения страниц из Notion API: {e}")
+                bulk_import.status = 'failed'
+                bulk_import.error_message = f'Ошибка получения страниц: {str(e)}'
+                bulk_import.completed_at = timezone.now()
+                bulk_import.save()
+                return {
+                    'status': 'failed',
+                    'message': f'Ошибка получения страниц: {str(e)}'
+                }
         
         if not all_pages:
             bulk_import.status = 'completed'
@@ -57,6 +119,7 @@ def bulk_import_notion_pages(self, user_id, database_id, max_pages=100):
         # Обновляем общее количество страниц
         bulk_import.total_pages = len(all_pages)
         bulk_import.save()
+        logger.info(f"📊 [CELERY TASK] Всего страниц для обработки: {len(all_pages)}, обновлено bulk_import.total_pages={bulk_import.total_pages}")
         
         pages_processed = 0
         pages_created = 0
@@ -66,14 +129,13 @@ def bulk_import_notion_pages(self, user_id, database_id, max_pages=100):
         # Обрабатываем каждую страницу
         for page_data in all_pages:
             try:
-                # Проверяем, не отменена ли задача
-                if self.is_aborted():
-                    bulk_import.status = 'cancelled'
-                    bulk_import.completed_at = timezone.now()
-                    bulk_import.save()
+                # Проверяем, не отменена ли задача (читаем актуальное состояние из БД)
+                bulk_import.refresh_from_db()
+                if bulk_import.status in ['stopped', 'cancelled', 'completed', 'failed']:
+                    logger.info(f"⚠️ [CELERY TASK] Массовый импорт {bulk_import_id} остановлен со статусом: {bulk_import.status}")
                     return {
-                        'status': 'cancelled',
-                        'message': 'Задача отменена пользователем'
+                        'status': bulk_import.status,
+                        'message': f'Задача прервана со статусом: {bulk_import.status}'
                     }
                 
                 # Парсим данные страницы
@@ -99,21 +161,24 @@ def bulk_import_notion_pages(self, user_id, database_id, max_pages=100):
                 
                 pages_processed += 1
                 
-                # Обновляем прогресс
-                bulk_import.processed_pages = pages_processed
-                bulk_import.successful_pages = pages_created + pages_updated
-                bulk_import.save()
+                # Обновляем прогресс (каждые 5 страниц или на последней странице)
+                if pages_processed % 5 == 0 or pages_processed == len(all_pages):
+                    bulk_import.processed_pages = pages_processed
+                    bulk_import.successful_pages = pages_created + pages_updated
+                    bulk_import.save()
+                    logger.info(f"📊 Прогресс обновлен: обработано {pages_processed}/{len(all_pages)}, успешно: {pages_created + pages_updated}, ошибок: {len(failed_pages)}")
                 
-                # Обновляем статус задачи
-                self.update_state(
-                    state='PROGRESS',
-                    meta={
-                        'current': pages_processed,
-                        'total': len(all_pages),
-                        'pages_created': pages_created,
-                        'pages_updated': pages_updated
-                    }
-                )
+                # Обновляем статус задачи Celery (каждые 10 страниц)
+                if pages_processed % 10 == 0:
+                    self.update_state(
+                        state='PROGRESS',
+                        meta={
+                            'current': pages_processed,
+                            'total': len(all_pages),
+                            'pages_created': pages_created,
+                            'pages_updated': pages_updated
+                        }
+                    )
                 
             except Exception as e:
                 logger.error(f"Ошибка обработки страницы {page_data.get('id', 'unknown')}: {e}")
@@ -123,15 +188,24 @@ def bulk_import_notion_pages(self, user_id, database_id, max_pages=100):
                 bulk_import.save()
                 continue
         
+        # Обновляем финальные значения перед завершением
+        bulk_import.processed_pages = pages_processed
+        bulk_import.successful_pages = pages_created + pages_updated
+        bulk_import.failed_pages = len(failed_pages)
+        if failed_pages:
+            bulk_import.failed_page_ids = failed_pages
+        
         # Завершаем массовый импорт
         if failed_pages:
             bulk_import.status = 'partial'
-            bulk_import.error_message = f"Не удалось обработать {len(failed_pages)} страниц"
+            bulk_import.error_message = f"Не удалось обработать {len(failed_pages)} страниц из {pages_processed}"
         else:
             bulk_import.status = 'completed'
         
         bulk_import.completed_at = timezone.now()
         bulk_import.save()
+        
+        logger.info(f"✅ Массовый импорт завершен (ID: {bulk_import.id}): обработано {pages_processed}/{bulk_import.total_pages}, успешно: {pages_created + pages_updated}, ошибок: {len(failed_pages)}")
         
         # Создаем лог синхронизации
         NotionSyncLog.objects.create(
@@ -140,7 +214,7 @@ def bulk_import_notion_pages(self, user_id, database_id, max_pages=100):
             pages_processed=pages_processed,
             pages_created=pages_created,
             pages_updated=pages_updated,
-            error_message=bulk_import.error_message if failed_pages else None
+            error_message=bulk_import.error_message if failed_pages else ''
         )
         
         # Обновляем время последней синхронизации

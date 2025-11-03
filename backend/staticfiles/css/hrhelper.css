@@ -1835,6 +1835,11 @@ a:hover {
     width: 100%;
 }
 
+/* Для пользовательских сообщений - ограничиваем ширину контейнера */
+.card .user-message > .d-flex {
+    width: 65% !important;
+}
+
 /* Единый размер шрифта для всех сообщений */
 .card .message-bubble {
     padding: 8px 12px;
@@ -1851,8 +1856,9 @@ a:hover {
 
 /* Пользовательские сообщения - остаются с ограничением */
 .card .user-message .message-bubble {
-    max-width: 75%;
+    max-width: 65% !important;
     min-width: 120px;
+    width: auto !important;
 }
 
 /* Системные сообщения - БЕЗ ОГРАНИЧЕНИЙ ШИРИНЫ */
@@ -1866,6 +1872,9 @@ a:hover {
     background: var(--hr-gradient, linear-gradient(135deg, #007bff 0%, #0056b3 100%));
     color: white;
     border: none;
+    margin-right: -32px;
+    position: relative;
+    z-index: 1;
 }
 
 .card .system-bubble {
@@ -1925,7 +1934,7 @@ a:hover {
 .card .user-message {
     display: flex;
     justify-content: flex-end;
-    width: 100%;
+    width: auto !important;
 }
 
 .card .system-message {
@@ -1941,6 +1950,36 @@ a:hover {
 
 .card .system-message .message-bubble {
     border-bottom-left-radius: 3px;
+}
+
+/* Аватар пользователя */
+.card .message-avatar {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    margin-bottom: -18px;
+    position: relative;
+    z-index: 100;
+}
+
+.card .message-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Футер сообщения пользователя */
+.card .user-message .message-footer {
+    text-align: right;
+    margin-top: -16px;
+    padding-right: 21px;
+}
+
+.card .user-message .message-footer small {
+    opacity: 0.6;
+    font-size: 0.75rem;
 }
 
 /* Футер карточки */

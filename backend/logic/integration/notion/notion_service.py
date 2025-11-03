@@ -296,9 +296,39 @@ def sync_logs(request):
 
 
 @login_required
+def bulk_import_view(request):
+    """Страница массового импорта страниц Notion"""
+    from logic.utilities.context_helpers import ContextHelper
+    user = request.user
+    
+    # Получаем настройки пользователя
+    try:
+        settings = NotionSettings.objects.get(user=user)
+        is_configured = bool(user.notion_integration_token and settings.database_id)
+    except NotionSettings.DoesNotExist:
+        settings = None
+        is_configured = False
+    
+    # Получаем последние массовые импорты
+    recent_imports = NotionBulkImport.objects.filter(user=user).order_by('-created_at')[:10]
+    
+    context = ContextHelper.get_base_context(
+        request,
+        'Массовый импорт страниц Notion',
+        {
+            'settings': settings,
+            'is_configured': is_configured,
+            'recent_imports': recent_imports,
+        }
+    )
+    
+    return render(request, 'notion_int/bulk_import.html', context)
+
+
+@login_required
 @require_POST
 def bulk_import(request):
-    """Массовый импорт страниц Notion"""
+    """API для запуска массового импорта страниц Notion"""
     try:
         user = request.user
         
@@ -311,6 +341,11 @@ def bulk_import(request):
         # Получаем настройки пользователя
         try:
             settings = NotionSettings.objects.get(user=user)
+            if not settings.database_id:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'База данных Notion не настроена'
+                })
         except NotionSettings.DoesNotExist:
             return JsonResponse({
                 'success': False,
@@ -320,12 +355,26 @@ def bulk_import(request):
         # Создаем запись о массовом импорте
         bulk_import_obj = NotionBulkImport.objects.create(
             user=user,
-            status='PENDING',
+            status='running',
             total_pages=0
         )
         
-        # Здесь должна быть логика запуска Celery задачи
-        # bulk_import_notion_pages.delay(bulk_import_obj.id)
+        # Запускаем Celery задачу
+        try:
+            from apps.notion_int.tasks import bulk_import_notion_pages
+            # Передаем bulk_import_id в задачу, чтобы использовать существующий объект
+            # Передаем все аргументы позиционно: user_id, database_id, bulk_import_id, max_pages
+            bulk_import_notion_pages.delay(user.id, settings.database_id, bulk_import_obj.id, 100)
+            logger.info(f"Запущена Celery задача для массового импорта #{bulk_import_obj.id} (user_id={user.id}, database_id={settings.database_id})")
+        except Exception as e:
+            logger.error(f"Ошибка запуска Celery задачи: {e}")
+            bulk_import_obj.status = 'failed'
+            bulk_import_obj.error_message = f"Ошибка запуска задачи: {str(e)}"
+            bulk_import_obj.save()
+            return JsonResponse({
+                'success': False,
+                'message': f'Ошибка запуска задачи: {str(e)}'
+            })
         
         return JsonResponse({
             'success': True,

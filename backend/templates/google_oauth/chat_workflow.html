@@ -5,6 +5,22 @@
 
 {% block content %}
 <div class="container-fluid">
+    <!-- Предупреждение о календаре компании -->
+    {% if company_calendar_warning %}
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Внимание!</strong> {{ company_calendar_warning }}
+                <a href="{% url 'company_settings:company_settings' %}" class="alert-link ms-2">
+                    <i class="fas fa-cog me-1"></i>Перейти к настройкам
+                </a>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
     <!-- Селектор вакансии и свободные слоты -->
     <div class="row" style="margin-bottom: -5px;">
         <div class="col-12">
@@ -87,6 +103,14 @@
                                                     title="Скопировать все слоты">
                                                 <i class="fas fa-copy"></i>
                                                 <div class="copy-tooltip">Скопировать все слоты</div>
+                                            </button>
+                                            
+                                            <!-- Кнопка добавления третьей недели -->
+                                            <button class="btn-copy btn-add-week" 
+                                                    onclick="window.addThirdWeek()"
+                                                    title="Загрузить слоты третьей недели">
+                                                <i class="fas fa-plus"></i>
+                                                <div class="copy-tooltip">Загрузить слоты третьей недели</div>
                                             </button>
                                             
                                             <button class="btn-copy btn-refresh-slots" 
@@ -193,6 +217,22 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Третья неделя (скрыта по умолчанию) -->
+            <div class="week-section third-week" id="thirdWeekSection" style="display: none;">
+                <h6 class="text-success mb-3">
+                    <i class="fas fa-calendar-check me-2"></i>
+                    Третья неделя
+                    <button class="btn btn-sm btn-outline-success float-end btn-collapse" type="button" data-bs-toggle="collapse" data-bs-target="#thirdWeekSlots" aria-expanded="true" aria-controls="thirdWeekSlots">
+                        <i class="fas fa-chevron-up"></i>
+                    </button>
+                </h6>
+                <div class="collapse show" id="thirdWeekSlots">
+                    <div class="row">
+                        <!-- Слоты будут добавлены через JavaScript -->
+                    </div>
+                </div>
+            </div>
         </div>
             </div>
         </div>
@@ -218,17 +258,23 @@
                     <div id="chat-messages" class="chat-messages" style="overflow-y: auto;">
                                 {% for message in messages %}
                             <div class="message mb-3 {% if message.message_type == 'user' %}user-message{% elif message.message_type == 'hrscreening' %}system-message hr-screening-message{% elif message.message_type == 'invite' %}system-message invite-message{% elif message.message_type == 'delete' %}system-message delete-message{% else %}system-message{% endif %}">
-                                        <div class="d-flex {% if message.message_type == 'user' %}justify-content-end{% else %}justify-content-start{% endif %}">
-                                            <div class="message-bubble {% if message.message_type == 'user' %}user-bubble{% else %}system-bubble{% endif %}">
+                                        <div class="d-flex {% if message.message_type == 'user' %}justify-content-end{% else %}justify-content-start{% endif %} align-items-end">
+                                            <div class="message-bubble {% if message.message_type == 'user' %}user-bubble{% else %}system-bubble{% endif %}" {% if message.message_type == 'user' %}style="position: relative;"{% endif %}>
                                         
                                         <!-- Пользовательское сообщение -->
                                                 {% if message.message_type == 'user' %}
-                                                        <div class="message-header">
-                                                        <i class="fas fa-user me-1"></i>
-                                                            <strong>Вы</strong>
-                                                            <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
-                                                        </div>
+                                                        {% comment %}Команда определена в view и передана как message.command_used{% endcomment %}
                                                         <div class="message-content user-content">{{ message.content|linebreaks }}</div>
+                                                        {% if message.command_used %}
+                                                            {% if message.command_used == '/s' or message.command_used == '/hr' %}
+                                                                <span class="command-indicator badge bg-success" style="position: absolute; bottom: 4px; left: 4px; font-size: 0.7em; z-index: 10;">{{ message.command_used }}</span>
+                                                            {% elif message.command_used == '/in' or message.command_used == '/invite' %}
+                                                                <span class="command-indicator badge bg-warning" style="position: absolute; bottom: 4px; left: 4px; font-size: 0.7em; z-index: 10;">{{ message.command_used }}</span>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                        <div class="message-footer">
+                                                            <small class="text-muted">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                        </div>
                                                 
                                         <!-- HR-скрининг -->
                                                 {% elif message.message_type == 'hrscreening' %}
@@ -404,6 +450,12 @@
                                                         <div class="message-content">{{ message.content|linebreaks }}</div>
                                                 {% endif %}
                                             </div>
+                                            <!-- Аватар пользователя -->
+                                            {% if message.message_type == 'user' and user_photo_url %}
+                                            <div class="message-avatar ms-2" style="margin-bottom: -18px; position: relative; z-index: 100;">
+                                                <img src="{{ user_photo_url }}" alt="User Avatar" class="rounded-circle">
+                                            </div>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 {% empty %}
@@ -444,7 +496,7 @@
                                         <input type="hidden"
                                                id="actionType"
                                                name="action_type"
-                                               value="hrscreening">
+                                               value="">
                                     </div>
                                     
                                     {% if form.message.errors %}
@@ -472,6 +524,43 @@
                 </div>
                 <div class="card-body p-3" id="commandsCardBody">
                     <div class="commands-list">
+                        <!-- Функциональность чата -->
+                        <div class="command-item mb-3 command-hover-card">
+                            <div class="command-header">
+                                <span class="command-badge bg-primary">📝</span>
+                                <strong class="ms-2">Функциональность чата</strong>
+                            </div>
+                            <div class="command-example mt-1">
+                                <code class="text-primary small">[дата время] (45 мин) @Иван Петров<br>Управление временем и интервьюерами</code>
+                            </div>
+                            <div class="command-details-hover">
+                                <div class="alert alert-info mb-0">
+                                    <div class="d-flex align-items-start">
+                                        <i class="fas fa-info-circle me-2 mt-1"></i>
+                                        <div>
+                                            <strong>Управление временем встречи (скобочки):</strong><br>
+                                            Добавьте в скобочках после даты и времени:
+                                            <p class="mb-0 mt-2">
+                                                <code>(45 мин)</code> OR <code>(1 час)</code> OR <code>(1h)</code><br>
+                                                <code>(30 минут)</code> OR <code>(30m)</code> OR <code>(полчаса)</code>
+                                            </p>
+                                            <div class="mt-2">
+                                                <strong>Добавление интервьюера (символ @):</strong><br>
+                                                <code>@Иван Петров</code> OR <code>@Анна Сидорова</code><br>
+                                                <code>@john.doe</code> OR <code>@jane_smith</code>
+                                            </div>
+                                            <div class="mt-2">
+                                                <strong>Примеры комбинаций:</strong><br>
+                                                <code>[15.11.2024 14:00] (1 ч) @Иван Петров</code><br>
+                                                <code>[16.11.2024 10:30] (45 мин) @Анна Сидорова</code>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Команды чата -->
                         <div class="command-item mb-3">
                             <div class="command-header">
                                 <span class="command-badge bg-success">/s</span>
@@ -482,59 +571,23 @@
                             </div>
                         </div>
                         
-                        <div class="command-item mb-3 command-hover-card">
+                        <div class="command-item mb-3">
                             <div class="command-header">
                                 <span class="command-badge bg-warning">/in</span>
                                 <strong class="ms-2">Инвайт</strong>
                             </div>
                             <div class="command-example mt-1">
-                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время]</code>
-                            </div>
-                            <div class="command-details-hover">
-                                <div class="alert alert-info mb-0">
-                                    <div class="d-flex align-items-start">
-                                        <i class="fas fa-info-circle me-2 mt-1"></i>
-                                        <div>
-                                                Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
-                                            <p class="mb-0 mt-2">
-                                                <code>(1 час)</code> OR <code>(60 минут)</code> OR <code>(1h)</code><br>
-                                                <code>(30 минут)</code> OR <code>(30m)</code> OR <code>(полчаса)</code> etc.
-                                            </p>
-                                            <div class="mt-2">
-                                                <strong>Пример:</strong><br>
-                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (1 ч)</code>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (время) @интервьюер</code>
                             </div>
                         </div>
                         
-                        <div class="command-item mb-3 command-hover-card" id="additionalCommand1">
+                        <div class="command-item mb-3" id="additionalCommand1">
                             <div class="command-header">
                                 <span class="command-badge bg-info">/t</span>
                                 <strong class="ms-2">Техническое интервью</strong>
                             </div>
                             <div class="command-example mt-1">
-                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время]</code>
-                            </div>
-                            <div class="command-details-hover">
-                                <div class="alert alert-info mb-0">
-                                    <div class="d-flex align-items-start">
-                                        <i class="fas fa-info-circle me-2 mt-1"></i>
-                                        <div>
-                                                Вы можете изменить продолжительность встречи, добавив в скобочках после даты и времени:
-                                            <p class="mb-0 mt-2">
-                                                <code>(1 час)</code> OR <code>(60 минут)</code> OR <code>(1h)</code><br>
-                                                <code>(30 минут)</code> OR <code>(30m)</code> OR <code>(полчаса)</code> etc.
-                                            </p>
-                                            <div class="mt-2">
-                                                <strong>Пример:</strong><br>
-                                                <code>https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (1 ч)</code>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (время) @интервьюер</code>
                             </div>
                         </div>
                         
@@ -576,6 +629,11 @@
 
 .card .message > .d-flex {
     width: 100%;
+}
+
+/* Для пользовательских сообщений - ограничиваем ширину контейнера */
+.card .user-message > .d-flex {
+    width: 65% !important;
 }
 
 /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: Единый размер шрифта для всех сообщений */
@@ -743,7 +801,7 @@
 
 /* Пользовательские сообщения - остаются с ограничением */
 .card .user-message .message-bubble {
-    max-width: 75%;
+    max-width: 65% !important;
     min-width: 120px;
 }
 
@@ -758,6 +816,7 @@
     background: var(--hr-gradient, linear-gradient(135deg, #007bff 0%, #0056b3 100%));
     color: white;
     border: none;
+    margin-right: -32px;
 }
 
 .card .system-bubble {
@@ -936,7 +995,7 @@
 .card .user-message {
     display: flex;
     justify-content: flex-end;
-    width: 100%;
+    width: auto;
 }
 
 .card .system-message {
@@ -952,6 +1011,34 @@
 
 .card .system-message .message-bubble {
     border-bottom-left-radius: 3px;
+}
+
+/* Аватар пользователя */
+.card .message-avatar {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    margin-bottom: -18px;
+}
+
+.card .message-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Футер сообщения пользователя */
+.card .user-message .message-footer {
+    text-align: right;
+    margin-top: -16px;
+    padding-right: 21px;
+}
+
+.card .user-message .message-footer small {
+    opacity: 0.6;
+    font-size: 0.75rem;
 }
 
 /* Специальные цвета для типов сообщений */
@@ -1584,12 +1671,38 @@
      box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3) !important;
  }
 
- .copy-buttons .btn-refresh-slots:hover {
+.copy-buttons .btn-refresh-slots:hover {
      background: linear-gradient(135deg, #138496, #0f6674) !important;
      box-shadow: 0 4px 15px rgba(23, 162, 184, 0.5) !important;
      transform: scale(1.1) !important;
  }
-
+ 
+ .copy-buttons .btn-add-week {
+     background: linear-gradient(135deg, #00b894, #00cec9) !important;
+     color: white !important;
+     border: 2px solid #fff !important;
+     box-shadow: 0 2px 8px rgba(0, 184, 148, 0.3) !important;
+ }
+ 
+ .copy-buttons .btn-add-week:hover {
+     background: linear-gradient(135deg, #00cec9, #00b894) !important;
+     box-shadow: 0 4px 15px rgba(0, 184, 148, 0.5) !important;
+     transform: scale(1.1) !important;
+ }
+ 
+ .copy-buttons .btn-copy-third-week {
+     background: linear-gradient(135deg, #55a3ff, #00b894) !important;
+     color: white !important;
+     border: 2px solid #fff !important;
+     box-shadow: 0 2px 8px rgba(85, 163, 255, 0.3) !important;
+ }
+ 
+ .copy-buttons .btn-copy-third-week:hover {
+     background: linear-gradient(135deg, #00b894, #55a3ff) !important;
+     box-shadow: 0 4px 15px rgba(85, 163, 255, 0.5) !important;
+     transform: scale(1.1) !important;
+ }
+ 
  .copy-buttons .btn-copy:disabled {
      opacity: 0.4 !important;
      cursor: not-allowed !important;
@@ -1604,6 +1717,39 @@
      transform: none !important;
      box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2) !important;
      filter: grayscale(0.8) !important;
+ }
+ 
+ /* Анимация загрузки для кнопки третьей недели */
+ .btn-loading {
+     position: relative;
+     overflow: hidden;
+ }
+ 
+ .btn-loading::before {
+     content: '';
+     position: absolute;
+     top: 0;
+     left: -100%;
+     width: 100%;
+     height: 100%;
+     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+     animation: loading 1.5s infinite;
+ }
+ 
+ @keyframes loading {
+     0% { left: -100%; }
+     100% { left: 100%; }
+ }
+ 
+ /* Плавное появление кнопки */
+ .btn-copy-fade-in {
+     opacity: 0;
+     animation: fadeIn 1s forwards;
+ }
+ 
+ @keyframes fadeIn {
+     from { opacity: 0; }
+     to { opacity: 1; }
  }
 
  .copy-buttons .btn-copy .copy-tooltip {
@@ -2088,22 +2234,7 @@ document.addEventListener('DOMContentLoaded', function() {
         resetTextareaSize();
     }, 100);
     
-    // Отправка формы
-    chatForm.addEventListener('submit', function(e) {
-        if (!messageInput.value.trim()) {
-            e.preventDefault();
-            return;
-        }
-        
-        sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-        sendBtn.disabled = true;
-        messageInput.disabled = true;
-        
-        // Сбрасываем размер textarea после отправки
-        setTimeout(() => {
-            resetTextareaSize();
-        }, 100);
-    });
+    // Отправка формы полностью обрабатывается в chat_actions.js через AJAX
     
     // Функция для сброса размера textarea к одной строке
     function resetTextareaSize() {
@@ -2119,27 +2250,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const newHeight = Math.min(this.scrollHeight, maxHeight);
         this.style.height = newHeight + 'px';
         
-        // Обработка команд (только рабочие команды)
-        const message = this.value.trim();
-        const actionTypeField = document.getElementById('actionType');
-        
-        if (message.startsWith('/s ')) {
-            actionTypeField.value = 'hrscreening';
-        } else if (message.startsWith('/in ')) {
-            actionTypeField.value = 'invite';
-        } else {
-            // Не устанавливаем значение по умолчанию - пусть backend сам определит
-            actionTypeField.value = '';
-        }
+        // Обработка команд вынесена в chat_actions.js
     });
     
-    // Отправка по Enter (без Shift)
-    messageInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            chatForm.submit();
-        }
-    });
+    // Отправка по Enter обрабатывается в chat_actions.js
     
     // Автодополнение интервьюеров
     let autocompleteTimeout;
@@ -2489,8 +2603,10 @@ console.log('🔍 DEBUG: Начинаем загрузку событий...');
 console.log('🔍 DEBUG: Количество событий в контексте:', {{ calendar_events_data|length|default:"0" }});
 
 // Загружаем реальные данные событий
-const calendarEvents = JSON.parse(document.getElementById('calendar-events').textContent);
+let calendarEvents = JSON.parse(document.getElementById('calendar-events').textContent);
 console.log('🔍 DEBUG: Загружены реальные события, количество:', calendarEvents.length);
+// Делаем переменную глобальной для изменения в других скриптах
+window.calendarEvents = calendarEvents;
 
 // Настройки слотов из Django контекста
 let slotsSettings = {{ slots_settings.to_dict|default:"{}"|safe }};
@@ -2506,6 +2622,12 @@ window.vacancyLinkPoland = "{{ selected_vacancy.vacancy_link_poland|escapejs }}"
 window.questionsBelarus = "{{ selected_vacancy.questions_belarus|escapejs }}";
 window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
 {% endif %}
+
+// Предрассчитанные слоты с backend
+window.screeningSlots = {{ screening_slots_json|safe|default:"[]" }};
+window.interviewSlots = {{ interview_slots_json|safe|default:"[]" }};
+console.log('📊 Слоты для скринингов:', window.screeningSlots);
+console.log('📊 Слоты для интервью:', window.interviewSlots);
 </script>
 
             <script src="{% static 'js/vacancy-slots.js' %}"></script>
@@ -2721,5 +2843,5 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
                 // Передаем sessionId из контекста шаблона в глобальный scope
                 window.sessionId = {{ chat_session.id }};
             </script>
-            <script src="{% static 'js/chat_actions.js' %}"></script>
+            <script src="{% static 'js/chat_actions.js' %}?v={{ timestamp }}"></script>
             {% endblock %}

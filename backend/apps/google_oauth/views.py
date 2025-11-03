@@ -1,3 +1,14 @@
+"""
+Документация по проблемным импортам (линтер):
+- django.shortcuts, django.contrib.*, django.http, django.views.decorators.*, django.conf,
+  django.utils, django.template.loader, django.db, django.core.paginator, django.urls
+- google.oauth2.credentials, googleapiclient.discovery
+- pytz (обработка таймзон)
+
+Влияние: все представления Google OAuth (аутентификация, календарь, чат, пагинация) и
+интеграции с Google API зависят от этих импортов. При их недоступности авторизация Google,
+чтение календаря/Drive, постраничная навигация и корректная работа времени перестанут работать.
+"""
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
@@ -8,11 +19,13 @@ from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.template.loader import render_to_string
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time as dt_time
 from django.contrib.auth import get_user_model, login
 from django import forms
 from django.db import models
 import json
+import re
+from time import time
 
 from .models import GoogleOAuthAccount, ScorecardPathSettings, SlotsSettings, ChatSession, ChatMessage
 from logic.integration.oauth.oauth_services import (
@@ -21,6 +34,59 @@ from logic.integration.oauth.oauth_services import (
     GoogleDriveService, 
     GoogleSheetsService
 )
+
+
+def _extract_calendar_id_from_link(calendar_link):
+    """Извлекает calendar_id из ссылки на календарь Google Calendar"""
+    if not calendar_link:
+        return None
+    
+    # Убираем @ в начале, если есть (например, @https://...)
+    if calendar_link.startswith('@'):
+        calendar_link = calendar_link[1:]
+    
+    # Различные форматы ссылок на календарь Google:
+    # 1. https://calendar.google.com/calendar/u/0?cid=calendar_id%40gmail.com
+    # 2. https://calendar.google.com/calendar/embed?src=c_6neaou3phcsg46u40pjbf6bki8%40group.calendar.google.com&ctz=Europe%2FMinsk
+    # 3. calendar_id@gmail.com (email напрямую)
+    # 4. @https://calendar.google.com/... (с @ в начале)
+    
+    # Проверяем, это просто email (без http и без параметров)
+    if '@' in calendar_link and 'http' not in calendar_link and '?' not in calendar_link:
+        return calendar_link
+    
+    # Извлекаем calendar_id из разных форматов ссылок
+    import re
+    from urllib.parse import unquote
+    
+    # Формат 1: cid=calendar_id%40gmail.com или cid=calendar_id%40group.calendar.google.com
+    # Захватываем все до следующего &, включая % для URL-encoded значений
+    match = re.search(r'[?&]cid=([^&\s]+)', calendar_link)
+    if match:
+        calendar_id_encoded = match.group(1)
+        calendar_id = unquote(calendar_id_encoded)  # Декодируем URL-encoded строку
+        print(f"🔍 EXTRACT_CALENDAR_ID: Извлечен из cid: '{calendar_id}' (исходный: '{calendar_id_encoded}')")
+        return calendar_id
+    
+    # Формат 2: src=calendar_id%40gmail.com или src=c_xxx%40group.calendar.google.com
+    # Важно: не исключаем %, чтобы захватывать URL-encoded значения
+    match = re.search(r'[?&]src=([^&\s]+)', calendar_link)
+    if match:
+        calendar_id_encoded = match.group(1)
+        calendar_id = unquote(calendar_id_encoded)  # Декодируем URL-encoded строку (%40 -> @, %2F -> /)
+        print(f"🔍 EXTRACT_CALENDAR_ID: Извлечен из src: '{calendar_id}' (исходный: '{calendar_id_encoded}')")
+        return calendar_id
+    
+    # Формат 3: Прямая ссылка с email в параметрах (любой формат email, включая %40)
+    match = re.search(r'([a-zA-Z0-9._+-]+(?:%40|@)[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})', calendar_link)
+    if match:
+        calendar_id_raw = match.group(1)
+        calendar_id = unquote(calendar_id_raw.replace('@', '%40'))  # Нормализуем и декодируем
+        print(f"🔍 EXTRACT_CALENDAR_ID: Извлечен из паттерна email: '{calendar_id}' (исходный: '{calendar_id_raw}')")
+        return calendar_id
+    
+    print(f"⚠️ EXTRACT_CALENDAR_ID: Не удалось извлечь calendar_id из ссылки: '{calendar_link}'")
+    return None
 
 
 def determine_action_type_from_text(text):
@@ -47,8 +113,6 @@ def determine_action_type_from_text(text):
     """
     if not text:
         return "hrscreening"
-    
-    import re
     
     # Паттерны для дат
     date_patterns = [
@@ -1015,7 +1079,7 @@ def sync_all(request):
 from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import SyncSettings, Invite, HRScreening
-from .forms import SyncSettingsForm, InviteForm, InviteUpdateForm, InviteCombinedForm, HRScreeningForm, CombinedForm
+from .forms import SyncSettingsForm, InviteForm, InviteUpdateForm, InviteCombinedForm, HRScreeningForm
 
 
 @login_required
@@ -2843,18 +2907,19 @@ def gdata_automation(request):
                             # Очищаем description от HTML-тегов для безопасного использования в JavaScript
                             description = event_data.get('description', '')
                             if description:
-                                import re
                                 # Удаляем HTML-теги
                                 description = re.sub(r'<[^>]+>', '', description)
                                 # Заменяем кавычки на безопасные символы
                                 description = description.replace('"', "'").replace("'", "'")
                             
+                            is_all_day_event = 'date' in event_data['start']
                             calendar_events_data.append({
                                 'id': event_data['id'],
                                 'title': event_data.get('summary', 'Без названия'),
                                 'start': start_time.isoformat(),
                                 'end': end_time.isoformat() if end_time else start_time.isoformat(),
-                                'is_all_day': 'date' in event_data['start'],
+                                'is_all_day': is_all_day_event,
+                                'isallday': is_all_day_event,  # Для совместимости с существующим кодом
                                 'location': event_data.get('location', ''),
                                 'description': description,
                             })
@@ -2892,6 +2957,7 @@ def api_calendar_events(request):
     try:
         from apps.google_oauth.services import GoogleOAuthService, GoogleCalendarService
         from apps.google_oauth.cache_service import GoogleAPICache
+        from apps.interviewers.models import Interviewer
         import json
         from datetime import datetime, timedelta
         import pytz
@@ -2907,15 +2973,138 @@ def api_calendar_events(request):
                 'message': 'Google OAuth аккаунт не подключен'
             })
         
-        # Получаем события через GoogleCalendarService
+        # Получаем параметры запроса
+        vacancy_id = request.GET.get('vacancy_id')
+        meeting_type = request.GET.get('meeting_type', 'screening')  # screening или interview
+        include_interviewers = (meeting_type == 'interview')
+        
+        # Получаем календарь компании из настроек
+        company_calendar_id = None
+        try:
+            from apps.company_settings.models import CompanySettings
+            company_settings = CompanySettings.get_settings()
+            if company_settings.main_calendar_id:
+                # main_calendar_id может быть ссылкой или ID, извлекаем ID
+                calendar_input = company_settings.main_calendar_id.strip()
+                print(f"📅 API КАЛЕНДАРЬ КОМПАНИИ: Исходное значение из настроек: '{calendar_input}'")
+                
+                # Проверяем, является ли это ссылкой
+                is_link = 'http' in calendar_input.lower() or 'calendar.google.com' in calendar_input.lower()
+                if is_link:
+                    print(f"📅 API КАЛЕНДАРЬ КОМПАНИИ: Обнаружена ссылка, извлекаем calendar_id...")
+                
+                # Извлекаем calendar_id из ссылки или используем как есть, если это уже ID
+                company_calendar_id = _extract_calendar_id_from_link(calendar_input)
+                
+                if company_calendar_id:
+                    print(f"✅ API КАЛЕНДАРЬ КОМПАНИИ: Извлечен calendar_id из {'ссылки' if is_link else 'значения'}: '{company_calendar_id}'")
+                else:
+                    # Если не удалось извлечь из ссылки, возможно это уже ID
+                    company_calendar_id = calendar_input
+                    print(f"⚠️ API КАЛЕНДАРЬ КОМПАНИИ: Не удалось извлечь calendar_id, используем значение как есть: '{company_calendar_id}'")
+                
+                print(f"✅ API КАЛЕНДАРЬ КОМПАНИИ: Финальный calendar_id для использования: '{company_calendar_id}'")
+            else:
+                print(f"⚠️ API КАЛЕНДАРЬ КОМПАНИИ: Календарь не настроен")
+        except Exception as e:
+            print(f"⚠️ API КАЛЕНДАРЬ КОМПАНИИ: Ошибка получения настроек: {e}")
+        
+        # Получаем события основного календаря пользователя
         calendar_service = GoogleCalendarService(oauth_service)
-        events_data = calendar_service.get_events(days_ahead=14)
+        events_data = calendar_service.get_events(calendar_id='primary', days_ahead=14)
+        
+        # Добавляем события календаря компании, если он настроен
+        if company_calendar_id:
+            try:
+                company_events_data = calendar_service.get_events(calendar_id=company_calendar_id, days_ahead=14)
+                print(f"📅 API КАЛЕНДАРЬ КОМПАНИИ: Получено {len(company_events_data)} событий из календаря компании")
+                if company_events_data:
+                    events_data.extend(company_events_data)
+                    print(f"📅 API КАЛЕНДАРЬ КОМПАНИИ: Всего событий после объединения: {len(events_data)}")
+            except Exception as e:
+                print(f"⚠️ API КАЛЕНДАРЬ КОМПАНИИ: Ошибка получения событий календаря компании: {e}")
+        
+        # Если это интервью, получаем события календарей обязательных интервьюеров
+        if include_interviewers and vacancy_id:
+            try:
+                from apps.vacancies.models import Vacancy
+                print(f"🔍 API: Параметры запроса - vacancy_id={vacancy_id}, meeting_type={meeting_type}, include_interviewers={include_interviewers}")
+                vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True, recruiter=request.user)
+                mandatory_interviewers = vacancy.mandatory_tech_interviewers.filter(is_active=True)
+                print(f"🔍 API: Найдено {len(mandatory_interviewers)} обязательных интервьюеров")
+                
+                for interviewer in mandatory_interviewers:
+                    print(f"🔍 API: Обработка интервьюера {interviewer.email}, calendar_link={interviewer.calendar_link}")
+                    
+                    # Пытаемся получить calendar_id разными способами
+                    calendar_id = None
+                    
+                    # Способ 1: Если есть calendar_link, извлекаем из него
+                    if interviewer.calendar_link:
+                        calendar_id = _extract_calendar_id_from_link(interviewer.calendar_link)
+                        print(f"🔍 API: Извлечен calendar_id из ссылки: {calendar_id}")
+                    
+                    # Способ 2: Если calendar_id не найден, используем email напрямую
+                    if not calendar_id:
+                        # Проверяем, есть ли календарь с таким email в списке доступных
+                        calendar = calendar_service.get_calendar_by_email(interviewer.email)
+                        if calendar:
+                            calendar_id = calendar['id']
+                            print(f"🔍 API: Найден календарь по email: {calendar_id}")
+                    
+                    # Способ 3: Если все еще нет calendar_id, используем email напрямую
+                    if not calendar_id:
+                        calendar_id = interviewer.email
+                        print(f"🔍 API: Используем email как calendar_id: {calendar_id}")
+                    
+                    if calendar_id:
+                        try:
+                            print(f"🔍 API: Получение событий для интервьюера {interviewer.email}, calendar_id={calendar_id}")
+                            interviewer_events = calendar_service.get_events(calendar_id=calendar_id, days_ahead=14)
+                            print(f"🔍 API: Получено {len(interviewer_events)} событий от {interviewer.email}")
+                            events_data.extend(interviewer_events)
+                            print(f"🔍 API: Добавлено {len(interviewer_events)} событий от {interviewer.email}, всего событий: {len(events_data)}")
+                        except Exception as e:
+                            print(f"⚠️ API: Ошибка получения событий для {interviewer.email}: {e}")
+                    else:
+                        print(f"⚠️ API: Не удалось определить calendar_id для интервьюера {interviewer.email}")
+            except Vacancy.DoesNotExist:
+                print(f"⚠️ API: Вакансия {vacancy_id} не найдена")
+            except Exception as e:
+                print(f"❌ API: Ошибка при обработке интервьюеров: {e}")
+                import traceback
+                traceback.print_exc()
         
         print(f"🔍 API CALENDAR EVENTS: Получено {len(events_data)} событий из API")
         
         # Преобразуем данные API в формат для JavaScript
         calendar_events_data = []
-        for event_data in events_data:
+        for idx, event_data in enumerate(events_data):
+            # Определяем источник события
+            event_source = "primary"
+            if company_calendar_id and 'company_events_data' in locals() and company_events_data:
+                primary_events_count = len(events_data) - len(company_events_data)
+                if idx >= primary_events_count:
+                    event_source = f"company ({company_calendar_id})"
+            
+            # Получаем информацию о владельце/организаторе события
+            organizer_email = None
+            organizer_name = None
+            creator_email = None
+            if 'organizer' in event_data:
+                organizer_email = event_data['organizer'].get('email', '')
+                organizer_name = event_data['organizer'].get('displayName', '')
+            if 'creator' in event_data:
+                creator_email = event_data['creator'].get('email', '')
+            
+            # Логируем информацию о событии
+            event_title = event_data.get('summary', 'Без названия')
+            print(f"📅 API СОБЫТИЕ [{idx+1}]: '{event_title}'")
+            print(f"   📍 Источник: {event_source}")
+            if organizer_email:
+                print(f"   👤 Организатор: {organizer_email}" + (f" ({organizer_name})" if organizer_name else ""))
+            if creator_email and creator_email != organizer_email:
+                print(f"   ✏️ Создатель: {creator_email}")
             try:
                 # Парсим время начала
                 start_time = None
@@ -2944,12 +3133,14 @@ def api_calendar_events(request):
                         # Заменяем кавычки на безопасные символы
                         description = description.replace('"', "'").replace("'", "'")
                     
+                    is_all_day = 'date' in event_data['start']
                     calendar_events_data.append({
                         'id': event_data['id'],
                         'title': event_data.get('summary', 'Без названия'),
                         'start': start_time.isoformat(),
                         'end': end_time.isoformat() if end_time else start_time.isoformat(),
-                        'is_all_day': 'date' in event_data['start'],
+                        'is_all_day': is_all_day,
+                        'isallday': is_all_day,  # Для совместимости с существующим кодом
                         'location': event_data.get('location', ''),
                         'description': description,
                     })
@@ -3039,124 +3230,140 @@ def api_interviewers_autocomplete(request):
 
 
 @login_required
+def api_third_week_slots(request):
+    """API для расчета слотов третьей недели"""
+    try:
+        vacancy_id = request.GET.get('vacancy_id')
+        meeting_type = request.GET.get('meeting_type', 'screening')
+        
+        print(f"📅 API THIRD WEEK: vacancy_id={vacancy_id}, meeting_type={meeting_type}")
+        
+        if not vacancy_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Не указан ID вакансии'
+            })
+        
+        # Получаем вакансию
+        from apps.vacancies.models import Vacancy
+        try:
+            vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True, recruiter=request.user)
+        except Vacancy.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Вакансия не найдена'
+            })
+        
+        # Получаем настройки рабочего времени из профиля пользователя
+        work_start = 11
+        work_end = 18
+        meeting_interval = 15
+        
+        if hasattr(request.user, 'interview_start_time') and request.user.interview_start_time:
+            if isinstance(request.user.interview_start_time, str):
+                work_start = dt_time.fromisoformat(request.user.interview_start_time).hour
+            else:
+                work_start = request.user.interview_start_time.hour
+        
+        if hasattr(request.user, 'interview_end_time') and request.user.interview_end_time:
+            if isinstance(request.user.interview_end_time, str):
+                work_end = dt_time.fromisoformat(request.user.interview_end_time).hour
+            else:
+                work_end = request.user.interview_end_time.hour
+        
+        if hasattr(request.user, 'meeting_interval_minutes') and request.user.meeting_interval_minutes:
+            meeting_interval = request.user.meeting_interval_minutes
+        
+        print(f"🕐 THIRD WEEK: Рабочие часы {work_start}:00-{work_end}:00, интервал {meeting_interval} мин")
+        
+        from logic.slots_calculator import SlotsCalculator
+        calculator = SlotsCalculator(
+            work_start_hour=work_start,
+            work_end_hour=work_end,
+            meeting_interval_minutes=meeting_interval
+        )
+        
+        # Получаем события календаря
+        from apps.google_oauth.services import GoogleOAuthService, GoogleCalendarService
+        oauth_service = GoogleOAuthService(request.user)
+        calendar_service = GoogleCalendarService(oauth_service)
+        
+        events_data = []
+        
+        if meeting_type == 'screening':
+            # Для скринингов только календарь пользователя
+            print(f"📅 THIRD WEEK: Получение слотов для скринингов")
+            events_data = calendar_service.get_events(days_ahead=21, force_refresh=True)  # Получаем на 3 недели
+            duration = vacancy.screening_duration if hasattr(vacancy, 'screening_duration') and vacancy.screening_duration else 45
+        else:
+            # Для интервью календарь пользователя + интервьюеров
+            print(f"📅 THIRD WEEK: Получение слотов для интервью")
+            events_data = calendar_service.get_events(days_ahead=21, force_refresh=True)
+            
+            mandatory_interviewers = vacancy.mandatory_tech_interviewers.filter(is_active=True)
+            print(f"📅 THIRD WEEK: Найдено {len(mandatory_interviewers)} обязательных интервьюеров")
+            
+            for interviewer in mandatory_interviewers:
+                calendar_id = None
+                
+                if interviewer.calendar_link:
+                    calendar_id = _extract_calendar_id_from_link(interviewer.calendar_link)
+                
+                if not calendar_id:
+                    calendar = calendar_service.get_calendar_by_email(interviewer.email)
+                    if calendar:
+                        calendar_id = calendar['id']
+                
+                if not calendar_id:
+                    calendar_id = interviewer.email
+                
+                if calendar_id:
+                    try:
+                        interviewer_events = calendar_service.get_events(calendar_id=calendar_id, days_ahead=21, force_refresh=True)
+                        events_data.extend(interviewer_events)
+                        print(f"📅 THIRD WEEK: Добавлено {len(interviewer_events)} событий от {interviewer.email}")
+                    except Exception as e:
+                        print(f"⚠️ THIRD WEEK: Ошибка получения событий для {interviewer.email}: {e}")
+            
+            duration = vacancy.tech_interview_duration if hasattr(vacancy, 'tech_interview_duration') and vacancy.tech_interview_duration else 90
+        
+        # Логируем события для отладки
+        print(f"📅 THIRD WEEK: Всего получено {len(events_data)} событий")
+        if events_data:
+            for i, event in enumerate(events_data[:5]):  # Показываем первые 5 событий
+                start_str = event.get('start', {}).get('dateTime', event.get('start', 'N/A'))
+                title = event.get('summary', 'N/A')
+                print(f"📅 THIRD WEEK: Событие {i+1}: {title} - {start_str}")
+        
+        # Рассчитываем слоты для третьей недели
+        third_week_slots = calculator.calculate_slots_for_week(
+            events_data,
+            required_duration_minutes=duration,
+            week_offset=2  # Третья неделя
+        )
+        
+        print(f"📅 THIRD WEEK: Рассчитано {len(third_week_slots)} дней")
+        
+        return JsonResponse({
+            'success': True,
+            'slots': third_week_slots
+        })
+        
+    except Exception as e:
+        print(f"❌ THIRD WEEK: Ошибка: {e}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка расчета слотов: {str(e)}'
+        })
+
+
+@login_required
 @permission_required('google_oauth.view_hrscreening', raise_exception=True)
 def combined_workflow(request):
-    """Объединенная страница для HR-скрининга и инвайтов"""
-    print(f"🔍 COMBINED_WORKFLOW: Метод запроса: {request.method}")
-    print(f"🔍 COMBINED_WORKFLOW: Пользователь: {request.user}")
-    
-    if request.method == 'POST':
-        print(f"🔍 COMBINED_WORKFLOW: POST запрос получен!")
-        print(f"🔍 COMBINED_WORKFLOW: POST данные: {request.POST}")
-        
-        form = CombinedForm(request.POST, user=request.user)
-        print(f"🔍 COMBINED_WORKFLOW: Форма создана")
-        
-        is_valid = form.is_valid()
-        print(f"🔍 COMBINED_WORKFLOW: Форма валидна: {is_valid}")
-        
-        if not is_valid:
-            print(f"❌ COMBINED_WORKFLOW: Ошибки формы: {form.errors}")
-            print(f"❌ COMBINED_WORKFLOW: Ошибки полей: {form.errors.as_data()}")
-        
-        if is_valid:
-            print(f"✅ COMBINED_WORKFLOW: Форма валидна, обрабатываем...")
-            try:
-                combined_data = form.cleaned_data['combined_data']
-                action_type = form.determine_action_type()
-                
-                print(f"🔍 COMBINED_WORKFLOW: Автоматически определен тип действия: {action_type}")
-                
-                hr_screening = None
-                invite = None
-                
-                # Создаем HR-скрининг если нужно - используем существующую форму
-                if action_type in ['hrscreening', 'both']:
-                    print(f"🔍 COMBINED_WORKFLOW: Создаем HR-скрининг через HRScreeningForm...")
-                    
-                    # Создаем данные для HRScreeningForm
-                    hr_form_data = {'input_data': combined_data}
-                    hr_form = HRScreeningForm(hr_form_data, user=request.user)
-                    
-                    if hr_form.is_valid():
-                        hr_screening = hr_form.save()
-                        print(f"✅ COMBINED_WORKFLOW: HR-скрининг создан с ID: {hr_screening.id}")
-                    else:
-                        print(f"❌ COMBINED_WORKFLOW: Ошибки HR-скрининга: {hr_form.errors}")
-                        raise forms.ValidationError(f'Ошибка создания HR-скрининга: {hr_form.errors}')
-                
-                # Создаем инвайт если нужно - используем InviteCombinedForm (полная функциональность)
-                if action_type in ['invite', 'both']:
-                    print(f"🔍 COMBINED_WORKFLOW: Создаем инвайт через InviteCombinedForm...")
-                    
-                    # Создаем данные для InviteCombinedForm
-                    invite_form_data = {'combined_data': combined_data}
-                    
-                    # Передаем данные об интервьюере, если они есть
-                    if 'selected_interviewer' in request.POST:
-                        invite_form_data['selected_interviewer'] = request.POST['selected_interviewer']
-                        print(f"🔍 COMBINED_WORKFLOW: Передаем данные об интервьюере: {request.POST['selected_interviewer']}")
-                    
-                    invite_form = InviteCombinedForm(invite_form_data, user=request.user)
-                    
-                    if invite_form.is_valid():
-                        invite = invite_form.save()
-                        print(f"✅ COMBINED_WORKFLOW: Инвайт создан с ID: {invite.id}")
-                    else:
-                        print(f"❌ COMBINED_WORKFLOW: Ошибки инвайта: {invite_form.errors}")
-                        raise forms.ValidationError(f'Ошибка создания инвайта: {invite_form.errors}')
-                
-                # Формируем сообщение об успехе
-                success_messages = []
-                if hr_screening:
-                    success_messages.append(f'HR-скрининг создан (ID: {hr_screening.id})')
-                if invite:
-                    success_messages.append(f'Инвайт создан (ID: {invite.id})')
-                
-                messages.success(request, ' | '.join(success_messages))
-                
-                # Перенаправляем на соответствующую страницу
-                if action_type == 'hrscreening' and hr_screening:
-                    return redirect('google_oauth:hr_screening_detail', pk=hr_screening.pk)
-                elif action_type == 'invite' and invite:
-                    return redirect('google_oauth:invite_detail', pk=invite.pk)
-                elif action_type == 'both':
-                    # Если созданы оба, перенаправляем на HR-скрининг
-                    if hr_screening:
-                        return redirect('google_oauth:hr_screening_detail', pk=hr_screening.pk)
-                    elif invite:
-                        return redirect('google_oauth:invite_detail', pk=invite.pk)
-                
-            except Exception as e:
-                print(f"❌ COMBINED_WORKFLOW: Ошибка при обработке: {e}")
-                import traceback
-                traceback.print_exc()
-                messages.error(request, f'Ошибка при обработке: {str(e)}')
-        else:
-            print(f"❌ COMBINED_WORKFLOW: Форма невалидна")
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f'{field}: {error}')
-    else:
-        print(f"🔍 COMBINED_WORKFLOW: GET запрос, создаем пустую форму")
-        form = CombinedForm(user=request.user)
-    
-    # Получаем настройки структуры папок для отображения
-    try:
-        from apps.google_oauth.models import ScorecardPathSettings
-        path_settings = ScorecardPathSettings.get_or_create_for_user(request.user)
-        path_preview = path_settings.get_path_preview()
-    except Exception as e:
-        print(f"❌ COMBINED_WORKFLOW: Ошибка получения настроек пути: {e}")
-        path_preview = "Ошибка получения настроек"
-    
-    context = {
-        'form': form,
-        'title': 'Объединенный рабочий процесс',
-        'path_preview': path_preview,
-    }
-    
-    return render(request, 'google_oauth/combined_workflow.html', context)
+    from django.http import Http404
+    raise Http404("Combined workflow отключен администратором")
 
 
 @login_required
@@ -3199,31 +3406,34 @@ def chat_ajax_handler(request, session_id):
 
         # Определяем тип действия (с приоритетом команд)
         print(f"🔍 CHAT AJAX: Анализируем сообщение: '{message_text}'")
-        print(f"🔍 CHAT AJAX: action_type_from_js: '{action_type_from_js}'")
+        print(f"🔍 CHAT AJAX: action_type_from_js: '{action_type_from_js}' (type: {type(action_type_from_js)}, bool: {bool(action_type_from_js)})")
         
-        if message_text.strip().lower().startswith('/del'):
+        # Проверяем команды строго с границами слов или пробелами
+        message_lower = message_text.strip().lower()
+        
+        if re.match(r'^/del(\s|$)', message_lower):
             action_type = 'delete_last'
             print(f"🔍 CHAT AJAX: Команда /del обнаружена - удаление последнего действия")
-        elif message_text.strip().lower().startswith('/s'):
+            message_text = re.sub(r'^/del\s*', '', message_text, flags=re.IGNORECASE).strip()
+        elif re.match(r'^/s(\s|$)', message_lower):
             action_type = 'hrscreening'
-            print(f"🔍 CHAT AJAX: Команда /s обнаружена - принудительный HR-скрининг")
-            message_text = message_text[2:].strip()
-        elif message_text.strip().lower().startswith('/in'):
+            print(f"🔍 CHAT AJAX: Команда /s обнаружена в тексте - принудительный HR-скрининг")
+            message_text = re.sub(r'^/s\s*', '', message_text, flags=re.IGNORECASE).strip()
+        elif re.match(r'^/in(\s|$)', message_lower):
             action_type = 'invite'
-            print(f"🔍 CHAT AJAX: Команда /in обнаружена - принудительный инвайт")
-            message_text = message_text[3:].strip()
+            print(f"🔍 CHAT AJAX: Команда /in обнаружена в тексте - принудительный инвайт")
+            message_text = re.sub(r'^/in\s*', '', message_text, flags=re.IGNORECASE).strip()
         else:
-            # Только если НЕТ команд, используем JavaScript или автоматическое определение
-            if action_type_from_js:
-                # Используем тип действия из JavaScript
-                action_type = action_type_from_js
-                print(f"🔍 CHAT AJAX: Используем тип действия из JS: {action_type}")
+            # Комбинированный/автоматический режим отключен, но допускаем явный тип из JS
+            # ВАЖНО: проверяем что action_type_from_js не пустая строка и не None
+            if action_type_from_js and action_type_from_js.strip():
+                action_type = action_type_from_js.strip()
+                print(f"🔍 CHAT AJAX: Используем тип действия из JS (скрытое поле): '{action_type}'")
             else:
-                # Определяем тип действия автоматически
-                action_type = determine_action_type_from_text(message_text)
-                print(f"🔍 CHAT AJAX: Определен тип действия автоматически: {action_type}")
+                print(f"❌ CHAT AJAX: НЕТ КОМАНДЫ! message_text: '{message_text}', action_type_from_js: '{action_type_from_js}'")
+                return JsonResponse({'success': False, 'error': 'Укажи команду: /s для HR-скрининга или /in для инвайта'})
         
-        print(f"🔍 CHAT AJAX: ФИНАЛЬНЫЙ action_type: {action_type}")
+        print(f"🔍 CHAT AJAX: ФИНАЛЬНЫЙ action_type: '{action_type}'")
 
         # Обрабатываем действие
         if action_type == 'delete_last':
@@ -3416,9 +3626,24 @@ def chat_ajax_handler(request, session_id):
                     content=error_content
                 )
         
-        # Получаем последнее сообщение из чата (то, что только что создали)
-        last_message = ChatMessage.objects.filter(session=chat_session).order_by('-created_at').first()
-        print(f"🔍 CHAT AJAX: Последнее сообщение: {last_message}")
+        # Получаем последнее СИСТЕМНОЕ сообщение из чата (то, что только что создали)
+        # Исключаем пользовательские сообщения, чтобы получить именно результат обработки
+        last_message = ChatMessage.objects.filter(
+            session=chat_session,
+            message_type__in=['hr_screening', 'invite', 'system', 'delete']
+        ).order_by('-created_at').first()
+        
+        # Если не нашли системное, пытаемся найти любое сообщение кроме пользовательского
+        if not last_message:
+            last_message = ChatMessage.objects.filter(
+                session=chat_session
+            ).exclude(message_type='user').order_by('-created_at').first()
+        
+        # Если всё ещё не нашли, берём просто последнее
+        if not last_message:
+            last_message = ChatMessage.objects.filter(session=chat_session).order_by('-created_at').first()
+        
+        print(f"🔍 CHAT AJAX: Последнее системное сообщение: {last_message} (type: {last_message.message_type if last_message else None})")
         
         # Формируем HTML для нового сообщения
         if last_message:
@@ -3437,11 +3662,21 @@ def chat_ajax_handler(request, session_id):
                     "message_id": last_message.id
                 })
             except Exception as e:
-                print(f"🔍 CHAT AJAX: Ошибка рендеринга HTML: {str(e)}")
-                return JsonResponse({"success": True})
+                import traceback
+                error_trace = traceback.format_exc()
+                print(f"❌ CHAT AJAX: Ошибка рендеринга HTML: {str(e)}")
+                print(f"❌ CHAT AJAX: Traceback: {error_trace}")
+                return JsonResponse({
+                    "success": False,
+                    "error": f"Ошибка отображения сообщения: {str(e)}",
+                    "message_type": last_message.message_type if last_message else None
+                })
         else:
-            print(f"🔍 CHAT AJAX: Сообщение не найдено")
-            return JsonResponse({"success": True})
+            print(f"❌ CHAT AJAX: Сообщение не найдено после обработки")
+            return JsonResponse({
+                "success": False,
+                "error": "Сообщение не было создано"
+            })
         
     except json.JSONDecodeError:
         return JsonResponse({'success': False, 'error': 'Неверный JSON'})
@@ -3497,8 +3732,8 @@ def send_chat_message(request):
         # Обрабатываем действие
         if action_type == 'hrscreening':
             # Создаем HR-скрининг
-            screening_form_data = {'combined_data': message_text}
-            screening_form = HRScreeningCombinedForm(screening_form_data, user=request.user)
+            screening_form_data = {'input_data': message_text}
+            screening_form = HRScreeningForm(screening_form_data, user=request.user)
             
             if screening_form.is_valid():
                 try:
@@ -3679,7 +3914,31 @@ def chat_workflow(request, session_id=None):
         )
 
     # Получаем все сообщения в этой сессии
-    messages = chat_session.messages.all().order_by('created_at')
+    messages_queryset = chat_session.messages.all().order_by('created_at')
+    
+    # Добавляем информацию о команде для каждого пользовательского сообщения
+    messages_list = list(messages_queryset)
+    for i, msg in enumerate(messages_list):
+        if msg.message_type == 'user':
+            command_used = None
+            # Проверяем следующее сообщение
+            if i + 1 < len(messages_list):
+                next_msg = messages_list[i + 1]
+                if next_msg.message_type == 'hrscreening':
+                    command_used = '/s'
+                elif next_msg.message_type == 'invite':
+                    command_used = '/in'
+            # Если не нашли по следующему сообщению, проверяем текст
+            if not command_used:
+                content = msg.content or ''
+                if content.startswith('/s ') or content.startswith('/hr '):
+                    command_used = '/s'
+                elif content.startswith('/in ') or content.startswith('/invite '):
+                    command_used = '/in'
+            # Добавляем атрибут к объекту сообщения для использования в шаблоне
+            msg.command_used = command_used
+    
+    messages = messages_list
     form = ChatForm(user=request.user)
 
     if request.method == 'POST':
@@ -3700,26 +3959,29 @@ def chat_workflow(request, session_id=None):
             )
 
             # Определяем тип действия (с приоритетом команд)
-            if message_text.strip().lower().startswith('/del'):
-                # Команда удаления последнего действия
+            message_lower = message_text.strip().lower()
+            
+            if re.match(r'^/del(\s|$)', message_lower):
                 action_type = 'delete_last'
                 print(f"🔍 CHAT: Команда /del обнаружена - удаление последнего действия")
-            elif message_text.strip().lower().startswith('/s'):
-                # Принудительно обрабатываем как HR-скрининг
+                message_text = re.sub(r'^/del\s*', '', message_text, flags=re.IGNORECASE).strip()
+            elif re.match(r'^/s(\s|$)', message_lower):
                 action_type = 'hrscreening'
                 print(f"🔍 CHAT: Команда /s обнаружена - принудительный HR-скрининг")
-                # Убираем команду /s из текста для обработки
-                message_text = message_text[2:].strip()
-            elif message_text.strip().lower().startswith('/in'):
-                # Принудительно обрабатываем как инвайт
+                message_text = re.sub(r'^/s\s*', '', message_text, flags=re.IGNORECASE).strip()
+            elif re.match(r'^/in(\s|$)', message_lower):
                 action_type = 'invite'
                 print(f"🔍 CHAT: Команда /in обнаружена - принудительный инвайт")
-                # Убираем команду /in из текста для обработки
-                message_text = message_text[3:].strip()
+                message_text = re.sub(r'^/in\s*', '', message_text, flags=re.IGNORECASE).strip()
             else:
-                # Определяем тип действия автоматически
-                action_type = determine_action_type_from_text(message_text)
-                print(f"🔍 CHAT: Определен тип действия автоматически: {action_type}")
+                # Комбинированный/автоматический режим отключен: требуем явные команды
+                ChatMessage.objects.create(
+                    session=chat_session,
+                    message_type='system',
+                    content='Укажи команду: /s для HR-скрининга или /in для инвайта'
+                )
+                # Возвращаемся на исходный URL с сохранением query-параметров
+                return redirect(request.get_full_path())
 
             try:
                 if action_type == 'delete_last':
@@ -3943,8 +4205,55 @@ def chat_workflow(request, session_id=None):
     from apps.vacancies.models import Vacancy
     active_vacancies = Vacancy.objects.filter(is_active=True, recruiter=request.user).order_by('name')
     
+    # Получаем календарь компании из настроек
+    company_calendar_id = None
+    company_calendar_warning = None
+    print(f"🔍 КАЛЕНДАРЬ КОМПАНИИ: Начинаем получение настроек...")
+    try:
+        from apps.company_settings.models import CompanySettings
+        print(f"🔍 КАЛЕНДАРЬ КОМПАНИИ: Импорт модели успешен")
+        company_settings = CompanySettings.get_settings()
+        print(f"🔍 КАЛЕНДАРЬ КОМПАНИИ: Получены настройки компании, ID записи: {company_settings.id}")
+        print(f"🔍 КАЛЕНДАРЬ КОМПАНИИ: main_calendar_id = '{company_settings.main_calendar_id}'")
+        
+        if company_settings.main_calendar_id:
+            # main_calendar_id может быть ссылкой или ID, извлекаем ID
+            calendar_input = company_settings.main_calendar_id.strip()
+            print(f"🔍 КАЛЕНДАРЬ КОМПАНИИ: Исходное значение из настроек: '{calendar_input}'")
+            
+            # Проверяем, является ли это ссылкой
+            is_link = 'http' in calendar_input.lower() or 'calendar.google.com' in calendar_input.lower()
+            if is_link:
+                print(f"🔍 КАЛЕНДАРЬ КОМПАНИИ: Обнаружена ссылка, извлекаем calendar_id...")
+            
+            # Извлекаем calendar_id из ссылки или используем как есть, если это уже ID
+            company_calendar_id = _extract_calendar_id_from_link(calendar_input)
+            
+            if company_calendar_id:
+                print(f"✅ КАЛЕНДАРЬ КОМПАНИИ: Извлечен calendar_id из {'ссылки' if is_link else 'значения'}: '{company_calendar_id}'")
+            else:
+                # Если не удалось извлечь из ссылки, возможно это уже ID
+                company_calendar_id = calendar_input
+                print(f"⚠️ КАЛЕНДАРЬ КОМПАНИИ: Не удалось извлечь calendar_id, используем значение как есть: '{company_calendar_id}'")
+            
+            print(f"✅ КАЛЕНДАРЬ КОМПАНИИ: Финальный calendar_id для использования: '{company_calendar_id}'")
+        else:
+            company_calendar_warning = "Календарь компании не настроен. Пожалуйста, настройте главный календарь в разделе 'Настройки компании'."
+            print(f"⚠️ КАЛЕНДАРЬ КОМПАНИИ: Календарь не настроен (main_calendar_id пустой или None)")
+    except ImportError as e:
+        print(f"❌ КАЛЕНДАРЬ КОМПАНИИ: Ошибка импорта модели: {e}")
+        import traceback
+        traceback.print_exc()
+        company_calendar_warning = f"Ошибка импорта модели CompanySettings: {str(e)}"
+    except Exception as e:
+        print(f"❌ КАЛЕНДАРЬ КОМПАНИИ: Ошибка получения настроек: {e}")
+        import traceback
+        traceback.print_exc()
+        company_calendar_warning = f"Не удалось получить настройки календаря компании: {str(e)}"
+    
     # Получаем данные о событиях календаря для JavaScript (как на странице gdata_automation)
     calendar_events_data = []
+    company_calendar_events_data = []
     try:
         from apps.google_oauth.services import GoogleOAuthService, GoogleCalendarService
         import json
@@ -3956,16 +4265,112 @@ def chat_workflow(request, session_id=None):
         oauth_account = oauth_service.get_oauth_account()
         
         if oauth_account:
-            # Получаем события через GoogleCalendarService (как на странице gdata_automation)
             calendar_service = GoogleCalendarService(oauth_service)
-            events_data = calendar_service.get_events(days_ahead=14)
             
-            print(f"🔍 DEBUG CHAT: Получено {len(events_data)} событий из API")
+            # Получаем события календаря пользователя (primary)
+            primary_events_data = calendar_service.get_events(calendar_id='primary', days_ahead=14)
+            
+            print(f"🔍 DEBUG CHAT: Получено {len(primary_events_data)} событий из календаря пользователя")
+            
+            # Получаем события календаря компании, если он настроен
+            company_events_data = []
+            if company_calendar_id:
+                print(f"🔍 КАЛЕНДАРЬ КОМПАНИИ: Начинаем получение событий для calendar_id='{company_calendar_id}'")
+                try:
+                    company_events_data = calendar_service.get_events(calendar_id=company_calendar_id, days_ahead=14)
+                    print(f"✅ КАЛЕНДАРЬ КОМПАНИИ: Успешно получено {len(company_events_data)} событий из календаря компании")
+                    
+                    if len(company_events_data) == 0:
+                        print(f"⚠️ КАЛЕНДАРЬ КОМПАНИИ: Календарь существует, но событий не найдено (возможно, календарь пустой или нет прав доступа)")
+                    
+                    # Подсчитываем события по датам: сегодня и следующая неделя
+                    from datetime import date, timedelta
+                    today = date.today()
+                    next_week_start = today + timedelta(days=(7 - today.weekday()))  # Понедельник следующей недели
+                    next_week_end = next_week_start + timedelta(days=6)  # Воскресенье следующей недели
+                    
+                    events_today = []
+                    events_next_week = []
+                    
+                    for event_data in company_events_data:
+                        try:
+                            event_date = None
+                            if 'dateTime' in event_data.get('start', {}):
+                                event_date_str = event_data['start']['dateTime'].replace('Z', '+00:00')
+                                event_date = datetime.fromisoformat(event_date_str).date()
+                            elif 'date' in event_data.get('start', {}):
+                                event_date = datetime.fromisoformat(event_data['start']['date']).date()
+                            
+                            if event_date:
+                                if event_date == today:
+                                    events_today.append(event_data.get('summary', 'Без названия'))
+                                elif next_week_start <= event_date <= next_week_end:
+                                    events_next_week.append(event_data.get('summary', 'Без названия'))
+                        except Exception as e:
+                            print(f"⚠️ Ошибка обработки даты события: {e}")
+                    
+                    print(f"📅 КАЛЕНДАРЬ КОМПАНИИ: События сегодня ({today}): {len(events_today)}")
+                    if events_today:
+                        for event_title in events_today:
+                            print(f"   - {event_title}")
+                    else:
+                        print(f"   (нет событий)")
+                    
+                    print(f"📅 КАЛЕНДАРЬ КОМПАНИИ: События на следующей неделе ({next_week_start} - {next_week_end}): {len(events_next_week)}")
+                    if events_next_week:
+                        for event_title in events_next_week:
+                            print(f"   - {event_title}")
+                    else:
+                        print(f"   (нет событий)")
+                        
+                except Exception as e:
+                    print(f"❌ КАЛЕНДАРЬ КОМПАНИИ: ОШИБКА получения событий календаря компании: {e}")
+                    print(f"❌ КАЛЕНДАРЬ КОМПАНИИ: Тип ошибки: {type(e).__name__}")
+                    import traceback
+                    traceback.print_exc()
+                    company_calendar_warning = f"Не удалось получить события календаря компании: {str(e)}"
+            else:
+                print(f"⚠️ КАЛЕНДАРЬ КОМПАНИИ: company_calendar_id = None, пропускаем получение событий календаря компании")
+            
+            # Объединяем события: сначала primary, потом company
+            events_data = list(primary_events_data)  # Копируем события пользователя
+            if company_events_data:
+                events_data.extend(company_events_data)
+                print(f"📅 КАЛЕНДАРЬ КОМПАНИИ: Всего событий после объединения: {len(events_data)} (primary: {len(primary_events_data)}, company: {len(company_events_data)})")
+            else:
+                print(f"📅 КАЛЕНДАРЬ КОМПАНИИ: Используются только события primary календаря ({len(events_data)} событий)")
             
             if events_data:
                 # Преобразуем данные API в формат для JavaScript (как на странице gdata_automation)
-                for event_data in events_data:
+                for idx, event_data in enumerate(events_data):
                     try:
+                        # Определяем источник события (календарь) на основе индекса
+                        event_calendar_source = "primary (пользователь)"
+                        if company_calendar_id and company_events_data:
+                            # Если индекс >= количества primary событий, то это событие из календаря компании
+                            primary_events_count = len(primary_events_data)
+                            if idx >= primary_events_count:
+                                event_calendar_source = f"company ({company_calendar_id})"
+                        
+                        # Получаем информацию о владельце/организаторе события
+                        organizer_email = None
+                        organizer_name = None
+                        creator_email = None
+                        if 'organizer' in event_data:
+                            organizer_email = event_data['organizer'].get('email', '')
+                            organizer_name = event_data['organizer'].get('displayName', '')
+                        if 'creator' in event_data:
+                            creator_email = event_data['creator'].get('email', '')
+                        
+                        # Логируем информацию о событии (в серверную консоль)
+                        event_title = event_data.get('summary', 'Без названия')
+                        print(f"📅 СОБЫТИЕ [{idx+1}/{len(events_data)}]: '{event_title}'")
+                        print(f"   📍 Источник календаря: {event_calendar_source}")
+                        if organizer_email:
+                            print(f"   👤 Организатор: {organizer_email}" + (f" ({organizer_name})" if organizer_name else ""))
+                        if creator_email and creator_email != organizer_email:
+                            print(f"   ✏️ Создатель: {creator_email}")
+                        
                         # Парсим время начала
                         start_time = None
                         if 'dateTime' in event_data['start']:
@@ -3989,21 +4394,32 @@ def chat_workflow(request, session_id=None):
                             # Очищаем description от HTML-тегов для безопасного использования в JavaScript
                             description = event_data.get('description', '')
                             if description:
-                                import re
                                 # Удаляем HTML-теги
                                 description = re.sub(r'<[^>]+>', '', description)
                                 # Заменяем кавычки на безопасные символы
                                 description = description.replace('"', "'").replace("'", "'")
                             
-                            calendar_events_data.append({
+                            is_all_day_event = 'date' in event_data['start']
+                            # Добавляем информацию об организаторе и источнике в данные для фронтенда
+                            event_obj = {
                                 'id': event_data['id'],
                                 'title': event_data.get('summary', 'Без названия'),
                                 'start': start_time.isoformat(),
                                 'end': end_time.isoformat() if end_time else start_time.isoformat(),
-                                'is_all_day': 'date' in event_data['start'],
+                                'is_all_day': is_all_day_event,
+                                'isallday': is_all_day_event,  # Для совместимости с существующим кодом
                                 'location': event_data.get('location', ''),
                                 'description': description,
-                            })
+                            }
+                            # Добавляем метаданные для отладки в браузерной консоли
+                            if organizer_email:
+                                event_obj['organizer_email'] = organizer_email
+                                if organizer_name:
+                                    event_obj['organizer_name'] = organizer_name
+                            if creator_email and creator_email != organizer_email:
+                                event_obj['creator_email'] = creator_email
+                            event_obj['calendar_source'] = event_calendar_source
+                            calendar_events_data.append(event_obj)
                     except Exception as e:
                         print(f"Ошибка обработки события {event_data.get('id', 'unknown')}: {e}")
                         continue
@@ -4026,15 +4442,219 @@ def chat_workflow(request, session_id=None):
     except Exception as e:
         print(f"🔍 DEBUG CHAT: Ошибка получения фото пользователя: {e}")
     
+    # Получаем список обязательных интервьюеров для тех. интервью
+    mandatory_interviewers = []
+    if vacancy and hasattr(vacancy, 'mandatory_tech_interviewers'):
+        mandatory_interviewers = list(vacancy.mandatory_tech_interviewers.all())
+    
+    # Вычисляем слоты для скринингов и интервью
+    screening_slots = []
+    interview_slots = []
+    
+    if vacancy:
+        # Получаем настройки рабочего времени из профиля пользователя
+        work_start = 11
+        work_end = 18
+        meeting_interval = 15
+        
+        if hasattr(request.user, 'interview_start_time') and request.user.interview_start_time:
+            if isinstance(request.user.interview_start_time, str):
+                work_start = dt_time.fromisoformat(request.user.interview_start_time).hour
+            else:
+                work_start = request.user.interview_start_time.hour
+        
+        if hasattr(request.user, 'interview_end_time') and request.user.interview_end_time:
+            if isinstance(request.user.interview_end_time, str):
+                work_end = dt_time.fromisoformat(request.user.interview_end_time).hour
+            else:
+                work_end = request.user.interview_end_time.hour
+        
+        if hasattr(request.user, 'meeting_interval_minutes') and request.user.meeting_interval_minutes:
+            meeting_interval = request.user.meeting_interval_minutes
+        
+        print(f"🕐 НАСТРОЙКИ: Рабочие часы {work_start}:00-{work_end}:00, интервал {meeting_interval} мин")
+        
+        from logic.slots_calculator import SlotsCalculator
+        calculator = SlotsCalculator(
+            work_start_hour=work_start,
+            work_end_hour=work_end,
+            meeting_interval_minutes=meeting_interval
+        )
+        
+        # Слоты для скринингов (только календарь пользователя)
+        screening_duration = None
+        if hasattr(vacancy, 'screening_duration') and vacancy.screening_duration:
+            screening_duration = vacancy.screening_duration
+        else:
+            screening_duration = 45
+        
+        print(f"📅 СЛОТЫ СКРИНИНГОВ: Начинаем поиск доступных слотов")
+        print(f"📅 СЛОТЫ СКРИНИНГОВ: Длительность встречи: {screening_duration} минут")
+        print(f"📅 СЛОТЫ СКРИНИНГОВ: События календаря: {len(calendar_events_data)}")
+        if company_calendar_id:
+            print(f"📅 СЛОТЫ СКРИНИНГОВ: Используются календари: пользователь {request.user.email} + компания ({company_calendar_id})")
+        else:
+            print(f"📅 СЛОТЫ СКРИНИНГОВ: Используется календарь пользователя {request.user.email} (календарь компании не настроен)")
+        
+        # Создаем список событий для калькулятора слотов (в формате для SlotsCalculator)
+        # Преобразуем calendar_events_data в формат, который понимает калькулятор
+        screening_events_for_calc = []
+        for event in calendar_events_data:
+            screening_events_for_calc.append({
+                'start': event['start'],
+                'end': event['end'],
+                'is_all_day': event.get('is_all_day', event.get('isallday', False)),
+            })
+        
+        print(f"📅 СЛОТЫ СКРИНИНГОВ: Подготовлено {len(screening_events_for_calc)} событий для расчета (пользователь + компания)")
+        print(f"📅 СЛОТЫ СКРИНИНГОВ: Из них событий календаря компании: {len([e for e in calendar_events_data if e.get('calendar_source', '').startswith('company')])}")
+        
+        screening_slots = calculator.calculate_slots_for_two_weeks(
+            screening_events_for_calc, 
+            required_duration_minutes=screening_duration
+        )
+        
+        print(f"📅 СЛОТЫ СКРИНИНГОВ: Рассчитано {len(screening_slots)} дней со слотами")
+        
+        # Слоты для интервью (календарь пользователя + календарь компании + календари интервьюеров)
+        # Для интервью мы должны учитывать занятость ВСЕХ участников
+        # Поэтому объединяем события из календарей пользователя, компании и интервьюеров
+        # Начинаем с событий пользователя и компании (уже объединены в calendar_events_data)
+        interview_events_for_calc = []
+        for event in calendar_events_data:
+            interview_events_for_calc.append({
+                'start': event['start'],
+                'end': event['end'],
+                'is_all_day': event.get('is_all_day', event.get('isallday', False)),
+            })
+        
+        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Начинаем поиск доступных слотов")
+        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Базовые события от пользователя и компании: {len(interview_events_for_calc)}")
+        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Из них событий календаря компании: {len([e for e in calendar_events_data if e.get('calendar_source', '').startswith('company')])}")
+        
+        if mandatory_interviewers:
+            print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Найдено {len(mandatory_interviewers)} обязательных интервьюеров")
+            
+            try:
+                from apps.google_oauth.services import GoogleOAuthService, GoogleCalendarService
+                oauth_service = GoogleOAuthService(request.user)
+                calendar_service = GoogleCalendarService(oauth_service)
+                
+                # Список используемых календарей для логирования
+                used_calendars = []
+                
+                for interviewer in mandatory_interviewers:
+                    calendar_id = None
+                    
+                    # Способ 1: Извлекаем из calendar_link
+                    if interviewer.calendar_link:
+                        calendar_id = _extract_calendar_id_from_link(interviewer.calendar_link)
+                        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Интервьюер {interviewer.email} - извлечен calendar_id из ссылки: {calendar_id}")
+                    
+                    # Способ 2: Проверяем календарь по email
+                    if not calendar_id:
+                        calendar = calendar_service.get_calendar_by_email(interviewer.email)
+                        if calendar:
+                            calendar_id = calendar['id']
+                            print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Интервьюер {interviewer.email} - найден календарь по email: {calendar_id}")
+                    
+                    # Способ 3: Используем email
+                    if not calendar_id:
+                        calendar_id = interviewer.email
+                        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Интервьюер {interviewer.email} - используем email как calendar_id: {calendar_id}")
+                    
+                    if calendar_id:
+                        used_calendars.append(f"{interviewer.email} ({calendar_id})")
+                        
+                        try:
+                            print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Загружаем события для {interviewer.email}, calendar_id={calendar_id}")
+                            interviewer_events = calendar_service.get_events(calendar_id=calendar_id, days_ahead=14)
+                            print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Получено {len(interviewer_events)} событий от {interviewer.email}")
+                            
+                            # Преобразуем в формат для калькулятора
+                            for event_data in interviewer_events:
+                                try:
+                                    # Получаем информацию о владельце/организаторе события
+                                    organizer_email = None
+                                    organizer_name = None
+                                    if 'organizer' in event_data:
+                                        organizer_email = event_data['organizer'].get('email', '')
+                                        organizer_name = event_data['organizer'].get('displayName', '')
+                                    
+                                    # Логируем информацию о событии интервьюера
+                                    event_title = event_data.get('summary', 'Без названия')
+                                    print(f"📅 СОБЫТИЕ ИНТЕРВЬЮЕРА [{interviewer.email}]: '{event_title}'")
+                                    if organizer_email:
+                                        print(f"   👤 Организатор: {organizer_email}" + (f" ({organizer_name})" if organizer_name else ""))
+                                    
+                                    start_time = None
+                                    if 'dateTime' in event_data['start']:
+                                        start_time = datetime.fromisoformat(event_data['start']['dateTime'].replace('Z', '+00:00'))
+                                        minsk_tz = pytz.timezone('Europe/Minsk')
+                                        start_time = start_time.astimezone(minsk_tz)
+                                    
+                                    end_time = None
+                                    if 'dateTime' in event_data['end']:
+                                        end_time = datetime.fromisoformat(event_data['end']['dateTime'].replace('Z', '+00:00'))
+                                        minsk_tz = pytz.timezone('Europe/Minsk')
+                                        end_time = end_time.astimezone(minsk_tz)
+                                    
+                                    if start_time:
+                                        is_all_day = 'date' in event_data['start']
+                                        # Добавляем событие интервьюера в формат для калькулятора
+                                        interview_events_for_calc.append({
+                                            'start': start_time.isoformat(),
+                                            'end': end_time.isoformat() if end_time else start_time.isoformat(),
+                                            'is_all_day': is_all_day,
+                                        })
+                                except Exception as e:
+                                    print(f"⚠️ Ошибка обработки события интервьюера {interviewer.email}: {e}")
+                            
+                            print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Обработано событий от {interviewer.email}, теперь всего: {len(interview_events_for_calc)}")
+                        except Exception as e:
+                            print(f"⚠️ Ошибка получения событий для {interviewer.email}: {e}")
+                    else:
+                        print(f"⚠️ СЛОТЫ ИНТЕРВЬЮ: Не удалось определить calendar_id для {interviewer.email}")
+                            
+                print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Итого событий для расчета слотов: {len(interview_events_for_calc)}")
+                print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Из них: пользователь + компания = {len(calendar_events_data)}, интервьюеры = {len(interview_events_for_calc) - len(calendar_events_data)}")
+                print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Использованные календари: пользователь + компания + {', '.join(used_calendars) if used_calendars else 'нет интервьюеров'}")
+            except Exception as e:
+                print(f"⚠️ Ошибка при получении событий интервьюеров: {e}")
+                import traceback
+                traceback.print_exc()
+        
+        # Рассчитываем слоты для интервью
+        interview_duration = None
+        if hasattr(vacancy, 'tech_interview_duration') and vacancy.tech_interview_duration:
+            interview_duration = vacancy.tech_interview_duration
+        else:
+            interview_duration = 90
+        
+        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Длительность встречи: {interview_duration} минут")
+        
+        interview_slots = calculator.calculate_slots_for_two_weeks(
+            interview_events_for_calc,
+            required_duration_minutes=interview_duration
+        )
+        
+        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Рассчитано {len(interview_slots)} дней со слотами")
+    
     context = {
         'form': form,
         'chat_session': chat_session,
         'messages': messages,
         'active_vacancies': active_vacancies,
         'selected_vacancy': vacancy,
+        'timestamp': int(time()),
         'calendar_events_data': calendar_events_data,
         'slots_settings': slots_settings,
         'user_photo_url': user_photo_url,
+        'mandatory_interviewers': mandatory_interviewers,
+        'screening_slots_json': json.dumps(screening_slots),
+        'interview_slots_json': json.dumps(interview_slots),
+        'company_calendar_id': company_calendar_id,
+        'company_calendar_warning': company_calendar_warning,
         'title': 'Чат-помощник',
     }
 

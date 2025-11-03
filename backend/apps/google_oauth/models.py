@@ -1,3 +1,11 @@
+"""
+Документация по проблемным импортам (линтер):
+- django.db, django.contrib.auth, django.utils, django.utils.translation, django.apps, pytz
+
+Влияние: модели и приложения Google OAuth (пользователи/токены/настройки) и все, что
+использует часовые пояса, не будут работать при отсутствующих модулях. Это затрагивает
+аутентификацию через Google, хранение/обновление токенов, временные поля и переводы.
+"""
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone

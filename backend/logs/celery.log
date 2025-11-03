@@ -1,10 +1,10 @@
  
  -------------- celery@andrei-golubenko-macbook.local v5.5.3 (immunity)
 --- ***** ----- 
--- ******* ---- macOS-26.0.1-arm64-arm-64bit-Mach-O 2025-10-28 23:09:13
+-- ******* ---- macOS-26.0.1-arm64-arm-64bit-Mach-O 2025-10-31 20:02:28
 - *** --- * --- 
 - ** ---------- [config]
-- ** ---------- .> app:         hrhelper:0x109103b60
+- ** ---------- .> app:         hrhelper:0x108ab3b60
 - ** ---------- .> transport:   redis://127.0.0.1:6379/0
 - ** ---------- .> results:     redis://127.0.0.1:6379/0
 - *** --- * --- .> concurrency: 1 (prefork)
@@ -36,7 +36,147 @@
   . config.celery.save_hh_analysis_result
   . config.celery.update_currency_rates
 
-[2025-10-28 23:09:13,262: INFO/MainProcess] Connected to redis://127.0.0.1:6379/0
-[2025-10-28 23:09:13,267: INFO/MainProcess] mingle: searching for neighbors
-[2025-10-28 23:09:14,275: INFO/MainProcess] mingle: all alone
-[2025-10-28 23:09:14,286: INFO/MainProcess] celery@andrei-golubenko-macbook.local ready.
+[2025-10-31 20:02:28,500: INFO/MainProcess] Connected to redis://127.0.0.1:6379/0
+[2025-10-31 20:02:28,506: INFO/MainProcess] mingle: searching for neighbors
+[2025-10-31 20:02:29,514: INFO/MainProcess] mingle: all alone
+[2025-10-31 20:02:29,527: INFO/MainProcess] celery@andrei-golubenko-macbook.local ready.
+[2025-10-31 20:02:44,541: INFO/MainProcess] Task apps.notion_int.tasks.bulk_import_notion_pages[a14e43bb-40e4-471b-b9ad-ade2f5096e1c] received
+[2025-10-31 20:02:44,549: INFO/ForkPoolWorker-1] 🚀 [CELERY TASK] Начало массового импорта: user_id=3, database_id=2875dfbd-a804-80df-830d-e5e6f70b9bc5, bulk_import_id=6, max_pages=100
+[2025-10-31 20:02:44,581: INFO/ForkPoolWorker-1] ✅ [CELERY TASK] Пользователь найден: andrei.golubenko (ID: 3)
+[2025-10-31 20:02:44,584: INFO/ForkPoolWorker-1] ✅ [CELERY TASK] Настройки Notion найдены, database_id=2875dfbd-a804-80df-830d-e5e6f70b9bc5
+[2025-10-31 20:02:44,590: INFO/ForkPoolWorker-1] ✅ [CELERY TASK] Используем существующую запись массового импорта #6, статус обновлен на 'running'
+[2025-10-31 20:02:44,591: INFO/ForkPoolWorker-1] 📋 [CELERY TASK] Начинаем массовый импорт для пользователя andrei.golubenko (bulk_import_id=6)
+[2025-10-31 20:02:44,592: INFO/ForkPoolWorker-1] ✅ [CELERY TASK] NotionService инициализирован
+[2025-10-31 20:02:44,592: INFO/ForkPoolWorker-1] 🔍 [CELERY TASK] Получаем страницы из базы данных Notion: 2875dfbd-a804-80df-830d-e5e6f70b9bc5
+[2025-10-31 20:02:44,593: INFO/ForkPoolWorker-1] Notion API запрос: POST https://api.notion.com/v1/databases/2875dfbd-a804-80df-830d-e5e6f70b9bc5/query
+[2025-10-31 20:02:45,134: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:45,137: INFO/ForkPoolWorker-1] Получена страница 1, найдено 8 страниц, всего: 8
+[2025-10-31 20:02:45,141: INFO/ForkPoolWorker-1] 📊 [CELERY TASK] Всего страниц для обработки: 8, обновлено bulk_import.total_pages=8
+[2025-10-31 20:02:45,142: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Доступные свойства: ['Created', 'Interview Date', 'Language', 'Нюансы', 'Rabota.by', 'LinkedIn', 'Status', 'Interviewer', 'Name', 'CV', 'Screening Owner', 'Email', 'Phone', 'Level', 'Salary Requested']
+[2025-10-31 20:02:45,142: INFO/ForkPoolWorker-1]   🎯 STATUS поле: 'Status' = 'On Board'
+[2025-10-31 20:02:45,143: INFO/ForkPoolWorker-1]   📌 SELECT поле: 'Screening Owner' = 'Anton Dubrouski'
+[2025-10-31 20:02:45,143: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Ищем статус по точному названию...
+[2025-10-31 20:02:45,143: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Статус найден в поле 'Status': 'On Board'
+[2025-10-31 20:02:45,143: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Извлечен Status: 'On Board' (из 15 свойств)
+[2025-10-31 20:02:45,144: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Статус будет сохранен в parsed_data['status'] = 'On Board'
+[2025-10-31 20:02:45,144: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Interviewer (raw): ['Andrei Golubenko']
+[2025-10-31 20:02:45,144: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Извлечен Interviewer: 'Andrei Golubenko'
+[2025-10-31 20:02:45,144: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Извлечен Interview Date: 2025-10-07 00:00:00
+[2025-10-31 20:02:45,144: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/blocks/29d5dfbd-a804-8008-bea6-f6ff56e64bf5/children
+[2025-10-31 20:02:45,830: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:45,831: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/comments?block_id=29d5dfbd-a804-8008-bea6-f6ff56e64bf5
+[2025-10-31 20:02:46,448: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:46,456: WARNING/ForkPoolWorker-1] /Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1595: RuntimeWarning: DateTimeField NotionPage.interview_date received a naive datetime (2025-10-07 00:00:00) while time zone support is active.
+  warnings.warn(
+
+[2025-10-31 20:02:46,460: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Доступные свойства: ['Created', 'Interview Date', 'Language', 'Нюансы', 'Rabota.by', 'LinkedIn', 'Status', 'Interviewer', 'Name', 'CV', 'Screening Owner', 'Email', 'Phone', 'Level', 'Salary Requested']
+[2025-10-31 20:02:46,461: INFO/ForkPoolWorker-1]   🎯 STATUS поле: 'Status' = 'Tech Interview'
+[2025-10-31 20:02:46,461: INFO/ForkPoolWorker-1]   📌 SELECT поле: 'Screening Owner' = 'Anton Dubrouski'
+[2025-10-31 20:02:46,461: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Ищем статус по точному названию...
+[2025-10-31 20:02:46,461: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Статус найден в поле 'Status': 'Tech Interview'
+[2025-10-31 20:02:46,461: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Извлечен Status: 'Tech Interview' (из 15 свойств)
+[2025-10-31 20:02:46,462: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Статус будет сохранен в parsed_data['status'] = 'Tech Interview'
+[2025-10-31 20:02:46,462: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Interviewer (raw): ['Andrei Golubenko']
+[2025-10-31 20:02:46,462: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Извлечен Interviewer: 'Andrei Golubenko'
+[2025-10-31 20:02:46,462: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Извлечен Interview Date: 2025-10-07 00:00:00
+[2025-10-31 20:02:46,462: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/blocks/29d5dfbd-a804-803b-8ce6-c538b2aa58eb/children
+[2025-10-31 20:02:47,035: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:47,036: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/comments?block_id=29d5dfbd-a804-803b-8ce6-c538b2aa58eb
+[2025-10-31 20:02:48,081: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:48,084: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Доступные свойства: ['Created', 'Interview Date', 'Language', 'Нюансы', 'Rabota.by', 'LinkedIn', 'Status', 'Interviewer', 'Name', 'CV', 'Screening Owner', 'Email', 'Phone', 'Level', 'Salary Requested']
+[2025-10-31 20:02:48,085: INFO/ForkPoolWorker-1]   🎯 STATUS поле: 'Status' = 'No'
+[2025-10-31 20:02:48,085: INFO/ForkPoolWorker-1]   📌 SELECT поле: 'Screening Owner' = 'Anton Dubrouski'
+[2025-10-31 20:02:48,085: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Ищем статус по точному названию...
+[2025-10-31 20:02:48,085: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Статус найден в поле 'Status': 'No'
+[2025-10-31 20:02:48,085: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Извлечен Status: 'No' (из 15 свойств)
+[2025-10-31 20:02:48,085: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Статус будет сохранен в parsed_data['status'] = 'No'
+[2025-10-31 20:02:48,085: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Interviewer (raw): ['Andrei Golubenko']
+[2025-10-31 20:02:48,086: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Извлечен Interviewer: 'Andrei Golubenko'
+[2025-10-31 20:02:48,086: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Извлечен Interview Date: 2025-10-07 00:00:00
+[2025-10-31 20:02:48,086: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/blocks/29d5dfbd-a804-8043-81a2-fa3ac390d713/children
+[2025-10-31 20:02:48,485: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:48,487: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/comments?block_id=29d5dfbd-a804-8043-81a2-fa3ac390d713
+[2025-10-31 20:02:48,952: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:48,957: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Доступные свойства: ['Created', 'Interview Date', 'Language', 'Нюансы', 'Rabota.by', 'LinkedIn', 'Status', 'Interviewer', 'Name', 'CV', 'Screening Owner', 'Email', 'Phone', 'Level', 'Salary Requested']
+[2025-10-31 20:02:48,957: INFO/ForkPoolWorker-1]   🎯 STATUS поле: 'Status' = 'On Board'
+[2025-10-31 20:02:48,957: INFO/ForkPoolWorker-1]   📌 SELECT поле: 'Screening Owner' = 'Anton Dubrouski'
+[2025-10-31 20:02:48,957: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Ищем статус по точному названию...
+[2025-10-31 20:02:48,958: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Статус найден в поле 'Status': 'On Board'
+[2025-10-31 20:02:48,958: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Извлечен Status: 'On Board' (из 15 свойств)
+[2025-10-31 20:02:48,958: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Статус будет сохранен в parsed_data['status'] = 'On Board'
+[2025-10-31 20:02:48,958: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Interviewer (raw): ['Andrei Golubenko']
+[2025-10-31 20:02:48,958: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Извлечен Interviewer: 'Andrei Golubenko'
+[2025-10-31 20:02:48,959: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Извлечен Interview Date: 2025-10-07 00:00:00
+[2025-10-31 20:02:48,959: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/blocks/29d5dfbd-a804-8047-9233-d76143cb5fda/children
+[2025-10-31 20:02:49,417: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:49,421: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/comments?block_id=29d5dfbd-a804-8047-9233-d76143cb5fda
+[2025-10-31 20:02:49,948: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:49,955: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Доступные свойства: ['Created', 'Interview Date', 'Language', 'Нюансы', 'Rabota.by', 'LinkedIn', 'Status', 'Interviewer', 'Name', 'CV', 'Screening Owner', 'Email', 'Phone', 'Level', 'Salary Requested']
+[2025-10-31 20:02:49,955: INFO/ForkPoolWorker-1]   🎯 STATUS поле: 'Status' = 'On Board'
+[2025-10-31 20:02:49,955: INFO/ForkPoolWorker-1]   📌 SELECT поле: 'Screening Owner' = 'Anton Dubrouski'
+[2025-10-31 20:02:49,956: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Ищем статус по точному названию...
+[2025-10-31 20:02:49,956: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Статус найден в поле 'Status': 'On Board'
+[2025-10-31 20:02:49,956: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Извлечен Status: 'On Board' (из 15 свойств)
+[2025-10-31 20:02:49,956: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Статус будет сохранен в parsed_data['status'] = 'On Board'
+[2025-10-31 20:02:49,956: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Interviewer (raw): ['Andrei Golubenko']
+[2025-10-31 20:02:49,957: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Извлечен Interviewer: 'Andrei Golubenko'
+[2025-10-31 20:02:49,957: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Извлечен Interview Date: 2025-10-07 00:00:00
+[2025-10-31 20:02:49,957: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/blocks/29d5dfbd-a804-8098-afa7-c84ad3819ff5/children
+[2025-10-31 20:02:50,361: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:50,362: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/comments?block_id=29d5dfbd-a804-8098-afa7-c84ad3819ff5
+[2025-10-31 20:02:51,210: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:51,225: INFO/ForkPoolWorker-1] 📊 Прогресс обновлен: обработано 5/8, успешно: 5, ошибок: 0
+[2025-10-31 20:02:51,226: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Доступные свойства: ['Created', 'Interview Date', 'Language', 'Нюансы', 'Rabota.by', 'LinkedIn', 'Status', 'Interviewer', 'Name', 'CV', 'Screening Owner', 'Email', 'Phone', 'Level', 'Salary Requested']
+[2025-10-31 20:02:51,227: INFO/ForkPoolWorker-1]   🎯 STATUS поле: 'Status' = 'On Board'
+[2025-10-31 20:02:51,227: INFO/ForkPoolWorker-1]   📌 SELECT поле: 'Screening Owner' = 'Anton Dubrouski'
+[2025-10-31 20:02:51,227: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Ищем статус по точному названию...
+[2025-10-31 20:02:51,228: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Статус найден в поле 'Status': 'On Board'
+[2025-10-31 20:02:51,228: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Извлечен Status: 'On Board' (из 15 свойств)
+[2025-10-31 20:02:51,228: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Статус будет сохранен в parsed_data['status'] = 'On Board'
+[2025-10-31 20:02:51,228: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Interviewer (raw): ['Andrei Golubenko']
+[2025-10-31 20:02:51,229: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Извлечен Interviewer: 'Andrei Golubenko'
+[2025-10-31 20:02:51,229: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Извлечен Interview Date: 2025-10-07 00:00:00
+[2025-10-31 20:02:51,229: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/blocks/29d5dfbd-a804-80a9-ac42-e2ea42c92a8f/children
+[2025-10-31 20:02:52,997: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:53,001: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/comments?block_id=29d5dfbd-a804-80a9-ac42-e2ea42c92a8f
+[2025-10-31 20:02:53,618: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:53,624: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Доступные свойства: ['Created', 'Interview Date', 'Language', 'Нюансы', 'Rabota.by', 'LinkedIn', 'Status', 'Interviewer', 'Name', 'CV', 'Screening Owner', 'Email', 'Phone', 'Level', 'Salary Requested']
+[2025-10-31 20:02:53,624: INFO/ForkPoolWorker-1]   🎯 STATUS поле: 'Status' = 'Offer Approved'
+[2025-10-31 20:02:53,624: INFO/ForkPoolWorker-1]   📌 SELECT поле: 'Screening Owner' = 'Anton Dubrouski'
+[2025-10-31 20:02:53,625: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Ищем статус по точному названию...
+[2025-10-31 20:02:53,625: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Статус найден в поле 'Status': 'Offer Approved'
+[2025-10-31 20:02:53,625: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Извлечен Status: 'Offer Approved' (из 15 свойств)
+[2025-10-31 20:02:53,625: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Статус будет сохранен в parsed_data['status'] = 'Offer Approved'
+[2025-10-31 20:02:53,625: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Interviewer (raw): ['Andrei Golubenko']
+[2025-10-31 20:02:53,626: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Извлечен Interviewer: 'Andrei Golubenko'
+[2025-10-31 20:02:53,626: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Извлечен Interview Date: 2025-10-07 00:00:00
+[2025-10-31 20:02:53,626: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/blocks/29d5dfbd-a804-80f4-a468-ff7a348057f5/children
+[2025-10-31 20:02:54,236: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:54,238: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/comments?block_id=29d5dfbd-a804-80f4-a468-ff7a348057f5
+[2025-10-31 20:02:54,722: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:54,724: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/users/ac5f0b8c-3043-4111-bde3-535c2c6fcbe8
+[2025-10-31 20:02:55,190: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:55,192: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/users/ac5f0b8c-3043-4111-bde3-535c2c6fcbe8
+[2025-10-31 20:02:55,761: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:55,767: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Доступные свойства: ['Created', 'Interview Date', 'Language', 'Нюансы', 'Rabota.by', 'LinkedIn', 'Status', 'Interviewer', 'Name', 'CV', 'Screening Owner', 'Email', 'Phone', 'Level', 'Salary Requested']
+[2025-10-31 20:02:55,767: INFO/ForkPoolWorker-1]   🎯 STATUS поле: 'Status' = 'Screening'
+[2025-10-31 20:02:55,767: INFO/ForkPoolWorker-1]   📌 SELECT поле: 'Screening Owner' = 'Anton Dubrouski'
+[2025-10-31 20:02:55,767: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Ищем статус по точному названию...
+[2025-10-31 20:02:55,768: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Статус найден в поле 'Status': 'Screening'
+[2025-10-31 20:02:55,768: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Извлечен Status: 'Screening' (из 15 свойств)
+[2025-10-31 20:02:55,768: INFO/ForkPoolWorker-1] ✅ NOTION PARSE: Статус будет сохранен в parsed_data['status'] = 'Screening'
+[2025-10-31 20:02:55,768: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Interviewer (raw): ['Andrei Golubenko']
+[2025-10-31 20:02:55,768: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Извлечен Interviewer: 'Andrei Golubenko'
+[2025-10-31 20:02:55,769: INFO/ForkPoolWorker-1] 🔍 NOTION PARSE: Извлечен Interview Date: 2025-10-07 00:00:00
+[2025-10-31 20:02:55,769: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/blocks/5dc39aae-3bf8-4389-9175-fe850739b8ac/children
+[2025-10-31 20:02:56,302: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:56,304: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/comments?block_id=5dc39aae-3bf8-4389-9175-fe850739b8ac
+[2025-10-31 20:02:57,167: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:57,169: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/users/ac5f0b8c-3043-4111-bde3-535c2c6fcbe8
+[2025-10-31 20:02:58,650: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:58,654: INFO/ForkPoolWorker-1] Notion API запрос: GET https://api.notion.com/v1/users/ac5f0b8c-3043-4111-bde3-535c2c6fcbe8
+[2025-10-31 20:02:59,141: INFO/ForkPoolWorker-1] Notion API ответ: 200
+[2025-10-31 20:02:59,147: INFO/ForkPoolWorker-1] 📊 Прогресс обновлен: обработано 8/8, успешно: 8, ошибок: 0
+[2025-10-31 20:02:59,149: INFO/ForkPoolWorker-1] ✅ Массовый импорт завершен (ID: 6): обработано 8/8, успешно: 8, ошибок: 0
+[2025-10-31 20:02:59,152: INFO/ForkPoolWorker-1] Массовый импорт завершен для пользователя andrei.golubenko: 8 страниц
+[2025-10-31 20:02:59,158: INFO/ForkPoolWorker-1] Task apps.notion_int.tasks.bulk_import_notion_pages[a14e43bb-40e4-471b-b9ad-ade2f5096e1c] succeeded in 14.612771332991542s: {'status': 'completed', 'message': 'Импорт завершен: 8 страниц обработано', 'total_pages': 8, 'pages_created': 0, 'pages_updated': 8, 'failed_pages': 0}

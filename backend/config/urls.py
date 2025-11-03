@@ -36,6 +36,7 @@ urlpatterns = [
     path('clickup/', include('apps.clickup_int.urls')),
     path('notion/', include('apps.notion_int.urls')),
     path('hiring-plans/', include('apps.hiring_plan.urls')),
+    path('company-settings/', include('apps.company_settings.urls')),
     
     # Common URLs (обработчики ошибок)
     path('common/', include('apps.common.urls')),

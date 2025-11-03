@@ -335,6 +335,187 @@
                     <p><strong>Права доступа:</strong> Интеграция должна иметь доступ к чтению базы данных</p>
                 </div>
             </div>
+
+            <!-- Связки Notion-Huntflow -->
+            <div class="settings-card">
+                <h5 class="mb-4">
+                    <i class="fas fa-link"></i> Связки Notion ↔ Huntflow
+                </h5>
+
+                <!-- Language → Вакансия -->
+                <div class="mb-5">
+                    <h6 class="mb-3">Language → Вакансия</h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Language (Notion)</th>
+                                    <th>Вакансия (Huntflow)</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="language-mappings-body">
+                                {% for mapping in language_mappings %}
+                                <tr data-mapping-id="{{ mapping.id }}">
+                                    <td>{{ mapping.notion_value }}</td>
+                                    <td>
+                                        {% for vacancy in huntflow_vacancies %}
+                                            {% if vacancy.id|stringformat:"s" == mapping.huntflow_value %}
+                                                {{ vacancy.name }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteMapping({{ mapping.id }})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-5">
+                            <select class="form-select" id="language-notion-select">
+                                <option value="">-- Выберите Language --</option>
+                                {% for lang in notion_languages %}
+                                <option value="{{ lang }}">{{ lang }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <select class="form-select" id="language-vacancy-select">
+                                <option value="">-- Выберите вакансию --</option>
+                                {% for vacancy in huntflow_vacancies %}
+                                <option value="{{ vacancy.id }}">{{ vacancy.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary w-100" onclick="saveMapping('language_vacancy', 'language-notion-select', 'language-vacancy-select')">
+                                <i class="fas fa-plus"></i> Добавить
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Нюансы → Поля кандидата -->
+                <div class="mb-5">
+                    <h6 class="mb-3">Нюансы → Поля кандидата</h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Нюансы (Notion)</th>
+                                    <th>Поле кандидата (Huntflow)</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="nuances-mappings-body">
+                                {% for mapping in nuances_mappings %}
+                                <tr data-mapping-id="{{ mapping.id }}">
+                                    <td>{{ mapping.notion_value }}</td>
+                                    <td>
+                                        {% for field in huntflow_fields %}
+                                            {% if field.id|stringformat:"s" == mapping.huntflow_value %}
+                                                {{ field.name }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteMapping({{ mapping.id }})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-5">
+                            <select class="form-select" id="nuances-notion-select">
+                                <option value="">-- Выберите Нюансы --</option>
+                                {% for nuance in notion_nuances %}
+                                <option value="{{ nuance }}">{{ nuance }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <select class="form-select" id="nuances-field-select">
+                                <option value="">-- Выберите поле --</option>
+                                {% for field in huntflow_fields %}
+                                <option value="{{ field.id }}">{{ field.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary w-100" onclick="saveMapping('nuances_field', 'nuances-notion-select', 'nuances-field-select')">
+                                <i class="fas fa-plus"></i> Добавить
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Notion → Status Huntflow -->
+                <div class="mb-5">
+                    <h6 class="mb-3">Status Notion → Status Huntflow</h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Status (Notion)</th>
+                                    <th>Status (Huntflow)</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="status-mappings-body">
+                                {% for mapping in status_mappings %}
+                                <tr data-mapping-id="{{ mapping.id }}">
+                                    <td>{{ mapping.notion_value }}</td>
+                                    <td>
+                                        {% for status in huntflow_statuses %}
+                                            {% if status.id|stringformat:"s" == mapping.huntflow_value %}
+                                                {{ status.name }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteMapping({{ mapping.id }})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-5">
+                            <select class="form-select" id="status-notion-select">
+                                <option value="">-- Выберите Status Notion --</option>
+                                {% for status in notion_statuses %}
+                                <option value="{{ status }}">{{ status }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <select class="form-select" id="status-huntflow-select">
+                                <option value="">-- Выберите Status Huntflow --</option>
+                                {% for status in huntflow_statuses %}
+                                <option value="{{ status.id }}">{{ status.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary w-100" onclick="saveMapping('status_status', 'status-notion-select', 'status-huntflow-select')">
+                                <i class="fas fa-plus"></i> Добавить
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
@@ -428,6 +609,77 @@ function showAlert(type, message) {
             alert.remove();
         }
     }, 5000);
+}
+
+function saveMapping(mappingType, notionSelectId, huntflowSelectId) {
+    const notionSelect = document.getElementById(notionSelectId);
+    const huntflowSelect = document.getElementById(huntflowSelectId);
+    
+    const notionValue = notionSelect.value;
+    const huntflowValue = huntflowSelect.value;
+    
+    if (!notionValue || !huntflowValue) {
+        showAlert('error', 'Пожалуйста, выберите значения из обоих списков');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('mapping_type', mappingType);
+    formData.append('notion_value', notionValue);
+    formData.append('huntflow_value', huntflowValue);
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    
+    fetch('{% url "notion_int:save_mapping" %}', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('success', data.message);
+            // Перезагружаем страницу для обновления таблицы
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            showAlert('error', data.error || 'Ошибка сохранения связки');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('error', 'Ошибка сохранения связки');
+    });
+}
+
+function deleteMapping(mappingId) {
+    if (!confirm('Вы уверены, что хотите удалить эту связку?')) {
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    
+    fetch(`/notion/settings/mapping/${mappingId}/delete/`, {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('success', data.message);
+            // Удаляем строку из таблицы
+            const row = document.querySelector(`tr[data-mapping-id="${mappingId}"]`);
+            if (row) {
+                row.remove();
+            }
+        } else {
+            showAlert('error', data.error || 'Ошибка удаления связки');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('error', 'Ошибка удаления связки');
+    });
 }
 </script>
 {% endblock %}
