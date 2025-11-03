@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from .models import CompanySettings
+from apps.finance.models import Grade
 
 
 class CompanySettingsForm(forms.ModelForm):
@@ -8,7 +9,7 @@ class CompanySettingsForm(forms.ModelForm):
     
     class Meta:
         model = CompanySettings
-        fields = ['company_name', 'theme', 'main_calendar_id', 'org_structure']
+        fields = ['company_name', 'theme', 'main_calendar_id', 'org_structure', 'active_grades']
         widgets = {
             'company_name': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -26,18 +27,23 @@ class CompanySettingsForm(forms.ModelForm):
                 'rows': 10,
                 'placeholder': '{"departments": [], "employees": []}'
             }),
+            'active_grades': forms.CheckboxSelectMultiple(attrs={
+                'class': 'form-check-input'
+            }),
         }
         labels = {
             'company_name': 'Название компании',
             'theme': 'Тема оформления',
             'main_calendar_id': 'ID главного календаря',
             'org_structure': 'Оргструктура (JSON)',
+            'active_grades': 'Активные грейды компании',
         }
         help_texts = {
             'company_name': 'Название вашей компании',
             'theme': 'Цветовая тема интерфейса приложения',
             'main_calendar_id': 'ID календаря Google Calendar для компании',
             'org_structure': 'Организационная структура в формате JSON',
+            'active_grades': 'Выберите грейды, которые используются в вашей компании',
         }
     
     def clean_org_structure(self):

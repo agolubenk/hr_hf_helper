@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 from django.core.exceptions import PermissionDenied
 import json
 
-from .models import CompanySettings
+from .models import CompanySettings, RejectionTemplate
 from .forms import CompanySettingsForm
 
 
@@ -62,12 +62,18 @@ def company_settings_view(request):
     # Проверяем, есть ли сохраненный ID календаря в списке доступных
     calendar_id_in_list = settings_obj.main_calendar_id in available_calendar_ids if settings_obj.main_calendar_id else False
     
+    # Получаем все доступные грейды для выбора
+    from apps.finance.models import Grade
+    all_grades = Grade.objects.all().order_by('name')
+    
     context = {
         'form': form,
         'settings': settings_obj,
         'available_calendars': available_calendars,
         'calendar_id_in_list': calendar_id_in_list,
-        'org_structure_json': json.dumps(settings_obj.org_structure, ensure_ascii=False, indent=2) if settings_obj.org_structure else '{}'
+        'org_structure_json': json.dumps(settings_obj.org_structure, ensure_ascii=False, indent=2) if settings_obj.org_structure else '{}',
+        'all_grades': all_grades,
+        'active_grades': settings_obj.active_grades.all()
     }
     
     return render(request, 'company_settings/settings.html', context)
@@ -93,6 +99,10 @@ def company_settings_api(request):
             settings_obj.main_calendar_id = data['main_calendar_id']
         if 'org_structure' in data:
             settings_obj.org_structure = data['org_structure']
+        if 'active_grades' in data:
+            from apps.finance.models import Grade
+            grade_ids = data['active_grades']
+            settings_obj.active_grades.set(Grade.objects.filter(id__in=grade_ids))
         
         settings_obj.save()
         
@@ -110,4 +120,57 @@ def company_settings_api(request):
             'success': False,
             'error': str(e)
         })
+
+
+@login_required
+@require_http_methods(["GET"])
+def rejection_templates_api(request):
+    """API для получения шаблонов отказов"""
+    rejection_type = request.GET.get('rejection_type')
+    grade_id = request.GET.get('grade_id')
+    
+    templates = RejectionTemplate.objects.filter(is_active=True)
+    
+    if rejection_type:
+        templates = templates.filter(rejection_type=rejection_type)
+    
+    if grade_id:
+        templates = templates.filter(grade_id=grade_id)
+    
+    templates_data = []
+    for template in templates:
+        templates_data.append({
+            'id': template.id,
+            'rejection_type': template.rejection_type,
+            'rejection_type_display': template.get_rejection_type_display(),
+            'grade_id': template.grade.id if template.grade else None,
+            'grade_name': template.grade.name if template.grade else None,
+            'title': template.title,
+            'message': template.message,
+        })
+    
+    return JsonResponse({
+        'success': True,
+        'templates': templates_data
+    })
+
+
+@login_required
+@require_http_methods(["GET"])
+def active_grades_api(request):
+    """API для получения активных грейдов компании"""
+    settings = CompanySettings.get_settings()
+    active_grades = settings.active_grades.all()
+    
+    grades_data = []
+    for grade in active_grades:
+        grades_data.append({
+            'id': grade.id,
+            'name': grade.name,
+        })
+    
+    return JsonResponse({
+        'success': True,
+        'active_grades': grades_data
+    })
 
