@@ -1501,13 +1501,15 @@
                             mainContent.style.width = 'calc(100% - 240px)';
                         }
                         
-                        // Обновляем кнопку переключения сайдбара
+                        // Устанавливаем состояние "unpinned" и показываем иконку pin
+                        localStorage.setItem('sidebarState', 'unpinned');
                         const toggleBtn = document.getElementById('sidebarToggle');
                         if (toggleBtn) {
-                            toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
+                            toggleBtn.className = 'fas fa-map-pin sidebar-toggle';
+                            toggleBtn.setAttribute('title', 'Закрепить сайдбар');
                         }
                         
-                        console.log('📂 Раскрытие основного сайдбара из hover меню');
+                        console.log('📂 Раскрытие основного сайдбара из hover меню (незакреплен)');
                     }
                     
                     // Скрываем hover меню
@@ -1561,6 +1563,18 @@
             if (isToggling) return; // Предотвращаем повторные вызовы
             isToggling = true;
             
+            // Проверяем, если текущая иконка - pin (fa-map-pin), то фиксируем сайдбар
+            if (toggleBtn.classList.contains('fa-map-pin')) {
+                // Фиксируем сайдбар
+                sidebarVisible = true;
+                localStorage.setItem('sidebarState', 'visible');
+                toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
+                toggleBtn.setAttribute('title', 'Свернуть сайдбар');
+                console.log('📌 Сайдбар закреплен');
+                isToggling = false;
+                return;
+            }
+            
             sidebarVisible = !sidebarVisible;
             
             // Сохраняем состояние сайдбара в localStorage
@@ -1583,6 +1597,7 @@
                 }
                 
                 toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
+                toggleBtn.setAttribute('title', 'Свернуть сайдбар');
             } else {
                 sidebar.classList.add('hidden');
                 sidebar.classList.remove('show');
@@ -1595,6 +1610,7 @@
                 
                 overlay.classList.remove('show');
                 toggleBtn.className = 'fas fa-caret-square-right sidebar-toggle';
+                toggleBtn.setAttribute('title', 'Развернуть сайдбар');
             }
             
             // Принудительно перерисовываем layout
@@ -1629,6 +1645,7 @@
             }
             overlay.classList.remove('show');
             toggleBtn.className = 'fas fa-caret-square-right sidebar-toggle';
+            toggleBtn.setAttribute('title', 'Развернуть сайдбар');
             
             // Принудительно перерисовываем layout
             setTimeout(() => {
@@ -1659,6 +1676,7 @@
                     }
                     overlay.classList.remove('show');
                     toggleBtn.className = 'fas fa-caret-square-right sidebar-toggle';
+                    toggleBtn.setAttribute('title', 'Развернуть сайдбар');
                 } else if (savedState === 'visible') {
                     sidebarVisible = true;
                     sidebar.classList.remove('hidden');
@@ -1669,6 +1687,18 @@
                         mainContent.style.width = 'calc(100% - 240px)';
                     }
                     toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
+                    toggleBtn.setAttribute('title', 'Свернуть сайдбар');
+                } else if (savedState === 'unpinned') {
+                    sidebarVisible = true;
+                    sidebar.classList.remove('hidden');
+                    sidebar.classList.add('show');
+                    if (mainContent) {
+                        mainContent.classList.remove('sidebar-hidden');
+                        mainContent.style.marginLeft = '240px';
+                        mainContent.style.width = 'calc(100% - 240px)';
+                    }
+                    toggleBtn.className = 'fas fa-map-pin sidebar-toggle';
+                    toggleBtn.setAttribute('title', 'Закрепить сайдбар');
                 }
             } else {
                 console.log('🆕 Нет сохраненного состояния сайдбара, используем значение по умолчанию');
@@ -1721,6 +1751,7 @@
                     }
                     sidebarVisible = false;
                     toggleBtn.className = 'fas fa-caret-square-right sidebar-toggle';
+                    toggleBtn.setAttribute('title', 'Развернуть сайдбар');
                 } else {
                     sidebar.classList.remove('hidden');
                     sidebar.classList.add('show');
@@ -1730,7 +1761,15 @@
                         mainContent.style.width = 'calc(100% - 240px)';
                     }
                     sidebarVisible = true;
-                    toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
+                    // Проверяем состояние, чтобы показать правильную иконку
+                    const savedState = localStorage.getItem('sidebarState');
+                    if (savedState === 'unpinned') {
+                        toggleBtn.className = 'fas fa-map-pin sidebar-toggle';
+                        toggleBtn.setAttribute('title', 'Закрепить сайдбар');
+                    } else {
+                        toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
+                        toggleBtn.setAttribute('title', 'Свернуть сайдбар');
+                    }
                 }
                 overlay.classList.remove('show');
                 
@@ -1771,6 +1810,7 @@
             hideSidebar();
         } else {
             toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
+            toggleBtn.setAttribute('title', 'Свернуть сайдбар');
             // Принудительно устанавливаем стили для десктопа
             if (mainContent) {
                 mainContent.style.marginLeft = '240px';
