@@ -272,7 +272,7 @@
                                                 <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
                                             </div>
                                             {% endif %}
-                                            <div class="message-bubble {% if message.message_type == 'user' %}user-bubble{% else %}system-bubble{% endif %}" {% if message.message_type == 'user' %}style="position: relative;"{% endif %}>
+                                            <div class="message-bubble {% if message.message_type == 'user' %}user-bubble{% else %}system-bubble{% endif %}" {% if message.message_type == 'user' %}style="position: relative;"{% else %}style="margin-left: -26px;"{% endif %}>
                                         
                                         <!-- Пользовательское сообщение -->
                                                 {% if message.message_type == 'user' %}
@@ -2630,28 +2630,51 @@ console.log('⚠️ DEBUG: Вакансия не выбрана');
 {% endif %}
 
 <script type="application/json" id="slots-settings-data">
-{{ slots_settings.to_dict|default:"{}"|safe }}
+{{ slots_settings_json|safe }}
 </script>
 
 <!-- Отладочная информация для настроек слотов -->
 <script>
-console.log('🔍 DEBUG: slots_settings.to_dict:', {{ slots_settings.to_dict|default:"{}"|safe }});
+// Настройки слотов из Django контекста (уже сериализованы в JSON)
+const slotsSettingsElement = document.getElementById('slots-settings-data');
+let slotsSettings = {};
+if (slotsSettingsElement) {
+    try {
+        slotsSettings = JSON.parse(slotsSettingsElement.textContent);
+    } catch (e) {
+        console.error('Ошибка парсинга настроек слотов:', e);
+        slotsSettings = {};
+    }
+}
+console.log('🔍 DEBUG: Настройки слотов:', slotsSettings);
+</script>
+
+<script type="application/json" id="calendar-events-count">
+{{ calendar_events_data|length|default:"0" }}
+</script>
+
+<script type="application/json" id="screening-slots-data">
+{{ screening_slots_json|safe }}
+</script>
+
+<script type="application/json" id="interview-slots-data">
+{{ interview_slots_json|safe }}
 </script>
 
 <script>
 // Данные событий из Django контекста (как на странице календаря)
 console.log('🔍 DEBUG: Начинаем загрузку событий...');
-console.log('🔍 DEBUG: Количество событий в контексте:', {{ calendar_events_data|length|default:"0" }});
+const eventsCountElement = document.getElementById('calendar-events-count');
+if (eventsCountElement) {
+    const eventsCount = parseInt(eventsCountElement.textContent.trim()) || 0;
+    console.log('🔍 DEBUG: Количество событий в контексте:', eventsCount);
+}
 
 // Загружаем реальные данные событий
 let calendarEvents = JSON.parse(document.getElementById('calendar-events').textContent);
 console.log('🔍 DEBUG: Загружены реальные события, количество:', calendarEvents.length);
 // Делаем переменную глобальной для изменения в других скриптах
 window.calendarEvents = calendarEvents;
-
-// Настройки слотов из Django контекста
-let slotsSettings = {{ slots_settings.to_dict|default:"{}"|safe }};
-console.log('🔍 DEBUG: Настройки слотов:', slotsSettings);
 
 console.log('📊 Загружено событий календаря:', calendarEvents.length);
 console.log('🔍 DEBUG: Первое событие:', calendarEvents[0]);
@@ -2665,8 +2688,18 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
 {% endif %}
 
 // Предрассчитанные слоты с backend
-window.screeningSlots = {{ screening_slots_json|safe|default:"[]" }};
-window.interviewSlots = {{ interview_slots_json|safe|default:"[]" }};
+const screeningSlotsElement = document.getElementById('screening-slots-data');
+const interviewSlotsElement = document.getElementById('interview-slots-data');
+if (screeningSlotsElement) {
+    window.screeningSlots = JSON.parse(screeningSlotsElement.textContent);
+} else {
+    window.screeningSlots = [];
+}
+if (interviewSlotsElement) {
+    window.interviewSlots = JSON.parse(interviewSlotsElement.textContent);
+} else {
+    window.interviewSlots = [];
+}
 console.log('📊 Слоты для скринингов:', window.screeningSlots);
 console.log('📊 Слоты для интервью:', window.interviewSlots);
 

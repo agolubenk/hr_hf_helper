@@ -4649,6 +4649,7 @@ def chat_workflow(request, session_id=None):
         'timestamp': int(time()),
         'calendar_events_data': calendar_events_data,
         'slots_settings': slots_settings,
+        'slots_settings_json': json.dumps(slots_settings.to_dict()) if slots_settings else '{}',
         'user_photo_url': user_photo_url,
         'mandatory_interviewers': mandatory_interviewers,
         'screening_slots_json': json.dumps(screening_slots),
