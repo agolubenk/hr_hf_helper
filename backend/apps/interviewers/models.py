@@ -176,9 +176,9 @@ class InterviewRule(models.Model):
     
     def is_grade_in_range(self, grade):
         """Проверить, входит ли грейд в диапазон правила"""
-        # Получаем все грейды между min_grade и max_grade
-        from apps.finance.models import Grade
-        grades = Grade.objects.all().order_by('name')
+        # Получаем активные грейды компании для проверки диапазона
+        from apps.company_settings.utils import get_active_grades_queryset
+        grades = get_active_grades_queryset().order_by('name')
         grade_names = [g.name for g in grades]
         
         try:

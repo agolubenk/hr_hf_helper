@@ -856,8 +856,12 @@ def _find_best_grade_match(ai_grade_name: str):
     if not ai_grade_name or ai_grade_name.strip() == '':
         return None
     
+    # Используем только активные грейды компании
+    from apps.company_settings.utils import get_active_grades_queryset
+    active_grades = get_active_grades_queryset()
+    
     # Сначала точное совпадение
-    exact_match = Grade.objects.filter(name__iexact=ai_grade_name.strip()).first()
+    exact_match = active_grades.filter(name__iexact=ai_grade_name.strip()).first()
     if exact_match:
         logger.info(f"🎯 Точный грейд найден: {exact_match.name}")
         return exact_match
@@ -876,12 +880,12 @@ def _find_best_grade_match(ai_grade_name: str):
     
     ai_name_lower = ai_grade_name.lower().strip()
     
-    # Поиск по синонимам
+    # Поиск по синонимам - только среди активных грейдов
     for canonical_grade, synonyms in grade_mapping.items():
         if ai_name_lower in [s.lower() for s in synonyms]:
-            # Находим соответствующий грейд в БД
+            # Находим соответствующий грейд в БД среди активных
             for synonym in synonyms:
-                grade = Grade.objects.filter(name__iexact=synonym).first()
+                grade = active_grades.filter(name__iexact=synonym).first()
                 if grade:
                     logger.info(f"🎯 Найден грейд через синоним: '{ai_grade_name}' -> '{grade.name}'")
                     return grade

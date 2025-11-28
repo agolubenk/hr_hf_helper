@@ -538,10 +538,16 @@ class HiringRequestsListView(LoginRequiredMixin, ListView):
         context['cancelled_requests'] = requests.filter(status='cancelled').count()
         
         # Опции для фильтров
+        from apps.company_settings.utils import get_active_grades_queryset
+        active_grades = get_active_grades_queryset()
+        
         context['status_choices'] = HiringRequest.STATUS_CHOICES
         context['priority_choices'] = HiringRequest.PRIORITY_CHOICES
         context['reason_choices'] = HiringRequest.REASON_CHOICES
-        context['grade_choices'] = HiringRequest.objects.values_list('grade__id', 'grade__name').distinct()
+        # Фильтруем только активные грейды компании для фильтров
+        context['grade_choices'] = HiringRequest.objects.filter(
+            grade__in=active_grades
+        ).values_list('grade__id', 'grade__name').distinct()
         context['vacancy_choices'] = HiringRequest.objects.values_list('vacancy__id', 'vacancy__name').distinct()
         context['recruiter_choices'] = HiringRequest.objects.filter(
             closed_by__isnull=False
@@ -708,10 +714,10 @@ class VacancySLAListView(LoginRequiredMixin, ListView):
         
         # Добавляем списки для фильтров
         from apps.vacancies.models import Vacancy
-        from apps.finance.models import Grade
+        from apps.company_settings.utils import get_active_grades_queryset
         
         context['vacancies'] = Vacancy.objects.filter(is_active=True).order_by('name')
-        context['grades'] = Grade.objects.all().order_by('name')
+        context['grades'] = get_active_grades_queryset().order_by('name')
         
         # Добавляем текущие значения фильтров
         context['current_vacancy'] = self.request.GET.get('vacancy', '')
@@ -719,8 +725,9 @@ class VacancySLAListView(LoginRequiredMixin, ListView):
         context['current_is_active'] = self.request.GET.get('is_active', '')
         
         # Проверяем, можно ли создавать новые SLA (только для активных вакансий)
+        from apps.company_settings.utils import get_active_grades_queryset
         active_vacancies = Vacancy.objects.filter(is_active=True)
-        all_grades = Grade.objects.all()
+        all_grades = get_active_grades_queryset()
         total_possible_slas = active_vacancies.count() * all_grades.count()
         existing_slas_for_active = VacancySLA.objects.filter(vacancy__in=active_vacancies).count()
         
@@ -899,13 +906,13 @@ def get_available_grades(request):
     
     try:
         from apps.vacancies.models import Vacancy
-        from apps.finance.models import Grade
+        from apps.company_settings.utils import get_active_grades_queryset
         
         # Получаем вакансию
         vacancy = Vacancy.objects.get(id=vacancy_id)
         
-        # Получаем все грейды
-        all_grades = Grade.objects.all()
+        # Получаем активные грейды компании
+        all_grades = get_active_grades_queryset()
         
         # Получаем грейды, для которых уже созданы SLA
         existing_grades = VacancySLA.objects.filter(vacancy=vacancy).values_list('grade', flat=True)

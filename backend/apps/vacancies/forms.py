@@ -142,9 +142,9 @@ class VacancyForm(forms.ModelForm):
         # Ограничиваем выбор только активными интервьюерами для обязательных участников
         self.fields['mandatory_tech_interviewers'].queryset = Interviewer.objects.filter(is_active=True)
         
-        # Ограничиваем выбор только активными грейдами (все грейды активны по умолчанию)
-        from apps.finance.models import Grade
-        self.fields['available_grades'].queryset = Grade.objects.all()
+        # Ограничиваем выбор только активными грейдами компании
+        from apps.company_settings.utils import get_active_grades_queryset
+        self.fields['available_grades'].queryset = get_active_grades_queryset()
         
         # Ограничиваем выбор только активными интервьюерами
         self.fields['interviewers'].queryset = Interviewer.objects.filter(is_active=True)
@@ -440,6 +440,10 @@ class SalaryRangeForm(forms.ModelForm):
         # Ограничиваем выбор только активными вакансиями
         self.fields['vacancy'].queryset = Vacancy.objects.filter(is_active=True)
         
+        # Ограничиваем выбор только активными грейдами компании
+        from apps.company_settings.utils import get_active_grades_queryset
+        self.fields['grade'].queryset = get_active_grades_queryset().order_by('name')
+        
         # Делаем обязательные поля
         self.fields['vacancy'].required = True  # Поле vacancy теперь обязательное
         self.fields['grade'].required = True
@@ -532,9 +536,9 @@ class SalaryRangeSearchForm(forms.Form):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        from apps.finance.models import Grade
+        from apps.company_settings.utils import get_active_grades_queryset
         
         # Ограничиваем выбор только активными вакансиями
         self.fields['vacancy'].queryset = Vacancy.objects.filter(is_active=True).order_by('name')
-        self.fields['grade'].queryset = Grade.objects.all().order_by('name')
+        self.fields['grade'].queryset = get_active_grades_queryset().order_by('name')
 

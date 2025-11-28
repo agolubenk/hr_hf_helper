@@ -25,13 +25,14 @@ class GradeViewSet(FinanceAPIViewSet):
     - request.user: аутентифицированный пользователь
     
     ИСТОЧНИКИ ДАННЫХ:
-    - Grade.objects: все грейды из базы данных
+    - Grade.objects: активные грейды компании из CompanySettings
     - GradeSerializer: сериализатор для грейдов
     
     ОБРАБОТКА:
     - Наследование от FinanceAPIViewSet
     - Управление грейдами (создание, чтение, обновление, удаление)
     - Поиск и сортировка по названию
+    - Использует только активные грейды компании
     
     ВЫХОДЯЩИЕ ДАННЫЕ:
     - DRF Response с данными грейдов
@@ -41,7 +42,11 @@ class GradeViewSet(FinanceAPIViewSet):
     - Передает: DRF API responses
     - Может вызываться из: DRF API endpoints
     """
-    queryset = Grade.objects.all()
+    def get_queryset(self):
+        from apps.company_settings.utils import get_active_grades_queryset
+        return get_active_grades_queryset().order_by('name')
+    
+    queryset = Grade.objects.all()  # Fallback, но get_queryset() переопределен
     serializer_class = GradeSerializer
     permission_classes = [permissions.IsAuthenticated]
     search_fields = ['name']
@@ -75,10 +80,12 @@ class GradeViewSet(FinanceAPIViewSet):
         - Передает: DRF Response
         - Может вызываться из: DRF API endpoints
         """
-        total_grades = Grade.objects.count()
+        from apps.company_settings.utils import get_active_grades_queryset
+        active_grades = get_active_grades_queryset()
+        total_grades = active_grades.count()
         
-        # Статистика по вакансиям
-        grades_with_vacancies = Grade.objects.annotate(
+        # Статистика по вакансиям - только для активных грейдов
+        grades_with_vacancies = active_grades.annotate(
             vacancies_count=Count('vacancies', distinct=True),
             salary_ranges_count=Count('finance_salary_ranges', distinct=True),
             benchmarks_count=Count('benchmarks', distinct=True)

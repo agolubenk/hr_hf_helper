@@ -362,14 +362,14 @@ class Invite(models.Model):
         return None
     
     def _find_candidate_level(self, questionary, account_id):
-        """Находит уровень кандидата с строгой проверкой против грейдов из @finance/"""
+        """Находит уровень кандидата с строгой проверкой против активных грейдов компании"""
         try:
             from apps.huntflow.services import HuntflowService
-            from apps.finance.models import Grade
+            from apps.company_settings.utils import get_active_grades_queryset
             
-            # Получаем все доступные грейды из системы
-            available_grades = list(Grade.objects.values_list('name', flat=True))
-            print(f"РЕАЛЬНЫЕ ДАННЫЕ: Доступные грейды в системе: {available_grades}")
+            # Получаем только активные грейды компании
+            available_grades = list(get_active_grades_queryset().values_list('name', flat=True))
+            print(f"РЕАЛЬНЫЕ ДАННЫЕ: Доступные активные грейды компании: {available_grades}")
             
             service = HuntflowService(self.user)
             
@@ -1056,84 +1056,91 @@ class Invite(models.Model):
         return folder_path, filename_base
     
     def process_scorecard(self):
-        """Обрабатывает scorecard файл - удаляет лишние листы"""
+        """Обрабатывает scorecard файл - удаляет лишние листы и заполняет плейсхолдеры"""
+        print(f"🚀 INVITE.process_scorecard: Начинаем обработку скоркарда для инвайта {self.id}")
+        print(f"📁 INVITE.process_scorecard: File ID: {self.google_drive_file_id}")
+        print(f"👤 INVITE.process_scorecard: Кандидат: {self.candidate_name}")
+        
         try:
             from apps.google_oauth.services import GoogleOAuthService, GoogleSheetsService
+            from logic.scorecard import ScorecardProcessor
             
             # Проверяем, есть ли у пользователя настроенный Google OAuth
+            print(f"🔍 INVITE.process_scorecard: Проверяем Google OAuth...")
             oauth_service = GoogleOAuthService(self.user)
             oauth_account = oauth_service.get_oauth_account()
             
             if not oauth_account:
                 # Если Google OAuth не настроен, используем заглушку
+                print(f"⚠️ INVITE.process_scorecard: Google OAuth не настроен, используем заглушку")
                 return self._process_scorecard_stub()
             
             # Проверяем, что у нас есть ID файла
             if not self.google_drive_file_id:
+                print(f"❌ INVITE.process_scorecard: ID файла scorecard не найден")
                 return False, "ID файла scorecard не найден"
             
             # Создаем сервис для работы с Google Sheets
+            print(f"🔧 INVITE.process_scorecard: Создаем GoogleSheetsService...")
             sheets_service = GoogleSheetsService(oauth_service)
             
-            # Получаем список всех листов в таблице
-            sheets = sheets_service.get_sheets(self.google_drive_file_id)
+            # Получаем вакансию из базы данных по vacancy_id
+            if not self.vacancy_id:
+                print(f"❌ INVITE.process_scorecard: vacancy_id не указан")
+                return False, "ID вакансии не найден"
             
-            if not sheets:
-                return False, "Не удалось получить список листов в таблице"
+            try:
+                from apps.vacancies.models import Vacancy
+                vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
+                print(f"📋 INVITE.process_scorecard: Вакансия найдена: {vacancy.name} (ID: {vacancy.external_id})")
+            except Vacancy.DoesNotExist:
+                print(f"❌ INVITE.process_scorecard: Вакансия с external_id={self.vacancy_id} не найдена в БД")
+                return False, f"Вакансия с ID {self.vacancy_id} не найдена"
+            except Exception as e:
+                print(f"❌ INVITE.process_scorecard: Ошибка получения вакансии: {e}")
+                return False, f"Ошибка получения вакансии: {str(e)}"
             
-            # Определяем листы для сохранения
-            sheets_to_keep = ['all', 'score']
+            # Создаем процессор скоркардов
+            print(f"🔧 INVITE.process_scorecard: Создаем ScorecardProcessor...")
+            processor = ScorecardProcessor(
+                vacancy=vacancy,
+                sheets_service=sheets_service,
+                candidate_grade=self.candidate_grade
+            )
             
-            # Добавляем лист с уровнем кандидата, если он есть
-            if self.candidate_grade and self.candidate_grade != "Не указан":
-                sheets_to_keep.append(self.candidate_grade)
+            # Обрабатываем скоркард
+            print(f"▶️ INVITE.process_scorecard: Вызываем processor.process_scorecard...")
+            result = processor.process_scorecard(self, self.google_drive_file_id)
+            print(f"📊 INVITE.process_scorecard: Результат: success={result.get('success')}, errors={result.get('errors')}")
+            
+            if result.get('success'):
+                actions = result.get('actions_performed', [])
+                sheets_processed = result.get('sheets_processed', [])
+                
+                kept_sheets = [s['name'] for s in sheets_processed if s.get('action') == 'kept']
+                deleted_sheets = [s['name'] for s in sheets_processed if s.get('action') == 'deleted']
+                
+                message = f"Scorecard обработан. Сохранены листы: {', '.join(kept_sheets) if kept_sheets else 'нет'}. "
+                if deleted_sheets:
+                    message += f"Удалены листы: {', '.join(deleted_sheets)}."
+                if actions:
+                    message += f" Выполнено действий: {len(actions)}."
+                
+                print(f"✅ INVITE.process_scorecard: {message}")
+                return True, message
             else:
-                # Если уровень не указан, оставляем лист по умолчанию (например, Middle)
-                # или не удаляем листы с уровнями вообще
-                print(f"РЕАЛЬНЫЕ ДАННЫЕ: Уровень кандидата не указан, оставляем все листы с уровнями")
-                # Не добавляем лист по умолчанию, чтобы сохранить все листы с уровнями
-            
-            # Удаляем лишние листы, но оставляем хотя бы один
-            deleted_sheets = []
-            sheets_to_delete = []
-            
-            for sheet in sheets:
-                sheet_title = sheet.get('properties', {}).get('title', '')
-                sheet_id = sheet.get('properties', {}).get('sheetId')
-                
-                # Пропускаем листы, которые нужно сохранить
-                if sheet_title.lower() in [s.lower() for s in sheets_to_keep]:
-                    continue
-                
-                # Если уровень не указан, не удаляем листы с уровнями
-                if not self.candidate_grade or self.candidate_grade == "Не указан":
-                    # Проверяем, является ли лист листом с уровнем
-                    level_sheets = ['junior', 'junior+', 'middle', 'middle+', 'senior']
-                    if sheet_title.lower() in level_sheets:
-                        print(f"РЕАЛЬНЫЕ ДАННЫЕ: Сохраняем лист с уровнем: {sheet_title}")
-                        continue
-                
-                sheets_to_delete.append((sheet_title, sheet_id))
-            
-            # Удаляем листы, но оставляем хотя бы один
-            if len(sheets_to_delete) < len(sheets):
-                for sheet_title, sheet_id in sheets_to_delete:
-                    if sheets_service.delete_sheet(self.google_drive_file_id, sheet_id):
-                        deleted_sheets.append(sheet_title)
-                        print(f"РЕАЛЬНЫЕ ДАННЫЕ: Удален лист: {sheet_title}")
-                    else:
-                        print(f"РЕАЛЬНЫЕ ДАННЫЕ: Не удалось удалить лист: {sheet_title}")
-            else:
-                print(f"РЕАЛЬНЫЕ ДАННЫЕ: Не удаляем листы - нужно оставить хотя бы один")
-            
-            print(f"РЕАЛЬНЫЕ ДАННЫЕ: Обработка scorecard завершена")
-            print(f"РЕАЛЬНЫЕ ДАННЫЕ: Сохранены листы: {', '.join(sheets_to_keep)}")
-            print(f"РЕАЛЬНЫЕ ДАННЫЕ: Удалены листы: {', '.join(deleted_sheets)}")
-            
-            return True, f"Scorecard обработан. Сохранены листы: {', '.join(sheets_to_keep)}. Удалены листы: {', '.join(deleted_sheets)}"
+                errors = result.get('errors', [])
+                error_msg = f"Ошибка обработки scorecard: {'; '.join(errors)}"
+                print(f"❌ INVITE.process_scorecard: {error_msg}")
+                return False, error_msg
             
         except Exception as e:
-            return False, f"Ошибка обработки scorecard: {str(e)}"
+            error_msg = f"Ошибка обработки scorecard: {str(e)}"
+            print(f"❌ INVITE.process_scorecard: Исключение: {error_msg}")
+            import traceback
+            print(f"❌ INVITE.process_scorecard: Трассировка:")
+            traceback.print_exc()
+            return False, error_msg
     
     def _process_scorecard_stub(self):
         """Создает заглушку для обработки scorecard (когда OAuth не настроен)"""

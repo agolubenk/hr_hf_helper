@@ -910,3 +910,103 @@ class GoogleSheetsService:
                 return False
             print(f"Ошибка проверки существования файла: {e}")
             return False
+    
+    def find_and_replace_cells(self, spreadsheet_id, search_text, replace_text, sheet_name=None):
+        """Найти и заменить текст во всех ячейках таблицы"""
+        service = self._get_service()
+        if not service:
+            print(f"❌ SCORECARD: Сервис не доступен")
+            return False
+        
+        try:
+            print(f"🔍 SCORECARD: Ищем '{search_text}' для замены на '{replace_text[:50] if len(replace_text) > 50 else replace_text}...'")
+            
+            # Получаем все листы
+            sheets = self.get_sheets(spreadsheet_id)
+            if not sheets:
+                print(f"❌ SCORECARD: Не удалось получить список листов")
+                return False
+            
+            print(f"📋 SCORECARD: Найдено листов: {len(sheets)}")
+            
+            requests = []
+            
+            for sheet in sheets:
+                sheet_title = sheet.get('properties', {}).get('title', 'Unknown')
+                sheet_id = sheet.get('properties', {}).get('sheetId')
+                
+                # Если указан конкретный лист, обрабатываем только его
+                if sheet_name and sheet_title != sheet_name:
+                    print(f"⏭️ SCORECARD: Пропускаем лист '{sheet_title}' (требуется '{sheet_name}')")
+                    continue
+                
+                print(f"📄 SCORECARD: Обрабатываем лист '{sheet_title}' (ID: {sheet_id}) для замены '{search_text}'")
+                
+                # Создаем запрос на поиск и замену для каждого листа
+                requests.append({
+                    'findReplace': {
+                        'find': search_text,
+                        'replacement': replace_text,
+                        'sheetId': sheet_id,
+                        'matchCase': False,
+                        'matchEntireCell': False,
+                        'searchByRegex': False,
+                        'includeFormulas': True
+                    }
+                })
+            
+            if requests:
+                print(f"🔄 SCORECARD: Отправляем {len(requests)} запросов на замену")
+                body = {'requests': requests}
+                response = service.spreadsheets().batchUpdate(
+                    spreadsheetId=spreadsheet_id,
+                    body=body
+                ).execute()
+                
+                # Проверяем результаты
+                replies = response.get('replies', [])
+                occurrences_changed = sum(reply.get('findReplace', {}).get('occurrencesChanged', 0) for reply in replies)
+                
+                print(f"✅ SCORECARD: Заменено '{search_text}' на '{replace_text[:50] if len(replace_text) > 50 else replace_text}...' в {occurrences_changed} местах на {len(requests)} листах")
+                
+                if occurrences_changed == 0:
+                    print(f"⚠️ SCORECARD: Плейсхолдер '{search_text}' не найден в таблице")
+                
+                return occurrences_changed > 0
+            
+            print(f"⚠️ SCORECARD: Нет листов для обработки")
+            return False
+            
+        except HttpError as e:
+            error_details = f"HTTP {e.resp.status}: {e.content.decode('utf-8') if hasattr(e, 'content') else str(e)}"
+            print(f"❌ SCORECARD: Ошибка поиска и замены в ячейках: {error_details}")
+            import traceback
+            traceback.print_exc()
+            return False
+        except Exception as e:
+            print(f"❌ SCORECARD: Неожиданная ошибка при замене: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return False
+    
+    def update_cell_value(self, spreadsheet_id, sheet_name, cell_range, value):
+        """Обновить значение конкретной ячейки"""
+        service = self._get_service()
+        if not service:
+            return False
+        
+        try:
+            range_name = f"{sheet_name}!{cell_range}"
+            body = {
+                'values': [[value]]
+            }
+            service.spreadsheets().values().update(
+                spreadsheetId=spreadsheet_id,
+                range=range_name,
+                valueInputOption='USER_ENTERED',
+                body=body
+            ).execute()
+            return True
+        except HttpError as e:
+            print(f"❌ SCORECARD: Ошибка обновления ячейки: {e}")
+            return False

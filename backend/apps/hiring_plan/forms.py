@@ -52,6 +52,22 @@ class HiringRequestForm(forms.ModelForm):
         # Фильтруем только активных пользователей для выбора рекрутера
         self.fields['recruiter'].queryset = User.objects.filter(is_active=True).order_by('first_name', 'last_name')
         self.fields['recruiter'].empty_label = "Выберите рекрутера..."
+        
+        # Ограничиваем выбор только активными грейдами компании
+        from apps.company_settings.utils import get_active_grades_queryset
+        self.fields['grade'].queryset = get_active_grades_queryset().order_by('name')
+    
+    def clean_grade(self):
+        """Валидация грейда - проверяем, что он является активным для компании"""
+        grade = self.cleaned_data.get('grade')
+        if grade:
+            from apps.company_settings.utils import get_active_grades_queryset
+            active_grades = get_active_grades_queryset()
+            if grade not in active_grades:
+                raise forms.ValidationError(
+                    f'Грейд "{grade.name}" не является активным для компании.'
+                )
+        return grade
 
 
 class HiringRequestUpdateForm(forms.ModelForm):
@@ -127,9 +143,9 @@ class VacancySLAForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        # Получаем все грейды
-        from apps.finance.models import Grade
-        all_grades = Grade.objects.all()
+        # Получаем активные грейды компании
+        from apps.company_settings.utils import get_active_grades_queryset
+        all_grades = get_active_grades_queryset()
         
         # Получаем все вакансии
         from apps.vacancies.models import Vacancy
@@ -172,6 +188,15 @@ class VacancySLAForm(forms.ModelForm):
         cleaned_data = super().clean()
         vacancy = cleaned_data.get('vacancy')
         grade = cleaned_data.get('grade')
+        
+        # Проверяем, что выбранный грейд является активным для компании
+        if grade:
+            from apps.company_settings.utils import get_active_grades_queryset
+            active_grades = get_active_grades_queryset()
+            if grade not in active_grades:
+                raise forms.ValidationError(
+                    f'Грейд "{grade.name}" не является активным для компании.'
+                )
         
         if vacancy and grade:
             # Проверяем, не существует ли уже SLA для этой пары

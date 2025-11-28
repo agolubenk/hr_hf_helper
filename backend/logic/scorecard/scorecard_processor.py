@@ -11,6 +11,17 @@ from apps.google_oauth.models import Invite
 from .config import get_scorecard_rules
 
 
+def _get_column_letter(col_index: int) -> str:
+    """Преобразует индекс колонки (0-based) в букву колонки (A, B, C, ..., Z, AA, AB, ...)"""
+    result = ""
+    col_index += 1  # Переводим в 1-based
+    while col_index > 0:
+        col_index -= 1
+        result = chr(65 + (col_index % 26)) + result
+        col_index //= 26
+    return result
+
+
 class ScorecardProcessor:
     """
     Процессор для настраиваемой обработки скоркардов
@@ -71,6 +82,13 @@ class ScorecardProcessor:
         Returns:
             Dict с результатами обработки
         """
+        print(f"🚀 SCORECARD: Начинаем обработку скоркарда для {invite.candidate_name}")
+        print(f"📁 SCORECARD: File ID: {file_id}")
+        print(f"👤 SCORECARD: Кандидат: {invite.candidate_name}")
+        print(f"📊 SCORECARD: Грейд: {invite.candidate_grade}")
+        print(f"🔗 SCORECARD: candidate_url: {getattr(invite, 'candidate_url', 'не найден')}")
+        print(f"📋 SCORECARD: vacancy_id: {getattr(invite, 'vacancy_id', 'не найден')}")
+        
         result = {
             'success': True,
             'errors': [],
@@ -81,20 +99,29 @@ class ScorecardProcessor:
         
         try:
             # 1. Обработка листов
+            print(f"📄 SCORECARD: Шаг 1 - Обработка листов")
             sheet_result = self._process_sheets(invite, file_id)
             result.update(sheet_result)
             
             # 2. Заполнение полей
+            print(f"✏️ SCORECARD: Шаг 2 - Заполнение полей и замена плейсхолдеров")
             field_result = self._fill_fields(invite, file_id)
             result.update(field_result)
             
             # 3. Формирование названия файла (если нужно)
+            print(f"📝 SCORECARD: Шаг 3 - Формирование названия файла")
             name_result = self._generate_filename(invite)
             result.update(name_result)
             
+            print(f"✅ SCORECARD: Обработка завершена успешно")
+            
         except Exception as e:
             result['success'] = False
-            result['errors'].append(f"Ошибка обработки скоркарда: {str(e)}")
+            error_msg = f"Ошибка обработки скоркарда: {str(e)}"
+            result['errors'].append(error_msg)
+            print(f"❌ SCORECARD: {error_msg}")
+            import traceback
+            traceback.print_exc()
         
         return result
     
@@ -117,12 +144,23 @@ class ScorecardProcessor:
             sheets_to_keep = self._get_sheets_to_keep(invite)
             sheets_to_delete = self._get_sheets_to_delete(invite)
             
+            # Создаем регистронезависимые списки для сравнения
+            sheets_to_keep_lower = [s.lower() for s in sheets_to_keep]
+            sheets_to_delete_lower = [s.lower() for s in sheets_to_delete]
+            
             # Обрабатываем каждый лист
             for sheet in sheets:
                 sheet_title = sheet.get('properties', {}).get('title', sheet.get('title', 'Unknown'))
                 sheet_id = sheet.get('properties', {}).get('sheetId', sheet.get('sheetId'))
+                sheet_title_lower = sheet_title.lower()
                 
-                if sheet_title in sheets_to_delete:
+                # Проверяем, нужно ли сохранить или удалить лист (регистронезависимо)
+                should_keep = sheet_title_lower in sheets_to_keep_lower
+                should_delete = sheet_title_lower in sheets_to_delete_lower
+                
+                print(f"🔍 SCORECARD: Обработка листа: '{sheet_title}' (keep: {should_keep}, delete: {should_delete})")
+                
+                if should_delete:
                     try:
                         self.sheets_service.delete_sheet(file_id, sheet_id)
                         result['sheets_processed'].append({
@@ -139,13 +177,41 @@ class ScorecardProcessor:
                         })
                         result['errors'] = result.get('errors', [])
                         result['errors'].append(f"Не удалось удалить лист {sheet_title}: {str(e)}")
-                elif sheet_title in sheets_to_keep:
+                elif should_keep:
                     result['sheets_processed'].append({
                         'name': sheet_title,
                         'action': 'kept',
                         'success': True
                     })
                     result['actions_performed'].append(f"Сохранен лист: {sheet_title}")
+                else:
+                    # Лист не в списке для сохранения и не в списке для удаления
+                    # По умолчанию удаляем его (если есть хотя бы один лист для сохранения)
+                    if sheets_to_keep:
+                        try:
+                            self.sheets_service.delete_sheet(file_id, sheet_id)
+                            result['sheets_processed'].append({
+                                'name': sheet_title,
+                                'action': 'deleted',
+                                'success': True
+                            })
+                            result['actions_performed'].append(f"Удален лист (не в списке сохранения): {sheet_title}")
+                        except Exception as e:
+                            result['sheets_processed'].append({
+                                'name': sheet_title,
+                                'action': 'delete_failed',
+                                'error': str(e)
+                            })
+                            result['errors'] = result.get('errors', [])
+                            result['errors'].append(f"Не удалось удалить лист {sheet_title}: {str(e)}")
+                    else:
+                        # Если нет листов для сохранения, оставляем все
+                        result['sheets_processed'].append({
+                            'name': sheet_title,
+                            'action': 'kept',
+                            'success': True
+                        })
+                        result['actions_performed'].append(f"Сохранен лист (нет правил): {sheet_title}")
             
         except Exception as e:
             result['errors'] = result.get('errors', [])
@@ -161,10 +227,18 @@ class ScorecardProcessor:
         for rule in self.rules['sheet_management']:
             if rule.get('action') == 'keep' and self._rule_applies(rule, invite):
                 for sheet_name in rule.get('sheets', []):
-                    processed_sheet = self._process_field_value(sheet_name, invite)
+                    # Для статических названий листов (без плейсхолдеров) не обрабатываем как шаблон
+                    # Проверяем, есть ли плейсхолдеры в названии
+                    if any(placeholder in sheet_name for placeholder in ['[F_NAME]', '[NAME]', '[DATE]', '[GRADE]', '[HUNTFLOW_LINK]', '[LINK]', '[VACANCY_NAME]', '[INTERVIEW_TIME]']):
+                        processed_sheet = self._process_field_value(sheet_name, invite)
+                    else:
+                        # Статическое название листа - используем как есть
+                        processed_sheet = sheet_name
+                    
                     if processed_sheet and processed_sheet not in sheets_to_keep:
                         sheets_to_keep.append(processed_sheet)
         
+        print(f"📋 SCORECARD: Листы для сохранения: {sheets_to_keep}")
         return sheets_to_keep
     
     def _get_sheets_to_delete(self, invite: Invite) -> List[str]:
@@ -283,6 +357,7 @@ class ScorecardProcessor:
             '[DATE]': invite.interview_datetime.strftime('%d.%m.%Y') if invite.interview_datetime else '',
             '[GRADE]': candidate_grade,
             '[HUNTFLOW_LINK]': huntflow_link,
+            '[LINK]': huntflow_link,  # Алиас для [HUNTFLOW_LINK]
             '[VACANCY_NAME]': self.vacancy.name or '',
             '[INTERVIEW_TIME]': invite.interview_datetime.strftime('%H:%M') if invite.interview_datetime else '',
         }
@@ -316,16 +391,28 @@ class ScorecardProcessor:
     def _get_huntflow_link(self, invite: Invite) -> str:
         """Получает реальную ссылку на кандидата в Huntflow"""
         try:
+            # Проверяем наличие необходимых данных
+            if not hasattr(invite, 'candidate_url') or not invite.candidate_url:
+                print(f"⚠️ SCORECARD: candidate_url не найден в инвайте")
+                return ""
+            
+            if not hasattr(invite, 'vacancy_id') or not invite.vacancy_id:
+                print(f"⚠️ SCORECARD: vacancy_id не найден в инвайте")
+                return ""
+            
             # Используем метод из модели Invite для генерации ссылки
             huntflow_link = invite._generate_huntflow_candidate_link()
             if huntflow_link:
                 print(f"🔗 SCORECARD: Получена ссылка Huntflow: {huntflow_link}")
                 return huntflow_link
             else:
-                print(f"⚠️ SCORECARD: Не удалось получить ссылку Huntflow для кандидата")
+                print(f"⚠️ SCORECARD: Метод _generate_huntflow_candidate_link вернул None")
+                print(f"⚠️ SCORECARD: candidate_url={invite.candidate_url}, vacancy_id={getattr(invite, 'vacancy_id', 'не найден')}")
                 return ""
         except Exception as e:
             print(f"❌ SCORECARD: Ошибка получения ссылки Huntflow: {e}")
+            import traceback
+            traceback.print_exc()
             return ""
     
     def _get_candidate_grade(self, invite: Invite) -> str:
@@ -390,46 +477,81 @@ class ScorecardProcessor:
             return None
     
     def _replace_placeholders_in_all_cells(self, invite: Invite, file_id: str, result: Dict[str, Any]):
-        """Заменяет плейсхолдеры [HUNTFLOW_LINK] и [GRADE] во всех ячейках таблицы"""
+        """Заменяет плейсхолдеры [HUNTFLOW_LINK], [LINK] и [GRADE] во всех ячейках таблицы"""
         try:
+            print(f"🔄 SCORECARD: Начинаем замену плейсхолдеров в файле {file_id}")
+            
             # Получаем реальную ссылку на Huntflow кандидата
             huntflow_link = self._get_huntflow_link(invite)
+            print(f"🔗 SCORECARD: Ссылка Huntflow: {huntflow_link if huntflow_link else 'не получена'}")
             
             # Получаем реальный грейд кандидата
             candidate_grade = self._get_candidate_grade(invite)
+            print(f"📊 SCORECARD: Грейд кандидата: {candidate_grade if candidate_grade else 'не получен'}")
             
             replaced_count = 0
             
             # Заменяем [HUNTFLOW_LINK]
             if huntflow_link:
+                print(f"🔄 SCORECARD: Заменяем [HUNTFLOW_LINK] на {huntflow_link[:50]}...")
                 success = self.sheets_service.find_and_replace_cells(
                     file_id, '[HUNTFLOW_LINK]', huntflow_link
                 )
                 if success:
                     replaced_count += 1
                     result['actions_performed'].append(f"Заменены плейсхолдеры [HUNTFLOW_LINK] на реальную ссылку")
+                    print(f"✅ SCORECARD: [HUNTFLOW_LINK] заменен успешно")
+                else:
+                    print(f"⚠️ SCORECARD: Не удалось заменить [HUNTFLOW_LINK]")
+            else:
+                print(f"⚠️ SCORECARD: Ссылка Huntflow не получена, пропускаем замену [HUNTFLOW_LINK]")
+            
+            # Заменяем [LINK] (алиас для [HUNTFLOW_LINK])
+            if huntflow_link:
+                print(f"🔄 SCORECARD: Заменяем [LINK] на {huntflow_link[:50]}...")
+                success = self.sheets_service.find_and_replace_cells(
+                    file_id, '[LINK]', huntflow_link
+                )
+                if success:
+                    replaced_count += 1
+                    result['actions_performed'].append(f"Заменены плейсхолдеры [LINK] на реальную ссылку")
+                    print(f"✅ SCORECARD: [LINK] заменен успешно")
+                else:
+                    print(f"⚠️ SCORECARD: Не удалось заменить [LINK]")
+            else:
+                print(f"⚠️ SCORECARD: Ссылка Huntflow не получена, пропускаем замену [LINK]")
             
             # Заменяем [GRADE]
             if candidate_grade:
+                print(f"🔄 SCORECARD: Заменяем [GRADE] на {candidate_grade}")
                 success = self.sheets_service.find_and_replace_cells(
                     file_id, '[GRADE]', candidate_grade
                 )
                 if success:
                     replaced_count += 1
                     result['actions_performed'].append(f"Заменены плейсхолдеры [GRADE] на реальный грейд: {candidate_grade}")
+                    print(f"✅ SCORECARD: [GRADE] заменен успешно")
+                else:
+                    print(f"⚠️ SCORECARD: Не удалось заменить [GRADE]")
+            else:
+                print(f"⚠️ SCORECARD: Грейд не получен, пропускаем замену [GRADE]")
             
             # Заменяем комбинированные плейсхолдеры (если оба тега в одной ячейке)
             if huntflow_link and candidate_grade:
+                print(f"🔄 SCORECARD: Заменяем комбинированные плейсхолдеры")
                 # Ищем ячейки, содержащие оба тега
                 success = self._replace_combined_placeholders(file_id, huntflow_link, candidate_grade)
                 if success:
                     result['actions_performed'].append("Заменены комбинированные плейсхолдеры")
+                    print(f"✅ SCORECARD: Комбинированные плейсхолдеры заменены успешно")
             
-            print(f"🔧 SCORECARD: Заменено плейсхолдеров: {replaced_count}")
+            print(f"🔧 SCORECARD: Всего заменено плейсхолдеров: {replaced_count}")
             
         except Exception as e:
             error_msg = f"Ошибка замены плейсхолдеров: {str(e)}"
             print(f"❌ SCORECARD: {error_msg}")
+            import traceback
+            traceback.print_exc()
             result['errors'] = result.get('errors', [])
             result['errors'].append(error_msg)
     
@@ -463,20 +585,42 @@ class ScorecardProcessor:
                     updated_row = []
                     for col_index, cell_value in enumerate(row):
                         cell_str = str(cell_value)
+                        cell_updated = False
+                        new_value = cell_str
                         
-                        # Проверяем, содержит ли ячейка оба тега
-                        if '[HUNTFLOW_LINK]' in cell_str and '[GRADE]' in cell_str:
-                            new_value = cell_str.replace('[HUNTFLOW_LINK]', huntflow_link)
+                        # Проверяем, содержит ли ячейка теги ссылки и грейда
+                        has_link_placeholder = '[HUNTFLOW_LINK]' in cell_str or '[LINK]' in cell_str
+                        has_grade_placeholder = '[GRADE]' in cell_str
+                        
+                        if has_link_placeholder and has_grade_placeholder:
+                            # Заменяем оба плейсхолдера
+                            new_value = new_value.replace('[HUNTFLOW_LINK]', huntflow_link)
+                            new_value = new_value.replace('[LINK]', huntflow_link)
                             new_value = new_value.replace('[GRADE]', candidate_grade)
-                            updated_row.append(new_value)
+                            cell_updated = True
+                        elif has_link_placeholder:
+                            # Заменяем только плейсхолдер ссылки
+                            new_value = new_value.replace('[HUNTFLOW_LINK]', huntflow_link)
+                            new_value = new_value.replace('[LINK]', huntflow_link)
+                            cell_updated = True
+                        elif has_grade_placeholder:
+                            # Заменяем только плейсхолдер грейда
+                            new_value = new_value.replace('[GRADE]', candidate_grade)
+                            cell_updated = True
+                        
+                        if cell_updated:
                             replaced_count += 1
-                            print(f"🔄 Заменена комбинированная ячейка {sheet_title}!{self.sheets_service._get_column_letter(col_index)}{row_index + 1}")
-                        else:
-                            updated_row.append(cell_value)
+                            print(f"🔄 Заменена ячейка {sheet_title}!{_get_column_letter(col_index)}{row_index + 1}")
+                        
+                        updated_row.append(new_value)
                     updated_values.append(updated_row)
                 
                 # Обновляем лист, если были изменения
-                if any('[HUNTFLOW_LINK]' in str(cell) and '[GRADE]' in str(cell) for row in values for cell in row):
+                has_placeholders = any(
+                    ('[HUNTFLOW_LINK]' in str(cell) or '[LINK]' in str(cell) or '[GRADE]' in str(cell))
+                    for row in values for cell in row
+                )
+                if has_placeholders:
                     body = {'values': updated_values}
                     self.sheets_service._get_service().spreadsheets().values().update(
                         spreadsheetId=file_id,

@@ -221,12 +221,26 @@ class VacancyViewSet(LogicVacancyViewSet):
                 )
                 return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
             
-            # Проверяем существование грейдов
+            # Проверяем существование грейдов и их активность
             from apps.finance.models import Grade
+            from apps.company_settings.utils import get_active_grades_queryset
+            
+            # Сначала проверяем существование
             grades = Grade.objects.filter(id__in=grade_ids)
             if len(grades) != len(grade_ids):
                 response_data = UnifiedResponseHandler.error_response(
                     "Некоторые грейды не найдены",
+                    400
+                )
+                return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Проверяем, что все грейды активные для компании
+            active_grades = get_active_grades_queryset()
+            inactive_grades = grades.exclude(id__in=active_grades.values_list('id', flat=True))
+            if inactive_grades.exists():
+                inactive_names = [g.name for g in inactive_grades]
+                response_data = UnifiedResponseHandler.error_response(
+                    f"Некоторые грейды не активны для компании: {', '.join(inactive_names)}",
                     400
                 )
                 return Response(response_data, status=status.HTTP_400_BAD_REQUEST)

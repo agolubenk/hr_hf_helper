@@ -220,10 +220,11 @@ class InterviewRuleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        # Загружаем грейды из finance
-        from apps.finance.models import Grade
-        self.fields['min_grade'].queryset = Grade.objects.all().order_by('name')
-        self.fields['max_grade'].queryset = Grade.objects.all().order_by('name')
+        # Загружаем только активные грейды компании
+        from apps.company_settings.utils import get_active_grades_queryset
+        active_grades = get_active_grades_queryset()
+        self.fields['min_grade'].queryset = active_grades.order_by('name')
+        self.fields['max_grade'].queryset = active_grades.order_by('name')
         
         # Делаем поля обязательными
         self.fields['name'].required = True
@@ -292,5 +293,6 @@ class InterviewRuleSearchForm(forms.Form):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        from apps.finance.models import Grade
-        self.fields['min_grade'].queryset = Grade.objects.all().order_by('name')
+        from apps.company_settings.utils import get_active_grades_queryset
+        active_grades = get_active_grades_queryset()
+        self.fields['min_grade'].queryset = active_grades.order_by('name')
