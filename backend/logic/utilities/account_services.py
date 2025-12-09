@@ -165,7 +165,13 @@ class UserService:
         try:
             with transaction.atomic():
                 if 'gemini_api_key' in data:
-                    user.gemini_api_key = data['gemini_api_key']
+                    old_key_preview = f"{user.gemini_api_key[:10]}...{user.gemini_api_key[-5:]}" if user.gemini_api_key and len(user.gemini_api_key) > 15 else "нет"
+                    new_key = data['gemini_api_key'].strip() if data['gemini_api_key'] else ''
+                    new_key_preview = f"{new_key[:10]}...{new_key[-5:]}" if new_key and len(new_key) > 15 else "нет"
+                    print(f"🔑 UPDATE_API_KEYS: Обновление Gemini API ключа для пользователя {user.username}")
+                    print(f"🔑 UPDATE_API_KEYS: Старый ключ: {old_key_preview}")
+                    print(f"🔑 UPDATE_API_KEYS: Новый ключ: {new_key_preview}")
+                    user.gemini_api_key = new_key
                 
                 if 'clickup_api_key' in data:
                     user.clickup_api_key = data['clickup_api_key']
@@ -195,9 +201,18 @@ class UserService:
                     user.huntflow_refresh_token = data['huntflow_refresh_token']
                 
                 user.save()
+                
+                # Проверяем, что ключ действительно сохранился
+                user.refresh_from_db()
+                saved_key_preview = f"{user.gemini_api_key[:10]}...{user.gemini_api_key[-5:]}" if user.gemini_api_key and len(user.gemini_api_key) > 15 else "нет"
+                print(f"✅ UPDATE_API_KEYS: Ключ сохранен в БД: {saved_key_preview}")
+                
                 return True, "API ключи успешно обновлены"
                 
         except Exception as e:
+            print(f"❌ UPDATE_API_KEYS: Ошибка обновления: {str(e)}")
+            import traceback
+            traceback.print_exc()
             return False, f"Ошибка обновления API ключей: {str(e)}"
     
     @staticmethod

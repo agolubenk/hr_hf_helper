@@ -3451,9 +3451,27 @@ class HRScreening(models.Model):
         try:
             from apps.gemini.logic.services import GeminiService
             
+            # Обновляем объект пользователя из базы данных, чтобы получить актуальный ключ
+            # ВАЖНО: Используем прямой запрос к БД, чтобы гарантировать актуальные данные
+            from apps.accounts.models import User
+            user_from_db = User.objects.get(id=self.user.id)
+            self.user = user_from_db
+            
             # Проверяем, есть ли API ключ у пользователя
             if not self.user.gemini_api_key:
+                print(f"❌ HR_SCREENING_ANALYSIS: API ключ не найден для пользователя {self.user.username} (ID: {self.user.id})")
                 return False, "У пользователя не настроен API ключ Gemini"
+            
+            # Логируем информацию о ключе (первые и последние символы для безопасности)
+            api_key_preview = f"{self.user.gemini_api_key[:10]}...{self.user.gemini_api_key[-5:]}" if len(self.user.gemini_api_key) > 15 else "***"
+            print(f"🔑 HR_SCREENING_ANALYSIS: Пользователь: {self.user.username} (ID: {self.user.id})")
+            print(f"🔑 HR_SCREENING_ANALYSIS: Используется API ключ: {api_key_preview}")
+            print(f"🔑 HR_SCREENING_ANALYSIS: Длина ключа: {len(self.user.gemini_api_key)} символов")
+            
+            # Проверяем, что ключ не пустой и имеет правильную длину
+            if len(self.user.gemini_api_key) < 20:
+                print(f"⚠️ HR_SCREENING_ANALYSIS: ВНИМАНИЕ: Ключ слишком короткий ({len(self.user.gemini_api_key)} символов)!")
+                return False, f"API ключ слишком короткий ({len(self.user.gemini_api_key)} символов). Проверьте правильность ключа."
             
             # Создаем сервис Gemini
             gemini_service = GeminiService(self.user.gemini_api_key)
@@ -3464,7 +3482,15 @@ class HRScreening(models.Model):
                 return False, prompt  # prompt содержит сообщение об ошибке
             
             # Отправляем запрос к Gemini
+            print(f"🔍 HR_SCREENING_ANALYSIS: Отправляем запрос к Gemini API...")
+            print(f"🔍 HR_SCREENING_ANALYSIS: Используется модель: {gemini_service.MODEL}")
+            
+            # Небольшая задержка перед запросом, чтобы не превысить rate limits
+            import time
+            time.sleep(0.5)  # 500ms задержка
+            
             success, response_text, metadata = gemini_service.generate_content(prompt)
+            print(f"🔍 HR_SCREENING_ANALYSIS: Получен ответ от Gemini API: success={success}, response_length={len(response_text) if response_text else 0}")
             
             if success and response_text:
                 # Очищаем ответ от markdown блоков
@@ -3489,7 +3515,10 @@ class HRScreening(models.Model):
                 
                 return True, "Анализ завершен успешно"
             else:
-                return False, f"Ошибка Gemini API: {metadata.get('error', 'Неизвестная ошибка')}"
+                # Когда success=False, response_text содержит сообщение об ошибке
+                error_message = response_text if response_text else 'Неизвестная ошибка'
+                print(f"❌ HR_SCREENING_ANALYSIS: Ошибка Gemini API: {error_message}")
+                return False, f"Ошибка Gemini API: {error_message}"
                 
         except Exception as e:
             return False, f"Ошибка при анализе с Gemini: {str(e)}"
