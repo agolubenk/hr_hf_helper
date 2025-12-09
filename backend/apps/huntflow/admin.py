@@ -1,7 +1,10 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.utils import timezone
-from .models import HuntflowCache, HuntflowLog
+from .models import (
+    HuntflowCache, HuntflowLog,
+    HHResponse, HHSyncConfiguration, HHSyncLog, HHFilterStatistics
+)
 
 
 @admin.register(HuntflowCache)
@@ -91,3 +94,197 @@ class HuntflowLogAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         """Разрешаем удаление только суперпользователям"""
         return request.user.is_superuser
+
+
+# ==================== АДМИНКА ДЛЯ HH.RU МОДЕЛЕЙ ====================
+
+@admin.register(HHResponse)
+class HHResponseAdmin(admin.ModelAdmin):
+    list_display = ("first_name", "last_name", "import_status", "hh_vacancy_id", "imported_at")
+    list_filter = ("import_status", "response_state", "imported_at", "hh_vacancy_id")
+    search_fields = ("first_name", "last_name", "email", "hh_response_id", "hh_vacancy_id")
+    readonly_fields = ("imported_at", "processed_at", "hh_created_at", "hh_updated_at")
+    date_hierarchy = "imported_at"
+    
+    fieldsets = (
+        ("Основная информация", {
+            "fields": ("hh_response_id", "hh_vacancy_id", "first_name", "last_name", "middle_name")
+        }),
+        ("Контакты", {
+            "fields": ("email", "phone", "location", "location_id")
+        }),
+        ("Дополнительно", {
+            "fields": ("birth_date", "gender", "experience_json", "skills_json", "resume_text")
+        }),
+        ("Статусы", {
+            "fields": ("response_state", "import_status", "filter_score", "filter_reasons")
+        }),
+        ("Связи", {
+            "fields": ("account_id", "vacancy_id", "applicant_id", "imported_by")
+        }),
+        ("Временные метки", {
+            "fields": ("hh_created_at", "hh_updated_at", "imported_at", "processed_at")
+        }),
+        ("Ссылки", {
+            "fields": ("hh_resume_url", "hh_applicant_url")
+        }),
+        ("Данные", {
+            "fields": ("raw_data",),
+            "classes": ("collapse",)
+        }),
+    )
+
+
+@admin.register(HHSyncConfiguration)
+class HHSyncConfigurationAdmin(admin.ModelAdmin):
+    list_display = ("user", "account_id", "vacancy_id", "hh_vacancy_id", "enabled", "sync_frequency", "last_sync")
+    list_filter = ("enabled", "sync_frequency", "created_at", "last_sync")
+    search_fields = ("user__username", "hh_vacancy_id", "account_id", "vacancy_id")
+    readonly_fields = ("created_at", "last_sync", "next_scheduled_sync", "statistics_display")
+    
+    fieldsets = (
+        ("Основная информация", {
+            "fields": ("user", "account_id", "vacancy_id", "hh_vacancy_id")
+        }),
+        ("Настройки синхронизации", {
+            "fields": ("enabled", "sync_frequency", "filters")
+        }),
+        ("Статистика", {
+            "fields": (
+                "total_responses_found", "total_responses_imported",
+                "total_responses_filtered", "total_responses_errors",
+                "statistics_display"
+            )
+        }),
+        ("Автоматизация", {
+            "fields": ("auto_add_to_project", "project_id")
+        }),
+        ("Временные метки", {
+            "fields": ("created_at", "last_sync", "next_scheduled_sync")
+        }),
+    )
+    
+    def statistics_display(self, obj):
+        """Отображает статистику синхронизации"""
+        return format_html(
+            """
+            <div style="background: #f8f9fa; padding: 10px; border-radius: 5px;">
+                <strong>Найдено:</strong> {}<br>
+                <strong>Импортировано:</strong> {}<br>
+                <strong>Отфильтровано:</strong> {}<br>
+                <strong>Ошибок:</strong> {}
+            </div>
+            """,
+            obj.total_responses_found,
+            obj.total_responses_imported,
+            obj.total_responses_filtered,
+            obj.total_responses_errors
+        )
+    statistics_display.short_description = "Статистика"
+
+
+@admin.register(HHSyncLog)
+class HHSyncLogAdmin(admin.ModelAdmin):
+    list_display = ("configuration", "status", "total_responses", "imported_count", "filtered_count", "started_at")
+    list_filter = ("status", "started_at", "configuration")
+    search_fields = ("configuration__hh_vacancy_id", "error_message")
+    readonly_fields = ("started_at", "completed_at", "sync_duration_display")
+    date_hierarchy = "started_at"
+    
+    fieldsets = (
+        ("Основная информация", {
+            "fields": ("configuration", "status")
+        }),
+        ("Результаты", {
+            "fields": ("total_responses", "imported_count", "filtered_count", "error_count")
+        }),
+        ("Ошибки", {
+            "fields": ("error_message", "error_details"),
+            "classes": ("collapse",)
+        }),
+        ("Статистика", {
+            "fields": ("filter_summary", "sync_duration_display")
+        }),
+        ("Временные метки", {
+            "fields": ("started_at", "completed_at")
+        }),
+    )
+    
+    def sync_duration_display(self, obj):
+        """Отображает длительность синхронизации"""
+        if obj.sync_duration_seconds:
+            if obj.sync_duration_seconds < 60:
+                return f"{obj.sync_duration_seconds} сек"
+            elif obj.sync_duration_seconds < 3600:
+                minutes = obj.sync_duration_seconds // 60
+                seconds = obj.sync_duration_seconds % 60
+                return f"{minutes} мин {seconds} сек"
+            else:
+                hours = obj.sync_duration_seconds // 3600
+                minutes = (obj.sync_duration_seconds % 3600) // 60
+                return f"{hours} ч {minutes} мин"
+        return "Не завершено"
+    sync_duration_display.short_description = "Длительность"
+
+
+@admin.register(HHFilterStatistics)
+class HHFilterStatisticsAdmin(admin.ModelAdmin):
+    list_display = ("configuration", "total_responses", "accepted_count", "rejection_rate", "updated_at")
+    list_filter = ("updated_at",)
+    search_fields = ("configuration__hh_vacancy_id",)
+    readonly_fields = ("updated_at", "statistics_display")
+    
+    fieldsets = (
+        ("Основная информация", {
+            "fields": ("configuration",)
+        }),
+        ("Статистика отклонений", {
+            "fields": (
+                "location_mismatch_count", "gender_mismatch_count",
+                "age_mismatch_count", "experience_mismatch_count",
+                "already_in_db_count", "other_count"
+            )
+        }),
+        ("Процентное распределение", {
+            "fields": (
+                "location_mismatch_percent", "gender_mismatch_percent",
+                "age_mismatch_percent", "experience_mismatch_percent",
+                "already_in_db_percent", "other_percent"
+            )
+        }),
+        ("Общая статистика", {
+            "fields": ("total_responses", "accepted_count", "rejection_rate", "statistics_display")
+        }),
+        ("Временные метки", {
+            "fields": ("updated_at",)
+        }),
+    )
+    
+    def statistics_display(self, obj):
+        """Отображает статистику фильтрации"""
+        return format_html(
+            """
+            <div style="background: #f8f9fa; padding: 10px; border-radius: 5px;">
+                <strong>Всего откликов:</strong> {}<br>
+                <strong>Принято:</strong> {}<br>
+                <strong>Процент отклонения:</strong> {:.2f}%<br><br>
+                <strong>Причины отклонения:</strong><br>
+                - Локация: {} ({:.2f}%)<br>
+                - Пол: {} ({:.2f}%)<br>
+                - Возраст: {} ({:.2f}%)<br>
+                - Опыт: {} ({:.2f}%)<br>
+                - Уже в БД: {} ({:.2f}%)<br>
+                - Другое: {} ({:.2f}%)
+            </div>
+            """,
+            obj.total_responses,
+            obj.accepted_count,
+            obj.rejection_rate,
+            obj.location_mismatch_count, obj.location_mismatch_percent,
+            obj.gender_mismatch_count, obj.gender_mismatch_percent,
+            obj.age_mismatch_count, obj.age_mismatch_percent,
+            obj.experience_mismatch_count, obj.experience_mismatch_percent,
+            obj.already_in_db_count, obj.already_in_db_percent,
+            obj.other_count, obj.other_percent
+        )
+    statistics_display.short_description = "Детальная статистика"

@@ -14,8 +14,11 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 import json
+import logging
 
 from .services import HuntflowService
+
+logger = logging.getLogger(__name__)
 
 
 def get_correct_account_id(user, fallback_account_id=None):
@@ -1201,3 +1204,650 @@ def get_applicants_ajax(request, account_id):
             'success': False,
             'message': f'Ошибка: {str(e)}'
         })
+
+
+# ==================== HH.RU ИНТЕГРАЦИЯ ====================
+
+@login_required
+def hh_vacancy_select(request, account_id):
+    """
+    Страница выбора вакансии для работы с HH.ru откликами
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации в Huntflow
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HuntflowService: получение списка вакансий
+    - HHSyncConfiguration: сохраненные конфигурации синхронизации
+    
+    ОБРАБОТКА:
+    - Получение списка вакансий из Huntflow
+    - Получение сохраненных конфигураций синхронизации
+    - Отображение страницы выбора вакансии
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с вакансиями и конфигурациями
+    - render: HTML страница 'huntflow/hh_vacancy_select.html'
+    """
+    try:
+        from apps.huntflow.models import HHSyncConfiguration
+        
+        huntflow_service = HuntflowService(request.user)
+        
+        # Получаем список вакансий
+        vacancies_data = huntflow_service.get_vacancies(account_id)
+        vacancies = vacancies_data.get('items', []) if vacancies_data else []
+        
+        # Получаем сохраненные конфигурации
+        sync_configs = HHSyncConfiguration.objects.filter(
+            user=request.user,
+            account_id=account_id,
+            enabled=True
+        )
+        
+        # Создаем словарь конфигураций по vacancy_id для быстрого доступа
+        configs_by_vacancy = {config.vacancy_id: config for config in sync_configs}
+        
+        context = {
+            'account_id': account_id,
+            'vacancies': vacancies,
+            'sync_configs': configs_by_vacancy,
+            'total_vacancies': len(vacancies)
+        }
+        
+        return render(request, 'huntflow/hh_vacancy_select.html', context)
+        
+    except Exception as e:
+        messages.error(request, f'Ошибка при загрузке вакансий: {str(e)}')
+        return render(request, 'huntflow/hh_vacancy_select.html', {
+            'account_id': account_id,
+            'vacancies': [],
+            'error': str(e)
+        })
+
+
+@login_required
+def hh_responses_list(request, account_id, vacancy_id):
+    """
+    Страница просмотра откликов из HH.ru для вакансии
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации в Huntflow
+    - vacancy_id: ID вакансии в Huntflow
+    - request.GET: параметры фильтрации и пагинации
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HH.ru API: получение откликов напрямую из HH.ru
+    - HHResponse: сохраненные отклики из БД (для связи)
+    - HHSyncConfiguration: конфигурация синхронизации
+    
+    ОБРАБОТКА:
+    - Получение информации о вакансии
+    - Получение откликов напрямую из HH.ru API
+    - Проверка, какие отклики уже обработаны
+    - Применение фильтров
+    - Отображение откликов с возможностью управления
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с откликами, вакансией и фильтрами
+    - render: HTML страница 'huntflow/hh_responses_list.html'
+    """
+    try:
+        from apps.huntflow.models import HHResponse, HHSyncConfiguration
+        from apps.huntflow.hh_integration import HHResponsesHandler
+        
+        huntflow_service = HuntflowService(request.user)
+        
+        # Получаем информацию о вакансии
+        vacancy = huntflow_service.get_vacancy(account_id, vacancy_id)
+        
+        # Получаем конфигурацию синхронизации для получения hh_vacancy_id
+        sync_config = HHSyncConfiguration.objects.filter(
+            user=request.user,
+            account_id=account_id,
+            vacancy_id=vacancy_id
+        ).first()
+        
+        # Получаем hh_vacancy_id из конфигурации или запроса
+        hh_vacancy_id = None
+        if sync_config:
+            hh_vacancy_id = sync_config.hh_vacancy_id
+        else:
+            hh_vacancy_id = request.GET.get('hh_vacancy_id')
+        
+        # Получаем отклики из Huntflow API (они уже там есть)
+        page = max(int(request.GET.get('page', 1)), 1)  # Huntflow использует 1-based пагинацию
+        per_page = min(int(request.GET.get('count', 20)), 30)  # Максимум 30 для Huntflow
+        
+        try:
+            # Получаем отклики из Huntflow
+            huntflow_responses_data = huntflow_service.get_vacancy_responses(
+                account_id=account_id,
+                vacancy_id=vacancy_id,
+                count=per_page,
+                page=page
+            )
+            
+            if not huntflow_responses_data:
+                messages.error(request, "Ошибка получения откликов из Huntflow")
+                huntflow_responses = []
+                total_responses = 0
+                total_pages = 1
+            else:
+                huntflow_responses = huntflow_responses_data.get('items', [])
+                total_responses = huntflow_responses_data.get('total', 0)
+                total_applicants = huntflow_responses_data.get('total_applicants', 0)
+                total_pages = huntflow_responses_data.get('total_pages', 1)
+                logger.info(f"Получено откликов из Huntflow: {len(huntflow_responses)} из {total_responses} (страница {page} из {total_pages})")
+        except Exception as e:
+            logger.error(f"Ошибка при получении откликов из Huntflow: {e}")
+            messages.error(request, f'Ошибка при загрузке откликов: {str(e)}')
+            huntflow_responses = []
+            total_responses = 0
+            total_pages = 1
+        
+        # Проверяем, какие отклики уже обработаны (сохранены в БД)
+        imported_hh_response_ids = set()
+        if hh_vacancy_id:
+            imported_hh_response_ids = set(
+                HHResponse.objects.filter(
+                    account_id=account_id,
+                    vacancy_id=vacancy_id,
+                    hh_vacancy_id=hh_vacancy_id
+                ).values_list('hh_response_id', flat=True)
+            )
+        else:
+            # Если hh_vacancy_id не указан, проверяем все отклики для вакансии
+            imported_hh_response_ids = set(
+                HHResponse.objects.filter(
+                    account_id=account_id,
+                    vacancy_id=vacancy_id
+                ).values_list('hh_response_id', flat=True)
+            )
+        
+        # Получаем фильтры из GET параметров или используем сохраненные
+        hh_filters = {}
+        if sync_config:
+            hh_filters = sync_config.get_filters()
+        
+        # Переопределяем фильтры из GET параметров, если они есть
+        if request.GET.get('min_age'):
+            hh_filters['min_age'] = int(request.GET.get('min_age'))
+        if request.GET.get('max_age'):
+            hh_filters['max_age'] = int(request.GET.get('max_age'))
+        if request.GET.get('min_experience_years'):
+            hh_filters['min_experience_years'] = int(request.GET.get('min_experience_years'))
+        if request.GET.get('max_experience_years'):
+            hh_filters['max_experience_years'] = int(request.GET.get('max_experience_years'))
+        if request.GET.get('allowed_locations'):
+            hh_filters['allowed_locations'] = request.GET.get('allowed_locations').split(',')
+        if request.GET.get('allowed_genders'):
+            hh_filters['allowed_genders'] = [request.GET.get('allowed_genders')]
+        
+        # Обогащаем данные откликов
+        enriched_responses = []
+        passed_filters = []
+        rejected_by_filters = []
+        
+        for response in huntflow_responses:
+            response_id = response.get('id')  # ID отклика в Huntflow
+            response_foreign = response.get('foreign', '')  # Foreign ID (из HH.ru)
+            applicant = response.get('applicant', {})
+            vacancy_external = response.get('vacancy_external', {})
+            
+            # Проверяем, обработан ли отклик (по foreign ID)
+            is_processed = False
+            hh_response_db = None
+            if response_foreign and hh_vacancy_id:
+                is_processed = str(response_foreign) in imported_hh_response_ids
+                if is_processed:
+                    hh_response_db = HHResponse.objects.filter(
+                        hh_response_id=str(response_foreign)
+                    ).first()
+            
+            # Извлекаем данные резюме из applicant
+            resume = {}
+            if applicant:
+                # Получаем резюме из externals кандидата
+                externals = applicant.get('externals', [])
+                for external in externals:
+                    if external.get('auth_type') == 'HH':  # HeadHunter
+                        resume_data = external.get('data', {})
+                        resume = external.get('resume', {}) or resume_data
+                        break
+                
+                # Если резюме не найдено, используем данные из applicant как fallback
+                if not resume:
+                    resume = {
+                        'first_name': applicant.get('first_name', ''),
+                        'last_name': applicant.get('last_name', ''),
+                        'middle_name': applicant.get('middle_name', ''),
+                        'area': applicant.get('area', {}),
+                        'contacts': []
+                    }
+                    # Добавляем контакты из applicant
+                    if applicant.get('email'):
+                        resume['contacts'] = resume.get('contacts', []) + [{
+                            'type': {'id': 'email'},
+                            'value': applicant.get('email')
+                        }]
+                    if applicant.get('phone'):
+                        resume['contacts'] = resume.get('contacts', []) + [{
+                            'type': {'id': 'phone'},
+                            'value': applicant.get('phone')
+                        }]
+            
+            # Применяем фильтры HH.ru к отклику
+            passes_filter = True
+            filter_reasons = []
+            
+            if hh_filters and any([
+                hh_filters.get('min_age') is not None or hh_filters.get('max_age') is not None,
+                hh_filters.get('min_experience_years') is not None or hh_filters.get('max_experience_years') is not None,
+                hh_filters.get('allowed_locations'),
+                hh_filters.get('allowed_genders') and 'any' not in hh_filters.get('allowed_genders', [])
+            ]):
+                # Проверяем возраст
+                age = None
+                birth_date_str = resume.get('birth_date')
+                if birth_date_str:
+                    try:
+                        from datetime import datetime, date
+                        if 'T' in birth_date_str:
+                            birthday = datetime.fromisoformat(birth_date_str.replace('Z', '+00:00')).date()
+                        else:
+                            birthday = datetime.strptime(birth_date_str, '%Y-%m-%d').date()
+                        today = date.today()
+                        age = today.year - birthday.year - (
+                            (today.month, today.day) < (birthday.month, birthday.day)
+                        )
+                    except:
+                        pass
+                
+                if age is not None:
+                    min_age = hh_filters.get('min_age')
+                    max_age = hh_filters.get('max_age')
+                    if min_age is not None or max_age is not None:
+                        min_age = min_age if min_age is not None else 0
+                        max_age = max_age if max_age is not None else 200
+                        if not (min_age <= age <= max_age):
+                            passes_filter = False
+                            filter_reasons.append(f'Возраст {age} не в диапазоне {min_age}-{max_age}')
+                
+                # Проверяем опыт (если есть данные в резюме)
+                experience_list = resume.get('experience', [])
+                if experience_list:
+                    total_days = 0
+                    today = date.today()
+                    for exp in experience_list:
+                        try:
+                            start_str = exp.get('start', '')
+                            end_str = exp.get('end')
+                            
+                            if 'T' in start_str:
+                                start = datetime.fromisoformat(start_str.replace('Z', '+00:00')).date()
+                            else:
+                                start = datetime.strptime(start_str, '%Y-%m-%d').date()
+                            
+                            if end_str:
+                                if 'T' in end_str:
+                                    end = datetime.fromisoformat(end_str.replace('Z', '+00:00')).date()
+                                else:
+                                    end = datetime.strptime(end_str, '%Y-%m-%d').date()
+                            else:
+                                end = today
+                            
+                            total_days += (end - start).days
+                        except:
+                            pass
+                    
+                    experience_years = total_days / 365.25 if total_days > 0 else 0
+                    min_exp = hh_filters.get('min_experience_years')
+                    max_exp = hh_filters.get('max_experience_years')
+                    if min_exp is not None or max_exp is not None:
+                        min_exp = min_exp if min_exp is not None else 0
+                        max_exp = max_exp if max_exp is not None else 200
+                        if not (min_exp <= experience_years <= max_exp):
+                            passes_filter = False
+                            filter_reasons.append(f'Опыт {experience_years:.1f} лет не в диапазоне {min_exp}-{max_exp}')
+                
+                # Проверяем локацию
+                area = resume.get('area', {})
+                location_id = str(area.get('id', '')) if area else None
+                if location_id:
+                    allowed_locations = hh_filters.get('allowed_locations', [])
+                    if allowed_locations and location_id not in allowed_locations:
+                        passes_filter = False
+                        filter_reasons.append(f'Локация не в списке разрешенных')
+                
+                # Проверяем пол
+                gender_obj = resume.get('gender', {})
+                gender = gender_obj.get('id', '') if isinstance(gender_obj, dict) else str(gender_obj) if gender_obj else None
+                if gender:
+                    allowed_genders = hh_filters.get('allowed_genders', ['any'])
+                    if 'any' not in allowed_genders and gender not in allowed_genders:
+                        passes_filter = False
+                        filter_reasons.append(f'Пол не соответствует фильтру')
+            
+            # Парсим дату создания отклика
+            created_at = None
+            created_at_str = response.get('created_at')
+            if created_at_str:
+                try:
+                    from datetime import datetime
+                    if 'T' in created_at_str:
+                        created_at = datetime.fromisoformat(created_at_str.replace('Z', '+00:00'))
+                    else:
+                        created_at = datetime.strptime(created_at_str, '%Y-%m-%d')
+                except:
+                    pass
+            
+            # Получаем информацию о вакансии из отклика
+            response_vacancy = response.get('vacancy', {})
+            vacancy_external = response.get('vacancy_external', {})
+            
+            response_data = {
+                'huntflow_response': response,  # Полный объект отклика из Huntflow
+                'response_id': response_id,  # ID отклика в Huntflow (например, 17800665)
+                'response_foreign': response_foreign,  # Foreign ID (из HH.ru)
+                'applicant': applicant,  # Данные кандидата
+                'resume': resume,  # Данные резюме
+                'is_processed': is_processed,  # Обработан ли отклик
+                'hh_response_db': hh_response_db,  # Запись в БД
+                'created_at': created_at,  # Дата создания отклика
+                'vacancy': response_vacancy,  # Информация о вакансии
+                'vacancy_external': vacancy_external,  # Внешняя публикация вакансии
+                'passes_hh_filters': passes_filter,  # Прошел ли фильтры
+                'filter_reasons': filter_reasons  # Причины отклонения фильтрами
+            }
+            
+            enriched_responses.append(response_data)
+            
+            if passes_filter:
+                passed_filters.append(response_data)
+            else:
+                rejected_by_filters.append(response_data)
+        
+        # Статистика
+        imported_count = len([r for r in enriched_responses if r['is_processed']])
+        not_imported_count = len(enriched_responses) - imported_count
+        passed_hh_filters = len(passed_filters)
+        rejected_by_hh_filters = len(rejected_by_filters)
+        
+        # Применяем фильтры из GET параметров для отображения
+        source_filter = request.GET.get('source', '')
+        filter_status = request.GET.get('filter_status', '')
+        
+        if source_filter == 'processed':
+            enriched_responses = [r for r in enriched_responses if r['is_processed']]
+        elif source_filter == 'new':
+            enriched_responses = [r for r in enriched_responses if not r['is_processed']]
+        
+        if filter_status == 'passed':
+            enriched_responses = [r for r in enriched_responses if r['passes_hh_filters']]
+        elif filter_status == 'rejected':
+            enriched_responses = [r for r in enriched_responses if not r['passes_hh_filters']]
+        
+        # Получаем название статуса отклика (если есть)
+        response_status_name = None
+        
+        context = {
+            'account_id': account_id,
+            'vacancy_id': vacancy_id,
+            'vacancy': vacancy,
+            'sync_config': sync_config,
+            'hh_vacancy_id': hh_vacancy_id,
+            'responses': enriched_responses,
+            'total_responses': total_responses,
+            'imported_count': imported_count,
+            'not_imported_count': not_imported_count,
+            'passed_hh_filters': passed_hh_filters,
+            'rejected_by_hh_filters': rejected_by_hh_filters,
+            'current_page': page + 1,  # Для отображения (1-based)
+            'total_pages': total_pages,
+            'hh_filters': hh_filters,
+            'response_status_name': response_status_name,
+            'current_filters': {
+                'source': source_filter,
+                'filter_status': filter_status,
+                'min_age': hh_filters.get('min_age'),
+                'max_age': hh_filters.get('max_age'),
+                'min_experience_years': hh_filters.get('min_experience_years'),
+                'max_experience_years': hh_filters.get('max_experience_years'),
+                'allowed_locations': ','.join(hh_filters.get('allowed_locations', [])),
+                'allowed_genders': hh_filters.get('allowed_genders', ['any'])[0] if hh_filters.get('allowed_genders') else 'any'
+            },
+            'pagination': {
+                'has_previous': page > 1,
+                'has_next': page < total_pages,
+                'previous_page': page - 1,
+                'next_page': page + 1,
+                'current_page': page,
+                'total_pages': total_pages
+            }
+        }
+        
+        return render(request, 'huntflow/hh_responses_list.html', context)
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        logger.error(f"Ошибка в hh_responses_list: {e}")
+        messages.error(request, f'Ошибка при загрузке откликов: {str(e)}')
+        return render(request, 'huntflow/hh_responses_list.html', {
+            'account_id': account_id,
+            'vacancy_id': vacancy_id,
+            'error': str(e),
+            'responses': []
+        })
+
+
+@login_required
+@require_http_methods(["POST"])
+def hh_import_responses_ajax(request, account_id, vacancy_id):
+    """
+    AJAX endpoint для импорта откликов из HH.ru
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации в Huntflow
+    - vacancy_id: ID вакансии в Huntflow
+    - request.POST: hh_vacancy_id, filters (JSON)
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HH.ru API: получение откликов
+    - HuntflowOperations: импорт в Huntflow
+    
+    ОБРАБОТКА:
+    - Получение откликов из HH.ru
+    - Фильтрация по критериям
+    - Импорт в Huntflow
+    - Сохранение в БД
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JsonResponse с результатами импорта
+    """
+    try:
+        from logic.integration.shared.huntflow_operations import HuntflowOperations
+        import json
+        
+        hh_vacancy_id = request.POST.get('hh_vacancy_id')
+        filters_json = request.POST.get('filters', '{}')
+        
+        if not hh_vacancy_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Требуется hh_vacancy_id'
+            }, status=400)
+        
+        try:
+            filters = json.loads(filters_json) if filters_json else {}
+        except json.JSONDecodeError:
+            filters = {}
+        
+        operations = HuntflowOperations(request.user)
+        result = operations.get_and_import_hh_responses(
+            account_id=int(account_id),
+            vacancy_id=int(vacancy_id),
+            hh_vacancy_id=hh_vacancy_id,
+            filters=filters
+        )
+        
+        return JsonResponse(result)
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка: {str(e)}'
+        }, status=500)
+
+
+@login_required
+@require_http_methods(["POST"])
+def hh_reject_response_ajax(request, account_id, vacancy_id):
+    """
+    AJAX endpoint для отклонения отклика в HH.ru
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации в Huntflow
+    - vacancy_id: ID вакансии в Huntflow
+    - request.POST: negotiation_id, hh_vacancy_id, message (опционально)
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HH.ru API: отклонение отклика
+    - HHResponse: сохранение статуса в БД
+    
+    ОБРАБОТКА:
+    - Отклонение отклика в HH.ru
+    - Сохранение информации об отклонении в БД
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JsonResponse с результатами операции
+    """
+    try:
+        from apps.huntflow.hh_integration import HHResponsesHandler
+        from apps.huntflow.models import HHResponse
+        
+        negotiation_id = request.POST.get('negotiation_id')
+        hh_vacancy_id = request.POST.get('hh_vacancy_id')
+        message = request.POST.get('message', '')
+        
+        if not negotiation_id or not hh_vacancy_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Требуется negotiation_id и hh_vacancy_id'
+            }, status=400)
+        
+        handler = HHResponsesHandler(request.user)
+        result = handler.reject_response(negotiation_id, hh_vacancy_id, message)
+        
+        # Сохраняем информацию об отклонении в БД
+        if result['success']:
+            HHResponse.objects.update_or_create(
+                hh_response_id=negotiation_id,
+                defaults={
+                    'account_id': account_id,
+                    'vacancy_id': vacancy_id,
+                    'hh_vacancy_id': hh_vacancy_id,
+                    'import_status': 'filtered',
+                    'response_state': 'rejected',
+                    'imported_by': request.user,
+                }
+            )
+        
+        return JsonResponse(result)
+        
+    except Exception as e:
+        logger.error(f"Ошибка при отклонении отклика: {e}")
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка: {str(e)}'
+        }, status=500)
+
+
+@login_required
+@require_http_methods(["POST"])
+def hh_archive_response_ajax(request, account_id, vacancy_id):
+    """
+    AJAX endpoint для архивирования отклика в HH.ru
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации в Huntflow
+    - vacancy_id: ID вакансии в Huntflow
+    - request.POST: negotiation_id
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HH.ru API: архивирование отклика
+    
+    ОБРАБОТКА:
+    - Архивирование отклика в HH.ru
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JsonResponse с результатами операции
+    """
+    try:
+        from apps.huntflow.hh_integration import HHResponsesHandler
+        
+        negotiation_id = request.POST.get('negotiation_id')
+        
+        if not negotiation_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Требуется negotiation_id'
+            }, status=400)
+        
+        handler = HHResponsesHandler(request.user)
+        result = handler.archive_response(negotiation_id)
+        
+        return JsonResponse(result)
+        
+    except Exception as e:
+        logger.error(f"Ошибка при архивировании отклика: {e}")
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка: {str(e)}'
+        }, status=500)
+
+
+@login_required
+@require_http_methods(["POST"])
+def hh_mark_viewed_ajax(request, account_id, vacancy_id):
+    """
+    AJAX endpoint для отметки отклика как просмотренного в HH.ru
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации в Huntflow
+    - vacancy_id: ID вакансии в Huntflow
+    - request.POST: negotiation_id
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HH.ru API: отметка как просмотренный
+    
+    ОБРАБОТКА:
+    - Отметка отклика как просмотренного в HH.ru
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JsonResponse с результатами операции
+    """
+    try:
+        from apps.huntflow.hh_integration import HHResponsesHandler
+        
+        negotiation_id = request.POST.get('negotiation_id')
+        
+        if not negotiation_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Требуется negotiation_id'
+            }, status=400)
+        
+        handler = HHResponsesHandler(request.user)
+        result = handler.mark_as_viewed(negotiation_id)
+        
+        return JsonResponse(result)
+        
+    except Exception as e:
+        logger.error(f"Ошибка при отметке отклика: {e}")
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка: {str(e)}'
+        }, status=500)

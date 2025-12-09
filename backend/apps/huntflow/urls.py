@@ -26,4 +26,12 @@ urlpatterns = [
     path('tokens/api/', views_token.HuntflowTokenAPIView.as_view(), name='huntflow_tokens'),
     path('tokens/refresh/', views_token.refresh_huntflow_token_view, name='huntflow_refresh_token'),
     path('tokens/test/', views_token.test_huntflow_connection_view, name='huntflow_test_connection'),
+    
+    # HH.ru интеграция
+    path('accounts/<int:account_id>/hh/vacancies/', views.hh_vacancy_select, name='hh_vacancy_select'),
+    path('accounts/<int:account_id>/hh/vacancies/<int:vacancy_id>/responses/', views.hh_responses_list, name='hh_responses_list'),
+    path('accounts/<int:account_id>/hh/vacancies/<int:vacancy_id>/import/', views.hh_import_responses_ajax, name='hh_import_responses_ajax'),
+    path('accounts/<int:account_id>/hh/vacancies/<int:vacancy_id>/reject/', views.hh_reject_response_ajax, name='hh_reject_response_ajax'),
+    path('accounts/<int:account_id>/hh/vacancies/<int:vacancy_id>/archive/', views.hh_archive_response_ajax, name='hh_archive_response_ajax'),
+    path('accounts/<int:account_id>/hh/vacancies/<int:vacancy_id>/mark-viewed/', views.hh_mark_viewed_ajax, name='hh_mark_viewed_ajax'),
 ]

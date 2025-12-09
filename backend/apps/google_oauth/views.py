@@ -3383,6 +3383,9 @@ def chat_ajax_handler(request, session_id):
         message_text = data.get('text', '').strip()
         action_type_from_js = data.get('action_type', '')
         
+        print(f"🔍 CHAT AJAX HANDLER: Получен message_text (длина: {len(message_text)}): {message_text}")
+        print(f"🔍 CHAT AJAX HANDLER: Проверяем наличие @ в message_text: {'@' in message_text}")
+        
         if not message_text:
             return JsonResponse({'success': False, 'error': 'Пустое сообщение'})
         

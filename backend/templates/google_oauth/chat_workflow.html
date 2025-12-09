@@ -2481,12 +2481,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const lastAtIndex = textBeforeCursor.lastIndexOf('@');
         
         if (lastAtIndex !== -1) {
-            // Заменяем текст от @ до курсора на username интервьюера
-            const newValue = value.substring(0, lastAtIndex) + interviewer.username + ' ' + value.substring(cursorPos);
+            // Заменяем текст от @ до курсора на @username интервьюера (сохраняем @)
+            const newValue = value.substring(0, lastAtIndex) + '@' + interviewer.username + ' ' + value.substring(cursorPos);
             messageInput.value = newValue;
             
-            // Устанавливаем курсор после username
-            const newCursorPos = lastAtIndex + interviewer.username.length + 1;
+            // Устанавливаем курсор после @username
+            const newCursorPos = lastAtIndex + interviewer.username.length + 2; // +2 для @ и пробела
             messageInput.setSelectionRange(newCursorPos, newCursorPos);
             
             // Добавляем информацию об интервьюере в скрытое поле для отправки на сервер

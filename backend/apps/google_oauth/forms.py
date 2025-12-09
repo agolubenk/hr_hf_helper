@@ -324,7 +324,8 @@ class InviteCombinedForm(forms.ModelForm):
         # Сохраняем исходные данные из формы
         if 'combined_data' in self.cleaned_data:
             invite.original_form_data = self.cleaned_data['combined_data']
-            print(f"🔍 COMBINED_FORM_SAVE: Сохранены исходные данные: {invite.original_form_data[:100]}...")
+            print(f"🔍 COMBINED_FORM_SAVE: Сохранены исходные данные (полная длина: {len(invite.original_form_data)}): {invite.original_form_data}")
+            print(f"🔍 COMBINED_FORM_SAVE: Проверяем наличие @ в данных: {'@' in invite.original_form_data}")
         
         # Обрабатываем выбранного интервьюера
         if 'selected_interviewer' in self.cleaned_data and self.cleaned_data['selected_interviewer']:

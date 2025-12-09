@@ -708,6 +708,306 @@ class HuntflowService:
         """
         return self._make_request('GET', f"/accounts/{account_id}/applicants/{applicant_id}/questionary")
     
+    def get_applicant_responses(self, account_id: int, applicant_id: int, count: int = 30, next_page_cursor: str = None) -> Optional[Dict[str, Any]]:
+        """
+        Получает отклики кандидата из Huntflow
+        
+        Args:
+            account_id: ID организации
+            applicant_id: ID кандидата
+            count: Количество результатов на странице (макс 100)
+            next_page_cursor: Курсор для следующей страницы
+            
+        Returns:
+            Список откликов кандидата или None
+        """
+        params = {'count': min(count, 100)}
+        if next_page_cursor:
+            params['next_page_cursor'] = next_page_cursor
+        
+        query_params = '&'.join([f"{k}={v}" for k, v in params.items()])
+        endpoint = f"/accounts/{account_id}/applicants/{applicant_id}/responses"
+        if query_params:
+            endpoint += f"?{query_params}"
+        
+        return self._make_request('GET', endpoint)
+    
+    def get_vacancy_responses(self, account_id: int, vacancy_id: int, count: int = 30, page: int = 1) -> Optional[Dict[str, Any]]:
+        """
+        Получает отклики (responses) по вакансии из Huntflow
+        
+        ВАЖНО: Получает именно responses (отклики), а не кандидатов на вакансии.
+        Responses - это отдельная сущность, которая может быть у кандидатов,
+        которые еще не привязаны к вакансии или находятся в статусе "отклик".
+        
+        Args:
+            account_id: ID организации
+            vacancy_id: ID вакансии
+            count: Количество откликов на странице (для пагинации)
+            page: Номер страницы (для пагинации отображения)
+            
+        Returns:
+            Словарь с откликами или None
+        """
+        try:
+            all_responses = []
+            processed_applicant_ids = set()  # Чтобы не обрабатывать одного кандидата дважды
+            processed_response_ids = set()  # Чтобы не дублировать отклики
+            
+            # Получаем источники для поиска кандидатов из HH.ru
+            sources_data = self._make_request('GET', f"/accounts/{account_id}/applicants/sources")
+            hh_source_id = None
+            if sources_data and 'items' in sources_data:
+                for source in sources_data['items']:
+                    source_name = source.get('name', '').lower()
+                    if 'hh' in source_name or 'headhunter' in source_name or 'хедхантер' in source_name:
+                        hh_source_id = source.get('id')
+                        break
+            
+            if not hh_source_id:
+                hh_source_id = 2  # Стандартный ID для HH.ru
+            
+            logger.info(f"Поиск откликов для вакансии {vacancy_id}, источник HH.ru: {hh_source_id}")
+            
+            # Стратегия: получаем кандидатов, которые уже на вакансии (они точно имеют responses)
+            # и также получаем кандидатов из HH.ru источника, которые могут иметь responses на эту вакансию
+            
+            # Шаг 1: Получаем кандидатов, которые уже на вакансии
+            logger.info(f"Шаг 1: Получение кандидатов на вакансии {vacancy_id}")
+            vacancy_applicants_page = 1
+            max_vacancy_pages = 100  # Лимит страниц для кандидатов на вакансии
+            
+            while vacancy_applicants_page <= max_vacancy_pages:
+                vacancy_applicants_data = self.get_applicants(
+                    account_id=account_id,
+                    vacancy=vacancy_id,
+                    count=30,
+                    page=vacancy_applicants_page
+                )
+                
+                if not vacancy_applicants_data or 'items' not in vacancy_applicants_data:
+                    break
+                
+                vacancy_applicants = vacancy_applicants_data.get('items', [])
+                if not vacancy_applicants:
+                    break
+                
+                logger.info(f"Обработка страницы {vacancy_applicants_page} кандидатов на вакансии, получено {len(vacancy_applicants)} кандидатов")
+                
+                for applicant in vacancy_applicants:
+                    applicant_id = applicant.get('id')
+                    if not applicant_id or applicant_id in processed_applicant_ids:
+                        continue
+                    
+                    processed_applicant_ids.add(applicant_id)
+                    
+                    # Получаем все отклики кандидата с пагинацией
+                    next_cursor = None
+                    while True:
+                        responses_data = self.get_applicant_responses(
+                            account_id, 
+                            applicant_id, 
+                            count=100,
+                            next_page_cursor=next_cursor
+                        )
+                        
+                        if not responses_data or 'items' not in responses_data:
+                            break
+                        
+                        # Фильтруем отклики по вакансии
+                        for response in responses_data['items']:
+                            response_id = response.get('id')
+                            if response_id in processed_response_ids:
+                                continue
+                            
+                            response_vacancy = response.get('vacancy', {})
+                            if isinstance(response_vacancy, dict):
+                                response_vacancy_id = response_vacancy.get('id')
+                            elif isinstance(response_vacancy, int):
+                                response_vacancy_id = response_vacancy
+                            else:
+                                response_vacancy_id = None
+                            
+                            # Добавляем только отклики для данной вакансии
+                            if response_vacancy_id == vacancy_id:
+                                processed_response_ids.add(response_id)
+                                # Получаем полные данные кандидата (только если их нет)
+                                if 'applicant' not in response or not response.get('applicant'):
+                                    applicant_full = self.get_applicant(account_id, applicant_id)
+                                    response['applicant'] = applicant_full or applicant
+                                else:
+                                    response['applicant'] = applicant
+                                all_responses.append(response)
+                                
+                                # Логируем каждые 100 откликов
+                                if len(all_responses) % 100 == 0:
+                                    logger.info(f"Найдено {len(all_responses)} откликов для вакансии {vacancy_id}")
+                        
+                        # Проверяем, есть ли следующая страница
+                        next_cursor = responses_data.get('next_page_cursor')
+                        if not next_cursor:
+                            break
+                
+                # Проверяем, есть ли еще страницы
+                total_pages_vacancy = vacancy_applicants_data.get('pages', 1)
+                if vacancy_applicants_page >= total_pages_vacancy:
+                    break
+                
+                vacancy_applicants_page += 1
+                
+                # Логируем прогресс каждые 10 страниц
+                if vacancy_applicants_page % 10 == 0:
+                    logger.info(f"Обработано {vacancy_applicants_page} страниц кандидатов на вакансии, найдено {len(all_responses)} откликов")
+            
+            logger.info(f"Шаг 1 завершен: найдено {len(all_responses)} откликов из кандидатов на вакансии")
+            
+            # Шаг 2: Получаем кандидатов из HH.ru источника, которые могут иметь responses на эту вакансию
+            # (но еще не привязаны к вакансии)
+            # ВАЖНО: Этот шаг может быть очень медленным, поэтому ограничиваем его
+            # Если уже нашли достаточно откликов на шаге 1, пропускаем шаг 2
+            if len(all_responses) > 0:
+                logger.info(f"Шаг 2 пропущен: уже найдено {len(all_responses)} откликов на шаге 1")
+            else:
+                logger.info(f"Шаг 2: Поиск откликов у кандидатов из HH.ru источника")
+                search_page = 1
+                max_search_pages = 20  # Ограничиваем для производительности (уменьшено с 50)
+                
+                while search_page <= max_search_pages and len(all_responses) < 5000:
+                    # Получаем кандидатов (без фильтра по вакансии)
+                    search_applicants_data = self.get_applicants(
+                        account_id=account_id,
+                        count=30,
+                        page=search_page
+                    )
+                    
+                    if not search_applicants_data or 'items' not in search_applicants_data:
+                        break
+                    
+                    search_applicants = search_applicants_data.get('items', [])
+                    if not search_applicants:
+                        break
+                    
+                    logger.info(f"Обработка страницы {search_page} всех кандидатов, получено {len(search_applicants)} кандидатов")
+                    
+                    for applicant in search_applicants:
+                        applicant_id = applicant.get('id')
+                        if not applicant_id or applicant_id in processed_applicant_ids:
+                            continue
+                        
+                        # Проверяем, есть ли у кандидата источник HH.ru
+                        externals = applicant.get('externals', [])
+                        has_hh_source = False
+                        for external in externals:
+                            if external.get('account_source') == hh_source_id:
+                                has_hh_source = True
+                                break
+                        
+                        # Если кандидат не из HH.ru, пропускаем
+                        if not has_hh_source:
+                            continue
+                        
+                        processed_applicant_ids.add(applicant_id)
+                        
+                        # Получаем все отклики кандидата с пагинацией
+                        next_cursor = None
+                        while True:
+                            responses_data = self.get_applicant_responses(
+                                account_id, 
+                                applicant_id, 
+                                count=100,
+                                next_page_cursor=next_cursor
+                            )
+                            
+                            if not responses_data or 'items' not in responses_data:
+                                break
+                            
+                            # Фильтруем отклики по вакансии
+                            for response in responses_data['items']:
+                                response_id = response.get('id')
+                                if response_id in processed_response_ids:
+                                    continue
+                                
+                                response_vacancy = response.get('vacancy', {})
+                                if isinstance(response_vacancy, dict):
+                                    response_vacancy_id = response_vacancy.get('id')
+                                elif isinstance(response_vacancy, int):
+                                    response_vacancy_id = response_vacancy
+                                else:
+                                    response_vacancy_id = None
+                                
+                                # Добавляем только отклики для данной вакансии
+                                if response_vacancy_id == vacancy_id:
+                                    processed_response_ids.add(response_id)
+                                    # Получаем полные данные кандидата (только если их нет)
+                                    if 'applicant' not in response or not response.get('applicant'):
+                                        applicant_full = self.get_applicant(account_id, applicant_id)
+                                        response['applicant'] = applicant_full or applicant
+                                    else:
+                                        response['applicant'] = applicant
+                                    all_responses.append(response)
+                                    
+                                    # Логируем каждые 100 откликов
+                                    if len(all_responses) % 100 == 0:
+                                        logger.info(f"Найдено {len(all_responses)} откликов для вакансии {vacancy_id}")
+                            
+                            # Проверяем, есть ли следующая страница
+                            next_cursor = responses_data.get('next_page_cursor')
+                            if not next_cursor:
+                                break
+                    
+                    # Проверяем, есть ли еще страницы
+                    total_pages_search = search_applicants_data.get('pages', 1)
+                    if search_page >= total_pages_search:
+                        break
+                    
+                    search_page += 1
+                    
+                    # Логируем прогресс каждые 10 страниц
+                    if search_page % 10 == 0:
+                        logger.info(f"Обработано {search_page} страниц всех кандидатов, найдено {len(all_responses)} откликов")
+                    
+                    # Если нашли достаточно откликов, останавливаемся
+                    if len(all_responses) >= 100:  # Если нашли хотя бы 100, останавливаемся для производительности
+                        logger.info(f"Найдено достаточно откликов ({len(all_responses)}), останавливаем поиск")
+                        break
+            
+            logger.info(f"Всего получено откликов для вакансии {vacancy_id}: {len(all_responses)} (обработано кандидатов: {len(processed_applicant_ids)})")
+            
+            if not all_responses:
+                logger.warning(f"Не найдено откликов для вакансии {vacancy_id}. Обработано кандидатов: {len(processed_applicant_ids)}, источник HH.ru ID: {hh_source_id}")
+                return {
+                    'items': [],
+                    'total': 0,
+                    'page': page,
+                    'count': count,
+                    'total_applicants': len(processed_applicant_ids)
+                }
+            
+            # Применяем пагинацию для отображения
+            total_responses = len(all_responses)
+            start_idx = (page - 1) * count
+            end_idx = start_idx + count
+            paginated_responses = all_responses[start_idx:end_idx]
+            
+            total_pages = max(1, (total_responses + count - 1) // count) if total_responses > 0 else 1
+            
+            logger.info(f"Получено откликов для вакансии {vacancy_id}: {len(paginated_responses)} из {total_responses} (страница {page} из {total_pages})")
+            
+            return {
+                'items': paginated_responses,
+                'total': total_responses,
+                'page': page,
+                'count': count,
+                'total_pages': total_pages,
+                'total_applicants': len(processed_applicant_ids)
+            }
+            
+        except Exception as e:
+            logger.error(f"Ошибка при получении откликов по вакансии: {e}")
+            import traceback
+            traceback.print_exc()
+            return None
+    
     def get_applicant_logs(self, account_id: int, applicant_id: int) -> Optional[Dict[str, Any]]:
         """
         Получает логи кандидата (включая комментарии)
@@ -1192,7 +1492,8 @@ class HuntflowService:
                         'auth_type': 'NATIVE',
                         'data': {
                             'body': candidate_data.get('resume_text', '')
-                        }
+                        },
+                        'account_source': 2  # ID источника HH.ru в Huntflow
                     }
                 ]
             }

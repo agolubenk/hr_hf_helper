@@ -327,4 +327,65 @@ class HuntflowOperations:
         except Exception as e:
             logger.error(f"Ошибка тестирования подключения: {e}")
             return False
+    
+    def get_and_import_hh_responses(
+        self,
+        account_id: int,
+        vacancy_id: int,
+        hh_vacancy_id: str,
+        filters: Dict = None
+    ) -> Dict:
+        """
+        Получает отклики из HH.ru, фильтрует их и импортирует в Huntflow
+        
+        ВХОДЯЩИЕ ДАННЫЕ:
+        - account_id: ID организации в Huntflow
+        - vacancy_id: ID вакансии в Huntflow
+        - hh_vacancy_id: ID вакансии на HH.ru
+        - filters: словарь с критериями фильтрации
+        
+        ИСТОЧНИКИ ДАННЫХ: HH.ru API, параметры метода
+        
+        ОБРАБОТКА:
+        1. Инициализация HHResponsesHandler
+        2. Получение откликов из HH.ru
+        3. Фильтрация откликов по заданным критериям
+        4. Импорт прошедших фильтр кандидатов в Huntflow
+        5. Логирование всех операций
+        
+        ВЫХОДЯЩИЕ ДАННЫЕ: Результаты импорта откликов
+        
+        СВЯЗИ: HHResponsesHandler, HH.ru API, Huntflow API
+        
+        ФОРМАТ: Dict с результатами импорта
+        """
+        
+        try:
+            from apps.huntflow.hh_integration import HHResponsesHandler
+            
+            handler = HHResponsesHandler(self.user)
+            
+            # Получаем отклики из HH.ru
+            hh_responses = handler.get_responses_from_hh(hh_vacancy_id)
+            
+            if not hh_responses['success']:
+                return hh_responses
+            
+            # Фильтруем и импортируем отклики
+            result = handler.filter_and_import_responses(
+                hh_responses['items'],
+                account_id,
+                vacancy_id,
+                filters,
+                hh_vacancy_id
+            )
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"Ошибка при получении откликов из HH.ru: {e}")
+            return {
+                'success': False,
+                'message': f"Ошибка: {str(e)}"
+            }
 

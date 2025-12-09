@@ -11,6 +11,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from datetime import timedelta
+from typing import List, Optional
 import json
 
 User = get_user_model()
@@ -1258,6 +1259,157 @@ class Invite(models.Model):
             traceback.print_exc()
             return False
     
+    def _extract_mentioned_emails(self, text: str) -> List[str]:
+        """
+        Извлекает email адреса из упоминаний через @ в тексте
+        
+        Поддерживает форматы:
+        - @email@domain.com (прямой email)
+        - @username (ищет email по username в системе)
+        
+        Args:
+            text: Текст для парсинга
+            
+        Returns:
+            Список email адресов
+        """
+        import re
+        emails = []
+        
+        if not text:
+            return emails
+        
+        print(f"🔍 EXTRACT_MENTIONS: Парсим текст для упоминаний")
+        print(f"🔍 EXTRACT_MENTIONS: Полный текст ({len(text)} символов): {text}")
+        
+        # Паттерн для поиска упоминаний через @
+        # Ищем @email@domain.com (прямой email) или @username
+        # Паттерн должен находить:
+        # 1. @email@domain.com (прямой email)
+        # 2. @username (username без @ в конце)
+        # Используем паттерн, который ищет @ за которым идет текст до пробела, знака препинания или конца строки
+        # Сначала ищем прямые email (с @ и доменом)
+        email_pattern = r'@([a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})'
+        email_mentions = re.findall(email_pattern, text)
+        
+        # Затем ищем username (без @ в середине)
+        # Исключаем те, которые уже найдены как email
+        username_pattern = r'@([a-zA-Z0-9._+-]+)'
+        all_mentions = re.findall(username_pattern, text)
+        
+        # Убираем дубликаты и email из username списка
+        mentions = list(set(all_mentions))
+        # Убираем те, которые уже есть в email_mentions
+        mentions = [m for m in mentions if m not in email_mentions]
+        # Добавляем email упоминания
+        mentions.extend(email_mentions)
+        
+        print(f"🔍 EXTRACT_MENTIONS: Найдено упоминаний (все): {all_mentions}")
+        print(f"🔍 EXTRACT_MENTIONS: Найдено email упоминаний: {email_mentions}")
+        print(f"🔍 EXTRACT_MENTIONS: Найдено username упоминаний: {[m for m in mentions if m not in email_mentions]}")
+        print(f"🔍 EXTRACT_MENTIONS: Финальный список упоминаний: {mentions}")
+        
+        for mention in mentions:
+            mention = mention.strip()
+            if not mention:
+                continue
+            
+            # Если это уже email (содержит @ и точку после @)
+            if '@' in mention:
+                parts = mention.split('@')
+                if len(parts) == 2 and '.' in parts[1]:
+                    # Это прямой email вида user@domain.com
+                    email = mention
+                    if email not in emails:
+                        emails.append(email)
+                        print(f"✅ EXTRACT_MENTIONS: Найден прямой email: {email}")
+                elif len(parts) > 2:
+                    # Это может быть некорректный формат, но попробуем использовать как email
+                    email = mention
+                    if email not in emails:
+                        emails.append(email)
+                        print(f"✅ EXTRACT_MENTIONS: Найден email (множественные @): {email}")
+                else:
+                    # Это может быть что-то странное, пропускаем
+                    print(f"⚠️ EXTRACT_MENTIONS: Пропускаем некорректное упоминание: {mention}")
+            else:
+                # Это username, нужно найти email
+                email = self._find_email_by_username(mention)
+                if email and email not in emails:
+                    emails.append(email)
+                    print(f"✅ EXTRACT_MENTIONS: Найден email для username '{mention}': {email}")
+                else:
+                    print(f"⚠️ EXTRACT_MENTIONS: Не удалось найти email для username '{mention}'")
+        
+        print(f"📧 EXTRACT_MENTIONS: Всего найдено email: {emails}")
+        return emails
+    
+    def _find_email_by_username(self, username: str) -> Optional[str]:
+        """
+        Находит email по username
+        
+        Ищет в:
+        1. Модели User (по username или email)
+        2. Модели Interviewer (по username или email)
+        
+        Args:
+            username: Username для поиска
+            
+        Returns:
+            Email адрес или None
+        """
+        try:
+            # Ищем в модели User
+            from django.contrib.auth.models import User
+            try:
+                # Сначала пробуем найти по username
+                user = User.objects.get(username=username)
+                if user.email:
+                    print(f"🔍 FIND_EMAIL: Найден пользователь по username '{username}': {user.email}")
+                    return user.email
+            except User.DoesNotExist:
+                pass
+            
+            # Пробуем найти по email (если username это email)
+            if '@' in username:
+                try:
+                    user = User.objects.get(email=username)
+                    if user.email:
+                        print(f"🔍 FIND_EMAIL: Найден пользователь по email '{username}': {user.email}")
+                        return user.email
+                except User.DoesNotExist:
+                    pass
+            
+            # Ищем в модели Interviewer
+            try:
+                from apps.interviewers.models import Interviewer
+                from django.db.models import Q
+                # Пробуем найти по email или по части email (до @)
+                # Username обычно генерируется из email (часть до @)
+                interviewer = Interviewer.objects.filter(
+                    Q(email=username) | Q(email__startswith=f"{username}@")
+                ).first()
+                if interviewer and interviewer.email:
+                    print(f"🔍 FIND_EMAIL: Найден интервьюер по email '{username}': {interviewer.email}")
+                    return interviewer.email
+                
+                # Если не нашли по точному совпадению, пробуем найти по части email
+                # Например, если username = "yauheni.ivanou", ищем email содержащий это
+                interviewer = Interviewer.objects.filter(
+                    email__icontains=username
+                ).first()
+                if interviewer and interviewer.email:
+                    print(f"🔍 FIND_EMAIL: Найден интервьюер по части email '{username}': {interviewer.email}")
+                    return interviewer.email
+            except Exception as e:
+                print(f"⚠️ FIND_EMAIL: Ошибка поиска в Interviewer: {e}")
+            
+            return None
+            
+        except Exception as e:
+            print(f"❌ FIND_EMAIL: Ошибка поиска email для '{username}': {e}")
+            return None
+    
     def _create_calendar_event(self):
         """Создает календарное событие с длительностью из настроек вакансии"""
         try:
@@ -1374,6 +1526,23 @@ class Invite(models.Model):
             if self.interviewer and self.interviewer.email:
                 attendees.append(self.interviewer.email)
                 print(f"👥 Добавляем интервьюера в участники: {self.interviewer.email}")
+            
+            # Извлекаем упоминания через @ из original_form_data
+            print(f"🔍 CALENDAR_EVENT: Проверяем original_form_data для упоминаний")
+            print(f"🔍 CALENDAR_EVENT: original_form_data существует: {bool(self.original_form_data)}")
+            if self.original_form_data:
+                print(f"🔍 CALENDAR_EVENT: original_form_data длина: {len(self.original_form_data)}")
+                print(f"🔍 CALENDAR_EVENT: original_form_data содержимое: {self.original_form_data}")
+                mentioned_emails = self._extract_mentioned_emails(self.original_form_data)
+                print(f"🔍 CALENDAR_EVENT: Найдено упомянутых email: {mentioned_emails}")
+                for email in mentioned_emails:
+                    if email not in attendees:  # Избегаем дубликатов
+                        attendees.append(email)
+                        print(f"👥 Добавляем упомянутого участника: {email}")
+                    else:
+                        print(f"⚠️ CALENDAR_EVENT: Email {email} уже в списке участников, пропускаем")
+            else:
+                print(f"⚠️ CALENDAR_EVENT: original_form_data пуст, упоминания не извлекаются")
             
             # Создаем событие
             created_event = calendar_service.create_event(

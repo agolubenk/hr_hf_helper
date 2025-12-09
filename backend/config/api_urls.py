@@ -11,7 +11,10 @@ from apps.finance.views_api import (
 )
 from apps.vacancies.views_api import VacancyViewSet
 from apps.interviewers.views_api import InterviewerViewSet, InterviewRuleViewSet
-from apps.huntflow.views_api import HuntflowCacheViewSet, HuntflowLogViewSet, HuntflowApiRequestViewSet
+from apps.huntflow.views_api import (
+    HuntflowCacheViewSet, HuntflowLogViewSet, HuntflowApiRequestViewSet,
+    HHResponsesViewSet
+)
 from apps.google_oauth.views_api import (
     GoogleOAuthAccountViewSet, SyncSettingsViewSet, ScorecardPathSettingsViewSet,
     SlotsSettingsViewSet, InviteViewSet, HRScreeningViewSet, QuestionTemplateViewSet,
@@ -58,6 +61,7 @@ router.register(r'interviewers/interview-rules', InterviewRuleViewSet, basename=
 router.register(r'huntflow/cache', HuntflowCacheViewSet, basename='huntflow-cache')
 router.register(r'huntflow/logs', HuntflowLogViewSet, basename='huntflow-log')
 router.register(r'huntflow/api', HuntflowApiRequestViewSet, basename='huntflow-api')
+router.register(r'huntflow/hh-responses', HHResponsesViewSet, basename='hh-responses')
 
 # Google OAuth
 router.register(r'google-oauth/accounts', GoogleOAuthAccountViewSet, basename='google-oauth-account')
