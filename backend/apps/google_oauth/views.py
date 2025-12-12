@@ -3230,6 +3230,221 @@ def api_interviewers_autocomplete(request):
 
 
 @login_required
+def api_weekly_reports(request):
+    """API для получения отчетов текущей и предыдущей недели"""
+    from apps.reporting.models import CalendarEvent
+    from apps.vacancies.models import Vacancy
+    from apps.interviewers.models import Interviewer
+    from datetime import timedelta
+    
+    try:
+        vacancy_id = request.GET.get('vacancy_id')
+        week_type = request.GET.get('week_type', 'current')  # 'current' или 'previous'
+        
+        if not vacancy_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Не указан ID вакансии'
+            })
+        
+        # Получаем вакансию
+        try:
+            vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True)
+        except Vacancy.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Вакансия не найдена'
+            })
+        
+        # Определяем границы недели (ПН-СБ)
+        now = timezone.now()
+        days_since_monday = now.weekday()  # 0 = ПН, 6 = ВС
+        
+        if week_type == 'current':
+            # Текущая неделя: от прошлого понедельника до субботы
+            week_start = now - timedelta(days=days_since_monday)
+            week_start = week_start.replace(hour=0, minute=0, second=0, microsecond=0)
+            week_end = week_start + timedelta(days=5)  # До субботы включительно
+            week_end = week_end.replace(hour=23, minute=59, second=59, microsecond=999999)
+        else:
+            # Предыдущая неделя: от понедельника недели назад до субботы
+            week_start = now - timedelta(days=days_since_monday + 7)
+            week_start = week_start.replace(hour=0, minute=0, second=0, microsecond=0)
+            week_end = week_start + timedelta(days=5)  # До субботы включительно
+            week_end = week_end.replace(hour=23, minute=59, second=59, microsecond=999999)
+        
+        # Получаем invite_title вакансии
+        invite_title = vacancy.invite_title or ''
+        if not invite_title:
+            return JsonResponse({
+                'success': True,
+                'data': {
+                    'hr_screening': 0,
+                    'tech_screening': 0,
+                    'interview': 0,
+                    'offer': 0,
+                    'offer_accepted': 0,
+                    'onboarding': 0,
+                }
+            })
+        
+        # Получаем интервьюеров вакансии
+        vacancy_interviewers = vacancy.interviewers.filter(is_active=True)
+        vacancy_interviewer_emails = set()
+        for interviewer in vacancy_interviewers:
+            if interviewer.email:
+                vacancy_interviewer_emails.add(interviewer.email.lower())
+        
+        # Получаем события за неделю
+        events = CalendarEvent.objects.filter(
+            start_time__gte=week_start,
+            start_time__lte=week_end,
+            event_type__in=['screening', 'interview', 'unknown']
+        ).select_related('vacancy', 'recruiter')
+        
+        # Фильтруем события по invite_title вакансии
+        matching_events = []
+        invite_title_lower = invite_title.lower().strip()
+        
+        print(f"📊 WEEKLY REPORTS: Вакансия ID={vacancy_id}, invite_title='{invite_title}'")
+        print(f"📊 WEEKLY REPORTS: Неделя {week_type}, период: {week_start.date()} - {week_end.date()}")
+        print(f"📊 WEEKLY REPORTS: Всего событий за период: {events.count()}")
+        print(f"📊 WEEKLY REPORTS: Интервьюеров вакансии: {len(vacancy_interviewer_emails)}")
+        if vacancy_interviewer_emails:
+            print(f"📊 WEEKLY REPORTS: Email интервьюеров: {', '.join(list(vacancy_interviewer_emails)[:5])}")
+        
+        for event in events:
+            event_title_lower = (event.title or '').lower().strip()
+            # Проверяем, содержит ли название события заголовок инвайта
+            if invite_title_lower and invite_title_lower in event_title_lower:
+                matching_events.append(event)
+                print(f"  ✅ Найдено совпадение: '{event.title}' (ID={event.id}, дата={event.start_time.date()})")
+        
+        print(f"📊 WEEKLY REPORTS: Событий с совпадением invite_title: {len(matching_events)}")
+        
+        # Подсчитываем скрининги
+        hr_screening_count = 0
+        tech_screening_count = 0
+        
+        # Получаем заголовок инвайта для Tech Screening (invite_title из вакансии)
+        # Формат названия события: "[Заголовок инвайтов] | [Фамилия Имя]"
+        tech_screening_invite_title = invite_title.strip() if invite_title else ''
+        tech_screening_invite_title_lower = tech_screening_invite_title.lower().strip().rstrip('|').strip()
+        
+        if not tech_screening_invite_title_lower:
+            # Если заголовок инвайта не указан, возвращаем нули
+            print(f"📊 WEEKLY REPORTS: Заголовок инвайта не указан для вакансии, скрининги не найдены")
+            return JsonResponse({
+                'success': True,
+                'data': {
+                    'hr_screening': 0,
+                    'tech_screening': 0,
+                    'interview': 0,
+                    'offer': 0,
+                    'offer_accepted': 0,
+                    'onboarding': 0,
+                }
+            })
+        
+        for event in matching_events:
+            event_title = event.title or ''
+            event_title_lower = event_title.lower()
+            
+            # Событие считается скринингом ТОЛЬКО если название начинается с invite_title (точное совпадение)
+            # Формат: "[Заголовок инвайтов] | [Фамилия Имя]" или "[Заголовок инвайтов]|[Фамилия Имя]"
+            is_screening = False
+            if event_title_lower.startswith(tech_screening_invite_title_lower):
+                # Проверяем, что после заголовка идет разделитель | или пробел
+                remaining = event_title_lower[len(tech_screening_invite_title_lower):].strip()
+                if remaining.startswith('|') or remaining.startswith(' '):
+                    is_screening = True
+            
+            if not is_screening:
+                continue  # Пропускаем события, которые не являются скринингами (нет точного совпадения с invite_title)
+            
+            # Если это скрининг (есть точное совпадение с invite_title), проверяем участников
+            attendees = event.attendees or []
+            has_interviewer = False
+            found_interviewer_email = None
+            
+            for attendee in attendees:
+                if isinstance(attendee, dict):
+                    attendee_email = attendee.get('email', '').lower()
+                elif isinstance(attendee, str):
+                    attendee_email = attendee.lower()
+                else:
+                    continue
+                
+                if attendee_email in vacancy_interviewer_emails:
+                    has_interviewer = True
+                    found_interviewer_email = attendee_email
+                    break
+            
+            # Определяем тип скрининга на основе участников
+            if has_interviewer:
+                tech_screening_count += 1
+                print(f"  🔵 Tech Screening: '{event.title}' (точное совпадение с invite_title='{invite_title}', интервьюер: {found_interviewer_email})")
+            else:
+                hr_screening_count += 1
+                print(f"  🟢 HR-screening: '{event.title}' (точное совпадение с invite_title='{invite_title}', но нет интервьюеров)")
+        
+        print(f"📊 WEEKLY REPORTS: Итого - HR-screening: {hr_screening_count}, Tech Screening: {tech_screening_count}")
+        
+        # Подсчитываем интервью
+        interview_count = 0
+        
+        # Получаем заголовок инвайта для интервью (tech_invite_title из вакансии)
+        tech_invite_title = vacancy.tech_invite_title or ''
+        tech_invite_title_lower = tech_invite_title.lower().strip().rstrip('|').strip() if tech_invite_title else ''
+        
+        if tech_invite_title_lower:
+            print(f"📊 WEEKLY REPORTS: Заголовок инвайта для интервью: '{tech_invite_title}'")
+            
+            # Проверяем все события за период на совпадение с tech_invite_title
+            for event in events:
+                event_title = event.title or ''
+                event_title_lower = event_title.lower()
+                
+                # Событие считается интервью ТОЛЬКО если название начинается с tech_invite_title (точное совпадение)
+                # Формат: "[Заголовок инвайтов] | [Фамилия Имя]" или "[Заголовок инвайтов]|[Фамилия Имя]"
+                is_interview = False
+                if event_title_lower.startswith(tech_invite_title_lower):
+                    # Проверяем, что после заголовка идет разделитель | или пробел
+                    remaining = event_title_lower[len(tech_invite_title_lower):].strip()
+                    if remaining.startswith('|') or remaining.startswith(' '):
+                        is_interview = True
+                
+                if is_interview:
+                    interview_count += 1
+                    print(f"  🟣 Интервью: '{event.title}' (точное совпадение с tech_invite_title='{tech_invite_title}')")
+        else:
+            print(f"📊 WEEKLY REPORTS: Заголовок инвайта для интервью не указан, интервью не найдены")
+        
+        print(f"📊 WEEKLY REPORTS: Итого интервью: {interview_count}")
+        
+        # Пока остальные этапы возвращаем как 0 (будут реализованы позже)
+        return JsonResponse({
+            'success': True,
+            'data': {
+                'hr_screening': hr_screening_count,
+                'tech_screening': tech_screening_count,
+                'interview': interview_count,
+                'offer': 0,
+                'offer_accepted': 0,
+                'onboarding': 0,
+            }
+        })
+        
+    except Exception as e:
+        import traceback
+        return JsonResponse({
+            'success': False,
+            'message': str(e),
+            'traceback': traceback.format_exc()
+        })
+
+
+@login_required
 def api_third_week_slots(request):
     """API для расчета слотов третьей недели"""
     try:
