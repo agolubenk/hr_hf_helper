@@ -1,5 +1,6 @@
 {% extends 'common/base.html' %}
 {% load static %}
+{% load vacancy_extras %}
 
 {% block title %}{{ title }}{% endblock %}
 
@@ -277,12 +278,14 @@
                                         <!-- Пользовательское сообщение -->
                                                 {% if message.message_type == 'user' %}
                                                         {% comment %}Команда определена в view и передана как message.command_used{% endcomment %}
-                                                        <div class="message-content user-content">{{ message.content|linebreaks }}</div>
+                                                        <div class="message-content user-content">{{ message.content|remove_command|linebreaks }}</div>
                                                         {% if message.command_used %}
                                                             {% if message.command_used == '/s' or message.command_used == '/hr' %}
-                                                                <span class="command-indicator badge bg-success" style="position: absolute; bottom: 4px; left: 4px; font-size: 0.7em; z-index: 10;">{{ message.command_used }}</span>
+                                                                <span class="command-indicator badge bg-success" style="position: absolute; bottom: -10px; right: 26px; font-size: 0.7em; z-index: 10; border: 1px solid #6c757d;">#hrscreening</span>
+                                                            {% elif message.command_used == '/t' %}
+                                                                <span class="command-indicator badge bg-warning" style="position: absolute; bottom: -10px; right: 26px; font-size: 0.7em; z-index: 10; border: 1px solid #6c757d;">#tech_screening</span>
                                                             {% elif message.command_used == '/in' or message.command_used == '/invite' %}
-                                                                <span class="command-indicator badge bg-warning" style="position: absolute; bottom: 4px; left: 4px; font-size: 0.7em; z-index: 10;">{{ message.command_used }}</span>
+                                                                <span class="command-indicator badge bg-info" style="position: absolute; bottom: -10px; right: 26px; font-size: 0.7em; z-index: 10; border: 1px solid #6c757d;">#final_interview</span>
                                                             {% endif %}
                                                         {% endif %}
                                                         <div class="message-footer">
@@ -586,8 +589,8 @@
                         
                         <div class="command-item mb-3">
                             <div class="command-header">
-                                <span class="command-badge bg-warning">/in</span>
-                                <strong class="ms-2">Инвайт</strong>
+                                <span class="command-badge bg-warning">/t</span>
+                                <strong class="ms-2">Tech Screening</strong>
                             </div>
                             <div class="command-example mt-1">
                                 <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (время) @интервьюер</code>
@@ -596,8 +599,8 @@
                         
                         <div class="command-item mb-3" id="additionalCommand1">
                             <div class="command-header">
-                                <span class="command-badge bg-info">/t</span>
-                                <strong class="ms-2">Техническое интервью</strong>
+                                <span class="command-badge bg-info">/in</span>
+                                <strong class="ms-2">Final Interview</strong>
                             </div>
                             <div class="command-example mt-1">
                                 <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (время) @интервьюер</code>

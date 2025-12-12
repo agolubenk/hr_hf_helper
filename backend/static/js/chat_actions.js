@@ -4,13 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
      *
      * Правила:
      * 1) Явной командой считается только ввод с клавиатуры: 
-     *    "/s ", "/hr ", "/in ", "/invite " — строго с пробелом или Enter после.
+     *    "/s ", "/hr ", "/t ", "/in ", "/invite " — строго с пробелом или Enter после.
      *    Фрагменты внутри URL (например, "/s" в ссылке) игнорируются.
      * 2) После ввода команды (и пробела/Enter) команда сохраняется в скрытом поле actionType
      *    и отображается бейджем слева, а из textarea сама команда удаляется. Это состояние
      *    фиксируется и НЕ меняется при дальнейшем вводе произвольного текста.
      * 3) Состояние меняется только при новом ручном вводе команды (с клавиатуры) — 
-     *    снова "/s ", "/in ", "/hr ", "/invite ", после чего обновляются actionType и бейдж.
+     *    снова "/s ", "/t ", "/in ", "/hr ", "/invite ", после чего обновляются actionType и бейдж.
      * 4) Команда, вставленная через копирование/вставку, НЕ считается введённой — 
      *    требуется именно набор с клавиатуры.
      */
@@ -37,9 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
         '/s':      'hrscreening',
         '/hr':     'hrscreening',
         '/screen': 'hrscreening',
-        '/in':     'invite',
-        '/invite': 'invite',
-        '/inv':    'invite'
+        '/t':      'tech_screening',
+        '/in':     'final_interview',
+        '/invite': 'final_interview',
+        '/inv':    'final_interview'
     };
 
     /**
@@ -94,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * Добавляет пользовательское сообщение в чат
      * @param {string} text - Текст сообщения
      * @param {string} actionType - Тип действия (hrscreening/invite)
-     * @param {string} commandUsed - Использованная команда (/s, /in и т.д.)
+     * @param {string} commandUsed - Использованная команда (/s, /t и т.д.)
      */
     function addUserMessageToChat(text, actionType, commandUsed) {
         const chatMessages = document.getElementById('chat-messages');
@@ -102,8 +103,26 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
+        // Убираем команды из начала текста
+        let cleanedText = text.trim();
+        if (cleanedText.startsWith('/s ')) {
+            cleanedText = cleanedText.substring(3).trim();
+        } else if (cleanedText.startsWith('/hr ')) {
+            cleanedText = cleanedText.substring(4).trim();
+        } else if (cleanedText.startsWith('/t ')) {
+            cleanedText = cleanedText.substring(3).trim();
+        } else if (cleanedText.startsWith('/in ')) {
+            cleanedText = cleanedText.substring(4).trim();
+        } else if (cleanedText.startsWith('/invite ')) {
+            cleanedText = cleanedText.substring(8).trim();
+        } else if (cleanedText.startsWith('/inv ')) {
+            cleanedText = cleanedText.substring(5).trim();
+        } else if (cleanedText.startsWith('/screen ')) {
+            cleanedText = cleanedText.substring(8).trim();
+        }
+        
         // Обрабатываем переносы строк: заменяем \n на <br>
-        const processedText = text.replace(/\n/g, '<br>');
+        const processedText = cleanedText.replace(/\n/g, '<br>');
         
         // Формируем метку команды в левом нижнем углу
         let commandBadge = '';
@@ -112,10 +131,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const cmd = String(commandUsed).toLowerCase();
             if (cmd === '/s' || cmd === '/hr') {
                 badgeClass = 'bg-success';
-            } else if (cmd === '/in' || cmd === '/invite') {
+            } else if (cmd === '/t') {
                 badgeClass = 'bg-warning';
+            } else if (cmd === '/in' || cmd === '/invite') {
+                badgeClass = 'bg-info';
             }
-            commandBadge = `<span class="command-indicator badge ${badgeClass}" style="position: absolute; bottom: 4px; left: 4px; font-size: 0.7em; z-index: 10;">${commandUsed}</span>`;
+            // Определяем хэштег для отображения
+            let hashtag = '';
+            if (cmd === '/s' || cmd === '/hr') {
+                hashtag = '#hrscreening';
+            } else if (cmd === '/t') {
+                hashtag = '#tech_screening';
+            } else if (cmd === '/in' || cmd === '/invite') {
+                hashtag = '#final_interview';
+            } else {
+                hashtag = commandUsed;
+            }
+            commandBadge = `<span class="command-indicator badge ${badgeClass}" style="position: absolute; bottom: -10px; right: 26px; font-size: 0.7em; z-index: 10; border: 1px solid #6c757d;">${hashtag}</span>`;
         }
         
         // Получаем URL фото пользователя (если доступен)
@@ -183,10 +215,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Меняем цвет метки в зависимости от типа
                     if (action === 'hrscreening') {
                         tagLabel.className = 'tag-label badge bg-success me-2';
-                    } else if (action === 'invite') {
+                    } else if (action === 'tech_screening') {
                         tagLabel.className = 'tag-label badge bg-warning me-2';
-                    } else {
+                    } else if (action === 'final_interview') {
                         tagLabel.className = 'tag-label badge bg-info me-2';
+                    } else {
+                        tagLabel.className = 'tag-label badge bg-secondary me-2';
                     }
                     
                     // Заполняем скрытое поле
@@ -214,9 +248,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const cursorPos = textarea.selectionStart; // позиция ДО вставки пробела
                 const text = textarea.value;
                 // Команда должна быть сразу после pendingCommandStart и до cursorPos: 
-                // например "/s" или "/in" и т.п.
+                // например "/s" или "/t" и т.п.
                 const raw = text.substring(pendingCommandStart, cursorPos).toLowerCase();
-                const cmdMatch = raw.match(/^\/(s|hr|in|invite)$/);
+                const cmdMatch = raw.match(/^\/(s|hr|t|in|invite)$/);
                 if (cmdMatch) {
                     const token = '/' + cmdMatch[1];
                     const action = COMMANDS[token];
@@ -227,7 +261,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         tagLabel.style.display = 'inline-block';
                         tagLabel.className = action === 'hrscreening'
                             ? 'tag-label badge bg-success me-2'
-                            : (action === 'invite' ? 'tag-label badge bg-warning me-2' : 'tag-label badge bg-info me-2');
+                            : (action === 'tech_screening' ? 'tag-label badge bg-warning me-2' 
+                            : (action === 'final_interview' ? 'tag-label badge bg-info me-2' : 'tag-label badge bg-secondary me-2'));
 
                         // Удаляем команду из текста, оставляя контент
                         const before = text.substring(0, pendingCommandStart);
@@ -257,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const cursorPos = textarea.selectionStart;
                     const text = textarea.value;
                     const raw = text.substring(pendingCommandStart, cursorPos).toLowerCase();
-                    const cmdMatch = raw.match(/^\/(s|hr|in|invite)$/);
+                    const cmdMatch = raw.match(/^\/(s|hr|t|in|invite)$/);
                     if (cmdMatch) {
                         const token = '/' + cmdMatch[1];
                         const action = COMMANDS[token];
@@ -269,7 +304,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             tagLabel.style.display = 'inline-block';
                             tagLabel.className = action === 'hrscreening'
                                 ? 'tag-label badge bg-success me-2'
-                                : (action === 'invite' ? 'tag-label badge bg-warning me-2' : 'tag-label badge bg-info me-2');
+                                : (action === 'tech_screening' ? 'tag-label badge bg-warning me-2' 
+                                : (action === 'final_interview' ? 'tag-label badge bg-info me-2' : 'tag-label badge bg-secondary me-2'));
 
                             // Удаляем команду из текста
                             const before = text.substring(0, pendingCommandStart);
@@ -329,8 +365,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let finalActionType = actionType;
         
         // Сначала проверяем, есть ли команда в самом тексте
-        const cmdMatchStart = text.match(/^\/(s|hr|in|invite)(?=\s|$)/i);
-        const cmdMatchSpace = text.match(/(^|\s)\/(s|hr|in|invite)(?=\s|$)/i);
+        const cmdMatchStart = text.match(/^\/(s|hr|t|in|invite)(?=\s|$)/i);
+        const cmdMatchSpace = text.match(/(^|\s)\/(s|hr|t|in|invite)(?=\s|$)/i);
         const cmdMatch = cmdMatchStart || cmdMatchSpace;
         
         if (cmdMatch) {
@@ -340,8 +376,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Обновляем actionType на основе найденной команды
             if (cmdToken === '/s' || cmdToken === '/hr') {
                 finalActionType = 'hrscreening';
+            } else if (cmdToken === '/t') {
+                finalActionType = 'tech_screening';
             } else if (cmdToken === '/in' || cmdToken === '/invite') {
-                finalActionType = 'invite';
+                finalActionType = 'final_interview';
             }
             
             // Обновляем скрытое поле, если оно не совпадает
@@ -353,7 +391,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (actionType === 'hrscreening') {
                 text = '/s ' + text;
                 commandUsed = '/s';
-            } else if (actionType === 'invite') {
+            } else if (actionType === 'tech_screening') {
+                text = '/t ' + text;
+                commandUsed = '/t';
+            } else if (actionType === 'final_interview') {
                 text = '/in ' + text;
                 commandUsed = '/in';
             }

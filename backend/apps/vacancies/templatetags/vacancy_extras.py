@@ -95,3 +95,44 @@ def get_stage_name_from_huntflow(context, stage_id):
     except Exception as e:
         print(f"Ошибка при получении названия этапа {stage_id}: {e}")
         return f"Этап {stage_id}"
+
+
+@register.filter
+def remove_command(value):
+    """
+    Убирает команды (/s, /hr, /t, /in, /invite) из начала текста сообщения
+    """
+    if not value:
+        return ''
+    
+    text = str(value).strip()
+    
+    # Убираем команды с пробелом после них
+    if text.startswith('/s '):
+        return text[3:].strip()
+    elif text.startswith('/hr '):
+        return text[4:].strip()
+    elif text.startswith('/t '):
+        return text[3:].strip()
+    elif text.startswith('/in '):
+        return text[4:].strip()
+    elif text.startswith('/invite '):
+        return text[8:].strip()
+    elif text.startswith('/inv '):
+        return text[5:].strip()
+    elif text.startswith('/screen '):
+        return text[8:].strip()
+    
+    # Убираем команды без пробела (если команда в конце строки)
+    if text.startswith('/s\n') or text.startswith('/s\r'):
+        return text[2:].strip()
+    elif text.startswith('/hr\n') or text.startswith('/hr\r'):
+        return text[3:].strip()
+    elif text.startswith('/t\n') or text.startswith('/t\r'):
+        return text[2:].strip()
+    elif text.startswith('/in\n') or text.startswith('/in\r'):
+        return text[3:].strip()
+    elif text.startswith('/invite\n') or text.startswith('/invite\r'):
+        return text[7:].strip()
+    
+    return text

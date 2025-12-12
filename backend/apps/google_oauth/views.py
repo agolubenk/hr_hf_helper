@@ -3637,9 +3637,13 @@ def chat_ajax_handler(request, session_id):
             action_type = 'hrscreening'
             print(f"🔍 CHAT AJAX: Команда /s обнаружена в тексте - принудительный HR-скрининг")
             message_text = re.sub(r'^/s\s*', '', message_text, flags=re.IGNORECASE).strip()
+        elif re.match(r'^/t(\s|$)', message_lower):
+            action_type = 'tech_screening'
+            print(f"🔍 CHAT AJAX: Команда /t обнаружена в тексте - Tech Screening")
+            message_text = re.sub(r'^/t\s*', '', message_text, flags=re.IGNORECASE).strip()
         elif re.match(r'^/in(\s|$)', message_lower):
-            action_type = 'invite'
-            print(f"🔍 CHAT AJAX: Команда /in обнаружена в тексте - принудительный инвайт")
+            action_type = 'final_interview'
+            print(f"🔍 CHAT AJAX: Команда /in обнаружена в тексте - Final Interview")
             message_text = re.sub(r'^/in\s*', '', message_text, flags=re.IGNORECASE).strip()
         else:
             # Комбинированный/автоматический режим отключен, но допускаем явный тип из JS
@@ -3649,7 +3653,7 @@ def chat_ajax_handler(request, session_id):
                 print(f"🔍 CHAT AJAX: Используем тип действия из JS (скрытое поле): '{action_type}'")
             else:
                 print(f"❌ CHAT AJAX: НЕТ КОМАНДЫ! message_text: '{message_text}', action_type_from_js: '{action_type_from_js}'")
-                return JsonResponse({'success': False, 'error': 'Укажи команду: /s для HR-скрининга или /in для инвайта'})
+                return JsonResponse({'success': False, 'error': 'Укажи команду: /s для HR-скрининга, /t для Tech Screening или /in для Final Interview'})
         
         print(f"🔍 CHAT AJAX: ФИНАЛЬНЫЙ action_type: '{action_type}'")
 
@@ -3674,7 +3678,8 @@ def chat_ajax_handler(request, session_id):
                     # Создаем стилизованный ответ в виде карточки
                     action_type_display = {
                         'hrscreening': 'HR-скрининг',
-                        'invite': 'Инвайт'
+                        'tech_screening': 'Tech Screening',
+                        'final_interview': 'Final Interview'
                     }.get(delete_result['action_type'], delete_result['action_type'])
                     
                     # Формируем список изменений
@@ -3790,8 +3795,8 @@ def chat_ajax_handler(request, session_id):
                     content=error_content
                 )
 
-        elif action_type == 'invite':
-            # Создаем инвайт
+        elif action_type == 'tech_screening':
+            # Создаем Tech Screening (логика как для invite)
             invite_form_data = {'combined_data': message_text}
             
             # Передаем данные об интервьюере, если они есть
@@ -3809,11 +3814,11 @@ def chat_ajax_handler(request, session_id):
                     
                     ChatMessage.objects.create(
                         session=chat_session,
-                        message_type='invite',
+                        message_type='invite',  # Используем существующий тип для совместимости
                         content=response_content,
                         invite=invite,
                         metadata={
-                            'action_type': 'invite',
+                            'action_type': 'tech_screening',
                             'invite_id': invite.id,
                             'candidate_name': invite.candidate_name,
                             'vacancy_name': invite.vacancy_title,
@@ -3835,6 +3840,60 @@ def chat_ajax_handler(request, session_id):
             else:
                 # Ошибки валидации
                 error_content = "Ошибка при обработке инвайта:\n"
+                for field, errors in invite_form.errors.items():
+                    error_content += f"- {field}: {', '.join(errors)}\n"
+                
+                ChatMessage.objects.create(
+                    session=chat_session,
+                    message_type='system',
+                    content=error_content
+                )
+        
+        elif action_type == 'final_interview':
+            # Создаем Final Interview (логика как для invite)
+            invite_form_data = {'combined_data': message_text}
+            
+            # Передаем данные об интервьюере, если они есть
+            if 'selected_interviewer' in request.POST:
+                invite_form_data['selected_interviewer'] = request.POST['selected_interviewer']
+                print(f"🔍 CHAT AJAX: Передаем данные об интервьюере: {request.POST['selected_interviewer']}")
+            
+            invite_form = InviteCombinedForm(invite_form_data, user=request.user)
+            
+            if invite_form.is_valid():
+                try:
+                    invite = invite_form.save()
+                    
+                    response_content = ""  # Пустой контент, данные будут браться из metadata
+                    
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='invite',  # Используем существующий тип для совместимости
+                        content=response_content,
+                        invite=invite,
+                        metadata={
+                            'action_type': 'final_interview',
+                            'invite_id': invite.id,
+                            'candidate_name': invite.candidate_name,
+                            'vacancy_name': invite.vacancy_title,
+                            'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
+                            'interviewer_email': invite.interviewer.email if invite.interviewer else None,
+                            'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
+                            'candidate_url': invite.candidate_url,
+                            'calendar_event_url': invite.calendar_event_url,
+                            'google_drive_file_url': invite.google_drive_file_url
+                        }
+                    )
+                except Exception as e:
+                    print(f"🔍 CHAT AJAX: Ошибка сохранения Final Interview: {str(e)}")
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content=f"Ошибка при обработке Final Interview: {str(e)}"
+                    )
+            else:
+                # Ошибки валидации
+                error_content = "Ошибка при обработке Final Interview:\n"
                 for field, errors in invite_form.errors.items():
                     error_content += f"- {field}: {', '.join(errors)}\n"
                 
@@ -3942,8 +4001,10 @@ def send_chat_message(request):
         
         # Определяем тип действия
         action_type = 'hrscreening'  # По умолчанию HR-скрининг
-        if message_text.startswith('/in '):
-            action_type = 'invite'
+        if message_text.startswith('/t '):
+            action_type = 'tech_screening'
+        elif message_text.startswith('/in '):
+            action_type = 'final_interview'
         elif message_text.startswith('/s '):
             action_type = 'hrscreening'
         
@@ -4005,8 +4066,8 @@ def send_chat_message(request):
                 )
                 return JsonResponse({'success': False, 'error': error_content})
         
-        elif action_type == 'invite':
-            # Создаем инвайт
+        elif action_type == 'tech_screening':
+            # Создаем Tech Screening (логика как для invite)
             invite_form_data = {'combined_data': message_text}
             
             # Передаем данные об интервьюере, если они есть
@@ -4023,11 +4084,11 @@ def send_chat_message(request):
                     
                     ChatMessage.objects.create(
                         session=chat_session,
-                        message_type='invite',
+                        message_type='invite',  # Используем существующий тип для совместимости
                         content=response_content,
                         invite=invite,
                         metadata={
-                            'action_type': 'invite',
+                            'action_type': 'tech_screening',
                             'invite_id': invite.id,
                             'candidate_name': invite.candidate_name,
                             'vacancy_name': invite.vacancy_title,
@@ -4044,7 +4105,7 @@ def send_chat_message(request):
                         'success': True,
                         'message_type': 'invite',
                         'metadata': {
-                            'action_type': 'invite',
+                            'action_type': 'tech_screening',
                             'invite_id': invite.id,
                             'candidate_name': invite.candidate_name,
                             'vacancy_name': invite.vacancy_title,
@@ -4067,7 +4128,85 @@ def send_chat_message(request):
                     )
                     return JsonResponse({'success': False, 'error': error_content})
             else:
-                error_content = f"Ошибка валидации инвайта: {invite_form.errors}"
+                # Ошибки валидации
+                error_content = "Ошибка при обработке Tech Screening:\n"
+                for field, errors in invite_form.errors.items():
+                    error_content += f"- {field}: {', '.join(errors)}\n"
+                
+                ChatMessage.objects.create(
+                    session=chat_session,
+                    message_type='system',
+                    content=error_content
+                )
+                return JsonResponse({'success': False, 'error': error_content})
+        
+        elif action_type == 'final_interview':
+            # Создаем Final Interview (логика как для invite)
+            invite_form_data = {'combined_data': message_text}
+            
+            # Передаем данные об интервьюере, если они есть
+            if 'selected_interviewer' in data:
+                invite_form_data['selected_interviewer'] = data['selected_interviewer']
+            
+            invite_form = InviteCombinedForm(invite_form_data, user=request.user)
+            
+            if invite_form.is_valid():
+                try:
+                    invite = invite_form.save()
+                    
+                    response_content = ""  # Пустой контент, данные будут браться из metadata
+                    
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='invite',  # Используем существующий тип для совместимости
+                        content=response_content,
+                        invite=invite,
+                        metadata={
+                            'action_type': 'final_interview',
+                            'invite_id': invite.id,
+                            'candidate_name': invite.candidate_name,
+                            'vacancy_name': invite.vacancy_title,
+                            'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
+                            'interviewer_email': invite.interviewer.email if invite.interviewer else None,
+                            'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
+                            'candidate_url': invite.candidate_url,
+                            'calendar_event_url': invite.calendar_event_url,
+                            'google_drive_file_url': invite.google_drive_file_url
+                        }
+                    )
+                    
+                    return JsonResponse({
+                        'success': True,
+                        'message_type': 'invite',
+                        'metadata': {
+                            'action_type': 'final_interview',
+                            'invite_id': invite.id,
+                            'candidate_name': invite.candidate_name,
+                            'vacancy_name': invite.vacancy_title,
+                            'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
+                            'interviewer_email': invite.interviewer.email if invite.interviewer else None,
+                            'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
+                            'candidate_url': invite.candidate_url,
+                            'calendar_event_url': invite.calendar_event_url,
+                            'google_drive_file_url': invite.google_drive_file_url
+                        }
+                    })
+                    
+                except Exception as e:
+                    print(f"❌ CHAT AJAX: Ошибка создания Final Interview: {e}")
+                    error_content = f"Ошибка при обработке Final Interview: {str(e)}"
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content=error_content
+                    )
+                    return JsonResponse({'success': False, 'error': error_content})
+            else:
+                # Ошибки валидации
+                error_content = "Ошибка при обработке Final Interview:\n"
+                for field, errors in invite_form.errors.items():
+                    error_content += f"- {field}: {', '.join(errors)}\n"
+                
                 ChatMessage.objects.create(
                     session=chat_session,
                     message_type='system',
@@ -4145,12 +4284,22 @@ def chat_workflow(request, session_id=None):
                 if next_msg.message_type == 'hrscreening':
                     command_used = '/s'
                 elif next_msg.message_type == 'invite':
-                    command_used = '/in'
+                    # Определяем команду по metadata
+                    metadata = next_msg.metadata or {}
+                    action_type = metadata.get('action_type', '')
+                    if action_type == 'tech_screening':
+                        command_used = '/t'
+                    elif action_type == 'final_interview':
+                        command_used = '/in'
+                    else:
+                        command_used = '/t'  # По умолчанию для обратной совместимости
             # Если не нашли по следующему сообщению, проверяем текст
             if not command_used:
                 content = msg.content or ''
                 if content.startswith('/s ') or content.startswith('/hr '):
                     command_used = '/s'
+                elif content.startswith('/t '):
+                    command_used = '/t'
                 elif content.startswith('/in ') or content.startswith('/invite '):
                     command_used = '/in'
             # Добавляем атрибут к объекту сообщения для использования в шаблоне
@@ -4187,16 +4336,20 @@ def chat_workflow(request, session_id=None):
                 action_type = 'hrscreening'
                 print(f"🔍 CHAT: Команда /s обнаружена - принудительный HR-скрининг")
                 message_text = re.sub(r'^/s\s*', '', message_text, flags=re.IGNORECASE).strip()
+            elif re.match(r'^/t(\s|$)', message_lower):
+                action_type = 'tech_screening'
+                print(f"🔍 CHAT: Команда /t обнаружена - Tech Screening")
+                message_text = re.sub(r'^/t\s*', '', message_text, flags=re.IGNORECASE).strip()
             elif re.match(r'^/in(\s|$)', message_lower):
-                action_type = 'invite'
-                print(f"🔍 CHAT: Команда /in обнаружена - принудительный инвайт")
+                action_type = 'final_interview'
+                print(f"🔍 CHAT: Команда /in обнаружена - Final Interview")
                 message_text = re.sub(r'^/in\s*', '', message_text, flags=re.IGNORECASE).strip()
             else:
                 # Комбинированный/автоматический режим отключен: требуем явные команды
                 ChatMessage.objects.create(
                     session=chat_session,
                     message_type='system',
-                    content='Укажи команду: /s для HR-скрининга или /in для инвайта'
+                    content='Укажи команду: /s для HR-скрининга, /t для Tech Screening или /in для Final Interview'
                 )
                 # Возвращаемся на исходный URL с сохранением query-параметров
                 return redirect(request.get_full_path())
@@ -4222,7 +4375,8 @@ def chat_workflow(request, session_id=None):
                             # Создаем стилизованный ответ в виде карточки
                             action_type_display = {
                                 'hrscreening': 'HR-скрининг',
-                                'invite': 'Инвайт'
+                                'tech_screening': 'Tech Screening',
+                        'final_interview': 'Final Interview'
                             }.get(delete_result['action_type'], delete_result['action_type'])
                             
                             # Формируем список изменений
@@ -4338,8 +4492,8 @@ def chat_workflow(request, session_id=None):
                             content=error_content
                         )
 
-                elif action_type == 'invite':
-                    # Создаем инвайт с ПРАВИЛЬНЫМИ данными
+                elif action_type == 'tech_screening':
+                    # Создаем Tech Screening с ПРАВИЛЬНЫМИ данными
                     invite_form_data = {'combined_data': message_text}
                     
                     # Передаем данные об интервьюере, если они есть
@@ -4353,7 +4507,7 @@ def chat_workflow(request, session_id=None):
                         try:
                             invite = invite_form.save()
                             
-                            response_content = f"""**Инвайт создан**
+                            response_content = f"""**Tech Screening создан**
 
 **Кандидат:** {invite.candidate_name or 'Не указан'}
 **Вакансия:** {invite.vacancy_title or 'Не указана'}
@@ -4363,15 +4517,15 @@ def chat_workflow(request, session_id=None):
 **Дата интервью:** {invite.interview_datetime.strftime('%d.%m.%Y %H:%M') if invite.interview_datetime else 'Не указана'}
 **Google Meet:** {invite.google_meet_url or 'Будет создана'}
 
-✅ **Инвайт отправлен и добавлен в календарь**"""
+✅ **Tech Screening отправлен и добавлен в календарь**"""
                             
                             ChatMessage.objects.create(
                                 session=chat_session,
-                                message_type='invite',
+                                message_type='invite',  # Используем существующий тип для совместимости
                                 content=response_content,
                                 invite=invite,
                                 metadata={
-                                    'action_type': 'invite',
+                                    'action_type': 'tech_screening',
                                     'invite_id': invite.id,
                                     'candidate_name': invite.candidate_name,
                                     'vacancy_name': invite.vacancy_title,
@@ -4383,15 +4537,15 @@ def chat_workflow(request, session_id=None):
                                 }
                             )
                         except Exception as e:
-                            print(f"🔍 CHAT: Ошибка сохранения инвайта: {str(e)}")
+                            print(f"🔍 CHAT: Ошибка сохранения Tech Screening: {str(e)}")
                             ChatMessage.objects.create(
                                 session=chat_session,
                                 message_type='system',
-                                content=f"Ошибка при обработке инвайта: {str(e)}"
+                                content=f"Ошибка при обработке Tech Screening: {str(e)}"
                             )
                     else:
                         # Ошибки валидации
-                        error_content = "Ошибка при обработке инвайта:\n"
+                        error_content = "Ошибка при обработке Tech Screening:\n"
                         for field, errors in invite_form.errors.items():
                             error_content += f"- {field}: {', '.join(errors)}\n"
                         
