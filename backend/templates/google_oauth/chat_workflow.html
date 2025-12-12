@@ -928,9 +928,8 @@
     min-width: 120px;
 }
 
-/* Системные сообщения - БЕЗ ОГРАНИЧЕНИЙ ШИРИНЫ */
+/* Системные сообщения - ограничение ширины для ошибок */
 .card .system-message .message-bubble {
-    max-width: none !important;
     min-width: fit-content !important;
     width: auto !important;
 }
@@ -1126,6 +1125,18 @@
     justify-content: flex-start;
     width: 100%;
     max-width: none !important;
+}
+
+/* Ограничение ширины системных сообщений (ответы HR-системы) - только для базового класса без дополнительных */
+.card .system-message:not(.hr-screening-message):not(.invite-message):not(.delete-message) .d-flex {
+    max-width: 60% !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+.card .system-message:not(.hr-screening-message):not(.invite-message):not(.delete-message) .message-bubble {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
 }
 
 .card .user-message .message-bubble {
@@ -1360,10 +1371,7 @@
         font-size: 0.85rem !important; /* На мобильных чуть меньше, но одинаково */
     }
     
-    .card .system-message .message-bubble {
-        min-width: 200px;
-        max-width: 95%;
-    }
+    /* Системные сообщения обрабатываются отдельным медиа-запросом выше */
     
     .card .message-content {
         font-size: 0.85rem !important; /* На мобильных чуть меньше, но одинаково */
