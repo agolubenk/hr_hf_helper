@@ -15,6 +15,7 @@ from apps.interviewers.models import Interviewer
 from apps.reporting.models import CalendarEvent
 from apps.google_oauth.models import GoogleOAuthAccount
 from apps.google_oauth.services import GoogleOAuthService, GoogleCalendarService
+from apps.reporting.excel_export import ExcelReportExporter
 
 User = get_user_model()
 
@@ -1084,4 +1085,202 @@ def _parse_event_time_for_sync(time_data):
             pass
     
     return None
+
+
+@login_required
+def export_company_report_excel(request):
+    """Экспорт отчета по компании в Excel"""
+    period = request.GET.get('period', 'monthly')
+    start_date, end_date = parse_date_range(request, period)
+    
+    generator = ReportGenerator(request.user)
+    report_data = generator.generate_company_report(start_date, end_date, period)
+    
+    # Добавляем даты для экспорта
+    report_data['start_date'] = start_date
+    report_data['end_date'] = end_date
+    report_data['period'] = period
+    
+    # Получаем детальные данные для таблицы
+    from apps.reporting.models import CalendarEvent
+    from apps.interviewers.models import Interviewer
+    
+    events = CalendarEvent.objects.filter(
+        start_time__gte=start_date,
+        start_time__lte=end_date
+    ).select_related('vacancy', 'recruiter').order_by('start_time')
+    
+    # Группируем события по периоду и рекрутеру
+    detailed_data = {}
+    for event in events:
+        # Определяем период для события
+        event_date = event.start_time.date()
+        if period == 'daily':
+            period_key = event_date.isoformat()
+        elif period == 'weekly':
+            period_key = f"{event_date.year}-W{event_date.isocalendar()[1]:02d}"
+        elif period == 'monthly':
+            period_key = f"{event_date.year}-{event_date.month:02d}"
+        elif period == 'quarterly':
+            quarter = (event_date.month - 1) // 3 + 1
+            period_key = f"{event_date.year}-Q{quarter}"
+        elif period == 'yearly':
+            period_key = str(event_date.year)
+        else:
+            period_key = event_date.isoformat()
+        
+        recruiter_id = event.recruiter.id
+        recruiter_name = event.recruiter.get_full_name() or event.recruiter.username
+        
+        # Получаем интервьюеров из участников
+        interviewer_emails = set()
+        interviewer_names = []
+        if event.attendees:
+            for attendee in event.attendees:
+                if isinstance(attendee, dict):
+                    email = attendee.get('email', '').lower()
+                elif isinstance(attendee, str):
+                    email = attendee.lower()
+                else:
+                    continue
+                
+                if email:
+                    try:
+                        interviewer = Interviewer.objects.filter(
+                            email__iexact=email,
+                            is_active=True
+                        ).first()
+                        if interviewer:
+                            interviewer_emails.add(email)
+                            interviewer_names.append(interviewer.get_full_name())
+                    except:
+                        pass
+        
+        # Создаем ключ для группировки
+        group_key = (period_key, recruiter_id)
+        
+        if group_key not in detailed_data:
+            detailed_data[group_key] = {
+                'period': period_key,
+                'recruiter_id': recruiter_id,
+                'recruiter_name': recruiter_name,
+                'interviewers': set(interviewer_emails),
+                'interviewer_names': set(interviewer_names),
+                'screenings': 0,
+                'interviews': 0,
+                'total_time_minutes': 0,
+            }
+        
+        # Обновляем статистику
+        if event.event_type == 'screening':
+            detailed_data[group_key]['screenings'] += 1
+        elif event.event_type == 'interview':
+            detailed_data[group_key]['interviews'] += 1
+        
+        detailed_data[group_key]['total_time_minutes'] += event.duration_minutes or 0
+        detailed_data[group_key]['interviewers'].update(interviewer_emails)
+        detailed_data[group_key]['interviewer_names'].update(interviewer_names)
+    
+    # Преобразуем sets в списки для сериализации
+    detailed_list = []
+    for group_key, data in detailed_data.items():
+        detailed_list.append({
+            'period': data['period'],
+            'recruiter_name': data['recruiter_name'],
+            'interviewer_names': ', '.join(sorted(data['interviewer_names'])) if data['interviewer_names'] else '—',
+            'screenings': data['screenings'],
+            'interviews': data['interviews'],
+            'total': data['screenings'] + data['interviews'],
+            'total_time_minutes': data['total_time_minutes'],
+        })
+    
+    # Сортируем по периоду и рекрутеру
+    detailed_list.sort(key=lambda x: (x['period'], x['recruiter_name']))
+    
+    report_data['detailed_data'] = detailed_list
+    
+    exporter = ExcelReportExporter(report_data, 'company', 'Отчет по компании')
+    return exporter.export()
+
+
+@login_required
+def export_recruiters_summary_excel(request):
+    """Экспорт сводного отчета по рекрутерам в Excel"""
+    period = request.GET.get('period', 'monthly')
+    start_date, end_date = parse_date_range(request, period)
+    
+    generator = ReportGenerator(request.user)
+    report_data = generator.generate_recruiters_summary_report(start_date, end_date, period)
+    
+    # Добавляем даты для экспорта
+    report_data['start_date'] = start_date
+    report_data['end_date'] = end_date
+    
+    exporter = ExcelReportExporter(report_data, 'recruiters_summary', 'Сводный отчет по рекрутерам')
+    return exporter.export()
+
+
+@login_required
+def export_recruiter_report_excel(request, recruiter_id):
+    """Экспорт отчета по рекрутеру в Excel"""
+    recruiter = get_object_or_404(User, id=recruiter_id)
+    period = request.GET.get('period', 'monthly')
+    start_date, end_date = parse_date_range(request, period)
+    
+    interviewer_id = request.GET.get('interviewer_id')
+    interviewer_id = int(interviewer_id) if interviewer_id else None
+    
+    generator = ReportGenerator(request.user)
+    report_data = generator.generate_recruiter_report(recruiter, start_date, end_date, period, interviewer_id=interviewer_id)
+    
+    # Добавляем даты для экспорта
+    report_data['start_date'] = start_date
+    report_data['end_date'] = end_date
+    
+    recruiter_name = recruiter.get_full_name() or recruiter.username
+    exporter = ExcelReportExporter(report_data, 'recruiter', f'Отчет по рекрутеру: {recruiter_name}')
+    return exporter.export()
+
+
+@login_required
+def export_vacancy_report_excel(request, vacancy_id):
+    """Экспорт отчета по вакансии в Excel"""
+    vacancy = get_object_or_404(Vacancy, id=vacancy_id)
+    period = request.GET.get('period', 'monthly')
+    start_date, end_date = parse_date_range(request, period)
+    
+    recruiter_id = request.GET.get('recruiter_id')
+    recruiter_id = int(recruiter_id) if recruiter_id else None
+    
+    generator = ReportGenerator(request.user)
+    report_data = generator.generate_vacancy_report(vacancy, start_date, end_date, period, recruiter_id=recruiter_id)
+    
+    # Добавляем даты для экспорта
+    report_data['start_date'] = start_date
+    report_data['end_date'] = end_date
+    
+    exporter = ExcelReportExporter(report_data, 'vacancy', f'Отчет по вакансии: {vacancy.name}')
+    return exporter.export()
+
+
+@login_required
+def export_interviewer_report_excel(request, interviewer_id):
+    """Экспорт отчета по интервьюеру в Excel"""
+    interviewer = get_object_or_404(Interviewer, id=interviewer_id)
+    period = request.GET.get('period', 'monthly')
+    start_date, end_date = parse_date_range(request, period)
+    
+    recruiter_id = request.GET.get('recruiter_id')
+    recruiter_id = int(recruiter_id) if recruiter_id else None
+    
+    generator = ReportGenerator(request.user)
+    report_data = generator.generate_interviewer_report(interviewer, start_date, end_date, period, recruiter_id=recruiter_id)
+    
+    # Добавляем даты для экспорта
+    report_data['start_date'] = start_date
+    report_data['end_date'] = end_date
+    
+    interviewer_name = interviewer.get_full_name()
+    exporter = ExcelReportExporter(report_data, 'interviewer', f'Отчет по интервьюеру: {interviewer_name}')
+    return exporter.export()
 

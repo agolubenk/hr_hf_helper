@@ -383,6 +383,7 @@ def get_admin_url(context):
         'clickup_int': 'clickup_int',
         'notion_int': 'notion_int',
         'huntflow': 'huntflow',
+        'reporting': 'reporting',
     }
     
     if namespace and namespace in namespace_to_admin:

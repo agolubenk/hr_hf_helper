@@ -778,6 +778,18 @@
                             }
                         ]
                     },
+                    { 
+                        title: 'Отчетность', 
+                        icon: 'fas fa-chart-bar', 
+                        url: '/reporting/',
+                        submenu: [
+                            { title: 'Главная', icon: 'fas fa-tachometer-alt', url: '/reporting/' },
+                            { title: 'По компании', icon: 'fas fa-building', url: '/reporting/company/' },
+                            { title: 'По рекрутеру', icon: 'fas fa-user-tie', url: '/reporting/recruiter/' },
+                            { title: 'По вакансии', icon: 'fas fa-briefcase', url: '/reporting/vacancy/' },
+                            { title: 'По интервьюеру', icon: 'fas fa-user-check', url: '/reporting/interviewer/' }
+                        ]
+                    },
                     { title: 'Вики', icon: 'fas fa-book', url: '/wiki/' }
                 ];
                 
@@ -817,6 +829,7 @@
                     'clickup_int': 'clickup_int',
                     'notion_int': 'notion_int',
                     'huntflow': 'huntflow',
+                    'reporting': 'reporting',
                 };
                 
                 const adminAppUrl = currentNamespace && namespaceToAdmin[currentNamespace] 
