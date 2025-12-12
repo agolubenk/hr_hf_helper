@@ -88,6 +88,7 @@ INSTALLED_APPS = [
     'apps.hiring_plan',
     'apps.company_settings',
     'apps.wiki',
+    'apps.reporting',
     
     
     # Django REST Framework

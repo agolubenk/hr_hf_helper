@@ -227,6 +227,38 @@ SIDEBAR_MENU = {
         'icon': 'fas fa-book',
         'url': 'wiki:list',
         'submenu': {}
+    },
+    'reporting': {
+        'title': 'Отчетность',
+        'icon': 'fas fa-chart-bar',
+        'url': 'reporting:dashboard',
+        'submenu': {
+            'dashboard': {
+                'title': 'Главная',
+                'icon': 'fas fa-tachometer-alt',
+                'url': 'reporting:dashboard'
+            },
+            'company': {
+                'title': 'По компании',
+                'icon': 'fas fa-building',
+                'url': 'reporting:company_report'
+            },
+            'recruiter': {
+                'title': 'По рекрутеру',
+                'icon': 'fas fa-user-tie',
+                'url': 'reporting:recruiter_list'
+            },
+            'vacancy': {
+                'title': 'По вакансии',
+                'icon': 'fas fa-briefcase',
+                'url': 'reporting:vacancy_list'
+            },
+            'interviewer': {
+                'title': 'По интервьюеру',
+                'icon': 'fas fa-user-check',
+                'url': 'reporting:interviewer_list'
+            }
+        }
     }
 }
 

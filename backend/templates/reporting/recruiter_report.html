@@ -1,0 +1,259 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% load reporting_filters %}
+
+{% block title %}Отчет по рекрутеру - HR Helper{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-user-tie me-2"></i>
+                Отчет по рекрутеру: {{ recruiter.get_full_name|default:recruiter.username }}
+            </h2>
+        </div>
+    </div>
+    
+    <!-- Фильтры -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <input type="hidden" name="recruiter_id" value="{{ recruiter.id }}">
+                        <div class="col-md-3">
+                            <label for="period" class="form-label">Период</label>
+                            <select name="period" id="period" class="form-select">
+                                <option value="daily" {% if period == 'daily' %}selected{% endif %}>Ежедневная</option>
+                                <option value="weekly" {% if period == 'weekly' %}selected{% endif %}>Понедельная</option>
+                                <option value="monthly" {% if period == 'monthly' %}selected{% endif %}>Помесячная</option>
+                                <option value="quarterly" {% if period == 'quarterly' %}selected{% endif %}>Поквартальная</option>
+                                <option value="yearly" {% if period == 'yearly' %}selected{% endif %}>Годовая</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="start_date" class="form-label">Дата начала</label>
+                            <input type="date" name="start_date" id="start_date" class="form-control" value="{{ start_date|date:'Y-m-d' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="end_date" class="form-label">Дата окончания</label>
+                            <input type="date" name="end_date" id="end_date" class="form-control" value="{{ end_date|date:'Y-m-d' }}">
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-filter me-2"></i>
+                                Применить фильтры
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Статистика -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="text-info">{{ report_data.total_events|default:0 }}</h3>
+                    <p class="mb-0">Всего событий</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="text-warning">{{ report_data.total_screenings }}</h3>
+                    <p class="mb-0">Скринингов</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="text-success">{{ report_data.total_interviews }}</h3>
+                    <p class="mb-0">Интервью</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="text-primary">{{ report_data.total_time_minutes|format_duration_minutes }}</h3>
+                    <p class="mb-0">Суммарное время</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Статистика по вакансиям -->
+    {% if report_data.vacancy_stats %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Статистика по вакансиям</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Вакансия</th>
+                                    <th class="text-center">Скрининги</th>
+                                    <th class="text-center">Интервью</th>
+                                    <th class="text-center">Всего</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for vs in report_data.vacancy_stats %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ vs.vacancy.name }}</strong><br>
+                                        <small class="text-muted">{{ vs.vacancy.external_id }}</small>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-warning">{{ vs.screenings }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success">{{ vs.interviews }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <strong>{{ vs.total }}</strong>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Детализация по периодам -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Детализация по периодам</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Период</th>
+                                    <th>Скрининги</th>
+                                    <th>Интервью</th>
+                                    <th>Всего</th>
+                                    <th>Время</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for period_key, period_data in report_data.grouped_data.items %}
+                                <tr>
+                                    <td>{{ period_key }}</td>
+                                    <td>{{ period_data.screenings }}</td>
+                                    <td>{{ period_data.interviews }}</td>
+                                    <td><strong>{{ period_data.screenings|add:period_data.interviews }}</strong></td>
+                                    <td>{{ period_data.total_time_minutes|format_duration_minutes }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center">Нет данных за выбранный период</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Все события -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Все события ({{ report_data.total_events|default:0 }})</h5>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#eventsCollapse">
+                        <i class="fas fa-chevron-down"></i> Показать/скрыть
+                    </button>
+                </div>
+                <div class="collapse" id="eventsCollapse">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Дата и время</th>
+                                        <th>Название</th>
+                                        <th>Тип</th>
+                                        <th>Вакансия</th>
+                                        <th>Участники</th>
+                                        <th>Длительность</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for event in report_data.events %}
+                                    <tr>
+                                        <td>
+                                            {{ event.start_time|date:"d.m.Y H:i"|default:"-" }}
+                                        </td>
+                                        <td>{{ event.event_title|default:"-" }}</td>
+                                        <td>
+                                            {% if event.event_type == 'screening' %}
+                                                <span class="badge bg-primary">Скрининг</span>
+                                            {% elif event.event_type == 'interview' %}
+                                                <span class="badge bg-success">Интервью</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Неизвестно</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if event.vacancy %}
+                                                {{ event.vacancy.name }}
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if event.attendees %}
+                                                <div class="small">
+                                                    {% for attendee in event.attendees %}
+                                                        <div>{{ attendee.name|default:attendee.email }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if event.duration_minutes %}
+                                                {{ event.duration_minutes }} мин.
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center">Нет событий</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

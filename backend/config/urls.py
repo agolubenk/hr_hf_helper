@@ -38,6 +38,7 @@ urlpatterns = [
     path('hiring-plans/', include('apps.hiring_plan.urls')),
     path('company-settings/', include('apps.company_settings.urls')),
     path('wiki/', include('apps.wiki.urls')),
+    path('reporting/', include('apps.reporting.urls')),
     
     # Common URLs (обработчики ошибок)
     path('common/', include('apps.common.urls')),
