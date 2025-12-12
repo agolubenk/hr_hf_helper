@@ -423,7 +423,10 @@ class ReportGenerator:
         self,
         start_date: datetime,
         end_date: datetime,
-        period: str = 'daily'
+        period: str = 'daily',
+        recruiter_id: Optional[int] = None,
+        interviewer_id: Optional[int] = None,
+        vacancy_id: Optional[int] = None
     ) -> Dict:
         """
         Генерирует отчет по компании
@@ -432,6 +435,9 @@ class ReportGenerator:
             start_date: Начало периода
             end_date: Конец периода
             period: Тип периода ('daily', 'weekly', 'monthly', 'quarterly', 'yearly')
+            recruiter_id: ID рекрутера для фильтрации (опционально)
+            interviewer_id: ID интервьюера для фильтрации (опционально)
+            vacancy_id: ID вакансии для фильтрации (опционально)
         
         Returns:
             Dict с данными отчета
@@ -440,7 +446,45 @@ class ReportGenerator:
         events = CalendarEvent.objects.filter(
             start_time__gte=start_date,
             start_time__lte=end_date
-        ).select_related('vacancy').order_by('start_time')
+        ).select_related('vacancy', 'recruiter').order_by('start_time')
+        
+        # Фильтруем по рекрутеру, если указан
+        if recruiter_id:
+            events = events.filter(recruiter_id=recruiter_id)
+        
+        # Фильтруем по вакансии, если указана
+        if vacancy_id:
+            events = events.filter(vacancy_id=vacancy_id)
+        
+        # Фильтруем по интервьюеру, если указан
+        if interviewer_id:
+            try:
+                from apps.interviewers.models import Interviewer
+                interviewer = Interviewer.objects.get(id=interviewer_id)
+                interviewer_email_lower = interviewer.email.lower()
+                
+                filtered_events = []
+                for event in events:
+                    attendees = event.attendees or []
+                    is_participant = False
+                    
+                    for attendee in attendees:
+                        if isinstance(attendee, dict):
+                            attendee_email = attendee.get('email', '').lower()
+                            if attendee_email == interviewer_email_lower:
+                                is_participant = True
+                                break
+                        elif isinstance(attendee, str):
+                            if attendee.lower() == interviewer_email_lower:
+                                is_participant = True
+                                break
+                    
+                    if is_participant:
+                        filtered_events.append(event)
+                
+                events = filtered_events
+            except Interviewer.DoesNotExist:
+                events = []
         
         # Преобразуем в формат для группировки
         events_list = []
@@ -458,9 +502,14 @@ class ReportGenerator:
         grouped_data = self._group_by_period(events_list, start_date, end_date, period)
         
         # Подсчитываем статистику
-        total_screenings = events.filter(event_type='screening').count()
-        total_interviews = events.filter(event_type='interview').count()
-        total_time_minutes = sum(event.duration_minutes or 0 for event in events)
+        if isinstance(events, list):
+            total_screenings = sum(1 for e in events if e.event_type == 'screening')
+            total_interviews = sum(1 for e in events if e.event_type == 'interview')
+            total_time_minutes = sum(e.duration_minutes or 0 for e in events)
+        else:
+            total_screenings = events.filter(event_type='screening').count()
+            total_interviews = events.filter(event_type='interview').count()
+            total_time_minutes = sum(event.duration_minutes or 0 for event in events)
         
         return {
             'period': period,
@@ -477,7 +526,8 @@ class ReportGenerator:
         recruiter: User,
         start_date: datetime,
         end_date: datetime,
-        period: str = 'daily'
+        period: str = 'daily',
+        interviewer_id: Optional[int] = None
     ) -> Dict:
         """
         Генерирует отчет по рекрутеру на основе данных из БД
@@ -487,6 +537,7 @@ class ReportGenerator:
             start_date: Начало периода
             end_date: Конец периода
             period: Тип периода ('daily', 'weekly', 'monthly', 'quarterly', 'yearly')
+            interviewer_id: ID интервьюера для фильтрации (опционально)
         
         Returns:
             Dict с данными отчета
@@ -497,6 +548,36 @@ class ReportGenerator:
             start_time__gte=start_date,
             start_time__lte=end_date
         ).select_related('vacancy').order_by('start_time')
+        
+        # Фильтруем по интервьюеру, если указан
+        if interviewer_id:
+            try:
+                from apps.interviewers.models import Interviewer
+                interviewer = Interviewer.objects.get(id=interviewer_id)
+                interviewer_email_lower = interviewer.email.lower()
+                
+                filtered_events = []
+                for event in events:
+                    attendees = event.attendees or []
+                    is_participant = False
+                    
+                    for attendee in attendees:
+                        if isinstance(attendee, dict):
+                            attendee_email = attendee.get('email', '').lower()
+                            if attendee_email == interviewer_email_lower:
+                                is_participant = True
+                                break
+                        elif isinstance(attendee, str):
+                            if attendee.lower() == interviewer_email_lower:
+                                is_participant = True
+                                break
+                    
+                    if is_participant:
+                        filtered_events.append(event)
+                
+                events = filtered_events
+            except Interviewer.DoesNotExist:
+                events = []
         
         # Преобразуем в формат для группировки
         events_list = []
@@ -513,14 +594,22 @@ class ReportGenerator:
         grouped_data = self._group_by_period(events_list, start_date, end_date, period)
         
         # Подсчитываем статистику
-        total_screenings = events.filter(event_type='screening').count()
-        total_interviews = events.filter(event_type='interview').count()
-        total_events = events.count()
-        total_time_minutes = sum(event.duration_minutes or 0 for event in events)
+        if isinstance(events, list):
+            total_screenings = sum(1 for e in events if e.event_type == 'screening')
+            total_interviews = sum(1 for e in events if e.event_type == 'interview')
+            total_events = len(events)
+            total_time_minutes = sum(e.duration_minutes or 0 for e in events)
+            events_for_vacancy = [e for e in events if e.vacancy]
+        else:
+            total_screenings = events.filter(event_type='screening').count()
+            total_interviews = events.filter(event_type='interview').count()
+            total_events = events.count()
+            total_time_minutes = sum(event.duration_minutes or 0 for event in events)
+            events_for_vacancy = events.filter(vacancy__isnull=False).select_related('vacancy')
         
         # Статистика по вакансиям
         vacancy_stats = {}
-        for event in events.filter(vacancy__isnull=False).select_related('vacancy'):
+        for event in events_for_vacancy:
             vacancy_id = event.vacancy.id
             if vacancy_id not in vacancy_stats:
                 vacancy_stats[vacancy_id] = {
@@ -637,7 +726,8 @@ class ReportGenerator:
         vacancy: Vacancy,
         start_date: datetime,
         end_date: datetime,
-        period: str = 'daily'
+        period: str = 'daily',
+        recruiter_id: Optional[int] = None
     ) -> Dict:
         """Генерирует отчет по вакансии"""
         # Получаем события из БД, отфильтрованные по вакансии
@@ -645,7 +735,11 @@ class ReportGenerator:
             vacancy=vacancy,
             start_time__gte=start_date,
             start_time__lte=end_date
-        ).select_related('vacancy').order_by('start_time')
+        ).select_related('vacancy', 'recruiter').order_by('start_time')
+        
+        # Фильтруем по рекрутеру, если указан
+        if recruiter_id:
+            events = events.filter(recruiter_id=recruiter_id)
         
         # Преобразуем в формат для группировки
         events_list = []
@@ -661,9 +755,14 @@ class ReportGenerator:
         
         grouped_data = self._group_by_period(events_list, start_date, end_date, period)
         
-        total_screenings = events.filter(event_type='screening').count()
-        total_interviews = events.filter(event_type='interview').count()
-        total_time_minutes = sum(event.duration_minutes or 0 for event in events)
+        if isinstance(events, list):
+            total_screenings = sum(1 for e in events if e.event_type == 'screening')
+            total_interviews = sum(1 for e in events if e.event_type == 'interview')
+            total_time_minutes = sum(e.duration_minutes or 0 for e in events)
+        else:
+            total_screenings = events.filter(event_type='screening').count()
+            total_interviews = events.filter(event_type='interview').count()
+            total_time_minutes = sum(event.duration_minutes or 0 for event in events)
         
         return {
             'vacancy': vacancy,
@@ -681,19 +780,31 @@ class ReportGenerator:
         interviewer: Interviewer,
         start_date: datetime,
         end_date: datetime,
-        period: str = 'daily'
+        period: str = 'daily',
+        recruiter_id: Optional[int] = None
     ) -> Dict:
         """
         Генерирует отчет по интервьюеру
         
         Получает события из БД, где интервьюер является участником встречи
         (его email присутствует в поле attendees)
+        
+        Args:
+            interviewer: Интервьюер для отчета
+            start_date: Начало периода
+            end_date: Конец периода
+            period: Тип периода ('daily', 'weekly', 'monthly', 'quarterly', 'yearly')
+            recruiter_id: ID рекрутера для фильтрации (опционально)
         """
         # Получаем все события за период
         all_events = CalendarEvent.objects.filter(
             start_time__gte=start_date,
             start_time__lte=end_date
-        ).select_related('vacancy').order_by('start_time')
+        ).select_related('vacancy', 'recruiter').order_by('start_time')
+        
+        # Фильтруем по рекрутеру, если указан
+        if recruiter_id:
+            all_events = all_events.filter(recruiter_id=recruiter_id)
         
         # Фильтруем события, где интервьюер является участником
         interviewer_email_lower = interviewer.email.lower()
@@ -816,7 +927,13 @@ class ReportGenerator:
             if duration_minutes and isinstance(duration_minutes, (int, float)):
                 grouped[key]['total_time_minutes'] += int(duration_minutes)
             
-            grouped[key]['events'].append(event)
+            # Не добавляем события в список, чтобы избежать проблем с сериализацией
+            # grouped[key]['events'].append(event)
+        
+        # Удаляем список событий из каждого периода для упрощения сериализации
+        for key in grouped:
+            if 'events' in grouped[key]:
+                del grouped[key]['events']
         
         return grouped
 

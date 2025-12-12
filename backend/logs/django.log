@@ -55875,3 +55875,427 @@ DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'n
 [12/Dec/2025 19:35:42] "GET /admin/reporting/calendarevent/?created_at__gte=2025-01-01+00%3A00%3A00%2B03%3A00&created_at__lt=2026-01-01+00%3A00%3A00%2B03%3A00&interviewer=23&start_time__year=2025 HTTP/1.1" 200 109332
 [12/Dec/2025 19:35:42] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
 [12/Dec/2025 19:36:35] "GET /reporting/interviewer/5/?period=daily&start_date=2025-07-01&end_date=2025-07-31 HTTP/1.1" 200 118838
+[12/Dec/2025 19:39:15] "GET /reporting/ HTTP/1.1" 200 117847
+[12/Dec/2025 19:39:22] "GET /reporting/recruiters/summary/ HTTP/1.1" 200 123139
+[12/Dec/2025 19:39:47] "GET /reporting/company/ HTTP/1.1" 200 125335
+WARNING Bad Request: /reporting/api/data/
+Bad Request: /reporting/api/data/
+[12/Dec/2025 19:39:47] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 400 32
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/views.py changed, reloading.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[12/Dec/2025 19:40:06] "GET /reporting/company/ HTTP/1.1" 200 125354
+ERROR Internal Server Error: /reporting/api/data/
+Internal Server Error: /reporting/api/data/
+[12/Dec/2025 19:40:07] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 500 60
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 12, 2025 - 19:40:01
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 12, 2025 - 19:40:09
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 12, 2025 - 19:40:11
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[12/Dec/2025 19:40:31] "GET /reporting/company/ HTTP/1.1" 200 125874
+ERROR Internal Server Error: /reporting/api/data/
+Internal Server Error: /reporting/api/data/
+[12/Dec/2025 19:40:31] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 500 60
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 12, 2025 - 19:40:30
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+ERROR Internal Server Error: /reporting/api/data/
+Internal Server Error: /reporting/api/data/
+[12/Dec/2025 19:40:37] "GET /reporting/api/data/?report_type=company&period=daily&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 500 60
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 12, 2025 - 19:40:35
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+ERROR Internal Server Error: /reporting/api/data/
+Internal Server Error: /reporting/api/data/
+[12/Dec/2025 19:40:40] "GET /reporting/api/data/?report_type=company&period=daily&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 500 60
+ERROR Internal Server Error: /reporting/api/data/
+Internal Server Error: /reporting/api/data/
+[12/Dec/2025 19:40:42] "GET /reporting/api/data/?report_type=company&period=daily&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 500 60
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 12, 2025 - 19:40:40
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 12, 2025 - 19:40:48
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 12, 2025 - 19:40:50
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 12, 2025 - 19:40:54
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 12, 2025 - 19:41:20
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 12, 2025 - 19:41:26
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[12/Dec/2025 19:41:52] "GET /reporting/company/ HTTP/1.1" 200 126019
+ERROR Internal Server Error: /reporting/api/data/
+Internal Server Error: /reporting/api/data/
+[12/Dec/2025 19:41:52] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 500 60
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[12/Dec/2025 19:41:59] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4253
+[12/Dec/2025 19:41:59] "GET /static/js/bootstrap.bundle.min.js.map HTTP/1.1" 200 332090
+[12/Dec/2025 19:41:59] "GET /static/css/bootstrap.min.css.map HTTP/1.1" 200 589892
+[12/Dec/2025 19:43:47] "GET /reporting/company/ HTTP/1.1" 200 127003
+ERROR Internal Server Error: /reporting/api/data/
+Internal Server Error: /reporting/api/data/
+[12/Dec/2025 19:43:49] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 500 60
+[12/Dec/2025 19:45:19] "GET /reporting/company/ HTTP/1.1" 200 127594
+ERROR Internal Server Error: /reporting/api/data/
+Internal Server Error: /reporting/api/data/
+[12/Dec/2025 19:45:20] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 500 60
+[12/Dec/2025 19:46:46] "GET /reporting/interviewer/ HTTP/1.1" 200 155963
+[12/Dec/2025 19:46:50] "GET /reporting/interviewer/14/?start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 127760
+ERROR Internal Server Error: /reporting/api/data/
+Internal Server Error: /reporting/api/data/
+[12/Dec/2025 19:46:51] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=14&period=monthly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 500 57
+[12/Dec/2025 19:47:09] "GET /reporting/interviewer/5/?start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 126968
+ERROR Internal Server Error: /reporting/api/data/
+Internal Server Error: /reporting/api/data/
+[12/Dec/2025 19:47:10] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=5&period=monthly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 500 60
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[12/Dec/2025 19:47:13] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4253
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 12, 2025 - 19:41:42
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 12, 2025 - 19:47:53
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 12, 2025 - 19:47:56
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 12, 2025 - 19:48:03
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[12/Dec/2025 19:48:15] "GET /reporting/interviewer/5/?start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 126968
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[12/Dec/2025 19:48:16] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4253
+[12/Dec/2025 19:48:16] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=5&period=monthly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 1164
+[12/Dec/2025 19:48:22] "GET /reporting/interviewer/5/?start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 126968
+[12/Dec/2025 19:48:22] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=5&period=monthly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 1164
+[12/Dec/2025 19:48:27] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=5&period=monthly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 1164
+[12/Dec/2025 19:48:41] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=5&period=weekly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 3252
+[12/Dec/2025 19:48:44] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=5&period=daily&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 8860
+[12/Dec/2025 19:48:47] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=5&period=weekly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 3252
+[12/Dec/2025 19:49:19] "GET /reporting/interviewer/5/?period=daily&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 165240
+[12/Dec/2025 19:49:19] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=5&period=monthly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 1164
+[12/Dec/2025 19:49:22] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=5&period=weekly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 3252
+[12/Dec/2025 19:49:29] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=5&period=weekly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 3252
+[12/Dec/2025 19:49:30] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=5&period=weekly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 3252
+[12/Dec/2025 19:50:23] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=5&period=weekly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 3252
+[12/Dec/2025 19:50:35] "GET /reporting/company/ HTTP/1.1" 200 129595
+[12/Dec/2025 19:50:35] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 1215
+[12/Dec/2025 19:51:26] "GET /reporting/api/data/?report_type=company&period=weekly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 4270
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 12, 2025 - 19:48:09
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 12, 2025 - 19:51:31
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 12, 2025 - 19:51:44
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 12, 2025 - 19:51:50
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[12/Dec/2025 19:52:06] "GET /reporting/company/ HTTP/1.1" 200 134770
+[12/Dec/2025 19:52:06] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 1215
+[12/Dec/2025 19:54:12] "GET /reporting/company/ HTTP/1.1" 200 158246
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[12/Dec/2025 19:54:30] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4253
+[12/Dec/2025 19:54:40] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&recruiter_id=3 HTTP/1.1" 200 1198
+[12/Dec/2025 19:54:41] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&recruiter_id=1 HTTP/1.1" 200 203
+[12/Dec/2025 19:54:41] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&recruiter_id=3 HTTP/1.1" 200 1198
+[12/Dec/2025 19:54:42] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&recruiter_id=1 HTTP/1.1" 200 203
+[12/Dec/2025 19:54:42] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&recruiter_id=3 HTTP/1.1" 200 1198
+[12/Dec/2025 19:54:42] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&recruiter_id=9 HTTP/1.1" 200 1128
+[12/Dec/2025 19:54:55] "GET /reporting/company/ HTTP/1.1" 200 158246
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[12/Dec/2025 19:54:55] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4253
+[12/Dec/2025 19:56:31] "GET /reporting/company/ HTTP/1.1" 200 138865
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[12/Dec/2025 19:56:31] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4253
+[12/Dec/2025 19:58:01] "GET /reporting/company/ HTTP/1.1" 200 138865
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[12/Dec/2025 19:58:01] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4253
+[12/Dec/2025 19:58:01] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[12/Dec/2025 19:58:01] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[12/Dec/2025 19:58:01] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[12/Dec/2025 19:58:01] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[12/Dec/2025 19:58:01] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[12/Dec/2025 19:58:01] "GET /static/css/hrhelper.css HTTP/1.1" 200 118146
+[12/Dec/2025 19:58:01] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[12/Dec/2025 19:58:01] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[12/Dec/2025 19:58:01] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[12/Dec/2025 19:58:01] "GET /static/img/logo-light.png HTTP/1.1" 200 47574
+[12/Dec/2025 19:59:43] "GET /reporting/company/ HTTP/1.1" 200 139572
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[12/Dec/2025 19:59:43] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4253
+[12/Dec/2025 19:59:43] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&recruiter_id=1 HTTP/1.1" 200 203
+[12/Dec/2025 19:59:43] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&recruiter_id=9 HTTP/1.1" 200 1128
+[12/Dec/2025 19:59:43] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&recruiter_id=3 HTTP/1.1" 200 1198
+[12/Dec/2025 19:59:49] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=22 HTTP/1.1" 200 648
+[12/Dec/2025 19:59:49] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=20 HTTP/1.1" 200 1176
+[12/Dec/2025 19:59:49] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=19 HTTP/1.1" 200 648
+[12/Dec/2025 19:59:49] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=1 HTTP/1.1" 200 1171
+[12/Dec/2025 19:59:49] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=16 HTTP/1.1" 200 1162
+[12/Dec/2025 19:59:49] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=21 HTTP/1.1" 200 1167
+[12/Dec/2025 19:59:50] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=5 HTTP/1.1" 200 1030
+[12/Dec/2025 19:59:50] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=8 HTTP/1.1" 200 1021
+[12/Dec/2025 19:59:50] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=26 HTTP/1.1" 200 1089
+[12/Dec/2025 19:59:50] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=25 HTTP/1.1" 200 1091
+[12/Dec/2025 19:59:50] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=18 HTTP/1.1" 200 575
+[12/Dec/2025 19:59:50] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=14 HTTP/1.1" 200 1199
+[12/Dec/2025 19:59:51] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=11 HTTP/1.1" 200 1163
+[12/Dec/2025 19:59:51] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=6 HTTP/1.1" 200 869
+[12/Dec/2025 19:59:51] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=10 HTTP/1.1" 200 944
+[12/Dec/2025 19:59:51] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=23 HTTP/1.1" 200 1019
+[12/Dec/2025 19:59:51] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=7 HTTP/1.1" 200 1095
+[12/Dec/2025 19:59:51] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=17 HTTP/1.1" 200 425
+[12/Dec/2025 19:59:51] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=24 HTTP/1.1" 200 794
+[12/Dec/2025 19:59:51] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=9 HTTP/1.1" 200 943
+[12/Dec/2025 20:00:14] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=20 HTTP/1.1" 200 1176
+[12/Dec/2025 20:00:14] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=19 HTTP/1.1" 200 648
+[12/Dec/2025 20:00:14] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=22 HTTP/1.1" 200 648
+[12/Dec/2025 20:00:14] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=16 HTTP/1.1" 200 1162
+[12/Dec/2025 20:00:14] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=21 HTTP/1.1" 200 1167
+[12/Dec/2025 20:00:14] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=1 HTTP/1.1" 200 1171
+[12/Dec/2025 20:00:15] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=18 HTTP/1.1" 200 575
+[12/Dec/2025 20:00:15] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=8 HTTP/1.1" 200 1021
+[12/Dec/2025 20:00:15] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=26 HTTP/1.1" 200 1089
+[12/Dec/2025 20:00:16] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=14 HTTP/1.1" 200 1199
+[12/Dec/2025 20:00:16] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=5 HTTP/1.1" 200 1030
+[12/Dec/2025 20:00:16] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=25 HTTP/1.1" 200 1091
+[12/Dec/2025 20:00:17] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=11 HTTP/1.1" 200 1163
+[12/Dec/2025 20:00:17] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=10 HTTP/1.1" 200 944
+[12/Dec/2025 20:00:17] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=7 HTTP/1.1" 200 1095
+[12/Dec/2025 20:00:17] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=23 HTTP/1.1" 200 1019
+[12/Dec/2025 20:00:17] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=6 HTTP/1.1" 200 869
+[12/Dec/2025 20:00:17] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=17 HTTP/1.1" 200 425
+[12/Dec/2025 20:00:17] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=9 HTTP/1.1" 200 943
+[12/Dec/2025 20:00:17] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&interviewer_id=24 HTTP/1.1" 200 794
+[12/Dec/2025 20:01:26] "GET /reporting/company/ HTTP/1.1" 200 139572
+[12/Dec/2025 20:01:27] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&recruiter_id=1 HTTP/1.1" 200 203
+[12/Dec/2025 20:01:27] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&recruiter_id=9 HTTP/1.1" 200 1128
+[12/Dec/2025 20:01:27] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2024-12-12&end_date=2025-12-12&recruiter_id=3 HTTP/1.1" 200 1198
+[12/Dec/2025 20:01:31] "GET /reporting/api/data/?report_type=company&period=weekly&start_date=2024-12-12&end_date=2025-12-12&recruiter_id=1 HTTP/1.1" 200 202
+[12/Dec/2025 20:01:31] "GET /reporting/api/data/?report_type=company&period=weekly&start_date=2024-12-12&end_date=2025-12-12&recruiter_id=3 HTTP/1.1" 200 3772
+[12/Dec/2025 20:01:31] "GET /reporting/api/data/?report_type=company&period=weekly&start_date=2024-12-12&end_date=2025-12-12&recruiter_id=9 HTTP/1.1" 200 3924
+[12/Dec/2025 20:02:06] "GET /reporting/interviewer/ HTTP/1.1" 200 155963
+[12/Dec/2025 20:02:17] "GET /reporting/interviewer/5/?start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 126968
+[12/Dec/2025 20:02:17] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=5&period=monthly&start_date=2024-12-12&end_date=2025-12-12 HTTP/1.1" 200 1164

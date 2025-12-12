@@ -90,11 +90,25 @@ def company_report(request):
     generator = ReportGenerator(request.user)
     report_data = generator.generate_company_report(start_date, end_date, period)
     
+    # Получаем список рекрутеров для фильтра графика
+    recruiters = User.objects.filter(groups__name='Рекрутер').distinct()
+    
+    # Получаем список интервьюеров для фильтра графика
+    from apps.interviewers.models import Interviewer
+    interviewers = Interviewer.objects.filter(is_active=True)
+    
+    # Получаем список вакансий для фильтра графика
+    from apps.vacancies.models import Vacancy
+    vacancies = Vacancy.objects.all().order_by('name')
+    
     context = {
         'report_data': report_data,
         'period': period,
         'start_date': start_date.date(),
         'end_date': end_date.date(),
+        'recruiters': recruiters,
+        'interviewers': interviewers,
+        'vacancies': vacancies,
     }
     
     return render(request, 'reporting/company_report.html', context)
@@ -143,12 +157,16 @@ def recruiter_report(request, recruiter_id=None):
     generator = ReportGenerator(request.user)
     report_data = generator.generate_recruiter_report(recruiter, start_date, end_date, period)
     
+    # Получаем список интервьюеров для фильтра графика
+    interviewers = Interviewer.objects.filter(is_active=True)
+    
     context = {
         'report_data': report_data,
         'recruiter': recruiter,
         'period': period,
         'start_date': start_date.date(),
         'end_date': end_date.date(),
+        'interviewers': interviewers,
     }
     
     return render(request, 'reporting/recruiter_report.html', context)
@@ -174,12 +192,16 @@ def vacancy_report(request, vacancy_id=None):
     generator = ReportGenerator(request.user)
     report_data = generator.generate_vacancy_report(vacancy, start_date, end_date, period)
     
+    # Получаем список рекрутеров для фильтра графика
+    recruiters = User.objects.filter(groups__name='Рекрутер').distinct()
+    
     context = {
         'report_data': report_data,
         'vacancy': vacancy,
         'period': period,
         'start_date': start_date.date(),
         'end_date': end_date.date(),
+        'recruiters': recruiters,
     }
     
     return render(request, 'reporting/vacancy_report.html', context)
@@ -315,12 +337,16 @@ def interviewer_report(request, interviewer_id=None):
     generator = ReportGenerator(request.user)
     report_data = generator.generate_interviewer_report(interviewer, start_date, end_date, period)
     
+    # Получаем список рекрутеров для фильтра графика
+    recruiters = User.objects.filter(groups__name='Рекрутер').distinct()
+    
     context = {
         'report_data': report_data,
         'interviewer': interviewer,
         'period': period,
         'start_date': start_date.date(),
         'end_date': end_date.date(),
+        'recruiters': recruiters,
     }
     
     return render(request, 'reporting/interviewer_report.html', context)
@@ -329,7 +355,7 @@ def interviewer_report(request, interviewer_id=None):
 @login_required
 def api_report_data(request):
     """API endpoint для получения данных отчета в JSON формате"""
-    report_type = request.GET.get('type')  # company, recruiter, vacancy, interviewer
+    report_type = request.GET.get('report_type') or request.GET.get('type')  # company, recruiter, vacancy, interviewer
     period = request.GET.get('period', 'monthly')
     
     start_date_str = request.GET.get('start_date')
@@ -364,7 +390,23 @@ def api_report_data(request):
     
     try:
         if report_type == 'company':
-            report_data = generator.generate_company_report(start_date, end_date, period)
+            recruiter_id = request.GET.get('recruiter_id')
+            recruiter_id = int(recruiter_id) if recruiter_id else None
+            
+            interviewer_id = request.GET.get('interviewer_id')
+            interviewer_id = int(interviewer_id) if interviewer_id else None
+            
+            vacancy_id = request.GET.get('vacancy_id')
+            vacancy_id = int(vacancy_id) if vacancy_id else None
+            
+            report_data = generator.generate_company_report(
+                start_date, 
+                end_date, 
+                period, 
+                recruiter_id=recruiter_id,
+                interviewer_id=interviewer_id,
+                vacancy_id=vacancy_id
+            )
         elif report_type == 'recruiters_summary':
             report_data = generator.generate_recruiters_summary_report(start_date, end_date, period)
         elif report_type == 'recruiter':
@@ -372,30 +414,51 @@ def api_report_data(request):
             if not recruiter_id:
                 return JsonResponse({'error': 'recruiter_id is required'}, status=400)
             recruiter = get_object_or_404(User, id=recruiter_id)
-            report_data = generator.generate_recruiter_report(recruiter, start_date, end_date, period)
+            interviewer_id = request.GET.get('interviewer_id')
+            interviewer_id = int(interviewer_id) if interviewer_id else None
+            report_data = generator.generate_recruiter_report(recruiter, start_date, end_date, period, interviewer_id=interviewer_id)
         elif report_type == 'vacancy':
             vacancy_id = request.GET.get('vacancy_id')
             if not vacancy_id:
                 return JsonResponse({'error': 'vacancy_id is required'}, status=400)
             vacancy = get_object_or_404(Vacancy, id=vacancy_id)
-            report_data = generator.generate_vacancy_report(vacancy, start_date, end_date, period)
+            recruiter_id = request.GET.get('recruiter_id')
+            recruiter_id = int(recruiter_id) if recruiter_id else None
+            report_data = generator.generate_vacancy_report(vacancy, start_date, end_date, period, recruiter_id=recruiter_id)
         elif report_type == 'interviewer':
             interviewer_id = request.GET.get('interviewer_id')
             if not interviewer_id:
                 return JsonResponse({'error': 'interviewer_id is required'}, status=400)
             interviewer = get_object_or_404(Interviewer, id=interviewer_id)
-            report_data = generator.generate_interviewer_report(interviewer, start_date, end_date, period)
+            recruiter_id = request.GET.get('recruiter_id')
+            recruiter_id = int(recruiter_id) if recruiter_id else None
+            report_data = generator.generate_interviewer_report(interviewer, start_date, end_date, period, recruiter_id=recruiter_id)
         else:
             return JsonResponse({'error': 'Invalid report type'}, status=400)
         
         # Преобразуем данные для JSON (убираем объекты моделей)
+        grouped_data = report_data.get('grouped_data', {})
+        
+        # Очищаем grouped_data от объектов моделей и других несериализуемых типов
+        cleaned_grouped_data = {}
+        for key, value in grouped_data.items():
+            if isinstance(value, dict):
+                cleaned_grouped_data[key] = {
+                    'screenings': value.get('screenings', 0),
+                    'interviews': value.get('interviews', 0),
+                    'total_time_minutes': value.get('total_time_minutes', 0),
+                }
+            else:
+                cleaned_grouped_data[key] = value
+        
         json_data = {
             'period': report_data.get('period'),
             'start_date': report_data.get('start_date').isoformat() if isinstance(report_data.get('start_date'), datetime) else str(report_data.get('start_date')),
             'end_date': report_data.get('end_date').isoformat() if isinstance(report_data.get('end_date'), datetime) else str(report_data.get('end_date')),
             'total_screenings': report_data.get('total_screenings', 0),
             'total_interviews': report_data.get('total_interviews', 0),
-            'grouped_data': report_data.get('grouped_data', {}),
+            'total_time_minutes': report_data.get('total_time_minutes', 0),
+            'grouped_data': cleaned_grouped_data,
         }
         
         # Для сводного отчета по рекрутерам добавляем дополнительную информацию
@@ -452,7 +515,11 @@ def api_report_data(request):
         return JsonResponse(json_data)
     
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        import traceback
+        error_traceback = traceback.format_exc()
+        print(f"Ошибка в api_report_data: {str(e)}")
+        print(f"Traceback: {error_traceback}")
+        return JsonResponse({'error': str(e), 'traceback': error_traceback}, status=500)
 
 
 @login_required
