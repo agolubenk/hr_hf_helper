@@ -100,12 +100,8 @@ def company_settings_basic(request):
         form = CompanySettingsForm(request.POST, instance=settings_obj)
         
         if form.is_valid():
-            # Сохраняем только базовые поля
-            settings_obj.company_name = form.cleaned_data['company_name']
-            settings_obj.theme = form.cleaned_data['theme']
-            settings_obj.main_calendar_id = form.cleaned_data['main_calendar_id']
-            settings_obj.org_structure = form.cleaned_data['org_structure']
-            settings_obj.save()
+            # Сохраняем все поля через форму
+            form.save()
             
             messages.success(request, 'Базовые настройки успешно сохранены')
             return redirect('company_settings:basic')

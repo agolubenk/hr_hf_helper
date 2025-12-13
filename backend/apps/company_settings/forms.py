@@ -9,7 +9,8 @@ class CompanySettingsForm(forms.ModelForm):
     
     class Meta:
         model = CompanySettings
-        fields = ['company_name', 'theme', 'main_calendar_id', 'org_structure', 'active_grades']
+        fields = ['company_name', 'theme', 'main_calendar_id', 'org_structure', 'active_grades', 
+                  'office_address', 'office_map_link', 'office_directions', 'office_interview_instructions']
         widgets = {
             'company_name': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -30,6 +31,24 @@ class CompanySettingsForm(forms.ModelForm):
             'active_grades': forms.CheckboxSelectMultiple(attrs={
                 'class': 'form-check-input'
             }),
+            'office_address': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Например: г. Москва, ул. Ленина, д. 10, офис 205'
+            }),
+            'office_map_link': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'https://yandex.ru/maps/... или https://www.google.com/maps/...'
+            }),
+            'office_directions': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 5,
+                'placeholder': 'Опишите, как добраться до офиса: ориентиры, этаж, вход и т.д.'
+            }),
+            'office_interview_instructions': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 6,
+                'placeholder': 'Инструкции для кандидатов: что взять с собой, куда обратиться при входе, контактное лицо, телефон и т.д.'
+            }),
         }
         labels = {
             'company_name': 'Название компании',
@@ -37,6 +56,10 @@ class CompanySettingsForm(forms.ModelForm):
             'main_calendar_id': 'ID главного календаря',
             'org_structure': 'Оргструктура (JSON)',
             'active_grades': 'Активные грейды компании',
+            'office_address': 'Адрес офиса',
+            'office_map_link': 'Ссылка на карты',
+            'office_directions': 'Как пройти',
+            'office_interview_instructions': 'Инструкции для офисного интервью',
         }
         help_texts = {
             'company_name': 'Название вашей компании',
@@ -44,6 +67,10 @@ class CompanySettingsForm(forms.ModelForm):
             'main_calendar_id': 'ID календаря Google Calendar для компании',
             'org_structure': 'Организационная структура в формате JSON',
             'active_grades': 'Выберите грейды, которые используются в вашей компании',
+            'office_address': 'Полный адрес офиса компании',
+            'office_map_link': 'Ссылка на Google Maps, Yandex Maps или другую карту',
+            'office_directions': 'Подробное описание, как добраться до офиса (ориентиры, этаж, вход и т.д.)',
+            'office_interview_instructions': 'Инструкции для кандидатов, которые приходят на офисное интервью (что взять с собой, куда обратиться, контакты и т.д.)',
         }
     
     def clean_org_structure(self):

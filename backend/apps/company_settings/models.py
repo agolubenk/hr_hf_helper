@@ -59,6 +59,36 @@ class CompanySettings(models.Model):
         related_name='company_settings'
     )
     
+    # Адрес офиса компании
+    office_address = models.CharField(
+        max_length=500,
+        blank=True,
+        verbose_name='Адрес офиса',
+        help_text='Полный адрес офиса компании'
+    )
+    
+    # Ссылка на карты
+    office_map_link = models.URLField(
+        max_length=1000,
+        blank=True,
+        verbose_name='Ссылка на карты',
+        help_text='Ссылка на Google Maps, Yandex Maps или другую карту'
+    )
+    
+    # Описание, как пройти
+    office_directions = models.TextField(
+        blank=True,
+        verbose_name='Как пройти',
+        help_text='Подробное описание, как добраться до офиса (ориентиры, этаж, вход и т.д.)'
+    )
+    
+    # Инструкции для офисного интервью
+    office_interview_instructions = models.TextField(
+        blank=True,
+        verbose_name='Инструкции для офисного интервью',
+        help_text='Инструкции для кандидатов, которые приходят на офисное интервью (что взять с собой, куда обратиться, контакты и т.д.)'
+    )
+    
     # Метаданные
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -91,7 +121,11 @@ class CompanySettings(models.Model):
                 'company_name': '',
                 'main_calendar_id': '',
                 'org_structure': {},
-                'theme': 'auto'
+                'theme': 'auto',
+                'office_address': '',
+                'office_map_link': '',
+                'office_directions': '',
+                'office_interview_instructions': ''
             }
         )
         return settings

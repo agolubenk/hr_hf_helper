@@ -295,6 +295,20 @@ class Invite(models.Model):
         help_text=_("Интервьюер, назначенный для проведения интервью")
     )
     
+    # Формат интервью
+    INTERVIEW_FORMAT_CHOICES = [
+        ('online', _('Онлайн')),
+        ('office', _('Офис')),
+    ]
+    interview_format = models.CharField(
+        _("Формат интервью"),
+        max_length=10,
+        choices=INTERVIEW_FORMAT_CHOICES,
+        default='online',
+        blank=True,
+        help_text=_("Формат проведения интервью: онлайн (видеозвонок) или офис (личная встреча)")
+    )
+    
     # Данные от Gemini AI
     gemini_suggested_datetime = models.CharField(
         _("Предложенное время от Gemini"),
@@ -1698,61 +1712,13 @@ class Invite(models.Model):
             # Время окончания - через указанное количество минут
             end_time = start_time + timedelta(minutes=duration)
             
-            # Получаем сопроводительный текст из вакансии
-            invite_text = ""
-            try:
-                if self.vacancy_id:
-                    from apps.vacancies.models import Vacancy
-                    import re
-                    
-                    vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
-                    
-                    # Для интервью используем tech_invite_text, для скринингов - invite_text
-                    if is_interview:
-                        invite_text = vacancy.tech_invite_text or ""
-                        print(f"📝 Используем tech_invite_text для интервью")
-                    else:
-                        invite_text = vacancy.invite_text or ""
-                        print(f"📝 Используем invite_text для скрининга")
-                    
-                    # Обрезаем текст после --- (для интервьюеров)
-                    if '---' in invite_text:
-                        invite_text = invite_text.split('---')[0].strip()
-                    
-                    # Получаем телеграм рекрутера и заменяем плейсхолдер
-                    if vacancy.recruiter and vacancy.recruiter.telegram_username:
-                        telegram_username = vacancy.recruiter.telegram_username
-                        # Убираем @ если есть
-                        if telegram_username.startswith('@'):
-                            telegram_username = telegram_username[1:]
-                        telegram_link = f"https://t.me/{telegram_username}"
-                        telegram_text_link = f'<a href="{telegram_link}">@{telegram_username}</a>'
-                        
-                        # Заменяем [телеграм рекрутера] на текст-ссылку
-                        invite_text = re.sub(
-                            r'\[телеграм рекрутера\]', 
-                            telegram_text_link, 
-                            invite_text, 
-                            flags=re.IGNORECASE
-                        )
-                        
-                        print(f"📝 Найден телеграм рекрутера: {telegram_username}")
-                        print(f"📝 Ссылка на телеграм: {telegram_link}")
-                    else:
-                        print("⚠️ Телеграм рекрутера не найден")
-                        
-                    print(f"📝 Сопроводительный текст: {invite_text[:100]}...")
-                    
-            except Exception as e:
-                print(f"⚠️ Ошибка получения данных вакансии: {e}")
-            
-            # Описание события - сопроводительный текст + ссылка на Huntflow
-            description = invite_text if invite_text else f"Интервью с кандидатом: {self.candidate_name} - {self.vacancy_title}"
+            # Генерируем описание события (без секции "Для интервьюеров")
+            description = self._generate_event_description_text(include_huntflow_link=False)
             
             # Добавляем ссылку на Huntflow кандидата
             huntflow_link = self._generate_huntflow_candidate_link()
             if huntflow_link:
-                description += f"\n\nДля интервьюеров:\n{huntflow_link}"
+                description += f"\n\n<strong>Для интервьюеров:</strong>\n{huntflow_link}"
             
             # Подготавливаем участников
             attendees = []
@@ -1807,15 +1773,28 @@ class Invite(models.Model):
             else:
                 print(f"⚠️ CALENDAR_EVENT: original_form_data пуст, упоминания не извлекаются")
             
+            # Получаем адрес офиса для офисного формата
+            office_location = ""
+            if self.interview_format == 'office':
+                from apps.company_settings.models import CompanySettings
+                try:
+                    company_settings = CompanySettings.get_settings()
+                    if company_settings.office_address:
+                        office_location = company_settings.office_address
+                        print(f"📍 Используем адрес офиса: {office_location}")
+                except Exception as e:
+                    print(f"⚠️ Ошибка получения адреса офиса: {e}")
+            
             # Создаем событие
             created_event = calendar_service.create_event(
                 title=event_title,
                 start_time=start_time,
                 end_time=end_time,
                 description=description,
-                location="",  # Можно добавить местоположение позже
+                location=office_location,
                 attendees=attendees if attendees else None,
-                calendar_id='primary'
+                calendar_id='primary',
+                create_conference=self.interview_format != 'office'  # Не создаем конференцию для офисного формата
             )
             
             if created_event:
@@ -1823,20 +1802,31 @@ class Invite(models.Model):
                 self.calendar_event_id = created_event.get('id', '')
                 self.calendar_event_url = created_event.get('htmlLink', '')
                 
-                # Получаем Google Meet ссылку
-                conference_data = created_event.get('conferenceData', {})
-                entry_points = conference_data.get('entryPoints', [])
-                meet_url = None
-                for entry_point in entry_points:
-                    if entry_point.get('entryPointType') == 'video':
-                        meet_url = entry_point.get('uri')
-                        break
-                
-                if meet_url:
-                    self.google_meet_url = meet_url
-                    print(f"🔗 Google Meet ссылка: {meet_url}")
+                # Для офисного формата используем адрес офиса вместо Google Meet
+                if self.interview_format == 'office':
+                    from apps.company_settings.models import CompanySettings
+                    try:
+                        company_settings = CompanySettings.get_settings()
+                        if company_settings.office_address:
+                            self.google_meet_url = company_settings.office_address
+                            print(f"📍 Адрес офиса сохранен вместо Google Meet: {company_settings.office_address}")
+                    except Exception as e:
+                        print(f"⚠️ Ошибка получения адреса офиса: {e}")
                 else:
-                    print(f"❌ Google Meet ссылка не найдена")
+                    # Получаем Google Meet ссылку для онлайн формата
+                    conference_data = created_event.get('conferenceData', {})
+                    entry_points = conference_data.get('entryPoints', [])
+                    meet_url = None
+                    for entry_point in entry_points:
+                        if entry_point.get('entryPointType') == 'video':
+                            meet_url = entry_point.get('uri')
+                            break
+                    
+                    if meet_url:
+                        self.google_meet_url = meet_url
+                        print(f"🔗 Google Meet ссылка: {meet_url}")
+                    else:
+                        print(f"❌ Google Meet ссылка не найдена")
                 
                 self.save()  # Сохраняем изменения в БД
                 
@@ -1953,13 +1943,20 @@ class Invite(models.Model):
             # Формируем название события: [Заголовок инвайтов] | [Фамилия Имя]
             event_title = f"{invite_title} | {self.candidate_name}"
             
-            print(f"📅 Сгенерировано название события: {event_title} (use_tech_invite_title={use_tech_invite_title})")
+            # Добавляем " (office)" в конце названия для офисного формата
+            if self.interview_format == 'office':
+                event_title += " (office)"
+            
+            print(f"📅 Сгенерировано название события: {event_title} (use_tech_invite_title={use_tech_invite_title}, format={self.interview_format})")
             return event_title
             
         except Exception as e:
             print(f"❌ Ошибка генерации названия события: {e}")
             # Fallback к простому названию
-            return f"Интервью: {self.candidate_name} - {self.vacancy_title}"
+            fallback_title = f"Интервью: {self.candidate_name} - {self.vacancy_title}"
+            if self.interview_format == 'office':
+                fallback_title += " (office)"
+            return fallback_title
     
     def _get_user_account_id(self):
         """Получает реальный account_id пользователя из Huntflow"""
@@ -2352,6 +2349,120 @@ class Invite(models.Model):
     def get_invitation_text(self):
         """Генерирует текст приглашения для копирования в буфер обмена"""
         try:
+            # Определяем, является ли это интервью (нет google_drive_file_id)
+            is_interview = not bool(self.google_drive_file_id)
+            
+            # Для интервью используем тот же текст, что и в описании события, но без секции "Для интервьюеров"
+            if is_interview:
+                # Получаем заголовок инвайтов из вакансии
+                invite_title = ""
+                if self.vacancy_id:
+                    try:
+                        from apps.vacancies.models import Vacancy
+                        vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
+                        # Для интервью используем tech_invite_title
+                        invite_title = vacancy.tech_invite_title or ""
+                    except Vacancy.DoesNotExist:
+                        pass
+                
+                # Если заголовок инвайтов не найден, используем название вакансии
+                if not invite_title:
+                    invite_title = self.vacancy_title or "Tech Interview"
+                
+                # Убираем лишние символы | из заголовка
+                invite_title = invite_title.strip().rstrip('|').strip()
+                
+                # Добавляем " (office)" для офисного формата
+                if self.interview_format == 'office':
+                    invite_title += " (office)"
+                
+                # Формируем название события: [Заголовок инвайтов] | [Фамилия Имя]
+                event_title = f"{invite_title} | {self.candidate_name}"
+                
+                # Форматируем дату и время
+                formatted_datetime = self.get_formatted_interview_datetime()
+                
+                # Для офисного формата формируем специальный формат текста
+                if self.interview_format == 'office':
+                    from apps.company_settings.models import CompanySettings
+                    
+                    invitation_parts = [
+                        event_title,
+                        formatted_datetime
+                    ]
+                    
+                    # Получаем данные офиса из настроек компании
+                    try:
+                        company_settings = CompanySettings.get_settings()
+                        
+                        # Добавляем адрес офиса
+                        if company_settings.office_address:
+                            invitation_parts.append(company_settings.office_address)
+                            
+                            # Добавляем ссылку на карту в скобках на новой строке
+                            if company_settings.office_map_link:
+                                invitation_parts.append(f"({company_settings.office_map_link})")
+                        
+                        # Добавляем пустую строку перед инструкциями
+                        if company_settings.office_directions:
+                            invitation_parts.append("")
+                            invitation_parts.append(company_settings.office_directions)
+                        
+                        # Добавляем пустую строку перед телеграм контактом
+                        invitation_parts.append("")
+                        
+                        # Получаем телеграм рекрутера
+                        telegram_username = None
+                        try:
+                            if self.vacancy_id:
+                                from apps.vacancies.models import Vacancy
+                                vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
+                                if vacancy.recruiter and vacancy.recruiter.telegram_username:
+                                    telegram_username = vacancy.recruiter.telegram_username
+                                    # Убираем @ если есть
+                                    if telegram_username.startswith('@'):
+                                        telegram_username = telegram_username[1:]
+                        except Exception as e:
+                            print(f"⚠️ Ошибка получения телеграм рекрутера: {e}")
+                        
+                        # Добавляем текст про телеграм
+                        if telegram_username:
+                            invitation_parts.append(f"По приходу, а также если возникнут вопросы - на связи в телеграм @{telegram_username}")
+                        else:
+                            invitation_parts.append("По приходу, а также если возникнут вопросы - на связи в телеграм @talent_softnetix")
+                            
+                    except Exception as e:
+                        print(f"⚠️ Ошибка получения данных офиса: {e}")
+                        # Если ошибка, добавляем дефолтный текст
+                        invitation_parts.append("")
+                        invitation_parts.append("По приходу, а также если возникнут вопросы - на связи в телеграм @talent_softnetix")
+                    
+                    return "\n".join(invitation_parts)
+                else:
+                    # Для онлайн формата используем старую логику
+                    # Генерируем описание события без секции "Для интервьюеров"
+                    description_text = self._generate_event_description_text(include_huntflow_link=False)
+                    
+                    # Получаем Google Meet ссылку
+                    meet_link = self.google_meet_url or ""
+                    
+                    # Формируем полный текст приглашения
+                    invitation_parts = [
+                        event_title,
+                        formatted_datetime,
+                        "Часовой пояс: Europe/Minsk"
+                    ]
+                    
+                    if meet_link:
+                        invitation_parts.append(meet_link)
+                    
+                    if description_text:
+                        invitation_parts.append("")
+                        invitation_parts.append(description_text)
+                    
+                    return "\n".join(invitation_parts)
+            
+            # Для скринингов используем старую логику
             # Получаем заголовок инвайтов из вакансии
             invite_title = ""
             if self.vacancy_id:
@@ -2429,6 +2540,114 @@ class Invite(models.Model):
         except Exception as e:
             print(f"❌ Ошибка генерации текста приглашения: {e}")
             return f"Ошибка генерации приглашения: {str(e)}"
+    
+    def _generate_event_description_text(self, include_huntflow_link=True):
+        """Генерирует текст описания события (без секции 'Для интервьюеров' для копирования)"""
+        try:
+            # Определяем, является ли это интервью (нет google_drive_file_id)
+            is_interview = not bool(self.google_drive_file_id)
+            
+            # Для офисного формата формируем описание с нуля, игнорируя текст из вакансии
+            if self.interview_format == 'office':
+                import re
+                from apps.company_settings.models import CompanySettings
+                
+                # Получаем телеграм пользователя-отправителя
+                telegram_username = None
+                telegram_link = None
+                try:
+                    if self.vacancy_id:
+                        from apps.vacancies.models import Vacancy
+                        vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
+                        if vacancy.recruiter and vacancy.recruiter.telegram_username:
+                            telegram_username = vacancy.recruiter.telegram_username
+                            # Убираем @ если есть
+                            if telegram_username.startswith('@'):
+                                telegram_username = telegram_username[1:]
+                            telegram_link = f"https://t.me/{telegram_username}"
+                except Exception as e:
+                    print(f"⚠️ Ошибка получения телеграм рекрутера: {e}")
+                
+                # Начинаем описание с адреса офиса
+                description = ""
+                
+                # Добавляем адрес офиса и инструкции
+                try:
+                    company_settings = CompanySettings.get_settings()
+                    
+                    # Формируем секцию с адресом офиса
+                    if company_settings.office_address:
+                        # Если есть ссылка на карту, делаем "Адрес офиса" ссылкой
+                        if company_settings.office_map_link:
+                            # Формируем HTML-ссылку для текста "Адрес офиса"
+                            address_label_link = f'<a href="{company_settings.office_map_link}">Адрес офиса</a>'
+                            description += f"📍 {address_label_link}\n{company_settings.office_address}"
+                        else:
+                            # Если ссылки нет, просто текст
+                            description += f"📍 Адрес офиса\n{company_settings.office_address}"
+                    
+                    if company_settings.office_directions:
+                        description += f"\n\n🚶 <strong>Как пройти:</strong>\n{company_settings.office_directions}"
+                    
+                    # Добавляем текст про телеграм после "Как пройти"
+                    if telegram_username and telegram_link:
+                        # Формируем ссылку на телеграм (Google Calendar поддерживает HTML в описании)
+                        telegram_text_link = f'<a href="{telegram_link}">@{telegram_username}</a>'
+                        description += f"\n\nПо приходу, а также если возникнут вопросы -- на связи в телеграм {telegram_text_link}"
+                    else:
+                        # Если телеграм не найден, используем дефолтный
+                        description += "\n\nПо приходу, а также если возникнут вопросы -- на связи в телеграм @talent_softnetix"
+                except Exception as e:
+                    print(f"⚠️ Ошибка получения адреса офиса: {e}")
+                
+                return description
+            else:
+                # Для онлайн формата используем текст из вакансии
+                invite_text = ""
+                try:
+                    if self.vacancy_id:
+                        from apps.vacancies.models import Vacancy
+                        import re
+                        
+                        vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
+                        
+                        # Для интервью используем tech_invite_text, для скринингов - invite_text
+                        if is_interview:
+                            invite_text = vacancy.tech_invite_text or ""
+                        else:
+                            invite_text = vacancy.invite_text or ""
+                        
+                        # Обрезаем текст после --- (для интервьюеров)
+                        if '---' in invite_text:
+                            invite_text = invite_text.split('---')[0].strip()
+                        
+                        # Получаем телеграм рекрутера и заменяем плейсхолдер
+                        if vacancy.recruiter and vacancy.recruiter.telegram_username:
+                            telegram_username = vacancy.recruiter.telegram_username
+                            # Убираем @ если есть
+                            if telegram_username.startswith('@'):
+                                telegram_username = telegram_username[1:]
+                            telegram_link = f"https://t.me/{telegram_username}"
+                            telegram_text_link = f'<a href="{telegram_link}">@{telegram_username}</a>'
+                            
+                            # Заменяем [телеграм рекрутера] на текст-ссылку
+                            invite_text = re.sub(
+                                r'\[телеграм рекрутера\]', 
+                                telegram_text_link, 
+                                invite_text, 
+                                flags=re.IGNORECASE
+                            )
+                except Exception as e:
+                    print(f"⚠️ Ошибка получения данных вакансии: {e}")
+                
+                # Описание события - сопроводительный текст
+                description = invite_text if invite_text else f"Интервью с кандидатом: {self.candidate_name} - {self.vacancy_title}"
+                
+                return description
+                
+        except Exception as e:
+            print(f"❌ Ошибка генерации текста описания события: {e}")
+            return ""
     
     def analyze_time_with_gemini(self):
         """
@@ -2722,13 +2941,18 @@ class Invite(models.Model):
             # Получаем существующие бронирования из календаря
             existing_bookings = self._get_existing_bookings()
 
+            # Определяем, является ли это техническим интервью (нет google_drive_file_id)
+            # Для технических интервью время НЕ должно переноситься при конфликтах
+            is_interview = not bool(self.google_drive_file_id)
+            
             # Используем расширенный парсер с валидацией (БЕЗ промпта из вакансии)
             result = parse_datetime_with_validation(
                 text=text_without_url,
                 user=self.user,  # Передаем пользователя для получения рабочих часов
                 existing_bookings=existing_bookings,
                 vacancy_prompt=None,  # Промпт НЕ используется в парсере
-                timezone_name='Europe/Minsk'
+                timezone_name='Europe/Minsk',
+                skip_time_adjustment=is_interview  # Для технических интервью не переносим время
             )
 
             if result['success']:

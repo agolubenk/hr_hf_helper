@@ -3854,9 +3854,9 @@ def chat_ajax_handler(request, session_id):
             invite_form_data = {'combined_data': message_text}
             
             # Передаем данные об интервьюере, если они есть
-            if 'selected_interviewer' in request.POST:
-                invite_form_data['selected_interviewer'] = request.POST['selected_interviewer']
-                print(f"🔍 CHAT AJAX: Передаем данные об интервьюере: {request.POST['selected_interviewer']}")
+            if 'selected_interviewer' in data:
+                invite_form_data['selected_interviewer'] = data['selected_interviewer']
+                print(f"🔍 CHAT AJAX: Передаем данные об интервьюере: {data['selected_interviewer']}")
             
             invite_form = InviteCombinedForm(invite_form_data, user=request.user)
             
@@ -3864,6 +3864,11 @@ def chat_ajax_handler(request, session_id):
                 try:
                     # Создаем инвайт без сохранения (commit=False)
                     invite = invite_form.save(commit=False)
+                    
+                    # Устанавливаем формат интервью (онлайн/офис)
+                    interview_format = data.get('interview_format', 'online')
+                    invite.interview_format = interview_format
+                    print(f"🔍 CHAT AJAX: Установлен формат интервью: {interview_format}")
                     
                     # Используем специальный метод для интервью (без скоркарда)
                     invite.save_for_interview()
@@ -4160,6 +4165,11 @@ def send_chat_message(request):
                 try:
                     # Создаем инвайт без сохранения (commit=False)
                     invite = invite_form.save(commit=False)
+                    
+                    # Устанавливаем формат интервью (онлайн/офис)
+                    interview_format = data.get('interview_format', 'online')
+                    invite.interview_format = interview_format
+                    print(f"🔍 SEND_CHAT_MESSAGE: Установлен формат интервью: {interview_format}")
                     
                     # Используем специальный метод для интервью (без скоркарда)
                     invite.save_for_interview()

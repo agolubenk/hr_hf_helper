@@ -365,7 +365,7 @@ class GoogleCalendarService:
             print(f"Ошибка получения событий: {e}")
             return []
     
-    def create_event(self, title, start_time, end_time, description='', location='', attendees=None, calendar_id='primary'):
+    def create_event(self, title, start_time, end_time, description='', location='', attendees=None, calendar_id='primary', create_conference=True):
         """
         Создает событие в Google Calendar
         
@@ -432,14 +432,6 @@ class GoogleCalendarService:
                     'timeZone': 'UTC',
                 },
                 'attendees': attendees_list,
-                'conferenceData': {
-                    'createRequest': {
-                        'requestId': f"meet-{start_time.strftime('%Y%m%d%H%M')}",
-                        'conferenceSolutionKey': {
-                            'type': 'hangoutsMeet'
-                        }
-                    }
-                },
                 'reminders': {
                     'useDefault': False,
                     'overrides': [
@@ -449,17 +441,33 @@ class GoogleCalendarService:
                 },
             }
             
+            # Добавляем конференцию только для онлайн формата
+            if create_conference:
+                event['conferenceData'] = {
+                    'createRequest': {
+                        'requestId': f"meet-{start_time.strftime('%Y%m%d%H%M')}",
+                        'conferenceSolutionKey': {
+                            'type': 'hangoutsMeet'
+                        }
+                    }
+                }
+            
             # Создаем событие в календаре
             print(f"📅 Создаем событие: {title}")
             print(f"📅 Время начала: {start_time_str}")
             print(f"📅 Время окончания: {end_time_str}")
+            print(f"📅 Формат: {'онлайн' if create_conference else 'офис'}")
             print(f"📅 Данные события: {event}")
             
-            created_event = service.events().insert(
-                calendarId=calendar_id,
-                body=event,
-                conferenceDataVersion=1
-            ).execute()
+            # Используем conferenceDataVersion только если создаем конференцию
+            insert_params = {
+                'calendarId': calendar_id,
+                'body': event
+            }
+            if create_conference:
+                insert_params['conferenceDataVersion'] = 1
+            
+            created_event = service.events().insert(**insert_params).execute()
             
             # Вычисляем длительность события
             duration_minutes = int((end_time - start_time).total_seconds() / 60)

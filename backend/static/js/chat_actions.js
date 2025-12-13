@@ -481,11 +481,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         textarea.disabled = true;
         
+        // Получаем формат интервью (онлайн/офис)
+        let interviewFormat = 'online'; // По умолчанию онлайн
+        const formatInput = document.getElementById('interviewFormatInput');
+        if (formatInput) {
+            interviewFormat = formatInput.value || 'online';
+            console.log('✅ SUBMIT: Формат интервью:', interviewFormat);
+        }
+        
         // AJAX запрос
         const payload = {
             'action_type': finalActionType || actionType,
             'text': text,
-            'session_id': sessionId
+            'session_id': sessionId,
+            'interview_format': interviewFormat
         };
         console.log('✅ SUBMIT: Sending payload:', payload);
         

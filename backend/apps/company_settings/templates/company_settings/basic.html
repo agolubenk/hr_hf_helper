@@ -133,6 +133,81 @@
                         <div class="row mb-4">
                             <div class="col-12">
                                 <h6 class="border-bottom pb-2 mb-3">
+                                    <i class="fas fa-map-marker-alt me-2"></i>
+                                    Адрес офиса компании
+                                </h6>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.office_address.id_for_label }}" class="form-label">
+                                        {{ form.office_address.label }}
+                                    </label>
+                                    {{ form.office_address }}
+                                    {% if form.office_address.help_text %}
+                                        <small class="form-text text-muted">{{ form.office_address.help_text }}</small>
+                                    {% endif %}
+                                    {% if form.office_address.errors %}
+                                        <div class="text-danger small">{{ form.office_address.errors }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.office_map_link.id_for_label }}" class="form-label">
+                                        {{ form.office_map_link.label }}
+                                        <i class="fas fa-external-link-alt ms-1" style="font-size: 0.8em;"></i>
+                                    </label>
+                                    {{ form.office_map_link }}
+                                    {% if form.office_map_link.help_text %}
+                                        <small class="form-text text-muted">{{ form.office_map_link.help_text }}</small>
+                                    {% endif %}
+                                    {% if form.office_map_link.errors %}
+                                        <div class="text-danger small">{{ form.office_map_link.errors }}</div>
+                                    {% endif %}
+                                    {% if settings.office_map_link %}
+                                        <div class="mt-2">
+                                            <a href="{{ settings.office_map_link }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-map-marked-alt me-1"></i>
+                                                Открыть на карте
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.office_directions.id_for_label }}" class="form-label">
+                                        {{ form.office_directions.label }}
+                                    </label>
+                                    {{ form.office_directions }}
+                                    {% if form.office_directions.help_text %}
+                                        <small class="form-text text-muted">{{ form.office_directions.help_text }}</small>
+                                    {% endif %}
+                                    {% if form.office_directions.errors %}
+                                        <div class="text-danger small">{{ form.office_directions.errors }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.office_interview_instructions.id_for_label }}" class="form-label">
+                                        <i class="fas fa-clipboard-list me-1"></i>
+                                        {{ form.office_interview_instructions.label }}
+                                    </label>
+                                    {{ form.office_interview_instructions }}
+                                    {% if form.office_interview_instructions.help_text %}
+                                        <small class="form-text text-muted">{{ form.office_interview_instructions.help_text }}</small>
+                                    {% endif %}
+                                    {% if form.office_interview_instructions.errors %}
+                                        <div class="text-danger small">{{ form.office_interview_instructions.errors }}</div>
+                                    {% endif %}
+                                    <small class="form-text text-info">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Эти инструкции будут отображаться кандидатам при выборе офисного формата интервью
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="border-bottom pb-2 mb-3">
                                     <i class="fas fa-sitemap me-2"></i>
                                     Оргструктура организации
                                 </h6>
