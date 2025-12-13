@@ -110,6 +110,12 @@ window.switchMeetingType = function(newType) {
     }
     
     console.log(`✅ [SWITCHER] Тип: ${newType}, длительность: ${conf.defaultDuration} мин`);
+    
+    // Обновляем состояние кнопки отправки (если функция доступна)
+    if (typeof window.updateSendButtonState === 'function') {
+        window.updateSendButtonState();
+        console.log('✅ [SWITCHER] Состояние кнопки отправки обновлено');
+    }
 };
 
 // Функция для загрузки конфигурации из вакансии

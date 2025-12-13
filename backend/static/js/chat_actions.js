@@ -24,6 +24,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendButton = document.getElementById('send-btn');
     const chatForm = document.getElementById('chat-form');
     
+    /**
+     * Проверяет состояние кнопки отправки в зависимости от команды и типа встречи
+     * Блокирует кнопку отправки, если выбрана команда /in, но не выбран тип встречи "Интервью"
+     */
+    function updateSendButtonState() {
+        if (!sendButton || !actionTypeInput) {
+            return;
+        }
+        
+        const actionType = actionTypeInput.value;
+        const interviewButton = document.getElementById('btnInterview');
+        const isInterviewSelected = interviewButton && interviewButton.classList.contains('active');
+        
+        // Если выбрана команда /in (final_interview), но не выбран тип встречи "Интервью"
+        if (actionType === 'final_interview' && !isInterviewSelected) {
+            sendButton.disabled = true;
+            sendButton.style.opacity = '0.5';
+            sendButton.style.cursor = 'not-allowed';
+            sendButton.title = 'Для отправки команды /in необходимо выбрать тип встречи "Интервью"';
+        } else {
+            // Разблокируем кнопку, если команда не /in или тип встречи выбран
+            sendButton.disabled = false;
+            sendButton.style.opacity = '1';
+            sendButton.style.cursor = 'pointer';
+            sendButton.title = '';
+        }
+    }
+    
     // Проверяем что форма найдена
     if (!chatForm) {
         return;
@@ -226,9 +254,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Заполняем скрытое поле
                     actionTypeInput.value = action;
                     
+                    // Обновляем состояние кнопки отправки
+                    updateSendButtonState();
+                    
                     // Удаляем команду из текста, оставляя только остальной контент
                     textarea.value = val.slice(cmd.length).trimStart();
                     return;
+                }
+            } else {
+                // Если команда удалена из текста, но была установлена ранее через скрытое поле,
+                // проверяем, нужно ли сбросить состояние
+                if (actionTypeInput && actionTypeInput.value && !val.trim()) {
+                    // Если поле пустое и команда была установлена, сбрасываем её
+                    actionTypeInput.value = '';
+                    if (tagLabel) {
+                        tagLabel.style.display = 'none';
+                    }
+                    updateSendButtonState();
+                } else if (actionTypeInput && actionTypeInput.value) {
+                    // Если команда установлена в скрытом поле, но не в тексте, обновляем состояние кнопки
+                    updateSendButtonState();
                 }
             }
         });
@@ -263,6 +308,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             ? 'tag-label badge bg-success me-2'
                             : (action === 'tech_screening' ? 'tag-label badge bg-warning me-2' 
                             : (action === 'final_interview' ? 'tag-label badge bg-info me-2' : 'tag-label badge bg-secondary me-2'));
+
+                        // Обновляем состояние кнопки отправки
+                        updateSendButtonState();
 
                         // Удаляем команду из текста, оставляя контент
                         const before = text.substring(0, pendingCommandStart);
@@ -306,6 +354,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                 ? 'tag-label badge bg-success me-2'
                                 : (action === 'tech_screening' ? 'tag-label badge bg-warning me-2' 
                                 : (action === 'final_interview' ? 'tag-label badge bg-info me-2' : 'tag-label badge bg-secondary me-2'));
+
+                            // Обновляем состояние кнопки отправки
+                            updateSendButtonState();
 
                             // Удаляем команду из текста
                             const before = text.substring(0, pendingCommandStart);
@@ -401,6 +452,24 @@ document.addEventListener('DOMContentLoaded', () => {
             finalActionType = actionType;
         }
         
+        // Проверка: команда /in требует выбранной кнопки "Интервью"
+        if (finalActionType === 'final_interview' || commandUsed === '/in') {
+            const interviewButton = document.getElementById('btnInterview');
+            const isInterviewSelected = interviewButton && interviewButton.classList.contains('active');
+            
+            if (!isInterviewSelected) {
+                console.warn('⚠️ SUBMIT: Команда /in требует выбора типа встречи "Интервью"');
+                alert('Для отправки команды /in необходимо выбрать тип встречи "Интервью" в свитчере выше.');
+                // Разблокируем кнопки, если они были заблокированы
+                if (sendButton) {
+                    sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                    sendButton.disabled = false;
+                }
+                textarea.disabled = false;
+                return;
+            }
+        }
+        
         // Добавляем сообщение пользователя (без команды для UX)
         const displayText = textarea.value.trim();
         addUserMessageToChat(displayText, finalActionType, commandUsed);
@@ -472,6 +541,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 actionLocked = false;
                 pendingCommandStart = -1;
                 
+                // Обновляем состояние кнопки отправки после очистки
+                updateSendButtonState();
+                
                 // Добавляем ответ
                 if (data.message_html) {
                     console.log('✅ SUBMIT: Добавляем HTML сообщение, длина:', data.message_html.length);
@@ -526,6 +598,12 @@ document.addEventListener('DOMContentLoaded', () => {
             submitChatForm();
         });
     }
+    
+    // Экспортируем функцию для использования в других скриптах
+    window.updateSendButtonState = updateSendButtonState;
+    
+    // Инициализируем состояние кнопки при загрузке
+    updateSendButtonState();
 });
 
 // Функция для получения CSRF токена
