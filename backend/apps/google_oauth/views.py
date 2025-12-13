@@ -3758,6 +3758,18 @@ def chat_ajax_handler(request, session_id):
                 try:
                     hr_screening = hr_form.save()
                     
+                    # Генерируем полную ссылку с вакансией
+                    full_candidate_url = None
+                    if hr_screening.vacancy_id and hr_screening.candidate_id:
+                        full_candidate_url = _generate_full_huntflow_link(
+                            hr_screening.vacancy_id,
+                            hr_screening.candidate_id,
+                            request.user
+                        )
+                    
+                    # Используем полную ссылку, если она сгенерирована, иначе исходную
+                    candidate_url_for_metadata = full_candidate_url or hr_screening.candidate_url
+                    
                     response_content = ""  # Пустой контент, данные будут браться из metadata
                     
                     ChatMessage.objects.create(
@@ -3771,7 +3783,7 @@ def chat_ajax_handler(request, session_id):
                             'candidate_name': hr_screening.candidate_name,
                             'vacancy_name': hr_screening.vacancy_title,
                             'determined_grade': hr_screening.determined_grade,
-                            'candidate_url': hr_screening.candidate_url,
+                            'candidate_url': candidate_url_for_metadata,
                             'extracted_salary': str(hr_screening.extracted_salary) if hr_screening.extracted_salary else None,
                             'salary_currency': hr_screening.salary_currency
                         }
@@ -3810,6 +3822,18 @@ def chat_ajax_handler(request, session_id):
                 try:
                     invite = invite_form.save()
                     
+                    # Генерируем полную ссылку с вакансией
+                    full_candidate_url = None
+                    if invite.vacancy_id and invite.candidate_id:
+                        full_candidate_url = _generate_full_huntflow_link(
+                            invite.vacancy_id,
+                            invite.candidate_id,
+                            request.user
+                        )
+                    
+                    # Используем полную ссылку, если она сгенерирована, иначе исходную
+                    candidate_url_for_metadata = full_candidate_url or invite.candidate_url
+                    
                     response_content = ""  # Пустой контент, данные будут браться из metadata
                     
                     ChatMessage.objects.create(
@@ -3825,7 +3849,7 @@ def chat_ajax_handler(request, session_id):
                             'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
                             'interviewer_email': invite.interviewer.email if invite.interviewer else None,
                             'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
-                            'candidate_url': invite.candidate_url,
+                            'candidate_url': candidate_url_for_metadata,
                             'calendar_event_url': invite.calendar_event_url,
                             'google_drive_file_url': invite.google_drive_file_url
                         }
@@ -3873,6 +3897,18 @@ def chat_ajax_handler(request, session_id):
                     # Используем специальный метод для интервью (без скоркарда)
                     invite.save_for_interview()
                     
+                    # Генерируем полную ссылку с вакансией
+                    full_candidate_url = None
+                    if invite.vacancy_id and invite.candidate_id:
+                        full_candidate_url = _generate_full_huntflow_link(
+                            invite.vacancy_id,
+                            invite.candidate_id,
+                            request.user
+                        )
+                    
+                    # Используем полную ссылку, если она сгенерирована, иначе исходную
+                    candidate_url_for_metadata = full_candidate_url or invite.candidate_url
+                    
                     response_content = ""  # Пустой контент, данные будут браться из metadata
                     
                     ChatMessage.objects.create(
@@ -3888,7 +3924,7 @@ def chat_ajax_handler(request, session_id):
                             'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
                             'interviewer_email': invite.interviewer.email if invite.interviewer else None,
                             'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
-                            'candidate_url': invite.candidate_url,
+                            'candidate_url': candidate_url_for_metadata,
                             'calendar_event_url': invite.calendar_event_url,
                             # google_drive_file_url не создается для интервью
                         }
@@ -3973,10 +4009,125 @@ def chat_ajax_handler(request, session_id):
         return JsonResponse({'success': False, 'error': str(e)})
 
 
+def _generate_full_huntflow_link(vacancy_id, candidate_id, user):
+    """
+    Генерирует полную ссылку на кандидата в Huntflow в формате:
+    https://huntflow.ru/my/{account_nick}#/vacancy/{vacancy_id}/filter/workon/id/{candidate_id}
+    
+    Args:
+        vacancy_id: ID вакансии
+        candidate_id: ID кандидата
+        user: Пользователь Django
+    
+    Returns:
+        str: Полная ссылка на кандидата или None в случае ошибки
+    """
+    try:
+        from apps.huntflow.services import HuntflowService
+        
+        huntflow_service = HuntflowService(user)
+        accounts = huntflow_service.get_accounts()
+        
+        if accounts and 'items' in accounts and accounts['items']:
+            account_data = accounts['items'][0]
+            account_id = account_data.get('id')
+            account_nick = account_data.get('nick', '')
+            
+            # Формируем ссылку в зависимости от активной системы
+            if user.active_system == 'prod':
+                # Для прода используем nickname
+                huntflow_link = f"https://huntflow.ru/my/{account_nick}#/vacancy/{vacancy_id}/filter/workon/id/{candidate_id}"
+            else:
+                # Для sandbox используем account_id
+                huntflow_link = f"https://sandbox.huntflow.dev/my/org{account_id}#/vacancy/{vacancy_id}/filter/workon/id/{candidate_id}"
+            
+            print(f"🔗 Сгенерирована полная ссылка на Huntflow ({user.active_system}): {huntflow_link}")
+            return huntflow_link
+        else:
+            print(f"⚠️ Не удалось получить данные аккаунта из API")
+            return None
+            
+    except Exception as e:
+        print(f"❌ Ошибка генерации полной ссылки на Huntflow: {e}")
+        return None
+
+
 @login_required
 @permission_required('google_oauth.view_hrscreening', raise_exception=True)
 @csrf_exempt
 @require_http_methods(["POST"])
+def _determine_vacancy_from_candidate_link(candidate_url, user):
+    """
+    Определяет вакансию кандидата по ссылке на кандидата без указания вакансии
+    Формат ссылки: https://huntflow.ru/my/softnetix#/applicants/filter/all/77231621
+    
+    Returns:
+        tuple: (vacancy_id, candidate_id, error_message) или (None, None, error_message)
+    """
+    import re
+    from apps.huntflow.services import HuntflowService
+    from apps.vacancies.models import Vacancy
+    
+    try:
+        # Извлекаем ID кандидата из ссылки формата /applicants/filter/all/77231621
+        applicant_pattern = r'/applicants/filter/[^/]+/(\d+)'
+        match = re.search(applicant_pattern, candidate_url)
+        
+        if not match:
+            return None, None, "Не удалось извлечь ID кандидата из ссылки"
+        
+        candidate_id = match.group(1)
+        print(f"🔍 DETERMINE_VACANCY: Извлечен ID кандидата: {candidate_id}")
+        
+        # Получаем информацию о кандидате через Huntflow API
+        huntflow_service = HuntflowService(user)
+        accounts = huntflow_service.get_accounts()
+        
+        if not accounts or 'items' not in accounts or not accounts['items']:
+            return None, None, "Нет доступных аккаунтов Huntflow"
+        
+        account_id = accounts['items'][0]['id']
+        print(f"🔍 DETERMINE_VACANCY: Используем account_id: {account_id}")
+        
+        # Получаем данные кандидата
+        candidate_data = huntflow_service.get_applicant(account_id, int(candidate_id))
+        
+        if not candidate_data:
+            return None, None, f"Кандидат {candidate_id} не найден в Huntflow"
+        
+        # Получаем вакансию из links кандидата
+        links = candidate_data.get('links', [])
+        if not links:
+            return None, None, f"У кандидата {candidate_id} нет привязанных вакансий"
+        
+        # Берем первую активную вакансию
+        vacancy_id = None
+        for link in links:
+            if link.get('vacancy'):
+                vacancy_id = link.get('vacancy')
+                break
+        
+        if not vacancy_id:
+            return None, None, f"Не удалось определить вакансию для кандидата {candidate_id}"
+        
+        print(f"✅ DETERMINE_VACANCY: Определена вакансия {vacancy_id} для кандидата {candidate_id}")
+        
+        # Проверяем, существует ли вакансия в локальной БД
+        try:
+            vacancy = Vacancy.objects.get(external_id=str(vacancy_id))
+            print(f"✅ DETERMINE_VACANCY: Вакансия найдена в локальной БД: {vacancy.name}")
+            return str(vacancy_id), candidate_id, None
+        except Vacancy.DoesNotExist:
+            print(f"⚠️ DETERMINE_VACANCY: Вакансия {vacancy_id} не найдена в локальной БД, но продолжаем работу")
+            return str(vacancy_id), candidate_id, None
+            
+    except Exception as e:
+        print(f"❌ DETERMINE_VACANCY: Ошибка определения вакансии: {e}")
+        import traceback
+        traceback.print_exc()
+        return None, None, f"Ошибка определения вакансии: {str(e)}"
+
+
 def send_chat_message(request):
     """
     AJAX endpoint для отправки сообщения в Google OAuth чат
@@ -3997,6 +4148,43 @@ def send_chat_message(request):
             chat_session = ChatSession.objects.get(id=session_id, user=request.user)
         except ChatSession.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Сессия чата не найдена'})
+        
+        # Проверяем, есть ли в сообщении ссылка на кандидата без вакансии
+        import re
+        url_pattern = r'https?://[^\s]+'
+        urls = re.findall(url_pattern, message_text)
+        
+        candidate_url_without_vacancy = None
+        for url in urls:
+            if 'huntflow' in url.lower() and '/applicants/filter/' in url and '/vacancy/' not in url:
+                candidate_url_without_vacancy = url
+                break
+        
+        # Если найдена ссылка на кандидата без вакансии, определяем вакансию
+        if candidate_url_without_vacancy:
+            print(f"🔍 SEND_CHAT_MESSAGE: Найдена ссылка на кандидата без вакансии: {candidate_url_without_vacancy}")
+            vacancy_id, candidate_id, error = _determine_vacancy_from_candidate_link(
+                candidate_url_without_vacancy, 
+                request.user
+            )
+            
+            if error:
+                return JsonResponse({
+                    'success': False, 
+                    'error': f'Ошибка определения вакансии: {error}'
+                })
+            
+            if vacancy_id:
+                # Обновляем сессию чата с найденной вакансией
+                from apps.vacancies.models import Vacancy
+                try:
+                    vacancy = Vacancy.objects.get(external_id=str(vacancy_id))
+                    chat_session.vacancy = vacancy
+                    chat_session.save()
+                    print(f"✅ SEND_CHAT_MESSAGE: Сессия чата обновлена с вакансией: {vacancy.name}")
+                except Vacancy.DoesNotExist:
+                    print(f"⚠️ SEND_CHAT_MESSAGE: Вакансия {vacancy_id} не найдена в локальной БД")
+                    # Продолжаем работу, но вакансия может быть не установлена
         
         # Получаем вакансию из сессии чата
         vacancy = chat_session.vacancy
@@ -4029,6 +4217,18 @@ def send_chat_message(request):
                 try:
                     screening = screening_form.save()
                     
+                    # Генерируем полную ссылку с вакансией
+                    full_candidate_url = None
+                    if screening.vacancy_id and screening.candidate_id:
+                        full_candidate_url = _generate_full_huntflow_link(
+                            screening.vacancy_id,
+                            screening.candidate_id,
+                            request.user
+                        )
+                    
+                    # Используем полную ссылку, если она сгенерирована, иначе исходную
+                    candidate_url_for_metadata = full_candidate_url or screening.candidate_url
+                    
                     response_content = ""  # Пустой контент, данные будут браться из metadata
                     
                     ChatMessage.objects.create(
@@ -4042,7 +4242,7 @@ def send_chat_message(request):
                             'candidate_name': screening.candidate_name,
                             'vacancy_name': screening.vacancy_name,
                             'determined_grade': screening.determined_grade,
-                            'candidate_url': screening.candidate_url
+                            'candidate_url': candidate_url_for_metadata
                         }
                     )
                     
@@ -4055,7 +4255,7 @@ def send_chat_message(request):
                             'candidate_name': screening.candidate_name,
                             'vacancy_name': screening.vacancy_name,
                             'determined_grade': screening.determined_grade,
-                            'candidate_url': screening.candidate_url
+                            'candidate_url': candidate_url_for_metadata
                         }
                     })
                     
@@ -4091,6 +4291,18 @@ def send_chat_message(request):
                 try:
                     invite = invite_form.save()
                     
+                    # Генерируем полную ссылку с вакансией
+                    full_candidate_url = None
+                    if invite.vacancy_id and invite.candidate_id:
+                        full_candidate_url = _generate_full_huntflow_link(
+                            invite.vacancy_id,
+                            invite.candidate_id,
+                            request.user
+                        )
+                    
+                    # Используем полную ссылку, если она сгенерирована, иначе исходную
+                    candidate_url_for_metadata = full_candidate_url or invite.candidate_url
+                    
                     response_content = ""  # Пустой контент, данные будут браться из metadata
                     
                     ChatMessage.objects.create(
@@ -4106,7 +4318,7 @@ def send_chat_message(request):
                             'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
                             'interviewer_email': invite.interviewer.email if invite.interviewer else None,
                             'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
-                            'candidate_url': invite.candidate_url,
+                            'candidate_url': candidate_url_for_metadata,
                             'calendar_event_url': invite.calendar_event_url,
                             'google_drive_file_url': invite.google_drive_file_url
                         }
@@ -4123,7 +4335,7 @@ def send_chat_message(request):
                             'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
                             'interviewer_email': invite.interviewer.email if invite.interviewer else None,
                             'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
-                            'candidate_url': invite.candidate_url,
+                            'candidate_url': candidate_url_for_metadata,
                             'calendar_event_url': invite.calendar_event_url,
                             'google_drive_file_url': invite.google_drive_file_url
                         }
@@ -4174,6 +4386,18 @@ def send_chat_message(request):
                     # Используем специальный метод для интервью (без скоркарда)
                     invite.save_for_interview()
                     
+                    # Генерируем полную ссылку с вакансией
+                    full_candidate_url = None
+                    if invite.vacancy_id and invite.candidate_id:
+                        full_candidate_url = _generate_full_huntflow_link(
+                            invite.vacancy_id,
+                            invite.candidate_id,
+                            request.user
+                        )
+                    
+                    # Используем полную ссылку, если она сгенерирована, иначе исходную
+                    candidate_url_for_metadata = full_candidate_url or invite.candidate_url
+                    
                     response_content = ""  # Пустой контент, данные будут браться из metadata
                     
                     ChatMessage.objects.create(
@@ -4189,7 +4413,7 @@ def send_chat_message(request):
                             'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
                             'interviewer_email': invite.interviewer.email if invite.interviewer else None,
                             'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
-                            'candidate_url': invite.candidate_url,
+                            'candidate_url': candidate_url_for_metadata,
                             'calendar_event_url': invite.calendar_event_url,
                             # google_drive_file_url не создается для интервью
                         }
@@ -4206,7 +4430,7 @@ def send_chat_message(request):
                             'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
                             'interviewer_email': invite.interviewer.email if invite.interviewer else None,
                             'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
-                            'candidate_url': invite.candidate_url,
+                            'candidate_url': candidate_url_for_metadata,
                             'calendar_event_url': invite.calendar_event_url,
                             # google_drive_file_url не создается для интервью
                         }

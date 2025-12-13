@@ -281,10 +281,12 @@ class InviteCombinedForm(forms.ModelForm):
         
         candidate_url = urls[0]  # Берем первую найденную ссылку
         
-        # Валидация URL
-        if '/vacancy/' not in candidate_url:
+        # Валидация URL - поддерживаем два формата:
+        # 1. С вакансией: /vacancy/123/filter/456/id/789
+        # 2. Без вакансии: /applicants/filter/all/77231621
+        if '/vacancy/' not in candidate_url and '/applicants/filter/' not in candidate_url:
             raise forms.ValidationError(
-                _('URL должен содержать /vacancy/ и быть ссылкой на кандидата из Huntflow')
+                _('URL должен содержать /vacancy/ или /applicants/filter/ и быть ссылкой на кандидата из Huntflow')
             )
         
         print(f"✅ CLEAN_COMBINED_DATA: URL извлечен: {candidate_url}")

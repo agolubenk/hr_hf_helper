@@ -421,50 +421,86 @@ class Invite(models.Model):
             return None, None
     
     def parse_candidate_url(self):
-        """Парсит URL кандидата и извлекает ID вакансии, кандидата и аккаунта"""
+        """Парсит URL кандидата и извлекает ID вакансии, кандидата и аккаунта
+        
+        Поддерживает два формата:
+        1. С вакансией: https://huntflow.ru/my/org#/vacancy/123/filter/456/id/789
+        2. Без вакансии: https://huntflow.ru/my/softnetix#/applicants/filter/all/77231621
+        """
         try:
             import re
+            from apps.huntflow.services import HuntflowService
             
-            # Проверяем, что URL содержит /vacancy/
-            if '/vacancy/' not in self.candidate_url:
-                return False, "URL должен содержать /vacancy/"
-            
-            # Ищем паттерн vacancy/[id]/filter/.../id/[candidate_id]
-            # Поддерживаем различные форматы:
+            # Паттерн 1: URL с вакансией
             # /vacancy/4/filter/workon/id/13
             # /vacancy/3936868/filter/186503/id/73349542
-            pattern = r'/vacancy/(\d+)/filter/(?:workon|\d+)/id/(\d+)'
-            match = re.search(pattern, self.candidate_url)
+            pattern_with_vacancy = r'/vacancy/(\d+)/filter/(?:workon|\d+)/id/(\d+)'
+            match = re.search(pattern_with_vacancy, self.candidate_url)
             
-            if not match:
-                return False, "Неверный формат URL. Ожидается формат: .../vacancy/[id]/filter/[status]/id/[candidate_id]"
+            if match:
+                vacancy_id = match.group(1)
+                candidate_id = match.group(2)
+                
+                # Получаем account_id из настроек пользователя, а не из URL
+                account_id = None
+                try:
+                    service = HuntflowService(self.user)
+                    accounts = service.get_accounts()
+                    if accounts and 'items' in accounts and len(accounts['items']) > 0:
+                        account_id = accounts['items'][0]['id']
+                        print(f"🔍 PARSE_URL: Используем первый доступный account_id: {account_id}")
+                    else:
+                        return False, "Не удалось получить список аккаунтов из Huntflow API"
+                except Exception as e:
+                    print(f"❌ PARSE_URL: Ошибка получения account_id из API: {e}")
+                    return False, f"Не удалось получить account_id из API: {str(e)}"
+                
+                self.vacancy_id = vacancy_id
+                self.candidate_id = candidate_id
+                # Сохраняем account_id в поле, если оно есть в модели
+                if hasattr(self, 'account_id'):
+                    self.account_id = account_id
+                
+                return True, f"URL успешно распарсен. Account ID: {account_id}"
             
-            vacancy_id = match.group(1)
-            candidate_id = match.group(2)
+            # Паттерн 2: URL без вакансии (формат /applicants/filter/all/77231621)
+            pattern_without_vacancy = r'/applicants/filter/[^/]+/(\d+)'
+            match = re.search(pattern_without_vacancy, self.candidate_url)
             
-            # Получаем account_id из настроек пользователя, а не из URL
-            # URL может содержать любой org_id, но мы используем настроенный аккаунт
-            account_id = None
-            try:
-                from apps.huntflow.services import HuntflowService
-                service = HuntflowService(self.user)
-                accounts = service.get_accounts()
-                if accounts and 'items' in accounts and len(accounts['items']) > 0:
-                    account_id = accounts['items'][0]['id']
-                    print(f"🔍 PARSE_URL: Используем первый доступный account_id: {account_id}")
-                else:
-                    return False, "Не удалось получить список аккаунтов из Huntflow API"
-            except Exception as e:
-                print(f"❌ PARSE_URL: Ошибка получения account_id из API: {e}")
-                return False, f"Не удалось получить account_id из API: {str(e)}"
+            if match:
+                candidate_id = match.group(1)
+                self.candidate_id = candidate_id
+                
+                # Определяем вакансию через Huntflow API
+                try:
+                    service = HuntflowService(self.user)
+                    accounts = service.get_accounts()
+                    
+                    if accounts and 'items' in accounts and len(accounts['items']) > 0:
+                        account_id = accounts['items'][0]['id']
+                        candidate_data = service.get_applicant(account_id, int(candidate_id))
+                        
+                        if candidate_data:
+                            # Получаем вакансию из links кандидата
+                            links = candidate_data.get('links', [])
+                            if links:
+                                vacancy_id = links[0].get('vacancy')
+                                if vacancy_id:
+                                    self.vacancy_id = str(vacancy_id)
+                                    if hasattr(self, 'account_id'):
+                                        self.account_id = account_id
+                                    return True, f"URL успешно распарсен, вакансия определена: {vacancy_id}. Account ID: {account_id}"
+                            
+                            return False, f"У кандидата {candidate_id} нет привязанных вакансий"
+                        else:
+                            return False, f"Кандидат {candidate_id} не найден в Huntflow"
+                    else:
+                        return False, "Не удалось получить список аккаунтов из Huntflow API"
+                except Exception as e:
+                    print(f"❌ PARSE_URL: Ошибка определения вакансии: {e}")
+                    return False, f"Ошибка определения вакансии: {str(e)}"
             
-            self.vacancy_id = vacancy_id
-            self.candidate_id = candidate_id
-            # Сохраняем account_id в поле, если оно есть в модели
-            if hasattr(self, 'account_id'):
-                self.account_id = account_id
-            
-            return True, f"URL успешно распарсен. Account ID: {account_id}"
+            return False, "Неверный формат URL. Ожидается формат: .../vacancy/[id]/filter/[status]/id/[candidate_id] или .../applicants/filter/all/[candidate_id]"
             
         except Exception as e:
             return False, f"Ошибка парсинга URL: {str(e)}"
@@ -1991,51 +2027,66 @@ class Invite(models.Model):
     def _generate_huntflow_candidate_link(self):
         """Генерирует ссылку на кандидата в Huntflow"""
         try:
-            if not self.candidate_url:
+            # Сначала пытаемся использовать vacancy_id и candidate_id напрямую (если они есть)
+            vacancy_id = None
+            candidate_id = None
+            
+            if self.vacancy_id and self.candidate_id:
+                vacancy_id = self.vacancy_id
+                candidate_id = self.candidate_id
+                print(f"🔗 ГЕНЕРАЦИЯ_ССЫЛКИ: Используем vacancy_id и candidate_id из модели")
+            elif self.candidate_url:
+                # Если нет прямых ID, пытаемся извлечь из URL
+                import re
+                
+                # Парсим URL кандидата для извлечения параметров
+                # Формат prod: https://huntflow.ru/my/{account_nick}#/vacancy/[vacancy_id]/filter/[status]/id/[candidate_id]
+                # Формат sandbox: https://sandbox.huntflow.dev/my/org{account_id}#/vacancy/[vacancy_id]/filter/[status]/id/[candidate_id]
+                
+                # Извлекаем vacancy_id и candidate_id из URL
+                vacancy_match = re.search(r'/vacancy/(\d+)/', self.candidate_url)
+                candidate_match = re.search(r'/id/(\d+)', self.candidate_url)
+                
+                if vacancy_match and candidate_match:
+                    vacancy_id = vacancy_match.group(1)
+                    candidate_id = candidate_match.group(1)
+                    print(f"🔗 ГЕНЕРАЦИЯ_ССЫЛКИ: Извлечены vacancy_id и candidate_id из URL")
+                else:
+                    print(f"⚠️ ГЕНЕРАЦИЯ_ССЫЛКИ: Не удалось извлечь параметры из URL кандидата: {self.candidate_url}")
+                    return None
+            
+            if not vacancy_id or not candidate_id:
+                print(f"⚠️ ГЕНЕРАЦИЯ_ССЫЛКИ: Нет vacancy_id или candidate_id для генерации ссылки")
                 return None
             
-            # Парсим URL кандидата для извлечения параметров
-            # Формат prod: https://huntflow.ru/my/{account_nick}#/vacancy/[vacancy_id]/filter/[status]/id/[candidate_id]
-            # Формат sandbox: https://sandbox.huntflow.dev/my/org{account_id}#/vacancy/[vacancy_id]/filter/[status]/id/[candidate_id]
-            import re
+            # Получаем данные аккаунта пользователя из API
+            from apps.huntflow.services import HuntflowService
+            huntflow_service = HuntflowService(self.user)
+            accounts = huntflow_service.get_accounts()
             
-            # Извлекаем vacancy_id и candidate_id из URL
-            vacancy_match = re.search(r'/vacancy/(\d+)/', self.candidate_url)
-            candidate_match = re.search(r'/id/(\d+)', self.candidate_url)
-            
-            if vacancy_match and candidate_match:
-                vacancy_id = vacancy_match.group(1)
-                candidate_id = candidate_match.group(1)
+            if accounts and 'items' in accounts and accounts['items']:
+                account_data = accounts['items'][0]
+                account_id = account_data.get('id')
+                account_nick = account_data.get('nick', '')
                 
-                # Получаем данные аккаунта пользователя из API
-                from apps.huntflow.services import HuntflowService
-                huntflow_service = HuntflowService(self.user)
-                accounts = huntflow_service.get_accounts()
-                
-                if accounts and 'items' in accounts and accounts['items']:
-                    account_data = accounts['items'][0]
-                    account_id = account_data.get('id')
-                    account_nick = account_data.get('nick', '')
-                    
-                    # Формируем ссылку в зависимости от активной системы
-                    if self.user.active_system == 'prod':
-                        # Для прода используем nickname
-                        huntflow_link = f"https://huntflow.ru/my/{account_nick}#/vacancy/{vacancy_id}/filter/workon/id/{candidate_id}"
-                    else:
-                        # Для sandbox используем account_id
-                        huntflow_link = f"https://sandbox.huntflow.dev/my/org{account_id}#/vacancy/{vacancy_id}/filter/workon/id/{candidate_id}"
-                    
-                    print(f"🔗 Сгенерирована ссылка на Huntflow ({self.user.active_system}): {huntflow_link}")
-                    return huntflow_link
+                # Формируем ссылку в зависимости от активной системы
+                if self.user.active_system == 'prod':
+                    # Для прода используем nickname
+                    huntflow_link = f"https://huntflow.ru/my/{account_nick}#/vacancy/{vacancy_id}/filter/workon/id/{candidate_id}"
                 else:
-                    print(f"⚠️ Не удалось получить данные аккаунта из API")
-                    return None
+                    # Для sandbox используем account_id
+                    huntflow_link = f"https://sandbox.huntflow.dev/my/org{account_id}#/vacancy/{vacancy_id}/filter/workon/id/{candidate_id}"
+                
+                print(f"🔗 Сгенерирована ссылка на Huntflow ({self.user.active_system}): {huntflow_link}")
+                return huntflow_link
             else:
-                print(f"⚠️ Не удалось извлечь параметры из URL кандидата: {self.candidate_url}")
+                print(f"⚠️ Не удалось получить данные аккаунта из API")
                 return None
                 
         except Exception as e:
             print(f"❌ Ошибка генерации ссылки на Huntflow: {e}")
+            import traceback
+            traceback.print_exc()
             return None
     
     def delete_calendar_event(self):
@@ -3900,7 +3951,12 @@ class HRScreening(models.Model):
         return f"HR-скрининг для {self.candidate_name} ({self.created_at.strftime('%d.%m.%Y %H:%M')})"
     
     def _extract_url_from_text(self):
-        """Извлекает URL кандидата из текста"""
+        """Извлекает URL кандидата из текста
+        
+        Поддерживает два формата:
+        1. С вакансией: https://huntflow.ru/my/org#/vacancy/123/filter/456/id/789
+        2. Без вакансии: https://huntflow.ru/my/softnetix#/applicants/filter/all/77231621
+        """
         import re
         
         if not self.input_data:
@@ -3910,33 +3966,76 @@ class HRScreening(models.Model):
         url_pattern = r'https?://[^\s]+'
         urls = re.findall(url_pattern, self.input_data)
         
-        # Ищем URL с huntflow и /vacancy/
+        # Ищем URL с huntflow
         for url in urls:
-            if 'huntflow' in url.lower() and '/vacancy/' in url:
-                self.candidate_url = url
-                return True, "URL успешно извлечен"
+            if 'huntflow' in url.lower():
+                # Проверяем, содержит ли URL ссылку на кандидата
+                if '/vacancy/' in url or '/applicants/filter/' in url:
+                    self.candidate_url = url
+                    return True, "URL успешно извлечен"
         
         return False, "URL кандидата не найден в тексте"
     
     def parse_candidate_url(self):
-        """Извлекает ID кандидата и вакансии из URL"""
+        """Извлекает ID кандидата и вакансии из URL
+        
+        Поддерживает два формата:
+        1. С вакансией: https://huntflow.ru/my/org#/vacancy/123/filter/456/id/789
+        2. Без вакансии: https://huntflow.ru/my/softnetix#/applicants/filter/all/77231621
+        """
         import re
+        from apps.huntflow.services import HuntflowService
         
         if not self.candidate_url:
             return False, "URL кандидата не найден"
         
-        # Паттерн для извлечения ID из URL
+        # Паттерн 1: URL с вакансией
         # https://sandbox.huntflow.dev/my/org499#/vacancy/3/filter/workon/id/17
         # или https://huntflow.ru/my/org#/vacancy/123/filter/456/id/789
-        pattern = r'/vacancy/(\d+)/.*?/id/(\d+)'
-        match = re.search(pattern, self.candidate_url)
+        pattern_with_vacancy = r'/vacancy/(\d+)/.*?/id/(\d+)'
+        match = re.search(pattern_with_vacancy, self.candidate_url)
         
         if match:
             self.vacancy_id = match.group(1)
             self.candidate_id = match.group(2)
             return True, "URL успешно распарсен"
-        else:
-            return False, "Не удалось извлечь ID из URL"
+        
+        # Паттерн 2: URL без вакансии (формат /applicants/filter/all/77231621)
+        pattern_without_vacancy = r'/applicants/filter/[^/]+/(\d+)'
+        match = re.search(pattern_without_vacancy, self.candidate_url)
+        
+        if match:
+            candidate_id = match.group(1)
+            self.candidate_id = candidate_id
+            
+            # Определяем вакансию через Huntflow API
+            try:
+                huntflow_service = HuntflowService(self.user)
+                accounts = huntflow_service.get_accounts()
+                
+                if accounts and 'items' in accounts and accounts['items']:
+                    account_id = accounts['items'][0]['id']
+                    candidate_data = huntflow_service.get_applicant(account_id, int(candidate_id))
+                    
+                    if candidate_data:
+                        # Получаем вакансию из links кандидата
+                        links = candidate_data.get('links', [])
+                        if links:
+                            vacancy_id = links[0].get('vacancy')
+                            if vacancy_id:
+                                self.vacancy_id = str(vacancy_id)
+                                return True, f"URL успешно распарсен, вакансия определена: {vacancy_id}"
+                        
+                        return False, f"У кандидата {candidate_id} нет привязанных вакансий"
+                    else:
+                        return False, f"Кандидат {candidate_id} не найден в Huntflow"
+                else:
+                    return False, "Нет доступных аккаунтов Huntflow"
+            except Exception as e:
+                print(f"❌ PARSE_CANDIDATE_URL: Ошибка определения вакансии: {e}")
+                return False, f"Ошибка определения вакансии: {str(e)}"
+        
+        return False, "Не удалось извлечь ID из URL"
     
     def get_candidate_info(self):
         """Получает информацию о кандидате из Huntflow API"""
