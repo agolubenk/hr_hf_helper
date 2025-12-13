@@ -49,6 +49,31 @@ window.switchMeetingType = function(newType) {
         alert(`Кнопка btn${newType.charAt(0).toUpperCase() + newType.slice(1)} не найдена!`);
     }
     
+    // Показываем/скрываем расширяющееся полотно для настроек интервью
+    const interviewOptionsPanel = document.getElementById('interviewOptionsPanel');
+    if (interviewOptionsPanel) {
+        if (newType === 'interview') {
+            interviewOptionsPanel.style.display = 'block';
+            // Плавное появление
+            interviewOptionsPanel.style.opacity = '0';
+            setTimeout(() => {
+                interviewOptionsPanel.style.transition = 'opacity 0.3s ease-in-out';
+                interviewOptionsPanel.style.opacity = '1';
+            }, 10);
+            console.log('✅ [SWITCHER] Панель настроек интервью показана');
+        } else {
+            // Плавное скрытие
+            interviewOptionsPanel.style.transition = 'opacity 0.3s ease-in-out';
+            interviewOptionsPanel.style.opacity = '0';
+            setTimeout(() => {
+                interviewOptionsPanel.style.display = 'none';
+            }, 300);
+            console.log('✅ [SWITCHER] Панель настроек интервью скрыта');
+        }
+    } else {
+        console.warn('⚠️ [SWITCHER] Панель настроек интервью не найдена');
+    }
+    
     currentMeetingType = newType;
     const conf = MEETING_CONFIG[newType];
     

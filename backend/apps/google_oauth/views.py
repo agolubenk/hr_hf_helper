@@ -5024,6 +5024,11 @@ def chat_workflow(request, session_id=None):
         
         print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Рассчитано {len(interview_slots)} дней со слотами")
     
+    # Получаем интервьюеров для технического интервью из обязательных участников
+    vacancy_interviewers = []
+    if vacancy:
+        vacancy_interviewers = vacancy.mandatory_tech_interviewers.filter(is_active=True).order_by('last_name', 'first_name')
+    
     context = {
         'form': form,
         'chat_session': chat_session,
@@ -5036,6 +5041,7 @@ def chat_workflow(request, session_id=None):
         'slots_settings_json': json.dumps(slots_settings.to_dict()) if slots_settings else '{}',
         'user_photo_url': user_photo_url,
         'mandatory_interviewers': mandatory_interviewers,
+        'vacancy_interviewers': vacancy_interviewers,
         'screening_slots_json': json.dumps(screening_slots),
         'interview_slots_json': json.dumps(interview_slots),
         'company_calendar_id': company_calendar_id,

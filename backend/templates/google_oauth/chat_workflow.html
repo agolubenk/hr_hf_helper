@@ -141,6 +141,67 @@
                                             </div>
                                         </div>
                                     </div>
+                                    
+                                    <!-- Расширяющееся полотно для настроек интервью -->
+                                    <div class="interview-options-panel" id="interviewOptionsPanel" style="display: none;">
+                                        <div class="row mt-1 p-3 bg-light rounded">
+                                            <div class="col-12">
+                                                <!-- Выбор формата интервью и интервьюеров в один ряд -->
+                                                <div class="interview-options-row">
+                                                    <!-- Кнопки формата интервью -->
+                                                    <div class="interview-format-buttons">
+                                                        <button type="button" 
+                                                                class="btn-interview-format active" 
+                                                                id="btnFormatOnline" 
+                                                                onclick="switchInterviewFormat('online')"
+                                                                title="Онлайн">
+                                                            <i class="fas fa-video"></i>
+                                                        </button>
+                                                        <button type="button" 
+                                                                class="btn-interview-format" 
+                                                                id="btnFormatOffice" 
+                                                                onclick="switchInterviewFormat('office')"
+                                                                title="Офис">
+                                                            <i class="fas fa-building"></i>
+                                                        </button>
+                                                        <input type="hidden" name="interviewFormat" id="interviewFormatInput" value="online">
+                                                    </div>
+                                                    
+                                                    <!-- Разделитель -->
+                                                    {% if vacancy_interviewers %}
+                                                    <span class="interview-separator">|</span>
+                                                    {% endif %}
+                                                    
+                                                    <!-- Интервьюеры -->
+                                                    {% if vacancy_interviewers %}
+                                                    <div class="interviewers-container">
+                                                        {% for interviewer in vacancy_interviewers %}
+                                                        <button type="button" 
+                                                                class="btn-interviewer-pill{% if vacancy_interviewers|length == 1 %} active{% endif %}" 
+                                                                id="interviewer_{{ interviewer.id }}"
+                                                                onclick="toggleInterviewer({{ interviewer.id }})"
+                                                                data-interviewer-id="{{ interviewer.id }}"
+                                                                title="{{ interviewer.get_full_name }}{% if interviewer.email %} ({{ interviewer.email }}){% endif %}">
+                                                            <span class="interviewer-name-full d-none d-md-inline">{{ interviewer.last_name }} {{ interviewer.first_name }}</span>
+                                                            <span class="interviewer-name-short d-md-none">{{ interviewer.last_name }}</span>
+                                                        </button>
+                                                        <input type="hidden" 
+                                                               name="interviewers" 
+                                                               id="interviewer_input_{{ interviewer.id }}" 
+                                                               value="{{ interviewer.id }}"
+                                                               {% if vacancy_interviewers|length != 1 %}disabled{% endif %}>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="alert alert-info alert-sm">
+                                                        <i class="fas fa-info-circle me-2"></i>
+                                                        Для этой вакансии не назначены интервьюеры. Добавьте их в настройках вакансии.
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -733,6 +794,11 @@
 </div>
 
 <style>
+/* === СТИЛИ ДЛЯ ПЕРВОЙ СТРОКИ КОНТЕЙНЕРА === */
+.main-content .container-fluid .row:first-child {
+    margin-top: 7px !important;
+}
+
 /* === ЕДИНООБРАЗИЕ РАЗМЕРОВ ШРИФТОВ === */
 .card .chat-messages {
     background-color: #ffffff; /* Белый фон для светлой темы */
@@ -1624,23 +1690,23 @@
      line-height: 1;
  }
 
- .copy-tooltip {
-     position: absolute;
-     bottom: 100%;
-     left: 50%;
-     transform: translateX(-50%);
-     background: var(--hr-dark, #333);
-     color: white;
-     padding: 4px 8px;
-     border-radius: 4px;
-     font-size: 0.75rem;
-     white-space: nowrap;
-     opacity: 0;
-     visibility: hidden;
-     transition: all 0.2s ease;
-     z-index: 1000;
-     margin-bottom: 5px;
- }
+.copy-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--hr-dark, #333);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    z-index: 99999 !important;
+    margin-bottom: 5px;
+}
 
  .btn-copy:hover .copy-tooltip {
      opacity: 1;
@@ -1911,22 +1977,22 @@
      to { opacity: 1; }
  }
 
- .copy-buttons .btn-copy .copy-tooltip {
-     position: absolute !important;
-     bottom: -35px !important;
-     left: 50% !important;
-     transform: translateX(-50%) !important;
-     background: rgba(0, 0, 0, 0.8) !important;
-     color: white !important;
-     padding: 5px 10px !important;
-     border-radius: 5px !important;
-     font-size: 12px !important;
-     white-space: nowrap !important;
-     opacity: 0 !important;
-     transition: opacity 0.3s ease !important;
-     pointer-events: none !important;
-     z-index: 1000 !important;
- }
+.copy-buttons .btn-copy .copy-tooltip {
+    position: absolute !important;
+    bottom: -35px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+    color: white !important;
+    padding: 5px 10px !important;
+    border-radius: 5px !important;
+    font-size: 12px !important;
+    white-space: nowrap !important;
+    opacity: 0 !important;
+    transition: opacity 0.3s ease !important;
+    pointer-events: none !important;
+    z-index: 99999 !important;
+}
 
  .copy-buttons .btn-copy:hover .copy-tooltip {
      opacity: 1 !important;
@@ -2364,6 +2430,346 @@
     0% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.8); }
     50% { box-shadow: 0 8px 25px rgba(40, 167, 69, 1); }
     100% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.8); }
+}
+
+/* === СТИЛИ ДЛЯ РАСШИРЯЮЩЕГОСЯ ПОЛОТНА НАСТРОЕК ИНТЕРВЬЮ === */
+.interview-options-panel {
+    margin-top: 15px;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.interview-options-panel .bg-light {
+    background: rgba(248, 249, 250, 0.45) !important;
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Стили для контейнера элементов в один ряд */
+.interview-options-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-wrap: wrap !important;
+}
+
+.interview-format-buttons {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+}
+
+.interview-separator {
+    color: rgba(0, 0, 0, 0.3) !important;
+    font-size: 18px !important;
+    font-weight: 300 !important;
+    padding: 0 4px !important;
+    flex-shrink: 0 !important;
+    line-height: 1 !important;
+}
+
+[data-theme="dark"] .interview-separator {
+    color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.interviewers-container {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    flex: 1 !important;
+    justify-content: flex-start !important;
+    min-width: 0 !important;
+}
+
+/* Если интервьюеров много, они равномерно распределяются */
+@media (min-width: 768px) {
+    .interviewers-container {
+        justify-content: space-between !important;
+    }
+}
+
+.alert-sm {
+    padding: 6px 10px !important;
+    font-size: 0.85rem !important;
+    margin: 0 !important;
+}
+
+.interview-options-panel h6 {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.interview-options-panel .form-label {
+    font-size: 0.95rem;
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+.interview-options-panel .form-check {
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    margin-bottom: 5px;
+}
+
+.interview-options-panel .form-check:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+.interview-options-panel .form-check-input {
+    margin-top: 0.4rem;
+    cursor: pointer;
+}
+
+.interview-options-panel .form-check-label {
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #495057;
+    display: flex;
+    align-items: center;
+}
+
+.interview-options-panel .form-check-label i {
+    margin-right: 6px;
+    color: #007bff;
+}
+
+.interview-options-panel .interviewer-checkbox {
+    margin-top: 0.35rem;
+}
+
+.interview-options-panel .alert-info {
+    font-size: 0.9rem;
+    padding: 10px 15px;
+    border-radius: 6px;
+}
+
+/* Темная тема для панели настроек интервью */
+[data-theme="dark"] .interview-options-panel .bg-light {
+    background: rgba(52, 58, 64, 0.45) !important;
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .interview-options-panel h6 {
+    color: #e9ecef;
+}
+
+[data-theme="dark"] .interview-options-panel .form-label {
+    color: #e9ecef;
+}
+
+[data-theme="dark"] .interview-options-panel .form-check-label {
+    color: #e9ecef;
+}
+
+[data-theme="dark"] .interview-options-panel .form-check:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* === СТИЛИ ДЛЯ КНОПОК ФОРМАТА ИНТЕРВЬЮ === */
+.btn-interview-format {
+    background: linear-gradient(135deg, #007bff, #0056b3) !important;
+    color: white !important;
+    border: 1px solid #fff !important;
+    box-shadow: 0 1px 4px rgba(0, 123, 255, 0.3) !important;
+    padding: 0 !important;
+    border-radius: 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 9px !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    width: 24px !important;
+    height: 24px !important;
+    opacity: 0.7 !important;
+    filter: grayscale(0.2) !important;
+    position: relative !important;
+}
+
+.btn-interview-format:hover:not(.active) {
+    opacity: 0.8 !important;
+    filter: grayscale(0.1) !important;
+    transform: scale(1.05) !important;
+}
+
+.btn-interview-format.active {
+    opacity: 1 !important;
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.7) !important;
+    transform: scale(1.1) !important;
+    border: 2px solid #fff !important;
+    z-index: 10 !important;
+    animation: pulse-active 2s infinite !important;
+}
+
+.btn-interview-format.active::before {
+    content: "✓" !important;
+    position: absolute !important;
+    top: -4px !important;
+    right: -4px !important;
+    background: #fff !important;
+    color: #28a745 !important;
+    border-radius: 50% !important;
+    width: 10px !important;
+    height: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 6px !important;
+    font-weight: bold !important;
+    box-shadow: 0 1.5px 3px rgba(0,0,0,0.3) !important;
+    border: 1px solid #28a745 !important;
+    z-index: 11 !important;
+}
+
+.btn-interview-format i {
+    font-size: 10px !important;
+}
+
+/* Темная тема для кнопок формата интервью */
+[data-theme="dark"] .btn-interview-format {
+    background: linear-gradient(135deg, #495057, #343a40) !important;
+    border: 1px solid #2c2c2c !important;
+    box-shadow: 0 1px 4px rgba(73, 80, 87, 0.4) !important;
+}
+
+[data-theme="dark"] .btn-interview-format.active {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.8) !important;
+    border: 2px solid #fff !important;
+    animation: pulse-active-dark 2s infinite !important;
+}
+
+[data-theme="dark"] .btn-interview-format.active::before {
+    background: #fff !important;
+    color: #28a745 !important;
+    border: 1px solid #28a745 !important;
+    box-shadow: 0 1.5px 3px rgba(0,0,0,0.5) !important;
+}
+
+/* === СТИЛИ ДЛЯ ПИЛЮЛЕЙ ИНТЕРВЬЮЕРОВ === */
+.btn-interviewer-pill {
+    background: linear-gradient(135deg, #6c757d, #5a6268) !important;
+    color: white !important;
+    border: 1px solid #fff !important;
+    box-shadow: 0 1px 3px rgba(108, 117, 125, 0.3) !important;
+    padding: 3px 7px !important;
+    border-radius: 12px !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    opacity: 0.7 !important;
+    filter: grayscale(0.2) !important;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    line-height: 1.2 !important;
+}
+
+.btn-interviewer-pill:hover:not(.active) {
+    opacity: 0.85 !important;
+    filter: grayscale(0.1) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 4px rgba(108, 117, 125, 0.4) !important;
+}
+
+.btn-interviewer-pill.active {
+    opacity: 1 !important;
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    box-shadow: 0 2px 6px rgba(40, 167, 69, 0.5) !important;
+    transform: translateY(-1px) scale(1.05) !important;
+    border: 1px solid #fff !important;
+    z-index: 5 !important;
+}
+
+.btn-interviewer-pill.active::before {
+    content: "✓" !important;
+    position: absolute !important;
+    top: -3px !important;
+    right: -3px !important;
+    background: #fff !important;
+    color: #28a745 !important;
+    border-radius: 50% !important;
+    width: 9px !important;
+    height: 9px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 6px !important;
+    font-weight: bold !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+    border: 1px solid #28a745 !important;
+    z-index: 6 !important;
+}
+
+.btn-interviewer-pill .interviewer-name-full {
+    display: inline-block !important;
+}
+
+.btn-interviewer-pill .interviewer-name-short {
+    display: inline-block !important;
+}
+
+/* Убеждаемся, что только один span виден */
+@media (min-width: 768px) {
+    .btn-interviewer-pill .interviewer-name-short {
+        display: none !important;
+    }
+    .btn-interviewer-pill .interviewer-name-full {
+        display: inline-block !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .btn-interviewer-pill .interviewer-name-full {
+        display: none !important;
+    }
+    .btn-interviewer-pill .interviewer-name-short {
+        display: inline-block !important;
+    }
+}
+
+/* Темная тема для пилюлей интервьюеров */
+[data-theme="dark"] .btn-interviewer-pill {
+    background: linear-gradient(135deg, #495057, #343a40) !important;
+    border: 1px solid #2c2c2c !important;
+    box-shadow: 0 1px 3px rgba(73, 80, 87, 0.4) !important;
+}
+
+[data-theme="dark"] .btn-interviewer-pill.active {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    box-shadow: 0 2px 6px rgba(40, 167, 69, 0.6) !important;
+    border: 1px solid #fff !important;
+}
+
+[data-theme="dark"] .btn-interviewer-pill.active::before {
+    background: #fff !important;
+    color: #28a745 !important;
+    border: 1px solid #28a745 !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.5) !important;
 }
 
 /* === СТИЛИ ДЛЯ ТАБЛИЦЫ ОТЧЕТОВ ТЕКУЩЕЙ НЕДЕЛИ === */
@@ -2884,6 +3290,79 @@ window.userPhotoUrl = null;
             <script src="{% static 'js/meeting-type-switcher.js' %}"></script>
             
             <script>
+            // Функция для переключения формата интервью
+            window.switchInterviewFormat = function(format) {
+                console.log(`🔄 [FORMAT] Переключение на: ${format}`);
+                
+                // Убираем активный класс со всех кнопок формата
+                const allFormatButtons = document.querySelectorAll('.btn-interview-format');
+                allFormatButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Добавляем активный класс к выбранной кнопке
+                const activeFormatBtn = document.getElementById(`btnFormat${format.charAt(0).toUpperCase() + format.slice(1)}`);
+                if (activeFormatBtn) {
+                    activeFormatBtn.classList.add('active');
+                    console.log(`✅ [FORMAT] Кнопка формата активирована: ${format}`);
+                } else {
+                    console.error(`❌ [FORMAT] Кнопка формата не найдена: btnFormat${format.charAt(0).toUpperCase() + format.slice(1)}`);
+                }
+                
+                // Обновляем скрытое поле
+                const formatInput = document.getElementById('interviewFormatInput');
+                if (formatInput) {
+                    formatInput.value = format;
+                    console.log(`✅ [FORMAT] Значение обновлено: ${format}`);
+                }
+            };
+            
+            // Функция для переключения выбора интервьюера
+            window.toggleInterviewer = function(interviewerId) {
+                console.log(`🔄 [INTERVIEWER] Переключение интервьюера: ${interviewerId}`);
+                
+                const pillButton = document.getElementById(`interviewer_${interviewerId}`);
+                const hiddenInput = document.getElementById(`interviewer_input_${interviewerId}`);
+                
+                if (!pillButton || !hiddenInput) {
+                    console.error(`❌ [INTERVIEWER] Элементы не найдены для интервьюера: ${interviewerId}`);
+                    return;
+                }
+                
+                // Переключаем активное состояние
+                const isActive = pillButton.classList.contains('active');
+                
+                if (isActive) {
+                    // Убираем активное состояние
+                    pillButton.classList.remove('active');
+                    hiddenInput.disabled = true;
+                    console.log(`✅ [INTERVIEWER] Интервьюер ${interviewerId} отключен`);
+                } else {
+                    // Добавляем активное состояние
+                    pillButton.classList.add('active');
+                    hiddenInput.disabled = false;
+                    console.log(`✅ [INTERVIEWER] Интервьюер ${interviewerId} включен`);
+                }
+            };
+            
+            // Автоматическое выделение единственного интервьюера при загрузке страницы
+            document.addEventListener('DOMContentLoaded', function() {
+                const interviewerPills = document.querySelectorAll('.btn-interviewer-pill');
+                if (interviewerPills.length === 1) {
+                    const singlePill = interviewerPills[0];
+                    const interviewerId = singlePill.getAttribute('data-interviewer-id');
+                    if (interviewerId) {
+                        // Активируем единственного интервьюера
+                        singlePill.classList.add('active');
+                        const hiddenInput = document.getElementById(`interviewer_input_${interviewerId}`);
+                        if (hiddenInput) {
+                            hiddenInput.disabled = false;
+                            console.log(`✅ [INTERVIEWER] Единственный интервьюер ${interviewerId} автоматически активирован`);
+                        }
+                    }
+                }
+            });
+            
             // Настройки пользователя для рабочих часов
             window.userWorkHours = {
                 startHour: {{ user.interview_start_time.hour|default:11 }},
