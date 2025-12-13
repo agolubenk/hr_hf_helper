@@ -3850,7 +3850,7 @@ def chat_ajax_handler(request, session_id):
                 )
         
         elif action_type == 'final_interview':
-            # Создаем Final Interview (логика как для invite)
+            # Создаем Final Interview БЕЗ скоркарда (используется tech_invite_title)
             invite_form_data = {'combined_data': message_text}
             
             # Передаем данные об интервьюере, если они есть
@@ -3862,7 +3862,11 @@ def chat_ajax_handler(request, session_id):
             
             if invite_form.is_valid():
                 try:
-                    invite = invite_form.save()
+                    # Создаем инвайт без сохранения (commit=False)
+                    invite = invite_form.save(commit=False)
+                    
+                    # Используем специальный метод для интервью (без скоркарда)
+                    invite.save_for_interview()
                     
                     response_content = ""  # Пустой контент, данные будут браться из metadata
                     
@@ -3881,11 +3885,13 @@ def chat_ajax_handler(request, session_id):
                             'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
                             'candidate_url': invite.candidate_url,
                             'calendar_event_url': invite.calendar_event_url,
-                            'google_drive_file_url': invite.google_drive_file_url
+                            # google_drive_file_url не создается для интервью
                         }
                     )
                 except Exception as e:
                     print(f"🔍 CHAT AJAX: Ошибка сохранения Final Interview: {str(e)}")
+                    import traceback
+                    traceback.print_exc()
                     ChatMessage.objects.create(
                         session=chat_session,
                         message_type='system',
@@ -4141,7 +4147,7 @@ def send_chat_message(request):
                 return JsonResponse({'success': False, 'error': error_content})
         
         elif action_type == 'final_interview':
-            # Создаем Final Interview (логика как для invite)
+            # Создаем Final Interview БЕЗ скоркарда (используется tech_invite_title)
             invite_form_data = {'combined_data': message_text}
             
             # Передаем данные об интервьюере, если они есть
@@ -4152,7 +4158,11 @@ def send_chat_message(request):
             
             if invite_form.is_valid():
                 try:
-                    invite = invite_form.save()
+                    # Создаем инвайт без сохранения (commit=False)
+                    invite = invite_form.save(commit=False)
+                    
+                    # Используем специальный метод для интервью (без скоркарда)
+                    invite.save_for_interview()
                     
                     response_content = ""  # Пустой контент, данные будут браться из metadata
                     
@@ -4171,7 +4181,7 @@ def send_chat_message(request):
                             'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
                             'candidate_url': invite.candidate_url,
                             'calendar_event_url': invite.calendar_event_url,
-                            'google_drive_file_url': invite.google_drive_file_url
+                            # google_drive_file_url не создается для интервью
                         }
                     )
                     
@@ -4188,12 +4198,14 @@ def send_chat_message(request):
                             'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
                             'candidate_url': invite.candidate_url,
                             'calendar_event_url': invite.calendar_event_url,
-                            'google_drive_file_url': invite.google_drive_file_url
+                            # google_drive_file_url не создается для интервью
                         }
                     })
                     
                 except Exception as e:
                     print(f"❌ CHAT AJAX: Ошибка создания Final Interview: {e}")
+                    import traceback
+                    traceback.print_exc()
                     error_content = f"Ошибка при обработке Final Interview: {str(e)}"
                     ChatMessage.objects.create(
                         session=chat_session,

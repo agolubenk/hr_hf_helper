@@ -633,6 +633,40 @@ class Invite(models.Model):
         except Exception as e:
             print(f"❌ Ошибка получения длительности скринингов: {e}, используем длительность по умолчанию: 45 минут")
             return 45
+    
+    def get_interview_duration(self):
+        """Получает длительность интервью для данной вакансии"""
+        try:
+            # Если указана кастомная длительность, используем её
+            if self.custom_duration_minutes:
+                print(f"✅ Используем кастомную длительность интервью: {self.custom_duration_minutes} минут")
+                return self.custom_duration_minutes
+            
+            from apps.vacancies.models import Vacancy
+            
+            # Проверяем, что у нас есть ID вакансии
+            if not self.vacancy_id:
+                print("⚠️ ID вакансии не найден, используем длительность интервью по умолчанию: 90 минут")
+                return 90
+            
+            # Пытаемся найти вакансию в локальной базе данных
+            try:
+                local_vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
+                duration = local_vacancy.tech_interview_duration
+                if duration:
+                    print(f"✅ Найдена длительность интервью для вакансии '{local_vacancy.name}': {duration} минут")
+                    return duration
+                else:
+                    print(f"⚠️ Длительность интервью не указана для вакансии '{local_vacancy.name}', используем по умолчанию: 90 минут")
+                    return 90
+                
+            except Vacancy.DoesNotExist:
+                print(f"⚠️ Вакансия {self.vacancy_id} не найдена в локальной БД, используем длительность интервью по умолчанию: 90 минут")
+                return 90
+                
+        except Exception as e:
+            print(f"❌ Ошибка получения длительности интервью: {e}, используем длительность по умолчанию: 90 минут")
+            return 90
 
     def get_vacancy_info(self):
         """Получает информацию о вакансии из локальной базы данных и Huntflow API"""
@@ -1056,6 +1090,200 @@ class Invite(models.Model):
         
         return folder_path, filename_base
     
+    def save_for_interview(self):
+        """Сохраняет инвайт для интервью без создания скоркарда (используется для команды /in)
+        
+        Выполняет все действия как обычное сохранение, но пропускает:
+        - create_google_drive_structure() 
+        - process_scorecard()
+        
+        Использует tech_invite_title для названия календарного события.
+        """
+        try:
+            print(f"🚀 SAVE_FOR_INTERVIEW: Начинаем сохранение интервью...")
+            print(f"🔍 SAVE_FOR_INTERVIEW: user = {self.user}")
+            print(f"🔍 SAVE_FOR_INTERVIEW: candidate_url = {self.candidate_url}")
+            print(f"🔍 SAVE_FOR_INTERVIEW: original_form_data = {self.original_form_data[:200] if self.original_form_data else 'НЕТ'}...")
+            
+            # Парсим URL и получаем информацию
+            print(f"🔍 SAVE_FOR_INTERVIEW: Парсим URL...")
+            success, message = self.parse_candidate_url()
+            if not success:
+                print(f"❌ SAVE_FOR_INTERVIEW: Ошибка парсинга URL: {message}")
+                raise Exception(f'Ошибка парсинга URL: {message}')
+            print(f"✅ SAVE_FOR_INTERVIEW: URL распарсен успешно")
+            
+            # Получаем информацию о кандидате и вакансии
+            print(f"🔍 SAVE_FOR_INTERVIEW: Получаем информацию о кандидате...")
+            try:
+                success, message = self.get_candidate_info()
+                if not success:
+                    print(f"⚠️ SAVE_FOR_INTERVIEW: Предупреждение при получении информации о кандидате: {message}")
+                else:
+                    print(f"✅ SAVE_FOR_INTERVIEW: Информация о кандидате получена")
+            except Exception as e:
+                print(f"⚠️ SAVE_FOR_INTERVIEW: Huntflow API недоступен для кандидата: {e}")
+            
+            print(f"🔍 SAVE_FOR_INTERVIEW: Получаем информацию о вакансии...")
+            try:
+                success, message = self.get_vacancy_info()
+                if not success:
+                    print(f"⚠️ SAVE_FOR_INTERVIEW: Предупреждение при получении информации о вакансии: {message}")
+                else:
+                    print(f"✅ SAVE_FOR_INTERVIEW: Информация о вакансии получена")
+            except Exception as e:
+                print(f"⚠️ SAVE_FOR_INTERVIEW: Huntflow API недоступен для вакансии: {e}")
+            
+            # Проверяем наличие original_form_data перед парсингом времени
+            if not self.original_form_data:
+                print(f"❌ SAVE_FOR_INTERVIEW: original_form_data не установлен!")
+                raise Exception('Отсутствуют исходные данные для анализа времени. Поле original_form_data не заполнено.')
+            
+            print(f"🔍 SAVE_FOR_INTERVIEW: original_form_data установлен: {self.original_form_data[:200]}...")
+            
+            # Анализируем время с помощью парсера (ПЕРЕД сохранением, так как interview_datetime обязателен)
+            print(f"🤖 SAVE_FOR_INTERVIEW: Анализируем время с помощью парсера...")
+            success, message = self.analyze_time_with_parser()
+            if not success:
+                print(f"❌ SAVE_FOR_INTERVIEW: Ошибка при анализе времени с парсером: {message}")
+                raise Exception(f'Ошибка анализа времени: {message}')
+            else:
+                print(f"✅ SAVE_FOR_INTERVIEW: Время проанализировано с помощью парсера")
+                print(f"🔍 SAVE_FOR_INTERVIEW: gemini_suggested_datetime = {self.gemini_suggested_datetime}")
+                
+                # Парсим дату из ответа парсера
+                if self.gemini_suggested_datetime:
+                    try:
+                        from datetime import datetime
+                        import pytz
+                        try:
+                            from dateutil import parser as date_parser
+                        except ImportError:
+                            date_parser = None
+                            print(f"⚠️ SAVE_FOR_INTERVIEW: dateutil не установлен, используем только стандартный парсинг")
+                        minsk_tz = pytz.timezone('Europe/Minsk')
+                        
+                        # Пробуем разные форматы парсинга
+                        parsed_datetime = None
+                        datetime_str = self.gemini_suggested_datetime.strip()
+                        
+                        # Формат 1: DD.MM.YYYY HH:MM (основной формат парсера)
+                        try:
+                            parsed_datetime = datetime.strptime(datetime_str, '%d.%m.%Y %H:%M')
+                            print(f"✅ SAVE_FOR_INTERVIEW: Дата распарсена в формате DD.MM.YYYY HH:MM")
+                        except ValueError:
+                            # Формат 2: Пробуем dateutil для гибкого парсинга (если доступен)
+                            if date_parser:
+                                try:
+                                    parsed_datetime = date_parser.parse(datetime_str, dayfirst=True)
+                                    print(f"✅ SAVE_FOR_INTERVIEW: Дата распарсена через dateutil")
+                                except Exception as e2:
+                                    print(f"❌ SAVE_FOR_INTERVIEW: Не удалось распарсить дату ни одним способом")
+                                    print(f"🔍 SAVE_FOR_INTERVIEW: Полученная строка: '{datetime_str}'")
+                                    raise Exception(f'Не удалось распарсить дату: {datetime_str}. Ошибка: {e2}')
+                            else:
+                                print(f"❌ SAVE_FOR_INTERVIEW: Не удалось распарсить дату в формате DD.MM.YYYY HH:MM")
+                                print(f"🔍 SAVE_FOR_INTERVIEW: Полученная строка: '{datetime_str}'")
+                                raise Exception(f'Не удалось распарсить дату: {datetime_str}. Ожидаемый формат: DD.MM.YYYY HH:MM')
+                        
+                        if parsed_datetime:
+                            # Локализуем в Minsk timezone
+                            if parsed_datetime.tzinfo is None:
+                                parsed_datetime = minsk_tz.localize(parsed_datetime)
+                            else:
+                                parsed_datetime = parsed_datetime.astimezone(minsk_tz)
+                            
+                            self.interview_datetime = parsed_datetime
+                            print(f"✅ SAVE_FOR_INTERVIEW: Дата интервью установлена из парсера: {self.interview_datetime}")
+                        else:
+                            raise Exception('Не удалось распарсить дату')
+                            
+                    except ValueError as e:
+                        print(f"❌ SAVE_FOR_INTERVIEW: Ошибка парсинга даты от парсера (ValueError): {e}")
+                        print(f"🔍 SAVE_FOR_INTERVIEW: Формат даты от парсера: '{self.gemini_suggested_datetime}'")
+                        raise Exception(f'Ошибка парсинга даты от парсера: {e}. Получено: {self.gemini_suggested_datetime}')
+                    except Exception as e:
+                        print(f"❌ SAVE_FOR_INTERVIEW: Ошибка парсинга даты от парсера: {e}")
+                        import traceback
+                        traceback.print_exc()
+                        raise Exception(f'Ошибка парсинга даты от парсера: {e}')
+                else:
+                    print(f"❌ SAVE_FOR_INTERVIEW: Парсер не вернул время (gemini_suggested_datetime пуст)")
+                    raise Exception('Парсер не вернул время для интервью')
+            
+            # Сохраняем промежуточные данные после установки времени (нужно для дальнейших операций)
+            self.save()
+            print(f"✅ SAVE_FOR_INTERVIEW: Промежуточные данные сохранены после установки времени")
+            
+            # Извлекаем кастомную длительность
+            print(f"🔍 SAVE_FOR_INTERVIEW: Извлекаем кастомную длительность...")
+            custom_duration = self.extract_custom_duration(self.original_form_data)
+            if custom_duration:
+                self.custom_duration_minutes = custom_duration
+                print(f"✅ SAVE_FOR_INTERVIEW: Установлена кастомная длительность: {custom_duration} минут")
+            
+            # ПРОПУСКАЕМ создание структуры Google Drive и скоркарда
+            print(f"⏭️ SAVE_FOR_INTERVIEW: Пропускаем создание скоркарда (это интервью)")
+            
+            # Проверяем, что interview_datetime установлен перед созданием события
+            if not self.interview_datetime:
+                print(f"❌ SAVE_FOR_INTERVIEW: interview_datetime не установлен!")
+                raise Exception('Дата и время интервью не установлены. Не удалось распарсить время из исходных данных.')
+            
+            # Создаем календарное событие с tech_invite_title
+            print(f"🔍 SAVE_FOR_INTERVIEW: Создаем календарное событие с tech_invite_title...")
+            print(f"🔍 SAVE_FOR_INTERVIEW: interview_datetime = {self.interview_datetime}")
+            print(f"🔍 SAVE_FOR_INTERVIEW: candidate_name = {self.candidate_name}")
+            print(f"🔍 SAVE_FOR_INTERVIEW: vacancy_id = {self.vacancy_id}")
+            
+            try:
+                calendar_success = self._create_calendar_event(use_tech_invite_title=True, is_interview=True)
+                if not calendar_success:
+                    print(f"⚠️ SAVE_FOR_INTERVIEW: Предупреждение при создании календарного события")
+                else:
+                    print(f"✅ SAVE_FOR_INTERVIEW: Календарное событие создано")
+                    
+                    # Обновляем статус на Tech Interview при создании интервью
+                    if calendar_success:
+                        print(f"[TECH_INTERVIEW_UPDATE] Календарное событие создано успешно, обновляем статус...")
+                        try:
+                            interview_success = self.update_candidate_status_to_tech_interview()
+                            print(f"[TECH_INTERVIEW_UPDATE] Статус обновлен: {interview_success}")
+                        except Exception as e:
+                            print(f"[TECH_INTERVIEW_UPDATE] Ошибка при обновлении статуса: {str(e)}")
+                            import traceback
+                            traceback.print_exc()
+                    else:
+                        print(f"[TECH_INTERVIEW_UPDATE] Календарное событие НЕ создано, пропускаем обновление статуса")
+            except Exception as e:
+                print(f"❌ SAVE_FOR_INTERVIEW: Ошибка при создании календарного события: {e}")
+                import traceback
+                traceback.print_exc()
+                # Не прерываем выполнение, продолжаем работу
+            
+            # Добавляем метку интервьюера в Huntflow
+            print(f"🔍 SAVE_FOR_INTERVIEW: Добавляем метку интервьюера в Huntflow...")
+            try:
+                tag_success = self._add_interviewer_tag_to_huntflow()
+                if tag_success:
+                    print(f"✅ SAVE_FOR_INTERVIEW: Метка интервьюера добавлена")
+                else:
+                    print(f"⚠️ SAVE_FOR_INTERVIEW: Не удалось добавить метку интервьюера")
+            except Exception as e:
+                print(f"⚠️ SAVE_FOR_INTERVIEW: Ошибка при добавлении метки интервьюера: {e}")
+            
+            self.status = 'sent'
+            self.save()
+            print(f"✅ SAVE_FOR_INTERVIEW: Инвайт сохранен с ID: {self.id}")
+            
+            return True
+            
+        except Exception as e:
+            print(f"❌ SAVE_FOR_INTERVIEW: Исключение: {e}")
+            import traceback
+            traceback.print_exc()
+            raise
+    
     def process_scorecard(self):
         """Обрабатывает scorecard файл - удаляет лишние листы и заполняет плейсхолдеры"""
         print(f"🚀 INVITE.process_scorecard: Начинаем обработку скоркарда для инвайта {self.id}")
@@ -1410,8 +1638,13 @@ class Invite(models.Model):
             print(f"❌ FIND_EMAIL: Ошибка поиска email для '{username}': {e}")
             return None
     
-    def _create_calendar_event(self):
-        """Создает календарное событие с длительностью из настроек вакансии"""
+    def _create_calendar_event(self, use_tech_invite_title=False, is_interview=False):
+        """Создает календарное событие с длительностью из настроек вакансии
+        
+        Args:
+            use_tech_invite_title: Если True, использует tech_invite_title вместо invite_title для названия события
+            is_interview: Если True, добавляет обязательных интервьюеров из вакансии
+        """
         try:
             from apps.google_oauth.services import GoogleOAuthService, GoogleCalendarService
             from apps.huntflow.services import HuntflowService
@@ -1447,17 +1680,23 @@ class Invite(models.Model):
                 print(f"❌ Ошибка получения email кандидата: {e}")
             
             # Формируем название события на основе настроек пути + заголовок Scorecard
-            event_title = self._generate_calendar_event_title()
+            event_title = self._generate_calendar_event_title(use_tech_invite_title=use_tech_invite_title)
             
             # Время начала - время интервью
             start_time = self.interview_datetime
             
-            # Получаем длительность скринингов из настроек вакансии
-            screening_duration = self.get_screening_duration()
-            print(f"⏱️ Используем длительность скринингов: {screening_duration} минут")
+            # Получаем длительность в зависимости от типа события
+            if is_interview:
+                # Для интервью используем длительность интервью из вакансии
+                duration = self.get_interview_duration()
+                print(f"⏱️ Используем длительность интервью: {duration} минут")
+            else:
+                # Для скринингов используем длительность скринингов из вакансии
+                duration = self.get_screening_duration()
+                print(f"⏱️ Используем длительность скринингов: {duration} минут")
             
             # Время окончания - через указанное количество минут
-            end_time = start_time + timedelta(minutes=screening_duration)
+            end_time = start_time + timedelta(minutes=duration)
             
             # Получаем сопроводительный текст из вакансии
             invite_text = ""
@@ -1467,7 +1706,14 @@ class Invite(models.Model):
                     import re
                     
                     vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
-                    invite_text = vacancy.invite_text
+                    
+                    # Для интервью используем tech_invite_text, для скринингов - invite_text
+                    if is_interview:
+                        invite_text = vacancy.tech_invite_text or ""
+                        print(f"📝 Используем tech_invite_text для интервью")
+                    else:
+                        invite_text = vacancy.invite_text or ""
+                        print(f"📝 Используем invite_text для скрининга")
                     
                     # Обрезаем текст после --- (для интервьюеров)
                     if '---' in invite_text:
@@ -1526,6 +1772,23 @@ class Invite(models.Model):
             if self.interviewer and self.interviewer.email:
                 attendees.append(self.interviewer.email)
                 print(f"👥 Добавляем интервьюера в участники: {self.interviewer.email}")
+            
+            # Добавляем обязательных интервьюеров из вакансии (для интервью)
+            if is_interview and self.vacancy_id:
+                try:
+                    from apps.vacancies.models import Vacancy
+                    vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
+                    mandatory_interviewers = vacancy.mandatory_tech_interviewers.filter(is_active=True)
+                    print(f"👥 CALENDAR_EVENT: Найдено {len(mandatory_interviewers)} обязательных интервьюеров")
+                    
+                    for interviewer in mandatory_interviewers:
+                        if interviewer.email and interviewer.email not in attendees:
+                            attendees.append(interviewer.email)
+                            print(f"👥 Добавляем обязательного интервьюера: {interviewer.email} ({interviewer.get_full_name()})")
+                        else:
+                            print(f"⚠️ CALENDAR_EVENT: Интервьюер {interviewer.email} уже в списке или email отсутствует")
+                except Exception as e:
+                    print(f"⚠️ CALENDAR_EVENT: Ошибка получения обязательных интервьюеров: {e}")
             
             # Извлекаем упоминания через @ из original_form_data
             print(f"🔍 CALENDAR_EVENT: Проверяем original_form_data для упоминаний")
@@ -1618,9 +1881,19 @@ class Invite(models.Model):
                 # Если время без timezone, считаем его уже в Minsk
                 start_time = self.interview_datetime
             
-            # Получаем длительность скринингов из настроек вакансии
-            screening_duration = self.get_screening_duration()
-            end_time = start_time + timedelta(minutes=screening_duration)
+            # Определяем тип события: если нет скоркарда, значит это интервью
+            # (для интервью скоркард не создается)
+            is_interview = not bool(self.google_drive_file_id)
+            
+            # Получаем длительность в зависимости от типа события
+            if is_interview:
+                duration = self.get_interview_duration()
+                print(f"⏱️ Форматирование: Используем длительность интервью: {duration} минут")
+            else:
+                duration = self.get_screening_duration()
+                print(f"⏱️ Форматирование: Используем длительность скринингов: {duration} минут")
+            
+            end_time = start_time + timedelta(minutes=duration)
             
             # Форматируем дату и время
             weekday = weekdays_ru.get(start_time.weekday(), '')
@@ -1646,8 +1919,12 @@ class Invite(models.Model):
             print(f"❌ Ошибка получения ссылки на кандидата: {e}")
             return None
     
-    def _generate_calendar_event_title(self):
-        """Генерирует название календарного события: [Заголовок инвайтов] [Фамилия Имя]"""
+    def _generate_calendar_event_title(self, use_tech_invite_title=False):
+        """Генерирует название календарного события: [Заголовок инвайтов] [Фамилия Имя]
+        
+        Args:
+            use_tech_invite_title: Если True, использует tech_invite_title вместо invite_title
+        """
         try:
             from apps.vacancies.models import Vacancy
             
@@ -1656,13 +1933,19 @@ class Invite(models.Model):
             if self.vacancy_id:
                 try:
                     vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
-                    invite_title = vacancy.invite_title
+                    if use_tech_invite_title:
+                        invite_title = vacancy.tech_invite_title or ""
+                    else:
+                        invite_title = vacancy.invite_title or ""
                 except Vacancy.DoesNotExist:
                     pass
             
             # Если заголовок инвайтов не найден, используем название вакансии
             if not invite_title:
-                invite_title = self.vacancy_title or "Интервью"
+                if use_tech_invite_title:
+                    invite_title = self.vacancy_title or "Tech Interview"
+                else:
+                    invite_title = self.vacancy_title or "Интервью"
             
             # Убираем лишние символы | из заголовка
             invite_title = invite_title.strip().rstrip('|').strip()
@@ -1670,7 +1953,7 @@ class Invite(models.Model):
             # Формируем название события: [Заголовок инвайтов] | [Фамилия Имя]
             event_title = f"{invite_title} | {self.candidate_name}"
             
-            print(f"📅 Сгенерировано название события: {event_title}")
+            print(f"📅 Сгенерировано название события: {event_title} (use_tech_invite_title={use_tech_invite_title})")
             return event_title
             
         except Exception as e:
@@ -1883,6 +2166,99 @@ class Invite(models.Model):
             print(f"[TECH_SCREENING] Исключение: {str(e)}")
             import traceback
             print(f"[TECH_SCREENING] Traceback: {traceback.format_exc()}")
+            return False
+    
+    def update_candidate_status_to_tech_interview(self):
+        """Обновление статуса кандидата на Tech Interview в Huntflow"""
+        try:
+            print(f"[TECH_INTERVIEW] Начинаем обновление статуса кандидата {self.candidate_id}")
+            
+            from apps.huntflow.services import HuntflowService
+            from apps.vacancies.models import Vacancy
+            from datetime import datetime, timezone, timedelta
+            import re
+
+            print(f"[TECH_INTERVIEW] Импорты выполнены успешно")
+
+            # Получаем account_id из Huntflow API
+            service = HuntflowService(self.user)
+            accounts = service.get_accounts()
+            if not accounts or 'items' not in accounts or len(accounts['items']) == 0:
+                print("[TECH_INTERVIEW] Не удалось получить account_id")
+                return False
+            
+            account_id = accounts['items'][0]['id']
+            print(f"[TECH_INTERVIEW] Получен account_id: {account_id}")
+
+            # Получаем статус из настроек вакансии
+            tech_interview_status_id = None
+            
+            try:
+                # Пытаемся получить вакансию из локальной БД
+                vacancy = Vacancy.objects.filter(external_id=str(self.vacancy_id)).first()
+                
+                if vacancy and vacancy.tech_interview_stage:
+                    tech_interview_status_id = int(vacancy.tech_interview_stage)
+                    print(f"🔍 TECH_INTERVIEW: Используем статус из вакансии: {tech_interview_status_id}")
+                else:
+                    print(f"⚠️ TECH_INTERVIEW: Этап не настроен в вакансии, ищем по названию")
+                    
+                    # Fallback: ищем по названию "Tech Interview" или "Final Interview"
+                    print(f"[TECH_INTERVIEW] Запрашиваем статусы вакансий...")
+                    statuses = service.get_vacancy_statuses(account_id)
+                    print(f"[TECH_INTERVIEW] Получены статусы: {statuses}")
+                    
+                    if statuses and 'items' in statuses:
+                        print(f"[TECH_INTERVIEW] Ищем статус Tech Interview среди {len(statuses['items'])} статусов")
+                        for status in statuses['items']:
+                            status_name = status.get('name', '').lower()
+                            print(f"[TECH_INTERVIEW] Проверяем статус: '{status_name}'")
+                            if 'tech interview' in status_name or 'final interview' in status_name:
+                                tech_interview_status_id = status.get('id')
+                                print(f"🔍 TECH_INTERVIEW: Найден статус с ID {tech_interview_status_id}")
+                                break
+            except Exception as e:
+                print(f"⚠️ TECH_INTERVIEW: Ошибка получения этапа из вакансии: {e}")
+                # Fallback к старой логике
+                statuses = service.get_vacancy_statuses(account_id)
+                if statuses and 'items' in statuses:
+                    for status in statuses['items']:
+                        status_name = status.get('name', '').lower()
+                        if 'tech interview' in status_name or 'final interview' in status_name:
+                            tech_interview_status_id = status.get('id')
+                            break
+            
+            if not tech_interview_status_id:
+                print(f"⚠️ TECH_INTERVIEW: Статус Tech Interview не найден")
+                return False
+
+            # Формируем комментарий в формате "Четверг, 25 сентября⋅11:00–11:45"
+            comment = self.get_formatted_interview_datetime()
+            print(f"[TECH_INTERVIEW] Кандидат: {self.candidate_id} -> Tech Interview")
+            print(f"[TECH_INTERVIEW] Комментарий: {comment}")
+            print(f"[TECH_INTERVIEW] Используем статус ID: {tech_interview_status_id}")
+
+            print(f"[TECH_INTERVIEW] Вызываем update_applicant_status...")
+            result = service.update_applicant_status(
+                account_id=account_id,
+                applicant_id=int(self.candidate_id),
+                status_id=tech_interview_status_id,
+                comment=comment,
+                vacancy_id=int(self.vacancy_id) if self.vacancy_id else None
+            )
+            print(f"[TECH_INTERVIEW] Результат update_applicant_status: {result}")
+
+            if result:
+                print(f"[TECH_INTERVIEW] Успешно обновлен статус на Tech Interview")
+                return True
+            else:
+                print(f"[TECH_INTERVIEW] Ошибка при обновлении статуса")
+                return False
+
+        except Exception as e:
+            print(f"[TECH_INTERVIEW] Исключение: {str(e)}")
+            import traceback
+            print(f"[TECH_INTERVIEW] Traceback: {traceback.format_exc()}")
             return False
 
     def _update_candidate_status_to_tech_screening(self):
