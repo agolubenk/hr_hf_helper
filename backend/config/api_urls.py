@@ -32,6 +32,9 @@ from apps.clickup_int.views_api import (
     ClickUpSettingsViewSet, ClickUpTaskViewSet, ClickUpSyncLogViewSet,
     ClickUpBulkImportViewSet
 )
+from apps.hhru.views_api import (
+    HHRUAccountViewSet, HHRUConfigurationViewSet, HHRUAPILogViewSet
+)
 
 # Создание роутера
 router = DefaultRouter()
@@ -95,6 +98,11 @@ router.register(r'clickup/settings', ClickUpSettingsViewSet, basename='clickup-s
 router.register(r'clickup/tasks', ClickUpTaskViewSet, basename='clickup-task')
 router.register(r'clickup/sync-logs', ClickUpSyncLogViewSet, basename='clickup-sync-log')
 router.register(r'clickup/bulk-imports', ClickUpBulkImportViewSet, basename='clickup-bulk-import')
+
+# HeadHunter.ru Integration
+router.register(r'hhru/accounts', HHRUAccountViewSet, basename='hhru-account')
+router.register(r'hhru/configurations', HHRUConfigurationViewSet, basename='hhru-configuration')
+router.register(r'hhru/logs', HHRUAPILogViewSet, basename='hhru-log')
 
 # URL patterns для API
 urlpatterns = [

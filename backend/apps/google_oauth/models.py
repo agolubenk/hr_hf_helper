@@ -4041,8 +4041,22 @@ class HRScreening(models.Model):
         """Получает информацию о кандидате из Huntflow API"""
         try:
             from apps.huntflow.services import HuntflowService
+            from apps.accounts.models import User
             
             print(f"🔍 HR_SCREENING_GET_CANDIDATE_INFO: Начинаем получение информации о кандидате {self.candidate_id}")
+            
+            # Проверяем, что user является объектом пользователя
+            if not self.user:
+                return False, "Пользователь не указан для HR-скрининга"
+            
+            if isinstance(self.user, str):
+                # Если user является строкой, получаем объект пользователя
+                try:
+                    self.user = User.objects.get(username=self.user)
+                except User.DoesNotExist:
+                    return False, f"Пользователь с username '{self.user}' не найден"
+            elif not isinstance(self.user, User):
+                return False, f"Ожидается объект User, получен {type(self.user)}"
             
             # Получаем аккаунты пользователя
             huntflow_service = HuntflowService(self.user)
@@ -4079,8 +4093,22 @@ class HRScreening(models.Model):
         """Получает информацию о вакансии из Huntflow API"""
         try:
             from apps.huntflow.services import HuntflowService
+            from apps.accounts.models import User
             
             print(f"🔍 HR_SCREENING_GET_VACANCY_INFO: Начинаем получение информации о вакансии {self.vacancy_id}")
+            
+            # Проверяем, что user является объектом пользователя
+            if not self.user:
+                return False, "Пользователь не указан для HR-скрининга"
+            
+            if isinstance(self.user, str):
+                # Если user является строкой, получаем объект пользователя
+                try:
+                    self.user = User.objects.get(username=self.user)
+                except User.DoesNotExist:
+                    return False, f"Пользователь с username '{self.user}' не найден"
+            elif not isinstance(self.user, User):
+                return False, f"Ожидается объект User, получен {type(self.user)}"
             
             # Получаем аккаунты пользователя
             huntflow_service = HuntflowService(self.user)
@@ -4116,8 +4144,22 @@ class HRScreening(models.Model):
         """Получает схему полей кандидата из Huntflow API"""
         try:
             from apps.huntflow.services import HuntflowService
+            from apps.accounts.models import User
             
             print(f"🔍 HR_SCREENING_GET_FIELDS_SCHEMA: Получаем схему полей кандидата")
+            
+            # Проверяем, что user является объектом пользователя
+            if not self.user:
+                return False, "Пользователь не указан для HR-скрининга"
+            
+            if isinstance(self.user, str):
+                # Если user является строкой, получаем объект пользователя
+                try:
+                    self.user = User.objects.get(username=self.user)
+                except User.DoesNotExist:
+                    return False, f"Пользователь с username '{self.user}' не найден"
+            elif not isinstance(self.user, User):
+                return False, f"Ожидается объект User, получен {type(self.user)}"
             
             # Получаем аккаунты пользователя
             huntflow_service = HuntflowService(self.user)
@@ -4149,10 +4191,23 @@ class HRScreening(models.Model):
         """Анализирует данные с помощью Gemini AI"""
         try:
             from apps.gemini.logic.services import GeminiService
+            from apps.accounts.models import User
+            
+            # Проверяем, что user является объектом пользователя
+            if not self.user:
+                return False, "Пользователь не указан для HR-скрининга"
+            
+            if isinstance(self.user, str):
+                # Если user является строкой, получаем объект пользователя
+                try:
+                    self.user = User.objects.get(username=self.user)
+                except User.DoesNotExist:
+                    return False, f"Пользователь с username '{self.user}' не найден"
+            elif not isinstance(self.user, User):
+                return False, f"Ожидается объект User, получен {type(self.user)}"
             
             # Обновляем объект пользователя из базы данных, чтобы получить актуальный ключ
             # ВАЖНО: Используем прямой запрос к БД, чтобы гарантировать актуальные данные
-            from apps.accounts.models import User
             user_from_db = User.objects.get(id=self.user.id)
             self.user = user_from_db
             
@@ -4251,10 +4306,25 @@ class HRScreening(models.Model):
         except Exception as e:
             print(f"❌ Ошибка получения account_id: {e}")
             return '694'  # Fallback
-
+    
     def _prepare_gemini_prompt(self):
         """Подготавливает промпт для Gemini AI"""
         try:
+            from apps.accounts.models import User
+            
+            # Проверяем, что user является объектом пользователя
+            if not self.user:
+                return False, "Пользователь не указан для HR-скрининга"
+            
+            if isinstance(self.user, str):
+                # Если user является строкой, получаем объект пользователя
+                try:
+                    self.user = User.objects.get(username=self.user)
+                except User.DoesNotExist:
+                    return False, f"Пользователь с username '{self.user}' не найден"
+            elif not isinstance(self.user, User):
+                return False, f"Ожидается объект User, получен {type(self.user)}"
+            
             # Получаем промпт из вакансии
             from apps.vacancies.models import Vacancy
             vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
@@ -4684,8 +4754,22 @@ class HRScreening(models.Model):
         try:
             from apps.huntflow.services import HuntflowService
             from .state_snapshot_service import snapshot_service
+            from apps.accounts.models import User
             
             print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Начинаем обновление кандидата {self.candidate_id}")
+            
+            # Проверяем, что user является объектом пользователя
+            if not self.user:
+                return False, "Пользователь не указан для HR-скрининга"
+            
+            if isinstance(self.user, str):
+                # Если user является строкой, получаем объект пользователя
+                try:
+                    self.user = User.objects.get(username=self.user)
+                except User.DoesNotExist:
+                    return False, f"Пользователь с username '{self.user}' не найден"
+            elif not isinstance(self.user, User):
+                return False, f"Ожидается объект User, получен {type(self.user)}"
             
             # Получаем аккаунты пользователя
             huntflow_service = HuntflowService(self.user)

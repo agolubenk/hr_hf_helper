@@ -18,6 +18,23 @@ class HuntflowService:
         Args:
             user: Пользователь с настройками Huntflow
         """
+        from apps.accounts.models import User
+        
+        # Проверяем, что user является объектом пользователя
+        if not user:
+            raise ValueError("Пользователь не указан для HuntflowService")
+        
+        if isinstance(user, str):
+            # Если user является строкой, получаем объект пользователя
+            try:
+                user = User.objects.get(username=user)
+                logger.info(f"🔍 HUNTFLOW_SERVICE: Преобразована строка в объект пользователя: {user.username}")
+            except User.DoesNotExist:
+                raise ValueError(f"Пользователь с username '{user}' не найден")
+        elif not isinstance(user, User):
+            logger.error(f"❌ HUNTFLOW_SERVICE: Неверный тип user: {type(user)}, значение: {user}")
+            raise ValueError(f"Ожидается объект User, получен {type(user)}")
+        
         self.user = user
         self.token_service = HuntflowTokenService(user)
     

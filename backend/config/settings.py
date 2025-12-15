@@ -89,6 +89,7 @@ INSTALLED_APPS = [
     'apps.company_settings',
     'apps.wiki',
     'apps.reporting',
+    'apps.hhru',
     
     
     # Django REST Framework

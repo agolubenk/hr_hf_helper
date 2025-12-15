@@ -628,7 +628,25 @@ class HRScreeningForm(forms.ModelForm):
         }
     
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
+        user = kwargs.pop('user', None)
+        # Проверяем, что user является объектом пользователя, а не строкой
+        if user is not None:
+            from apps.accounts.models import User
+            if isinstance(user, str):
+                # Если передан username, получаем объект пользователя
+                try:
+                    user = User.objects.get(username=user)
+                    print(f"🔍 HR_SCREENING_FORM_INIT: Преобразована строка в объект пользователя: {user.username}")
+                except User.DoesNotExist:
+                    raise ValueError(f"Пользователь с username '{user}' не найден")
+            elif not isinstance(user, User):
+                print(f"❌ HR_SCREENING_FORM_INIT: Неверный тип user: {type(user)}, значение: {user}")
+                raise ValueError(f"Ожидается объект User, получен {type(user)}")
+            else:
+                print(f"✅ HR_SCREENING_FORM_INIT: User корректный: {user.username} (ID: {user.id})")
+        else:
+            print(f"⚠️ HR_SCREENING_FORM_INIT: User не передан")
+        self.user = user
         super().__init__(*args, **kwargs)
     
     def clean_input_data(self):
@@ -649,9 +667,24 @@ class HRScreeningForm(forms.ModelForm):
     def save(self, commit=True):
         """Сохраняет HR-скрининг с автоматической обработкой"""
         print(f"🔍 HR_SCREENING_FORM_SAVE: Начинаем сохранение HR-скрининга...")
+        
+        # Проверяем, что user установлен и является объектом пользователя
+        if not self.user:
+            raise ValueError("Пользователь не указан для HR-скрининга")
+        
+        from apps.accounts.models import User
+        if isinstance(self.user, str):
+            # Если user является строкой, получаем объект пользователя
+            try:
+                self.user = User.objects.get(username=self.user)
+            except User.DoesNotExist:
+                raise ValueError(f"Пользователь с username '{self.user}' не найден")
+        elif not isinstance(self.user, User):
+            raise ValueError(f"Ожидается объект User, получен {type(self.user)}")
+        
         hr_screening = super().save(commit=False)
         hr_screening.user = self.user
-        print(f"🔍 HR_SCREENING_FORM_SAVE: HR-скрининг создан, user: {hr_screening.user}")
+        print(f"🔍 HR_SCREENING_FORM_SAVE: HR-скрининг создан, user: {hr_screening.user} (ID: {hr_screening.user.id})")
         
         if commit:
             try:

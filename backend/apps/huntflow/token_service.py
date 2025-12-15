@@ -10,6 +10,23 @@ class HuntflowTokenService:
     """Сервис для управления токенами Huntflow"""
     
     def __init__(self, user):
+        from apps.accounts.models import User
+        
+        # Проверяем, что user является объектом пользователя
+        if not user:
+            raise ValueError("Пользователь не указан для HuntflowTokenService")
+        
+        if isinstance(user, str):
+            # Если user является строкой, получаем объект пользователя
+            try:
+                user = User.objects.get(username=user)
+                logger.info(f"🔍 HUNTFLOW_TOKEN_SERVICE: Преобразована строка в объект пользователя: {user.username}")
+            except User.DoesNotExist:
+                raise ValueError(f"Пользователь с username '{user}' не найден")
+        elif not isinstance(user, User):
+            logger.error(f"❌ HUNTFLOW_TOKEN_SERVICE: Неверный тип user: {type(user)}, значение: {user}")
+            raise ValueError(f"Ожидается объект User, получен {type(user)}")
+        
         self.user = user
     
     def _get_base_url(self):

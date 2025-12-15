@@ -511,9 +511,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        const url = `/google-oauth/chat/${sessionId}/ajax/`;
+        const url = `/google-oauth/api/send-message/`;
         console.log('✅ SUBMIT: URL:', url);
         console.log('✅ SUBMIT: CSRF токен:', csrfToken ? 'найден' : 'не найден');
+        
+        // Обновляем payload для send_chat_message
+        const sendMessagePayload = {
+            'message': text,
+            'session_id': sessionId
+        };
         
         fetch(url, {
             method: 'POST',
@@ -521,7 +527,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': csrfToken
             },
-            body: JSON.stringify(payload),
+            body: JSON.stringify(sendMessagePayload),
             credentials: 'same-origin'
         })
         .then(response => {
@@ -563,18 +569,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.warn('⚠️ SUBMIT: message_html отсутствует в ответе');
                     console.log('✅ SUBMIT: Полный ответ:', JSON.stringify(data, null, 2));
                 }
+                
+                // Обрабатываем переадресацию, если вакансия изменилась
+                if (data.redirect_url) {
+                    if (data.session_id && data.session_id !== sessionId) {
+                        console.log('🔄 SUBMIT: Переключаемся на другой чат (сессия изменилась):', data.redirect_url);
+                    } else {
+                        console.log('🔄 SUBMIT: Переключаемся на другой чат (вакансия определена из сообщения):', data.redirect_url);
+                    }
+                    // Небольшая задержка перед переадресацией, чтобы пользователь увидел ответ
+                    setTimeout(() => {
+                        window.location.href = data.redirect_url;
+                    }, 500);
+                }
             } else {
                 const errorMsg = data.error || 'Ошибка отправки';
                 console.error('❌ SUBMIT: Server error:', errorMsg);
                 alert(errorMsg);
             }
             
-            // Разблокируем кнопки
-            if (sendButton) {
-                sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
-                sendButton.disabled = false;
+            // Разблокируем кнопки только если не происходит переадресация
+            if (!data.redirect_url || (data.session_id && data.session_id === sessionId)) {
+                if (sendButton) {
+                    sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                    sendButton.disabled = false;
+                }
+                textarea.disabled = false;
             }
-            textarea.disabled = false;
         })
         .catch(error => {
             console.error('❌ SUBMIT: Catch error:', error);

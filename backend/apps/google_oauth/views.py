@@ -4067,8 +4067,24 @@ def _determine_vacancy_from_candidate_link(candidate_url, user):
     import re
     from apps.huntflow.services import HuntflowService
     from apps.vacancies.models import Vacancy
+    from apps.accounts.models import User
     
     try:
+        # Проверяем, что user является объектом пользователя
+        if not user:
+            return None, None, "Пользователь не указан"
+        
+        if isinstance(user, str):
+            # Если user является строкой, получаем объект пользователя
+            try:
+                user = User.objects.get(username=user)
+                print(f"🔍 DETERMINE_VACANCY: Преобразована строка в объект пользователя: {user.username}")
+            except User.DoesNotExist:
+                return None, None, f"Пользователь с username '{user}' не найден"
+        elif not isinstance(user, User):
+            print(f"❌ DETERMINE_VACANCY: Неверный тип user: {type(user)}, значение: {user}")
+            return None, None, f"Ожидается объект User, получен {type(user)}"
+        
         # Извлекаем ID кандидата из ссылки формата /applicants/filter/all/77231621
         applicant_pattern = r'/applicants/filter/[^/]+/(\d+)'
         match = re.search(applicant_pattern, candidate_url)
@@ -4128,14 +4144,150 @@ def _determine_vacancy_from_candidate_link(candidate_url, user):
         return None, None, f"Ошибка определения вакансии: {str(e)}"
 
 
+def _determine_vacancy_from_text(message_text, user):
+    """
+    Определяет вакансию из текста сообщения по названию вакансии
+    
+    Args:
+        message_text: Текст сообщения
+        user: Пользователь Django
+    
+    Returns:
+        Vacancy объект или None
+    """
+    from apps.vacancies.models import Vacancy
+    from django.db.models import Q
+    from apps.accounts.models import User
+    
+    # Проверяем, что user является объектом пользователя
+    if not user:
+        print(f"⚠️ DETERMINE_VACANCY_FROM_TEXT: Пользователь не указан")
+        return None
+    
+    if isinstance(user, str):
+        # Если user является строкой, получаем объект пользователя
+        try:
+            user = User.objects.get(username=user)
+            print(f"🔍 DETERMINE_VACANCY_FROM_TEXT: Преобразована строка в объект пользователя: {user.username}")
+        except User.DoesNotExist:
+            print(f"❌ DETERMINE_VACANCY_FROM_TEXT: Пользователь с username '{user}' не найден")
+            return None
+    elif not isinstance(user, User):
+        print(f"❌ DETERMINE_VACANCY_FROM_TEXT: Неверный тип user: {type(user)}, значение: {user}")
+        return None
+    
+    if not message_text or not message_text.strip():
+        return None
+    
+    # Получаем все активные вакансии пользователя
+    vacancies = Vacancy.objects.filter(is_active=True).order_by('name')
+    
+    # Ищем упоминания названий вакансий в тексте
+    message_lower = message_text.lower()
+    
+    # Сначала пытаемся найти точное совпадение (регистронезависимое)
+    for vacancy in vacancies:
+        vacancy_name_lower = vacancy.name.lower()
+        # Проверяем, содержит ли текст название вакансии как отдельное слово
+        # Используем границы слов для более точного поиска
+        import re
+        pattern = r'\b' + re.escape(vacancy_name_lower) + r'\b'
+        if re.search(pattern, message_lower):
+            print(f"✅ DETERMINE_VACANCY_FROM_TEXT: Найдено точное совпадение: {vacancy.name}")
+            return vacancy
+    
+    # Если точного совпадения нет, ищем частичное совпадение
+    # Разбиваем текст на слова и ищем вакансии, содержащие эти слова
+    words = [w.strip() for w in message_lower.split() if len(w.strip()) > 2]
+    
+    best_match = None
+    best_score = 0
+    
+    for vacancy in vacancies:
+        vacancy_name_lower = vacancy.name.lower()
+        score = 0
+        
+        # Подсчитываем количество совпадающих слов
+        for word in words:
+            if word in vacancy_name_lower:
+                score += len(word)
+        
+        # Если название вакансии содержит значительную часть слов из сообщения
+        if score > best_score and score >= 5:  # Минимальный порог совпадения
+            best_score = score
+            best_match = vacancy
+    
+    if best_match:
+        print(f"✅ DETERMINE_VACANCY_FROM_TEXT: Найдено частичное совпадение: {best_match.name} (score: {best_score})")
+        return best_match
+    
+    return None
+
+
+def _get_or_create_chat_session_for_vacancy(user, vacancy):
+    """
+    Находит или создает сессию чата для указанной вакансии
+    
+    Args:
+        user: Пользователь Django
+        vacancy: Объект Vacancy
+    
+    Returns:
+        ChatSession: Сессия чата для вакансии
+    """
+    from .models import ChatSession
+    from apps.accounts.models import User
+    
+    # Проверяем, что user является объектом пользователя
+    if not user:
+        raise ValueError("Пользователь не указан для создания сессии чата")
+    
+    if isinstance(user, str):
+        # Если user является строкой, получаем объект пользователя
+        try:
+            user = User.objects.get(username=user)
+            print(f"🔍 GET_OR_CREATE_CHAT_SESSION: Преобразована строка в объект пользователя: {user.username}")
+        except User.DoesNotExist:
+            raise ValueError(f"Пользователь с username '{user}' не найден")
+    elif not isinstance(user, User):
+        print(f"❌ GET_OR_CREATE_CHAT_SESSION: Неверный тип user: {type(user)}, значение: {user}")
+        raise ValueError(f"Ожидается объект User, получен {type(user)}")
+    
+    # Ищем существующую сессию чата для этой вакансии
+    chat_session, created = ChatSession.objects.get_or_create(
+        user=user,
+        vacancy=vacancy,
+        defaults={'title': vacancy.name}
+    )
+    
+    if created:
+        print(f"✅ Создана новая сессия чата для вакансии: {vacancy.name}")
+    else:
+        print(f"✅ Найдена существующая сессия чата для вакансии: {vacancy.name}")
+    
+    return chat_session
+
+
 def send_chat_message(request):
     """
     AJAX endpoint для отправки сообщения в Google OAuth чат
+    Автоматически определяет вакансию из сообщения и переключает на соответствующий чат
     """
     try:
+        from apps.accounts.models import User
+        
+        # Проверяем, что request.user является объектом пользователя
+        print(f"🔍 SEND_CHAT_MESSAGE: request.user: {request.user} (тип: {type(request.user)})")
+        if not request.user or not isinstance(request.user, User):
+            print(f"❌ SEND_CHAT_MESSAGE: request.user не является объектом User: {type(request.user)}")
+            return JsonResponse({'success': False, 'error': 'Пользователь не авторизован'})
+        
         data = json.loads(request.body)
+        print(f"🔍 SEND_CHAT_MESSAGE: Получены данные: {data}")
         session_id = data.get('session_id')
-        message_text = data.get('message', '').strip()
+        # Поддерживаем оба варианта: 'message' и 'text'
+        message_text = data.get('message', data.get('text', '')).strip()
+        print(f"🔍 SEND_CHAT_MESSAGE: message_text (длина: {len(message_text)}): {message_text[:100]}...")
         
         if not message_text:
             return JsonResponse({'success': False, 'error': 'Пустое сообщение'})
@@ -4143,60 +4295,94 @@ def send_chat_message(request):
         if not session_id:
             return JsonResponse({'success': False, 'error': 'ID сессии не указан'})
         
-        # Получаем сессию чата
+        # Получаем текущую сессию чата
         try:
-            chat_session = ChatSession.objects.get(id=session_id, user=request.user)
+            print(f"🔍 SEND_CHAT_MESSAGE: Ищем сессию {session_id} для пользователя {request.user.id}")
+            current_chat_session = ChatSession.objects.get(id=session_id, user=request.user)
         except ChatSession.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Сессия чата не найдена'})
         
-        # Проверяем, есть ли в сообщении ссылка на кандидата без вакансии
+        # Определяем вакансию из сообщения
+        determined_vacancy = None
+        
+        # 1. Проверяем, есть ли в сообщении ссылка на кандидата
         import re
         url_pattern = r'https?://[^\s]+'
         urls = re.findall(url_pattern, message_text)
         
-        candidate_url_without_vacancy = None
+        candidate_url_found = None
         for url in urls:
-            if 'huntflow' in url.lower() and '/applicants/filter/' in url and '/vacancy/' not in url:
-                candidate_url_without_vacancy = url
+            if 'huntflow' in url.lower():
+                candidate_url_found = url
                 break
         
-        # Если найдена ссылка на кандидата без вакансии, определяем вакансию
-        if candidate_url_without_vacancy:
-            print(f"🔍 SEND_CHAT_MESSAGE: Найдена ссылка на кандидата без вакансии: {candidate_url_without_vacancy}")
-            vacancy_id, candidate_id, error = _determine_vacancy_from_candidate_link(
-                candidate_url_without_vacancy, 
-                request.user
-            )
+        # Если найдена ссылка на кандидата, определяем вакансию
+        if candidate_url_found:
+            print(f"🔍 SEND_CHAT_MESSAGE: Найдена ссылка на кандидата: {candidate_url_found}")
             
-            if error:
-                return JsonResponse({
-                    'success': False, 
-                    'error': f'Ошибка определения вакансии: {error}'
-                })
-            
-            if vacancy_id:
-                # Обновляем сессию чата с найденной вакансией
-                from apps.vacancies.models import Vacancy
-                try:
-                    vacancy = Vacancy.objects.get(external_id=str(vacancy_id))
-                    chat_session.vacancy = vacancy
+            # Проверяем, есть ли в ссылке вакансия
+            if '/vacancy/' in candidate_url_found:
+                # Извлекаем vacancy_id из ссылки
+                vacancy_match = re.search(r'/vacancy/(\d+)/', candidate_url_found)
+                if vacancy_match:
+                    vacancy_id = vacancy_match.group(1)
+                    from apps.vacancies.models import Vacancy
+                    try:
+                        determined_vacancy = Vacancy.objects.get(external_id=str(vacancy_id))
+                        print(f"✅ SEND_CHAT_MESSAGE: Вакансия определена из ссылки: {determined_vacancy.name}")
+                    except Vacancy.DoesNotExist:
+                        print(f"⚠️ SEND_CHAT_MESSAGE: Вакансия {vacancy_id} не найдена в локальной БД")
+            elif '/applicants/filter/' in candidate_url_found:
+                # Ссылка без вакансии - определяем через API
+                vacancy_id, candidate_id, error = _determine_vacancy_from_candidate_link(
+                    candidate_url_found, 
+                    request.user
+                )
+                
+                if error:
+                    return JsonResponse({
+                        'success': False, 
+                        'error': f'Ошибка определения вакансии: {error}'
+                    })
+                
+                if vacancy_id:
+                    from apps.vacancies.models import Vacancy
+                    try:
+                        determined_vacancy = Vacancy.objects.get(external_id=str(vacancy_id))
+                        print(f"✅ SEND_CHAT_MESSAGE: Вакансия определена через API: {determined_vacancy.name}")
+                    except Vacancy.DoesNotExist:
+                        print(f"⚠️ SEND_CHAT_MESSAGE: Вакансия {vacancy_id} не найдена в локальной БД")
+        
+        # 2. Если вакансия не определена из ссылки, пытаемся определить из текста сообщения
+        if not determined_vacancy:
+            print(f"🔍 SEND_CHAT_MESSAGE: Вакансия не найдена в ссылке, пытаемся определить из текста")
+            determined_vacancy = _determine_vacancy_from_text(message_text, request.user)
+            if determined_vacancy:
+                print(f"✅ SEND_CHAT_MESSAGE: Вакансия определена из текста: {determined_vacancy.name}")
+        
+        # Если вакансия определена и отличается от текущей, переключаемся на правильный чат
+        if determined_vacancy and (not current_chat_session.vacancy or current_chat_session.vacancy.id != determined_vacancy.id):
+            print(f"🔄 SEND_CHAT_MESSAGE: Переключаемся с вакансии '{current_chat_session.vacancy.name if current_chat_session.vacancy else 'Без вакансии'}' на '{determined_vacancy.name}'")
+            # Находим или создаем сессию чата для правильной вакансии
+            chat_session = _get_or_create_chat_session_for_vacancy(request.user, determined_vacancy)
+        else:
+            # Используем текущую сессию или определяем вакансию из текущей сессии
+            chat_session = current_chat_session
+            if not chat_session.vacancy:
+                # Если в текущей сессии нет вакансии, но мы определили её из сообщения
+                if determined_vacancy:
+                    chat_session.vacancy = determined_vacancy
+                    chat_session.title = determined_vacancy.name
                     chat_session.save()
-                    print(f"✅ SEND_CHAT_MESSAGE: Сессия чата обновлена с вакансией: {vacancy.name}")
-                except Vacancy.DoesNotExist:
-                    print(f"⚠️ SEND_CHAT_MESSAGE: Вакансия {vacancy_id} не найдена в локальной БД")
-                    # Продолжаем работу, но вакансия может быть не установлена
+                    print(f"✅ SEND_CHAT_MESSAGE: Обновлена текущая сессия с вакансией: {determined_vacancy.name}")
         
-        # Получаем вакансию из сессии чата
-        vacancy = chat_session.vacancy
-        if not vacancy:
-            return JsonResponse({'success': False, 'error': 'Вакансия не найдена для данного чата'})
-        
-        # Сохраняем пользовательское сообщение
+        # Создаем пользовательское сообщение в правильном чате ДО обработки действий
         user_message = ChatMessage.objects.create(
             session=chat_session,
             message_type='user',
             content=message_text
         )
+        print(f"✅ SEND_CHAT_MESSAGE: Создано пользовательское сообщение в сессии {chat_session.id}")
         
         # Определяем тип действия
         action_type = 'hrscreening'  # По умолчанию HR-скрининг
@@ -4206,16 +4392,42 @@ def send_chat_message(request):
             action_type = 'final_interview'
         elif message_text.startswith('/s '):
             action_type = 'hrscreening'
+            # Убираем префикс '/s ' из сообщения для обработки
+            message_text = message_text[3:].strip()
+        
+        print(f"🔍 SEND_CHAT_MESSAGE: action_type: {action_type}, message_text после обработки: {message_text[:100]}...")
         
         # Обрабатываем действие
         if action_type == 'hrscreening':
             # Создаем HR-скрининг
+            print(f"🔍 SEND_CHAT_MESSAGE: Создаем HRScreeningForm с user: {request.user} (тип: {type(request.user)})")
             screening_form_data = {'input_data': message_text}
             screening_form = HRScreeningForm(screening_form_data, user=request.user)
+            print(f"🔍 SEND_CHAT_MESSAGE: Форма создана, user в форме: {screening_form.user} (тип: {type(screening_form.user)})")
             
             if screening_form.is_valid():
                 try:
                     screening = screening_form.save()
+                    
+                    # Определяем вакансию из созданного скрининга
+                    screening_vacancy = None
+                    if screening.vacancy_id:
+                        from apps.vacancies.models import Vacancy
+                        try:
+                            screening_vacancy = Vacancy.objects.get(external_id=str(screening.vacancy_id))
+                            print(f"✅ SEND_CHAT_MESSAGE: Вакансия определена из скрининга: {screening_vacancy.name}")
+                        except Vacancy.DoesNotExist:
+                            print(f"⚠️ SEND_CHAT_MESSAGE: Вакансия {screening.vacancy_id} не найдена в локальной БД")
+                    
+                    # Если вакансия из скрининга отличается от текущей, переключаемся на правильный чат
+                    if screening_vacancy and (not chat_session.vacancy or chat_session.vacancy.id != screening_vacancy.id):
+                        print(f"🔄 SEND_CHAT_MESSAGE: Переключаемся на правильный чат для вакансии: {screening_vacancy.name}")
+                        # Находим или создаем сессию чата для правильной вакансии
+                        correct_chat_session = _get_or_create_chat_session_for_vacancy(request.user, screening_vacancy)
+                        # Перемещаем пользовательское сообщение в правильную сессию
+                        user_message.session = correct_chat_session
+                        user_message.save()
+                        chat_session = correct_chat_session
                     
                     # Генерируем полную ссылку с вакансией
                     full_candidate_url = None
@@ -4240,20 +4452,47 @@ def send_chat_message(request):
                             'action_type': 'hrscreening',
                             'screening_id': screening.id,
                             'candidate_name': screening.candidate_name,
-                            'vacancy_name': screening.vacancy_name,
+                            'vacancy_name': screening.vacancy_title,
                             'determined_grade': screening.determined_grade,
                             'candidate_url': candidate_url_for_metadata
                         }
                     )
                     
+                    # Формируем URL для перенаправления
+                    from django.urls import reverse
+                    redirect_url = reverse('google_oauth:chat_workflow_session', args=[chat_session.id])
+                    if chat_session.vacancy:
+                        redirect_url += f'?vacancy_id={chat_session.vacancy.id}'
+                    
+                    # Генерируем HTML для ответного сообщения
+                    from django.template.loader import render_to_string
+                    try:
+                        response_message = ChatMessage.objects.filter(
+                            session=chat_session,
+                            hr_screening=screening
+                        ).order_by('-created_at').first()
+                        if response_message:
+                            message_html = render_to_string('google_oauth/partials/chat_message.html', {
+                                'message': response_message,
+                                'user': request.user
+                            })
+                        else:
+                            message_html = None
+                    except Exception as e:
+                        print(f"⚠️ SEND_CHAT_MESSAGE: Ошибка генерации HTML: {e}")
+                        message_html = None
+                    
                     return JsonResponse({
                         'success': True,
                         'message_type': 'hrscreening',
+                        'redirect_url': redirect_url,
+                        'session_id': chat_session.id,
+                        'message_html': message_html,
                         'metadata': {
                             'action_type': 'hrscreening',
                             'screening_id': screening.id,
                             'candidate_name': screening.candidate_name,
-                            'vacancy_name': screening.vacancy_name,
+                            'vacancy_name': screening.vacancy_title,
                             'determined_grade': screening.determined_grade,
                             'candidate_url': candidate_url_for_metadata
                         }
@@ -4291,6 +4530,26 @@ def send_chat_message(request):
                 try:
                     invite = invite_form.save()
                     
+                    # Определяем вакансию из созданного инвайта
+                    invite_vacancy = None
+                    if invite.vacancy_id:
+                        from apps.vacancies.models import Vacancy
+                        try:
+                            invite_vacancy = Vacancy.objects.get(external_id=str(invite.vacancy_id))
+                            print(f"✅ SEND_CHAT_MESSAGE: Вакансия определена из инвайта: {invite_vacancy.name}")
+                        except Vacancy.DoesNotExist:
+                            print(f"⚠️ SEND_CHAT_MESSAGE: Вакансия {invite.vacancy_id} не найдена в локальной БД")
+                    
+                    # Если вакансия из инвайта отличается от текущей, переключаемся на правильный чат
+                    if invite_vacancy and (not chat_session.vacancy or chat_session.vacancy.id != invite_vacancy.id):
+                        print(f"🔄 SEND_CHAT_MESSAGE: Переключаемся на правильный чат для вакансии: {invite_vacancy.name}")
+                        # Находим или создаем сессию чата для правильной вакансии
+                        correct_chat_session = _get_or_create_chat_session_for_vacancy(request.user, invite_vacancy)
+                        # Перемещаем пользовательское сообщение в правильную сессию
+                        user_message.session = correct_chat_session
+                        user_message.save()
+                        chat_session = correct_chat_session
+                    
                     # Генерируем полную ссылку с вакансией
                     full_candidate_url = None
                     if invite.vacancy_id and invite.candidate_id:
@@ -4324,9 +4583,36 @@ def send_chat_message(request):
                         }
                     )
                     
+                    # Формируем URL для перенаправления
+                    from django.urls import reverse
+                    redirect_url = reverse('google_oauth:chat_workflow_session', args=[chat_session.id])
+                    if chat_session.vacancy:
+                        redirect_url += f'?vacancy_id={chat_session.vacancy.id}'
+                    
+                    # Генерируем HTML для ответного сообщения
+                    from django.template.loader import render_to_string
+                    try:
+                        response_message = ChatMessage.objects.filter(
+                            session=chat_session,
+                            invite=invite
+                        ).order_by('-created_at').first()
+                        if response_message:
+                            message_html = render_to_string('google_oauth/partials/chat_message.html', {
+                                'message': response_message,
+                                'user': request.user
+                            })
+                        else:
+                            message_html = None
+                    except Exception as e:
+                        print(f"⚠️ SEND_CHAT_MESSAGE: Ошибка генерации HTML: {e}")
+                        message_html = None
+                    
                     return JsonResponse({
                         'success': True,
                         'message_type': 'invite',
+                        'redirect_url': redirect_url,
+                        'session_id': chat_session.id,
+                        'message_html': message_html,
                         'metadata': {
                             'action_type': 'tech_screening',
                             'invite_id': invite.id,
@@ -4386,6 +4672,26 @@ def send_chat_message(request):
                     # Используем специальный метод для интервью (без скоркарда)
                     invite.save_for_interview()
                     
+                    # Определяем вакансию из созданного инвайта
+                    invite_vacancy = None
+                    if invite.vacancy_id:
+                        from apps.vacancies.models import Vacancy
+                        try:
+                            invite_vacancy = Vacancy.objects.get(external_id=str(invite.vacancy_id))
+                            print(f"✅ SEND_CHAT_MESSAGE: Вакансия определена из инвайта (final_interview): {invite_vacancy.name}")
+                        except Vacancy.DoesNotExist:
+                            print(f"⚠️ SEND_CHAT_MESSAGE: Вакансия {invite.vacancy_id} не найдена в локальной БД")
+                    
+                    # Если вакансия из инвайта отличается от текущей, переключаемся на правильный чат
+                    if invite_vacancy and (not chat_session.vacancy or chat_session.vacancy.id != invite_vacancy.id):
+                        print(f"🔄 SEND_CHAT_MESSAGE: Переключаемся на правильный чат для вакансии (final_interview): {invite_vacancy.name}")
+                        # Находим или создаем сессию чата для правильной вакансии
+                        correct_chat_session = _get_or_create_chat_session_for_vacancy(request.user, invite_vacancy)
+                        # Перемещаем пользовательское сообщение в правильную сессию
+                        user_message.session = correct_chat_session
+                        user_message.save()
+                        chat_session = correct_chat_session
+                    
                     # Генерируем полную ссылку с вакансией
                     full_candidate_url = None
                     if invite.vacancy_id and invite.candidate_id:
@@ -4419,9 +4725,36 @@ def send_chat_message(request):
                         }
                     )
                     
+                    # Формируем URL для перенаправления
+                    from django.urls import reverse
+                    redirect_url = reverse('google_oauth:chat_workflow_session', args=[chat_session.id])
+                    if chat_session.vacancy:
+                        redirect_url += f'?vacancy_id={chat_session.vacancy.id}'
+                    
+                    # Генерируем HTML для ответного сообщения
+                    from django.template.loader import render_to_string
+                    try:
+                        response_message = ChatMessage.objects.filter(
+                            session=chat_session,
+                            invite=invite
+                        ).order_by('-created_at').first()
+                        if response_message:
+                            message_html = render_to_string('google_oauth/partials/chat_message.html', {
+                                'message': response_message,
+                                'user': request.user
+                            })
+                        else:
+                            message_html = None
+                    except Exception as e:
+                        print(f"⚠️ SEND_CHAT_MESSAGE: Ошибка генерации HTML: {e}")
+                        message_html = None
+                    
                     return JsonResponse({
                         'success': True,
                         'message_type': 'invite',
+                        'redirect_url': redirect_url,
+                        'session_id': chat_session.id,
+                        'message_html': message_html,
                         'metadata': {
                             'action_type': 'final_interview',
                             'invite_id': invite.id,
@@ -4466,6 +4799,8 @@ def send_chat_message(request):
         return JsonResponse({'success': False, 'error': 'Неверный JSON в запросе'})
     except Exception as e:
         print(f"❌ CHAT AJAX: Общая ошибка: {e}")
+        import traceback
+        traceback.print_exc()
         return JsonResponse({'success': False, 'error': f'Внутренняя ошибка сервера: {str(e)}'})
 
 

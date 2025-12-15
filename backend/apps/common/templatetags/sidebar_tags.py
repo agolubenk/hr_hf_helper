@@ -219,6 +219,38 @@ SIDEBAR_MENU = {
                         'url': 'notion_int:settings'
                     }
                 }
+            },
+            'hhru': {
+                'title': 'HeadHunter.ru',
+                'icon': 'fab fa-hire-a-helper',
+                'url': 'hhru:dashboard',
+                'submenu': {
+                    'dashboard': {
+                        'title': 'Главная',
+                        'icon': 'fas fa-tachometer-alt',
+                        'url': 'hhru:dashboard'
+                    },
+                    'accounts': {
+                        'title': 'Аккаунты',
+                        'icon': 'fas fa-user-circle',
+                        'url': 'hhru:accounts_list'
+                    },
+                    'configurations': {
+                        'title': 'Конфигурации',
+                        'icon': 'fas fa-cog',
+                        'url': 'hhru:configurations_list'
+                    },
+                    'create_config': {
+                        'title': 'Создать конфигурацию',
+                        'icon': 'fas fa-plus',
+                        'url': 'hhru:configuration_create'
+                    },
+                    'logs': {
+                        'title': 'Логи',
+                        'icon': 'fas fa-history',
+                        'url': 'hhru:logs_list'
+                    }
+                }
             }
         }
     },
