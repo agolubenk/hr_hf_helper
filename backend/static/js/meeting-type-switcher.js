@@ -94,7 +94,11 @@ window.switchMeetingType = function(newType) {
     console.log(`✅ [SWITCHER] Установлена глобальная переменная: window.currentMeetingDuration = ${conf.defaultDuration}`);
     
     // Обновляем отображение слотов с использованием предрассчитанных данных
-    if (typeof window.switchSlotsByMeetingType === 'function') {
+    // Для интервью используем динамический пересчет с учетом выбранных участников
+    if (newType === 'interview' && typeof window.updateInterviewSlots === 'function') {
+        console.log('🔄 [SWITCHER] Переключение на интервью - обновляем слоты с учетом выбранных участников');
+        window.updateInterviewSlots();
+    } else if (typeof window.switchSlotsByMeetingType === 'function') {
         console.log('🔄 [SWITCHER] Обновление отображения слотов для типа:', newType);
         window.switchSlotsByMeetingType(newType);
         console.log('✅ [SWITCHER] Слоты обновлены');

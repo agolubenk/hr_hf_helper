@@ -3167,6 +3167,225 @@ def api_calendar_events(request):
 
 
 @login_required
+@require_http_methods(["GET", "POST"])
+def api_interview_slots(request):
+    """API для пересчета слотов интервью с учетом выбранных участников"""
+    try:
+        from apps.google_oauth.services import GoogleOAuthService, GoogleCalendarService
+        from apps.google_oauth.cache_service import GoogleAPICache
+        from apps.interviewers.models import Interviewer
+        from apps.vacancies.models import Vacancy
+        from logic.slots_calculator import SlotsCalculator
+        import json
+        from datetime import datetime, timedelta, time as dt_time
+        import pytz
+        
+        # Получаем параметры запроса
+        vacancy_id = request.GET.get('vacancy_id') or (json.loads(request.body).get('vacancy_id') if request.method == 'POST' else None)
+        interviewer_ids_str = request.GET.get('interviewer_ids') or (json.loads(request.body).get('interviewer_ids') if request.method == 'POST' else None)
+        
+        print(f"🔍 API INTERVIEW SLOTS: vacancy_id={vacancy_id}, interviewer_ids={interviewer_ids_str}")
+        
+        if not vacancy_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Не указан ID вакансии'
+            })
+        
+        # Получаем вакансию
+        try:
+            vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True)
+        except Vacancy.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Вакансия не найдена'
+            })
+        
+        # Получаем выбранных интервьюеров
+        selected_interviewers = []
+        if interviewer_ids_str:
+            try:
+                interviewer_ids = [int(id.strip()) for id in interviewer_ids_str.split(',') if id.strip()]
+                selected_interviewers = Interviewer.objects.filter(id__in=interviewer_ids, is_active=True)
+                print(f"🔍 API INTERVIEW SLOTS: Найдено {len(selected_interviewers)} выбранных интервьюеров")
+            except ValueError:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Неверный формат ID интервьюеров'
+                })
+        
+        # Если интервьюеры не выбраны, используем обязательных
+        if not selected_interviewers:
+            selected_interviewers = vacancy.mandatory_tech_interviewers.filter(is_active=True)
+            print(f"🔍 API INTERVIEW SLOTS: Используем {len(selected_interviewers)} обязательных интервьюеров")
+        
+        # Получаем OAuth аккаунт
+        oauth_service = GoogleOAuthService(request.user)
+        oauth_account = oauth_service.get_oauth_account()
+        
+        if not oauth_account:
+            return JsonResponse({
+                'success': False,
+                'message': 'Google OAuth аккаунт не подключен'
+            })
+        
+        # Получаем календарь компании
+        company_calendar_id = None
+        try:
+            from apps.company_settings.models import CompanySettings
+            company_settings = CompanySettings.get_settings()
+            if company_settings.main_calendar_id:
+                calendar_input = company_settings.main_calendar_id.strip()
+                company_calendar_id = _extract_calendar_id_from_link(calendar_input)
+        except Exception as e:
+            print(f"⚠️ API INTERVIEW SLOTS: Ошибка получения календаря компании: {e}")
+        
+        # Получаем события календаря пользователя и компании
+        calendar_service = GoogleCalendarService(oauth_service)
+        events_data = calendar_service.get_events(calendar_id='primary', days_ahead=14)
+        
+        if company_calendar_id:
+            try:
+                company_events_data = calendar_service.get_events(calendar_id=company_calendar_id, days_ahead=14)
+                events_data.extend(company_events_data)
+            except Exception as e:
+                print(f"⚠️ API INTERVIEW SLOTS: Ошибка получения событий календаря компании: {e}")
+        
+        # Преобразуем события в формат для калькулятора
+        interview_events_for_calc = []
+        for event in events_data:
+            try:
+                start_time = None
+                if 'dateTime' in event.get('start', {}):
+                    start_time = datetime.fromisoformat(event['start']['dateTime'].replace('Z', '+00:00'))
+                    minsk_tz = pytz.timezone('Europe/Minsk')
+                    start_time = start_time.astimezone(minsk_tz)
+                elif 'date' in event.get('start', {}):
+                    start_time = datetime.fromisoformat(event['start']['date'])
+                    minsk_tz = pytz.timezone('Europe/Minsk')
+                    start_time = minsk_tz.localize(start_time)
+                
+                end_time = None
+                if 'dateTime' in event.get('end', {}):
+                    end_time = datetime.fromisoformat(event['end']['dateTime'].replace('Z', '+00:00'))
+                    minsk_tz = pytz.timezone('Europe/Minsk')
+                    end_time = end_time.astimezone(minsk_tz)
+                elif 'date' in event.get('end', {}):
+                    end_time = datetime.fromisoformat(event['end']['date'])
+                    minsk_tz = pytz.timezone('Europe/Minsk')
+                    end_time = minsk_tz.localize(end_time)
+                
+                if start_time:
+                    is_all_day = 'date' in event.get('start', {})
+                    interview_events_for_calc.append({
+                        'start': start_time.isoformat(),
+                        'end': end_time.isoformat() if end_time else start_time.isoformat(),
+                        'is_all_day': is_all_day,
+                    })
+            except Exception as e:
+                print(f"⚠️ API INTERVIEW SLOTS: Ошибка обработки события: {e}")
+        
+        # Добавляем события выбранных интервьюеров
+        for interviewer in selected_interviewers:
+            calendar_id = None
+            
+            # Способ 1: Извлекаем из calendar_link
+            if interviewer.calendar_link:
+                calendar_id = _extract_calendar_id_from_link(interviewer.calendar_link)
+            
+            # Способ 2: Проверяем календарь по email
+            if not calendar_id:
+                calendar = calendar_service.get_calendar_by_email(interviewer.email)
+                if calendar:
+                    calendar_id = calendar['id']
+            
+            # Способ 3: Используем email
+            if not calendar_id:
+                calendar_id = interviewer.email
+            
+            if calendar_id:
+                try:
+                    interviewer_events = calendar_service.get_events(calendar_id=calendar_id, days_ahead=14)
+                    print(f"📅 API INTERVIEW SLOTS: Получено {len(interviewer_events)} событий от {interviewer.email}")
+                    
+                    for event_data in interviewer_events:
+                        try:
+                            start_time = None
+                            if 'dateTime' in event_data.get('start', {}):
+                                start_time = datetime.fromisoformat(event_data['start']['dateTime'].replace('Z', '+00:00'))
+                                minsk_tz = pytz.timezone('Europe/Minsk')
+                                start_time = start_time.astimezone(minsk_tz)
+                            
+                            end_time = None
+                            if 'dateTime' in event_data.get('end', {}):
+                                end_time = datetime.fromisoformat(event_data['end']['dateTime'].replace('Z', '+00:00'))
+                                minsk_tz = pytz.timezone('Europe/Minsk')
+                                end_time = end_time.astimezone(minsk_tz)
+                            
+                            if start_time:
+                                is_all_day = 'date' in event_data.get('start', {})
+                                interview_events_for_calc.append({
+                                    'start': start_time.isoformat(),
+                                    'end': end_time.isoformat() if end_time else start_time.isoformat(),
+                                    'is_all_day': is_all_day,
+                                })
+                        except Exception as e:
+                            print(f"⚠️ API INTERVIEW SLOTS: Ошибка обработки события интервьюера {interviewer.email}: {e}")
+                except Exception as e:
+                    print(f"⚠️ API INTERVIEW SLOTS: Ошибка получения событий для {interviewer.email}: {e}")
+        
+        # Получаем настройки рабочего времени из профиля пользователя
+        work_start = 11
+        work_end = 18
+        meeting_interval = 15
+        
+        if hasattr(request.user, 'interview_start_time') and request.user.interview_start_time:
+            if isinstance(request.user.interview_start_time, str):
+                work_start = dt_time.fromisoformat(request.user.interview_start_time).hour
+            else:
+                work_start = request.user.interview_start_time.hour
+        
+        if hasattr(request.user, 'interview_end_time') and request.user.interview_end_time:
+            if isinstance(request.user.interview_end_time, str):
+                work_end = dt_time.fromisoformat(request.user.interview_end_time).hour
+            else:
+                work_end = request.user.interview_end_time.hour
+        
+        if hasattr(request.user, 'meeting_interval_minutes') and request.user.meeting_interval_minutes:
+            meeting_interval = request.user.meeting_interval_minutes
+        
+        # Рассчитываем слоты
+        interview_duration = vacancy.tech_interview_duration if hasattr(vacancy, 'tech_interview_duration') and vacancy.tech_interview_duration else 90
+        
+        calculator = SlotsCalculator(
+            work_start_hour=work_start,
+            work_end_hour=work_end,
+            meeting_interval_minutes=meeting_interval
+        )
+        interview_slots = calculator.calculate_slots_for_two_weeks(
+            interview_events_for_calc,
+            required_duration_minutes=interview_duration
+        )
+        
+        print(f"📅 API INTERVIEW SLOTS: Рассчитано {len(interview_slots)} дней со слотами")
+        
+        return JsonResponse({
+            'success': True,
+            'slots': interview_slots,
+            'interviewer_count': len(selected_interviewers)
+        })
+        
+    except Exception as e:
+        print(f"❌ API INTERVIEW SLOTS: Ошибка: {e}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка расчета слотов: {str(e)}'
+        })
+
+
+@login_required
 def api_interviewers_autocomplete(request):
     """API для автодополнения интервьюеров по вакансии"""
     try:
@@ -5485,99 +5704,15 @@ def chat_workflow(request, session_id=None):
         print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Базовые события от пользователя и компании: {len(interview_events_for_calc)}")
         print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Из них событий календаря компании: {len([e for e in calendar_events_data if e.get('calendar_source', '').startswith('company')])}")
         
-        if mandatory_interviewers:
-            print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Найдено {len(mandatory_interviewers)} обязательных интервьюеров")
-            
-            try:
-                from apps.google_oauth.services import GoogleOAuthService, GoogleCalendarService
-                oauth_service = GoogleOAuthService(request.user)
-                calendar_service = GoogleCalendarService(oauth_service)
-                
-                # Список используемых календарей для логирования
-                used_calendars = []
-                
-                for interviewer in mandatory_interviewers:
-                    calendar_id = None
-                    
-                    # Способ 1: Извлекаем из calendar_link
-                    if interviewer.calendar_link:
-                        calendar_id = _extract_calendar_id_from_link(interviewer.calendar_link)
-                        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Интервьюер {interviewer.email} - извлечен calendar_id из ссылки: {calendar_id}")
-                    
-                    # Способ 2: Проверяем календарь по email
-                    if not calendar_id:
-                        calendar = calendar_service.get_calendar_by_email(interviewer.email)
-                        if calendar:
-                            calendar_id = calendar['id']
-                            print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Интервьюер {interviewer.email} - найден календарь по email: {calendar_id}")
-                    
-                    # Способ 3: Используем email
-                    if not calendar_id:
-                        calendar_id = interviewer.email
-                        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Интервьюер {interviewer.email} - используем email как calendar_id: {calendar_id}")
-                    
-                    if calendar_id:
-                        used_calendars.append(f"{interviewer.email} ({calendar_id})")
-                        
-                        try:
-                            print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Загружаем события для {interviewer.email}, calendar_id={calendar_id}")
-                            interviewer_events = calendar_service.get_events(calendar_id=calendar_id, days_ahead=14)
-                            print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Получено {len(interviewer_events)} событий от {interviewer.email}")
-                            
-                            # Преобразуем в формат для калькулятора
-                            for event_data in interviewer_events:
-                                try:
-                                    # Получаем информацию о владельце/организаторе события
-                                    organizer_email = None
-                                    organizer_name = None
-                                    if 'organizer' in event_data:
-                                        organizer_email = event_data['organizer'].get('email', '')
-                                        organizer_name = event_data['organizer'].get('displayName', '')
-                                    
-                                    # Логируем информацию о событии интервьюера
-                                    event_title = event_data.get('summary', 'Без названия')
-                                    print(f"📅 СОБЫТИЕ ИНТЕРВЬЮЕРА [{interviewer.email}]: '{event_title}'")
-                                    if organizer_email:
-                                        print(f"   👤 Организатор: {organizer_email}" + (f" ({organizer_name})" if organizer_name else ""))
-                                    
-                                    start_time = None
-                                    if 'dateTime' in event_data['start']:
-                                        start_time = datetime.fromisoformat(event_data['start']['dateTime'].replace('Z', '+00:00'))
-                                        minsk_tz = pytz.timezone('Europe/Minsk')
-                                        start_time = start_time.astimezone(minsk_tz)
-                                    
-                                    end_time = None
-                                    if 'dateTime' in event_data['end']:
-                                        end_time = datetime.fromisoformat(event_data['end']['dateTime'].replace('Z', '+00:00'))
-                                        minsk_tz = pytz.timezone('Europe/Minsk')
-                                        end_time = end_time.astimezone(minsk_tz)
-                                    
-                                    if start_time:
-                                        is_all_day = 'date' in event_data['start']
-                                        # Добавляем событие интервьюера в формат для калькулятора
-                                        interview_events_for_calc.append({
-                                            'start': start_time.isoformat(),
-                                            'end': end_time.isoformat() if end_time else start_time.isoformat(),
-                                            'is_all_day': is_all_day,
-                                        })
-                                except Exception as e:
-                                    print(f"⚠️ Ошибка обработки события интервьюера {interviewer.email}: {e}")
-                            
-                            print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Обработано событий от {interviewer.email}, теперь всего: {len(interview_events_for_calc)}")
-                        except Exception as e:
-                            print(f"⚠️ Ошибка получения событий для {interviewer.email}: {e}")
-                    else:
-                        print(f"⚠️ СЛОТЫ ИНТЕРВЬЮ: Не удалось определить calendar_id для {interviewer.email}")
-                            
-                print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Итого событий для расчета слотов: {len(interview_events_for_calc)}")
-                print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Из них: пользователь + компания = {len(calendar_events_data)}, интервьюеры = {len(interview_events_for_calc) - len(calendar_events_data)}")
-                print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Использованные календари: пользователь + компания + {', '.join(used_calendars) if used_calendars else 'нет интервьюеров'}")
-            except Exception as e:
-                print(f"⚠️ Ошибка при получении событий интервьюеров: {e}")
-                import traceback
-                traceback.print_exc()
+        # ВАЖНО: При загрузке страницы НЕ добавляем события интервьюеров
+        # Слоты для интервью будут рассчитываться динамически через API
+        # на основе выбранных участников (через JavaScript)
+        # Это позволяет показывать слоты только для выбранных интервьюеров
+        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Пропускаем добавление событий интервьюеров при загрузке страницы")
+        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Слоты будут обновлены через API на основе выбранных участников")
         
-        # Рассчитываем слоты для интервью
+        # Рассчитываем слоты для интервью только на основе событий пользователя и компании
+        # JavaScript обновит их для выбранных участников
         interview_duration = None
         if hasattr(vacancy, 'tech_interview_duration') and vacancy.tech_interview_duration:
             interview_duration = vacancy.tech_interview_duration
@@ -5585,13 +5720,16 @@ def chat_workflow(request, session_id=None):
             interview_duration = 90
         
         print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Длительность встречи: {interview_duration} минут")
+        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Рассчитываем базовые слоты (без интервьюеров) - будут обновлены через API")
         
+        # Рассчитываем базовые слоты только для пользователя и компании
+        # JavaScript обновит их для выбранных участников при загрузке страницы
         interview_slots = calculator.calculate_slots_for_two_weeks(
             interview_events_for_calc,
             required_duration_minutes=interview_duration
         )
         
-        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Рассчитано {len(interview_slots)} дней со слотами")
+        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Рассчитано {len(interview_slots)} дней со слотами (базовые, без интервьюеров)")
     
     # Получаем интервьюеров для технического интервью из обязательных участников
     vacancy_interviewers = []

@@ -555,7 +555,8 @@ function updateLastUpdateTime() {
     }
 }
 
-function updateSlotsDisplay(currentWeekSlots, nextWeekSlots) {
+// Экспортируем функцию в глобальную область
+window.updateSlotsDisplay = function(currentWeekSlots, nextWeekSlots) {
     console.log('🔄 Обновление отображения слотов...');
     
     // Обновляем текущую неделю
@@ -588,9 +589,19 @@ function updateSlotsDisplay(currentWeekSlots, nextWeekSlots) {
     updateSlotButtons(currentWeekSlots, nextWeekSlots);
 }
 
+// Флаг для предотвращения рекурсии при обновлении слотов интервью
+let isUpdatingInterviewSlots = false;
+
 // Новая функция для переключения между предрассчитанными слотами
 function switchSlotsByMeetingType(meetingType) {
     console.log(`🔄 [SLOTS] Переключение на слоты для типа: ${meetingType}`);
+    
+    // Если переключаемся на интервью и не идет процесс обновления, обновляем слоты с учетом выбранных участников
+    if (meetingType === 'interview' && typeof window.updateInterviewSlots === 'function' && !isUpdatingInterviewSlots) {
+        console.log(`🔄 [SLOTS] Переключение на интервью - обновляем слоты с учетом выбранных участников`);
+        window.updateInterviewSlots();
+        return; // updateInterviewSlots сам вызовет обновление отображения
+    }
     
     // Определяем какие слоты использовать
     let slots = [];

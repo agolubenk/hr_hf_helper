@@ -3338,9 +3338,191 @@ window.userPhotoUrl = null;
                     hiddenInput.disabled = false;
                     console.log(`✅ [INTERVIEWER] Интервьюер ${interviewerId} включен`);
                 }
+                
+                // Если выбран тип "Интервью", пересчитываем слоты
+                if (typeof window.getCurrentMeetingType === 'function' && window.getCurrentMeetingType() === 'interview') {
+                    console.log(`🔄 [INTERVIEWER] Пересчитываем слоты для интервью с учетом выбранных участников`);
+                    if (typeof window.updateInterviewSlots === 'function') {
+                        window.updateInterviewSlots();
+                    }
+                }
+            };
+            
+            // Функция для обновления слотов интервью с учетом выбранных участников
+            window.updateInterviewSlots = function() {
+                console.log(`🔄 [SLOTS] Обновление слотов интервью с учетом выбранных участников`);
+                
+                // Устанавливаем флаг, чтобы предотвратить рекурсию
+                if (window.isUpdatingInterviewSlots) {
+                    console.log(`⚠️ [SLOTS] Обновление уже идет, пропускаем`);
+                    return;
+                }
+                window.isUpdatingInterviewSlots = true;
+                
+                // Получаем ID вакансии из URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const vacancyId = urlParams.get('vacancy_id');
+                
+                if (!vacancyId) {
+                    console.warn(`⚠️ [SLOTS] vacancy_id не найден в URL`);
+                    window.isUpdatingInterviewSlots = false;
+                    return;
+                }
+                
+                // Получаем выбранных интервьюеров
+                const selectedInterviewers = [];
+                document.querySelectorAll('.btn-interviewer-pill.active').forEach(button => {
+                    const interviewerId = button.getAttribute('data-interviewer-id');
+                    if (interviewerId) {
+                        selectedInterviewers.push(interviewerId);
+                    }
+                });
+                
+                console.log(`🔍 [SLOTS] Выбранные интервьюеры: ${selectedInterviewers.length > 0 ? selectedInterviewers.join(', ') : 'нет (будут использованы обязательные)'}`);
+                
+                // Показываем индикатор загрузки (если есть элемент для этого)
+                const slotsCardBody = document.getElementById('slotsCardBody');
+                if (slotsCardBody) {
+                    const loadingIndicator = slotsCardBody.querySelector('.slots-loading-indicator');
+                    if (!loadingIndicator) {
+                        // Создаем индикатор загрузки, если его нет
+                        const loadingDiv = document.createElement('div');
+                        loadingDiv.className = 'slots-loading-indicator text-center py-3';
+                        loadingDiv.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Обновление слотов...';
+                        loadingDiv.style.display = 'block';
+                        slotsCardBody.insertBefore(loadingDiv, slotsCardBody.firstChild);
+                    } else {
+                        loadingIndicator.style.display = 'block';
+                    }
+                }
+                
+                // Формируем URL для API
+                // Если интервьюеры не выбраны, отправляем пустую строку - API использует обязательных
+                const interviewerIds = selectedInterviewers.length > 0 ? selectedInterviewers.join(',') : '';
+                const apiUrl = `/google-oauth/api/interview-slots/?vacancy_id=${vacancyId}&interviewer_ids=${interviewerIds}`;
+                
+                console.log(`🔍 [SLOTS] Запрос к API: ${apiUrl}`);
+                
+                // Запрашиваем обновленные слоты
+                fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    console.log(`🔍 [SLOTS] Ответ от API, status: ${response.status}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(`🔍 [SLOTS] Данные от API:`, data);
+                    
+                    // Скрываем индикатор загрузки
+                    const slotsCardBody = document.getElementById('slotsCardBody');
+                    if (slotsCardBody) {
+                        const loadingIndicator = slotsCardBody.querySelector('.slots-loading-indicator');
+                        if (loadingIndicator) {
+                            loadingIndicator.style.display = 'none';
+                        }
+                    }
+                    
+                    if (data.success && data.slots) {
+                        console.log(`✅ [SLOTS] Получено ${data.slots.length} дней со слотами для ${data.interviewer_count || 0} интервьюеров`);
+                        // Обновляем глобальную переменную
+                        window.interviewSlots = data.slots;
+                        // Сбрасываем флаг перед обновлением отображения
+                        window.isUpdatingInterviewSlots = false;
+                        // Обновляем отображение напрямую, используя логику из switchSlotsByMeetingType
+                        if (data.slots && data.slots.length > 0) {
+                            const today = new Date();
+                            const currentWeekSlots = [];
+                            const nextWeekSlots = [];
+                            
+                            // Определяем начало следующей недели (следующий понедельник)
+                            const dayOfWeek = today.getDay();
+                            const daysUntilMonday = dayOfWeek === 0 ? 1 : (7 - dayOfWeek + 1);
+                            const nextMonday = new Date(today);
+                            nextMonday.setDate(today.getDate() + daysUntilMonday);
+                            nextMonday.setHours(0, 0, 0, 0);
+                            
+                            // Разделяем слоты по неделям
+                            data.slots.forEach(slot => {
+                                const slotDate = new Date(slot.date);
+                                if (slotDate < nextMonday) {
+                                    currentWeekSlots.push(slot);
+                                } else {
+                                    nextWeekSlots.push(slot);
+                                }
+                            });
+                            
+                            console.log(`📅 Разделение слотов: текущая неделя = ${currentWeekSlots.length} дней, следующая = ${nextWeekSlots.length} дней`);
+                            
+                            // Используем функцию обновления отображения из vacancy-slots.js
+                            if (typeof updateSlotsDisplay === 'function') {
+                                updateSlotsDisplay(currentWeekSlots, nextWeekSlots);
+                            } else if (typeof window.switchSlotsByMeetingType === 'function') {
+                                // Fallback: используем стандартную функцию
+                                window.switchSlotsByMeetingType('interview');
+                            }
+                        } else {
+                            // Если слотов нет, очищаем отображение
+                            if (typeof updateSlotsDisplay === 'function') {
+                                updateSlotsDisplay([], []);
+                            }
+                            console.warn(`⚠️ [SLOTS] Нет доступных слотов для выбранных интервьюеров`);
+                        }
+                    } else {
+                        console.error(`❌ [SLOTS] Ошибка получения слотов:`, data.message || data);
+                        // Показываем сообщение об ошибке пользователю
+                        const slotsCardBody = document.getElementById('slotsCardBody');
+                        if (slotsCardBody) {
+                            const errorDiv = document.createElement('div');
+                            errorDiv.className = 'alert alert-warning alert-sm';
+                            errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>Не удалось обновить слоты: ${data.message || 'Неизвестная ошибка'}`;
+                            slotsCardBody.insertBefore(errorDiv, slotsCardBody.firstChild);
+                            // Удаляем сообщение через 5 секунд
+                            setTimeout(() => {
+                                if (errorDiv.parentNode) {
+                                    errorDiv.parentNode.removeChild(errorDiv);
+                                }
+                            }, 5000);
+                        }
+                        window.isUpdatingInterviewSlots = false;
+                    }
+                })
+                .catch(error => {
+                    console.error(`❌ [SLOTS] Ошибка при запросе к API:`, error);
+                    
+                    // Скрываем индикатор загрузки
+                    const slotsCardBody = document.getElementById('slotsCardBody');
+                    if (slotsCardBody) {
+                        const loadingIndicator = slotsCardBody.querySelector('.slots-loading-indicator');
+                        if (loadingIndicator) {
+                            loadingIndicator.style.display = 'none';
+                        }
+                        
+                        // Показываем сообщение об ошибке
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'alert alert-danger alert-sm';
+                        errorDiv.innerHTML = `<i class="fas fa-exclamation-circle me-2"></i>Ошибка при обновлении слотов: ${error.message}`;
+                        slotsCardBody.insertBefore(errorDiv, slotsCardBody.firstChild);
+                        // Удаляем сообщение через 5 секунд
+                        setTimeout(() => {
+                            if (errorDiv.parentNode) {
+                                errorDiv.parentNode.removeChild(errorDiv);
+                            }
+                        }, 5000);
+                    }
+                    
+                    window.isUpdatingInterviewSlots = false;
+                });
             };
             
             // Автоматическое выделение единственного интервьюера при загрузке страницы
+            // и инициализация слотов для выбранных участников
             document.addEventListener('DOMContentLoaded', function() {
                 const interviewerPills = document.querySelectorAll('.btn-interviewer-pill');
                 if (interviewerPills.length === 1) {
@@ -3356,6 +3538,38 @@ window.userPhotoUrl = null;
                         }
                     }
                 }
+                
+                // Инициализация слотов для выбранных участников при загрузке страницы
+                // Ждем немного, чтобы все скрипты загрузились
+                setTimeout(function() {
+                    // Проверяем, есть ли активные интервьюеры
+                    const activeInterviewers = document.querySelectorAll('.btn-interviewer-pill.active');
+                    
+                    // Проверяем, выбран ли тип встречи "интервью"
+                    const interviewBtn = document.getElementById('btnInterview');
+                    const isInterviewTypeActive = interviewBtn && interviewBtn.classList.contains('active');
+                    const currentType = typeof window.getCurrentMeetingType === 'function' ? window.getCurrentMeetingType() : null;
+                    
+                    // Если тип интервью активен (по кнопке или по функции), обновляем слоты
+                    if (isInterviewTypeActive || currentType === 'interview') {
+                        if (activeInterviewers.length > 0) {
+                            console.log(`🔄 [INIT] При загрузке страницы найдено ${activeInterviewers.length} активных интервьюеров, обновляем слоты для выбранных участников`);
+                            if (typeof window.updateInterviewSlots === 'function') {
+                                window.updateInterviewSlots();
+                            } else {
+                                console.warn(`⚠️ [INIT] Функция updateInterviewSlots не найдена`);
+                            }
+                        } else {
+                            console.log(`ℹ️ [INIT] Тип интервью активен, но нет выбранных интервьюеров - будут использованы обязательные из API`);
+                            // Даже если нет выбранных интервьюеров, обновляем слоты (API использует обязательных)
+                            if (typeof window.updateInterviewSlots === 'function') {
+                                window.updateInterviewSlots();
+                            }
+                        }
+                    } else {
+                        console.log(`ℹ️ [INIT] Тип встречи не интервью, слоты не обновляем`);
+                    }
+                }, 800); // Увеличиваем задержку, чтобы все скрипты точно загрузились
             });
             
             // Настройки пользователя для рабочих часов
