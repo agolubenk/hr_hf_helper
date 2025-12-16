@@ -1443,9 +1443,23 @@ class HuntflowService:
             Результат загрузки с распарсенными данными или None
         """
         try:
+            # Определяем MIME тип файла
+            import mimetypes
+            mime_type, _ = mimetypes.guess_type(file_name)
+            if not mime_type:
+                # Определяем по расширению
+                if file_name.lower().endswith('.pdf'):
+                    mime_type = 'application/pdf'
+                elif file_name.lower().endswith(('.doc', '.docx')):
+                    mime_type = 'application/msword' if file_name.lower().endswith('.doc') else 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                elif file_name.lower().endswith('.txt'):
+                    mime_type = 'text/plain'
+                else:
+                    mime_type = 'application/pdf'  # По умолчанию
+            
             # Подготавливаем файл
             files = {
-                'file': (file_name, file_data, 'application/pdf')
+                'file': (file_name, file_data, mime_type)
             }
             
             # Подготавливаем заголовки

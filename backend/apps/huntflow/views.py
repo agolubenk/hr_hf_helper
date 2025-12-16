@@ -17,6 +17,7 @@ import json
 import logging
 
 from .services import HuntflowService
+from .forms import CreateApplicantForm
 
 logger = logging.getLogger(__name__)
 
@@ -589,20 +590,49 @@ def applicant_detail(request, account_id, applicant_id):
         # Получаем информацию об организации для хлебных крошек
         accounts = huntflow_service.get_accounts()
         account_name = f'Организация {account_id}'
+        account_slug = None  # Для формирования URL
         if accounts and 'items' in accounts:
             for account in accounts['items']:
                 if account['id'] == account_id:
                     account_name = account.get('name', account_name)
+                    # Формируем slug для URL (название в нижнем регистре, без пробелов и спецсимволов)
+                    import re
+                    account_slug = re.sub(r'[^a-z0-9]', '', account_name.lower()) if account_name else None
                     break
+        
+        # Получаем ID вакансии для формирования ссылки
+        vacancy_id_for_link = None
+        if applicant.get('vacancy_info') and applicant['vacancy_info'].get('id'):
+            vacancy_id_for_link = applicant['vacancy_info']['id']
+        elif applicant.get('links') and len(applicant['links']) > 0:
+            # Пытаемся получить из links
+            link = applicant['links'][0]
+            if 'vacancy' in link:
+                vacancy_id_for_link = link['vacancy']
         
         # Формируем имя кандидата для хлебных крошек
         applicant_name = f'Кандидат {applicant_id}'
         if applicant.get('first_name') or applicant.get('last_name'):
             applicant_name = f"{applicant.get('first_name', '')} {applicant.get('last_name', '')}".strip()
         
+        # Формируем ссылку на кандидата в Huntflow
+        huntflow_link = None
+        if account_slug and vacancy_id_for_link:
+            base_url = huntflow_service._get_base_url()
+            # Извлекаем домен из base_url (например, https://api.huntflow.ru/v2 -> https://huntflow.ru)
+            if 'api.huntflow' in base_url:
+                domain = base_url.replace('api.huntflow', 'huntflow').replace('/v2', '').replace('/api', '').rstrip('/')
+            elif 'huntflow.ru' in base_url or 'huntflow.dev' in base_url:
+                domain = base_url.replace('/v2', '').replace('/api', '').rstrip('/')
+            else:
+                domain = 'https://huntflow.ru'
+            
+            huntflow_link = f"{domain}/my/{account_slug}#/vacancy/{vacancy_id_for_link}/filter/workon/id/{applicant_id}"
+        
         context = {
             'account_id': correct_account_id,  # Используем правильный account_id
             'account_name': account_name,
+            'account_slug': account_slug,
             'accounts': accounts,  # Добавляем для sidebar menu
             'applicant': applicant,
             'applicant_name': applicant_name,
@@ -610,7 +640,9 @@ def applicant_detail(request, account_id, applicant_id):
             'questionary_schema': questionary_schema,
             'applicant_logs': applicant_logs_processed,
             'comments': comments,
-            'comments_count': comments_count
+            'comments_count': comments_count,
+            'huntflow_link': huntflow_link,
+            'vacancy_id_for_link': vacancy_id_for_link
         }
         
         
@@ -1850,4 +1882,310 @@ def hh_mark_viewed_ajax(request, account_id, vacancy_id):
         return JsonResponse({
             'success': False,
             'message': f'Ошибка: {str(e)}'
+        }, status=500)
+
+
+@login_required
+def create_applicant(request):
+    """
+    Страница для создания кандидата и привязки к вакансии
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь
+    - request.POST: данные формы создания кандидата
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - CreateApplicantForm: форма для создания кандидата
+    - Vacancy.objects: список активных вакансий
+    - HuntflowService: сервис для создания кандидата в Huntflow
+    
+    ОБРАБОТКА:
+    - Отображение формы с активными вакансиями
+    - Валидация данных формы
+    - Создание кандидата в Huntflow через API
+    - Привязка кандидата к выбранной вакансии
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с формой и данными
+    - render: HTML страница 'huntflow/create_applicant.html'
+    - redirect: перенаправление на страницу кандидата после создания
+    
+    СВЯЗИ:
+    - Использует: CreateApplicantForm, HuntflowService, Vacancy
+    - Передает данные в: huntflow/create_applicant.html
+    - Может вызываться из: huntflow/ URL patterns
+    """
+    try:
+        # Получаем правильный account_id
+        correct_account_id = get_correct_account_id(request.user)
+        
+        if not correct_account_id:
+            messages.error(request, 'Не удалось определить организацию Huntflow. Проверьте настройки.')
+            return redirect('huntflow:dashboard')
+        
+        huntflow_service = HuntflowService(request.user)
+        
+        # Получаем информацию об организации для хлебных крошек
+        accounts = huntflow_service.get_accounts()
+        account_name = f'Организация {correct_account_id}'
+        if accounts and 'items' in accounts:
+            for account in accounts['items']:
+                if account['id'] == correct_account_id:
+                    account_name = account.get('name', account_name)
+                    break
+        
+        if request.method == 'POST':
+            form = CreateApplicantForm(request.POST, request.FILES, user=request.user)
+            
+            if form.is_valid():
+                try:
+                    # Проверяем, загружен ли файл резюме
+                    resume_file = form.cleaned_data.get('resume_file')
+                    parsed_data = None
+                    parsed_file_id = request.POST.get('parsed_file_id')  # ID файла из AJAX парсинга
+                    
+                    # Если загружен файл, парсим его через Huntflow
+                    if resume_file:
+                        try:
+                            # Читаем файл
+                            file_data = resume_file.read()
+                            file_name = resume_file.name
+                            
+                            logger.info(f"Загружен файл резюме: {file_name} ({len(file_data)} байт)")
+                            
+                            # Загружаем и парсим файл через Huntflow API
+                            parsed_data = huntflow_service.upload_file(
+                                account_id=correct_account_id,
+                                file_data=file_data,
+                                file_name=file_name,
+                                parse_file=True
+                            )
+                            
+                            if parsed_data:
+                                logger.info(f"Файл успешно обработан парсером Huntflow")
+                                
+                                # Извлекаем данные из распарсенного файла
+                                fields = parsed_data.get('fields', {})
+                                name_data = fields.get('name', {})
+                                
+                                # Автозаполняем форму данными из парсера, если поля пустые
+                                if not form.cleaned_data.get('first_name') and name_data.get('first'):
+                                    form.cleaned_data['first_name'] = name_data.get('first')
+                                
+                                if not form.cleaned_data.get('last_name') and name_data.get('last'):
+                                    form.cleaned_data['last_name'] = name_data.get('last')
+                                
+                                if not form.cleaned_data.get('middle_name') and name_data.get('middle'):
+                                    form.cleaned_data['middle_name'] = name_data.get('middle')
+                                
+                                if not form.cleaned_data.get('email') and fields.get('email'):
+                                    form.cleaned_data['email'] = fields.get('email')
+                                
+                                if not form.cleaned_data.get('phone') and fields.get('phones'):
+                                    phones = fields.get('phones', [])
+                                    if phones and len(phones) > 0:
+                                        form.cleaned_data['phone'] = phones[0]
+                                
+                                if not form.cleaned_data.get('position') and fields.get('position'):
+                                    form.cleaned_data['position'] = fields.get('position')
+                                
+                                if not form.cleaned_data.get('salary') and fields.get('salary'):
+                                    form.cleaned_data['salary'] = str(fields.get('salary'))
+                                
+                                # Если текст резюме не заполнен, используем текст из парсера
+                                if not form.cleaned_data.get('resume_text') and parsed_data.get('text'):
+                                    form.cleaned_data['resume_text'] = parsed_data.get('text')
+                                
+                                messages.info(request, 'Файл резюме успешно обработан. Данные автоматически заполнены.')
+                            else:
+                                messages.warning(request, 'Не удалось обработать файл через парсер Huntflow. Продолжаем с введенными данными.')
+                                
+                        except Exception as e:
+                            logger.error(f"Ошибка при обработке файла: {e}")
+                            messages.warning(request, f'Ошибка при обработке файла: {str(e)}. Продолжаем с введенными данными.')
+                    
+                    # Получаем данные из формы (возможно уже заполненные парсером)
+                    candidate_data = {
+                        'first_name': form.cleaned_data['first_name'],
+                        'last_name': form.cleaned_data['last_name'],
+                        'middle_name': form.cleaned_data.get('middle_name', ''),
+                        'email': form.cleaned_data.get('email', ''),
+                        'phone': form.cleaned_data.get('phone', ''),
+                        'position': form.cleaned_data.get('position', ''),
+                        'company': form.cleaned_data.get('company', ''),
+                        'salary': form.cleaned_data.get('salary', ''),
+                        'resume_text': form.cleaned_data.get('resume_text', '')
+                    }
+                    
+                    # Получаем ID вакансии из Huntflow (external_id из нашей БД)
+                    vacancy = form.cleaned_data['vacancy']
+                    vacancy_id = int(vacancy.external_id) if vacancy.external_id else None
+                    
+                    if not vacancy_id:
+                        messages.error(request, 'У выбранной вакансии не указан ID для связи с Huntflow')
+                        form = CreateApplicantForm(user=request.user)
+                    else:
+                        # Если есть распарсенные данные, используем create_applicant_from_parsed_data
+                        # для более полного использования данных парсера
+                        if parsed_data:
+                            # Добавляем ID файла в parsed_data если он был загружен
+                            if parsed_data.get('id') or parsed_file_id:
+                                file_id = parsed_data.get('id') or parsed_file_id
+                                if file_id and 'id' not in parsed_data:
+                                    parsed_data['id'] = file_id
+                                
+                                # Используем create_applicant_from_parsed_data для полной поддержки парсера
+                                created_applicant = huntflow_service.create_applicant_from_parsed_data(
+                                    account_id=correct_account_id,
+                                    parsed_data=parsed_data,
+                                    vacancy_id=vacancy_id
+                                )
+                            else:
+                                # Если файл не был сохранен, используем обычный метод
+                                created_applicant = huntflow_service.create_applicant_manual(
+                                    account_id=correct_account_id,
+                                    candidate_data=candidate_data,
+                                    vacancy_id=vacancy_id
+                                )
+                        else:
+                            # Создаем кандидата в Huntflow обычным способом
+                            created_applicant = huntflow_service.create_applicant_manual(
+                                account_id=correct_account_id,
+                                candidate_data=candidate_data,
+                                vacancy_id=vacancy_id
+                            )
+                        
+                        if created_applicant:
+                            applicant_id = created_applicant.get('id')
+                            messages.success(
+                                request, 
+                                f'Кандидат успешно создан и привязан к вакансии "{vacancy.name}"'
+                            )
+                            return redirect('huntflow:applicant_detail', 
+                                          account_id=correct_account_id, 
+                                          applicant_id=applicant_id)
+                        else:
+                            messages.error(request, 'Не удалось создать кандидата в Huntflow. Проверьте данные и попробуйте снова.')
+                            form = CreateApplicantForm(request.POST, request.FILES, user=request.user)
+                            
+                except Exception as e:
+                    logger.error(f"Ошибка при создании кандидата: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    messages.error(request, f'Ошибка при создании кандидата: {str(e)}')
+                    form = CreateApplicantForm(request.POST, request.FILES, user=request.user)
+        else:
+            form = CreateApplicantForm(user=request.user)
+        
+        context = {
+            'form': form,
+            'account_id': correct_account_id,
+            'account_name': account_name,
+            'accounts': accounts,
+        }
+        
+        return render(request, 'huntflow/create_applicant.html', context)
+        
+    except Exception as e:
+        logger.error(f"Ошибка при загрузке страницы создания кандидата: {e}")
+        messages.error(request, f'Ошибка: {str(e)}')
+        return redirect('huntflow:dashboard')
+
+
+@login_required
+@require_http_methods(["POST"])
+def parse_resume_file_ajax(request):
+    """
+    AJAX endpoint для парсинга файла резюме через Huntflow API
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.FILES: загруженный файл резюме
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HuntflowService.upload_file: загрузка и парсинг файла
+    
+    ОБРАБОТКА:
+    - Загрузка файла
+    - Парсинг через Huntflow API
+    - Возврат распарсенных данных для автозаполнения формы
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON с распарсенными данными кандидата
+    
+    СВЯЗИ:
+    - Использует: HuntflowService
+    - Передает: JSON ответ с данными для автозаполнения
+    """
+    try:
+        if 'file' not in request.FILES:
+            return JsonResponse({
+                'success': False,
+                'message': 'Файл не загружен'
+            }, status=400)
+        
+        resume_file = request.FILES['file']
+        
+        # Получаем правильный account_id
+        correct_account_id = get_correct_account_id(request.user)
+        
+        if not correct_account_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Не удалось определить организацию Huntflow'
+            }, status=400)
+        
+        huntflow_service = HuntflowService(request.user)
+        
+        # Читаем файл
+        file_data = resume_file.read()
+        file_name = resume_file.name
+        
+        logger.info(f"Парсинг файла резюме: {file_name} ({len(file_data)} байт)")
+        
+        # Загружаем и парсим файл через Huntflow API
+        parsed_data = huntflow_service.upload_file(
+            account_id=correct_account_id,
+            file_data=file_data,
+            file_name=file_name,
+            parse_file=True
+        )
+        
+        if not parsed_data:
+            return JsonResponse({
+                'success': False,
+                'message': 'Не удалось обработать файл через парсер Huntflow'
+            }, status=400)
+        
+        # Извлекаем данные из распарсенного файла
+        fields = parsed_data.get('fields', {})
+        name_data = fields.get('name', {})
+        
+        # Формируем ответ с данными для автозаполнения
+        response_data = {
+            'success': True,
+            'data': {
+                'first_name': name_data.get('first', ''),
+                'last_name': name_data.get('last', ''),
+                'middle_name': name_data.get('middle', ''),
+                'email': fields.get('email', ''),
+                'phone': fields.get('phones', [None])[0] if fields.get('phones') else '',
+                'position': fields.get('position', ''),
+                'salary': str(fields.get('salary', '')) if fields.get('salary') else '',
+                'resume_text': parsed_data.get('text', ''),
+                'file_id': parsed_data.get('id'),  # ID загруженного файла для привязки
+            }
+        }
+        
+        logger.info(f"Файл успешно обработан. Извлечено: {response_data['data']['first_name']} {response_data['data']['last_name']}")
+        
+        return JsonResponse(response_data)
+        
+    except Exception as e:
+        logger.error(f"Ошибка при парсинге файла: {e}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка при обработке файла: {str(e)}'
         }, status=500)

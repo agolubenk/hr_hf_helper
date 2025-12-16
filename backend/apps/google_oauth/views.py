@@ -3987,6 +3987,13 @@ def chat_ajax_handler(request, session_id):
                         )
                     
                     # Используем полную ссылку, если она сгенерирована, иначе исходную
+                    # ВАЖНО: Перезагружаем объект из БД, чтобы получить актуальные данные,
+                    # включая зарплату, которая могла быть извлечена в analyze_with_gemini
+                    from apps.google_oauth.models import HRScreening
+                    hr_screening = HRScreening.objects.get(id=hr_screening.id)
+                    
+                    print(f"🔍 CHAT AJAX: HR-скрининг перезагружен, зарплата: {hr_screening.extracted_salary}, валюта: {hr_screening.salary_currency}")
+                    
                     candidate_url_for_metadata = full_candidate_url or hr_screening.candidate_url
                     
                     response_content = ""  # Пустой контент, данные будут браться из metadata
@@ -4673,7 +4680,9 @@ def send_chat_message(request):
                             'candidate_name': screening.candidate_name,
                             'vacancy_name': screening.vacancy_title,
                             'determined_grade': screening.determined_grade,
-                            'candidate_url': candidate_url_for_metadata
+                            'candidate_url': candidate_url_for_metadata,
+                            'extracted_salary': str(screening.extracted_salary) if screening.extracted_salary else None,
+                            'salary_currency': screening.salary_currency
                         }
                     )
                     
@@ -4713,7 +4722,9 @@ def send_chat_message(request):
                             'candidate_name': screening.candidate_name,
                             'vacancy_name': screening.vacancy_title,
                             'determined_grade': screening.determined_grade,
-                            'candidate_url': candidate_url_for_metadata
+                            'candidate_url': candidate_url_for_metadata,
+                            'extracted_salary': str(screening.extracted_salary) if screening.extracted_salary else None,
+                            'salary_currency': screening.salary_currency
                         }
                     })
                     
@@ -5254,6 +5265,13 @@ def chat_workflow(request, session_id=None):
                     if hr_form.is_valid():
                         try:
                             hr_screening = hr_form.save()
+                            
+                            # ВАЖНО: Перезагружаем объект из БД, чтобы получить актуальные данные,
+                            # включая зарплату, которая могла быть извлечена в analyze_with_gemini
+                            from apps.google_oauth.models import HRScreening
+                            hr_screening = HRScreening.objects.get(id=hr_screening.id)
+                            
+                            print(f"🔍 CHAT: HR-скрининг перезагружен, зарплата: {hr_screening.extracted_salary}, валюта: {hr_screening.salary_currency}")
                             
                             response_content = ""  # Пустой контент, данные будут браться из metadata
                             
