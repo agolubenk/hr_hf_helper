@@ -116,7 +116,9 @@ class CalendarEvent(models.Model):
         on_delete=models.CASCADE,
         related_name='calendar_events',
         verbose_name='Рекрутер',
-        limit_choices_to={'groups__name': 'Рекрутер'}
+        limit_choices_to={'groups__name': 'Рекрутер'},
+        null=True,
+        blank=True
     )
     
     # ID события в Google Calendar

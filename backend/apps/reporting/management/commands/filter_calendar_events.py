@@ -21,33 +21,17 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
 
-        # Ключевые слова для поиска (включая опечатки и варианты написания)
+        # Ключевые слова для поиска (если хотя бы одно есть - оставляем событие)
         keywords = [
-            # Английские варианты
-            'screening',
-            'screen',
-            'scrin',  # опечатка
-            'interview',
-            'tech',
-            'technical',
+            'meet',
             'final',
-            # Русские варианты
-            'интервью',
+            'Screening',
             'скрининг',
-            'скрин',
-            'скриннинг',  # вариант написания
-            'техническое',
-            'технический',
-            'техническая',
-            'финальное',
-            'финальный',
-            'финальная',
-            # Дополнительные варианты
-            'tech interview',
-            'tech screening',
-            'final interview',
-            'technical interview',
-            'technical screening',
+            'interview',
+            'интервью',
+            'tech',
+            'office',
+            'with',
         ]
 
         self.stdout.write('🔍 Поиск событий для удаления...')

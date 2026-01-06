@@ -3,6 +3,7 @@
 """
 from django.contrib import admin
 from django.contrib.admin import helpers
+from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.urls import path, reverse
@@ -11,6 +12,8 @@ from django.utils.html import format_html
 from .models import ReportCache, CalendarEvent
 from apps.interviewers.models import Interviewer
 from apps.vacancies.models import Vacancy
+
+User = get_user_model()
 
 
 class InterviewerFilter(admin.SimpleListFilter):
@@ -59,7 +62,7 @@ class CalendarEventAdmin(admin.ModelAdmin):
     readonly_fields = ('duration_minutes', 'created_at', 'updated_at', 'event_id', 'interviewers_display')
     date_hierarchy = 'start_time'
     ordering = ['-start_time']
-    actions = ['bulk_change_vacancy', 'bulk_change_event_type']
+    actions = ['bulk_change_vacancy', 'bulk_change_event_type', 'bulk_change_recruiter']
     
     fieldsets = (
         ('Основная информация', {
@@ -224,4 +227,60 @@ class CalendarEventAdmin(admin.ModelAdmin):
         return render(request, 'admin/reporting/calendarevent/bulk_change_event_type.html', context)
     
     bulk_change_event_type.short_description = 'Изменить тип события для выбранных событий'
+    
+    def bulk_change_recruiter(self, request, queryset):
+        """Массовое изменение рекрутера для выбранных событий"""
+        if 'apply' in request.POST:
+            # Получаем выбранные ID из POST запроса
+            selected_ids = request.POST.getlist(helpers.ACTION_CHECKBOX_NAME)
+            recruiter_id = request.POST.get('recruiter')
+            
+            if not selected_ids:
+                self.message_user(
+                    request,
+                    'Не выбрано ни одного события.',
+                    level='ERROR'
+                )
+                return HttpResponseRedirect(request.get_full_path())
+            
+            if recruiter_id:
+                try:
+                    recruiter = User.objects.get(id=recruiter_id)
+                    # Обновляем только выбранные события
+                    selected_queryset = CalendarEvent.objects.filter(id__in=selected_ids)
+                    updated = selected_queryset.update(recruiter=recruiter)
+                    recruiter_name = recruiter.get_full_name() or recruiter.username
+                    self.message_user(
+                        request,
+                        f'Рекрутер успешно изменен для {updated} событий на "{recruiter_name}".',
+                        level='SUCCESS'
+                    )
+                    return HttpResponseRedirect(request.get_full_path())
+                except User.DoesNotExist:
+                    self.message_user(
+                        request,
+                        'Выбранный рекрутер не найден.',
+                        level='ERROR'
+                    )
+            else:
+                self.message_user(
+                    request,
+                    'Рекрутер не выбран.',
+                    level='ERROR'
+                )
+            return HttpResponseRedirect(request.get_full_path())
+        
+        # Показываем форму выбора рекрутера
+        recruiters = User.objects.filter(groups__name='Рекрутер').distinct().order_by('last_name', 'first_name', 'username')
+        context = {
+            'title': 'Массовое изменение рекрутера',
+            'queryset': queryset,
+            'opts': self.model._meta,
+            'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
+            'recruiters': recruiters,
+            'count': queryset.count(),
+        }
+        return render(request, 'admin/reporting/calendarevent/bulk_change_recruiter.html', context)
+    
+    bulk_change_recruiter.short_description = 'Изменить рекрутера для выбранных событий'
 
