@@ -59,7 +59,7 @@
     
     <!-- Статистика -->
     <div class="row mb-4">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card">
                 <div class="card-body text-center">
                     <h3 class="text-primary">{{ report_data.total_screenings }}</h3>
@@ -67,7 +67,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card">
                 <div class="card-body text-center">
                     <h3 class="text-success">{{ report_data.total_interviews }}</h3>
@@ -75,7 +75,21 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="text-warning">
+                        {% if report_data.conversion_rate is not None %}
+                            {{ report_data.conversion_rate }}%
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </h3>
+                    <p class="mb-0">Конверсия (скрининги → интервью)</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
             <div class="card">
                 <div class="card-body text-center">
                     <h3 class="text-info">{{ report_data.total_time_minutes|format_duration_minutes }}</h3>

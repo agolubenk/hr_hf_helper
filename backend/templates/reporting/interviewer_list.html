@@ -187,6 +187,21 @@
                                             </span>
                                         </a>
                                     </th>
+                                    <th class="text-center">
+                                        <a href="?start_date={{ start_date|date:'Y-m-d' }}&end_date={{ end_date|date:'Y-m-d' }}&sort={% if sort_by == 'conversion_asc' %}conversion_desc{% else %}conversion_asc{% endif %}" 
+                                           class="text-decoration-none text-dark d-flex align-items-center justify-content-center">
+                                            <span>Конверсия</span>
+                                            <span class="ms-2">
+                                                {% if sort_by == 'conversion_asc' %}
+                                                    <i class="fas fa-sort-up"></i>
+                                                {% elif sort_by == 'conversion_desc' %}
+                                                    <i class="fas fa-sort-down"></i>
+                                                {% else %}
+                                                    <i class="fas fa-sort text-muted"></i>
+                                                {% endif %}
+                                            </span>
+                                        </a>
+                                    </th>
                                     <th class="text-center">Действия</th>
                                 </tr>
                             </thead>
@@ -205,6 +220,13 @@
                                     </td>
                                     <td class="text-center">
                                         <strong>{{ stat.total_time_minutes|format_duration_minutes }}</strong>
+                                    </td>
+                                    <td class="text-center">
+                                        {% if stat.conversion_rate is not None %}
+                                            <span class="badge bg-warning">{{ stat.conversion_rate }}%</span>
+                                        {% else %}
+                                            <span class="text-muted">N/A</span>
+                                        {% endif %}
                                     </td>
                                     <td class="text-center">
                                         <a href="{% url 'reporting:interviewer_report' stat.interviewer.id %}?start_date={{ start_date|date:'Y-m-d' }}&end_date={{ end_date|date:'Y-m-d' }}" 

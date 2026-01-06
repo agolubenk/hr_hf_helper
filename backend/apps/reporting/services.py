@@ -419,6 +419,36 @@ class ReportGenerator:
         self.user = user
         self.analyzer = CalendarEventAnalyzer(user)
     
+    def _is_recruiter_also_interviewer(self, event: CalendarEvent) -> bool:
+        """
+        Проверяет, является ли рекрутер (владелец события) также интервьюером
+        (его email присутствует среди участников события)
+        
+        Args:
+            event: Событие календаря
+            
+        Returns:
+            True, если рекрутер также является интервьюером, иначе False
+        """
+        if not event.recruiter or not event.recruiter.email:
+            return False
+        
+        recruiter_email_lower = event.recruiter.email.lower()
+        attendees = event.attendees or []
+        
+        for attendee in attendees:
+            if isinstance(attendee, dict):
+                attendee_email = attendee.get('email', '').lower()
+            elif isinstance(attendee, str):
+                attendee_email = attendee.lower()
+            else:
+                continue
+            
+            if attendee_email == recruiter_email_lower:
+                return True
+        
+        return False
+    
     def generate_company_report(
         self,
         start_date: datetime,
@@ -511,6 +541,11 @@ class ReportGenerator:
             total_interviews = events.filter(event_type='interview').count()
             total_time_minutes = sum(event.duration_minutes or 0 for event in events)
         
+        # Вычисляем конверсию из скринингов в интервью
+        conversion_rate = None
+        if total_screenings > 0:
+            conversion_rate = round((total_interviews / total_screenings) * 100, 2)
+        
         return {
             'period': period,
             'start_date': start_date,
@@ -518,6 +553,7 @@ class ReportGenerator:
             'total_screenings': total_screenings,
             'total_interviews': total_interviews,
             'total_time_minutes': total_time_minutes,
+            'conversion_rate': conversion_rate,
             'grouped_data': grouped_data,
         }
     
@@ -579,6 +615,13 @@ class ReportGenerator:
             except Interviewer.DoesNotExist:
                 events = []
         
+        # ИСКЛЮЧАЕМ события, где рекрутер сам является интервьюером
+        filtered_events = []
+        for event in events:
+            if not self._is_recruiter_also_interviewer(event):
+                filtered_events.append(event)
+        events = filtered_events
+        
         # Преобразуем в формат для группировки
         events_list = []
         for event in events:
@@ -624,6 +667,11 @@ class ReportGenerator:
             elif event.event_type == 'interview':
                 vacancy_stats[vacancy_id]['interviews'] += 1
         
+        # Вычисляем конверсию из скринингов в интервью
+        conversion_rate = None
+        if total_screenings > 0:
+            conversion_rate = round((total_interviews / total_screenings) * 100, 2)
+        
         return {
             'recruiter': recruiter,
             'period': period,
@@ -633,6 +681,7 @@ class ReportGenerator:
             'total_interviews': total_interviews,
             'total_events': total_events,
             'total_time_minutes': total_time_minutes,
+            'conversion_rate': conversion_rate,
             'grouped_data': grouped_data,
             'vacancy_stats': list(vacancy_stats.values()),
             'events': events_list,
@@ -764,6 +813,11 @@ class ReportGenerator:
             total_interviews = events.filter(event_type='interview').count()
             total_time_minutes = sum(event.duration_minutes or 0 for event in events)
         
+        # Вычисляем конверсию из скринингов в интервью
+        conversion_rate = None
+        if total_screenings > 0:
+            conversion_rate = round((total_interviews / total_screenings) * 100, 2)
+        
         return {
             'vacancy': vacancy,
             'period': period,
@@ -772,6 +826,7 @@ class ReportGenerator:
             'total_screenings': total_screenings,
             'total_interviews': total_interviews,
             'total_time_minutes': total_time_minutes,
+            'conversion_rate': conversion_rate,
             'grouped_data': grouped_data,
         }
     
@@ -807,6 +862,7 @@ class ReportGenerator:
             all_events = all_events.filter(recruiter_id=recruiter_id)
         
         # Фильтруем события, где интервьюер является участником
+        # ИСКЛЮЧАЕМ события, где рекрутер (владелец) совпадает с интервьюером
         interviewer_email_lower = interviewer.email.lower()
         interviewer_events = []
         
@@ -827,7 +883,8 @@ class ReportGenerator:
                         is_participant = True
                         break
             
-            if is_participant:
+            # Исключаем события, где рекрутер также является интервьюером
+            if is_participant and not self._is_recruiter_also_interviewer(event):
                 interviewer_events.append(event)
         
         # Преобразуем в формат для группировки
@@ -850,6 +907,11 @@ class ReportGenerator:
         total_interviews = sum(1 for e in interviewer_events if e.event_type == 'interview')
         total_time_minutes = sum(e.duration_minutes or 0 for e in interviewer_events)
         
+        # Вычисляем конверсию из скринингов в интервью
+        conversion_rate = None
+        if total_screenings > 0:
+            conversion_rate = round((total_interviews / total_screenings) * 100, 2)
+        
         return {
             'interviewer': interviewer,
             'period': period,
@@ -858,6 +920,7 @@ class ReportGenerator:
             'total_screenings': total_screenings,
             'total_interviews': total_interviews,
             'total_time_minutes': total_time_minutes,
+            'conversion_rate': conversion_rate,
             'grouped_data': grouped_data,
             'events': events_list,
         }

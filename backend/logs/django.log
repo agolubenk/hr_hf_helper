@@ -8253,3 +8253,421 @@ Refresh token истек для пользователя andrei.golubenko
 Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
 [06/Jan/2026 18:01:31] "GET /reporting/interviewer/14/?start_date=2025-01-06&end_date=2026-01-06 HTTP/1.1" 200 131319
 [06/Jan/2026 18:01:31] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=14&period=monthly&start_date=2025-01-06&end_date=2026-01-06 HTTP/1.1" 200 1257
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 06, 2026 - 17:28:56
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 06, 2026 - 18:02:32
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 06, 2026 - 18:02:47
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 06, 2026 - 18:02:59
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 06, 2026 - 18:03:05
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 06, 2026 - 18:03:16
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 06, 2026 - 18:03:53
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:06:13] "GET /reporting/interviewer/ HTTP/1.1" 200 187775
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:06:16] "GET /reporting/interviewer/14/?start_date=2025-01-06&end_date=2026-01-06 HTTP/1.1" 200 131749
+[06/Jan/2026 18:06:16] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=14&period=monthly&start_date=2025-01-06&end_date=2026-01-06 HTTP/1.1" 200 1257
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:06:30] "GET /reporting/interviewer/5/?start_date=2025-01-06&end_date=2026-01-06 HTTP/1.1" 200 131710
+[06/Jan/2026 18:06:30] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=5&period=monthly&start_date=2025-01-06&end_date=2026-01-06 HTTP/1.1" 200 1240
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:06:34] "GET /reporting/interviewer/23/?start_date=2025-01-06&end_date=2026-01-06 HTTP/1.1" 200 131722
+[06/Jan/2026 18:06:34] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=23&period=monthly&start_date=2025-01-06&end_date=2026-01-06 HTTP/1.1" 200 1236
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:06:54] "GET /reporting/company/ HTTP/1.1" 200 143832
+[06/Jan/2026 18:06:54] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-06&end_date=2026-01-06&recruiter_id=1 HTTP/1.1" 200 741
+[06/Jan/2026 18:06:55] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-06&end_date=2026-01-06&recruiter_id=3 HTTP/1.1" 200 670
+[06/Jan/2026 18:06:55] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-06&end_date=2026-01-06&recruiter_id=9 HTTP/1.1" 200 1128
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 06, 2026 - 18:04:37
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 06, 2026 - 18:07:13
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 06, 2026 - 18:07:19
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 06, 2026 - 18:07:28
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/reporting/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 06, 2026 - 18:07:51
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:08:32] "GET /reporting/interviewer/ HTTP/1.1" 200 187742
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:08:38] "GET /reporting/interviewer/ HTTP/1.1" 200 187742
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:11:32] "GET /reporting/company/ HTTP/1.1" 200 143832
+[06/Jan/2026 18:11:32] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-06&end_date=2026-01-06&recruiter_id=1 HTTP/1.1" 200 741
+[06/Jan/2026 18:11:32] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-06&end_date=2026-01-06&recruiter_id=9 HTTP/1.1" 200 1128
+[06/Jan/2026 18:11:32] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-06&end_date=2026-01-06&recruiter_id=3 HTTP/1.1" 200 670
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:11:47] "GET /reporting/company/?period=weekly&start_date=2025-01-06&end_date=2026-01-06 HTTP/1.1" 200 159060
+[06/Jan/2026 18:11:47] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-06&end_date=2026-01-06&recruiter_id=1 HTTP/1.1" 200 741
+[06/Jan/2026 18:11:47] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-06&end_date=2026-01-06&recruiter_id=3 HTTP/1.1" 200 670
+[06/Jan/2026 18:11:47] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-06&end_date=2026-01-06&recruiter_id=9 HTTP/1.1" 200 1128
+[06/Jan/2026 18:11:52] "GET /reporting/api/data/?report_type=company&period=weekly&start_date=2025-01-06&end_date=2026-01-06&recruiter_id=1 HTTP/1.1" 200 2237
+[06/Jan/2026 18:11:52] "GET /reporting/api/data/?report_type=company&period=weekly&start_date=2025-01-06&end_date=2026-01-06&recruiter_id=9 HTTP/1.1" 200 4092
+[06/Jan/2026 18:11:52] "GET /reporting/api/data/?report_type=company&period=weekly&start_date=2025-01-06&end_date=2026-01-06&recruiter_id=3 HTTP/1.1" 200 2199
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:12:27] "GET /reporting/interviewer/ HTTP/1.1" 200 187742
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:12:38] "GET /reporting/interviewer/ HTTP/1.1" 200 187742
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:12:42] "GET /reporting/interviewer/14/?start_date=2025-01-06&end_date=2026-01-06 HTTP/1.1" 200 131727
+[06/Jan/2026 18:12:43] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=14&period=monthly&start_date=2025-01-06&end_date=2026-01-06 HTTP/1.1" 200 1254
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:13:35] "GET /admin/reporting/calendarevent/?recruiter__id__exact=1 HTTP/1.1" 200 125499
+[06/Jan/2026 18:13:35] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:14:02] "GET /admin/reporting/calendarevent/?recruiter__id__exact=3 HTTP/1.1" 200 126596
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:14:04] "GET /admin/reporting/calendarevent/?recruiter__id__exact=1 HTTP/1.1" 200 125499
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:14:08] "GET /admin/reporting/calendarevent/?recruiter__id__exact=1 HTTP/1.1" 200 125499
+[06/Jan/2026 18:14:08] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+[06/Jan/2026 18:15:04] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=14&period=monthly&start_date=2025-01-06&end_date=2026-01-06 HTTP/1.1" 200 1254
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:15:21] "GET /reporting/interviewer/5/?start_date=2025-01-06&end_date=2026-01-06 HTTP/1.1" 200 131666
+[06/Jan/2026 18:15:21] "GET /reporting/api/data/?report_type=interviewer&interviewer_id=5&period=monthly&start_date=2025-01-06&end_date=2026-01-06 HTTP/1.1" 200 1231
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:26:46] "GET /admin/reporting/calendarevent/?event_type__exact=screening&recruiter__id__exact=1 HTTP/1.1" 200 131875
+[06/Jan/2026 18:26:46] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:26:47] "GET /admin/reporting/calendarevent/?event_type__exact=interview&recruiter__id__exact=1 HTTP/1.1" 200 131557
+[06/Jan/2026 18:26:47] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:26:48] "GET /admin/reporting/calendarevent/?event_type__exact=screening&recruiter__id__exact=1 HTTP/1.1" 200 131875
+[06/Jan/2026 18:26:49] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:26:50] "GET /admin/reporting/calendarevent/?event_type__exact=unknown&recruiter__id__exact=1 HTTP/1.1" 200 66059
+[06/Jan/2026 18:26:50] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:26:55] "GET /admin/reporting/calendarevent/?event_type__exact=unknown HTTP/1.1" 200 125728
+[06/Jan/2026 18:26:55] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:27:52] "GET /admin/reporting/calendarevent/?q=Recruitment&event_type__exact=unknown HTTP/1.1" 200 73966
+[06/Jan/2026 18:27:52] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:27:57] "POST /admin/reporting/calendarevent/?q=Recruitment&event_type__exact=unknown HTTP/1.1" 200 44356
+[06/Jan/2026 18:28:00] "POST /admin/reporting/calendarevent/?q=Recruitment&event_type__exact=unknown HTTP/1.1" 302 0
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:28:00] "GET /admin/reporting/calendarevent/?q=Recruitment&event_type__exact=unknown HTTP/1.1" 200 47010
+[06/Jan/2026 18:28:00] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:28:03] "GET /admin/reporting/calendarevent/? HTTP/1.1" 200 120684
+[06/Jan/2026 18:28:03] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:29:23] "GET /admin/reporting/calendarevent/?q=Support HTTP/1.1" 200 128626
+[06/Jan/2026 18:29:23] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:31:54] "POST /admin/reporting/calendarevent/?q=Support HTTP/1.1" 200 8440
+[06/Jan/2026 18:31:58] "POST /admin/reporting/calendarevent/?q=Support HTTP/1.1" 302 0
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:31:58] "GET /admin/reporting/calendarevent/?q=Support HTTP/1.1" 200 131198
+[06/Jan/2026 18:31:58] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:32:07] "GET /admin/reporting/calendarevent/?q=Support&vacancy__isnull=True HTTP/1.1" 200 69376
+[06/Jan/2026 18:32:07] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:32:27] "POST /admin/reporting/calendarevent/?q=Support&vacancy__isnull=True HTTP/1.1" 200 7162
+[06/Jan/2026 18:32:31] "POST /admin/reporting/calendarevent/?q=Support&vacancy__isnull=True HTTP/1.1" 302 0
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:32:31] "GET /admin/reporting/calendarevent/?q=Support&vacancy__isnull=True HTTP/1.1" 200 46411
+[06/Jan/2026 18:32:31] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:32:34] "GET /admin/reporting/calendarevent/?q=Support&vacancy__id__exact=33 HTTP/1.1" 200 46211
+[06/Jan/2026 18:32:34] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:32:35] "GET /admin/reporting/calendarevent/?q=Support&vacancy__id__exact=32 HTTP/1.1" 200 46211
+[06/Jan/2026 18:32:35] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:32:36] "GET /admin/reporting/calendarevent/?q=Support&vacancy__id__exact=26 HTTP/1.1" 200 46211
+[06/Jan/2026 18:32:36] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:32:37] "GET /admin/reporting/calendarevent/?q=Support&vacancy__id__exact=25 HTTP/1.1" 200 46211
+[06/Jan/2026 18:32:37] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:32:38] "GET /admin/reporting/calendarevent/?q=Support&vacancy__id__exact=13 HTTP/1.1" 200 46211
+[06/Jan/2026 18:32:38] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:32:38] "GET /admin/reporting/calendarevent/?q=Support&vacancy__id__exact=10 HTTP/1.1" 200 46211
+[06/Jan/2026 18:32:38] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:32:39] "GET /admin/reporting/calendarevent/?q=Support&vacancy__id__exact=9 HTTP/1.1" 200 135376
+[06/Jan/2026 18:32:39] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:32:41] "GET /admin/reporting/calendarevent/?q=Support&vacancy__id__exact=3 HTTP/1.1" 200 46165
+[06/Jan/2026 18:32:41] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:32:44] "GET /admin/reporting/calendarevent/?q=Support&vacancy__id__exact=1 HTTP/1.1" 200 51331
+[06/Jan/2026 18:32:44] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:32:54] "POST /admin/reporting/calendarevent/?q=Support&vacancy__id__exact=1 HTTP/1.1" 200 5457
+[06/Jan/2026 18:32:57] "POST /admin/reporting/calendarevent/?q=Support&vacancy__id__exact=1 HTTP/1.1" 302 0
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:32:57] "GET /admin/reporting/calendarevent/?q=Support&vacancy__id__exact=1 HTTP/1.1" 200 46410
+[06/Jan/2026 18:32:57] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:33:12] "GET /admin/reporting/calendarevent/? HTTP/1.1" 200 121790
+[06/Jan/2026 18:33:12] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:33:17] "GET /admin/reporting/calendarevent/30957/change/ HTTP/1.1" 200 53502
+[06/Jan/2026 18:33:17] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+[06/Jan/2026 18:33:37] "POST /admin/reporting/calendarevent/30957/change/ HTTP/1.1" 302 0
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:33:37] "GET /admin/reporting/calendarevent/ HTTP/1.1" 200 122094
+[06/Jan/2026 18:33:37] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:33:46] "GET /admin/reporting/calendarevent/?interviewer=19 HTTP/1.1" 200 78841
+[06/Jan/2026 18:33:46] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:33:55] "GET /admin/reporting/calendarevent/?interviewer=19&vacancy__id__exact=10 HTTP/1.1" 200 62908
+[06/Jan/2026 18:33:55] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:34:09] "GET /reporting/interviewer/ HTTP/1.1" 200 187742
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:41:58] "GET /admin/reporting/calendarevent/?interviewer=15&vacancy__id__exact=10 HTTP/1.1" 200 46051
+[06/Jan/2026 18:41:58] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:42:17] "GET /interviewers/list/ HTTP/1.1" 200 165639
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:42:30] "GET /interviewers/list/ HTTP/1.1" 200 165639
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:42:32] "GET /interviewers/15/ HTTP/1.1" 200 126790
+[06/Jan/2026 18:42:34] "POST /interviewers/15/delete/ HTTP/1.1" 302 0
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:42:34] "GET /interviewers/list/ HTTP/1.1" 200 166444
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:42:41] "GET /interviewers/list/ HTTP/1.1" 200 165940
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:43:07] "GET /huntflow/ HTTP/1.1" 200 116995
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[06/Jan/2026 18:43:19] "GET /hhru/ HTTP/1.1" 200 116900

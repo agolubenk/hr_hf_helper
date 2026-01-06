@@ -262,6 +262,7 @@ def interviewer_report(request, interviewer_id=None):
             interviewer_email_lower = interviewer.email.lower()
             
             # Фильтруем события, где интервьюер является участником
+            # ИСКЛЮЧАЕМ события, где рекрутер (владелец) совпадает с интервьюером
             interviewer_events = []
             for event in all_events:
                 attendees = event.attendees or []
@@ -278,19 +279,43 @@ def interviewer_report(request, interviewer_id=None):
                             is_participant = True
                             break
                 
+                # Исключаем события, где рекрутер также является интервьюером
                 if is_participant:
-                    interviewer_events.append(event)
+                    # Проверяем, не является ли рекрутер также интервьюером
+                    recruiter_is_interviewer = False
+                    if event.recruiter and event.recruiter.email:
+                        recruiter_email_lower = event.recruiter.email.lower()
+                        for attendee in attendees:
+                            if isinstance(attendee, dict):
+                                attendee_email = attendee.get('email', '').lower()
+                            elif isinstance(attendee, str):
+                                attendee_email = attendee.lower()
+                            else:
+                                continue
+                            if attendee_email == recruiter_email_lower:
+                                recruiter_is_interviewer = True
+                                break
+                    
+                    # Добавляем событие только если рекрутер не является интервьюером
+                    if not recruiter_is_interviewer:
+                        interviewer_events.append(event)
             
             # Подсчитываем статистику
             screenings = sum(1 for e in interviewer_events if e.event_type == 'screening')
             interviews = sum(1 for e in interviewer_events if e.event_type == 'interview')
             total_time_minutes = sum(e.duration_minutes or 0 for e in interviewer_events)
             
+            # Вычисляем конверсию из скринингов в интервью
+            conversion_rate = None
+            if screenings > 0:
+                conversion_rate = round((interviews / screenings) * 100, 2)
+            
             interviewer_stats.append({
                 'interviewer': interviewer,
                 'screenings': screenings,
                 'interviews': interviews,
                 'total_time_minutes': total_time_minutes,
+                'conversion_rate': conversion_rate,
             })
         
         # Получаем параметр сортировки
@@ -313,6 +338,10 @@ def interviewer_report(request, interviewer_id=None):
             interviewer_stats.sort(key=lambda x: x['total_time_minutes'])
         elif sort_by == 'time_desc':
             interviewer_stats.sort(key=lambda x: x['total_time_minutes'], reverse=True)
+        elif sort_by == 'conversion_asc':
+            interviewer_stats.sort(key=lambda x: x['conversion_rate'] if x['conversion_rate'] is not None else -1)
+        elif sort_by == 'conversion_desc':
+            interviewer_stats.sort(key=lambda x: x['conversion_rate'] if x['conversion_rate'] is not None else -1, reverse=True)
         else:
             # По умолчанию сортируем по общему количеству встреч (скрининги + интервью)
             interviewer_stats.sort(key=lambda x: x['screenings'] + x['interviews'], reverse=True)
