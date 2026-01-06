@@ -112,3 +112,8 @@ class Migration(migrations.Migration):
         migrations.RunPython(determine_vacancy_for_events, migrations.RunPython.noop),
     ]
 
+
+
+
+
+

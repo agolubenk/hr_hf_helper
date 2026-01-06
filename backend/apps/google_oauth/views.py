@@ -3993,27 +3993,72 @@ def chat_ajax_handler(request, session_id):
                     hr_screening = HRScreening.objects.get(id=hr_screening.id)
                     
                     print(f"🔍 CHAT AJAX: HR-скрининг перезагружен, зарплата: {hr_screening.extracted_salary}, валюта: {hr_screening.salary_currency}")
+                    print(f"🔍 CHAT AJAX: gemini_analysis присутствует: {bool(hr_screening.gemini_analysis)}")
+                    if hr_screening.gemini_analysis:
+                        print(f"🔍 CHAT AJAX: gemini_analysis длина: {len(hr_screening.gemini_analysis)} символов")
+                        print(f"🔍 CHAT AJAX: gemini_analysis начало: {hr_screening.gemini_analysis[:200]}")
                     
                     candidate_url_for_metadata = full_candidate_url or hr_screening.candidate_url
                     
+                    # Проверяем, был ли отклонен кандидат по офисному формату
+                    print(f"🔍 CHAT AJAX: Проверяем офисный формат...")
+                    office_format_rejected = hr_screening.is_office_format_rejected()
+                    print(f"🔍 CHAT AJAX: Результат проверки офисного формата: {office_format_rejected}")
+                    
+                    rejection_template = None
+                    if office_format_rejected:
+                        print(f"🔍 CHAT AJAX: Кандидат отклонен по офисному формату, получаем шаблон отказа...")
+                        rejection_template = hr_screening.get_office_format_rejection_template()
+                        if rejection_template:
+                            print(f"✅ CHAT AJAX: Найден шаблон отказа: {rejection_template.title} (ID: {rejection_template.id})")
+                            print(f"✅ CHAT AJAX: Текст шаблона (первые 100 символов): {rejection_template.message[:100]}")
+                        else:
+                            print(f"⚠️ CHAT AJAX: Шаблон отказа не найден")
+                    else:
+                        print(f"ℹ️ CHAT AJAX: Кандидат не отклонен по офисному формату")
+                    
                     response_content = ""  # Пустой контент, данные будут браться из metadata
+                    
+                    metadata = {
+                        'action_type': 'hrscreening',
+                        'hr_screening_id': hr_screening.id,
+                        'candidate_name': hr_screening.candidate_name,
+                        'vacancy_name': hr_screening.vacancy_title,
+                        'determined_grade': hr_screening.determined_grade,
+                        'candidate_url': candidate_url_for_metadata,
+                        'extracted_salary': str(hr_screening.extracted_salary) if hr_screening.extracted_salary else None,
+                        'salary_currency': hr_screening.salary_currency
+                    }
+                    
+                    # Добавляем информацию о шаблоне отказа, если кандидат отклонен по офисному формату
+                    if office_format_rejected:
+                        # Сохраняем флаг отказа в метаданные, даже если шаблон не найден
+                        metadata['office_format_rejected'] = True
+                        
+                        if rejection_template:
+                            metadata['rejection_template_id'] = rejection_template.id
+                            metadata['rejection_template_title'] = rejection_template.title
+                            metadata['rejection_template_message'] = rejection_template.message
+                            print(f"✅ CHAT AJAX: Метаданные обновлены с информацией об отказе. office_format_rejected=True, template_id={rejection_template.id}")
+                            print(f"✅ CHAT AJAX: Текст шаблона (первые 200 символов): {rejection_template.message[:200]}")
+                        else:
+                            print(f"⚠️ CHAT AJAX: Кандидат отклонен по офисному формату, но шаблон отказа не найден. office_format_rejected=True установлен в метаданные")
+                    else:
+                        print(f"ℹ️ CHAT AJAX: Кандидат не отклонен по офисному формату. office_format_rejected={office_format_rejected} (type: {type(office_format_rejected)})")
+                    
+                    print(f"🔍 CHAT AJAX: Сохраняем сообщение с метаданными. Ключи: {list(metadata.keys())}")
+                    print(f"🔍 CHAT AJAX: office_format_rejected в метаданных: {metadata.get('office_format_rejected', 'NOT SET')}")
+                    print(f"🔍 CHAT AJAX: rejection_template_message в метаданных: {'SET' if metadata.get('rejection_template_message') else 'NOT SET'}")
                     
                     ChatMessage.objects.create(
                         session=chat_session,
                         message_type='hrscreening',
                         content=response_content,
                         hr_screening=hr_screening,
-                        metadata={
-                            'action_type': 'hrscreening',
-                            'hr_screening_id': hr_screening.id,
-                            'candidate_name': hr_screening.candidate_name,
-                            'vacancy_name': hr_screening.vacancy_title,
-                            'determined_grade': hr_screening.determined_grade,
-                            'candidate_url': candidate_url_for_metadata,
-                            'extracted_salary': str(hr_screening.extracted_salary) if hr_screening.extracted_salary else None,
-                            'salary_currency': hr_screening.salary_currency
-                        }
+                        metadata=metadata
                     )
+                    
+                    print(f"✅ CHAT AJAX: Сообщение создано успешно")
                 except Exception as e:
                     print(f"🔍 CHAT AJAX: Ошибка сохранения HR: {str(e)}")
                     ChatMessage.objects.create(

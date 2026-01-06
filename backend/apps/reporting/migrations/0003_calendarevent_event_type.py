@@ -54,3 +54,8 @@ class Migration(migrations.Migration):
         migrations.RunPython(set_event_types, migrations.RunPython.noop),
     ]
 
+
+
+
+
+

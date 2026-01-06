@@ -1017,7 +1017,21 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
         ]
         
         # Доступные годы для фильтра
-        years = HiringRequest.objects.values_list('opening_date__year', flat=True).distinct().order_by('-opening_date__year')
+        # Получаем годы из существующих заявок
+        years_from_db = list(HiringRequest.objects.values_list('opening_date__year', flat=True).distinct())
+        
+        # Добавляем текущий год и следующий год, если их еще нет в списке
+        current_year = timezone.now().year
+        next_year = current_year + 1
+        
+        years_set = set(years_from_db)
+        if current_year not in years_set:
+            years_set.add(current_year)
+        if next_year not in years_set:
+            years_set.add(next_year)
+        
+        # Сортируем по убыванию
+        years = sorted(years_set, reverse=True)
         context['available_years'] = years
         
         # Рассчитываем медианы

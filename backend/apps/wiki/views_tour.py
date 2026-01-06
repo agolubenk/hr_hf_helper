@@ -58,3 +58,8 @@ def tour_interviewers_example(request):
         'page_title': 'Интервьюеры - Пример'
     })
 
+
+
+
+
+

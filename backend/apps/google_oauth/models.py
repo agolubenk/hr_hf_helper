@@ -4896,26 +4896,84 @@ class HRScreening(models.Model):
                 print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Статус HR Screening не найден")
                 status_result = None
             else:
-                # Формируем комментарий из поля comment
-                comment_text = ""
-                if 'comment' in parsed_analysis and parsed_analysis['comment']:
-                    comment_text = f"Доп. инфо: {parsed_analysis['comment']}"
-                else:
-                    comment_text = ""
+                # Проверяем офисный формат перед обновлением статуса
+                print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Проверяем офисный формат перед обновлением статуса")
+                print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: parsed_analysis ключи: {list(parsed_analysis.keys()) if isinstance(parsed_analysis, dict) else 'NOT DICT'}")
+                office_format_rejected = self._check_office_format_rejection(parsed_analysis)
+                print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Результат проверки офисного формата: {office_format_rejected}")
                 
-                # Обновляем статус на "HR Screening"
-                status_result = huntflow_service.update_applicant_status(
-                    account_id, 
-                    int(self.candidate_id), 
-                    status_id=hr_screening_status_id,
-                    comment=comment_text,
-                    vacancy_id=int(self.vacancy_id) if self.vacancy_id else None
-                )
+                # Сохраняем результат проверки для использования в views.py
+                # Используем временное поле через JSON в gemini_analysis или создадим отдельное поле
+                # Пока что будем использовать метод is_office_format_rejected() который перепроверит
+                
+                if office_format_rejected:
+                    # Ищем статус "Отказ Удаленка/гибрид"
+                    rejection_status_id = self._find_rejection_status(huntflow_service, account_id)
+                    if rejection_status_id:
+                        print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Офисный формат = нет, переводим на статус отказа: {rejection_status_id}")
+                        # Формируем комментарий из поля comment
+                        comment_text = ""
+                        if 'comment' in parsed_analysis and parsed_analysis['comment']:
+                            comment_text = f"Доп. инфо: {parsed_analysis['comment']}"
+                        else:
+                            comment_text = "Отказ по офисному формату"
+                        
+                        # Обновляем статус на "Отказ Удаленка/гибрид"
+                        status_result = huntflow_service.update_applicant_status(
+                            account_id, 
+                            int(self.candidate_id), 
+                            status_id=rejection_status_id,
+                            comment=comment_text,
+                            vacancy_id=int(self.vacancy_id) if self.vacancy_id else None
+                        )
+                        if status_result:
+                            print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Статус обновлен на 'Отказ Удаленка/гибрид' (ID: {rejection_status_id})")
+                        else:
+                            print(f"❌ HR_SCREENING_UPDATE_CANDIDATE: Не удалось обновить статус на 'Отказ Удаленка/гибрид'")
+                    else:
+                        print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Статус 'Отказ Удаленка/гибрид' не найден, используем обычный статус HR Screening")
+                        # Формируем комментарий из поля comment
+                        comment_text = ""
+                        if 'comment' in parsed_analysis and parsed_analysis['comment']:
+                            comment_text = f"Доп. инфо: {parsed_analysis['comment']}"
+                        else:
+                            comment_text = ""
+                        
+                        # Обновляем статус на "HR Screening"
+                        status_result = huntflow_service.update_applicant_status(
+                            account_id, 
+                            int(self.candidate_id), 
+                            status_id=hr_screening_status_id,
+                            comment=comment_text,
+                            vacancy_id=int(self.vacancy_id) if self.vacancy_id else None
+                        )
+                        if status_result:
+                            print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Статус обновлен на HR Screening (ID: {hr_screening_status_id})")
+                        else:
+                            print(f"❌ HR_SCREENING_UPDATE_CANDIDATE: Не удалось обновить статус на HR Screening")
+                else:
+                    # Формируем комментарий из поля comment
+                    comment_text = ""
+                    if 'comment' in parsed_analysis and parsed_analysis['comment']:
+                        comment_text = f"Доп. инфо: {parsed_analysis['comment']}"
+                    else:
+                        comment_text = ""
+                    
+                    # Обновляем статус на "HR Screening"
+                    status_result = huntflow_service.update_applicant_status(
+                        account_id, 
+                        int(self.candidate_id), 
+                        status_id=hr_screening_status_id,
+                        comment=comment_text,
+                        vacancy_id=int(self.vacancy_id) if self.vacancy_id else None
+                    )
+                    if status_result:
+                        print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Статус обновлен на HR Screening (ID: {hr_screening_status_id})")
+                    else:
+                        print(f"❌ HR_SCREENING_UPDATE_CANDIDATE: Не удалось обновить статус на HR Screening")
             
-            if status_result:
-                print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Статус обновлен на HR Screening")
-            else:
-                print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Не удалось обновить статус")
+            if not status_result:
+                print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Не удалось обновить статус (status_result = None)")
             
             # Очищаем кэш для обновленного кандидата
             from apps.google_oauth.cache_service import HuntflowAPICache
@@ -4928,6 +4986,197 @@ class HRScreening(models.Model):
         except Exception as e:
             print(f"❌ HR_SCREENING_UPDATE_CANDIDATE: Ошибка при обновлении кандидата: {str(e)}")
             return False, f"Ошибка при обновлении кандидата: {str(e)}"
+    
+    def _check_office_format_rejection(self, parsed_analysis):
+        """
+        Проверяет, есть ли в анализе информация о том, что офисный формат = нет
+        
+        Args:
+            parsed_analysis: Распарсенный анализ от Gemini
+            
+        Returns:
+            bool: True если офисный формат = нет, False иначе
+        """
+        if not parsed_analysis or not isinstance(parsed_analysis, dict):
+            print(f"🔍 HR_SCREENING_OFFICE_CHECK: parsed_analysis пуст или не является dict")
+            return False
+        
+        print(f"🔍 HR_SCREENING_OFFICE_CHECK: Начинаем проверку офисного формата. Ключи в анализе: {list(parsed_analysis.keys())}")
+        
+        # Список возможных названий полей офисного формата (расширенный список)
+        office_field_names = [
+            'office', 'офис', 'work_format', 'workformat', 'формат работы',
+            'формат_работы', 'office_format', 'officeformat', 'удаленка', 'remote',
+            'гибрид', 'hybrid', 'формат', 'format', 'работа в офисе', 'работа_в_офисе',
+            'офисный формат', 'офисный_формат', 'готов работать в офисе', 'готов_работать_в_офисе',
+            'работа_офис', 'работа офис', 'офисная работа', 'офисная_работа',
+            'готовность к офису', 'готовность_к_офису', 'готов к офису', 'готов_к_офису',
+            'офис', 'office', 'формат_работы', 'work format', 'work_format'
+        ]
+        
+        # Список значений, которые означают "нет" офисного формата (расширенный список)
+        rejection_values = ['нет', 'no', 'false', '0', 'не', 'не подходит', 'не готов', 
+                           'не могу', 'не хочу', 'не подходит', 'удаленка', 'remote', 
+                           'гибрид', 'hybrid', 'только удаленка', 'только гибрид',
+                           'не готов работать в офисе', 'не готов работать в офис', 
+                           'не готов к офисной работе', 'не готов к работе в офисе',
+                           'готов только удаленка', 'готов только гибрид', 'только удаленно',
+                           'не подходит офис', 'не подходит офисный формат']
+        
+        # Сначала проверяем все ключи в анализе
+        for key, value in parsed_analysis.items():
+            key_lower = str(key).lower()
+            print(f"🔍 HR_SCREENING_OFFICE_CHECK: Проверяем ключ '{key}' со значением: {value}")
+            
+            # Проверяем, содержит ли ключ название поля офисного формата
+            for field_name in office_field_names:
+                if field_name.lower() in key_lower:
+                    print(f"🔍 HR_SCREENING_OFFICE_CHECK: Найден ключ '{key}' похожий на поле офисного формата '{field_name}'")
+                    
+                    # Извлекаем значение
+                    field_value = None
+                    if isinstance(value, dict):
+                        field_value = value.get('value', '')
+                        if not field_value:
+                            field_value = value.get('quote', '')
+                    elif isinstance(value, str):
+                        field_value = value
+                    else:
+                        field_value = str(value)
+                    
+                    if field_value:
+                        field_value_lower = str(field_value).lower().strip()
+                        print(f"🔍 HR_SCREENING_OFFICE_CHECK: Значение поля '{key}': '{field_value_lower}'")
+                        
+                        # Проверяем, является ли значение отказом
+                        for rejection_val in rejection_values:
+                            if rejection_val.lower() in field_value_lower:
+                                print(f"✅ HR_SCREENING_OFFICE_CHECK: Найдено поле '{key}' со значением '{field_value}' - офисный формат = нет")
+                                return True
+        
+        # Также проверяем значения на наличие ключевых слов об отказе
+        for key, value in parsed_analysis.items():
+            if isinstance(value, dict):
+                value_str = str(value.get('value', '')).lower()
+                quote_str = str(value.get('quote', '')).lower()
+                combined_str = f"{value_str} {quote_str}".strip()
+                
+                # Проверяем, содержит ли значение слова об отказе офисного формата
+                if any(rejection_val in combined_str for rejection_val in rejection_values):
+                    if any(field_name in key.lower() for field_name in office_field_names):
+                        print(f"✅ HR_SCREENING_OFFICE_CHECK: Найдено в значении поля '{key}': '{combined_str}' - офисный формат = нет")
+                        return True
+        
+        print(f"⚠️ HR_SCREENING_OFFICE_CHECK: Офисный формат не найден или значение не является отказом")
+        return False
+    
+    def _find_rejection_status(self, huntflow_service, account_id):
+        """
+        Ищет статус "Отказ Удаленка/гибрид" в Huntflow
+        
+        Args:
+            huntflow_service: Сервис Huntflow
+            account_id: ID аккаунта
+            
+        Returns:
+            int или None: ID статуса отказа или None если не найден
+        """
+        try:
+            statuses = huntflow_service.get_vacancy_statuses(account_id)
+            if not statuses or 'items' not in statuses:
+                return None
+            
+            # Список возможных названий статуса отказа (расширенный список)
+            # Ищем частичные совпадения, так как название может быть разным
+            rejection_keywords = [
+                'отказ',
+                'rejection',
+                'удаленка',
+                'remote',
+                'гибрид',
+                'hybrid',
+                'формат',
+                'format'
+            ]
+            
+            # Комбинации ключевых слов для поиска
+            rejection_combinations = [
+                ('отказ', 'удаленка'),
+                ('отказ', 'гибрид'),
+                ('отказ', 'формат'),
+                ('rejection', 'remote'),
+                ('rejection', 'hybrid'),
+                ('rejection', 'format'),
+            ]
+            
+            print(f"🔍 HR_SCREENING_REJECTION_STATUS: Ищем статус отказа среди {len(statuses['items'])} статусов")
+            for status in statuses['items']:
+                status_name = status.get('name', '').lower().strip()
+                status_id = status.get('id')
+                print(f"🔍 HR_SCREENING_REJECTION_STATUS: Проверяем статус '{status.get('name')}' (ID: {status_id})")
+                
+                # Проверяем комбинации ключевых слов
+                for keyword1, keyword2 in rejection_combinations:
+                    if keyword1 in status_name and keyword2 in status_name:
+                        print(f"✅ HR_SCREENING_REJECTION_STATUS: Найден статус '{status.get('name')}' с ID {status_id} (содержит '{keyword1}' и '{keyword2}')")
+                        return status_id
+                
+                # Также проверяем отдельные ключевые слова "отказ" + ("удаленка" или "гибрид" или "формат")
+                if 'отказ' in status_name:
+                    if any(kw in status_name for kw in ['удаленка', 'гибрид', 'формат', 'remote', 'hybrid', 'format']):
+                        print(f"✅ HR_SCREENING_REJECTION_STATUS: Найден статус '{status.get('name')}' с ID {status_id} (содержит 'отказ' и связанное слово)")
+                        return status_id
+            
+            # Если точное совпадение не найдено, выводим все статусы для отладки
+            print(f"⚠️ HR_SCREENING_REJECTION_STATUS: Статус отказа не найден. Доступные статусы:")
+            for status in statuses['items']:
+                print(f"  - '{status.get('name')}' (ID: {status.get('id')})")
+            return None
+        except Exception as e:
+            print(f"❌ HR_SCREENING_REJECTION_STATUS: Ошибка при поиске статуса отказа: {e}")
+            return None
+    
+    def get_office_format_rejection_template(self):
+        """
+        Получает активный шаблон отказа по офисному формату
+        
+        Returns:
+            RejectionTemplate или None
+        """
+        try:
+            from apps.company_settings.models import RejectionTemplate
+            template = RejectionTemplate.get_template('office_format')
+            if template:
+                print(f"🔍 HR_SCREENING_REJECTION_TEMPLATE: Найден шаблон отказа: {template.title}")
+            else:
+                print(f"⚠️ HR_SCREENING_REJECTION_TEMPLATE: Шаблон отказа не найден")
+            return template
+        except Exception as e:
+            print(f"❌ HR_SCREENING_REJECTION_TEMPLATE: Ошибка при получении шаблона отказа: {e}")
+            return None
+    
+    def is_office_format_rejected(self):
+        """
+        Проверяет, был ли отклонен кандидат по офисному формату
+        
+        Returns:
+            bool: True если офисный формат отклонен, False иначе
+        """
+        print(f"🔍 HR_SCREENING_IS_OFFICE_REJECTED: Проверяем офисный формат для скрининга ID {self.id}")
+        
+        if not self.gemini_analysis:
+            print(f"⚠️ HR_SCREENING_IS_OFFICE_REJECTED: gemini_analysis пуст")
+            return False
+        
+        parsed_analysis = self.get_parsed_analysis()
+        if not parsed_analysis:
+            print(f"⚠️ HR_SCREENING_IS_OFFICE_REJECTED: parsed_analysis пуст или None")
+            return False
+        
+        print(f"🔍 HR_SCREENING_IS_OFFICE_REJECTED: parsed_analysis получен, тип: {type(parsed_analysis)}")
+        result = self._check_office_format_rejection(parsed_analysis)
+        print(f"🔍 HR_SCREENING_IS_OFFICE_REJECTED: Результат проверки: {result}")
+        return result
 
 
 class QuestionTemplate(models.Model):

@@ -21,6 +21,7 @@ urlpatterns = [
     path('interviewer/', views.interviewer_report, name='interviewer_list'),
     path('interviewer/<int:interviewer_id>/', views.interviewer_report, name='interviewer_report'),
     path('interviewer/<int:interviewer_id>/export/', views.export_interviewer_report_excel, name='export_interviewer_report_excel'),
+    path('interviewers/list/export/', views.export_interviewers_list_excel, name='export_interviewers_list_excel'),
     path('api/data/', views.api_report_data, name='api_report_data'),
     path('api/sync/', views.sync_calendar_events, name='api_sync_events'),
 ]

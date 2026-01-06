@@ -419,6 +419,20 @@
                                                                             <i class="fas fa-external-link-alt"></i>
                                                                         </a>
                                                                     {% endif %}
+                                                                    {% comment %}Кнопка копирования шаблона отказа по офисному формату{% endcomment %}
+                                                                    {% if message.metadata.office_format_rejected %}
+                                                                    {% if message.metadata.rejection_template_message %}
+                                                                <button type="button" class="btn btn-sm btn-outline-warning copy-rejection-template-btn" 
+                                                                        data-template-message="{{ message.metadata.rejection_template_message|escapejs }}" 
+                                                                        data-template-title="{% if message.metadata.rejection_template_title %}{{ message.metadata.rejection_template_title|escapejs }}{% endif %}"
+                                                                        title="Скопировать шаблон отказа по офисному формату">
+                                                                            <i class="fas fa-copy me-1"></i>
+                                                                            Скопировать отказ
+                                                                        </button>
+                                                                    {% else %}
+                                                                    <!-- DEBUG: office_format_rejected=True, но rejection_template_message отсутствует -->
+                                                                    {% endif %}
+                                                                    {% endif %}
                                                             </div>
                                                         {% endif %}
                                                     </div>
@@ -3141,6 +3155,65 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
+});
+
+// Обработчик кнопки копирования шаблона отказа по офисному формату
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.copy-rejection-template-btn')) {
+        const btn = e.target.closest('.copy-rejection-template-btn');
+        const templateMessage = btn.getAttribute('data-template-message');
+        const templateTitle = btn.getAttribute('data-template-title');
+        
+        if (!templateMessage) {
+            alert('Текст шаблона не найден');
+            return;
+        }
+        
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        
+        // Копируем текст шаблона в буфер обмена
+        navigator.clipboard.writeText(templateMessage).then(() => {
+            btn.innerHTML = '<i class="fas fa-check"></i> Скопировано';
+            btn.classList.remove('btn-outline-warning');
+            btn.classList.add('btn-success');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-outline-warning');
+                btn.disabled = false;
+            }, 2000);
+        }).catch(err => {
+            console.error('Clipboard error:', err);
+            // Fallback для старых браузеров
+            const textArea = document.createElement('textarea');
+            textArea.value = templateMessage;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                btn.innerHTML = '<i class="fas fa-check"></i> Скопировано';
+                btn.classList.remove('btn-outline-warning');
+                btn.classList.add('btn-success');
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-outline-warning');
+                    btn.disabled = false;
+                }, 2000);
+            } catch (err2) {
+                console.error('Fallback copy error:', err2);
+                alert('Ошибка копирования в буфер обмена');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+            document.body.removeChild(textArea);
+        });
+    }
 });
 
 </script>

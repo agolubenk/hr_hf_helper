@@ -120,8 +120,12 @@ function syncCalendarEvents() {
     }
     const csrftoken = getCookie('csrftoken') || document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
     
-    // Отправляем запрос
-    fetch('{% url "reporting:api_sync_events" %}', {
+    // Отправляем запрос с параметрами за 2025 год
+    const startDate = '2025-01-01';
+    const endDate = '2025-12-31';
+    const syncUrl = '{% url "reporting:api_sync_events" %}?start_date=' + startDate + '&end_date=' + endDate;
+    
+    fetch(syncUrl, {
         method: 'GET',
         headers: {
             'X-CSRFToken': csrftoken,

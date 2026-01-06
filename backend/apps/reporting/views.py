@@ -4,7 +4,7 @@ Views для отчетности
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -552,23 +552,39 @@ def sync_calendar_events(request):
                 # Устанавливаем время начала дня для start_date и конец дня для end_date
                 start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
                 sync_end_date = end_date.replace(hour=23, minute=59, second=59, microsecond=999999)
+                
+                # Ограничиваем период 2025 годом
+                year_2025_start = datetime(2025, 1, 1, 0, 0, 0)
+                if timezone.is_naive(year_2025_start):
+                    year_2025_start = timezone.make_aware(year_2025_start)
+                year_2025_end = datetime(2025, 12, 31, 23, 59, 59, 999999)
+                if timezone.is_naive(year_2025_end):
+                    year_2025_end = timezone.make_aware(year_2025_end)
+                
+                # Ограничиваем даты 2025 годом
+                if start_date < year_2025_start:
+                    start_date = year_2025_start
+                if sync_end_date > year_2025_end:
+                    sync_end_date = year_2025_end
             except Exception as e:
                 print(f"⚠️ Ошибка парсинга дат из параметров: {e}. Используем значения по умолчанию.")
-                # Используем значения по умолчанию при ошибке парсинга
-                start_date = datetime(2024, 12, 12, 0, 0, 0)
+                # Используем значения по умолчанию при ошибке парсинга - только 2025 год
+                start_date = datetime(2025, 1, 1, 0, 0, 0)
                 if timezone.is_naive(start_date):
                     start_date = timezone.make_aware(start_date)
-                now = timezone.now()
-                sync_end_date = now.replace(hour=23, minute=59, second=59, microsecond=999999)
+                sync_end_date = datetime(2025, 12, 31, 23, 59, 59, 999999)
+                if timezone.is_naive(sync_end_date):
+                    sync_end_date = timezone.make_aware(sync_end_date)
         else:
-            # Используем значения по умолчанию - за год с 12.12.2024 по сегодня
-            start_date = datetime(2024, 12, 12, 0, 0, 0)
+            # Используем значения по умолчанию - только 2025 год
+            start_date = datetime(2025, 1, 1, 0, 0, 0)
             if timezone.is_naive(start_date):
                 start_date = timezone.make_aware(start_date)
             
-            # Конец: сегодня (конец дня) - синхронизируем все события за год
-            now = timezone.now()
-            sync_end_date = now.replace(hour=23, minute=59, second=59, microsecond=999999)
+            # Конец: 31.12.2025 - синхронизируем только события за 2025 год
+            sync_end_date = datetime(2025, 12, 31, 23, 59, 59, 999999)
+            if timezone.is_naive(sync_end_date):
+                sync_end_date = timezone.make_aware(sync_end_date)
         
         # Получаем всех рекрутеров (кроме admin)
         recruiters = User.objects.filter(
@@ -652,11 +668,22 @@ def sync_calendar_events(request):
                         
                         # Извлекаем участников
                         attendees = []
+                        attendee_emails = []
                         for attendee in event.get('attendees', []):
+                            attendee_email = attendee.get('email', '').lower()
                             attendees.append({
-                                'email': attendee.get('email', ''),
-                                'name': attendee.get('displayName', attendee.get('email', ''))
+                                'email': attendee_email,
+                                'name': attendee.get('displayName', attendee_email)
                             })
+                            attendee_emails.append(attendee_email)
+                        
+                        # Извлекаем email организатора
+                        organizer_email = None
+                        if 'organizer' in event:
+                            organizer_email = event['organizer'].get('email', '').lower()
+                            # Добавляем организатора в список email для проверки
+                            if organizer_email and organizer_email not in attendee_emails:
+                                attendee_emails.append(organizer_email)
                         
                         # Получаем время обновления из Google
                         google_updated = None
@@ -667,24 +694,40 @@ def sync_calendar_events(request):
                                 pass
                         
                         # Определяем рекрутера для события
-                        # Если это календарь компании, пытаемся определить рекрутера по участникам или используем первого рекрутера
+                        # Специальная логика: если на встрече нет andrei.golubenko@softnetix.io,
+                        # но есть andrei.chernomordin@softnetix.io, то присваиваем событие ему
+                        golubenko_email = 'andrei.golubenko@softnetix.io'
+                        chernomordin_email = 'andrei.chernomordin@softnetix.io'
+                        
+                        has_golubenko = golubenko_email in attendee_emails
+                        has_chernomordin = chernomordin_email in attendee_emails
+                        
                         event_recruiter = user
-                        if not user.groups.filter(name='Рекрутер').exists():
-                            # Если пользователь не рекрутер, пытаемся найти рекрутера по участникам
-                            for attendee_email in [a.get('email', '') for a in attendees]:
-                                recruiter_user = User.objects.filter(
-                                    email=attendee_email,
-                                    groups__name='Рекрутер'
-                                ).first()
-                                if recruiter_user:
-                                    event_recruiter = recruiter_user
-                                    break
-                            
-                            # Если не нашли, используем первого рекрутера
-                            if not event_recruiter.groups.filter(name='Рекрутер').exists():
-                                first_recruiter = recruiters.first()
-                                if first_recruiter:
-                                    event_recruiter = first_recruiter
+                        
+                        # Приоритетная логика: если нет andrei.golubenko, но есть andrei.chernomordin, присваиваем ему
+                        if not has_golubenko and has_chernomordin:
+                            chernomordin_user = User.objects.filter(email=chernomordin_email).first()
+                            if chernomordin_user:
+                                event_recruiter = chernomordin_user
+                                print(f"   📌 Событие присвоено {chernomordin_email} (нет {golubenko_email} среди участников)")
+                        else:
+                            # Стандартная логика определения рекрутера
+                            if not user.groups.filter(name='Рекрутер').exists():
+                                # Если пользователь не рекрутер, пытаемся найти рекрутера по участникам
+                                for attendee_email in attendee_emails:
+                                    recruiter_user = User.objects.filter(
+                                        email=attendee_email,
+                                        groups__name='Рекрутер'
+                                    ).first()
+                                    if recruiter_user:
+                                        event_recruiter = recruiter_user
+                                        break
+                                
+                                # Если не нашли, используем первого рекрутера
+                                if not event_recruiter.groups.filter(name='Рекрутер').exists():
+                                    first_recruiter = recruiters.first()
+                                    if first_recruiter:
+                                        event_recruiter = first_recruiter
                         
                         # Сохраняем событие
                         CalendarEvent.objects.update_or_create(
@@ -1283,4 +1326,271 @@ def export_interviewer_report_excel(request, interviewer_id):
     interviewer_name = interviewer.get_full_name()
     exporter = ExcelReportExporter(report_data, 'interviewer', f'Отчет по интервьюеру: {interviewer_name}')
     return exporter.export()
+
+
+@login_required
+def export_interviewers_list_excel(request):
+    """Экспорт списка интервьюеров со статистикой в Excel"""
+    from io import BytesIO
+    from openpyxl import Workbook
+    from openpyxl.chart import BarChart, Reference
+    from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
+    from openpyxl.utils import get_column_letter
+    
+    # Получаем параметры фильтров
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
+    interviewer_ids_str = request.GET.get('interviewer_ids', '')
+    chart_data_type = request.GET.get('chart_data_type', 'screenings')
+    
+    # Парсим диапазон дат
+    if start_date_str and end_date_str:
+        try:
+            start_date_naive = datetime.fromisoformat(start_date_str)
+            end_date_naive = datetime.fromisoformat(end_date_str)
+            
+            if timezone.is_naive(start_date_naive):
+                start_date = timezone.make_aware(start_date_naive)
+            else:
+                start_date = start_date_naive
+            
+            if timezone.is_naive(end_date_naive):
+                end_date = timezone.make_aware(end_date_naive)
+            else:
+                end_date = end_date_naive
+            
+            start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+            end_date = end_date.replace(hour=23, minute=59, second=59, microsecond=999999)
+        except:
+            end_date = timezone.now()
+            start_date = end_date - relativedelta(months=12)
+            start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+            end_date = end_date.replace(hour=23, minute=59, second=59, microsecond=999999)
+    else:
+        end_date = timezone.now()
+        start_date = end_date - relativedelta(months=12)
+        start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+        end_date = end_date.replace(hour=23, minute=59, second=59, microsecond=999999)
+    
+    # Получаем интервьюеров
+    interviewers = Interviewer.objects.filter(is_active=True).order_by('last_name', 'first_name')
+    
+    # Фильтруем по выбранным ID, если указаны
+    if interviewer_ids_str:
+        try:
+            selected_ids = [int(id) for id in interviewer_ids_str.split(',')]
+            interviewers = interviewers.filter(id__in=selected_ids)
+        except:
+            pass
+    
+    # Получаем все события за период
+    all_events = CalendarEvent.objects.filter(
+        start_time__gte=start_date,
+        start_time__lte=end_date
+    ).select_related('vacancy').order_by('start_time')
+    
+    # Собираем статистику
+    interviewer_stats = []
+    for interviewer in interviewers:
+        interviewer_email_lower = interviewer.email.lower()
+        
+        interviewer_events = []
+        for event in all_events:
+            attendees = event.attendees or []
+            is_participant = False
+            
+            for attendee in attendees:
+                if isinstance(attendee, dict):
+                    attendee_email = attendee.get('email', '').lower()
+                    if attendee_email == interviewer_email_lower:
+                        is_participant = True
+                        break
+                elif isinstance(attendee, str):
+                    if attendee.lower() == interviewer_email_lower:
+                        is_participant = True
+                        break
+            
+            if is_participant:
+                interviewer_events.append(event)
+        
+        screenings = sum(1 for e in interviewer_events if e.event_type == 'screening')
+        interviews = sum(1 for e in interviewer_events if e.event_type == 'interview')
+        total_time_minutes = sum(e.duration_minutes or 0 for e in interviewer_events)
+        
+        interviewer_stats.append({
+            'interviewer': interviewer,
+            'screenings': screenings,
+            'interviews': interviews,
+            'total': screenings + interviews,
+            'total_time_minutes': total_time_minutes,
+        })
+    
+    # Создаем Excel файл
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Отчет по интервьюерам"
+    
+    # Стили
+    header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+    header_font = Font(bold=True, size=12, color="FFFFFF")
+    title_font = Font(bold=True, size=14)
+    
+    # Заголовок
+    row = 1
+    ws.merge_cells(f'A{row}:F{row}')
+    title_cell = ws[f'A{row}']
+    title_cell.value = "Отчет по интервьюерам"
+    title_cell.font = title_font
+    title_cell.alignment = Alignment(horizontal="center", vertical="center")
+    row += 1
+    
+    # Информация о фильтрах
+    ws.merge_cells(f'A{row}:F{row}')
+    filter_info = f"Период: {start_date.strftime('%d.%m.%Y')} - {end_date.strftime('%d.%m.%Y')}"
+    if interviewer_ids_str:
+        filter_info += f" | Выбрано интервьюеров: {len(interviewer_stats)}"
+    if chart_data_type:
+        data_type_labels = {
+            'screenings': 'Скрининги',
+            'interviews': 'Интервью',
+            'total': 'Всего встреч',
+            'time': 'Время'
+        }
+        filter_info += f" | Тип данных графика: {data_type_labels.get(chart_data_type, chart_data_type)}"
+    ws[f'A{row}'].value = filter_info
+    ws[f'A{row}'].font = Font(italic=True)
+    row += 2
+    
+    # Заголовки таблицы
+    headers = ['Интервьюер', 'Email', 'Скрининги', 'Интервью', 'Всего встреч', 'Время']
+    for col_idx, header in enumerate(headers, start=1):
+        cell = ws.cell(row=row, column=col_idx)
+        cell.value = header
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = Alignment(horizontal="center", vertical="center")
+        cell.border = Border(
+            left=Side(style='thin'),
+            right=Side(style='thin'),
+            top=Side(style='thin'),
+            bottom=Side(style='thin')
+        )
+    row += 1
+    
+    # Данные таблицы
+    table_start_row = row
+    for stat in interviewer_stats:
+        interviewer = stat['interviewer']
+        hours = stat['total_time_minutes'] // 60
+        minutes = stat['total_time_minutes'] % 60
+        time_str = f"{hours} ч {minutes} мин" if stat['total_time_minutes'] > 0 else "0 ч 0 мин"
+        
+        data_row = [
+            interviewer.get_full_name(),
+            interviewer.email,
+            stat['screenings'],
+            stat['interviews'],
+            stat['total'],
+            time_str
+        ]
+        
+        for col_idx, value in enumerate(data_row, start=1):
+            cell = ws.cell(row=row, column=col_idx)
+            cell.value = value
+            cell.border = Border(
+                left=Side(style='thin'),
+                right=Side(style='thin'),
+                top=Side(style='thin'),
+                bottom=Side(style='thin')
+            )
+            if col_idx in [3, 4, 5]:  # Числовые столбцы
+                cell.alignment = Alignment(horizontal="center", vertical="center")
+            else:
+                cell.alignment = Alignment(horizontal="left", vertical="center")
+        row += 1
+    
+    table_end_row = row - 1
+    
+    # Настройка ширины столбцов
+    ws.column_dimensions['A'].width = 30
+    ws.column_dimensions['B'].width = 35
+    ws.column_dimensions['C'].width = 12
+    ws.column_dimensions['D'].width = 12
+    ws.column_dimensions['E'].width = 15
+    ws.column_dimensions['F'].width = 18
+    
+    # Добавляем график только если есть данные
+    if interviewer_stats:
+        row += 2
+        chart_title_row = row
+        ws.merge_cells(f'A{row}:F{row}')
+        chart_title_cell = ws[f'A{row}']
+        data_type_labels = {
+            'screenings': 'Количество скринингов',
+            'interviews': 'Количество интервью',
+            'total': 'Общее количество встреч',
+            'time': 'Время (часы)'
+        }
+        chart_title_cell.value = f"График: {data_type_labels.get(chart_data_type, 'Данные')}"
+        chart_title_cell.font = Font(bold=True, size=12)
+        chart_title_cell.fill = PatternFill(start_color="D9E1F2", end_color="D9E1F2", fill_type="solid")
+        row += 1
+        
+        # Создаем график
+        chart = BarChart()
+        chart.type = "col"
+        chart.style = 10
+        chart.title = data_type_labels.get(chart_data_type, 'Данные')
+        chart.y_axis.title = data_type_labels.get(chart_data_type, 'Значение')
+        chart.x_axis.title = 'Интервьюер'
+        
+        # Определяем столбец данных в зависимости от типа
+        data_col_map = {
+            'screenings': 3,
+            'interviews': 4,
+            'total': 5,
+            'time': 6
+        }
+        data_col = data_col_map.get(chart_data_type, 3)
+        
+        # Данные для графика
+        if chart_data_type == 'time':
+            # Для времени создаем отдельный столбец с часами
+            chart_data_row = row
+            ws.cell(row=row, column=1).value = 'Интервьюер'
+            ws.cell(row=row, column=2).value = 'Время (часы)'
+            row += 1
+            for stat in interviewer_stats:
+                ws.cell(row=row, column=1).value = stat['interviewer'].get_full_name()
+                ws.cell(row=row, column=2).value = round(stat['total_time_minutes'] / 60, 2)
+                row += 1
+            chart_data_end_row = row - 1
+            
+            data = Reference(ws, min_col=2, min_row=chart_data_row, max_row=chart_data_end_row)
+            chart.add_data(data, titles_from_data=True)
+            cats = Reference(ws, min_col=1, min_row=chart_data_row + 1, max_row=chart_data_end_row)
+            chart.set_categories(cats)
+        else:
+            data = Reference(ws, min_col=data_col, min_row=table_start_row - 1, max_row=table_end_row)
+            chart.add_data(data, titles_from_data=True)
+            cats = Reference(ws, min_col=1, min_row=table_start_row, max_row=table_end_row)
+            chart.set_categories(cats)
+        
+        # Размещаем график
+        ws.add_chart(chart, f'A{row}')
+    
+    # Сохраняем в BytesIO
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+    
+    # Создаем HTTP ответ
+    response = HttpResponse(
+        output.read(),
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    filename = f"Отчет_по_интервьюерам_{start_date.strftime('%Y%m%d')}_{end_date.strftime('%Y%m%d')}.xlsx"
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    
+    return response
 

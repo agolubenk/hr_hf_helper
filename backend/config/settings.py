@@ -179,6 +179,10 @@ STATICFILES_DIRS = [
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Настройки для массовых операций в Django Admin
+# Увеличиваем лимит количества полей в POST запросе для массового удаления
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 100000
+
 # Custom user model
 AUTH_USER_MODEL = 'accounts.User'
 
