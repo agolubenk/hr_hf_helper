@@ -108,13 +108,15 @@
     }
     
     .yearly-table .month-cell {
-        width: 35px;
-        min-width: 35px;
-        max-width: 35px;
+        width: 45px;
+        min-width: 45px;
+        max-width: 45px;
         height: 30px;
         min-height: 30px;
         position: relative;
         padding: 2px;
+        font-weight: 600;
+        font-size: 0.85rem;
     }
     
     /* Цвета для статусов */
@@ -666,7 +668,9 @@
                                     {% with month_num|add:1 as month %}
                                         {% with row.months|get_item:month as month_data %}
                                             <td class="month-cell cell-{{ month_data.color }}">
-                                                {% if month_data.active %}
+                                                {% if month_data.active and month_data.days > 0 %}
+                                                    <span title="Активна в {{ month_name }}">{{ month_data.days }}</span>
+                                                {% elif month_data.active %}
                                                     <span title="Активна в {{ month_name }}"></span>
                                                 {% endif %}
                                             </td>

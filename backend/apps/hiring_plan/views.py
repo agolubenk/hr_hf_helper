@@ -560,7 +560,7 @@ class HiringRequestDetailView(LoginRequiredMixin, DetailView):
     """Детальный просмотр заявки"""
     model = HiringRequest
     template_name = 'hiring_plan/hiring_request_detail.html'
-    context_object_name = 'request'
+    context_object_name = 'hiring_request'
 
 
 class HiringRequestCreateView(LoginRequiredMixin, CreateView):
@@ -1276,19 +1276,22 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
                     if month == planned_month:
                         months[month] = {
                             'color': 'lightblue',
-                            'active': True
+                            'active': True,
+                            'days': 0  # Планируемые заявки еще не начались
                         }
                     else:
                         months[month] = {
                             'color': 'transparent',
-                            'active': False
+                            'active': False,
+                            'days': 0
                         }
             else:
                 # Если планируемая заявка не в этом году, не показываем
                 for month in range(1, 13):
                     months[month] = {
                         'color': 'transparent',
-                        'active': False
+                        'active': False,
+                        'days': 0
                     }
             return months
         
@@ -1312,14 +1315,34 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
             if start_date <= month_end and end_date >= month_start:
                 # Определяем цвет ячейки
                 color = self._get_cell_color(request, month_start, month_end)
+                
+                # Вычисляем количество дней в этом месяце
+                # Начало периода - максимум из начала заявки и начала месяца
+                period_start = max(start_date, month_start)
+                # Конец периода - минимум из конца заявки и конца месяца
+                period_end = min(end_date, month_end)
+                
+                # Если это текущий месяц и заявка еще активна, ограничиваем текущей датой
+                if request.status == 'in_progress' and year == timezone.now().year and month == timezone.now().month:
+                    today = timezone.now().date()
+                    if period_end > today:
+                        period_end = today
+                
+                # Считаем количество дней
+                days_in_month = (period_end - period_start).days + 1
+                if days_in_month < 0:
+                    days_in_month = 0
+                
                 months[month] = {
                     'color': color,
-                    'active': True
+                    'active': True,
+                    'days': days_in_month
                 }
             else:
                 months[month] = {
                     'color': 'transparent',
-                    'active': False
+                    'active': False,
+                    'days': 0
                 }
         
         return months
