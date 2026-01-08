@@ -1,0 +1,39 @@
+/* Стили для страницы профиля */
+
+.profileWrapper {
+  width: 100%;
+  max-width: 100%;
+  padding: 0 24px;
+}
+
+.profileLayout {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.leftColumn {
+  flex: 0 0 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.rightColumn {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 1024px) {
+  .profileLayout {
+    flex-direction: column;
+  }
+
+  .leftColumn {
+    flex: 1;
+    width: 100%;
+  }
+}

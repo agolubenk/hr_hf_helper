@@ -12,6 +12,7 @@ interface FloatingLabelInputProps {
   placeholder?: string
   required?: boolean
   icon?: ReactNode
+  disabled?: boolean
 }
 
 export default function FloatingLabelInput({
@@ -23,6 +24,7 @@ export default function FloatingLabelInput({
   placeholder,
   required = false,
   icon,
+  disabled = false,
 }: FloatingLabelInputProps) {
   const [isFocused, setIsFocused] = useState(false)
 
@@ -38,7 +40,7 @@ export default function FloatingLabelInput({
             top: isFloating ? '20px' : '50%',
             transform: isFloating ? 'none' : 'translateY(-50%)',
             zIndex: 2,
-            color: isFocused ? 'var(--accent-9)' : 'var(--gray-11)',
+            color: disabled ? 'var(--gray-10)' : (isFocused ? 'var(--accent-9)' : 'var(--gray-11)'),
             display: 'flex',
             alignItems: 'center',
             transition: 'all 0.2s ease-in-out',
@@ -53,9 +55,10 @@ export default function FloatingLabelInput({
         type={type}
         value={value}
         onChange={onChange}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+        onFocus={() => !disabled && setIsFocused(true)}
+        onBlur={() => !disabled && setIsFocused(false)}
         required={required}
+        disabled={disabled}
         placeholder={isFloating ? placeholder : ''}
         style={{
           width: '100%',
@@ -67,21 +70,27 @@ export default function FloatingLabelInput({
           lineHeight: '20px',
           borderRadius: '6px',
           border: '1px solid var(--gray-a6)',
-          backgroundColor: 'var(--color-panel)',
-          color: 'var(--gray-12)',
+          backgroundColor: disabled ? 'var(--gray-a3)' : 'var(--color-panel)',
+          color: disabled ? 'var(--gray-10)' : 'var(--gray-12)',
           outline: 'none',
           transition: 'all 0.2s ease-in-out',
           boxSizing: 'border-box',
+          cursor: disabled ? 'not-allowed' : 'text',
+          opacity: disabled ? 0.7 : 1,
         }}
         onFocus={(e) => {
-          setIsFocused(true)
-          e.currentTarget.style.borderColor = 'var(--accent-9)'
-          e.currentTarget.style.boxShadow = '0 0 0 1px var(--accent-9)'
+          if (!disabled) {
+            setIsFocused(true)
+            e.currentTarget.style.borderColor = 'var(--accent-9)'
+            e.currentTarget.style.boxShadow = '0 0 0 1px var(--accent-9)'
+          }
         }}
         onBlur={(e) => {
-          setIsFocused(false)
-          e.currentTarget.style.borderColor = 'var(--gray-a6)'
-          e.currentTarget.style.boxShadow = 'none'
+          if (!disabled) {
+            setIsFocused(false)
+            e.currentTarget.style.borderColor = 'var(--gray-a6)'
+            e.currentTarget.style.boxShadow = 'none'
+          }
         }}
       />
       <Text

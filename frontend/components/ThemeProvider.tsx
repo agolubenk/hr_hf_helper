@@ -2,12 +2,17 @@
 
 import { Theme } from '@radix-ui/themes'
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react'
+import type { AccentColorValue } from '@/components/profile/AccentColorSettings'
 
 type ThemeMode = 'light' | 'dark'
 
 interface ThemeContextType {
   theme: ThemeMode
   toggleTheme: () => void
+  lightThemeAccentColor: AccentColorValue
+  darkThemeAccentColor: AccentColorValue
+  setLightThemeAccentColor: (color: AccentColorValue) => void
+  setDarkThemeAccentColor: (color: AccentColorValue) => void
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
@@ -27,6 +32,8 @@ interface ThemeProviderProps {
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [theme, setTheme] = useState<ThemeMode>('light')
   const [mounted, setMounted] = useState(false)
+  const [lightThemeAccentColor, setLightThemeAccentColorState] = useState<AccentColorValue>('crimson')
+  const [darkThemeAccentColor, setDarkThemeAccentColorState] = useState<AccentColorValue>('crimson')
 
   useEffect(() => {
     setMounted(true)
@@ -42,6 +49,17 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     }
     
     setTheme(initialTheme)
+
+    // Загружаем сохраненные акцентные цвета
+    const savedLightAccent = localStorage.getItem('lightThemeAccentColor') as AccentColorValue
+    const savedDarkAccent = localStorage.getItem('darkThemeAccentColor') as AccentColorValue
+    
+    if (savedLightAccent) {
+      setLightThemeAccentColorState(savedLightAccent)
+    }
+    if (savedDarkAccent) {
+      setDarkThemeAccentColorState(savedDarkAccent)
+    }
     
     // Применяем тему к html и body элементам при первой загрузке
     if (typeof document !== 'undefined') {
@@ -115,14 +133,36 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     }
   }, [theme, mounted])
 
+  const setLightThemeAccentColor = (color: AccentColorValue) => {
+    setLightThemeAccentColorState(color)
+    localStorage.setItem('lightThemeAccentColor', color)
+  }
+
+  const setDarkThemeAccentColor = (color: AccentColorValue) => {
+    setDarkThemeAccentColorState(color)
+    localStorage.setItem('darkThemeAccentColor', color)
+  }
+
+  // Определяем текущий акцентный цвет на основе активной темы
+  const currentAccentColor = theme === 'light' ? lightThemeAccentColor : darkThemeAccentColor
+
   if (!mounted) {
     return null
   }
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider 
+      value={{ 
+        theme, 
+        toggleTheme,
+        lightThemeAccentColor,
+        darkThemeAccentColor,
+        setLightThemeAccentColor,
+        setDarkThemeAccentColor
+      }}
+    >
       <Theme 
-        accentColor="crimson" 
+        accentColor={currentAccentColor} 
         grayColor="sand" 
         radius="large" 
         scaling="95%"

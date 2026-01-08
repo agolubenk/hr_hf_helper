@@ -153,7 +153,7 @@ export default function FloatingActions({ actions = [] }: FloatingActionsProps) 
             backgroundColor: 'var(--color-panel)',
             border: '1px solid var(--gray-a6)',
             borderRadius: '12px',
-            padding: '12px 8px',
+            padding: '10px 6px',
             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
           }}
         >
@@ -163,8 +163,8 @@ export default function FloatingActions({ actions = [] }: FloatingActionsProps) 
               key={action.id}
               onClick={action.onClick}
               style={{
-                width: '48px',
-                height: '48px',
+                width: '43px',
+                height: '43px',
                 borderRadius: '50%',
                 backgroundColor: action.id === 'pin' && isPinned
                   ? 'var(--gray-4)'
@@ -190,7 +190,15 @@ export default function FloatingActions({ actions = [] }: FloatingActionsProps) 
               }}
               title={action.label}
             >
-              <Box style={{ color: 'var(--gray-12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Box style={{ 
+                color: 'var(--gray-12)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                width: '20px',
+                height: '20px',
+                transform: 'scale(0.9)'
+              }}>
                 {action.icon}
               </Box>
             </Box>
