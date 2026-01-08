@@ -150,7 +150,7 @@ export default function IntegrationSettingsModal({
             <Text size="2" weight="medium" style={{ marginBottom: '12px', display: 'block' }}>
               Пошаговая инструкция:
             </Text>
-            <Box as="ol" style={{ paddingLeft: '20px', marginBottom: '16px' }}>
+            <ol style={{ paddingLeft: '20px', marginBottom: '16px' }}>
               <li style={{ marginBottom: '8px' }}>
                 <Text size="2">Войти в Google аккаунт - используйте ваш Google аккаунт</Text>
               </li>
@@ -172,7 +172,7 @@ export default function IntegrationSettingsModal({
               <li style={{ marginBottom: '8px' }}>
                 <Text size="2">Скопировать ключ и сохранить - скопируйте полученный API ключ и вставьте в настройки профиля</Text>
               </li>
-            </Box>
+            </ol>
             <Box 
               style={{ 
                 padding: '12px', 
@@ -220,7 +220,7 @@ export default function IntegrationSettingsModal({
             <Text size="2" weight="medium" style={{ marginBottom: '12px', display: 'block' }}>
               Пошаговая инструкция (Токенная система):
             </Text>
-            <Box as="ol" style={{ paddingLeft: '20px', marginBottom: '16px' }}>
+            <ol style={{ paddingLeft: '20px', marginBottom: '16px' }}>
               <li style={{ marginBottom: '8px' }}>
                 <Text size="2">Кликнуть "+Add token" - найдите кнопку в разделе API</Text>
               </li>
@@ -249,7 +249,7 @@ export default function IntegrationSettingsModal({
               <li style={{ marginBottom: '8px' }}>
                 <Text size="2">Вставить оба токена и сохранить</Text>
               </li>
-            </Box>
+            </ol>
             <Box 
               style={{ 
                 padding: '12px', 
@@ -282,7 +282,7 @@ export default function IntegrationSettingsModal({
             <Text size="2" weight="medium" style={{ marginBottom: '12px', display: 'block' }}>
               Пошаговая инструкция:
             </Text>
-            <Box as="ol" style={{ paddingLeft: '20px', marginBottom: '16px' }}>
+            <ol style={{ paddingLeft: '20px', marginBottom: '16px' }}>
               <li style={{ marginBottom: '8px' }}>
                 <Text size="2">Кликнуть "+ Create new App" или "Generate API Token" - найдите соответствующую кнопку</Text>
               </li>
@@ -298,7 +298,7 @@ export default function IntegrationSettingsModal({
               <li style={{ marginBottom: '8px' }}>
                 <Text size="2">Скопировать Client ID, Client Secret или API Token - скопируйте полученный API токен и вставьте в настройки профиля</Text>
               </li>
-            </Box>
+            </ol>
             <Box 
               style={{ 
                 padding: '12px', 
@@ -341,7 +341,7 @@ export default function IntegrationSettingsModal({
             <Text size="2" weight="medium" style={{ marginBottom: '12px', display: 'block' }}>
               Пошаговая инструкция:
             </Text>
-            <Box as="ol" style={{ paddingLeft: '20px', marginBottom: '16px' }}>
+            <ol style={{ paddingLeft: '20px', marginBottom: '16px' }}>
               <li style={{ marginBottom: '8px' }}>
                 <Text size="2">Войти в Notion аккаунт - используйте ваш аккаунт Notion</Text>
               </li>
@@ -363,11 +363,11 @@ export default function IntegrationSettingsModal({
               <li style={{ marginBottom: '8px' }}>
                 <Text size="2">Скопировать "Internal Integration Token" - сохраните токен и вставьте в настройки профиля</Text>
               </li>
-            </Box>
+            </ol>
             <Text size="2" weight="medium" style={{ marginBottom: '12px', display: 'block', marginTop: '16px' }}>
               Дополнительно - предоставить доступ к страницам:
             </Text>
-            <Box as="ol" style={{ paddingLeft: '20px', marginBottom: '16px' }}>
+            <ol style={{ paddingLeft: '20px', marginBottom: '16px' }}>
               <li style={{ marginBottom: '8px' }}>
                 <Text size="2">Открыть нужную страницу в Notion - перейдите к странице, которую хотите синхронизировать</Text>
               </li>
@@ -383,7 +383,7 @@ export default function IntegrationSettingsModal({
               <li style={{ marginBottom: '8px' }}>
                 <Text size="2">"Confirm" - подтвердите подключение</Text>
               </li>
-            </Box>
+            </ol>
             <Box 
               style={{ 
                 padding: '12px', 
@@ -464,9 +464,9 @@ export default function IntegrationSettingsModal({
                   tabIndex={0}
                 >
                   {showApiKey ? (
-                    <EyeClosedIcon width="16" height="16" style={{ color: 'var(--gray-11)' }} />
+                    <EyeClosedIcon width={16} height={16} style={{ color: 'var(--gray-11)' }} />
                   ) : (
-                    <EyeOpenIcon width="16" height="16" style={{ color: 'var(--gray-11)' }} />
+                    <EyeOpenIcon width={16} height={16} style={{ color: 'var(--gray-11)' }} />
                   )}
                 </Box>
                 <Button
@@ -545,9 +545,9 @@ export default function IntegrationSettingsModal({
                   tabIndex={0}
                 >
                   {showApiKey ? (
-                    <EyeClosedIcon width="16" height="16" style={{ color: 'var(--gray-11)' }} />
+                    <EyeClosedIcon width={16} height={16} style={{ color: 'var(--gray-11)' }} />
                   ) : (
-                    <EyeOpenIcon width="16" height="16" style={{ color: 'var(--gray-11)' }} />
+                    <EyeOpenIcon width={16} height={16} style={{ color: 'var(--gray-11)' }} />
                   )}
                 </Box>
                 <Button
@@ -626,9 +626,9 @@ export default function IntegrationSettingsModal({
                   tabIndex={0}
                 >
                   {showIntegrationToken ? (
-                    <EyeClosedIcon width="16" height="16" style={{ color: 'var(--gray-11)' }} />
+                    <EyeClosedIcon width={16} height={16} style={{ color: 'var(--gray-11)' }} />
                   ) : (
-                    <EyeOpenIcon width="16" height="16" style={{ color: 'var(--gray-11)' }} />
+                    <EyeOpenIcon width={16} height={16} style={{ color: 'var(--gray-11)' }} />
                   )}
                 </Box>
                 <Button
@@ -761,9 +761,9 @@ export default function IntegrationSettingsModal({
                         tabIndex={0}
                       >
                         {showSandboxApiKey ? (
-                          <EyeClosedIcon width="16" height="16" style={{ color: 'var(--gray-11)' }} />
+                          <EyeClosedIcon width={16} height={16} style={{ color: 'var(--gray-11)' }} />
                         ) : (
-                          <EyeOpenIcon width="16" height="16" style={{ color: 'var(--gray-11)' }} />
+                          <EyeOpenIcon width={16} height={16} style={{ color: 'var(--gray-11)' }} />
                         )}
                       </Box>
                       <Button
@@ -870,9 +870,9 @@ export default function IntegrationSettingsModal({
                       tabIndex={0}
                     >
                       {showAccessToken ? (
-                        <EyeClosedIcon width="16" height="16" style={{ color: 'var(--gray-11)' }} />
+                        <EyeClosedIcon width={16} height={16} style={{ color: 'var(--gray-11)' }} />
                       ) : (
-                        <EyeOpenIcon width="16" height="16" style={{ color: 'var(--gray-11)' }} />
+                        <EyeOpenIcon width={16} height={16} style={{ color: 'var(--gray-11)' }} />
                       )}
                     </Box>
                   </Box>
@@ -931,9 +931,9 @@ export default function IntegrationSettingsModal({
                       tabIndex={0}
                     >
                       {showRefreshToken ? (
-                        <EyeClosedIcon width="16" height="16" style={{ color: 'var(--gray-11)' }} />
+                        <EyeClosedIcon width={16} height={16} style={{ color: 'var(--gray-11)' }} />
                       ) : (
-                        <EyeOpenIcon width="16" height="16" style={{ color: 'var(--gray-11)' }} />
+                        <EyeOpenIcon width={16} height={16} style={{ color: 'var(--gray-11)' }} />
                       )}
                     </Box>
                   </Box>
@@ -1091,9 +1091,9 @@ export default function IntegrationSettingsModal({
                 </Text>
                 <Box style={{ flexShrink: 0, marginLeft: '8px' }}>
                   {isInstructionsExpanded ? (
-                    <ChevronUpIcon width="16" height="16" />
+                    <ChevronUpIcon width={16} height={16} />
                   ) : (
-                    <ChevronDownIcon width="16" height="16" />
+                    <ChevronDownIcon width={16} height={16} />
                   )}
                 </Box>
               </Button>

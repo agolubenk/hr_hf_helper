@@ -8,12 +8,90 @@ import ProfileInfo from "@/components/profile/ProfileInfo"
 import ProfileEditForm from "@/components/profile/ProfileEditForm"
 import IntegrationsPage from "@/components/profile/IntegrationsPage"
 import AccentColorSettings from "@/components/profile/AccentColorSettings"
+import QuickButtonsPage from "@/components/profile/QuickButtonsPage"
 import { useTheme } from "@/components/ThemeProvider"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import styles from './profile.module.css'
 
+type TabType = 'profile' | 'edit' | 'integrations' | 'quick-buttons'
+
 export default function ProfilePage() {
-  const [activeTab, setActiveTab] = useState<'profile' | 'edit' | 'integrations' | 'quick-buttons'>('profile')
+  // Загружаем активную вкладку из localStorage или используем 'profile' по умолчанию
+  const getInitialTab = (): TabType => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('profileActiveTab')
+      if (saved === 'profile' || saved === 'edit' || saved === 'integrations' || saved === 'quick-buttons') {
+        return saved as TabType
+      }
+    }
+    return 'profile'
+  }
+
+  const [activeTab, setActiveTab] = useState<TabType>(getInitialTab)
+
+  // Сохраняем активную вкладку в localStorage при изменении
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('profileActiveTab', activeTab)
+    }
+  }, [activeTab])
+
+  // Слушаем изменения в localStorage для синхронизации (например, при клике на "Интеграции и API" из меню)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'profileActiveTab' && e.newValue) {
+        const newTab = e.newValue as TabType
+        if (newTab === 'profile' || newTab === 'edit' || newTab === 'integrations' || newTab === 'quick-buttons') {
+          setActiveTab(newTab)
+        }
+      }
+    }
+
+    // Кастомное событие для синхронизации в той же вкладке
+    const handleCustomStorageChange = (e: CustomEvent) => {
+      if (e.detail?.key === 'profileActiveTab' && e.detail?.value) {
+        const newTab = e.detail.value as TabType
+        if (newTab === 'profile' || newTab === 'edit' || newTab === 'integrations' || newTab === 'quick-buttons') {
+          setActiveTab(newTab)
+        }
+      }
+    }
+
+    // Проверяем изменения при фокусе на окне
+    const handleFocus = () => {
+      const saved = localStorage.getItem('profileActiveTab')
+      if (saved && (saved === 'profile' || saved === 'edit' || saved === 'integrations' || saved === 'quick-buttons')) {
+        setActiveTab(saved as TabType)
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+    window.addEventListener('localStorageChange', handleCustomStorageChange as EventListener)
+    window.addEventListener('focus', handleFocus)
+
+    // Периодическая проверка для надежной синхронизации
+    const intervalId = setInterval(() => {
+      const saved = localStorage.getItem('profileActiveTab')
+      if (saved && (saved === 'profile' || saved === 'edit' || saved === 'integrations' || saved === 'quick-buttons')) {
+        const newTab = saved as TabType
+        setActiveTab(prev => {
+          if (prev !== newTab) {
+            return newTab
+          }
+          return prev
+        })
+      }
+    }, 200)
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+      window.removeEventListener('localStorageChange', handleCustomStorageChange as EventListener)
+      window.removeEventListener('focus', handleFocus)
+      clearInterval(intervalId)
+    }
+  }, [])
   const { lightThemeAccentColor, darkThemeAccentColor, setLightThemeAccentColor, setDarkThemeAccentColor } = useTheme()
 
   // Моковые данные пользователя (в реальном приложении будут приходить из API)
@@ -91,7 +169,7 @@ export default function ProfilePage() {
       case 'integrations':
         return <IntegrationsPage />
       case 'quick-buttons':
-        return <Box>Быстрые кнопки (в разработке)</Box>
+        return <QuickButtonsPage />
       default:
         return null
     }
@@ -99,7 +177,7 @@ export default function ProfilePage() {
 
   return (
     <AppLayout pageTitle="Профиль">
-      <Box className={styles.profileWrapper}>
+      <Box id="main-content-start" className={styles.profileWrapper}>
         <Flex gap="4" className={styles.profileLayout}>
           {/* Левая колонка */}
           <Box className={styles.leftColumn}>

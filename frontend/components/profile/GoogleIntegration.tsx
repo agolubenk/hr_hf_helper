@@ -59,7 +59,7 @@ export default function GoogleIntegration({
           <Flex direction="column" gap="3" style={{ flex: 1 }}>
             {/* Статус подключения */}
             <Flex align="center" gap="2">
-              <CheckIcon width="16" height="16" style={{ color: 'var(--green-9)' }} />
+              <CheckIcon width={16} height={16} style={{ color: 'var(--green-9)' }} />
               <Text size="3">
                 Google API подключен
               </Text>
@@ -67,7 +67,7 @@ export default function GoogleIntegration({
 
             {/* Статус токена */}
             <Flex align="center" gap="2">
-              <CheckIcon width="16" height="16" style={{ color: 'var(--green-9)' }} />
+              <CheckIcon width={16} height={16} style={{ color: 'var(--green-9)' }} />
               <Text size="3">
                 Статус токена: {tokenStatus}
               </Text>

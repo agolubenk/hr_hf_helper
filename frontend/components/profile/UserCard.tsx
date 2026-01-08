@@ -45,7 +45,7 @@ export default function UserCard({
 
       {/* Email */}
       <Flex align="center" gap="2" className={styles.emailRow}>
-        <EnvelopeClosedIcon width="16" height="16" />
+        <EnvelopeClosedIcon width={16} height={16} />
         <Text size="2" color="gray">
           {email}
         </Text>
@@ -54,7 +54,7 @@ export default function UserCard({
       {/* Telegram */}
       {telegram && (
         <Flex align="center" gap="2" className={styles.telegramRow}>
-          <PaperPlaneIcon width="16" height="16" />
+          <PaperPlaneIcon width={16} height={16} />
           <Text size="2" color="gray">
             {telegram}
           </Text>

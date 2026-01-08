@@ -55,8 +55,6 @@ export default function FloatingLabelInput({
         type={type}
         value={value}
         onChange={onChange}
-        onFocus={() => !disabled && setIsFocused(true)}
-        onBlur={() => !disabled && setIsFocused(false)}
         required={required}
         disabled={disabled}
         placeholder={isFloating ? placeholder : ''}

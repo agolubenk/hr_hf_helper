@@ -14,6 +14,7 @@ import {
   OpenInNewWindowIcon
 } from "@radix-ui/react-icons"
 import { useState, ReactNode, useEffect } from "react"
+import { useRouter, usePathname } from "next/navigation"
 import styles from './Sidebar.module.css'
 import { useTheme } from "@/components/ThemeProvider"
 
@@ -35,13 +36,48 @@ interface MenuItemComponentProps {
   item: MenuItem
   isActive?: boolean
   level?: number
+  onNavigate?: () => void
 }
 
-function MenuItemComponent({ item, isActive = false, level = 0 }: MenuItemComponentProps) {
+function MenuItemComponent({ item, isActive = false, level = 0, onNavigate }: MenuItemComponentProps) {
+  const router = useRouter()
   const hasChildren = item.children && item.children.length > 0
   // Некоторые разделы открыты по умолчанию
   const defaultExpanded = item.id === 'invites' || item.id === 'google-oauth'
   const [isExpanded, setIsExpanded] = useState(defaultExpanded)
+
+  const handleClick = () => {
+    if (hasChildren) {
+      setIsExpanded(!isExpanded)
+    } else if (item.href) {
+      // Если это ссылка, выполняем навигацию
+      if (item.external) {
+        // Внешняя ссылка открывается в новой вкладке
+        window.open(item.href, '_blank')
+      } else {
+        // Внутренняя ссылка - используем Next.js роутер
+        // Если это ссылка на профиль с интеграциями, устанавливаем активную вкладку
+        if (item.id === 'settings-integrations' && item.href === '/profile') {
+          // Сохраняем активную вкладку в localStorage для открытия страницы с интеграциями
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('profileActiveTab', 'integrations')
+            // Отправляем кастомное событие для синхронизации в той же вкладке
+            window.dispatchEvent(new CustomEvent('localStorageChange', {
+              detail: {
+                key: 'profileActiveTab',
+                value: 'integrations'
+              }
+            }))
+          }
+        }
+        router.push(item.href)
+        // Закрываем меню при навигации только на мобильных устройствах (< 768px)
+        if (onNavigate && typeof window !== 'undefined' && window.innerWidth < 768) {
+          onNavigate()
+        }
+      }
+    }
+  }
 
   return (
     <Box>
@@ -53,18 +89,17 @@ function MenuItemComponent({ item, isActive = false, level = 0 }: MenuItemCompon
         style={{
           backgroundColor: isActive ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
           borderRadius: '6px',
-          cursor: 'pointer',
+          cursor: item.href || hasChildren ? 'pointer' : 'default',
           paddingLeft: level > 0 ? `${16 + level * 20}px` : '12px',
           position: 'relative',
           marginBottom: '2px',
         }}
-        onClick={() => {
-          if (hasChildren) {
-            setIsExpanded(!isExpanded)
-          }
+        onClick={(e) => {
+          e.preventDefault()
+          handleClick()
         }}
         onMouseEnter={(e) => {
-          if (!isActive) {
+          if (!isActive && (item.href || hasChildren)) {
             e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)'
           }
         }}
@@ -85,9 +120,9 @@ function MenuItemComponent({ item, isActive = false, level = 0 }: MenuItemCompon
         {hasChildren && (
           <Box style={{ display: 'flex', alignItems: 'center' }}>
             {isExpanded ? (
-              <ChevronUpIcon width="16" height="16" style={{ color: 'var(--gray-12)' }} />
+              <ChevronUpIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />
             ) : (
-              <ChevronDownIcon width="16" height="16" style={{ color: 'var(--gray-12)' }} />
+              <ChevronDownIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />
             )}
           </Box>
         )}
@@ -102,6 +137,7 @@ function MenuItemComponent({ item, isActive = false, level = 0 }: MenuItemCompon
               key={child.id}
               item={child}
               level={level + 1}
+              onNavigate={onNavigate}
             />
           ))}
         </Flex>
@@ -112,18 +148,20 @@ function MenuItemComponent({ item, isActive = false, level = 0 }: MenuItemCompon
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { theme } = useTheme()
+  const pathname = usePathname()
   
   // Пример структуры меню - можно вынести в отдельный файл или получать из API
   const menuItems: MenuItem[] = [
     {
       id: 'home',
       label: 'Главная',
-      icon: <HomeIcon width="16" height="16" style={{ color: 'var(--gray-12)' }} />,
+      icon: <HomeIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+      href: '/',
     },
     {
       id: 'huntflow',
       label: 'Huntflow',
-      icon: <PersonIcon width="16" height="16" style={{ color: 'var(--gray-12)' }} />,
+      icon: <PersonIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
     },
     {
       id: 'google-oauth',
@@ -134,22 +172,22 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     {
       id: 'calendar',
       label: 'Календарь',
-      icon: <CalendarIcon width="16" height="16" style={{ color: 'var(--gray-12)' }} />,
+      icon: <CalendarIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
     },
     {
       id: 'invites',
       label: 'Инвайты',
-      icon: <EnvelopeClosedIcon width="16" height="16" style={{ color: 'var(--gray-12)' }} />,
+      icon: <EnvelopeClosedIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
       children: [
         {
           id: 'invites-list',
           label: 'Список инвайтов',
-          icon: <ListBulletIcon width="16" height="16" style={{ color: 'var(--gray-12)' }} />,
+          icon: <ListBulletIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
         },
         {
           id: 'invites-create',
           label: 'Создать инвайт',
-          icon: <PlusIcon width="16" height="16" style={{ color: 'var(--gray-12)' }} />,
+          icon: <PlusIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
         },
       ],
     },
@@ -177,7 +215,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     {
       id: 'interviewers',
       label: 'Интервьюеры',
-      icon: <PersonIcon width="16" height="16" style={{ color: 'var(--gray-12)' }} />,
+      icon: <PersonIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
       children: [],
     },
     {
@@ -200,7 +238,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     {
       id: 'reporting',
       label: 'Отчетность',
-      icon: <ListBulletIcon width="16" height="16" style={{ color: 'var(--gray-12)' }} />,
+      icon: <ListBulletIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
       children: [],
     },
   ]
@@ -209,15 +247,17 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     {
       id: 'profile',
       label: 'Профиль',
-      icon: <PersonIcon width="16" height="16" style={{ color: 'var(--gray-12)' }} />,
+      icon: <PersonIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+      href: '/profile',
     },
     {
       id: 'settings-integrations',
-      label: 'Интеграции',
+      label: 'Интеграции и API',
       icon: <Box style={{ width: '16px', height: '16px', position: 'relative' }}>
         <Box style={{ width: '8px', height: '8px', border: '1px solid var(--gray-12)', borderRadius: '2px', position: 'absolute', top: '0', left: '0' }} />
         <Box style={{ width: '4px', height: '4px', borderTop: '1px solid var(--gray-12)', borderRight: '1px solid var(--gray-12)', position: 'absolute', bottom: '0', right: '0' }} />
       </Box>,
+      href: '/profile',
     },
     {
       id: 'company-settings',
@@ -229,7 +269,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     {
       id: 'admin',
       label: 'Admin-панель',
-      icon: <GearIcon width="16" height="16" style={{ color: 'var(--gray-12)' }} />,
+      icon: <GearIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
       external: true,
     },
   ]
@@ -255,7 +295,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           <MenuItemComponent
             key={item.id}
             item={item}
-            isActive={item.id === 'home'}
+            isActive={pathname === item.href || (item.id === 'home' && pathname === '/')}
+            onNavigate={onClose}
           />
         ))}
 
@@ -263,12 +304,33 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <Separator size="4" my="2" />
 
         {/* Настройки */}
-        {settingsItems.map((item) => (
-          <MenuItemComponent
-            key={item.id}
-            item={item}
-          />
-        ))}
+        {settingsItems.map((item) => {
+          // Проверяем, является ли текущая страница активной
+          let isActive = pathname === item.href
+          
+          // Для страницы интеграций проверяем активную вкладку в localStorage
+          if (item.id === 'settings-integrations' && pathname === '/profile') {
+            if (typeof window !== 'undefined') {
+              const activeTab = localStorage.getItem('profileActiveTab')
+              isActive = activeTab === 'integrations'
+            }
+          } else if (item.id === 'profile' && pathname === '/profile') {
+            // Для профиля проверяем, что активная вкладка - это профиль (или не установлена)
+            if (typeof window !== 'undefined') {
+              const activeTab = localStorage.getItem('profileActiveTab')
+              isActive = !activeTab || activeTab === 'profile'
+            }
+          }
+          
+          return (
+            <MenuItemComponent
+              key={item.id}
+              item={item}
+              isActive={isActive}
+              onNavigate={onClose}
+            />
+          )
+        })}
       </Flex>
     </Box>
   )

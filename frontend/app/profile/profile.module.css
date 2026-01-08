@@ -24,6 +24,8 @@
 .rightColumn {
   flex: 1;
   min-width: 0;
+  position: relative;
+  overflow: visible;
 }
 
 /* Адаптивность для мобильных устройств */

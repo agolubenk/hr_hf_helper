@@ -25,13 +25,13 @@ function IntegrationCard({ name, logo, status, onConfigure }: IntegrationCardPro
           </Text>
         </Flex>
         <Flex align="center" gap="2">
-          <CheckIcon width="16" height="16" style={{ color: 'var(--green-9)', flexShrink: 0 }} />
+          <CheckIcon width={16} height={16} style={{ color: 'var(--green-9)', flexShrink: 0 }} />
           <Box
             className={styles.gearButton}
             onClick={onConfigure}
             title="Настроить API ключи"
           >
-            <GearIcon width="16" height="16" />
+            <GearIcon width={16} height={16} />
           </Box>
         </Flex>
       </Flex>
@@ -79,7 +79,7 @@ const NotionLogo = () => (
 
 const TelegramLogo = () => (
   <Box className={styles.logoContainer}>
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width={16} height={16} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M12 0C5.373 0 0 5.373 0 12C0 18.627 5.373 24 12 24C18.627 24 24 18.627 24 12C24 5.373 18.627 0 12 0ZM17.67 8.01L15.63 16.53C15.48 17.22 15.09 17.4 14.49 17.04L11.97 15.19L10.71 16.41C10.53 16.59 10.38 16.74 10.05 16.74L10.29 14.14L15.63 9.39C15.93 9.12 15.57 8.97 15.18 9.24L8.67 13.45L6.09 12.66C5.52 12.5 5.5 12.03 6.18 11.76L17.01 7.62C17.48 7.44 17.9 7.73 17.67 8.01Z"
         fill="white"

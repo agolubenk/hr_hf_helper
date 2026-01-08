@@ -52,17 +52,17 @@ export default function ProfileInfo({ userData }: ProfileInfoProps) {
             <InfoRow 
               label="Email:" 
               value={userData.email}
-              icon={<EnvelopeClosedIcon width="16" height="16" />}
+              icon={<EnvelopeClosedIcon width={16} height={16} />}
             />
             <InfoRow 
               label="Telegram:" 
               value={userData.telegram || 'Не указан'}
-              icon={<PaperPlaneIcon width="16" height="16" />}
+              icon={<PaperPlaneIcon width={16} height={16} />}
             />
             <InfoRow 
               label="LinkedIn:" 
               value={userData.linkedin || 'Не указан'}
-              icon={<LinkedInIcon width="16" height="16" />}
+              icon={<LinkedInIcon width={16} height={16} />}
             />
           </Box>
 
@@ -74,7 +74,7 @@ export default function ProfileInfo({ userData }: ProfileInfoProps) {
             <InfoRow 
               label="Время между встречами:" 
               value={userData.meetingInterval}
-              icon={<ClockIcon width="16" height="16" />}
+              icon={<ClockIcon width={16} height={16} />}
             />
             <Box className={styles.environmentRow}>
               <Text size="2" weight="medium" style={{ color: 'var(--gray-11)' }}>

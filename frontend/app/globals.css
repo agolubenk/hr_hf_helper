@@ -35,3 +35,22 @@ body[data-theme="light"] .radix-themes,
 .radix-themes[data-appearance="light"] {
   background-color: #ffffff;
 }
+/* Исправляем z-index для Select.Content внутри модальных окон */
+body [data-radix-popper-content-wrapper] {
+  z-index: 3000 !important;
+}
+
+body [data-radix-select-content] {
+  z-index: 3000 !important;
+}
+
+/* Стили для Select.Content из Radix UI Themes */
+body .rt-SelectContent {
+  z-index: 3000 !important;
+}
+
+body [data-radix-select-viewport] {
+  max-height: 300px;
+  overflow-y: auto;
+}
+

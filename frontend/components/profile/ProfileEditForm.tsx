@@ -80,7 +80,7 @@ export default function ProfileEditForm({
                 onChange={handleChange('firstName')}
                 required
                 disabled
-                icon={<PersonIcon width="16" height="16" />}
+                icon={<PersonIcon width={16} height={16} />}
               />
             </Box>
 
@@ -93,7 +93,7 @@ export default function ProfileEditForm({
                 onChange={handleChange('lastName')}
                 required
                 disabled
-                icon={<PersonIcon width="16" height="16" />}
+                icon={<PersonIcon width={16} height={16} />}
               />
             </Box>
           </Grid>
@@ -107,7 +107,7 @@ export default function ProfileEditForm({
               onChange={handleChange('email')}
               required
               disabled
-              icon={<EnvelopeClosedIcon width="16" height="16" />}
+              icon={<EnvelopeClosedIcon width={16} height={16} />}
             />
           </Box>
 
@@ -127,7 +127,7 @@ export default function ProfileEditForm({
                   pointerEvents: 'none',
                 }}
               >
-                <PaperPlaneIcon width="16" height="16" />
+                <PaperPlaneIcon width={16} height={16} />
               </Box>
               <Box
                 style={{
@@ -148,8 +148,6 @@ export default function ProfileEditForm({
                 type="text"
                 value={formData.telegram || ''}
                 onChange={handleChange('telegram')}
-                onFocus={() => setTelegramFocused(true)}
-                onBlur={() => setTelegramFocused(false)}
                 style={{
                   width: '100%',
                   paddingTop: (telegramFocused || formData.telegram) && formData.telegram && formData.telegram.length > 0 ? '20px' : '12px',
@@ -223,8 +221,6 @@ export default function ProfileEditForm({
                 type="text"
                 value={formData.linkedin || ''}
                 onChange={handleChange('linkedin')}
-                onFocus={() => setLinkedinFocused(true)}
-                onBlur={() => setLinkedinFocused(false)}
                 style={{
                   width: '100%',
                   paddingTop: (linkedinFocused || formData.linkedin) && formData.linkedin && formData.linkedin.length > 0 ? '20px' : '12px',
@@ -283,7 +279,7 @@ export default function ProfileEditForm({
                 type="time"
                 value={formData.workStartTime || ''}
                 onChange={handleChange('workStartTime')}
-                icon={<ClockIcon width="16" height="16" />}
+                icon={<ClockIcon width={16} height={16} />}
               />
               <Text size="1" color="gray" style={{ marginTop: '4px', display: 'block' }}>
                 Время начала рабочего дня для планирования интервью
@@ -297,7 +293,7 @@ export default function ProfileEditForm({
                 type="time"
                 value={formData.workEndTime || ''}
                 onChange={handleChange('workEndTime')}
-                icon={<ClockIcon width="16" height="16" />}
+                icon={<ClockIcon width={16} height={16} />}
               />
               <Text size="1" color="gray" style={{ marginTop: '4px', display: 'block' }}>
                 Время окончания рабочего дня для планирования интервью
@@ -312,7 +308,7 @@ export default function ProfileEditForm({
               type="number"
               value={formData.meetingInterval || ''}
               onChange={handleChange('meetingInterval')}
-              icon={<ClockIcon width="16" height="16" />}
+              icon={<ClockIcon width={16} height={16} />}
             />
             <Text size="1" color="gray" style={{ marginTop: '4px', display: 'block' }}>
               Время между встречами в минутах (кратно 5, от 0 до 60)
@@ -327,7 +323,7 @@ export default function ProfileEditForm({
             variant="soft"
             onClick={onCancel}
           >
-            <ChevronLeftIcon width="16" height="16" />
+            <ChevronLeftIcon width={16} height={16} />
             Отмена
           </Button>
           
@@ -335,7 +331,7 @@ export default function ProfileEditForm({
             type="submit"
             className={styles.saveButton}
           >
-            <SaveIcon width="16" height="16" />
+            <SaveIcon width={16} height={16} />
             Сохранить изменения
           </Button>
         </Flex>

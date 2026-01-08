@@ -1,12 +1,15 @@
 'use client'
 
 import { Box, Flex } from "@radix-ui/themes"
-import { useState, ReactNode } from "react"
+import { useState, useEffect, ReactNode } from "react"
 import Header from "./Header"
 import Sidebar from "./Sidebar"
 import FloatingActions from "./FloatingActions"
 import { useTheme } from "./ThemeProvider"
 import styles from './AppLayout.module.css'
+
+const SIDEBAR_STATE_STORAGE_KEY = 'sidebarMenuOpen'
+const DESKTOP_BREAKPOINT = 768 // Мобильные устройства < 768px
 
 interface AppLayoutProps {
   children: ReactNode
@@ -21,8 +24,84 @@ export default function AppLayout({
   userName = "Голубенко Андрей",
   onLogout,
 }: AppLayoutProps) {
-  const [menuOpen, setMenuOpen] = useState(false)
+  // Проверяем, является ли устройство десктопом
+  const isDesktop = () => {
+    if (typeof window === 'undefined') return false
+    return window.innerWidth >= DESKTOP_BREAKPOINT
+  }
+
+  // Инициализируем состояние меню: загружаем из localStorage только на десктопе
+  const [menuOpen, setMenuOpen] = useState(() => {
+    if (typeof window === 'undefined') return false
+    
+    // На мобильных устройствах всегда начинаем с закрытого меню
+    if (!isDesktop()) {
+      return false
+    }
+
+    // На десктопе загружаем сохраненное состояние
+    try {
+      const savedState = localStorage.getItem(SIDEBAR_STATE_STORAGE_KEY)
+      return savedState === 'true'
+    } catch (error) {
+      console.error('Ошибка при загрузке состояния меню из localStorage:', error)
+      return false
+    }
+  })
+
   const { theme, toggleTheme } = useTheme()
+
+  // Сохраняем состояние меню в localStorage при изменении (только на десктопе)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    // На мобильных устройствах не сохраняем состояние
+    if (window.innerWidth < DESKTOP_BREAKPOINT) {
+      // На мобильных устройствах удаляем сохраненное состояние
+      try {
+        localStorage.removeItem(SIDEBAR_STATE_STORAGE_KEY)
+      } catch (error) {
+        // Игнорируем ошибки при удалении из localStorage
+      }
+      return
+    }
+
+    // На десктопе сохраняем состояние
+    try {
+      localStorage.setItem(SIDEBAR_STATE_STORAGE_KEY, String(menuOpen))
+    } catch (error) {
+      console.error('Ошибка при сохранении состояния меню в localStorage:', error)
+    }
+  }, [menuOpen])
+
+  // Обработчик изменения размера окна: на мобильных закрываем меню
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const handleResize = () => {
+      // Если переключились на мобильное устройство, закрываем меню
+      if (window.innerWidth < DESKTOP_BREAKPOINT) {
+        setMenuOpen((prev) => {
+          // Если меню было открыто, закрываем его на мобильном устройстве
+          if (prev) {
+            // На мобильных не сохраняем состояние в localStorage
+            try {
+              localStorage.removeItem(SIDEBAR_STATE_STORAGE_KEY)
+            } catch (error) {
+              // Игнорируем ошибки при удалении из localStorage
+            }
+            return false
+          }
+          return prev
+        })
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, []) // Пустой массив зависимостей, так как функция handleResize проверяет window.innerWidth напрямую
 
   const handleLogout = () => {
     if (onLogout) {
@@ -33,12 +112,16 @@ export default function AppLayout({
     }
   }
 
+  const handleMenuToggle = () => {
+    setMenuOpen(!menuOpen)
+  }
+
   return (
     <>
       <Header
         pageTitle={pageTitle}
         userName={userName}
-        onMenuToggle={() => setMenuOpen(!menuOpen)}
+        onMenuToggle={handleMenuToggle}
         onThemeToggle={toggleTheme}
         currentTheme={theme}
         menuOpen={menuOpen}
@@ -47,17 +130,28 @@ export default function AppLayout({
       <Sidebar isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       <FloatingActions />
       
-      <Box 
-        className={`${styles.content} ${menuOpen ? styles.contentWithMenu : ''}`}
-        style={{ 
-          marginTop: '64px', 
-          padding: '24px 0',
-          borderTop: '1px solid var(--gray-a6)',
+      <Flex
+        style={{
+          marginTop: '64px',
           width: '100%',
+          transition: 'all 0.2s ease-in-out',
         }}
       >
-        {children}
-      </Box>
+        <Box 
+          className={styles.content}
+          style={{ 
+            padding: '24px 0',
+            borderTop: '1px solid var(--gray-a6)',
+            flex: 1,
+            minWidth: 0,
+            marginLeft: menuOpen ? '280px' : '0',
+            width: menuOpen ? 'calc(100% - 280px)' : '100%',
+            transition: 'margin-left 0.2s ease-in-out, width 0.2s ease-in-out',
+          }}
+        >
+          {children}
+        </Box>
+      </Flex>
     </>
   )
 }

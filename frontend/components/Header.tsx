@@ -3,6 +3,7 @@
 import { Flex, Button, Text, Box } from "@radix-ui/themes"
 import { SunIcon, MoonIcon, PersonIcon, ExitIcon, HamburgerMenuIcon, ChevronLeftIcon } from "@radix-ui/react-icons"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import styles from './Header.module.css'
 
 interface HeaderProps {
@@ -24,13 +25,25 @@ export default function Header({
   menuOpen = false,
   onLogout
 }: HeaderProps) {
+  const router = useRouter()
   const [userHover, setUserHover] = useState(false)
   const [logoutHover, setLogoutHover] = useState(false)
   
   // Извлекаем имя из полного имени (второе слово)
   const firstName = userName.split(' ')[1] || userName
+
+  // Обработчик клика на имя пользователя - переход на страницу профиля
+  const handleUserClick = () => {
+    // Сохраняем активную вкладку "Профиль" в localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('profileActiveTab', 'profile')
+    }
+    // Переходим на страницу профиля
+    router.push('/profile')
+  }
   return (
     <header
+      id="app-header"
       style={{
         position: 'fixed',
         top: 0,
@@ -69,9 +82,9 @@ export default function Header({
           title={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
         >
           {menuOpen ? (
-            <ChevronLeftIcon width="16" height="16" style={{ color: 'var(--gray-12)' }} />
+            <ChevronLeftIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />
           ) : (
-            <HamburgerMenuIcon width="16" height="16" style={{ color: 'var(--gray-12)' }} />
+            <HamburgerMenuIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />
           )}
         </Box>
         <Text size="5" weight="bold" className={styles.pageTitle}>
@@ -99,9 +112,9 @@ export default function Header({
           title={currentTheme === 'light' ? 'Переключить на темную тему' : 'Переключить на светлую тему'}
         >
           {currentTheme === 'light' ? (
-            <MoonIcon width="16" height="16" style={{ color: 'var(--gray-12)' }} />
+            <MoonIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />
           ) : (
-            <SunIcon width="16" height="16" style={{ color: 'var(--gray-12)' }} />
+            <SunIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />
           )}
         </Box>
 
@@ -134,9 +147,9 @@ export default function Header({
               alignItems: 'center',
               transition: 'background-color 0.2s ease-in-out',
             }}
-            onClick={() => {}}
+            onClick={handleUserClick}
           >
-            <PersonIcon width="16" height="16" style={{ color: '#3b82f6', flexShrink: 0 }} />
+            <PersonIcon width={16} height={16} style={{ color: '#3b82f6', flexShrink: 0 }} />
             <Text size="2" className={styles.userFullName} style={{ color: '#3b82f6', whiteSpace: 'nowrap', fontWeight: 400 }}>
               {userName}
             </Text>
@@ -166,7 +179,7 @@ export default function Header({
               transition: 'background-color 0.2s ease-in-out',
             }}
           >
-            <ExitIcon width="16" height="16" style={{ color: '#ef4444', flexShrink: 0 }} />
+            <ExitIcon width={16} height={16} style={{ color: '#ef4444', flexShrink: 0 }} />
             <Text size="2" className={styles.logoutText} style={{ color: '#ef4444', whiteSpace: 'nowrap', fontWeight: 400 }}>
               Выход
             </Text>
