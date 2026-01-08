@@ -4277,14 +4277,49 @@ window.userPhotoUrl = null;
                 });
                 
                 // Функция для обработки клика по быстрой кнопке
+                // Функция для декодирования escape-последовательностей в тексте
+                function decodeEscapedText(text) {
+                    if (!text) return text;
+                    
+                    // Создаем временный элемент для декодирования HTML-сущностей
+                    const tempDiv = document.createElement('div');
+                    tempDiv.textContent = text;
+                    let decoded = tempDiv.textContent || tempDiv.innerText || '';
+                    
+                    // Заменяем все возможные escape-последовательности на нормальные символы
+                    // Обрабатываем Unicode escape-последовательности из escapejs
+                    decoded = decoded
+                        // Unicode escape-последовательности (CRLF, LF, CR)
+                        .replace(/\\u000D\\u000A/g, '\n')  // CRLF -> \n
+                        .replace(/\\u000A/g, '\n')         // LF -> \n
+                        .replace(/\\u000D/g, '\n')         // CR -> \n
+                        .replace(/\\u0009/g, '\t')         // Tab -> \t
+                        // Обычные escape-последовательности
+                        .replace(/\\r\\n/g, '\n')          // \r\n -> \n
+                        .replace(/\\n/g, '\n')             // \n -> \n
+                        .replace(/\\r/g, '\n')             // \r -> \n
+                        .replace(/\\t/g, '\t')             // \t -> табуляция
+                        // Экранированные символы (должны быть последними)
+                        .replace(/\\\\/g, '\\')            // \\ -> \
+                        .replace(/\\"/g, '"')              // \" -> "
+                        .replace(/\\'/g, "'");              // \' -> '
+                    
+                    return decoded;
+                }
+                
                 function handleQuickButton(buttonElement) {
                     const item = buttonElement.closest('.quick-button-item');
                     if (!item) return;
                     
                     const buttonType = item.dataset.buttonType;
-                    const buttonValue = item.dataset.buttonValue;
+                    let buttonValue = item.dataset.buttonValue;
                     
                     if (!buttonValue) return;
+                    
+                    // Декодируем escape-последовательности для текстовых значений
+                    if (buttonType === 'text' || buttonType === 'datetime') {
+                        buttonValue = decodeEscapedText(buttonValue);
+                    }
                     
                     try {
                         if (buttonType === 'link') {
