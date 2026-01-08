@@ -521,6 +521,13 @@
                                 API ключи
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'quick_buttons' %}active{% endif %}" 
+                               href="{% url 'accounts:quick_buttons' %}">
+                                <i class="fas fa-bolt me-2"></i>
+                                Быстрые кнопки
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>

@@ -12,6 +12,7 @@ urlpatterns = [
     # Интеграции
     path('integrations/', views.unified_template_view, {'template_name': 'profile/integrations.html', 'handler_func': views.integrations_template_handler}, name='integrations'),
     path('api-keys/', views.unified_template_view, {'template_name': 'profile/api_keys.html', 'handler_func': views.api_keys_template_handler}, name='api_keys'),
+    path('quick-buttons/', views.unified_template_view, {'template_name': 'profile/quick_buttons.html', 'handler_func': views.quick_buttons_template_handler}, name='quick_buttons'),
     path('components/', views.unified_template_view, {'template_name': 'account/test_google_oauth.html', 'handler_func': views.components_template_handler}, name='components'),
     
     # Аутентификация

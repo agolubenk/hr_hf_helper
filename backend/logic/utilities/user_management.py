@@ -302,7 +302,214 @@ def api_keys_template_handler(request):
         return redirect('accounts:api_keys')
     
     context = {'user': user}
-    return unified_template_view(request, 'profile/api_keys.html', context)
+    return context
+
+
+def quick_buttons_template_handler(request):
+    """Обработчик для страницы быстрых кнопок"""
+    from apps.accounts.models import QuickButton
+    from django.db import transaction
+    
+    user = request.user
+    
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        
+        if action == 'create':
+            # Создание новой кнопки
+            try:
+                name = request.POST.get('name', '').strip()
+                icon = request.POST.get('icon', 'fas fa-circle').strip()
+                button_type = request.POST.get('button_type', 'link')
+                value = request.POST.get('value', '').strip()
+                order = int(request.POST.get('order', 0))
+                
+                # Проверяем обязательные поля
+                if not name:
+                    messages.error(request, 'Название кнопки обязательно для заполнения')
+                    return redirect('accounts:quick_buttons')
+                
+                if not icon:
+                    messages.error(request, 'Иконка обязательна для заполнения')
+                    return redirect('accounts:quick_buttons')
+                
+                if not button_type:
+                    messages.error(request, 'Тип кнопки обязателен для заполнения')
+                    return redirect('accounts:quick_buttons')
+                
+                if not value:
+                    messages.error(request, 'Значение обязательно для заполнения')
+                    return redirect('accounts:quick_buttons')
+                
+                color = request.POST.get('color', '#007bff').strip()
+                if not color.startswith('#'):
+                    color = '#' + color
+                
+                with transaction.atomic():
+                    button = QuickButton(
+                        user=user,
+                        name=name,
+                        icon=icon,
+                        button_type=button_type,
+                        value=value,
+                        order=order,
+                        color=color
+                    )
+                    button.full_clean()  # Валидация
+                    button.save()
+                messages.success(request, f'Быстрая кнопка "{button.name}" успешно создана!')
+            except Exception as e:
+                import traceback
+                error_details = traceback.format_exc()
+                print(f"❌ Ошибка при создании кнопки: {e}")
+                print(f"❌ Детали: {error_details}")
+                messages.error(request, f'Ошибка при создании кнопки: {str(e)}')
+        
+        elif action == 'update':
+            # Обновление существующей кнопки
+            button_id = request.POST.get('button_id')
+            try:
+                if not button_id:
+                    messages.error(request, 'ID кнопки не указан')
+                    return redirect('accounts:quick_buttons')
+                
+                button = QuickButton.objects.get(id=button_id, user=user)
+                name = request.POST.get('name', '').strip()
+                icon = request.POST.get('icon', 'fas fa-circle').strip()
+                button_type = request.POST.get('button_type', 'link')
+                value = request.POST.get('value', '').strip()
+                order = int(request.POST.get('order', 0))
+                
+                # Проверяем обязательные поля
+                if not name:
+                    messages.error(request, 'Название кнопки обязательно для заполнения')
+                    return redirect('accounts:quick_buttons')
+                
+                if not icon:
+                    messages.error(request, 'Иконка обязательна для заполнения')
+                    return redirect('accounts:quick_buttons')
+                
+                color = request.POST.get('color', '#007bff').strip()
+                if not color.startswith('#'):
+                    color = '#' + color
+                
+                button.name = name
+                button.icon = icon
+                button.button_type = button_type
+                button.value = value
+                button.order = order
+                button.color = color
+                button.full_clean()  # Валидация
+                button.save()
+                messages.success(request, f'Быстрая кнопка "{button.name}" успешно обновлена!')
+            except QuickButton.DoesNotExist:
+                messages.error(request, 'Кнопка не найдена.')
+            except Exception as e:
+                import traceback
+                error_details = traceback.format_exc()
+                print(f"❌ Ошибка при обновлении кнопки: {e}")
+                print(f"❌ Детали: {error_details}")
+                messages.error(request, f'Ошибка при обновлении кнопки: {str(e)}')
+        
+        elif action == 'delete':
+            # Удаление кнопки
+            button_id = request.POST.get('button_id')
+            try:
+                button = QuickButton.objects.get(id=button_id, user=user)
+                button_name = button.name
+                button.delete()
+                messages.success(request, f'Быстрая кнопка "{button_name}" успешно удалена!')
+            except QuickButton.DoesNotExist:
+                messages.error(request, 'Кнопка не найдена.')
+            except Exception as e:
+                messages.error(request, f'Ошибка при удалении кнопки: {str(e)}')
+        
+        elif action == 'reorder':
+            # Изменение порядка кнопок
+            try:
+                with transaction.atomic():
+                    button_orders = request.POST.getlist('button_order[]')
+                    for order_data in button_orders:
+                        button_id, new_order = order_data.split(':')
+                        QuickButton.objects.filter(id=button_id, user=user).update(order=int(new_order))
+                messages.success(request, 'Порядок кнопок успешно обновлен!')
+            except Exception as e:
+                messages.error(request, f'Ошибка при изменении порядка: {str(e)}')
+        
+        return redirect('accounts:quick_buttons')
+    
+    # GET запрос - отображение списка кнопок
+    from apps.accounts.models import QuickButtonType
+    
+    quick_buttons = QuickButton.objects.filter(user=user).order_by('order', 'created_at')
+    
+    # Отладочная информация
+    print(f"🔍 QUICK_BUTTONS: Пользователь: {user.username}")
+    print(f"🔍 QUICK_BUTTONS: Найдено кнопок: {quick_buttons.count()}")
+    for btn in quick_buttons:
+        print(f"🔍 QUICK_BUTTONS: - {btn.name} (ID: {btn.id}, тип: {btn.button_type})")
+    
+    # Используем choices напрямую - это уже список кортежей (value, label)
+    button_types_list = list(QuickButtonType.choices)
+    
+    # Популярные иконки Font Awesome для быстрых кнопок
+    popular_icons = [
+        ('fas fa-link', 'Ссылка'),
+        ('fas fa-calendar', 'Календарь'),
+        ('fas fa-clock', 'Часы'),
+        ('fas fa-envelope', 'Почта'),
+        ('fas fa-phone', 'Телефон'),
+        ('fas fa-map-marker-alt', 'Местоположение'),
+        ('fas fa-file', 'Файл'),
+        ('fas fa-folder', 'Папка'),
+        ('fas fa-user', 'Пользователь'),
+        ('fas fa-users', 'Пользователи'),
+        ('fas fa-building', 'Здание'),
+        ('fas fa-briefcase', 'Портфель'),
+        ('fas fa-chart-line', 'График'),
+        ('fas fa-tasks', 'Задачи'),
+        ('fas fa-check-circle', 'Галочка'),
+        ('fas fa-star', 'Звезда'),
+        ('fas fa-heart', 'Сердце'),
+        ('fas fa-bookmark', 'Закладка'),
+        ('fas fa-bolt', 'Молния'),
+        ('fas fa-fire', 'Огонь'),
+        ('fas fa-gift', 'Подарок'),
+        ('fas fa-home', 'Дом'),
+        ('fas fa-globe', 'Глобус'),
+        ('fas fa-share-alt', 'Поделиться'),
+        ('fas fa-download', 'Скачать'),
+        ('fas fa-upload', 'Загрузить'),
+        ('fas fa-search', 'Поиск'),
+        ('fas fa-cog', 'Настройки'),
+        ('fas fa-info-circle', 'Информация'),
+        ('fas fa-question-circle', 'Вопрос'),
+        ('fas fa-exclamation-circle', 'Внимание'),
+        ('fas fa-times-circle', 'Закрыть'),
+        ('fas fa-plus-circle', 'Добавить'),
+        ('fas fa-minus-circle', 'Удалить'),
+        ('fas fa-edit', 'Редактировать'),
+        ('fas fa-trash', 'Корзина'),
+        ('fas fa-save', 'Сохранить'),
+        ('fas fa-print', 'Печать'),
+        ('fas fa-copy', 'Копировать'),
+        ('fas fa-paste', 'Вставить'),
+    ]
+    
+    # Преобразуем QuerySet в список для отладки
+    quick_buttons_list = list(quick_buttons)
+    print(f"🔍 QUICK_BUTTONS: Список кнопок (длина): {len(quick_buttons_list)}")
+    
+    context = {
+        'user': user,
+        'quick_buttons': quick_buttons,  # Оставляем QuerySet для шаблона
+        'button_types': button_types_list,
+        'popular_icons': popular_icons,
+    }
+    
+    print(f"🔍 QUICK_BUTTONS: Контекст создан, quick_buttons в контексте: {len(context.get('quick_buttons', []))}")
+    
+    return context
 
 
 # =============================================================================

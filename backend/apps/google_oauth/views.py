@@ -5799,6 +5799,10 @@ def chat_workflow(request, session_id=None):
     if vacancy:
         vacancy_interviewers = vacancy.mandatory_tech_interviewers.filter(is_active=True).order_by('last_name', 'first_name')
     
+    # Получаем быстрые кнопки пользователя
+    from apps.accounts.models import QuickButton
+    quick_buttons = QuickButton.objects.filter(user=request.user).order_by('order', 'created_at')
+    
     context = {
         'form': form,
         'chat_session': chat_session,
@@ -5817,6 +5821,7 @@ def chat_workflow(request, session_id=None):
         'company_calendar_id': company_calendar_id,
         'company_calendar_warning': company_calendar_warning,
         'title': 'Чат-помощник',
+        'quick_buttons': quick_buttons,
     }
 
     # Отладочная информация (как на странице gdata_automation)
