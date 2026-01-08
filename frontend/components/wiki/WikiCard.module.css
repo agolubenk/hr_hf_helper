@@ -1,0 +1,57 @@
+.card {
+  background: var(--gray-2);
+  border: 1px solid var(--gray-6);
+  border-radius: 8px;
+  padding: 20px;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  position: relative;
+}
+
+/* Для темной темы */
+[data-theme="dark"] .card,
+.radix-themes[data-appearance="dark"] .card {
+  background: var(--gray-3);
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  border-color: var(--gray-8);
+}
+
+.card.highlighted {
+  border-color: #10b981;
+  border-width: 2px;
+}
+
+.cardTitle {
+  color: var(--gray-12);
+  margin-bottom: 12px;
+  display: block;
+}
+
+.tag {
+  padding: 4px 12px;
+  border-radius: 9999px;
+  display: inline-block;
+}
+
+.description {
+  line-height: 1.5;
+  margin-top: 8px;
+}
+
+.cardFooter {
+  padding-top: 12px;
+  border-top: 1px solid var(--gray-6);
+}
+
+.openIcon {
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.openIcon:hover {
+  transform: scale(1.1);
+}

@@ -11,7 +11,8 @@ import {
   PlusIcon,
   CalendarIcon,
   GearIcon,
-  OpenInNewWindowIcon
+  OpenInNewWindowIcon,
+  FileTextIcon
 } from "@radix-ui/react-icons"
 import { useState, ReactNode, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
@@ -230,10 +231,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     {
       id: 'wiki',
       label: 'Вики',
-      icon: <Box style={{ width: '16px', height: '16px', border: '1px solid var(--gray-12)', borderRadius: '1px', position: 'relative' }}>
-        <Box style={{ width: '10px', height: '2px', backgroundColor: 'var(--gray-12)', position: 'absolute', top: '4px', left: '3px' }} />
-        <Box style={{ width: '10px', height: '2px', backgroundColor: 'var(--gray-12)', position: 'absolute', top: '7px', left: '3px' }} />
-      </Box>,
+      icon: <FileTextIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+      href: '/wiki',
     },
     {
       id: 'reporting',
@@ -295,7 +294,9 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           <MenuItemComponent
             key={item.id}
             item={item}
-            isActive={pathname === item.href || (item.id === 'home' && pathname === '/workflow')}
+            isActive={pathname === item.href || 
+              (item.id === 'home' && pathname === '/workflow') ||
+              (item.id === 'wiki' && pathname?.startsWith('/wiki'))}
             onNavigate={onClose}
           />
         ))}

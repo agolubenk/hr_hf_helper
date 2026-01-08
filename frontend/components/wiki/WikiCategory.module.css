@@ -1,0 +1,19 @@
+.category {
+  margin-bottom: 32px;
+}
+
+.categoryHeader {
+  margin-bottom: 16px;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .cardsGrid {
+    grid-template-columns: 1fr;
+  }
+}

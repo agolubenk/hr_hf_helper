@@ -1,0 +1,14 @@
+.wikiContainer {
+  width: 100%;
+  padding: 24px;
+}
+
+.wikiContent {
+  margin-top: 32px;
+}
+
+@media (max-width: 768px) {
+  .wikiContainer {
+    padding: 16px;
+  }
+}

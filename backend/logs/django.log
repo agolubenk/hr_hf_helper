@@ -70722,3 +70722,480 @@ Not Found: /api/auth/qr-code
 WARNING Not Found: /api/auth/status
 Not Found: /api/auth/status
 [09/Jan/2026 01:22:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:23:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:23:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:23:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:23:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:24:19] "GET /wiki/ HTTP/1.1" 200 190683
+[09/Jan/2026 01:24:19] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[09/Jan/2026 01:24:19] "GET /static/js/wiki-tour.js HTTP/1.1" 200 29292
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+[09/Jan/2026 01:24:44] "GET /api/auth/status HTTP/1.1" 404 5512
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:24:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:24:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:24:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:24:56] "GET /company-settings/ HTTP/1.1" 200 126933
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:25:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:25:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+[09/Jan/2026 01:25:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+Not Found: /api/auth/status
+[09/Jan/2026 01:25:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:26:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:26:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:26:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:26:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:27:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:27:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:27:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:27:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:28:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:28:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:28:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:28:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:29:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:29:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:29:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:29:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:30:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:30:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:30:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:30:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:31:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:31:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:31:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:31:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:32:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:32:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:32:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:32:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:32:45] "GET /wiki/page/architecture/ HTTP/1.1" 200 143029
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:33:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:33:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:33:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:33:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:34:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:34:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:34:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:34:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:35:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:35:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:35:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:35:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:36:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:36:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:36:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:36:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:37:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:37:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:37:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:37:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:38:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:38:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:38:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:38:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:39:29] "GET /wiki/page/architecture/edit/ HTTP/1.1" 200 154651
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:39:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:39:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:39:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:39:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /favicon.ico
+Not Found: /favicon.ico
+[09/Jan/2026 01:40:07] "GET /favicon.ico HTTP/1.1" 404 4247
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:40:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:40:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:40:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:40:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:41:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:41:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:41:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:41:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:42:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:42:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:42:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:42:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:43:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:43:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:43:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:43:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:44:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:44:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:44:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:44:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:45:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:45:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:45:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:45:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:46:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:46:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:46:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:46:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:47:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:47:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:47:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:47:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:48:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:48:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:48:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:48:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:49:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:49:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:49:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:49:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:50:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:50:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:50:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:50:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:51:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:51:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:51:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:51:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:52:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:52:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:52:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:52:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:53:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:53:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:53:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:53:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:54:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:54:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:54:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:54:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:55:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:55:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:55:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:55:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:56:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:56:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:56:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:56:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+[09/Jan/2026 01:57:44] "GET /api/auth/status HTTP/1.1" 404 5512
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:57:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:57:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:57:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:58:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 01:58:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:58:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:58:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:59:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 01:59:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 01:59:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 01:59:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 02:00:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[09/Jan/2026 02:00:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 02:00:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[09/Jan/2026 02:00:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+[09/Jan/2026 02:01:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+Not Found: /api/auth/status
+[09/Jan/2026 02:01:44] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[09/Jan/2026 02:01:44] "GET /api/auth/status HTTP/1.1" 404 5512
+[09/Jan/2026 02:01:44] "GET /api/auth/qr-code HTTP/1.1" 404 5515

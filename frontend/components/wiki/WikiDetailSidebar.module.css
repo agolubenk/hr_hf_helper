@@ -1,0 +1,44 @@
+.sidebar {
+  background: var(--gray-2);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid var(--gray-6);
+  height: fit-content;
+}
+
+/* Для темной темы */
+[data-theme="dark"] .sidebar,
+.radix-themes[data-appearance="dark"] .sidebar {
+  background: var(--gray-3);
+}
+
+.sidebarTitle {
+  color: var(--gray-12);
+  display: block;
+}
+
+.contentList {
+  width: 100%;
+}
+
+.contentItem {
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
+.contentItem:hover {
+  background: var(--gray-3);
+}
+
+/* Для темной темы */
+[data-theme="dark"] .contentItem:hover,
+.radix-themes[data-appearance="dark"] .contentItem:hover {
+  background: var(--gray-4);
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+  }
+}

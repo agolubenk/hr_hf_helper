@@ -1,0 +1,35 @@
+.wikiDetailContainer {
+  width: 100%;
+  padding: 24px;
+}
+
+.detailContent {
+  margin-top: 24px;
+}
+
+.mainContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar {
+  width: 250px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .wikiDetailContainer {
+    padding: 16px;
+  }
+  
+  .detailContent {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+  }
+}

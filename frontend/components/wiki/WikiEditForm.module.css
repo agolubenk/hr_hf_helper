@@ -1,0 +1,102 @@
+.editContainer {
+  padding: 24px;
+}
+
+.content {
+  align-items: flex-start;
+}
+
+.formContainer {
+  flex: 1;
+  background: var(--gray-2);
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid var(--gray-6);
+}
+
+/* Для темной темы */
+[data-theme="dark"] .formContainer,
+.radix-themes[data-appearance="dark"] .formContainer {
+  background: var(--gray-3);
+}
+
+.formHeader {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--gray-6);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  gap: 16px;
+}
+
+.actions {
+  margin-top: 8px;
+  padding-top: 20px;
+  border-top: 1px solid var(--gray-6);
+}
+
+.helpContainer {
+  width: 320px;
+  flex-shrink: 0;
+}
+
+.helpCard {
+  background: var(--gray-2);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid var(--gray-6);
+  position: sticky;
+  top: 24px;
+}
+
+/* Для темной темы */
+[data-theme="dark"] .helpCard,
+.radix-themes[data-appearance="dark"] .helpCard {
+  background: var(--gray-3);
+}
+
+@media (max-width: 1024px) {
+  .content {
+    flex-direction: column;
+  }
+
+  .helpContainer {
+    width: 100%;
+  }
+
+  .helpCard {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .editContainer {
+    padding: 16px;
+  }
+
+  .formContainer {
+    padding: 16px;
+  }
+
+  .row {
+    flex-direction: column;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
