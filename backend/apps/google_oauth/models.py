@@ -535,9 +535,22 @@ class Invite(models.Model):
                 return False, f"Не удалось получить account_id: {str(e)}"
             
             # Проверяем настройки пользователя
-            if not self.user.huntflow_sandbox_api_key and not self.user.huntflow_prod_api_key:
-                # Если API ключи не настроены, останавливаем процесс
-                error_msg = f"КРИТИЧЕСКАЯ ОШИБКА: API ключи Huntflow не настроены. Настройте API ключи в профиле пользователя."
+            # Для PROD нужны токены, для sandbox - API ключ или токены
+            huntflow_configured = False
+            if self.user.active_system == 'prod':
+                huntflow_configured = bool(self.user.huntflow_access_token and self.user.huntflow_prod_url)
+            else:
+                huntflow_configured = bool(
+                    (getattr(self.user, 'huntflow_sandbox_api_key', None) and self.user.huntflow_sandbox_url) or
+                    (self.user.huntflow_access_token and self.user.huntflow_sandbox_url)
+                )
+            
+            if not huntflow_configured:
+                # Если настройки не настроены, останавливаем процесс
+                if self.user.active_system == 'prod':
+                    error_msg = f"КРИТИЧЕСКАЯ ОШИБКА: Токены Huntflow PROD не настроены. Настройте токены в профиле пользователя."
+                else:
+                    error_msg = f"КРИТИЧЕСКАЯ ОШИБКА: Настройки Huntflow Sandbox не настроены. Настройте API ключ или токены в профиле пользователя."
                 print(f"РЕАЛЬНЫЕ ДАННЫЕ: ❌ {error_msg}")
                 return False, error_msg
             
@@ -763,10 +776,20 @@ class Invite(models.Model):
                 return True, f"Информация о вакансии получена (заглушка - ошибка получения account_id: {str(e)})"
             
             # Проверяем настройки пользователя
-            if not self.user.huntflow_sandbox_api_key and not self.user.huntflow_prod_api_key:
-                # Если API ключи не настроены, используем заглушку
+            # Для PROD нужны токены, для sandbox - API ключ или токены
+            huntflow_configured = False
+            if self.user.active_system == 'prod':
+                huntflow_configured = bool(self.user.huntflow_access_token and self.user.huntflow_prod_url)
+            else:
+                huntflow_configured = bool(
+                    (getattr(self.user, 'huntflow_sandbox_api_key', None) and self.user.huntflow_sandbox_url) or
+                    (self.user.huntflow_access_token and self.user.huntflow_sandbox_url)
+                )
+            
+            if not huntflow_configured:
+                # Если настройки не настроены, используем заглушку
                 self.vacancy_title = f"Вакансия {self.vacancy_id}"
-                return True, "Информация о вакансии получена (заглушка - API ключи не настроены)"
+                return True, "Информация о вакансии получена (заглушка - настройки Huntflow не настроены)"
             
             # Получаем реальный account_id пользователя для fallback
             user_account_id = self._get_user_account_id()

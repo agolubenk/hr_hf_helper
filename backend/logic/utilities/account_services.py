@@ -2,6 +2,8 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.db import transaction
+from django.utils import timezone
+from datetime import timedelta
 
 User = get_user_model()
 
@@ -92,23 +94,29 @@ class UserService:
         # Huntflow
         # Проверяем новую токенную систему
         huntflow_token_configured = bool(user.huntflow_access_token and user.huntflow_refresh_token)
-        # Проверяем старую систему API ключей
-        huntflow_api_configured = bool(
-            (user.huntflow_sandbox_api_key and user.huntflow_sandbox_url) or
-            user.huntflow_prod_url
+        # Проверяем старую систему API ключей (только для sandbox)
+        huntflow_sandbox_api_configured = bool(
+            getattr(user, 'huntflow_sandbox_api_key', None) and user.huntflow_sandbox_url
+        )
+        # Для PROD нужны токены и URL
+        huntflow_prod_configured = bool(
+            user.huntflow_prod_url and user.huntflow_access_token
         )
         # Общая конфигурация (любая из систем)
-        huntflow_configured = huntflow_token_configured or huntflow_api_configured
+        huntflow_configured = huntflow_token_configured or huntflow_sandbox_api_configured or huntflow_prod_configured
         
         integrations['huntflow'] = {
             'name': 'Huntflow',
             'enabled': True,
-            'sandbox_configured': bool(user.huntflow_sandbox_api_key and user.huntflow_sandbox_url),
-            'prod_configured': bool(user.huntflow_prod_url),
+            'sandbox_configured': bool(
+                (getattr(user, 'huntflow_sandbox_api_key', None) and user.huntflow_sandbox_url) or
+                (user.huntflow_access_token and user.huntflow_sandbox_url)
+            ),
+            'prod_configured': bool(user.huntflow_prod_url and user.huntflow_access_token),
             'active_system': user.active_system,
             'configured': huntflow_configured,
             'token_configured': huntflow_token_configured,
-            'api_configured': huntflow_api_configured,
+            'api_configured': huntflow_sandbox_api_configured,
             'token_valid': user.is_huntflow_token_valid if huntflow_token_configured else False,
             'refresh_valid': user.is_huntflow_refresh_valid if huntflow_token_configured else False,
         }
@@ -182,8 +190,11 @@ class UserService:
                 if 'huntflow_sandbox_api_key' in data:
                     user.huntflow_sandbox_api_key = data['huntflow_sandbox_api_key']
                 
+                # huntflow_prod_api_key больше не используется, для PROD используются токены
+                # Оставляем для обратной совместимости, но не сохраняем в модель
                 if 'huntflow_prod_api_key' in data:
-                    user.huntflow_prod_api_key = data['huntflow_prod_api_key']
+                    # Игнорируем, так как поле больше не существует в модели
+                    pass
                 
                 if 'huntflow_sandbox_url' in data:
                     user.huntflow_sandbox_url = data['huntflow_sandbox_url']
@@ -194,13 +205,38 @@ class UserService:
                 if 'active_system' in data:
                     user.active_system = data['active_system']
                 
-                if 'huntflow_access_token' in data:
-                    user.huntflow_access_token = data['huntflow_access_token']
+                # Сохраняем токены Huntflow с установкой времени истечения
+                if 'huntflow_access_token' in data or 'huntflow_refresh_token' in data:
+                    access_token = data.get('huntflow_access_token', user.huntflow_access_token)
+                    refresh_token = data.get('huntflow_refresh_token', user.huntflow_refresh_token)
+                    
+                    # Если оба токена указаны, используем метод set_huntflow_tokens для установки времени истечения
+                    if access_token and refresh_token:
+                        # Используем стандартные значения времени жизни токенов Huntflow
+                        # access token: 7 дней (604800 секунд)
+                        # refresh token: 14 дней (1209600 секунд)
+                        user.set_huntflow_tokens(
+                            access_token=access_token,
+                            refresh_token=refresh_token,
+                            expires_in=604800,  # 7 дней
+                            refresh_expires_in=1209600  # 14 дней
+                        )
+                    elif access_token:
+                        # Если указан только access token, сохраняем его отдельно
+                        user.huntflow_access_token = access_token
+                        # Устанавливаем время истечения по умолчанию
+                        user.huntflow_token_expires_at = timezone.now() + timedelta(seconds=604800)
+                        user.save(update_fields=['huntflow_access_token', 'huntflow_token_expires_at'])
+                    elif refresh_token:
+                        # Если указан только refresh token, сохраняем его отдельно
+                        user.huntflow_refresh_token = refresh_token
+                        # Устанавливаем время истечения по умолчанию
+                        user.huntflow_refresh_expires_at = timezone.now() + timedelta(seconds=1209600)
+                        user.save(update_fields=['huntflow_refresh_token', 'huntflow_refresh_expires_at'])
                 
-                if 'huntflow_refresh_token' in data:
-                    user.huntflow_refresh_token = data['huntflow_refresh_token']
-                
-                user.save()
+                # Сохраняем остальные изменения, если токены не были обновлены выше
+                if 'huntflow_access_token' not in data and 'huntflow_refresh_token' not in data:
+                    user.save()
                 
                 # Проверяем, что ключ действительно сохранился
                 user.refresh_from_db()
@@ -261,8 +297,10 @@ class UserService:
                     huntflow_sandbox_api_key__isnull=False
                 ).exclude(huntflow_sandbox_api_key='').count(),
                 'huntflow_prod_configured': User.objects.filter(
-                    huntflow_prod_api_key__isnull=False
-                ).exclude(huntflow_prod_api_key='').count(),
+                    huntflow_prod_url__isnull=False
+                ).exclude(huntflow_prod_url='').filter(
+                    huntflow_access_token__isnull=False
+                ).exclude(huntflow_access_token='').count(),
             }
             
             stats = {

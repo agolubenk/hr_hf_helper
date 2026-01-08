@@ -7034,3 +7034,2739 @@ Refresh token истек для пользователя andrei.golubenko
 Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
 [08/Jan/2026 11:39:35] "GET /finance/benchmarks/ HTTP/1.1" 200 289130
 [08/Jan/2026 11:39:35] "GET /static/css/finance.css HTTP/1.1" 404 1905
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:40:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:40:26] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:40:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:40:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:41:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:41:26] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:41:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:41:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1595: RuntimeWarning: DateTimeField Benchmark.date_added received a naive datetime (2025-01-08 11:41:33.772832) while time zone support is active.
+  warnings.warn(
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:41:33] "GET /finance/benchmarks/ HTTP/1.1" 200 289130
+[08/Jan/2026 11:41:33] "GET /static/css/finance.css HTTP/1.1" 404 1905
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:41:37] "GET /finance/benchmarks/settings/ HTTP/1.1" 200 149212
+[08/Jan/2026 11:41:37] "GET /static/css/finance.css HTTP/1.1" 404 1905
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:41:55] "GET /reporting/company/ HTTP/1.1" 200 143842
+[08/Jan/2026 11:41:55] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&recruiter_id=1 HTTP/1.1" 200 741
+[08/Jan/2026 11:41:55] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&recruiter_id=3 HTTP/1.1" 200 670
+[08/Jan/2026 11:41:55] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&recruiter_id=9 HTTP/1.1" 200 1128
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:42:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:42:26] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:42:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:42:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+[08/Jan/2026 11:43:26] "GET /api/auth/status HTTP/1.1" 404 5512
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:43:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:43:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:43:26] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:45:30] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:45:30] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:45:30] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:45:30] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:56:11] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:56:11] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+[08/Jan/2026 11:56:11] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+Not Found: /api/auth/status
+[08/Jan/2026 11:56:11] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:57:11] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:57:11] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:57:11] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:57:11] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:58:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:58:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:58:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:58:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:59:01] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:59:01] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:59:01] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:59:01] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:59:02] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:59:02] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:59:03] "GET /api/auth/status HTTP/1.1" 404 5512
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:59:10] "GET /reporting/company/ HTTP/1.1" 200 143842
+[08/Jan/2026 11:59:10] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&recruiter_id=1 HTTP/1.1" 200 741
+[08/Jan/2026 11:59:11] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&recruiter_id=3 HTTP/1.1" 200 670
+[08/Jan/2026 11:59:11] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&recruiter_id=9 HTTP/1.1" 200 1128
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:59:25] "GET /reporting/company/ HTTP/1.1" 200 143842
+[08/Jan/2026 11:59:25] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&recruiter_id=1 HTTP/1.1" 200 741
+[08/Jan/2026 11:59:25] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&recruiter_id=3 HTTP/1.1" 200 670
+[08/Jan/2026 11:59:25] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&recruiter_id=9 HTTP/1.1" 200 1128
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:59:29] "GET /reporting/interviewer/ HTTP/1.1" 200 185773
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:59:44] "GET /reporting/interviewer/ HTTP/1.1" 200 185773
+[08/Jan/2026 11:59:44] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[08/Jan/2026 11:59:44] "GET /static/css/hrhelper.css HTTP/1.1" 200 118598
+[08/Jan/2026 11:59:44] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[08/Jan/2026 11:59:44] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[08/Jan/2026 11:59:44] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[08/Jan/2026 11:59:44] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[08/Jan/2026 11:59:44] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[08/Jan/2026 11:59:44] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[08/Jan/2026 11:59:44] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[08/Jan/2026 11:59:48] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:59:51] "GET /reporting/ HTTP/1.1" 200 121609
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:59:53] "GET /reporting/company/ HTTP/1.1" 200 143842
+[08/Jan/2026 11:59:53] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&recruiter_id=1 HTTP/1.1" 200 741
+[08/Jan/2026 11:59:53] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&recruiter_id=3 HTTP/1.1" 200 670
+[08/Jan/2026 11:59:53] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&recruiter_id=9 HTTP/1.1" 200 1128
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:59:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:59:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:59:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:59:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:00:14] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&recruiter_id=1 HTTP/1.1" 200 741
+[08/Jan/2026 12:00:14] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&recruiter_id=3 HTTP/1.1" 200 670
+[08/Jan/2026 12:00:14] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&recruiter_id=9 HTTP/1.1" 200 1128
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:00:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:00:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:00:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:00:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:01:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:01:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:01:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:01:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:02:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:02:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:02:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:02:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:03:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:03:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:03:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:03:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:04:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:04:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:04:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:04:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:05:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:05:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:05:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:05:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:06:06] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&vacancy_id=33 HTTP/1.1" 200 203
+[08/Jan/2026 12:06:06] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&vacancy_id=13 HTTP/1.1" 200 203
+[08/Jan/2026 12:06:06] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&vacancy_id=25 HTTP/1.1" 200 203
+[08/Jan/2026 12:06:06] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&vacancy_id=10 HTTP/1.1" 200 950
+[08/Jan/2026 12:06:06] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&vacancy_id=26 HTTP/1.1" 200 352
+[08/Jan/2026 12:06:06] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&vacancy_id=9 HTTP/1.1" 200 1030
+[08/Jan/2026 12:06:06] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&vacancy_id=32 HTTP/1.1" 200 1036
+[08/Jan/2026 12:06:06] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&vacancy_id=3 HTTP/1.1" 200 1124
+[08/Jan/2026 12:06:06] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&vacancy_id=1 HTTP/1.1" 200 1121
+[08/Jan/2026 12:06:13] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=21 HTTP/1.1" 200 1098
+[08/Jan/2026 12:06:13] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=19 HTTP/1.1" 200 942
+[08/Jan/2026 12:06:13] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=22 HTTP/1.1" 200 724
+[08/Jan/2026 12:06:14] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=1 HTTP/1.1" 200 1100
+[08/Jan/2026 12:06:14] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=20 HTTP/1.1" 200 1106
+[08/Jan/2026 12:06:14] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=16 HTTP/1.1" 200 1092
+[08/Jan/2026 12:06:16] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=26 HTTP/1.1" 200 1097
+[08/Jan/2026 12:06:17] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=5 HTTP/1.1" 200 1106
+[08/Jan/2026 12:06:17] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=18 HTTP/1.1" 200 576
+[08/Jan/2026 12:06:17] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=8 HTTP/1.1" 200 1021
+[08/Jan/2026 12:06:17] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=14 HTTP/1.1" 200 1126
+[08/Jan/2026 12:06:17] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=29 HTTP/1.1" 200 1022
+[08/Jan/2026 12:06:20] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=25 HTTP/1.1" 200 1096
+[08/Jan/2026 12:06:20] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=7 HTTP/1.1" 200 1095
+[08/Jan/2026 12:06:20] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=11 HTTP/1.1" 200 1094
+[08/Jan/2026 12:06:20] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=10 HTTP/1.1" 200 946
+[08/Jan/2026 12:06:21] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=23 HTTP/1.1" 200 1103
+[08/Jan/2026 12:06:21] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=6 HTTP/1.1" 200 943
+[08/Jan/2026 12:06:23] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=24 HTTP/1.1" 200 876
+[08/Jan/2026 12:06:23] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=28 HTTP/1.1" 200 951
+[08/Jan/2026 12:06:23] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=17 HTTP/1.1" 200 498
+[08/Jan/2026 12:06:23] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=27 HTTP/1.1" 200 503
+[08/Jan/2026 12:06:23] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&interviewer_id=9 HTTP/1.1" 200 944
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:06:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:06:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:06:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:06:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:07:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:07:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:07:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:07:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:08:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:08:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:08:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:08:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:09:01] "GET /google-oauth/chat/ HTTP/1.1" 302 0
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 08, 2026 - 11:35:19
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 КАЛЕНДАРЬ КОМПАНИИ: Начинаем получение настроек...
+🔍 КАЛЕНДАРЬ КОМПАНИИ: Импорт модели успешен
+🔍 КАЛЕНДАРЬ КОМПАНИИ: Получены настройки компании, ID записи: 1
+🔍 КАЛЕНДАРЬ КОМПАНИИ: main_calendar_id = 'https://calendar.google.com/calendar/embed?src=c_6neaou3phcsg46u40pjbf6bki8%40group.calendar.google.com&ctz=Europe%2FMinsk'
+🔍 КАЛЕНДАРЬ КОМПАНИИ: Исходное значение из настроек: 'https://calendar.google.com/calendar/embed?src=c_6neaou3phcsg46u40pjbf6bki8%40group.calendar.google.com&ctz=Europe%2FMinsk'
+🔍 КАЛЕНДАРЬ КОМПАНИИ: Обнаружена ссылка, извлекаем calendar_id...
+🔍 EXTRACT_CALENDAR_ID: Извлечен из src: 'c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com' (исходный: 'c_6neaou3phcsg46u40pjbf6bki8%40group.calendar.google.com')
+✅ КАЛЕНДАРЬ КОМПАНИИ: Извлечен calendar_id из ссылки: 'c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com'
+✅ КАЛЕНДАРЬ КОМПАНИИ: Финальный calendar_id для использования: 'c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com'
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 19 событий
+🔍 DEBUG CHAT: Получено 19 событий из календаря пользователя
+🔍 КАЛЕНДАРЬ КОМПАНИИ: Начинаем получение событий для calendar_id='c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com'
+💾 Сохранены события календаря в кэш: 12 событий
+✅ КАЛЕНДАРЬ КОМПАНИИ: Успешно получено 12 событий из календаря компании
+📅 КАЛЕНДАРЬ КОМПАНИИ: События сегодня (2026-01-08): 0
+   (нет событий)
+📅 КАЛЕНДАРЬ КОМПАНИИ: События на следующей неделе (2026-01-12 - 2026-01-18): 5
+   - E2E CR: Voitas A.
+   - E2E CR: Voitas A.
+   - E2E CR: Voitas A.
+   - E2E CR: Voitas A.
+   - E2E CR: Voitas A.
+📅 КАЛЕНДАРЬ КОМПАНИИ: Всего событий после объединения: 31 (primary: 19, company: 12)
+📅 СОБЫТИЕ [1/31]: 'C&B & API'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrei.golubenko@softnetix.io
+📅 СОБЫТИЕ [2/31]: 'Support Manager Final Interview | Лихошапко Артемий'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrey.chernomordin@softnetix.io
+   ✏️ Создатель: andrei.golubenko@softnetix.io
+📅 СОБЫТИЕ [3/31]: 'JS Tech Screening | Кузьмич Андрей'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrei.golubenko@softnetix.io
+📅 СОБЫТИЕ [4/31]: 'JS Tech Screening | Ketsmur Oleg'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrei.golubenko@softnetix.io
+📅 СОБЫТИЕ [5/31]: 'JS Tech Screening | Бобрик Андрей'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrei.golubenko@softnetix.io
+📅 СОБЫТИЕ [6/31]: 'Recruitment Meeting'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: alena.koipash@softnetix.io
+📅 СОБЫТИЕ [7/31]: 'Support Screening with Ilya'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrey.chernomordin@softnetix.io
+📅 СОБЫТИЕ [8/31]: 'PM Screening | ZYL EDVARD'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrei.golubenko@softnetix.io
+📅 СОБЫТИЕ [9/31]: 'JS Final Interview | Пушкин Евгений (office)'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrei.golubenko@softnetix.io
+📅 СОБЫТИЕ [10/31]: 'Support Screening with Nikolay'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrey.chernomordin@softnetix.io
+📅 СОБЫТИЕ [11/31]: 'Support Screening with Ivan'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrey.chernomordin@softnetix.io
+📅 СОБЫТИЕ [12/31]: 'A2+'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: anastasiya.maneshyna@softnetix.io
+📅 СОБЫТИЕ [13/31]: 'Recruitment Meeting'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: alena.koipash@softnetix.io
+📅 СОБЫТИЕ [14/31]: 'JS Final Interview | Агапотов Константин'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrei.golubenko@softnetix.io
+📅 СОБЫТИЕ [15/31]: 'A2+'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: anastasiya.maneshyna@softnetix.io
+📅 СОБЫТИЕ [16/31]: 'Recruitment Meeting'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: alena.koipash@softnetix.io
+📅 СОБЫТИЕ [17/31]: 'A2+'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: anastasiya.maneshyna@softnetix.io
+📅 СОБЫТИЕ [18/31]: 'Recruitment Meeting'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: alena.koipash@softnetix.io
+📅 СОБЫТИЕ [19/31]: 'A2+'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: anastasiya.maneshyna@softnetix.io
+📅 СОБЫТИЕ [20/31]: 'E2E CR: Kern N.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [21/31]: 'BE CR: Borykau A.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [22/31]: 'FE CR: Bazhko M.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [23/31]: 'E2E CR: Voitas A.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [24/31]: 'E2E CR: Voitas A.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [25/31]: 'E2E CR: Voitas A.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [26/31]: 'E2E CR: Voitas A.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [27/31]: 'E2E CR: Voitas A.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [28/31]: 'E2E CR: Kern N.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [29/31]: 'E2E CR: Kern N.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [30/31]: 'E2E CR: Kern N.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [31/31]: 'E2E CR: Kern N.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🕐 НАСТРОЙКИ: Рабочие часы 11:00-18:00, интервал 15 мин
+📅 СЛОТЫ СКРИНИНГОВ: Начинаем поиск доступных слотов
+📅 СЛОТЫ СКРИНИНГОВ: Длительность встречи: 30 минут
+📅 СЛОТЫ СКРИНИНГОВ: События календаря: 31
+📅 СЛОТЫ СКРИНИНГОВ: Используются календари: пользователь andrei.golubenko@softnetix.io + компания (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+📅 СЛОТЫ СКРИНИНГОВ: Подготовлено 31 событий для расчета (пользователь + компания)
+📅 СЛОТЫ СКРИНИНГОВ: Из них событий календаря компании: 12
+⏭️ Пропускаем прошедший день: 05.01.2026
+⏭️ Пропускаем прошедший день: 06.01.2026
+⏭️ Пропускаем прошедший день: 07.01.2026
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-08 00:00:00+03:00, date_end=2026-01-08 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-08 00:00:00+03:00, date_end=2026-01-08 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-08 00:00:00+03:00, date_end=2026-01-08 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Чт 08.01.2026: 5 встреч, слоты: 16.45-18.00
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пт 09.01.2026: 6 встреч, слоты: 11.15-11.45, 16.15-18.00
+📅 Итого дней со слотами в неделе: 2
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пн 12.01.2026: 2 встреч, слоты: 11.15-18.00
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-13 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-20 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-21 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Вт 13.01.2026: 0 встреч, слоты: 11.00-18.00
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-13 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-20 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-21 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Ср 14.01.2026: 1 встреч, слоты: 11.00-13.45, 15.45-18.00
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-13 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-20 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-21 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Чт 15.01.2026: 1 встреч, слоты: 11.05-18.00
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-13 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-20 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-21 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пт 16.01.2026: 1 встреч, слоты: 11.15-18.00
+📅 Итого дней со слотами в неделе: 5
+📅 СЛОТЫ СКРИНИНГОВ: Рассчитано 7 дней со слотами
+📅 СЛОТЫ ИНТЕРВЬЮ: Начинаем поиск доступных слотов
+📅 СЛОТЫ ИНТЕРВЬЮ: Базовые события от пользователя и компании: 31
+📅 СЛОТЫ ИНТЕРВЬЮ: Из них событий календаря компании: 12
+📅 СЛОТЫ ИНТЕРВЬЮ: Пропускаем добавление событий интервьюеров при загрузке страницы
+📅 СЛОТЫ ИНТЕРВЬЮ: Слоты будут обновлены через API на основе выбранных участников
+📅 СЛОТЫ ИНТЕРВЬЮ: Длительность встречи: 90 минут
+📅 СЛОТЫ ИНТЕРВЬЮ: Рассчитываем базовые слоты (без интервьюеров) - будут обновлены через API
+⏭️ Пропускаем прошедший день: 05.01.2026
+⏭️ Пропускаем прошедший день: 06.01.2026
+⏭️ Пропускаем прошедший день: 07.01.2026
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-08 00:00:00+03:00, date_end=2026-01-08 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-08 00:00:00+03:00, date_end=2026-01-08 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-08 00:00:00+03:00, date_end=2026-01-08 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Чт 08.01.2026: 5 встреч, слоты: Нет свободных слотов
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пт 09.01.2026: 6 встреч, слоты: 16.15-18.00
+📅 Итого дней со слотами в неделе: 2
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пн 12.01.2026: 2 встреч, слоты: 11.15-18.00
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-13 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-20 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-21 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Вт 13.01.2026: 0 встреч, слоты: 11.00-18.00
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-13 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-20 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-21 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Ср 14.01.2026: 1 встреч, слоты: 11.00-13.45, 15.45-18.00
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-13 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-20 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-21 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/MinskRefresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 12:09:09] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[08/Jan/2026 12:09:09] "GET /google-oauth/chat/?vacancy_id=1 HTTP/1.1" 200 4920971
+[08/Jan/2026 12:09:09] "GET /static/js/chat_actions.js?v=1767863349 HTTP/1.1" 200 32525
+[08/Jan/2026 12:09:25] "POST /google-oauth/invites/554/invitation-text/ HTTP/1.1" 200 739
+[08/Jan/2026 12:09:27] "GET /google-oauth/api/interviewers-autocomplete/?vacancy_id=10&q=talent_softnetix HTTP/1.1" 200 32
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:09:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:09:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:09:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:09:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:10:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:10:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:10:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:10:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:11:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:11:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:11:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:11:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:12:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:12:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+[08/Jan/2026 12:12:54] "GET /api/auth/status HTTP/1.1" 404 5512
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:12:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:13:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:13:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:13:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:13:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:14:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:14:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:14:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:14:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:15:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:15:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:15:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:15:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 12:16:17] "GET /finance/ HTTP/1.1" 200 157961
+[08/Jan/2026 12:16:17] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[08/Jan/2026 12:16:17] "GET /static/css/finance.css HTTP/1.1" 404 1905
+[08/Jan/2026 12:16:30] "GET /finance/update-rates/ HTTP/1.1" 302 0
+[08/Jan/2026 12:16:30,173] - Broken pipe from ('127.0.0.1', 61462)
+[08/Jan/2026 12:16:30] "GET /finance/update-rates/ HTTP/1.1" 302 0
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 12:16:30] "GET /finance/ HTTP/1.1" 200 158636
+[08/Jan/2026 12:16:30] "GET /static/css/finance.css HTTP/1.1" 404 1905
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:16:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:16:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:16:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:16:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:17:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:17:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:17:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:17:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+
+📅 День Чт 15.01.2026: 1 встреч, слоты: 11.05-18.00
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-13 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-20 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-21 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пт 16.01.2026: 1 встреч, слоты: 11.15-18.00
+📅 Итого дней со слотами в неделе: 5
+📅 СЛОТЫ ИНТЕРВЬЮ: Рассчитано 7 дней со слотами (базовые, без интервьюеров)
+🔍 DEBUG CHAT: Передаем 31 событий в шаблон
+🔍 DEBUG CHAT: Событие: C&B & API в 2026-01-08T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: Support Manager Final Interview | Лихошапко Артемий в 2026-01-08T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кузьмич Андрей в 2026-01-08T14:00:00+03:00
+DEBUG context_processor: accounts_list = []
+✅ Найдена длительность скринингов для вакансии 'Project Manager': 30 минут
+⏱️ Форматирование: Используем длительность скринингов: 30 минут
+🔍 API INTERVIEWERS AUTOCOMPLETE: vacancy_id=10, query='talent_softnetix'
+🔍 API INTERVIEWERS AUTOCOMPLETE: Найдено 0 интервьюеров
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+🔍 DEBUG: folder_structure = [{'type': 'text', 'value': 'automations'}, {'type': 'mixed', 'value': '[vacancy_title]', 'patterns': []}, {'type': 'mixed', 'value': '[year_full]', 'patterns': []}, {'type': 'mixed', 'value': '[month_num] [month_full_ru]', 'patterns': []}, {'type': 'mixed', 'value': '[day] [month_full_ru] ([weekday_short_ru])', 'patterns': []}]
+🔍 DEBUG: path_preview = automations/Frontend Engineer (React)/2026/01 январь/08 январь (ЧТ)Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 12:18:30] "GET /google-oauth/invites/settings/ HTTP/1.1" 200 200987
+[08/Jan/2026 12:18:30] "GET /static/css/google-oauth.css HTTP/1.1" 404 1920
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:18:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:18:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:18:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:18:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:19:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:19:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:19:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:19:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:20:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:20:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:20:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:20:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:21:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:21:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:21:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:21:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:22:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:22:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:22:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:22:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:23:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:23:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:23:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:23:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:24:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:24:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:24:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:24:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:25:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:25:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:25:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:25:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:26:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:26:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:26:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:26:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:27:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:27:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:27:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:27:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:28:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:28:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:28:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:28:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:29:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:29:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:29:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:29:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:30:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:30:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:30:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:30:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:31:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:31:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:31:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:31:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:32:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:32:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:32:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:32:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:33:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:33:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:33:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:33:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:34:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:34:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:34:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:34:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:35:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:35:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:35:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:35:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:36:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:36:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:36:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:36:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:37:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:37:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:37:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:37:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:38:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:38:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:38:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:38:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:39:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:39:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:39:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:39:54] "GET /api/auth/status HTTP/1.1" 404 5512
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 12:40:48] "GET /reporting/ HTTP/1.1" 200 121609
+[08/Jan/2026 12:40:48] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:40:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:40:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:40:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:40:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:41:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:41:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:41:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:41:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:42:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:42:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:42:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:42:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:43:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:43:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:43:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:43:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+[08/Jan/2026 12:44:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+Not Found: /api/auth/status
+[08/Jan/2026 12:44:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:44:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:44:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:45:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:45:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:45:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:45:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:46:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:46:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:46:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:46:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:47:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:47:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:47:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:47:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:48:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:48:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:48:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:48:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:49:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:49:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:49:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:49:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:50:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:50:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:50:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:50:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:51:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:51:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:51:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:51:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:52:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:52:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:52:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:52:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:53:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:53:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:53:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:53:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:54:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:54:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:54:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:54:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:55:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:55:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:55:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:55:54] "GET /api/auth/status HTTP/1.1" 404 5512
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 12:56:12] "GET /reporting/company/ HTTP/1.1" 200 143842
+[08/Jan/2026 12:56:12] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[08/Jan/2026 12:56:12] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&recruiter_id=1 HTTP/1.1" 200 741
+[08/Jan/2026 12:56:12] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&recruiter_id=9 HTTP/1.1" 200 1128
+[08/Jan/2026 12:56:12] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-08&end_date=2026-01-08&recruiter_id=3 HTTP/1.1" 200 670
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 12:56:31] "GET /reporting/company/?period=monthly&start_date=2025-01-01&end_date=2026-01-01 HTTP/1.1" 200 143842
+[08/Jan/2026 12:56:32] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-01&end_date=2026-01-01&recruiter_id=1 HTTP/1.1" 200 741
+[08/Jan/2026 12:56:32] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-01&end_date=2026-01-01&recruiter_id=9 HTTP/1.1" 200 1128
+[08/Jan/2026 12:56:32] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-01&end_date=2026-01-01&recruiter_id=3 HTTP/1.1" 200 670
+[08/Jan/2026 12:56:50] "GET /reporting/api/data/?report_type=company&period=quarterly&start_date=2025-01-01&end_date=2026-01-01&recruiter_id=1 HTTP/1.1" 200 438
+[08/Jan/2026 12:56:50] "GET /reporting/api/data/?report_type=company&period=quarterly&start_date=2025-01-01&end_date=2026-01-01&recruiter_id=3 HTTP/1.1" 200 367
+[08/Jan/2026 12:56:50] "GET /reporting/api/data/?report_type=company&period=quarterly&start_date=2025-01-01&end_date=2026-01-01&recruiter_id=9 HTTP/1.1" 200 526
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:56:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:56:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+[08/Jan/2026 12:56:54] "GET /api/auth/status HTTP/1.1" 404 5512
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:56:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 12:57:13] "GET /reporting/interviewer/ HTTP/1.1" 200 185773
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:57:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:57:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:57:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:57:54] "GET /api/auth/status HTTP/1.1" 404 5512
+/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1595: RuntimeWarning: DateTimeField Benchmark.date_added received a naive datetime (2025-01-08 12:58:39.517798) while time zone support is active.
+  warnings.warn(
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 12:58:39] "GET /finance/benchmarks/ HTTP/1.1" 200 289130
+[08/Jan/2026 12:58:39] "GET /static/css/finance.css HTTP/1.1" 404 1905
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:58:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 12:58:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:58:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:58:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:59:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 12:59:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 12:59:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 12:59:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:00:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:00:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 13:00:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:00:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:01:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 13:01:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:01:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 13:01:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:02:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 13:02:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:02:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 13:02:54] "GET /api/auth/status HTTP/1.1" 404 5512
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:03:41] "GET /accounts/ HTTP/1.1" 200 133237
+[08/Jan/2026 13:03:41] "GET /static/css/profile.css HTTP/1.1" 404 1905
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:03:48] "GET /accounts/api-keys/ HTTP/1.1" 200 142156
+[08/Jan/2026 13:03:48] "GET /huntflow/tokens/api/ HTTP/1.1" 200 251
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:03:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 13:03:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:03:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:03:54] "GET /api/auth/status HTTP/1.1" 404 5512
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:04:07] "GET /huntflow/tokens/test/ HTTP/1.1" 200 170
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: Не настроена аутентификация для текущей системы
+[08/Jan/2026 13:04:11] "POST /accounts/api-keys/ HTTP/1.1" 200 142643
+[08/Jan/2026 13:04:11] "GET /huntflow/tokens/api/ HTTP/1.1" 200 251
+Refresh token истек для пользователя andrei.golubenko
+[08/Jan/2026 13:04:13] "POST /huntflow/tokens/refresh/ HTTP/1.1" 200 166
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:04:16] "GET /huntflow/tokens/test/ HTTP/1.1" 200 170
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:04:21] "GET /admin/accounts/ HTTP/1.1" 200 5507
+WARNING Not Found: /favicon.ico
+Not Found: /favicon.ico
+[08/Jan/2026 13:04:21] "GET /favicon.ico HTTP/1.1" 404 4247
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:04:23] "GET /admin/accounts/user/ HTTP/1.1" 200 44088
+[08/Jan/2026 13:04:23] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:04:25] "GET /admin/accounts/user/3/change/ HTTP/1.1" 200 111429
+[08/Jan/2026 13:04:25] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+[08/Jan/2026 13:04:38] "POST /admin/accounts/user/3/change/ HTTP/1.1" 302 0
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:04:38] "GET /admin/accounts/user/ HTTP/1.1" 200 44304
+[08/Jan/2026 13:04:38] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:04:40] "GET /admin/accounts/user/3/change/ HTTP/1.1" 200 111283
+[08/Jan/2026 13:04:40] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:04:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 13:04:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:04:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 13:04:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 13:04:59] "POST /admin/accounts/user/3/change/ HTTP/1.1" 302 0
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:04:59] "GET /admin/accounts/user/ HTTP/1.1" 200 44324
+[08/Jan/2026 13:04:59] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:05:02] "GET /admin/accounts/user/9/change/ HTTP/1.1" 200 110865
+[08/Jan/2026 13:05:02] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+[08/Jan/2026 13:05:34] "POST /admin/accounts/user/9/change/ HTTP/1.1" 302 0
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:05:34] "GET /admin/accounts/user/ HTTP/1.1" 200 44337
+[08/Jan/2026 13:05:34] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:05:36] "GET /admin/accounts/user/3/change/ HTTP/1.1" 200 111429
+[08/Jan/2026 13:05:36] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+[08/Jan/2026 13:05:43] "POST /admin/accounts/user/3/change/ HTTP/1.1" 302 0
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:05:43] "GET /admin/accounts/user/ HTTP/1.1" 200 44334
+[08/Jan/2026 13:05:43] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:05:49] "GET /accounts/integrations/ HTTP/1.1" 200 165276
+[08/Jan/2026 13:05:49] "GET /static/css/profile.css HTTP/1.1" 404 1905
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:05:51] "GET /accounts/api-keys/ HTTP/1.1" 200 142156
+[08/Jan/2026 13:05:51] "GET /huntflow/tokens/api/ HTTP/1.1" 200 251
+Refresh token истек для пользователя andrei.golubenko
+[08/Jan/2026 13:05:54] "POST /huntflow/tokens/refresh/ HTTP/1.1" 200 166
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:05:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:05:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+[08/Jan/2026 13:05:54] "GET /api/auth/status HTTP/1.1" 404 5512
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:05:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:05:57] "GET /huntflow/tokens/test/ HTTP/1.1" 200 170
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:06:04] "GET /accounts/api-keys/ HTTP/1.1" 200 142156
+[08/Jan/2026 13:06:04] "GET /static/images/integrations/clickup-official.svg HTTP/1.1" 200 917
+[08/Jan/2026 13:06:04] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[08/Jan/2026 13:06:04] "GET /static/css/hrhelper.css HTTP/1.1" 200 118598
+[08/Jan/2026 13:06:04] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[08/Jan/2026 13:06:04] "GET /static/images/integrations/huntflow-official.ico HTTP/1.1" 200 15086
+[08/Jan/2026 13:06:04] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[08/Jan/2026 13:06:04] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[08/Jan/2026 13:06:04] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[08/Jan/2026 13:06:04] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[08/Jan/2026 13:06:04] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[08/Jan/2026 13:06:04] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[08/Jan/2026 13:06:04] "GET /huntflow/tokens/api/ HTTP/1.1" 200 251
+[08/Jan/2026 13:06:08] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:06:09] "GET /huntflow/tokens/test/ HTTP/1.1" 200 170
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:06:13] "GET /admin/accounts/user/3/change/ HTTP/1.1" 200 111587
+[08/Jan/2026 13:06:13] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+WARNING Not Found: /favicon.ico
+Not Found: /favicon.ico
+[08/Jan/2026 13:06:13] "GET /favicon.ico HTTP/1.1" 404 4247
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:06:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:06:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:06:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:06:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:06:58] "GET /huntflow/ HTTP/1.1" 200 116995
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:06:59] "POST /huntflow/test-connection/ HTTP/1.1" 200 136
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:07:10] "GET /accounts/ HTTP/1.1" 200 133237
+[08/Jan/2026 13:07:10] "GET /static/css/profile.css HTTP/1.1" 404 1905
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:07:12] "GET /accounts/api-keys/ HTTP/1.1" 200 142156
+[08/Jan/2026 13:07:12] "GET /huntflow/tokens/api/ HTTP/1.1" 200 251
+Ошибка запроса: Не настроена аутентификация для текущей системы
+[08/Jan/2026 13:07:21] "POST /accounts/api-keys/ HTTP/1.1" 200 142515
+[08/Jan/2026 13:07:21] "GET /huntflow/tokens/api/ HTTP/1.1" 200 418
+Ошибка запроса: Не настроена аутентификация для текущей системы
+[08/Jan/2026 13:07:27] "POST /accounts/api-keys/ HTTP/1.1" 200 142515
+[08/Jan/2026 13:07:27] "GET /huntflow/tokens/api/ HTTP/1.1" 200 418
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:07:28] "GET /accounts/integrations/ HTTP/1.1" 200 165258
+[08/Jan/2026 13:07:28] "GET /static/css/profile.css HTTP/1.1" 404 1905
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:07:32] "GET /accounts/api-keys/ HTTP/1.1" 200 142028
+[08/Jan/2026 13:07:32] "GET /huntflow/tokens/api/ HTTP/1.1" 200 418
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: Не настроена аутентификация для текущей системы
+[08/Jan/2026 13:07:46] "POST /accounts/api-keys/ HTTP/1.1" 200 142643
+[08/Jan/2026 13:07:46] "GET /huntflow/tokens/api/ HTTP/1.1" 200 251
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:07:49] "GET /huntflow/tokens/test/ HTTP/1.1" 200 170
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:07:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:07:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:07:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:07:54] "GET /api/auth/status HTTP/1.1" 404 5512
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:07:59] "GET /accounts/ HTTP/1.1" 200 133237
+[08/Jan/2026 13:08:00] "GET /static/css/profile.css HTTP/1.1" 404 1905
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:08:02] "GET /admin/accounts/ HTTP/1.1" 200 5507
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:08:03] "GET /admin/accounts/user/ HTTP/1.1" 200 44098
+[08/Jan/2026 13:08:03] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:08:04] "GET /admin/accounts/user/3/change/ HTTP/1.1" 200 111429
+[08/Jan/2026 13:08:04] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+[08/Jan/2026 13:08:08] "POST /admin/accounts/user/3/change/ HTTP/1.1" 302 0
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:08:08] "GET /admin/accounts/user/ HTTP/1.1" 200 44334
+[08/Jan/2026 13:08:08] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:08:13] "GET /accounts/api-keys/ HTTP/1.1" 200 142156
+[08/Jan/2026 13:08:13] "GET /huntflow/tokens/api/ HTTP/1.1" 200 251
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:08:15] "GET /huntflow/tokens/test/ HTTP/1.1" 200 170
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:08:30] "GET /admin/accounts/user/3/change/ HTTP/1.1" 200 111587
+[08/Jan/2026 13:08:30] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:08:52] "GET /huntflow/ HTTP/1.1" 200 116995
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 13:08:53] "POST /huntflow/test-connection/ HTTP/1.1" 200 136
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:08:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:08:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:08:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:08:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:09:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 13:09:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:09:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 13:09:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:10:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 13:10:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:10:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 13:10:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+🔑 UPDATE_API_KEYS: Обновление Gemini API ключа для пользователя andrei.golubenko
+🔑 UPDATE_API_KEYS: Старый ключ: AIzaSyCW2M...bjH9Q
+🔑 UPDATE_API_KEYS: Новый ключ: AIzaSyCW2M...bjH9Q
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+✅ UPDATE_API_KEYS: Ключ сохранен в БД: AIzaSyCW2M...bjH9Q
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+📝 SIGNAL: Обновлен пользователь: andrei.chernomordin
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+❌ Не удалось подключиться к Huntflow API
+DEBUG context_processor: accounts_list = []
+❌ Не удалось подключиться к Huntflow API
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+🔑 UPDATE_API_KEYS: Обновление Gemini API ключа для пользователя andrei.golubenko
+🔑 UPDATE_API_KEYS: Старый ключ: AIzaSyCW2M...bjH9Q
+🔑 UPDATE_API_KEYS: Новый ключ: AIzaSyCW2M...bjH9Q
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+✅ UPDATE_API_KEYS: Ключ сохранен в БД: AIzaSyCW2M...bjH9Q
+DEBUG context_processor: accounts_list = []
+🔑 UPDATE_API_KEYS: Обновление Gemini API ключа для пользователя andrei.golubenko
+🔑 UPDATE_API_KEYS: Старый ключ: AIzaSyCW2M...bjH9Q
+🔑 UPDATE_API_KEYS: Новый ключ: AIzaSyCW2M...bjH9Q
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+✅ UPDATE_API_KEYS: Ключ сохранен в БД: AIzaSyCW2M...bjH9Q
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+🔑 UPDATE_API_KEYS: Обновление Gemini API ключа для пользователя andrei.golubenko
+🔑 UPDATE_API_KEYS: Старый ключ: AIzaSyCW2M...bjH9Q
+🔑 UPDATE_API_KEYS: Новый ключ: AIzaSyCW2M...bjH9Q
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+✅ UPDATE_API_KEYS: Ключ сохранен в БД: AIzaSyCW2M...bjH9Q
+DEBUG context_processor: accounts_list = []
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+❌ Не удалось подключиться к Huntflow API
+DEBUG context_processor: accounts_list = []
+❌ Не удалось подключиться к Huntflow API
+Watching for file changes with StatReloader
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: Не удалось получить валидный токен для PROD системы. Проверьте настройки токенов в профиле.
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: Не удалось получить валидный токен для PROD системы. Проверьте настройки токенов в профиле.
+[08/Jan/2026 13:11:16] "GET /huntflow/ HTTP/1.1" 200 116995
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 08, 2026 - 13:11:06
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+❌ Не удалось подключиться к Huntflow API
+DEBUG context_processor: accounts_list = []
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 08, 2026 - 13:11:29
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/logic/utilities/account_services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 08, 2026 - 13:11:37
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/logic/utilities/account_services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 08, 2026 - 13:11:46
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/clickup_int/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 08, 2026 - 13:11:50
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:11:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 13:11:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:11:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 13:11:54] "GET /api/auth/status HTTP/1.1" 404 5512
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: Не удалось получить валидный токен для PROD системы. Проверьте настройки токенов в профиле.
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: Не удалось получить валидный токен для PROD системы. Проверьте настройки токенов в профиле.
+[08/Jan/2026 13:12:12] "GET /huntflow/ HTTP/1.1" 200 116995
+/Users/agolubenko/hrhelper/fullstack/backend/logic/utilities/account_services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 08, 2026 - 13:11:53
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+❌ Не удалось подключиться к Huntflow API
+DEBUG context_processor: accounts_list = []
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/serializers.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 08, 2026 - 13:12:14
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: Не удалось получить валидный токен для PROD системы. Проверьте настройки токенов в профиле.
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: Не удалось получить валидный токен для PROD системы. Проверьте настройки токенов в профиле.
+[08/Jan/2026 13:12:44] "GET /huntflow/ HTTP/1.1" 200 116995
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: Не удалось получить валидный токен для PROD системы. Проверьте настройки токенов в профиле.
+[08/Jan/2026 13:12:46] "POST /huntflow/test-connection/ HTTP/1.1" 200 136
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:12:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 13:12:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:12:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:12:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+/Users/agolubenko/hrhelper/fullstack/backend/logic/utilities/user_management.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 08, 2026 - 13:12:25
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+❌ Не удалось подключиться к Huntflow API
+DEBUG context_processor: accounts_list = []
+❌ Не удалось подключиться к Huntflow API
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/logic/user_service.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 08, 2026 - 13:13:03
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/logic/user_service.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 08, 2026 - 13:13:08
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: Не удалось получить валидный токен для PROD системы. Проверьте настройки токенов в профиле.
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: Не удалось получить валидный токен для PROD системы. Проверьте настройки токенов в профиле.
+[08/Jan/2026 13:13:25] "GET /accounts/api-keys/ HTTP/1.1" 200 142156
+[08/Jan/2026 13:13:25] "GET /huntflow/tokens/api/ HTTP/1.1" 200 251
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: Не удалось получить валидный токен для PROD системы. Проверьте настройки токенов в профиле.
+[08/Jan/2026 13:13:27] "GET /huntflow/tokens/test/ HTTP/1.1" 200 170
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: Не удалось получить валидный токен для PROD системы. Проверьте настройки токенов в профиле.
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: Не удалось получить валидный токен для PROD системы. Проверьте настройки токенов в профиле.
+[08/Jan/2026 13:13:35] "GET /accounts/api-keys/ HTTP/1.1" 200 142156
+[08/Jan/2026 13:13:35] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[08/Jan/2026 13:13:35] "GET /static/images/integrations/clickup-official.svg HTTP/1.1" 200 917
+[08/Jan/2026 13:13:35] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[08/Jan/2026 13:13:35] "GET /static/css/hrhelper.css HTTP/1.1" 200 118598
+[08/Jan/2026 13:13:35] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[08/Jan/2026 13:13:35] "GET /static/images/integrations/huntflow-official.ico HTTP/1.1" 200 15086
+[08/Jan/2026 13:13:35] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[08/Jan/2026 13:13:35] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[08/Jan/2026 13:13:35] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[08/Jan/2026 13:13:35] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[08/Jan/2026 13:13:35] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[08/Jan/2026 13:13:35] "GET /huntflow/tokens/api/ HTTP/1.1" 200 251
+[08/Jan/2026 13:13:35] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+Refresh token истек для пользователя andrei.golubenko
+[08/Jan/2026 13:13:37] "POST /huntflow/tokens/refresh/ HTTP/1.1" 200 166
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: Не удалось получить валидный токен для PROD системы. Проверьте настройки токенов в профиле.
+[08/Jan/2026 13:13:40] "GET /huntflow/tokens/test/ HTTP/1.1" 200 170
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: Не удалось получить валидный токен для PROD системы. Проверьте настройки токенов в профиле.
+[08/Jan/2026 13:13:47] "GET /admin/accounts/user/3/change/ HTTP/1.1" 200 111587
+[08/Jan/2026 13:13:47] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+WARNING Not Found: /favicon.ico
+Not Found: /favicon.ico
+[08/Jan/2026 13:13:47] "GET /favicon.ico HTTP/1.1" 404 4247
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:13:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:13:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:13:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:13:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 13:14:14] "POST /admin/accounts/user/3/change/ HTTP/1.1" 302 0
+[08/Jan/2026 13:14:15] "GET /admin/accounts/user/ HTTP/1.1" 200 44344
+[08/Jan/2026 13:14:15] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+[08/Jan/2026 13:14:17] "GET /admin/accounts/user/3/change/ HTTP/1.1" 200 111587
+[08/Jan/2026 13:14:17] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:14:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 13:14:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:14:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 13:14:54] "GET /api/auth/status HTTP/1.1" 404 5512
+/Users/agolubenko/hrhelper/fullstack/backend/logic/utilities/account_services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 08, 2026 - 13:13:11
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":659,"name":"Softnetix","nick":"org49170","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 659, 'name': 'Softnetix', 'nick': 'org49170', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":659,"name":"Softnetix","nick":"org49170","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 659, 'name': 'Softnetix', 'nick': 'org49170', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:15:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 13:15:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:15:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:15:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/logic/user_service.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 08, 2026 - 13:15:50
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/logic/utilities/account_services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 08, 2026 - 13:16:04
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/logic/user_service.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 08, 2026 - 13:16:13
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/logic/utilities/account_services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 08, 2026 - 13:16:14
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/accounts/logic/user_service.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 08, 2026 - 13:16:19
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[08/Jan/2026 13:16:46] "POST /admin/accounts/user/3/change/ HTTP/1.1" 302 0
+[08/Jan/2026 13:16:46] "GET /admin/accounts/user/ HTTP/1.1" 200 44344
+[08/Jan/2026 13:16:46] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+[08/Jan/2026 13:16:48] "GET /admin/accounts/user/3/change/ HTTP/1.1" 200 111587
+[08/Jan/2026 13:16:48] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:16:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 13:16:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:16:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 13:16:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 13:16:59] "POST /admin/accounts/user/3/change/ HTTP/1.1" 302 0
+[08/Jan/2026 13:16:59] "GET /admin/accounts/user/ HTTP/1.1" 200 44324
+[08/Jan/2026 13:16:59] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+[08/Jan/2026 13:17:01] "GET /admin/accounts/user/3/change/ HTTP/1.1" 200 111441
+[08/Jan/2026 13:17:01] "GET /admin/jsi18n/ HTTP/1.1" 200 16066
+[08/Jan/2026 13:17:10] "GET /accounts/api-keys/ HTTP/1.1" 200 142028
+[08/Jan/2026 13:17:10] "GET /huntflow/tokens/api/ HTTP/1.1" 200 418
+[08/Jan/2026 13:17:36] "POST /accounts/api-keys/ HTTP/1.1" 200 142643
+[08/Jan/2026 13:17:36] "GET /huntflow/tokens/api/ HTTP/1.1" 200 157
+[08/Jan/2026 13:17:40] "GET /huntflow/tokens/test/ HTTP/1.1" 200 239
+[08/Jan/2026 13:17:53] "POST /huntflow/test-connection/ HTTP/1.1" 200 141
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 13:17:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 13:17:54] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 13:17:54] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 13:17:54] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 13:17:56,326] - Broken pipe from ('127.0.0.1', 63761)
+[08/Jan/2026 13:17:56] "GET /huntflow/ HTTP/1.1" 200 122526
+[08/Jan/2026 13:17:56] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[08/Jan/2026 13:18:10] "GET /accounts/ HTTP/1.1" 200 133234
+[08/Jan/2026 13:18:10] "GET /static/css/profile.css HTTP/1.1" 404 1905
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/services.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+January 08, 2026 - 13:16:25
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":659,"name":"Softnetix","nick":"org49170","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 659, 'name': 'Softnetix', 'nick': 'org49170', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":659,"name":"Softnetix","nick":"org49170","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 659, 'name': 'Softnetix', 'nick': 'org49170', 'member_type': 'owner', 'production_calendar': 1}]
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":659,"name":"Softnetix","nick":"org49170","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 659, 'name': 'Softnetix', 'nick': 'org49170', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":659,"name":"Softnetix","nick":"org49170","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 659, 'name': 'Softnetix', 'nick': 'org49170', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":659,"name":"Softnetix","nick":"org49170","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 659, 'name': 'Softnetix', 'nick': 'org49170', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":659,"name":"Softnetix","nick":"org49170","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 659, 'name': 'Softnetix', 'nick': 'org49170', 'member_type': 'owner', 'production_calendar': 1}]
+🔑 UPDATE_API_KEYS: Обновление Gemini API ключа для пользователя andrei.golubenko
+🔑 UPDATE_API_KEYS: Старый ключ: AIzaSyCW2M...bjH9Q
+🔑 UPDATE_API_KEYS: Новый ключ: AIzaSyCW2M...bjH9Q
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+✅ UPDATE_API_KEYS: Ключ сохранен в БД: AIzaSyCW2M...bjH9Q
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":659,"name":"Softnetix","nick":"org49170","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 659, 'name': 'Softnetix', 'nick': 'org49170', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/me
+📥 Ответ API: 200
+📥 Тело ответа: {"id":658,"name":"andrei.golubenko@softnetix.io","position":null,"email":"andrei.golubenko@softnetix.io","phone":null,"locale":"ru_RU"}...
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/me
+📥 Ответ API: 200
+📥 Тело ответа: {"id":658,"name":"andrei.golubenko@softnetix.io","position":null,"email":"andrei.golubenko@softnetix.io","phone":null,"locale":"ru_RU"}...
+✅ Подключение к Huntflow успешно!
+👤 Пользователь: andrei.golubenko@softnetix.io
+📧 Email: andrei.golubenko@softnetix.io
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/me
+📥 Ответ API: 200
+📥 Тело ответа: {"id":658,"name":"andrei.golubenko@softnetix.io","position":null,"email":"andrei.golubenko@softnetix.io","phone":null,"locale":"ru_RU"}...
+✅ Подключение к Huntflow успешно!
+👤 Пользователь: andrei.golubenko@softnetix.io
+📧 Email: andrei.golubenko@softnetix.io
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/me
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":659,"name":"Softnetix","nick":"org49170","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"id":658,"name":"andrei.golubenko@softnetix.io","position":null,"email":"andrei.golubenko@softnetix.io","phone":null,"locale":"ru_RU"}...
+✅ Подключение к Huntflow успешно!
+👤 Пользователь: andrei.golubenko@softnetix.io
+📧 Email: andrei.golubenko@softnetix.io
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":659,"name":"Softnetix","nick":"org49170","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 659, 'name': 'Softnetix', 'nick': 'org49170', 'member_type': 'owner', 'production_calendar': 1}]
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":659,"name":"Softnetix","nick":"org49170","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":659,"name":"Softnetix","nick":"org49170","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 659, 'name': 'Softnetix', 'nick': 'org49170', 'member_type': 'owner', 'production_calendar': 1}]
+Ошибка при получении статистики Google: cannot import name 'GoogleCalendarEvent' from 'apps.google_oauth.models' (/Users/agolubenko/hrhelper/fullstack/backend/apps/google_oauth/models.py)
+🔍 API запрос: GET https://sandbox-api.huntflow.dev/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":659,"name":"Softnetix","nick":"org49170","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 659, 'name': 'Softnetix', 'nick': 'org49170', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader

@@ -225,7 +225,7 @@ class UserSettingsSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'gemini_api_key', 'clickup_api_key', 'notion_integration_token',
-            'huntflow_sandbox_api_key', 'huntflow_prod_api_key',
+            'huntflow_sandbox_api_key',
             'huntflow_sandbox_url', 'huntflow_prod_url', 'active_system',
             'is_observer_active', 'interviewer_calendar_url'
         ]
@@ -257,11 +257,7 @@ class UserSettingsSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("API ключ Huntflow Sandbox слишком короткий")
         return value
     
-    def validate_huntflow_prod_api_key(self, value):
-        """Валидация API ключа Huntflow Production"""
-        if value and len(value) < 10:
-            raise serializers.ValidationError("API ключ Huntflow Production слишком короткий")
-        return value
+    # huntflow_prod_api_key больше не используется, для PROD используются токены
     
     def validate_active_system(self, value):
         """Валидация активной системы"""

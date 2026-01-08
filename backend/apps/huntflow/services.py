@@ -45,17 +45,21 @@ class HuntflowService:
         else:
             return self.user.huntflow_sandbox_url
     
-    def _get_api_key(self) -> str:
-        """Получает API ключ для аутентификации (fallback для старой системы)"""
+    def _get_api_key(self) -> Optional[str]:
+        """Получает API ключ для аутентификации (только для sandbox)"""
+        # Для PROD не используем API ключи, только токены
         if self.user.active_system == 'prod':
-            return self.user.huntflow_prod_api_key
+            return None
         else:
-            return self.user.huntflow_sandbox_api_key
+            # Для sandbox используем API ключ, если он есть
+            return getattr(self.user, 'huntflow_sandbox_api_key', None)
     
     def _get_headers(self):
         """Получает заголовки для API запросов с валидным токеном"""
-        # Если активная система - prod и есть токены, используем токены
-        if self.user.active_system == 'prod' and self.user.huntflow_access_token:
+        # Если активная система - prod, используем только токены
+        if self.user.active_system == 'prod':
+            if not self.user.huntflow_access_token:
+                raise Exception("Для PROD системы необходимо настроить токены Huntflow в профиле пользователя")
             # Получаем валидный токен
             access_token = self.token_service.ensure_valid_token()
             if access_token:
@@ -63,8 +67,10 @@ class HuntflowService:
                     'Authorization': f'Bearer {access_token}',
                     'Content-Type': 'application/json'
                 }
+            else:
+                raise Exception("Не удалось получить валидный токен для PROD системы. Проверьте настройки токенов в профиле.")
         
-        # Если активная система - sandbox или нет токенов, используем API ключ
+        # Если активная система - sandbox, используем API ключ (fallback)
         api_key = self._get_api_key()
         if api_key:
             return {

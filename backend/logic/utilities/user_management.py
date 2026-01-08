@@ -289,7 +289,7 @@ def api_keys_template_handler(request):
             'clickup_api_key': request.POST.get('clickup_api_key', ''),
             'notion_integration_token': request.POST.get('notion_integration_token', ''),
             'huntflow_sandbox_api_key': request.POST.get('huntflow_sandbox_api_key', ''),
-            'huntflow_prod_api_key': request.POST.get('huntflow_prod_api_key', ''),
+            # huntflow_prod_api_key больше не используется, для PROD используются токены
             'huntflow_sandbox_url': request.POST.get('huntflow_sandbox_url', ''),
             'huntflow_prod_url': request.POST.get('huntflow_prod_url', ''),
             'huntflow_access_token': request.POST.get('huntflow_access_token', ''),

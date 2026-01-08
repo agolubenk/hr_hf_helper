@@ -41,21 +41,15 @@ class HuntflowCandidateService(BaseAPIClient, BaseCandidateOperations, BaseComme
         Настройка аутентификации для Huntflow API
         
         ВХОДЯЩИЕ ДАННЫЕ: Нет
-        ИСТОЧНИКИ ДАННЫЕ: self.user.active_system, self.user.huntflow_prod_api_key, self.user.huntflow_sandbox_api_key
-        ОБРАБОТКА: Настройка заголовков авторизации в зависимости от системы
+        ИСТОЧНИКИ ДАННЫЕ: self.user.active_system, HuntflowService для получения заголовков
+        ОБРАБОТКА: Настройка заголовков авторизации в зависимости от системы через HuntflowService
         ВЫХОДЯЩИЕ ДАННЫЕ: Настроенные заголовки
-        СВЯЗИ: Нет
+        СВЯЗИ: HuntflowService
         ФОРМАТ: Обновление self.headers
         """
-        if self.user.active_system == 'PROD':
-            api_key = self.user.huntflow_prod_api_key
-        else:
-            api_key = self.user.huntflow_sandbox_api_key
-        
-        self.headers.update({
-            'Authorization': f'Bearer {api_key}',
-            'Content-Type': 'application/json'
-        })
+        # Используем HuntflowService для получения правильных заголовков с поддержкой токенов
+        headers = self.huntflow_service._get_headers()
+        self.headers.update(headers)
     
     # ==================== КАНДИДАТЫ ====================
     
