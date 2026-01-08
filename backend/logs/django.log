@@ -5650,3 +5650,1387 @@ Refresh token истек для пользователя andrei.golubenko
 Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
 [08/Jan/2026 11:20:29] "GET /finance/pln-taxes/ HTTP/1.1" 200 137552
 [08/Jan/2026 11:20:29] "GET /static/css/finance.css HTTP/1.1" 404 1905
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:21:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:21:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:21:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:21:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:21:28] "GET /finance/benchmarks/list/ HTTP/1.1" 200 255539
+[08/Jan/2026 11:21:28] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[08/Jan/2026 11:21:28] "GET /static/css/finance.css HTTP/1.1" 404 1905
+/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1595: RuntimeWarning: DateTimeField Benchmark.date_added received a naive datetime (2025-01-08 11:21:30.379806) while time zone support is active.
+  warnings.warn(
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:21:30] "GET /finance/benchmarks/ HTTP/1.1" 200 289189
+[08/Jan/2026 11:21:30] "GET /static/css/finance.css HTTP/1.1" 404 1905
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:21:39] "GET /vacancies/salary-ranges/ HTTP/1.1" 200 193398
+[08/Jan/2026 11:21:39] "GET /static/css/vacancies.css HTTP/1.1" 404 1911
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:21:46] "GET /hiring-plans/ HTTP/1.1" 200 268386
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:22:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:22:26] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:22:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:22:26] "GET /api/auth/status HTTP/1.1" 404 5512
+/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1595: RuntimeWarning: DateTimeField Benchmark.date_added received a naive datetime (2025-01-08 11:22:43.527636) while time zone support is active.
+  warnings.warn(
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:22:43] "GET /finance/benchmarks/ HTTP/1.1" 200 289189
+[08/Jan/2026 11:22:43] "GET /static/css/finance.css HTTP/1.1" 404 1905
+[08/Jan/2026 11:22:48] "GET /static/css/finance.css HTTP/1.1" 404 1905
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:23:14] "GET /vacancies/ HTTP/1.1" 200 163213
+[08/Jan/2026 11:23:14] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:23:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:23:26] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:23:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:23:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:24:08] "GET /hiring-plans/ HTTP/1.1" 200 269587
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:24:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:24:26] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:24:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:24:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:24:34] "GET /hiring-plans/ HTTP/1.1" 200 270209
+[08/Jan/2026 11:24:34] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[08/Jan/2026 11:24:34] "GET /static/css/hrhelper.css HTTP/1.1" 200 118598
+[08/Jan/2026 11:24:34] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[08/Jan/2026 11:24:34] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[08/Jan/2026 11:24:34] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[08/Jan/2026 11:24:34] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[08/Jan/2026 11:24:34] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[08/Jan/2026 11:24:34] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[08/Jan/2026 11:24:34] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:24:45] "GET /hiring-plans/ HTTP/1.1" 200 270209
+[08/Jan/2026 11:24:45] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[08/Jan/2026 11:24:45] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[08/Jan/2026 11:24:45] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[08/Jan/2026 11:24:45] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[08/Jan/2026 11:24:45] "GET /static/css/hrhelper.css HTTP/1.1" 200 118598
+[08/Jan/2026 11:24:45] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[08/Jan/2026 11:24:45] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[08/Jan/2026 11:24:45] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[08/Jan/2026 11:24:45] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:25:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:25:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:25:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:25:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:25:31] "GET /vacancies/ HTTP/1.1" 200 162090
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:25:57] "GET /vacancies/ HTTP/1.1" 200 158586
+[08/Jan/2026 11:25:57] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[08/Jan/2026 11:25:57] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[08/Jan/2026 11:25:57] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[08/Jan/2026 11:25:57] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[08/Jan/2026 11:25:57] "GET /static/css/hrhelper.css HTTP/1.1" 200 118598
+[08/Jan/2026 11:25:57] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[08/Jan/2026 11:25:57] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[08/Jan/2026 11:25:57] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[08/Jan/2026 11:25:57] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:26:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:26:26] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:26:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:26:26] "GET /api/auth/status HTTP/1.1" 404 5512
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:27:14] "GET /hiring-plans/ HTTP/1.1" 200 270188
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:27:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:27:26] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:27:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:27:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:27:51] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:28:01] "GET /vacancies/ HTTP/1.1" 200 158634
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:28:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:28:26] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:28:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:28:26] "GET /api/auth/status HTTP/1.1" 404 5512
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:29:03] "GET /hiring-plans/ HTTP/1.1" 200 270336
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:29:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:29:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:29:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:29:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:30:09] "GET /vacancies/ HTTP/1.1" 200 158765
+[08/Jan/2026 11:30:09] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:30:11] "GET /vacancies/ HTTP/1.1" 200 158765
+[08/Jan/2026 11:30:11] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[08/Jan/2026 11:30:11] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[08/Jan/2026 11:30:11] "GET /static/css/hrhelper.css HTTP/1.1" 200 118598
+[08/Jan/2026 11:30:11] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[08/Jan/2026 11:30:11] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[08/Jan/2026 11:30:11] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[08/Jan/2026 11:30:11] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[08/Jan/2026 11:30:11] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[08/Jan/2026 11:30:11] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:30:20] "GET /hiring-plans/ HTTP/1.1" 200 270336
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:30:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:30:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:30:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:30:26] "GET /api/auth/status HTTP/1.1" 404 5512
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:30:53] "GET /hiring-plans/ HTTP/1.1" 200 270354
+[08/Jan/2026 11:30:53] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[08/Jan/2026 11:30:53] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[08/Jan/2026 11:30:53] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[08/Jan/2026 11:30:53] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[08/Jan/2026 11:30:53] "GET /static/css/hrhelper.css HTTP/1.1" 200 118598
+[08/Jan/2026 11:30:53] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[08/Jan/2026 11:30:53] "GET /static/img/logo-dark.png HTTP/1.1" 200 52582
+[08/Jan/2026 11:30:53] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[08/Jan/2026 11:30:53] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+[08/Jan/2026 11:31:13] "GET /google-oauth/chat/ HTTP/1.1" 302 0
+
+📊 WEEKLY REPORTS: Итого интервью: 0
+📊 WEEKLY REPORTS: Вакансия ID=1, invite_title='JS Tech Screening |'
+📊 WEEKLY REPORTS: Неделя previous, период: 2025-12-29 - 2026-01-03
+📊 WEEKLY REPORTS: Всего событий за период: 18
+📊 WEEKLY REPORTS: Интервьюеров вакансии: 8
+📊 WEEKLY REPORTS: Email интервьюеров: pl@softnetix.io, maksim.misiukevich@softnetix.io, yahor.litavar@softnetix.io, siarhei.tsukanau@softnetix.io, yauheni.ivanou@softnetix.io
+📊 WEEKLY REPORTS: Событий с совпадением invite_title: 0
+📊 WEEKLY REPORTS: Итого - HR-screening: 0, Tech Screening: 0
+📊 WEEKLY REPORTS: Заголовок инвайта для интервью: 'JS Final Interview |'
+📊 WEEKLY REPORTS: Итого интервью: 0
+📊 WEEKLY REPORTS: Вакансия ID=1, invite_title='JS Tech Screening |'
+📊 WEEKLY REPORTS: Неделя current, период: 2026-01-05 - 2026-01-10
+📊 WEEKLY REPORTS: Всего событий за период: 0
+📊 WEEKLY REPORTS: Интервьюеров вакансии: 8
+📊 WEEKLY REPORTS: Email интервьюеров: pl@softnetix.io, maksim.misiukevich@softnetix.io, yahor.litavar@softnetix.io, siarhei.tsukanau@softnetix.io, yauheni.ivanou@softnetix.io
+📊 WEEKLY REPORTS: Событий с совпадением invite_title: 0
+📊 WEEKLY REPORTS: Итого - HR-screening: 0, Tech Screening: 0
+📊 WEEKLY REPORTS: Заголовок инвайта для интервью: 'JS Final Interview |'
+📊 WEEKLY REPORTS: Итого интервью: 0
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+DEBUG context_processor: accounts_list = []
+🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: andrei.golubenko
+🔍 КАЛЕНДАРЬ КОМПАНИИ: Начинаем получение настроек...
+🔍 КАЛЕНДАРЬ КОМПАНИИ: Импорт модели успешен
+🔍 КАЛЕНДАРЬ КОМПАНИИ: Получены настройки компании, ID записи: 1
+🔍 КАЛЕНДАРЬ КОМПАНИИ: main_calendar_id = 'https://calendar.google.com/calendar/embed?src=c_6neaou3phcsg46u40pjbf6bki8%40group.calendar.google.com&ctz=Europe%2FMinsk'
+🔍 КАЛЕНДАРЬ КОМПАНИИ: Исходное значение из настроек: 'https://calendar.google.com/calendar/embed?src=c_6neaou3phcsg46u40pjbf6bki8%40group.calendar.google.com&ctz=Europe%2FMinsk'
+🔍 КАЛЕНДАРЬ КОМПАНИИ: Обнаружена ссылка, извлекаем calendar_id...
+🔍 EXTRACT_CALENDAR_ID: Извлечен из src: 'c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com' (исходный: 'c_6neaou3phcsg46u40pjbf6bki8%40group.calendar.google.com')
+✅ КАЛЕНДАРЬ КОМПАНИИ: Извлечен calendar_id из ссылки: 'c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com'
+✅ КАЛЕНДАРЬ КОМПАНИИ: Финальный calendar_id для использования: 'c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com'
+🔍 DEBUG CHAT: Получение событий для пользователя: andrei.golubenko
+💾 Сохранены события календаря в кэш: 19 событий
+🔍 DEBUG CHAT: Получено 19 событий из календаря пользователя
+🔍 КАЛЕНДАРЬ КОМПАНИИ: Начинаем получение событий для calendar_id='c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com'
+💾 Сохранены события календаря в кэш: 12 событий
+✅ КАЛЕНДАРЬ КОМПАНИИ: Успешно получено 12 событий из календаря компании
+📅 КАЛЕНДАРЬ КОМПАНИИ: События сегодня (2026-01-08): 0
+   (нет событий)
+📅 КАЛЕНДАРЬ КОМПАНИИ: События на следующей неделе (2026-01-12 - 2026-01-18): 5
+   - E2E CR: Voitas A.
+   - E2E CR: Voitas A.
+   - E2E CR: Voitas A.
+   - E2E CR: Voitas A.
+   - E2E CR: Voitas A.
+📅 КАЛЕНДАРЬ КОМПАНИИ: Всего событий после объединения: 31 (primary: 19, company: 12)
+📅 СОБЫТИЕ [1/31]: 'C&B & API'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrei.golubenko@softnetix.io
+📅 СОБЫТИЕ [2/31]: 'Support Manager Final Interview | Лихошапко Артемий'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrey.chernomordin@softnetix.io
+   ✏️ Создатель: andrei.golubenko@softnetix.io
+📅 СОБЫТИЕ [3/31]: 'JS Tech Screening | Кузьмич Андрей'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrei.golubenko@softnetix.io
+📅 СОБЫТИЕ [4/31]: 'JS Tech Screening | Ketsmur Oleg'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrei.golubenko@softnetix.io
+📅 СОБЫТИЕ [5/31]: 'JS Tech Screening | Бобрик Андрей'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrei.golubenko@softnetix.io
+📅 СОБЫТИЕ [6/31]: 'Recruitment Meeting'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: alena.koipash@softnetix.io
+📅 СОБЫТИЕ [7/31]: 'Support Screening with Ilya'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrey.chernomordin@softnetix.io
+📅 СОБЫТИЕ [8/31]: 'PM Screening | ZYL EDVARD'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrei.golubenko@softnetix.io
+📅 СОБЫТИЕ [9/31]: 'JS Final Interview | Пушкин Евгений (office)'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrei.golubenko@softnetix.io
+📅 СОБЫТИЕ [10/31]: 'Support Screening with Nikolay'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrey.chernomordin@softnetix.io
+📅 СОБЫТИЕ [11/31]: 'Support Screening with Ivan'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrey.chernomordin@softnetix.io
+📅 СОБЫТИЕ [12/31]: 'A2+'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: anastasiya.maneshyna@softnetix.io
+📅 СОБЫТИЕ [13/31]: 'Recruitment Meeting'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: alena.koipash@softnetix.io
+📅 СОБЫТИЕ [14/31]: 'JS Final Interview | Агапотов Константин'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: andrei.golubenko@softnetix.io
+📅 СОБЫТИЕ [15/31]: 'A2+'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: anastasiya.maneshyna@softnetix.io
+📅 СОБЫТИЕ [16/31]: 'Recruitment Meeting'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: alena.koipash@softnetix.io
+📅 СОБЫТИЕ [17/31]: 'A2+'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: anastasiya.maneshyna@softnetix.io
+📅 СОБЫТИЕ [18/31]: 'Recruitment Meeting'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: alena.koipash@softnetix.io
+📅 СОБЫТИЕ [19/31]: 'A2+'
+   📍 Источник календаря: primary (пользователь)
+   👤 Организатор: anastasiya.maneshyna@softnetix.io
+📅 СОБЫТИЕ [20/31]: 'E2E CR: Kern N.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [21/31]: 'BE CR: Borykau A.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [22/31]: 'FE CR: Bazhko M.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [23/31]: 'E2E CR: Voitas A.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [24/31]: 'E2E CR: Voitas A.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [25/31]: 'E2E CR: Voitas A.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [26/31]: 'E2E CR: Voitas A.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [27/31]: 'E2E CR: Voitas A.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [28/31]: 'E2E CR: Kern N.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [29/31]: 'E2E CR: Kern N.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [30/31]: 'E2E CR: Kern N.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+📅 СОБЫТИЕ [31/31]: 'E2E CR: Kern N.'
+   📍 Источник календаря: company (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+   👤 Организатор: c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com (Softnetix)
+   ✏️ Создатель: arthur.akimov@softnetix.io
+🔍 DEBUG CHAT: Найдено фото пользователя: https://lh3.googleusercontent.com/a/ACg8ocJsYe1sFQFtGk0M1sMa16I92X_j5oX-P0fBs2_6HPX6oNwg_0U=s96-c
+🕐 НАСТРОЙКИ: Рабочие часы 11:00-18:00, интервал 15 мин
+📅 СЛОТЫ СКРИНИНГОВ: Начинаем поиск доступных слотов
+📅 СЛОТЫ СКРИНИНГОВ: Длительность встречи: 30 минут
+📅 СЛОТЫ СКРИНИНГОВ: События календаря: 31
+📅 СЛОТЫ СКРИНИНГОВ: Используются календари: пользователь andrei.golubenko@softnetix.io + компания (c_6neaou3phcsg46u40pjbf6bki8@group.calendar.google.com)
+📅 СЛОТЫ СКРИНИНГОВ: Подготовлено 31 событий для расчета (пользователь + компания)
+📅 СЛОТЫ СКРИНИНГОВ: Из них событий календаря компании: 12
+⏭️ Пропускаем прошедший день: 05.01.2026
+⏭️ Пропускаем прошедший день: 06.01.2026
+⏭️ Пропускаем прошедший день: 07.01.2026
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-08 00:00:00+03:00, date_end=2026-01-08 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-08 00:00:00+03:00, date_end=2026-01-08 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-08 00:00:00+03:00, date_end=2026-01-08 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Чт 08.01.2026: 5 встреч, слоты: 16.45-18.00
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пт 09.01.2026: 6 встреч, слоты: 11.15-11.45, 16.15-18.00
+📅 Итого дней со слотами в неделе: 2
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пн 12.01.2026: 2 встреч, слоты: 11.15-18.00
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-13 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-20 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-21 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Вт 13.01.2026: 0 встреч, слоты: 11.00-18.00
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-13 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-20 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-21 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Ср 14.01.2026: 1 встреч, слоты: 11.00-13.45, 15.45-18.00
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-13 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-20 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-21 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Чт 15.01.2026: 1 встреч, слоты: 11.05-18.00
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-13 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-20 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-21 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пт 16.01.2026: 1 встреч, слоты: 11.15-18.00
+📅 Итого дней со слотами в неделе: 5
+📅 СЛОТЫ СКРИНИНГОВ: Рассчитано 7 дней со слотами
+📅 СЛОТЫ ИНТЕРВЬЮ: Начинаем поиск доступных слотов
+📅 СЛОТЫ ИНТЕРВЬЮ: Базовые события от пользователя и компании: 31
+📅 СЛОТЫ ИНТЕРВЬЮ: Из них событий календаря компании: 12
+📅 СЛОТЫ ИНТЕРВЬЮ: Пропускаем добавление событий интервьюеров при загрузке страницы
+📅 СЛОТЫ ИНТЕРВЬЮ: Слоты будут обновлены через API на основе выбранных участников
+📅 СЛОТЫ ИНТЕРВЬЮ: Длительность встречи: 90 минут
+📅 СЛОТЫ ИНТЕРВЬЮ: Рассчитываем базовые слоты (без интервьюеров) - будут обновлены через API
+⏭️ Пропускаем прошедший день: 05.01.2026
+⏭️ Пропускаем прошедший день: 06.01.2026
+⏭️ Пропускаем прошедший день: 07.01.2026
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-08 00:00:00+03:00, date_end=2026-01-08 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-08 00:00:00+03:00, date_end=2026-01-08 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-08 00:00:00+03:00, date_end=2026-01-08 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Чт 08.01.2026: 5 встреч, слоты: Нет свободных слотов
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-09 00:00:00+03:00, date_end=2026-01-09 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пт 09.01.2026: 6 встреч, слоты: 16.15-18.00
+📅 Итого дней со слотами в неделе: 2
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-12 00:00:00+03:00, date_end=2026-01-12 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пн 12.01.2026: 2 встреч, слоты: 11.15-18.00
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-13 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-20 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-21 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 03:00:00+03:00, date_start=2026-01-13 00:00:00+03:00, date_end=2026-01-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Вт 13.01.2026: 0 встреч, слоты: 11.00-18.00
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-13 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-20 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-21 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 03:00:00+03:00, date_start=2026-01-14 00:00:00+03:00, date_end=2026-01-14 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Ср 14.01.2026: 1 встреч, слоты: 11.00-13.45, 15.45-18.00
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-13 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-20 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-21 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 03:00:00+03:00, date_start=2026-01-15 00:00:00+03:00, date_end=2026-01-15 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Чт 15.01.2026: 1 встреч, слоты: 11.05-18.00
+🔍 FILTER: event_start=2026-01-08 12:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 13:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 14:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 15:15:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-08 16:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 10:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 12:15:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 13:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 15:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 09:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 10:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 14:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 09:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 10:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 09:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 10:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 09:30:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-09 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-12 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-13 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-14 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-15 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-16 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-19 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-20 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-21 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:31:19] "GET /google-oauth/chat/?vacancy_id=1 HTTP/1.1" 200 4920971
+[08/Jan/2026 11:31:19] "GET /static/js/vacancy-slots.js HTTP/1.1" 304 0
+[08/Jan/2026 11:31:19] "GET /static/js/meeting-type-switcher.js HTTP/1.1" 304 0
+[08/Jan/2026 11:31:19] "GET /static/js/chat_actions.js?v=1767861078 HTTP/1.1" 200 32525
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:31:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:31:26] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:31:26] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:31:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:32:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:32:26] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:32:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:32:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:33:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:33:26] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:33:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:33:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:34:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:34:26] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:34:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:34:26] "GET /api/auth/status HTTP/1.1" 404 5512
+/Users/agolubenko/hrhelper/fullstack/backend/apps/hhru/urls.py changed, reloading.
+
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-22 03:00:00+03:00, date_start=2026-01-16 00:00:00+03:00, date_end=2026-01-16 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пт 16.01.2026: 1 встреч, слоты: 11.15-18.00
+📅 Итого дней со слотами в неделе: 5
+📅 СЛОТЫ ИНТЕРВЬЮ: Рассчитано 7 дней со слотами (базовые, без интервьюеров)
+🔍 DEBUG CHAT: Передаем 31 событий в шаблон
+🔍 DEBUG CHAT: Событие: C&B & API в 2026-01-08T12:00:00+03:00
+🔍 DEBUG CHAT: Событие: Support Manager Final Interview | Лихошапко Артемий в 2026-01-08T13:00:00+03:00
+🔍 DEBUG CHAT: Событие: JS Tech Screening | Кузьмич Андрей в 2026-01-08T14:00:00+03:00
+DEBUG context_processor: accounts_list = []
+Watching for file changes with StatReloader
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:35:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:35:26] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:35:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:35:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:35:36] "GET /reporting/interviewer/ HTTP/1.1" 302 0
+[08/Jan/2026 11:35:36] "GET /accounts/login/?next=/reporting/interviewer/ HTTP/1.1" 200 93416
+[08/Jan/2026 11:35:36] "GET /static/css/unified-colors.css HTTP/1.1" 200 9954
+[08/Jan/2026 11:35:36] "GET /static/css/hrhelper.css HTTP/1.1" 200 118598
+[08/Jan/2026 11:35:36] "GET /static/css/all.min.css HTTP/1.1" 200 102025
+[08/Jan/2026 11:35:36] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 80721
+[08/Jan/2026 11:35:36] "GET /static/js/jquery-3.6.0.min.js HTTP/1.1" 200 89501
+[08/Jan/2026 11:35:36] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 232803
+[08/Jan/2026 11:35:36] "GET /static/webfonts/fa-brands-400.woff2 HTTP/1.1" 200 108020
+[08/Jan/2026 11:35:36] "GET /static/webfonts/fa-solid-900.woff2 HTTP/1.1" 200 150124
+/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1595: RuntimeWarning: DateTimeField Benchmark.date_added received a naive datetime (2025-01-08 11:35:49.328207) while time zone support is active.
+  warnings.warn(
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:35:49] "GET /finance/benchmarks/ HTTP/1.1" 200 289189
+[08/Jan/2026 11:35:49] "GET /static/css/finance.css HTTP/1.1" 404 1905
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:36:10] "GET /finance/benchmarks/list/ HTTP/1.1" 200 255539
+[08/Jan/2026 11:36:10] "GET /static/css/finance.css HTTP/1.1" 404 1905
+WARNING Not Found: /api/vacancies/
+Not Found: /api/vacancies/
+[08/Jan/2026 11:36:12] "GET /api/vacancies/ HTTP/1.1" 404 5170
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+ERROR Internal Server Error: /finance/hh-analysis/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 61, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 175, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 167, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 966, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 132, in render
+    compiled_parent = self.get_parent(context)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 129, in get_parent
+    return self.find_template(parent, context)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 107, in find_template
+    template, origin = context.template.engine.find_template(
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        template_name,
+        ^^^^^^^^^^^^^^
+        skip=history,
+        ^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/engine.py", line 161, in find_template
+    raise TemplateDoesNotExist(name, tried=tried)
+django.template.exceptions.TemplateDoesNotExist: base.html
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/views.py", line 1873, in hh_analysis_dashboard
+    return render(request, 'finance/hh_analysis_dashboard.html', context)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 63, in render
+    reraise(exc, self.backend)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 84, in reraise
+    raise new from exc
+django.template.exceptions.TemplateDoesNotExist: base.html
+Internal Server Error: /finance/hh-analysis/
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 61, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 175, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 167, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/base.py", line 966, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 132, in render
+    compiled_parent = self.get_parent(context)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 129, in get_parent
+    return self.find_template(parent, context)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 107, in find_template
+    template, origin = context.template.engine.find_template(
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        template_name,
+        ^^^^^^^^^^^^^^
+        skip=history,
+        ^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/engine.py", line 161, in find_template
+    raise TemplateDoesNotExist(name, tried=tried)
+django.template.exceptions.TemplateDoesNotExist: base.html
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapper_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/apps/finance/views.py", line 1873, in hh_analysis_dashboard
+    return render(request, 'finance/hh_analysis_dashboard.html', context)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 63, in render
+    reraise(exc, self.backend)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/template/backends/django.py", line 84, in reraise
+    raise new from exc
+django.template.exceptions.TemplateDoesNotExist: base.html
+[08/Jan/2026 11:36:19] "GET /finance/hh-analysis/ HTTP/1.1" 500 162423
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:36:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:36:26] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:36:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:36:26] "GET /api/auth/status HTTP/1.1" 404 5512
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:37:06] "GET /finance/hh-analysis/ HTTP/1.1" 200 146177
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:37:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:37:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:37:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:37:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1595: RuntimeWarning: DateTimeField Benchmark.date_added received a naive datetime (2025-01-08 11:37:30.710964) while time zone support is active.
+  warnings.warn(
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:37:30] "GET /finance/benchmarks/ HTTP/1.1" 200 289189
+[08/Jan/2026 11:37:30] "GET /static/css/finance.css HTTP/1.1" 404 1905
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:38:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:38:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:38:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:38:26] "GET /api/auth/status HTTP/1.1" 404 5512
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+[08/Jan/2026 11:39:26] "GET /api/auth/status HTTP/1.1" 404 5512
+[08/Jan/2026 11:39:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+WARNING Not Found: /api/auth/qr-code
+Not Found: /api/auth/qr-code
+WARNING Not Found: /api/auth/status
+Not Found: /api/auth/status
+[08/Jan/2026 11:39:26] "GET /api/auth/qr-code HTTP/1.1" 404 5515
+[08/Jan/2026 11:39:26] "GET /api/auth/status HTTP/1.1" 404 5512
+/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1595: RuntimeWarning: DateTimeField Benchmark.date_added received a naive datetime (2025-01-08 11:39:35.537055) while time zone support is active.
+  warnings.warn(
+Refresh token истек для пользователя andrei.golubenko
+Не удалось получить валидный токен для пользователя andrei.golubenko
+Ошибка запроса: 'User' object has no attribute 'huntflow_prod_api_key'
+[08/Jan/2026 11:39:35] "GET /finance/benchmarks/ HTTP/1.1" 200 289130
+[08/Jan/2026 11:39:35] "GET /static/css/finance.css HTTP/1.1" 404 1905

@@ -7,6 +7,60 @@
 
 {% block content %}
 <style>
+/* Стили для stat-card (как в benchmarks) */
+.stat-card {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    min-height: 118px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    margin: 0;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    pointer-events: none;
+}
+
+.stat-card .stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+    line-height: 1.2;
+}
+
+.stat-card .stat-label {
+    font-size: 1rem;
+    opacity: 0.9;
+    position: relative;
+    z-index: 1;
+    line-height: 1.2;
+}
+
+.stat-card .stat-icon {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 3rem;
+    opacity: 0.2;
+    z-index: 0;
+}
+
 .priority-icon {
     font-size: 1.2em;
     cursor: help;
@@ -156,45 +210,50 @@
             <div class="card-body">
 
                 <!-- Статистика -->
-                <div class="row mb-4">
-                    <div class="col-md-2">
-                        <div class="card bg-primary text-white">
-                            <div class="card-body text-center">
-                                <h4>{{ total_requests }}</h4>
-                                <small>Всего заявок</small>
+                <div class="row mb-4 g-3 align-items-stretch">
+                    <div class="col reporting-section d-flex">
+                        <div class="stat-card h-100 w-100" style="background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);">
+                            <div class="stat-icon">
+                                <i class="fas fa-list-alt"></i>
                             </div>
+                            <div class="stat-number">{{ total_requests }}</div>
+                            <div class="stat-label">Всего заявок</div>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <div class="card bg-info text-white">
-                            <div class="card-body text-center">
-                                <h4>{{ planned_requests }}</h4>
-                                <small>Планируется</small>
+                    <div class="col reporting-section d-flex">
+                        <div class="stat-card h-100 w-100" style="background: linear-gradient(135deg, #17a2b8 0%, #117a8b 100%);">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-alt"></i>
                             </div>
+                            <div class="stat-number">{{ planned_requests }}</div>
+                            <div class="stat-label">Планируется</div>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <div class="card bg-warning text-white">
-                            <div class="card-body text-center">
-                                <h4>{{ in_progress_requests }}</h4>
-                                <small>В процессе</small>
+                    <div class="col reporting-section d-flex">
+                        <div class="stat-card h-100 w-100" style="background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);">
+                            <div class="stat-icon">
+                                <i class="fas fa-spinner"></i>
                             </div>
+                            <div class="stat-number">{{ in_progress_requests }}</div>
+                            <div class="stat-label">В процессе</div>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <div class="card bg-success text-white">
-                            <div class="card-body text-center">
-                                <h4>{{ closed_requests }}</h4>
-                                <small>Закрыто</small>
+                    <div class="col reporting-section d-flex">
+                        <div class="stat-card h-100 w-100" style="background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
                             </div>
+                            <div class="stat-number">{{ closed_requests }}</div>
+                            <div class="stat-label">Закрыто</div>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <div class="card bg-secondary text-white">
-                            <div class="card-body text-center">
-                                <h4>{% widthratio closed_requests total_requests 100 %}%</h4>
-                                <small>Выполнение</small>
+                    <div class="col reporting-section d-flex">
+                        <div class="stat-card h-100 w-100" style="background: linear-gradient(135deg, #6c757d 0%, #545b62 100%);">
+                            <div class="stat-icon">
+                                <i class="fas fa-percentage"></i>
                             </div>
+                            <div class="stat-number">{% widthratio closed_requests total_requests 100 %}%</div>
+                            <div class="stat-label">Выполнение</div>
                         </div>
                     </div>
                 </div>
