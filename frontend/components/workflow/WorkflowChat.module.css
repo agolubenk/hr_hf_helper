@@ -1,0 +1,133 @@
+.chatContainer {
+  background: var(--gray-2);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 200px);
+  min-height: 600px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chatHeader {
+  background: var(--accent-9); /* Акцентный цвет из темы */
+  padding: 8px 16px; /* Уменьшены паддинги */
+  border-radius: 12px 12px 0 0;
+}
+
+.messagesContainer {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.messageWrapper {
+  width: 100%;
+}
+
+.userMessage {
+  background: var(--accent-9);
+  color: #ffffff;
+  padding: 12px 16px;
+  border-radius: 12px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+.inviteMessage {
+  background: var(--gray-2); /* Адаптивный фон для светлой и темной темы */
+  border: 1px solid var(--gray-6);
+  padding: 0;
+  border-radius: 12px;
+  max-width: 80%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+/* Для темной темы */
+[data-theme="dark"] .inviteMessage,
+.radix-themes[data-appearance="dark"] .inviteMessage {
+  background: var(--gray-3);
+}
+
+.inviteHeader {
+  background: var(--accent-9); /* Акцентный цвет для хедера */
+  padding: 12px 16px;
+  margin-bottom: 0;
+  border-radius: 12px 12px 0 0;
+}
+
+.tag {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.botIcon {
+  font-size: 20px;
+}
+
+.candidateInfo {
+  margin-top: 12px;
+}
+
+.statusBar {
+  background: #d1fae5;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-top: 12px;
+}
+
+.inputContainer {
+  padding: 4px; /* Минимальные отступы от границ блока */
+  border-top: 1px solid var(--gray-6);
+  background: var(--gray-2); /* Адаптивный фон для светлой и темной темы */
+  border-radius: 0 0 12px 12px;
+  display: flex;
+  align-items: flex-start; /* Выравнивание по верхнему краю */
+  gap: 4px; /* Небольшой отступ между textarea и кнопкой */
+}
+
+/* Для темной темы */
+[data-theme="dark"] .inputContainer,
+.radix-themes[data-appearance="dark"] .inputContainer {
+  background: var(--gray-3);
+}
+
+.inputContainer :global(.rt-TextAreaRoot) {
+  border-radius: 6px !important; /* Скругление для textarea */
+}
+
+.inputContainer :global(.rt-Button) {
+  flex-shrink: 0; /* Кнопка не сжимается */
+}
+
+/* Скроллбар */
+.messagesContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messagesContainer::-webkit-scrollbar-track {
+  background: var(--gray-3);
+  border-radius: 4px;
+}
+
+.messagesContainer::-webkit-scrollbar-thumb {
+  background: var(--gray-6);
+  border-radius: 4px;
+}
+
+.messagesContainer::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-8);
+}

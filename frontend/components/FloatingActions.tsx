@@ -270,19 +270,20 @@ export default function FloatingActions({ actions = [] }: FloatingActionsProps) 
   // Зона срабатывания на правом краю
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      const rightEdgeZone = window.innerWidth - 60 // 60px от правого края - зона срабатывания
+      const rightEdgeZone = window.innerWidth - 7 // 7px от правого края - зона срабатывания
 
       // Проверяем, находится ли курсор в зоне срабатывания или над самим блоком
       const isInTriggerZone = e.clientX >= rightEdgeZone
       const isOverPanel = panelRef.current && panelRef.current.contains(e.target as Node)
+      const isOverTriggerZone = triggerZoneRef.current && triggerZoneRef.current.contains(e.target as Node)
 
-      if ((isInTriggerZone || isOverPanel) && !isPinned) {
+      if ((isInTriggerZone || isOverPanel || isOverTriggerZone) && !isPinned) {
         setIsVisible(true)
         if (timeoutRef.current) {
           clearTimeout(timeoutRef.current)
           timeoutRef.current = null
         }
-      } else if (!isPinned && !isHovering && !isOverPanel && e.clientX < rightEdgeZone) {
+      } else if (!isPinned && !isHovering && !isOverPanel && !isOverTriggerZone && e.clientX < rightEdgeZone) {
         // Задержка перед скрытием, если курсор не над блоком
         if (timeoutRef.current) {
           clearTimeout(timeoutRef.current)
@@ -590,10 +591,26 @@ export default function FloatingActions({ actions = [] }: FloatingActionsProps) 
         top="64px"
         right="0"
         bottom="0"
-        width="60px"
+        width="7px"
         style={{
           zIndex: 998,
           pointerEvents: isPinned ? 'none' : 'auto',
+        }}
+        onMouseEnter={() => {
+          if (!isPinned) {
+            setIsVisible(true)
+            setIsHovering(true)
+          }
+        }}
+        onMouseLeave={() => {
+          if (!isPinned) {
+            setIsHovering(false)
+            timeoutRef.current = setTimeout(() => {
+              if (!isPinned) {
+                setIsVisible(false)
+              }
+            }, 300)
+          }
         }}
       />
       

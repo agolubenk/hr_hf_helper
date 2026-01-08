@@ -156,7 +156,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       id: 'home',
       label: 'Главная',
       icon: <HomeIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-      href: '/',
+      href: '/workflow',
     },
     {
       id: 'huntflow',
@@ -295,7 +295,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           <MenuItemComponent
             key={item.id}
             item={item}
-            isActive={pathname === item.href || (item.id === 'home' && pathname === '/')}
+            isActive={pathname === item.href || (item.id === 'home' && pathname === '/workflow')}
             onNavigate={onClose}
           />
         ))}
