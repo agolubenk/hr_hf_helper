@@ -90,6 +90,8 @@ INSTALLED_APPS = [
     'apps.wiki',
     'apps.reporting',
     'apps.hhru',
+    'apps.n8n_integration',
+    'apps.huntflow_updates',
     
     
     # Django REST Framework

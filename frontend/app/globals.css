@@ -1,0 +1,32 @@
+/* Глобальные стили для применения темы к body */
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+/* Светлая тема */
+body[data-theme="light"],
+body.light-theme {
+  background-color: #ffffff !important;
+  color: #000000;
+}
+
+/* Темная тема */
+body[data-theme="dark"],
+body.dark-theme {
+  background-color: var(--gray-1, #1c1c1f) !important;
+  color: var(--gray-12, #ffffff);
+}
+
+/* Применяем тему к корневому элементу Radix Themes */
+body[data-theme="dark"] .radix-themes,
+.radix-themes[data-appearance="dark"] {
+  background-color: var(--gray-1, #1c1c1f);
+}
+
+body[data-theme="light"] .radix-themes,
+.radix-themes[data-appearance="light"] {
+  background-color: #ffffff;
+}
