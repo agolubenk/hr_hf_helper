@@ -13,7 +13,9 @@ import {
   GearIcon,
   OpenInNewWindowIcon
 } from "@radix-ui/react-icons"
-import { useState, ReactNode } from "react"
+import { useState, ReactNode, useEffect } from "react"
+import styles from './Sidebar.module.css'
+import { useTheme } from "@/components/ThemeProvider"
 
 interface MenuItem {
   id: string
@@ -109,6 +111,8 @@ function MenuItemComponent({ item, isActive = false, level = 0 }: MenuItemCompon
 }
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+  const { theme } = useTheme()
+  
   // Пример структуры меню - можно вынести в отдельный файл или получать из API
   const menuItems: MenuItem[] = [
     {
@@ -236,13 +240,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       top="64px"
       left="0"
       bottom="0"
-      width="280px"
+      className={styles.sidebar}
       style={{
-        backgroundColor: 'var(--color-panel)',
+        backgroundColor: theme === 'dark' ? 'var(--gray-2, #1c1c1f)' : '#ffffff',
         borderRight: '1px solid var(--gray-a6)',
-        zIndex: 999,
         transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
-        transition: 'transform 0.2s ease-in-out',
+        transition: 'transform 0.2s ease-in-out, background-color 0.2s ease-in-out',
         overflowY: 'auto',
       }}
     >

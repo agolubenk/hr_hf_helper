@@ -1,0 +1,14 @@
+/* Стили для адаптивного Sidebar */
+
+.sidebar {
+  width: 280px;
+  z-index: 999;
+}
+
+/* На мобильных устройствах (до 768px) */
+@media (max-width: 767px) {
+  .sidebar {
+    width: 100%;
+    z-index: 1700;
+  }
+}

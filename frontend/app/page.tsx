@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import FloatingActions from "@/components/FloatingActions";
 import { useTheme } from "@/components/ThemeProvider";
+import styles from './page.module.css'
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -20,7 +21,7 @@ export default function Home() {
     <>
       <Header
         pageTitle="HR Helper"
-        userEmail="andrei.golubenko@softnetix.io"
+        userName="Голубенко Андрей"
         onMenuToggle={() => setMenuOpen(!menuOpen)}
         onThemeToggle={toggleTheme}
         currentTheme={theme}
@@ -31,11 +32,10 @@ export default function Home() {
       <FloatingActions />
       
       <Box 
+        className={`${styles.content} ${menuOpen ? styles.contentWithMenu : ''}`}
         style={{ 
           marginTop: '64px', 
           padding: '24px',
-          marginLeft: menuOpen ? '280px' : '0',
-          transition: 'margin-left 0.2s ease-in-out',
           borderTop: '1px solid var(--gray-a6)',
           minHeight: 'calc(100vh - 64px)',
         }}

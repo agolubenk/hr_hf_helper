@@ -1,0 +1,13 @@
+/* Адаптивные стили для контента */
+
+.content {
+  margin-left: 0;
+  transition: margin-left 0.2s ease-in-out;
+}
+
+/* На десктопе (от 768px) контент сдвигается при открытом меню */
+@media (min-width: 768px) {
+  .contentWithMenu {
+    margin-left: 280px !important;
+  }
+}

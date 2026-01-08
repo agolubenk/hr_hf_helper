@@ -3,10 +3,11 @@
 import { Flex, Button, Text, Box } from "@radix-ui/themes"
 import { SunIcon, MoonIcon, PersonIcon, ExitIcon, HamburgerMenuIcon, ChevronLeftIcon } from "@radix-ui/react-icons"
 import { useState } from "react"
+import styles from './Header.module.css'
 
 interface HeaderProps {
   pageTitle: string
-  userEmail?: string
+  userName?: string
   onMenuToggle?: () => void
   onThemeToggle: () => void
   currentTheme: 'light' | 'dark'
@@ -16,7 +17,7 @@ interface HeaderProps {
 
 export default function Header({ 
   pageTitle, 
-  userEmail = "andrei.golubenko@softnetix.io",
+  userName = "Голубенко Андрей",
   onMenuToggle,
   onThemeToggle,
   currentTheme,
@@ -25,6 +26,9 @@ export default function Header({
 }: HeaderProps) {
   const [userHover, setUserHover] = useState(false)
   const [logoutHover, setLogoutHover] = useState(false)
+  
+  // Извлекаем имя из полного имени (второе слово)
+  const firstName = userName.split(' ')[1] || userName
   return (
     <header
       style={{
@@ -70,7 +74,7 @@ export default function Header({
             <HamburgerMenuIcon width="16" height="16" style={{ color: 'var(--gray-12)' }} />
           )}
         </Box>
-        <Text size="5" weight="bold">
+        <Text size="5" weight="bold" className={styles.pageTitle}>
           {pageTitle}
         </Text>
       </Flex>
@@ -133,8 +137,11 @@ export default function Header({
             onClick={() => {}}
           >
             <PersonIcon width="16" height="16" style={{ color: '#3b82f6', flexShrink: 0 }} />
-            <Text size="2" style={{ color: '#3b82f6', whiteSpace: 'nowrap', fontWeight: 400 }}>
-              {userEmail}
+            <Text size="2" className={styles.userFullName} style={{ color: '#3b82f6', whiteSpace: 'nowrap', fontWeight: 400 }}>
+              {userName}
+            </Text>
+            <Text size="2" className={styles.userName} style={{ color: '#3b82f6', whiteSpace: 'nowrap', fontWeight: 400 }}>
+              {firstName}
             </Text>
           </Flex>
 
@@ -143,6 +150,7 @@ export default function Header({
             align="center"
             gap="2"
             px="3"
+            className={styles.logoutButton}
             onMouseEnter={() => setLogoutHover(true)}
             onMouseLeave={() => setLogoutHover(false)}
             onClick={onLogout}
@@ -159,7 +167,7 @@ export default function Header({
             }}
           >
             <ExitIcon width="16" height="16" style={{ color: '#ef4444', flexShrink: 0 }} />
-            <Text size="2" style={{ color: '#ef4444', whiteSpace: 'nowrap', fontWeight: 400 }}>
+            <Text size="2" className={styles.logoutText} style={{ color: '#ef4444', whiteSpace: 'nowrap', fontWeight: 400 }}>
               Выход
             </Text>
           </Flex>
