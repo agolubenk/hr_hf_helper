@@ -9,10 +9,16 @@ import styles from './WorkflowChat.module.css'
 function ParticipantsList({ participants }: { participants: string[] }) {
   const [isExpanded, setIsExpanded] = useState(false)
   
+  const getParticipantsText = (count: number) => {
+    if (count === 1) return '1 Участник'
+    if (count >= 2 && count <= 4) return `${count} Участника`
+    return `${count} Участников`
+  }
+  
   return (
     <Flex direction="column" gap="1">
       <Flex align="center" gap="1" style={{ cursor: 'pointer' }} onClick={() => setIsExpanded(!isExpanded)}>
-        <Text size="2">{participants.length}</Text>
+        <Text size="2">{getParticipantsText(participants.length)}</Text>
         {isExpanded ? (
           <ChevronUpIcon width={12} height={12} />
         ) : (
@@ -178,6 +184,84 @@ export default function WorkflowChat() {
       candidate: {
         name: 'Игорь Грицук',
         vacancy: 'Frontend Engineer (React)',
+      },
+      status: 'Последнее действие отменено',
+    },
+    {
+      id: '6',
+      type: 'user',
+      file: {
+        name: 'resume2.pdf',
+        type: 'application/pdf'
+      },
+      timestamp: '08.01.2026 18:00',
+      tag: '#add',
+    },
+    {
+      id: '6-response',
+      type: 'response',
+      timestamp: '08.01.2026 18:01',
+      tag: '#add',
+      candidate: {
+        name: 'Петр Сидоров',
+        vacancy: 'Backend Engineer (Python)',
+      },
+      status: 'Резюме добавлено в систему',
+    },
+    {
+      id: '7',
+      type: 'user',
+      timestamp: '08.01.2026 18:05',
+      tag: '#delete',
+    },
+    {
+      id: '7-response',
+      type: 'response',
+      timestamp: '08.01.2026 18:06',
+      tag: '#delete',
+      deleteType: 'Удаление кандидата',
+      candidate: {
+        name: 'Петр Сидоров',
+        vacancy: 'Backend Engineer (Python)',
+      },
+      status: 'Последнее действие отменено',
+    },
+    {
+      id: '8',
+      type: 'user',
+      url: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/79013655',
+      timestamp: '08.01.2026 19:00',
+      tag: '#hr_screening',
+      text: '1) ожидаю от 1500$ на руки\n2) Готов к удаленной работе',
+    },
+    {
+      id: '8-response',
+      type: 'response',
+      timestamp: '08.01.2026 19:01',
+      tag: '#hr_screening',
+      candidate: {
+        name: 'Мария Козлова',
+        vacancy: 'Fullstack Engineer',
+        salary: '1500 USD',
+        level: 'Middle',
+      },
+      status: 'Данные сохранены и переданы в Huntflow',
+    },
+    {
+      id: '9',
+      type: 'user',
+      timestamp: '08.01.2026 19:10',
+      tag: '#delete',
+    },
+    {
+      id: '9-response',
+      type: 'response',
+      timestamp: '08.01.2026 19:11',
+      tag: '#delete',
+      deleteType: 'Удаление записи',
+      candidate: {
+        name: 'Мария Козлова',
+        vacancy: 'Fullstack Engineer',
       },
       status: 'Последнее действие отменено',
     },
@@ -562,7 +646,7 @@ export default function WorkflowChat() {
 
                           {msg.candidate && (
                             <Box className={styles.candidateInfo} style={{ padding: '16px' }}>
-                              <Flex gap="2" align="flex-start" className={styles.tableWithButtons}>
+                              <Flex gap="2" align="start" className={styles.tableWithButtons}>
                                 <Table.Root>
                                   <Table.Body>
                                     <Table.Row>
@@ -596,7 +680,7 @@ export default function WorkflowChat() {
                                       </Table.Row>
                                     )}
                                     
-                                    {msg.candidate.format && (
+                                    {msg.tag === '#interview' && msg.candidate.format && (
                                       <Table.Row>
                                         <Table.Cell>
                                           <Text size="2" weight="bold">Формат:</Text>
@@ -647,7 +731,7 @@ export default function WorkflowChat() {
                                 </Flex>
                               </Flex>
                               
-                              {msg.candidate.participants && msg.candidate.participants.length > 0 && (
+                              {msg.tag === '#interview' && msg.candidate.participants && msg.candidate.participants.length > 0 && (
                                 <Box mt="2">
                                   <ParticipantsList participants={msg.candidate.participants} />
                                 </Box>
@@ -704,7 +788,37 @@ export default function WorkflowChat() {
                                       <Text size="2">{msg.candidate.vacancy}</Text>
                                     </Table.Cell>
                                   </Table.Row>
-                                  {msg.tag !== '#add' && msg.candidate.salary && (
+                                  {msg.tag === '#delete' && msg.deleteType === 'Удаление записи' && (
+                                    <Table.Row>
+                                      <Table.Cell>
+                                        <Text size="2" weight="bold">Удалено:</Text>
+                                      </Table.Cell>
+                                      <Table.Cell>
+                                        <Text size="2">HR-скрининг у {msg.candidate.name}</Text>
+                                      </Table.Cell>
+                                    </Table.Row>
+                                  )}
+                                  {msg.tag === '#delete' && msg.deleteType === 'Удаление кандидата' && (
+                                    <Table.Row>
+                                      <Table.Cell>
+                                        <Text size="2" weight="bold">Удалено:</Text>
+                                      </Table.Cell>
+                                      <Table.Cell>
+                                        <Text size="2">Кандидат {msg.candidate.name}</Text>
+                                      </Table.Cell>
+                                    </Table.Row>
+                                  )}
+                                  {msg.tag === '#delete' && msg.deleteType === 'Удаление события' && (
+                                    <Table.Row>
+                                      <Table.Cell>
+                                        <Text size="2" weight="bold">Удалено:</Text>
+                                      </Table.Cell>
+                                      <Table.Cell>
+                                        <Text size="2">Событие у {msg.candidate.name}</Text>
+                                      </Table.Cell>
+                                    </Table.Row>
+                                  )}
+                                  {msg.tag !== '#add' && msg.tag !== '#delete' && msg.candidate.salary && (
                                     <Table.Row>
                                       <Table.Cell>
                                         <Text size="2" weight="bold">Зарплата:</Text>
@@ -714,7 +828,7 @@ export default function WorkflowChat() {
                                       </Table.Cell>
                                     </Table.Row>
                                   )}
-                                  {msg.tag !== '#add' && msg.candidate.level && (
+                                  {msg.tag !== '#add' && msg.tag !== '#delete' && msg.candidate.level && (
                                     <Table.Row>
                                       <Table.Cell>
                                         <Text size="2" weight="bold">Уровень:</Text>
