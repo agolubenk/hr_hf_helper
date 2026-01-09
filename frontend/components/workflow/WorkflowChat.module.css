@@ -173,6 +173,7 @@
   flex: 1;
   font-size: 11px;
   border-collapse: collapse;
+  border: none !important;
 }
 
 .candidateInfo :global(.rt-TableBody) {
@@ -181,11 +182,25 @@
 
 .candidateInfo :global(.rt-TableRow) {
   border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+.candidateInfo :global(.rt-TableRow + .rt-TableRow),
+.candidateInfo :global(.rt-TableRow:not(:first-child)) {
+  border-top: none !important;
+  border-bottom: none !important;
 }
 
 .candidateInfo :global(.rt-TableCell) {
   padding: 0px 6px;
   border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
   vertical-align: middle;
   line-height: 1.2;
   height: auto;
@@ -195,6 +210,7 @@
   padding-right: 12px;
   padding-left: 0;
   white-space: nowrap;
+  border-left: none !important;
 }
 
 .candidateInfo :global(.rt-TableCell:last-child) {
@@ -202,33 +218,115 @@
   overflow: hidden;
   text-overflow: ellipsis;
   padding-right: 0;
+  border-right: none !important;
 }
 
 /* Убираем границы у нативных элементов таблицы */
-.candidateInfo :global(table) {
+.candidateInfo :global(table),
+.candidateInfo :global(.rt-TableRootTable) {
   border: none !important;
   border-collapse: collapse;
   border-spacing: 0;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
 }
 
 .candidateInfo :global(td),
-.candidateInfo :global(th) {
+.candidateInfo :global(th),
+.candidateInfo :global(.rt-TableCell) {
   border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
   padding: 0px 6px !important;
   vertical-align: middle !important;
   line-height: 1.2 !important;
 }
 
-.candidateInfo :global(tr) {
+.candidateInfo :global(tr),
+.candidateInfo :global(.rt-TableRow) {
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+.candidateInfo :global(tr + tr) {
+  border-top: none !important;
+}
+
+.candidateInfo :global(tbody),
+.candidateInfo :global(.rt-TableBody) {
   border: none !important;
 }
 
-.candidateInfo :global(tbody) {
+.candidateInfo :global(thead),
+.candidateInfo :global(.rt-TableHeader) {
   border: none !important;
 }
 
-.candidateInfo :global(thead) {
+/* Дополнительные правила для полного удаления границ */
+.candidateInfo :global(.rt-TableRow),
+.candidateInfo :global(.rt-TableCell),
+.candidateInfo :global(tr),
+.candidateInfo :global(td),
+.candidateInfo :global(th) {
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Специфичные правила для нижних границ строк - максимальная специфичность */
+.candidateInfo :global(.rt-TableRow[style*="border-bottom"]),
+.candidateInfo :global(tr[style*="border-bottom"]) {
+  border-bottom: none !important;
+}
+
+.candidateInfo :global(.rt-TableCell[style*="border-bottom"]),
+.candidateInfo :global(td[style*="border-bottom"]),
+.candidateInfo :global(th[style*="border-bottom"]) {
+  border-bottom: none !important;
+}
+
+/* Убираем границы через все возможные селекторы */
+.candidateInfo :global(.rt-TableRow > .rt-TableCell),
+.candidateInfo :global(tr > td),
+.candidateInfo :global(tr > th) {
+  border-bottom: none !important;
+  border-top: none !important;
+}
+
+.candidateInfo :global(.rt-TableRow:not(:last-child) > .rt-TableCell),
+.candidateInfo :global(tr:not(:last-child) > td),
+.candidateInfo :global(tr:not(:last-child) > th) {
+  border-bottom: none !important;
+}
+
+.candidateInfo :global(.rt-TableRow:last-child > .rt-TableCell),
+.candidateInfo :global(tr:last-child > td),
+.candidateInfo :global(tr:last-child > th) {
+  border-bottom: none !important;
+}
+
+/* Агрессивное удаление всех границ через универсальные селекторы */
+.candidateInfo :global(.rt-TableRoot *) {
   border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+.candidateInfo :global(table *) {
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
 }
 
 /* Кнопки действий - на десктопе справа от таблицы, на мобильных под статусом */

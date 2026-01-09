@@ -646,16 +646,16 @@ export default function WorkflowChat() {
                       {/* Для interview и tech_screening - формат Инвайт */}
                       {(msg.type === 'invite' || (msg.type === 'response' && (msg.tag === '#interview' || msg.tag === '#tech_screening'))) && (
                         <Box className={styles.inviteMessage}>
-                          <Flex align="center" gap="2" className={styles.inviteHeader}>
-                            <CalendarIcon width={16} height={16} />
-                            <Text size="2" weight="bold">
-                              {msg.tag === '#tech_screening' ? 'Tech-скрининг' : 'Инвайт'} {msg.timestamp}
-                            </Text>
-                            <Text size="2">🏆</Text>
-                          </Flex>
-
                           {msg.candidate && (
                             <Box className={styles.candidateInfo} style={{ padding: '16px' }}>
+                              <Flex align="center" gap="2" mb="2">
+                                <CalendarIcon width={16} height={16} />
+                                <Text size="2" weight="bold">
+                                  {msg.tag === '#tech_screening' ? 'Tech-скрининг' : 'Инвайт'} {msg.timestamp}
+                                </Text>
+                                <Text size="2">🏆</Text>
+                              </Flex>
+                              
                               <Flex gap="2" align="start" className={styles.tableWithButtons}>
                                 <Table.Root>
                                   <Table.Body>
@@ -682,10 +682,15 @@ export default function WorkflowChat() {
                                           <Text size="2" weight="bold">Scorecard:</Text>
                                         </Table.Cell>
                                         <Table.Cell>
-                                          <Button size="1" variant="soft" style={{ color: '#10b981', backgroundColor: 'transparent', border: 'none' }}>
+                                          <a 
+                                            href={msg.candidate.scorecardUrl} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            style={{ color: '#10b981', textDecoration: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px' }}
+                                          >
                                             Открыть
-                                            <OpenInNewWindowIcon width={12} height={12} />
-                                          </Button>
+                                            <OpenInNewWindowIcon width={12} height={12} style={{ display: 'inline-block', verticalAlign: 'middle' }} />
+                                          </a>
                                         </Table.Cell>
                                       </Table.Row>
                                     )}
@@ -707,10 +712,15 @@ export default function WorkflowChat() {
                                           <Text size="2" weight="bold">Google Meet:</Text>
                                         </Table.Cell>
                                         <Table.Cell>
-                                          <Button size="1" variant="soft" style={{ color: '#10b981', backgroundColor: 'transparent', border: 'none' }}>
+                                          <a 
+                                            href={msg.candidate.meetUrl} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            style={{ color: '#10b981', textDecoration: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px' }}
+                                          >
                                             Присоединиться
-                                            <OpenInNewWindowIcon width={12} height={12} />
-                                          </Button>
+                                            <OpenInNewWindowIcon width={12} height={12} style={{ display: 'inline-block', verticalAlign: 'middle' }} />
+                                          </a>
                                         </Table.Cell>
                                       </Table.Row>
                                     )}
@@ -763,43 +773,37 @@ export default function WorkflowChat() {
                       {/* Для hr_screening, delete, add - формат HR-скрининг */}
                       {msg.type === 'response' && (msg.tag === '#hr_screening' || msg.tag === '#delete' || msg.tag === '#add') && (
                         <Box className={styles.screeningMessage}>
-                          <Flex align="center" justify="between" className={styles.screeningHeader}>
-                            <Flex align="center" gap="2">
-                              <ClipboardIcon width={16} height={16} />
-                              <Text size="2" weight="bold">
-                                {msg.tag === '#hr_screening' ? 'HR-скрининг' : msg.tag === '#delete' ? (msg.deleteType || 'Удаление') : 'Добавление'}
-                              </Text>
-                              <Text size="2">
-                                {msg.timestamp}
-                              </Text>
-                            </Flex>
-                            {msg.tag !== '#delete' || msg.deleteType !== 'Удаление кандидата' ? (
-                              <Button size="1" variant="ghost" style={{ padding: '4px' }}>
-                                <OpenInNewWindowIcon width={14} height={14} />
-                              </Button>
-                            ) : null}
-                          </Flex>
-
                           {msg.candidate && (
                             <Box className={styles.candidateInfo} style={{ padding: '16px' }}>
-                              <Table.Root>
-                                <Table.Body>
-                                  <Table.Row>
-                                    <Table.Cell>
-                                      <Text size="2" weight="bold">Кандидат:</Text>
-                                    </Table.Cell>
-                                    <Table.Cell>
-                                      <Text size="2">{msg.candidate.name}</Text>
-                                    </Table.Cell>
-                                  </Table.Row>
-                                  <Table.Row>
-                                    <Table.Cell>
-                                      <Text size="2" weight="bold">Вакансия:</Text>
-                                    </Table.Cell>
-                                    <Table.Cell>
-                                      <Text size="2">{msg.candidate.vacancy}</Text>
-                                    </Table.Cell>
-                                  </Table.Row>
+                              <Flex align="center" gap="2" mb="2">
+                                <ClipboardIcon width={16} height={16} />
+                                <Text size="2" weight="bold">
+                                  {msg.tag === '#hr_screening' ? 'HR-скрининг' : msg.tag === '#delete' ? (msg.deleteType || 'Удаление') : 'Добавление'}
+                                </Text>
+                                <Text size="2">
+                                  {msg.timestamp}
+                                </Text>
+                              </Flex>
+                              
+                              <Flex gap="2" align="start" className={styles.tableWithButtons}>
+                                <Table.Root>
+                                  <Table.Body>
+                                    <Table.Row>
+                                      <Table.Cell>
+                                        <Text size="2" weight="bold">Кандидат:</Text>
+                                      </Table.Cell>
+                                      <Table.Cell>
+                                        <Text size="2">{msg.candidate.name}</Text>
+                                      </Table.Cell>
+                                    </Table.Row>
+                                    <Table.Row>
+                                      <Table.Cell>
+                                        <Text size="2" weight="bold">Вакансия:</Text>
+                                      </Table.Cell>
+                                      <Table.Cell>
+                                        <Text size="2">{msg.candidate.vacancy}</Text>
+                                      </Table.Cell>
+                                    </Table.Row>
                                   {msg.tag === '#delete' && msg.deleteType === 'Удаление записи' && (
                                     <Table.Row>
                                       <Table.Cell>
@@ -886,8 +890,17 @@ export default function WorkflowChat() {
                                       </Table.Cell>
                                     </Table.Row>
                                   )}
-                                </Table.Body>
-                              </Table.Root>
+                                  </Table.Body>
+                                </Table.Root>
+                                
+                                {msg.tag !== '#delete' || msg.deleteType !== 'Удаление кандидата' ? (
+                                  <Flex gap="1" className={styles.actionButtons}>
+                                    <Button size="1" variant="soft" style={{ backgroundColor: '#3b82f6', color: '#ffffff', width: '32px', height: '32px', padding: 0, minWidth: '32px' }}>
+                                      <OpenInNewWindowIcon width={14} height={14} />
+                                    </Button>
+                                  </Flex>
+                                ) : null}
+                              </Flex>
 
                               {msg.status && (
                                 <Flex align="center" gap="2" className={styles.statusBar} mt="2">
