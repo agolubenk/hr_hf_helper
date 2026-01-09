@@ -1,7 +1,7 @@
 .header {
   width: 100%;
   position: relative;
-  padding: 8px 24px 16px 24px; /* Уменьшен верхний отступ */
+  padding: 8px 24px 11px 24px; /* Уменьшен нижний отступ на 5px (16px -> 11px) */
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;

@@ -1,0 +1,73 @@
+.vacancyCard {
+  background: var(--gray-2);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid var(--gray-6);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.vacancyCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: var(--gray-7);
+}
+
+.statusTag {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.statusActive {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.statusInactive {
+  background: var(--gray-4);
+  color: var(--gray-11);
+}
+
+.techTag {
+  background: var(--gray-4);
+  color: var(--gray-12);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.actionButtons {
+  margin-top: auto;
+  background: var(--accent-9);
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 8px;
+}
+
+.actionButton {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+}
+
+.actionButton:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  transform: scale(1.1);
+}
