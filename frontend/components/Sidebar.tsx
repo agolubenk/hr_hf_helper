@@ -68,7 +68,6 @@ function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefi
     return true
   }
   if (item.id === 'google-related' && (
-    pathname.startsWith('/finance') || 
     pathname.startsWith('/calendar') || 
     pathname.startsWith('/invites')
   )) {
@@ -287,24 +286,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             },
           ],
         },
-        {
-          id: 'finance-grades',
-          label: 'Грейды',
-          icon: <StarIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-          href: '/finance?tab=grades',
-        },
-        {
-          id: 'finance-currencies',
-          label: 'Курсы валют',
-          icon: <ReloadIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-          href: '/finance?tab=currencies',
-        },
-        {
-          id: 'finance-taxes',
-          label: 'Налоги PLN',
-          icon: <MixerHorizontalIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-          href: '/finance?tab=taxes',
-        },
       ],
     },
     {
@@ -347,8 +328,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           href: '/vacancies/salary-ranges',
         },
         {
-          id: 'vacancies-grades',
-          label: 'Грейды, налоги и курсы',
+          id: 'vacancies-finance',
+          label: 'Грейды, курсы и налоги',
           icon: <BarChartIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
           href: '/finance',
         },

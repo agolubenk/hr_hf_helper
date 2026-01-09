@@ -1,0 +1,28 @@
+.salaryRangeCard {
+  border: 1px solid var(--gray-a6);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--color-panel);
+  transition: all 0.2s;
+}
+
+.salaryRangeCard:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.cardHeader {
+  background: var(--accent-9);
+  padding: 16px;
+  color: white;
+}
+
+.cardDetails {
+  padding: 16px;
+  background: var(--color-panel);
+}
+
+.actionButton {
+  margin-left: 2px;
+  margin-right: 2px;
+}
