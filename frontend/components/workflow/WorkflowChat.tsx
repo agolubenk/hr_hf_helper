@@ -381,6 +381,35 @@ export default function WorkflowChat() {
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
   }
 
+  // Функция для сокращения длинных URL
+  const shortenUrl = (url: string, maxLength: number = 50): string => {
+    if (url.length <= maxLength) return url
+    
+    // Пытаемся найти паттерн с id в конце
+    const idMatch = url.match(/(id\/\d+)$/)
+    if (idMatch) {
+      const idPart = idMatch[1]
+      // Извлекаем начало до первого слеша после протокола (например, "https://hunt")
+      const protocolMatch = url.match(/^(https?:\/\/[^\/]+)/)
+      if (protocolMatch) {
+        const domain = protocolMatch[1]
+        // Берем только начало домена до первого слеша или точки после "hunt"
+        const huntMatch = domain.match(/^(https?:\/\/hunt)/i)
+        if (huntMatch) {
+          return `${huntMatch[1]}......${idPart}`
+        }
+        // Если нет "hunt", используем протокол + начало домена
+        const domainStart = domain.split('.')[0] // берем до первой точки
+        return `${domainStart}......${idPart}`
+      }
+      // Если не нашли протокол, используем просто начало
+      return `https://hunt......${idPart}`
+    }
+    
+    // Если не удалось найти id, просто обрезаем с многоточием
+    return url.substring(0, maxLength - 3) + '...'
+  }
+
   // Функция для определения цвета фона тега
   const getTagColor = (tag: string): string => {
     const tagLower = tag.toLowerCase()
@@ -570,7 +599,7 @@ export default function WorkflowChat() {
                             {msg.url && (
                               <Text size="2" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>
                                 <a href={msg.url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>
-                                  {msg.url}
+                                  {shortenUrl(msg.url)}
                                 </a>
                               </Text>
                             )}
