@@ -653,7 +653,6 @@ export default function WorkflowChat() {
                                 <Text size="2" weight="bold">
                                   {msg.tag === '#tech_screening' ? 'Tech-скрининг' : 'Инвайт'}
                                 </Text>
-                                <Text size="2">🏆</Text>
                               </Flex>
                               
                               <Flex gap="2" align="start" className={styles.tableWithButtons}>
