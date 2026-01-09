@@ -651,7 +651,7 @@ export default function WorkflowChat() {
                               <Flex align="center" gap="2" mb="2">
                                 <CalendarIcon width={16} height={16} />
                                 <Text size="2" weight="bold">
-                                  {msg.tag === '#tech_screening' ? 'Tech-скрининг' : 'Инвайт'} {msg.timestamp}
+                                  {msg.tag === '#tech_screening' ? 'Tech-скрининг' : 'Инвайт'}
                                 </Text>
                                 <Text size="2">🏆</Text>
                               </Flex>
@@ -779,9 +779,6 @@ export default function WorkflowChat() {
                                 <ClipboardIcon width={16} height={16} />
                                 <Text size="2" weight="bold">
                                   {msg.tag === '#hr_screening' ? 'HR-скрининг' : msg.tag === '#delete' ? (msg.deleteType || 'Удаление') : 'Добавление'}
-                                </Text>
-                                <Text size="2">
-                                  {msg.timestamp}
                                 </Text>
                               </Flex>
                               
@@ -914,6 +911,11 @@ export default function WorkflowChat() {
                           )}
                         </Box>
                       )}
+                      
+                      {/* Дата и время для всех сообщений ассистента */}
+                      <Text size="1" className={styles.messageTimestamp}>
+                        {msg.timestamp}
+                      </Text>
                     </Flex>
                   </>
                 )}
