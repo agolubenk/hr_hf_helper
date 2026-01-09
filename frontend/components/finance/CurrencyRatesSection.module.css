@@ -1,0 +1,38 @@
+.section {
+  margin-bottom: 32px;
+}
+
+.header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--gray-a6);
+}
+
+.error {
+  padding: 12px;
+  background: var(--red-2);
+  border: 1px solid var(--red-6);
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.table {
+  margin-bottom: 16px;
+}
+
+.infoBox {
+  margin-top: 16px;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -12,3 +12,22 @@
     z-index: 1700;
   }
 }
+
+/* Анимация для элементов меню */
+.menuItem {
+  transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  position: relative;
+  will-change: transform;
+}
+
+.menuItem:hover:not(.menuItemActive) {
+  transform: translateX(3px);
+}
+
+.menuItemActive {
+  transform: translateX(4px);
+}
+
+.menuItemActive:hover {
+  transform: translateX(5px);
+}

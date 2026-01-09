@@ -1,0 +1,48 @@
+.section {
+  margin-bottom: 32px;
+}
+
+.header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--gray-a6);
+}
+
+.error {
+  padding: 12px;
+  background: var(--red-2);
+  border: 1px solid var(--red-6);
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.addForm {
+  padding: 16px;
+  background: var(--gray-2);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.content {
+  align-items: flex-start;
+}
+
+.tableContainer {
+  flex: 1;
+}
+
+.table {
+  width: 100%;
+}
+
+.exampleBox {
+  padding: 16px;
+  background: var(--gray-2);
+  border-radius: 8px;
+  min-width: 200px;
+  border: 1px solid var(--gray-a6);
+}
+
+.table :global(.rt-TableCell) {
+  vertical-align: middle;
+}

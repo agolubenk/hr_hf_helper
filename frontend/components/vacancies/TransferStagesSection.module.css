@@ -14,7 +14,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #10b981;
+  background: var(--accent-9);
   color: #ffffff;
   display: flex;
   align-items: center;

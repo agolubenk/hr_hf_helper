@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Flex, Text, Button } from "@radix-ui/themes"
-import { PersonIcon, ExclamationTriangleIcon, EyeOpenIcon, Pencil1Icon, PlayIcon } from "@radix-ui/react-icons"
+import { PersonIcon, ExclamationTriangleIcon, EyeOpenIcon, Pencil1Icon } from "@radix-ui/react-icons"
 import styles from './VacancyCard.module.css'
 
 interface Vacancy {
@@ -26,27 +26,39 @@ export default function VacancyCard({ vacancy, onClick }: VacancyCardProps) {
     <Box className={styles.vacancyCard} onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }}>
       {/* Заголовок и статус */}
       <Flex justify="between" align="start" mb="2">
+        <Box>
         <Text size="4" weight="bold" style={{ color: 'var(--accent-11)' }}>
           {vacancy.title}
+          <br></br>
+        {/* ID */}
+        <Text size="2" weight="bold" style={{ color: 'var(--gray-11)' }}>
+          # {vacancy.id}
         </Text>
-        <Box 
-          className={`${styles.statusTag} ${vacancy.status === 'active' ? styles.statusActive : styles.statusInactive}`}
-        >
-          <Text size="1" weight="bold">
-            {vacancy.status === 'active' ? 'Активна' : 'Неактивна'}
-          </Text>
+        <br></br>
+        </Text>
+        {/* Рекрутер */}
+        <Flex align="center" gap="2" mb="2">
+          <PersonIcon width={16} height={16} />
+          <Text size="2">{vacancy.recruiter}</Text>
+        </Flex>
         </Box>
-      </Flex>
-
-      {/* ID */}
-      <Text size="2" mb="2" style={{ color: 'var(--gray-11)' }}>
-        # {vacancy.id}
-      </Text>
-
-      {/* Рекрутер */}
-      <Flex align="center" gap="2" mb="2">
-        <PersonIcon width={16} height={16} />
-        <Text size="2">• {vacancy.recruiter}</Text>
+        <Flex direction="column" align="end" gap="1">
+          <Box 
+            className={`${styles.statusTag} ${vacancy.status === 'active' ? styles.statusActive : styles.statusInactive}`}
+          >
+            <Text size="1" weight="bold">
+              {vacancy.status === 'active' ? 'Активна' : 'Неактивна'}
+            </Text>
+          </Box>
+          <Flex className={styles.actionButtons}>
+            <Button variant="ghost" size="1" className={styles.actionButton}>
+              <EyeOpenIcon width={16} height={16} />
+            </Button>
+            <Button variant="ghost" size="1" className={styles.actionButton}>
+              <Pencil1Icon width={16} height={16} />
+            </Button>
+          </Flex>
+        </Flex>
       </Flex>
 
       {/* Технологии */}
@@ -84,18 +96,6 @@ export default function VacancyCard({ vacancy, onClick }: VacancyCardProps) {
         </Flex>
       )}
 
-      {/* Кнопки действий */}
-      <Flex className={styles.actionButtons}>
-        <Button variant="ghost" size="1" className={styles.actionButton}>
-          <EyeOpenIcon width={16} height={16} />
-        </Button>
-        <Button variant="ghost" size="1" className={styles.actionButton}>
-          <Pencil1Icon width={16} height={16} />
-        </Button>
-        <Button variant="ghost" size="1" className={styles.actionButton}>
-          <PlayIcon width={16} height={16} />
-        </Button>
-      </Flex>
     </Box>
   )
 }

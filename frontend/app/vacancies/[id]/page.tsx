@@ -126,8 +126,7 @@ export default function VacancyDetailPage() {
   }
 
   const handleEdit = () => {
-    // TODO: Переход на страницу редактирования
-    console.log('Edit vacancy:', vacancyId)
+    router.push(`/vacancies/${vacancyId}/edit`)
   }
 
   return (

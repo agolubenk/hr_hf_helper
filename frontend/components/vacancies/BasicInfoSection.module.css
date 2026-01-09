@@ -41,7 +41,7 @@
 }
 
 .statusActive {
-  background: #10b981;
+  background: var(--accent-9);
 }
 
 .statusInactive {

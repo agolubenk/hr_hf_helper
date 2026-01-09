@@ -1,0 +1,68 @@
+.transferStagesCard {
+  background: var(--gray-2);
+  border: 1px solid var(--gray-6);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.header {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--gray-6);
+}
+
+.iconCircle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-9);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stagesContainer {
+  margin-top: 16px;
+}
+
+.stageCard {
+  background: var(--gray-3);
+  border: 1px solid var(--gray-6);
+  border-radius: 8px;
+  padding: 16px;
+  flex: 1 1 calc(33.333% - 11px);
+  min-width: 300px;
+}
+
+.stageHeader {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--gray-6);
+  margin-bottom: 12px;
+}
+
+.relatedSectionButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--gray-4);
+  border: 1px solid var(--gray-6);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.relatedSectionButton:hover {
+  background: var(--gray-5);
+  border-color: var(--gray-7);
+}
+
+@media (max-width: 768px) {
+  .transferStagesCard {
+    padding: 16px;
+  }
+  
+  .stageCard {
+    min-width: 100%;
+  }
+}

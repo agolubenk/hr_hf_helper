@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Flex, Text, Button } from "@radix-ui/themes"
-import { PersonIcon, ExclamationTriangleIcon, EyeOpenIcon, Pencil1Icon, PlayIcon } from "@radix-ui/react-icons"
+import { PersonIcon, ExclamationTriangleIcon, EyeOpenIcon, Pencil1Icon } from "@radix-ui/react-icons"
 import styles from './VacancyListItem.module.css'
 
 interface Vacancy {
@@ -84,15 +84,12 @@ export default function VacancyListItem({ vacancy, onClick }: VacancyListItemPro
         </Flex>
 
         {/* Правая часть - кнопки действий */}
-        <Flex gap="1" className={styles.actionButtons}>
+        <Flex gap="2" className={styles.actionButtons}>
           <Button variant="ghost" size="1" className={styles.actionButton}>
             <EyeOpenIcon width={16} height={16} />
           </Button>
           <Button variant="ghost" size="1" className={styles.actionButton}>
             <Pencil1Icon width={16} height={16} />
-          </Button>
-          <Button variant="ghost" size="1" className={styles.actionButton}>
-            <PlayIcon width={16} height={16} />
           </Button>
         </Flex>
       </Flex>
