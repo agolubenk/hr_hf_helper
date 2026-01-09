@@ -73,12 +73,16 @@ function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefi
   )) {
     return true
   }
+  if (item.id === 'company-settings' && pathname.startsWith('/company-settings')) {
+    return true
+  }
   
   // Проверяем сам элемент
   if (item.href) {
     // Для finance страницы проверяем путь и query параметры
     if (item.href.includes('/finance')) {
-      if (pathname === '/finance') {
+      const basePath = '/finance'
+      if (pathname === basePath || pathname.startsWith(basePath)) {
         // Если текущая страница finance, проверяем query параметры
         if (typeof window !== 'undefined') {
           const url = new URL(item.href, window.location.origin)
@@ -481,11 +485,25 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       icon: <Box style={{ width: '16px', height: '16px', border: '1px solid var(--gray-12)', borderRadius: '2px', position: 'relative' }}>
         <Box style={{ width: '10px', height: '6px', border: '1px solid var(--gray-12)', borderRadius: '1px', position: 'absolute', top: '2px', left: '2px' }} />
       </Box>,
+      href: '/company-settings',
       children: [
         {
           id: 'company-settings-general',
           label: 'Общие',
           icon: <GearIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+          href: '/company-settings',
+        },
+        {
+          id: 'company-settings-org-structure',
+          label: 'Оргструктура',
+          icon: <PersonIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+          href: '/company-settings/org-structure',
+        },
+        {
+          id: 'company-settings-grades',
+          label: 'Грейды',
+          icon: <StarIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+          href: '/company-settings/grades',
         },
         {
           id: 'company-settings-benchmark',
@@ -596,6 +614,9 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               const activeTab = localStorage.getItem('profileActiveTab')
               isActive = !activeTab || activeTab === 'profile'
             }
+          } else if (item.id === 'company-settings' && pathname?.startsWith('/company-settings')) {
+            // Для настроек компании проверяем путь
+            isActive = isItemOrChildrenActive(item, pathname)
           }
           
           return (
