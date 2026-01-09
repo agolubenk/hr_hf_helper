@@ -63,6 +63,11 @@ interface ChatMessage {
   }
   status?: string
   deleteType?: 'Удаление кандидата' | 'Удаление записи' | 'Удаление события'
+  deletedEventInfo?: {
+    eventDate?: string
+    documentsDeleted?: boolean
+    recordsDeleted?: boolean
+  }
 }
 
 interface AttachedFile {
@@ -184,6 +189,11 @@ export default function WorkflowChat() {
       candidate: {
         name: 'Игорь Грицук',
         vacancy: 'Frontend Engineer (React)',
+      },
+      deletedEventInfo: {
+        eventDate: '2026-01-10 15:30',
+        documentsDeleted: true,
+        recordsDeleted: true,
       },
       status: 'Последнее действие отменено',
     },
@@ -763,9 +773,11 @@ export default function WorkflowChat() {
                                 {msg.timestamp}
                               </Text>
                             </Flex>
-                            <Button size="1" variant="ghost" style={{ padding: '4px' }}>
-                              <OpenInNewWindowIcon width={14} height={14} />
-                            </Button>
+                            {msg.tag !== '#delete' || msg.deleteType !== 'Удаление кандидата' ? (
+                              <Button size="1" variant="ghost" style={{ padding: '4px' }}>
+                                <OpenInNewWindowIcon width={14} height={14} />
+                              </Button>
+                            ) : null}
                           </Flex>
 
                           {msg.candidate && (
@@ -809,14 +821,46 @@ export default function WorkflowChat() {
                                     </Table.Row>
                                   )}
                                   {msg.tag === '#delete' && msg.deleteType === 'Удаление события' && (
-                                    <Table.Row>
-                                      <Table.Cell>
-                                        <Text size="2" weight="bold">Удалено:</Text>
-                                      </Table.Cell>
-                                      <Table.Cell>
-                                        <Text size="2">Событие у {msg.candidate.name}</Text>
-                                      </Table.Cell>
-                                    </Table.Row>
+                                    <>
+                                      <Table.Row>
+                                        <Table.Cell>
+                                          <Text size="2" weight="bold">Удалено:</Text>
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                          <Text size="2">Событие у {msg.candidate.name}</Text>
+                                        </Table.Cell>
+                                      </Table.Row>
+                                      {msg.deletedEventInfo?.eventDate && (
+                                        <Table.Row>
+                                          <Table.Cell>
+                                            <Text size="2" weight="bold">Дата события:</Text>
+                                          </Table.Cell>
+                                          <Table.Cell>
+                                            <Text size="2">{msg.deletedEventInfo.eventDate}</Text>
+                                          </Table.Cell>
+                                        </Table.Row>
+                                      )}
+                                      {msg.deletedEventInfo?.documentsDeleted !== undefined && (
+                                        <Table.Row>
+                                          <Table.Cell>
+                                            <Text size="2" weight="bold">Документы:</Text>
+                                          </Table.Cell>
+                                          <Table.Cell>
+                                            <Text size="2">{msg.deletedEventInfo.documentsDeleted ? 'Удалены' : 'Не удалены'}</Text>
+                                          </Table.Cell>
+                                        </Table.Row>
+                                      )}
+                                      {msg.deletedEventInfo?.recordsDeleted !== undefined && (
+                                        <Table.Row>
+                                          <Table.Cell>
+                                            <Text size="2" weight="bold">Записи в БД:</Text>
+                                          </Table.Cell>
+                                          <Table.Cell>
+                                            <Text size="2">{msg.deletedEventInfo.recordsDeleted ? 'Удалены' : 'Не удалены'}</Text>
+                                          </Table.Cell>
+                                        </Table.Row>
+                                      )}
+                                    </>
                                   )}
                                   {msg.tag !== '#add' && msg.tag !== '#delete' && msg.candidate.salary && (
                                     <Table.Row>

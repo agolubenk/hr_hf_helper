@@ -171,25 +171,29 @@
 
 .candidateInfo :global(.rt-TableRoot) {
   flex: 1;
-  font-size: 12px;
+  font-size: 11px;
+  border-collapse: collapse;
 }
 
 .candidateInfo :global(.rt-TableBody) {
-  border: none;
+  border: none !important;
 }
 
 .candidateInfo :global(.rt-TableRow) {
-  border: none;
+  border: none !important;
 }
 
 .candidateInfo :global(.rt-TableCell) {
-  padding: 2px 8px;
-  border: none;
-  vertical-align: top;
+  padding: 0px 6px;
+  border: none !important;
+  vertical-align: middle;
+  line-height: 1.2;
+  height: auto;
 }
 
 .candidateInfo :global(.rt-TableCell:first-child) {
-  padding-right: 16px;
+  padding-right: 12px;
+  padding-left: 0;
   white-space: nowrap;
 }
 
@@ -197,6 +201,34 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding-right: 0;
+}
+
+/* Убираем границы у нативных элементов таблицы */
+.candidateInfo :global(table) {
+  border: none !important;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.candidateInfo :global(td),
+.candidateInfo :global(th) {
+  border: none !important;
+  padding: 0px 6px !important;
+  vertical-align: middle !important;
+  line-height: 1.2 !important;
+}
+
+.candidateInfo :global(tr) {
+  border: none !important;
+}
+
+.candidateInfo :global(tbody) {
+  border: none !important;
+}
+
+.candidateInfo :global(thead) {
+  border: none !important;
 }
 
 /* Кнопки действий - на десктопе справа от таблицы, на мобильных под статусом */
