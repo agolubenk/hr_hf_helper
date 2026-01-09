@@ -11,6 +11,7 @@ import {
   PersonIcon,
   ClipboardIcon,
   VideoIcon,
+  Link2Icon,
 } from "@radix-ui/react-icons"
 import { useState } from "react"
 import styles from './WorkflowHeader.module.css'
@@ -70,7 +71,7 @@ export default function WorkflowHeader({ onSlotsClick, slotsOpen }: WorkflowHead
           {/* Быстрые кнопки */}
           <Flex gap="2" align="center" className={styles.quickButtonsGroup}>
             <Box className={styles.quickButton} style={{ backgroundColor: '#ef4444', position: 'relative' }}>
-              <Text size="4" weight="bold" style={{ color: '#ffffff' }}>?</Text>
+              <Link2Icon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
               <Box className={styles.flagBadge} title="Беларусь">
                 <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇧🇾</Text>
               </Box>
@@ -82,7 +83,7 @@ export default function WorkflowHeader({ onSlotsClick, slotsOpen }: WorkflowHead
               </Box>
             </Box>
             <Box className={styles.quickButton} style={{ backgroundColor: '#eab308', position: 'relative' }}>
-              <Text size="4" weight="bold" style={{ color: '#ffffff' }}>?</Text>
+              <Link2Icon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
               <Box className={styles.flagBadge} title="Польша">
                 <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇵🇱</Text>
               </Box>

@@ -105,6 +105,7 @@ interface FloatingActionsProps {
 const STORAGE_KEY = 'floatingActionsPinned'
 const SCROLL_TOP_BUTTON_STORAGE_KEY = 'floatingActionsScrollTopEnabled'
 const SETTINGS_BUTTON_STORAGE_KEY = 'floatingActionsSettingsEnabled'
+export const QUICK_BUTTONS_ENABLED_KEY = 'quickButtonsEnabled'
 
 export default function FloatingActions({ actions = [] }: FloatingActionsProps) {
   const { theme } = useTheme()
@@ -159,6 +160,34 @@ export default function FloatingActions({ actions = [] }: FloatingActionsProps) 
       return true
     }
   })
+
+  // Состояние включения/выключения быстрых кнопок (по умолчанию включено)
+  const [isQuickButtonsEnabled, setIsQuickButtonsEnabled] = useState(() => {
+    if (typeof window === 'undefined') return true
+    try {
+      const saved = localStorage.getItem(QUICK_BUTTONS_ENABLED_KEY)
+      return saved !== null ? saved === 'true' : true // По умолчанию включено
+    } catch (error) {
+      console.error('Ошибка при загрузке состояния быстрых кнопок:', error)
+      return true
+    }
+  })
+
+  // Слушаем изменения в localStorage для синхронизации между вкладками
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const handleStorageChange = (e: CustomEvent) => {
+      if (e.detail?.key === QUICK_BUTTONS_ENABLED_KEY) {
+        setIsQuickButtonsEnabled(e.detail.value === 'true')
+      }
+    }
+
+    window.addEventListener('localStorageChange', handleStorageChange as EventListener)
+    return () => {
+      window.removeEventListener('localStorageChange', handleStorageChange as EventListener)
+    }
+  }, [])
 
   // Слушаем изменения в localStorage для кнопки "Вверх" (для синхронизации между компонентами)
   useEffect(() => {
@@ -313,6 +342,7 @@ export default function FloatingActions({ actions = [] }: FloatingActionsProps) 
   }
 
   const handleMouseEnter = () => {
+    if (!isQuickButtonsEnabled) return
     setIsHovering(true)
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current)
@@ -321,6 +351,7 @@ export default function FloatingActions({ actions = [] }: FloatingActionsProps) 
   }
 
   const handleMouseLeave = () => {
+    if (!isQuickButtonsEnabled) return
     setIsHovering(false)
     if (!isPinned) {
       timeoutRef.current = setTimeout(() => {
@@ -328,6 +359,14 @@ export default function FloatingActions({ actions = [] }: FloatingActionsProps) 
       }, 300)
     }
   }
+
+  // Скрываем панель, если быстрые кнопки выключены
+  useEffect(() => {
+    if (!isQuickButtonsEnabled && !isPinned) {
+      setIsVisible(false)
+      setIsHovering(false)
+    }
+  }, [isQuickButtonsEnabled, isPinned])
 
   // Плавная прокрутка с easing функцией (ускорение, прокрутка, замедление)
   const smoothScrollTo = (element: HTMLElement | Window, target: number, duration: number = 800) => {
@@ -520,11 +559,17 @@ export default function FloatingActions({ actions = [] }: FloatingActionsProps) 
   }
 
   // Используем быстрые кнопки (кроме последней) или переданные actions
-  const defaultActions: FloatingAction[] = actions.length > 0 ? actions : quickButtonsData.map(button => ({
+  // Если быстрые кнопки выключены, не добавляем их
+  const defaultActions: FloatingAction[] = !isQuickButtonsEnabled ? [] : (actions.length > 0 ? actions : quickButtonsData.map(button => ({
     id: button.id,
     icon: renderIcon(button.icon, 20),
     label: button.name,
     onClick: () => {
+      // Проверяем, включены ли быстрые кнопки перед выполнением действия
+      if (!isQuickButtonsEnabled) {
+        console.log('Быстрые кнопки выключены')
+        return
+      }
       if (button.type === 'link') {
         window.open(button.value, '_blank')
       } else if (button.type === 'text') {
@@ -539,7 +584,7 @@ export default function FloatingActions({ actions = [] }: FloatingActionsProps) 
         })
       }
     },
-  }))
+  })))
 
   // Добавляем кнопку "Вверх" (если включена) и кнопку pin в конец списка
   // Для светлой темы используем темный цвет иконки
@@ -594,16 +639,16 @@ export default function FloatingActions({ actions = [] }: FloatingActionsProps) 
         width="7px"
         style={{
           zIndex: 998,
-          pointerEvents: isPinned ? 'none' : 'auto',
+          pointerEvents: (isPinned || !isQuickButtonsEnabled) ? 'none' : 'auto',
         }}
         onMouseEnter={() => {
-          if (!isPinned) {
+          if (!isPinned && isQuickButtonsEnabled) {
             setIsVisible(true)
             setIsHovering(true)
           }
         }}
         onMouseLeave={() => {
-          if (!isPinned) {
+          if (!isPinned && isQuickButtonsEnabled) {
             setIsHovering(false)
             timeoutRef.current = setTimeout(() => {
               if (!isPinned) {
@@ -615,7 +660,7 @@ export default function FloatingActions({ actions = [] }: FloatingActionsProps) 
       />
       
       {/* Плавающий блок с кнопками */}
-      {(isVisible || isPinned) && (
+      {(isVisible || isPinned) && isQuickButtonsEnabled && (
         <Box
           ref={panelRef}
           position="fixed"

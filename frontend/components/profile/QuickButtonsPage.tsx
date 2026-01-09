@@ -104,6 +104,8 @@ import { useState, useEffect } from "react"
 import QuickButtonModal from "./QuickButtonModal"
 import styles from './QuickButtonsPage.module.css'
 
+import { QUICK_BUTTONS_ENABLED_KEY } from "@/components/FloatingActions"
+
 const SCROLL_TOP_BUTTON_STORAGE_KEY = 'floatingActionsScrollTopEnabled'
 const SETTINGS_BUTTON_STORAGE_KEY = 'floatingActionsSettingsEnabled'
 
@@ -289,6 +291,19 @@ export default function QuickButtonsPage() {
   const [buttons, setButtons] = useState<QuickButton[]>(initialButtons)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingButton, setEditingButton] = useState<QuickButton | null>(null)
+  
+  // Состояние включения/выключения быстрых кнопок (по умолчанию включено)
+  const [isQuickButtonsEnabled, setIsQuickButtonsEnabled] = useState(() => {
+    if (typeof window === 'undefined') return true
+    try {
+      const saved = localStorage.getItem(QUICK_BUTTONS_ENABLED_KEY)
+      return saved !== null ? saved === 'true' : true // По умолчанию включено
+    } catch (error) {
+      console.error('Ошибка при загрузке состояния быстрых кнопок:', error)
+      return true
+    }
+  })
+  
   // Состояние видимости кнопки "Вверх" (по умолчанию включено)
   const [isScrollTopEnabled, setIsScrollTopEnabled] = useState(() => {
     if (typeof window === 'undefined') return true
@@ -354,6 +369,43 @@ export default function QuickButtonsPage() {
       console.error('❌ Ошибка при сохранении состояния кнопки "Настройки":', error)
     }
   }, [isSettingsEnabled])
+
+  // Сохраняем состояние включения/выключения быстрых кнопок в localStorage и отправляем событие для синхронизации
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    try {
+      const valueString = String(isQuickButtonsEnabled)
+      localStorage.setItem(QUICK_BUTTONS_ENABLED_KEY, valueString)
+      console.log(`💾 Сохранено состояние быстрых кнопок: ${isQuickButtonsEnabled} (${valueString})`)
+      
+      // Отправляем кастомное событие для синхронизации в той же вкладке
+      window.dispatchEvent(new CustomEvent('localStorageChange', {
+        detail: {
+          key: QUICK_BUTTONS_ENABLED_KEY,
+          value: valueString
+        }
+      }))
+      console.log(`📤 Отправлено событие для синхронизации быстрых кнопок: ${valueString}`)
+    } catch (error) {
+      console.error('❌ Ошибка при сохранении состояния быстрых кнопок:', error)
+    }
+  }, [isQuickButtonsEnabled])
+
+  // Слушаем изменения в localStorage для синхронизации между вкладками
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const handleStorageChange = (e: CustomEvent) => {
+      if (e.detail?.key === QUICK_BUTTONS_ENABLED_KEY) {
+        setIsQuickButtonsEnabled(e.detail.value === 'true')
+      }
+    }
+
+    window.addEventListener('localStorageChange', handleStorageChange as EventListener)
+    return () => {
+      window.removeEventListener('localStorageChange', handleStorageChange as EventListener)
+    }
+  }, [])
 
   const handleCreate = () => {
     if (buttons.length >= 10) {
@@ -445,15 +497,27 @@ export default function QuickButtonsPage() {
               </Text>
             )}
           </Flex>
-          <Button
-            variant="solid"
-            style={{ backgroundColor: 'var(--accent-9)' }}
-            onClick={handleCreate}
-            disabled={buttons.length >= 10}
-          >
-            <PlusIcon width="14" height="14" />
-            {buttons.length === 0 ? 'Создать' : 'Добавить'}
-          </Button>
+          <Flex align="center" gap="3">
+            <Flex align="center" gap="2">
+              <Switch
+                checked={isQuickButtonsEnabled}
+                onCheckedChange={setIsQuickButtonsEnabled}
+                size="2"
+              />
+              <Text size="2" color="gray">
+                {isQuickButtonsEnabled ? 'Включено' : 'Выключено'}
+              </Text>
+            </Flex>
+            <Button
+              variant="solid"
+              style={{ backgroundColor: 'var(--accent-9)' }}
+              onClick={handleCreate}
+              disabled={buttons.length >= 10}
+            >
+              <PlusIcon width="14" height="14" />
+              {buttons.length === 0 ? 'Создать' : 'Добавить'}
+            </Button>
+          </Flex>
         </Flex>
       </Box>
 
