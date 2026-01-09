@@ -125,27 +125,32 @@
   display: inline-block;
 }
 
-.inviteMessage {
+.inviteMessage,
+.screeningMessage {
   background: var(--gray-2); /* Адаптивный фон для светлой и темной темы */
   border: 1px solid var(--gray-6);
   padding: 0;
   border-radius: 12px;
-  max-width: 80%;
+  width: fit-content;
+  max-width: 100%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   overflow: hidden;
 }
 
 /* Для темной темы */
 [data-theme="dark"] .inviteMessage,
-.radix-themes[data-appearance="dark"] .inviteMessage {
+[data-theme="dark"] .screeningMessage,
+.radix-themes[data-appearance="dark"] .inviteMessage,
+.radix-themes[data-appearance="dark"] .screeningMessage {
   background: var(--gray-3);
 }
 
-.inviteHeader {
-  background: var(--accent-9); /* Акцентный цвет для хедера */
+.inviteHeader,
+.screeningHeader {
+  background: transparent;
   padding: 12px 16px;
   margin-bottom: 0;
-  border-radius: 12px 12px 0 0;
+  border-bottom: none;
 }
 
 .botIcon {
@@ -153,14 +158,79 @@
 }
 
 .candidateInfo {
-  margin-top: 12px;
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tableWithButtons {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.candidateInfo :global(.rt-TableRoot) {
+  flex: 1;
+  font-size: 12px;
+}
+
+.candidateInfo :global(.rt-TableBody) {
+  border: none;
+}
+
+.candidateInfo :global(.rt-TableRow) {
+  border: none;
+}
+
+.candidateInfo :global(.rt-TableCell) {
+  padding: 2px 8px;
+  border: none;
+  vertical-align: top;
+}
+
+.candidateInfo :global(.rt-TableCell:first-child) {
+  padding-right: 16px;
+  white-space: nowrap;
+}
+
+.candidateInfo :global(.rt-TableCell:last-child) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Кнопки действий - на десктопе справа от таблицы, на мобильных под статусом */
+.actionButtons {
+  flex-shrink: 0;
+  flex-direction: column;
+}
+
+@media (max-width: 767px) {
+  .tableWithButtons {
+    flex-direction: column;
+  }
+  
+  .actionButtons {
+    margin-top: 12px !important;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-self: flex-end;
+  }
 }
 
 .statusBar {
   background: #d1fae5;
   padding: 8px 12px;
   border-radius: 6px;
-  margin-top: 12px;
+  width: 100%;
+}
+
+.levelTag {
+  background: #3b82f6;
+  color: #ffffff;
+  padding: 2px 8px;
+  border-radius: 12px;
+  display: inline-block;
 }
 
 .inputContainer {
@@ -262,6 +332,20 @@
 .radix-themes[data-appearance="dark"] .fileTag {
   background: var(--gray-5);
   border-color: var(--gray-7);
+}
+
+.commandTag {
+  position: absolute;
+  top: -20px;
+  right: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.commandTagInner {
+  padding: 1px 6px;
+  border-radius: 4px;
+  display: inline-block;
 }
 
 /* Скроллбар */

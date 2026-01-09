@@ -1,13 +1,40 @@
 'use client'
 
-import { Box, Text, Flex, TextArea, Button } from "@radix-ui/themes"
-import { ChevronDownIcon, PaperPlaneIcon, OpenInNewWindowIcon, EyeOpenIcon, CalendarIcon, CheckIcon, PersonIcon, Cross2Icon } from "@radix-ui/react-icons"
+import { Box, Text, Flex, TextArea, Button, Table } from "@radix-ui/themes"
+import { ChevronDownIcon, ChevronUpIcon, PaperPlaneIcon, OpenInNewWindowIcon, EyeOpenIcon, CalendarIcon, CheckIcon, PersonIcon, Cross2Icon, ClipboardIcon } from "@radix-ui/react-icons"
 import { useState, useRef, useEffect } from "react"
 import styles from './WorkflowChat.module.css'
 
+// Компонент для отображения списка участников
+function ParticipantsList({ participants }: { participants: string[] }) {
+  const [isExpanded, setIsExpanded] = useState(false)
+  
+  return (
+    <Flex direction="column" gap="1">
+      <Flex align="center" gap="1" style={{ cursor: 'pointer' }} onClick={() => setIsExpanded(!isExpanded)}>
+        <Text size="2">{participants.length}</Text>
+        {isExpanded ? (
+          <ChevronUpIcon width={12} height={12} />
+        ) : (
+          <ChevronDownIcon width={12} height={12} />
+        )}
+      </Flex>
+      {isExpanded && (
+        <Box style={{ paddingLeft: '12px' }}>
+          {participants.map((participant, index) => (
+            <Text key={index} size="2" style={{ display: 'block', marginBottom: '4px' }}>
+              • {participant}
+            </Text>
+          ))}
+        </Box>
+      )}
+    </Flex>
+  )
+}
+
 interface ChatMessage {
   id: string
-  type: 'user' | 'invite'
+  type: 'user' | 'invite' | 'response'
   content?: string
   url?: string
   text?: string
@@ -23,8 +50,13 @@ interface ChatMessage {
     scorecardUrl?: string
     meetUrl?: string
     interviewDate?: string
+    salary?: string
+    level?: string
+    format?: 'Офис' | 'Онлайн' | 'Гибрид'
+    participants?: string[]
   }
   status?: string
+  deleteType?: 'Удаление кандидата' | 'Удаление записи' | 'Удаление события'
 }
 
 interface AttachedFile {
@@ -34,14 +66,15 @@ interface AttachedFile {
 
 export default function WorkflowChat() {
   const [message, setMessage] = useState('')
-  const [chatExpanded, setChatExpanded] = useState(true)
   const [hiddenMessages, setHiddenMessages] = useState<Set<string>>(new Set())
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([])
+  const [currentCommand, setCurrentCommand] = useState<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
 
-  // Моковые данные сообщений
-  const messages: ChatMessage[] = [
+  // Моковые данные сообщений (начальные)
+  const initialMessages: ChatMessage[] = [
     {
       id: '1',
       type: 'user',
@@ -53,12 +86,36 @@ export default function WorkflowChat() {
       tag: '#add',
     },
     {
+      id: '1-response',
+      type: 'response',
+      timestamp: '08.01.2026 10:31',
+      tag: '#add',
+      candidate: {
+        name: 'Иван Иванов',
+        vacancy: 'Frontend Engineer (React)',
+      },
+      status: 'Резюме добавлено в систему',
+    },
+    {
       id: '2',
       type: 'user',
       url: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/79013654',
       timestamp: '08.01.2026 11:15',
       tag: '#hr_screening',
       text: '1) ожидаю от 1300$ на руки\n2) Готов, но было бы отлично, если бы была возможность удаленной работы или гибрид. Нахожусь в Минске\n3) Да\n4) Не понял вопроса, если связано с универом, то закончил уже(БГУИР КСиС ПОИТ), военный билет есть\n5) Военный билет есть\n6) Нет\n7) Компания столкнулась с серьезными финансовыми трудностями\n8) кратчайшие сроки после успешного собеса\n9) Наверное нет смысла перечислять мелкие библиотеки, из значимого это настройка SEO, NextJS, да на самом деле много всего, лучше вживую на собеседовании рассказать)\n10) начинающий middle',
+    },
+    {
+      id: '2-response',
+      type: 'response',
+      timestamp: '08.01.2026 11:16',
+      tag: '#hr_screening',
+      candidate: {
+        name: 'Игорь Грицук',
+        vacancy: 'Frontend Engineer',
+        salary: '1300 USD',
+        level: 'Junior',
+      },
+      status: 'Данные сохранены и переданы в Huntflow',
     },
     {
       id: '3',
@@ -69,6 +126,20 @@ export default function WorkflowChat() {
       text: 'завтра 11:15',
     },
     {
+      id: '3-response',
+      type: 'response',
+      timestamp: '08.01.2026 14:21',
+      tag: '#tech_screening',
+      candidate: {
+        name: 'Игорь Грицук',
+        vacancy: 'Frontend Engineer (React)',
+        scorecardUrl: '#',
+        meetUrl: '#',
+        interviewDate: '2026-01-12 12:00',
+      },
+      status: 'Инвайт отправлен и добавлен в календарь',
+    },
+    {
       id: '4',
       type: 'user',
       url: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/186500/id/79014225',
@@ -77,33 +148,70 @@ export default function WorkflowChat() {
       text: 'послезавтра 15:30',
     },
     {
+      id: '4-response',
+      type: 'response',
+      timestamp: '08.01.2026 16:46',
+      tag: '#interview',
+      candidate: {
+        name: 'Игорь Грицук',
+        vacancy: 'Frontend Engineer (React)',
+        scorecardUrl: '#',
+        meetUrl: '#',
+        interviewDate: '2026-01-10 15:30',
+        format: 'Офис',
+        participants: ['Петр Иванов', 'Анна Смирнова'],
+      },
+      status: 'Инвайт отправлен и добавлен в календарь',
+    },
+    {
       id: '5',
       type: 'user',
       timestamp: '08.01.2026 17:00',
       tag: '#delete',
     },
     {
-      id: '6',
-      type: 'invite',
-      timestamp: '08.01.2026 17:47',
+      id: '5-response',
+      type: 'response',
+      timestamp: '08.01.2026 17:01',
+      tag: '#delete',
+      deleteType: 'Удаление события',
       candidate: {
-        name: 'Саковский Антон',
+        name: 'Игорь Грицук',
         vacancy: 'Frontend Engineer (React)',
-        scorecardUrl: '#',
-        meetUrl: '#',
-        interviewDate: '2026-01-12 11:15',
       },
-      status: 'Инвайт отправлен и добавлен в календарь',
+      status: 'Последнее действие отменено',
     },
   ]
 
+  const [messages, setMessages] = useState<ChatMessage[]>(initialMessages)
+
   const handleSend = () => {
-    if (message.trim() || attachedFiles.length > 0) {
-      // Здесь будет логика отправки сообщения
+    if (message.trim() || attachedFiles.length > 0 || currentCommand === '#delete') {
       const files = attachedFiles.map(af => af.file)
-      console.log('Отправка сообщения:', message, 'Файлы:', files)
+      const now = new Date()
+      const timestamp = `${now.getDate().toString().padStart(2, '0')}.${(now.getMonth() + 1).toString().padStart(2, '0')}.${now.getFullYear()} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
+      
+      // Создаем новое сообщение
+      const newMessage: ChatMessage = {
+        id: Date.now().toString(),
+        type: 'user',
+        timestamp,
+        tag: currentCommand || undefined,
+        url: message.includes('http') ? message.split('\n')[0] : undefined,
+        text: message.includes('http') ? message.split('\n').slice(1).join('\n') : message || undefined,
+        file: files.length > 0 ? {
+          name: files[0].name,
+          type: files[0].type
+        } : undefined,
+      }
+
+      // Добавляем сообщение в список
+      setMessages(prev => [...prev, newMessage])
+      
+      console.log('Отправка сообщения:', message, 'Файлы:', files, 'Команда:', currentCommand)
       setMessage('')
       setAttachedFiles([])
+      setCurrentCommand(null)
       // Сбрасываем высоту textarea после отправки
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto'
@@ -154,6 +262,9 @@ export default function WorkflowChat() {
         file
       }))
       setAttachedFiles([...attachedFiles, ...newFiles])
+      
+      // Автоматически добавляем команду #add при прикреплении файла
+      setCurrentCommand('#add')
     }
     // Сбрасываем значение input, чтобы можно было выбрать тот же файл снова
     if (fileInputRef.current) {
@@ -162,7 +273,12 @@ export default function WorkflowChat() {
   }
 
   const handleRemoveFile = (fileId: string) => {
-    setAttachedFiles(attachedFiles.filter(af => af.id !== fileId))
+    const newFiles = attachedFiles.filter(af => af.id !== fileId)
+    setAttachedFiles(newFiles)
+    // Если файлов не осталось, убираем команду #add
+    if (newFiles.length === 0 && currentCommand === '#add') {
+      setCurrentCommand(null)
+    }
   }
 
   const formatFileSize = (bytes: number): string => {
@@ -188,6 +304,104 @@ export default function WorkflowChat() {
     return 'rgba(255, 255, 255, 0.75)' // по умолчанию
   }
 
+  // Функция для преобразования команды в тег
+  const commandToTag = (command: string): string | null => {
+    const cmd = command.toLowerCase().trim()
+    if (cmd === '/add' || cmd === 'add') return '#add'
+    if (cmd === '/s' || cmd === 's') return '#hr_screening'
+    if (cmd === '/t' || cmd === 't') return '#tech_screening'
+    if (cmd === '/in' || cmd === 'in') return '#interview'
+    if (cmd === '/del' || cmd === 'del') return '#delete'
+    return null
+  }
+
+  // Обработка ввода команды в textarea
+  const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value
+    
+    // Проверяем, есть ли команда в тексте
+    const commandPattern = /\/(add|s|t|in|del)(\s|$)/g
+    const matches = value.match(commandPattern)
+    
+    if (matches && matches.length > 0) {
+      // Берем последнюю найденную команду
+      const lastCommand = matches[matches.length - 1].trim()
+      const tag = commandToTag(lastCommand)
+      
+      if (tag) {
+        setCurrentCommand(tag)
+        // Удаляем все команды из текста
+        const cleanedValue = value.replace(commandPattern, '').trim()
+        setMessage(cleanedValue)
+        
+        // Если команда /del, автоматически отправляем сообщение
+        if (tag === '#delete') {
+          // Небольшая задержка для обновления состояния перед отправкой
+          setTimeout(() => {
+            const now = new Date()
+            const timestamp = `${now.getDate().toString().padStart(2, '0')}.${(now.getMonth() + 1).toString().padStart(2, '0')}.${now.getFullYear()} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
+            
+            // Определяем тип удаления на основе последнего сообщения пользователя
+            setMessages(prev => {
+              const lastUserMessage = [...prev].reverse().find(m => m.type === 'user' && m.tag !== '#delete')
+              let deleteType: 'Удаление кандидата' | 'Удаление записи' | 'Удаление события' = 'Удаление события'
+              
+              if (lastUserMessage) {
+                if (lastUserMessage.tag === '#add') {
+                  deleteType = 'Удаление кандидата'
+                } else if (lastUserMessage.tag === '#hr_screening') {
+                  deleteType = 'Удаление записи'
+                } else if (lastUserMessage.tag === '#tech_screening' || lastUserMessage.tag === '#interview') {
+                  deleteType = 'Удаление события'
+                }
+              }
+              
+              const newMessage: ChatMessage = {
+                id: Date.now().toString(),
+                type: 'user',
+                timestamp,
+                tag: '#delete',
+              }
+              
+              // Добавляем ответ сразу после сообщения удаления
+              const responseTimestamp = `${now.getDate().toString().padStart(2, '0')}.${(now.getMonth() + 1).toString().padStart(2, '0')}.${now.getFullYear()} ${now.getHours().toString().padStart(2, '0')}:${(now.getMinutes() + 1).toString().padStart(2, '0')}`
+              
+              const responseMessage: ChatMessage = {
+                id: (Date.now() + 1).toString(),
+                type: 'response',
+                timestamp: responseTimestamp,
+                tag: '#delete',
+                deleteType,
+                candidate: lastUserMessage?.candidate || {
+                  name: 'Кандидат',
+                  vacancy: 'Вакансия',
+                },
+                status: 'Последнее действие отменено',
+              }
+              
+              return [...prev, newMessage, responseMessage]
+            })
+            setCurrentCommand(null)
+            setMessage('')
+          }, 0)
+        }
+        return
+      }
+    }
+    
+    // Если команды нет, но была установлена ранее и пользователь вводит текст - оставляем команду
+    // Если пользователь удалил весь текст - сбрасываем команду (кроме #add при наличии файлов)
+    if (value.trim() === '' && currentCommand !== '#add') {
+      if (attachedFiles.length === 0) {
+        setCurrentCommand(null)
+      }
+    } else if (value.trim() !== '' && !value.match(commandPattern)) {
+      // Если есть текст без команд, но команда была установлена - оставляем команду
+    }
+    
+    setMessage(value)
+  }
+
   // Автоматическое изменение высоты textarea
   useEffect(() => {
     const textarea = textareaRef.current
@@ -208,6 +422,20 @@ export default function WorkflowChat() {
     }
   }, [message])
 
+  // Автоматическая прокрутка чата вниз
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
+    }
+  }, [messages])
+
+  // Прокрутка при монтировании компонента
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
+    }
+  }, [])
+
   return (
     <Box className={styles.chatContainer}>
       {/* Заголовок чата */}
@@ -215,27 +443,14 @@ export default function WorkflowChat() {
         align="center"
         justify="between"
         className={styles.chatHeader}
-        onClick={() => setChatExpanded(!chatExpanded)}
-        style={{ cursor: 'pointer' }}
       >
         <Text size="4" weight="bold" style={{ color: '#ffffff' }}>
           HR-помощник #38
         </Text>
-        <ChevronDownIcon
-          width={20}
-          height={20}
-          style={{
-            color: '#ffffff',
-            transform: chatExpanded ? 'rotate(0deg)' : 'rotate(180deg)',
-            transition: 'transform 0.2s ease-in-out',
-          }}
-        />
       </Flex>
 
-      {chatExpanded && (
-        <>
-          {/* Сообщения */}
-          <Box className={styles.messagesContainer}>
+      {/* Сообщения */}
+      <Box ref={messagesContainerRef} className={styles.messagesContainer}>
             {messages.filter(msg => !hiddenMessages.has(msg.id)).map((msg) => (
               <Flex
                 key={msg.id}
@@ -275,7 +490,7 @@ export default function WorkflowChat() {
                                 <Text size="2" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>
                                   Отменить последнее действие?
                                 </Text>
-                                <Flex gap="2" justify="end">
+                                <Flex gap="2" justify="start">
                                   <Button 
                                     size="1" 
                                     variant="soft"
@@ -334,82 +549,209 @@ export default function WorkflowChat() {
                       gap="0" 
                       className={styles.assistantMessageContainer}
                     >
-                      <Box className={styles.inviteMessage}>
-                      <Flex align="center" gap="2" className={styles.inviteHeader}>
-                        <Box className={styles.botIcon}>🤖</Box>
-                        <Text size="2" weight="bold" style={{ color: '#ffffff' }}>
-                          Инвайт {msg.timestamp}
-                        </Text>
-                        <Text size="2" style={{ color: '#ffffff' }}>🏆</Text>
-                      </Flex>
-
-                      {msg.candidate && (
-                        <Box className={styles.candidateInfo} style={{ padding: '16px' }}>
-                          <Text size="2" style={{ display: 'block', marginBottom: '8px' }}>
-                            <strong>Кандидат:</strong> {msg.candidate.name}
-                          </Text>
-                          <Text size="2" style={{ display: 'block', marginBottom: '8px' }}>
-                            <strong>Вакансия:</strong> {msg.candidate.vacancy}
-                          </Text>
-                          
-                          <Flex direction="column" gap="2" mb="3">
-                            <Flex align="center" gap="2">
-                              <Text size="2">
-                                <strong>Scorecard:</strong>
-                              </Text>
-                              <Button size="1" variant="soft">
-                                Открыть
-                                <OpenInNewWindowIcon width={12} height={12} />
-                              </Button>
-                            </Flex>
-                            
-                            <Flex align="center" gap="2">
-                              <Text size="2">
-                                <strong>Google Meet:</strong>
-                              </Text>
-                              <Button size="1" variant="soft">
-                                Присоединиться
-                                <OpenInNewWindowIcon width={12} height={12} />
-                              </Button>
-                            </Flex>
-                            
-                            <Text size="2">
-                              <strong>Дата интервью:</strong> {msg.candidate.interviewDate}
+                      {/* Для interview и tech_screening - формат Инвайт */}
+                      {(msg.type === 'invite' || (msg.type === 'response' && (msg.tag === '#interview' || msg.tag === '#tech_screening'))) && (
+                        <Box className={styles.inviteMessage}>
+                          <Flex align="center" gap="2" className={styles.inviteHeader}>
+                            <CalendarIcon width={16} height={16} />
+                            <Text size="2" weight="bold">
+                              {msg.tag === '#tech_screening' ? 'Tech-скрининг' : 'Инвайт'} {msg.timestamp}
                             </Text>
+                            <Text size="2">🏆</Text>
                           </Flex>
 
-                          <Flex gap="2" justify="end" mb="2">
-                            <Button size="1" variant="ghost">
-                              <OpenInNewWindowIcon width={14} height={14} />
-                            </Button>
-                            <Button size="1" variant="ghost">
-                              <EyeOpenIcon width={14} height={14} />
-                            </Button>
-                            <Button size="1" variant="ghost">
-                              <CalendarIcon width={14} height={14} />
-                            </Button>
-                          </Flex>
+                          {msg.candidate && (
+                            <Box className={styles.candidateInfo} style={{ padding: '16px' }}>
+                              <Flex gap="2" align="flex-start" className={styles.tableWithButtons}>
+                                <Table.Root>
+                                  <Table.Body>
+                                    <Table.Row>
+                                      <Table.Cell>
+                                        <Text size="2" weight="bold">Кандидат:</Text>
+                                      </Table.Cell>
+                                      <Table.Cell>
+                                        <Text size="2">{msg.candidate.name}</Text>
+                                      </Table.Cell>
+                                    </Table.Row>
+                                    <Table.Row>
+                                      <Table.Cell>
+                                        <Text size="2" weight="bold">Вакансия:</Text>
+                                      </Table.Cell>
+                                      <Table.Cell>
+                                        <Text size="2">{msg.candidate.vacancy}</Text>
+                                      </Table.Cell>
+                                    </Table.Row>
+                                    
+                                    {msg.candidate.scorecardUrl && (
+                                      <Table.Row>
+                                        <Table.Cell>
+                                          <Text size="2" weight="bold">Scorecard:</Text>
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                          <Button size="1" variant="soft" style={{ color: '#10b981', backgroundColor: 'transparent', border: 'none' }}>
+                                            Открыть
+                                            <OpenInNewWindowIcon width={12} height={12} />
+                                          </Button>
+                                        </Table.Cell>
+                                      </Table.Row>
+                                    )}
+                                    
+                                    {msg.candidate.format && (
+                                      <Table.Row>
+                                        <Table.Cell>
+                                          <Text size="2" weight="bold">Формат:</Text>
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                          <Text size="2">{msg.candidate.format}</Text>
+                                        </Table.Cell>
+                                      </Table.Row>
+                                    )}
+                                    
+                                    {msg.candidate.meetUrl && (
+                                      <Table.Row>
+                                        <Table.Cell>
+                                          <Text size="2" weight="bold">Google Meet:</Text>
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                          <Button size="1" variant="soft" style={{ color: '#10b981', backgroundColor: 'transparent', border: 'none' }}>
+                                            Присоединиться
+                                            <OpenInNewWindowIcon width={12} height={12} />
+                                          </Button>
+                                        </Table.Cell>
+                                      </Table.Row>
+                                    )}
+                                    
+                                    {msg.candidate.interviewDate && (
+                                      <Table.Row>
+                                        <Table.Cell>
+                                          <Text size="2" weight="bold">Дата интервью:</Text>
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                          <Text size="2">{msg.candidate.interviewDate}</Text>
+                                        </Table.Cell>
+                                      </Table.Row>
+                                    )}
+                                  </Table.Body>
+                                </Table.Root>
+                                
+                                <Flex gap="1" className={styles.actionButtons}>
+                                  <Button size="1" variant="soft" style={{ backgroundColor: '#3b82f6', color: '#ffffff', width: '32px', height: '32px', padding: 0, minWidth: '32px' }}>
+                                    <OpenInNewWindowIcon width={14} height={14} />
+                                  </Button>
+                                  <Button size="1" variant="soft" style={{ backgroundColor: '#10b981', color: '#ffffff', width: '32px', height: '32px', padding: 0, minWidth: '32px' }}>
+                                    <EyeOpenIcon width={14} height={14} />
+                                  </Button>
+                                  <Button size="1" variant="soft" style={{ backgroundColor: '#d97706', color: '#ffffff', width: '32px', height: '32px', padding: 0, minWidth: '32px' }}>
+                                    <ClipboardIcon width={14} height={14} />
+                                  </Button>
+                                </Flex>
+                              </Flex>
+                              
+                              {msg.candidate.participants && msg.candidate.participants.length > 0 && (
+                                <Box mt="2">
+                                  <ParticipantsList participants={msg.candidate.participants} />
+                                </Box>
+                              )}
 
-                          {msg.status && (
-                            <Flex align="center" gap="2" className={styles.statusBar}>
-                              <CheckIcon width={14} height={14} style={{ color: '#10b981' }} />
-                              <Text size="2" style={{ color: '#10b981' }}>
-                                {msg.status}
-                              </Text>
-                            </Flex>
+                              {msg.status && (
+                                <Flex align="center" gap="2" className={styles.statusBar} mt="2">
+                                  <CheckIcon width={14} height={14} style={{ color: '#10b981' }} />
+                                  <Text size="2" style={{ color: '#10b981' }}>
+                                    {msg.status}
+                                  </Text>
+                                </Flex>
+                              )}
+                            </Box>
                           )}
                         </Box>
                       )}
-                      </Box>
+
+                      {/* Для hr_screening, delete, add - формат HR-скрининг */}
+                      {msg.type === 'response' && (msg.tag === '#hr_screening' || msg.tag === '#delete' || msg.tag === '#add') && (
+                        <Box className={styles.screeningMessage}>
+                          <Flex align="center" justify="between" className={styles.screeningHeader}>
+                            <Flex align="center" gap="2">
+                              <ClipboardIcon width={16} height={16} />
+                              <Text size="2" weight="bold">
+                                {msg.tag === '#hr_screening' ? 'HR-скрининг' : msg.tag === '#delete' ? (msg.deleteType || 'Удаление') : 'Добавление'}
+                              </Text>
+                              <Text size="2">
+                                {msg.timestamp}
+                              </Text>
+                            </Flex>
+                            <Button size="1" variant="ghost" style={{ padding: '4px' }}>
+                              <OpenInNewWindowIcon width={14} height={14} />
+                            </Button>
+                          </Flex>
+
+                          {msg.candidate && (
+                            <Box className={styles.candidateInfo} style={{ padding: '16px' }}>
+                              <Table.Root>
+                                <Table.Body>
+                                  <Table.Row>
+                                    <Table.Cell>
+                                      <Text size="2" weight="bold">Кандидат:</Text>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                      <Text size="2">{msg.candidate.name}</Text>
+                                    </Table.Cell>
+                                  </Table.Row>
+                                  <Table.Row>
+                                    <Table.Cell>
+                                      <Text size="2" weight="bold">Вакансия:</Text>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                      <Text size="2">{msg.candidate.vacancy}</Text>
+                                    </Table.Cell>
+                                  </Table.Row>
+                                  {msg.tag !== '#add' && msg.candidate.salary && (
+                                    <Table.Row>
+                                      <Table.Cell>
+                                        <Text size="2" weight="bold">Зарплата:</Text>
+                                      </Table.Cell>
+                                      <Table.Cell>
+                                        <Text size="2">{msg.candidate.salary}</Text>
+                                      </Table.Cell>
+                                    </Table.Row>
+                                  )}
+                                  {msg.tag !== '#add' && msg.candidate.level && (
+                                    <Table.Row>
+                                      <Table.Cell>
+                                        <Text size="2" weight="bold">Уровень:</Text>
+                                      </Table.Cell>
+                                      <Table.Cell>
+                                        <Box className={styles.levelTag}>
+                                          <Text size="1" style={{ color: '#ffffff', fontSize: '11px' }}>
+                                            {msg.candidate.level}
+                                          </Text>
+                                        </Box>
+                                      </Table.Cell>
+                                    </Table.Row>
+                                  )}
+                                </Table.Body>
+                              </Table.Root>
+
+                              {msg.status && (
+                                <Flex align="center" gap="2" className={styles.statusBar} mt="2">
+                                  <CheckIcon width={14} height={14} style={{ color: '#10b981' }} />
+                                  <Text size="2" style={{ color: '#10b981' }}>
+                                    {msg.status}
+                                  </Text>
+                                </Flex>
+                              )}
+                            </Box>
+                          )}
+                        </Box>
+                      )}
                     </Flex>
                   </>
                 )}
               </Flex>
             ))}
-          </Box>
+      </Box>
 
-          {/* Поле ввода сообщения */}
-          <Flex direction="column" className={styles.inputContainer}>
+      {/* Поле ввода сообщения */}
+      <Flex direction="column" className={styles.inputContainer}>
             {attachedFiles.length > 0 && (
               <Box className={styles.attachedFilesContainer}>
                 <Flex gap="2" className={styles.attachedFilesList}>
@@ -462,26 +804,40 @@ export default function WorkflowChat() {
               >
                 <Box style={{ fontSize: '16px', lineHeight: 1 }}>📎</Box>
               </Button>
-              <TextArea
-                ref={textareaRef}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault()
-                    handleSend()
-                  }
-                }}
-                placeholder="Введите сообщение..."
-                style={{ 
-                  flex: 1,
-                  resize: 'none',
-                  minHeight: '40px',
-                  maxHeight: '120px',
-                  overflowY: 'auto'
-                }}
-                rows={1}
-              />
+              <Box style={{ position: 'relative', flex: 1 }}>
+                {currentCommand && (
+                  <Box className={styles.commandTag}>
+                    <Box 
+                      className={styles.commandTagInner}
+                      style={{ backgroundColor: getTagColor(currentCommand) }}
+                    >
+                      <Text size="1" style={{ fontSize: '10px', lineHeight: 1 }}>
+                        {currentCommand}
+                      </Text>
+                    </Box>
+                  </Box>
+                )}
+                <TextArea
+                  ref={textareaRef}
+                  value={message}
+                  onChange={handleMessageChange}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault()
+                      handleSend()
+                    }
+                  }}
+                  placeholder="Введите сообщение..."
+                  style={{ 
+                    flex: 1,
+                    resize: 'none',
+                    minHeight: '40px',
+                    maxHeight: '120px',
+                    overflowY: 'auto'
+                  }}
+                  rows={1}
+                />
+              </Box>
               <Button
                 onClick={handleSend}
                 disabled={!message.trim() && attachedFiles.length === 0}
@@ -501,8 +857,6 @@ export default function WorkflowChat() {
               </Button>
             </Flex>
           </Flex>
-        </>
-      )}
     </Box>
   )
 }
