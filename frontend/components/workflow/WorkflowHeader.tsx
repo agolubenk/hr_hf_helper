@@ -69,26 +69,38 @@ export default function WorkflowHeader({ onSlotsClick, slotsOpen }: WorkflowHead
         >
           {/* Быстрые кнопки */}
           <Flex gap="2" align="center" className={styles.quickButtonsGroup}>
-            <Box className={styles.quickButton} style={{ backgroundColor: '#ef4444' }}>
-              <Text size="2" weight="bold" style={{ color: '#ffffff' }}>@?</Text>
+            <Box className={styles.quickButton} style={{ backgroundColor: '#ef4444', position: 'relative' }}>
+              <Text size="4" weight="bold" style={{ color: '#ffffff' }}>?</Text>
+              <Box className={styles.flagBadge} title="Беларусь">
+                <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇧🇾</Text>
+              </Box>
             </Box>
-            <Box className={styles.quickButton} style={{ backgroundColor: '#ef4444' }}>
-              <Text size="2" weight="bold" style={{ color: '#ffffff' }}>?</Text>
+            <Box className={styles.quickButton} style={{ backgroundColor: '#f97316', position: 'relative' }}>
+              <Text size="4" weight="bold" style={{ color: '#ffffff' }}>?</Text>
+              <Box className={styles.flagBadge} title="Беларусь">
+                <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇧🇾</Text>
+              </Box>
             </Box>
-            <Box className={styles.quickButton} style={{ backgroundColor: '#f59e0b' }}>
-              <Text size="2" weight="bold" style={{ color: '#ffffff' }}>∞?</Text>
+            <Box className={styles.quickButton} style={{ backgroundColor: '#eab308', position: 'relative' }}>
+              <Text size="4" weight="bold" style={{ color: '#ffffff' }}>?</Text>
+              <Box className={styles.flagBadge} title="Польша">
+                <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇵🇱</Text>
+              </Box>
             </Box>
-            <Box className={styles.quickButton} style={{ backgroundColor: '#3b82f6' }}>
-              <Text size="2" weight="bold" style={{ color: '#ffffff' }}>?</Text>
+            <Box className={styles.quickButton} style={{ backgroundColor: '#3b82f6', position: 'relative' }}>
+              <Text size="4" weight="bold" style={{ color: '#ffffff' }}>?</Text>
+              <Box className={styles.flagBadge} title="Польша">
+                <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇵🇱</Text>
+              </Box>
             </Box>
             <Box className={styles.quickButton} style={{ backgroundColor: '#06b6d4' }}>
-              <CalendarIcon width={16} height={16} style={{ color: '#ffffff' }} />
+              <CalendarIcon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
             </Box>
             <Box className={styles.quickButton} style={{ backgroundColor: '#6b7280' }}>
-              <Text size="1" style={{ color: '#ffffff' }}>📄</Text>
+              <Text size="3" weight="bold" style={{ color: '#ffffff' }}>📄</Text>
             </Box>
             <Box className={styles.quickButton} style={{ backgroundColor: '#10b981' }}>
-              <Text size="3" weight="bold" style={{ color: '#ffffff' }}>+</Text>
+              <Text size="5" weight="bold" style={{ color: '#ffffff' }}>+</Text>
             </Box>
           </Flex>
 
@@ -149,7 +161,7 @@ export default function WorkflowHeader({ onSlotsClick, slotsOpen }: WorkflowHead
         {/* Правая часть: выпадающий список вакансии и кнопки управления */}
         <Box className={styles.rightSection}>
           <Select.Root value={selectedVacancy} onValueChange={setSelectedVacancy}>
-            <Select.Trigger className={styles.vacancySelect} size="3" />
+            <Select.Trigger className={styles.vacancySelect} />
             <Select.Content className={styles.selectContent}>
               <Select.Item value="frontend-react" className={styles.selectItem}>
                 Frontend Engineer (React)

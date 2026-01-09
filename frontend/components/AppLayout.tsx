@@ -20,7 +20,7 @@ interface AppLayoutProps {
 
 export default function AppLayout({
   children,
-  pageTitle = "HR Helper",
+  pageTitle = "aichat",
   userName = "Голубенко Андрей",
   onLogout,
 }: AppLayoutProps) {

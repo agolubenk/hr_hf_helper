@@ -453,7 +453,7 @@ export default function WikiEditForm({ initialData, isNew = false }: WikiEditFor
             <Text size="2" color="gray" style={{ display: 'block', marginBottom: '8px' }}>
               Поддерживается Markdown форматирование:
             </Text>
-            <Box as="ul" style={{ marginLeft: '20px', marginBottom: '16px' }}>
+            <ul style={{ marginLeft: '20px', marginBottom: '16px' }}>
               <li><Text size="2" color="gray"><strong>**жирный текст**</strong> - жирный текст</Text></li>
               <li><Text size="2" color="gray"><em>*курсив*</em> - курсив</Text></li>
               <li><Text size="2" color="gray"><code>`код`</code> - код</Text></li>
@@ -461,17 +461,17 @@ export default function WikiEditForm({ initialData, isNew = false }: WikiEditFor
               <li><Text size="2" color="gray">## Заголовок 2</Text></li>
               <li><Text size="2" color="gray">- Список</Text></li>
               <li><Text size="2" color="gray">1. Нумерованный список</Text></li>
-            </Box>
+            </ul>
             
             <Text size="3" weight="medium" style={{ display: 'block', marginBottom: '8px', marginTop: '16px' }}>
               Рекомендации
             </Text>
-            <Box as="ul" style={{ marginLeft: '20px' }}>
+            <ul style={{ marginLeft: '20px' }}>
               <li><Text size="2" color="gray">Используйте понятные и описательные названия</Text></li>
               <li><Text size="2" color="gray">Указывайте категорию для удобной навигации</Text></li>
               <li><Text size="2" color="gray">Добавляйте краткое описание для превью</Text></li>
               <li><Text size="2" color="gray">Структурируйте содержимое с помощью заголовков</Text></li>
-            </Box>
+            </ul>
           </Box>
         </Box>
       </Flex>

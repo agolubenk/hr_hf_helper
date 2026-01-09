@@ -11,12 +11,12 @@ export default function Home() {
 
   return (
     <AppLayout
-      pageTitle="HR Helper"
+      pageTitle="aichat"
       userName="Голубенко Андрей"
       onLogout={handleLogout}
     >
       <Flex direction="column" gap="4" align="center">
-        <Text size="6" weight="bold">Добро пожаловать в HR Helper</Text>
+        <Text size="6" weight="bold">Добро пожаловать в aichat</Text>
         <Text size="4" color="gray">
           Используйте меню для навигации по приложению
         </Text>

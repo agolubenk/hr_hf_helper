@@ -218,11 +218,11 @@ export default function WikiFileUploadModal({
             <Text size="2" weight="medium" style={{ display: 'block', marginBottom: '8px' }}>
               Поддерживаемые форматы:
             </Text>
-            <Box as="ul" style={{ marginLeft: '20px', marginTop: '4px' }}>
+            <ul style={{ marginLeft: '20px', marginTop: '4px' }}>
               <li><Text size="2" color="gray">.md, .txt - полная поддержка</Text></li>
               <li><Text size="2" color="gray">.doc, .docx - в разработке</Text></li>
               <li><Text size="2" color="gray">.pdf - в разработке</Text></li>
-            </Box>
+            </ul>
           </Box>
         </Box>
 

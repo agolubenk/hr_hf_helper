@@ -1,0 +1,57 @@
+.inputWrapper {
+  width: 100%;
+}
+
+.input {
+  flex: 1;
+}
+
+.input :global(input) {
+  border-radius: 6px !important;
+  border: 1px solid var(--gray-6);
+  background-color: var(--gray-2);
+  color: var(--gray-12);
+  padding: 12px 16px;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.input :global(input):focus {
+  outline: none;
+  border-color: var(--accent-9);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.input :global(input)::placeholder {
+  color: var(--gray-10);
+}
+
+.sendButton {
+  background: var(--accent-9) !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 12px 16px !important;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  flex-shrink: 0;
+}
+
+.sendButton:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.sendButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Темная тема */
+:global([data-theme='dark']) .input :global(input) {
+  background-color: var(--gray-3);
+  border-color: var(--gray-6);
+}
+
+:global([data-theme='dark']) .input :global(input):focus {
+  border-color: var(--accent-9);
+}

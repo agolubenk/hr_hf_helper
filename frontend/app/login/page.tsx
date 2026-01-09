@@ -134,7 +134,7 @@ export default function LoginPage() {
           {/* Заголовок */}
           <Flex direction="column" gap="2" align="center">
             <Text size="7" weight="bold">
-              HR Helper
+              aichat
             </Text>
             <Text size="3" color="gray">
               Войдите в свой аккаунт

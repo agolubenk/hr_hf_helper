@@ -12,7 +12,13 @@ import {
   CalendarIcon,
   GearIcon,
   OpenInNewWindowIcon,
-  FileTextIcon
+  FileTextIcon,
+  DashboardIcon,
+  ClipboardIcon,
+  BarChartIcon,
+  DotsHorizontalIcon,
+  CheckIcon,
+  ClockIcon
 } from "@radix-ui/react-icons"
 import { useState, ReactNode, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
@@ -38,14 +44,48 @@ interface MenuItemComponentProps {
   isActive?: boolean
   level?: number
   onNavigate?: () => void
+  pathname?: string | null
 }
 
-function MenuItemComponent({ item, isActive = false, level = 0, onNavigate }: MenuItemComponentProps) {
+// Функция для проверки, является ли элемент или его дочерние элементы активными
+function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefined): boolean {
+  if (!pathname) return false
+  
+  // Специальные случаи для проверки активности
+  if (item.id === 'home' && pathname === '/workflow') {
+    return true
+  }
+  if (item.id === 'wiki' && pathname.startsWith('/wiki')) {
+    return true
+  }
+  if (item.id === 'aichat' && pathname.startsWith('/aichat')) {
+    return true
+  }
+  
+  // Проверяем сам элемент
+  if (item.href && pathname === item.href) {
+    return true
+  }
+  
+  // Проверяем дочерние элементы
+  if (item.children && item.children.length > 0) {
+    return item.children.some(child => isItemOrChildrenActive(child, pathname))
+  }
+  
+  return false
+}
+
+function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, pathname }: MenuItemComponentProps) {
   const router = useRouter()
   const hasChildren = item.children && item.children.length > 0
-  // Некоторые разделы открыты по умолчанию
-  const defaultExpanded = item.id === 'invites' || item.id === 'google-oauth'
-  const [isExpanded, setIsExpanded] = useState(defaultExpanded)
+  // Раскрываем только если элемент или его дочерние элементы активны
+  const shouldBeExpanded = hasChildren && isItemOrChildrenActive(item, pathname)
+  const [isExpanded, setIsExpanded] = useState(shouldBeExpanded)
+  
+  // Обновляем состояние при изменении pathname
+  useEffect(() => {
+    setIsExpanded(shouldBeExpanded)
+  }, [shouldBeExpanded])
 
   const handleClick = () => {
     if (hasChildren) {
@@ -139,6 +179,7 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate }: Me
               item={child}
               level={level + 1}
               onNavigate={onNavigate}
+              pathname={pathname}
             />
           ))}
         </Flex>
@@ -193,31 +234,79 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       ],
     },
     {
-      id: 'scorecard',
-      label: 'Настройки Scorecard',
-      icon: <Box style={{ width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Box style={{ width: '2px', height: '12px', backgroundColor: 'var(--gray-12)', marginRight: '2px' }} />
-        <Box style={{ width: '2px', height: '12px', backgroundColor: 'var(--gray-12)' }} />
-      </Box>,
-    },
-    {
-      id: 'gemini',
-      label: 'Gemini AI',
+      id: 'aichat',
+      label: 'AI Chat',
       icon: <Box style={{ width: '16px', height: '16px', borderRadius: '50%', border: '1px solid var(--gray-12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Box style={{ width: '6px', height: '6px', backgroundColor: 'var(--gray-12)', borderRadius: '50%' }} />
       </Box>,
+      href: '/aichat',
     },
     {
       id: 'vacancies',
       label: 'Вакансии и финансы',
       icon: <Box style={{ width: '16px', height: '16px', border: '1px solid var(--gray-12)', borderRadius: '2px' }} />,
-      children: [],
+      children: [
+        {
+          id: 'vacancies-dashboard',
+          label: 'Дашборд',
+          icon: <ClockIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+        },
+        {
+          id: 'vacancies-list',
+          label: 'Вакансии',
+          icon: <ListBulletIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+        },
+        {
+          id: 'vacancies-requests',
+          label: 'Заявки',
+          icon: <ClipboardIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+        },
+        {
+          id: 'vacancies-salary-ranges',
+          label: 'Зарплатные вилки',
+          icon: <Box style={{ width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Text size="1" style={{ color: 'var(--gray-12)' }}>$</Text>
+          </Box>,
+        },
+        {
+          id: 'vacancies-grades',
+          label: 'Грейды, налоги и курсы',
+          icon: <BarChartIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+        },
+        {
+          id: 'vacancies-benchmarks',
+          label: 'Бенчмарки',
+          icon: <ListBulletIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+          children: [
+            {
+              id: 'benchmarks-dashboard',
+              label: 'Dashboard',
+              icon: <DashboardIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+            },
+            {
+              id: 'benchmarks-all',
+              label: 'Все бенчмарки',
+              icon: <ListBulletIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+            },
+          ],
+        },
+      ],
     },
     {
       id: 'interviewers',
       label: 'Интервьюеры',
       icon: <PersonIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-      children: [],
+      children: [
+        {
+          id: 'interviewers-list',
+          label: 'Интервьюеры',
+          icon: <Box style={{ width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px' }}>
+            <Box style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'var(--gray-12)' }} />
+            <Box style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'var(--gray-12)' }} />
+            <Box style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'var(--gray-12)' }} />
+          </Box>,
+        },
+      ],
     },
     {
       id: 'integrations',
@@ -226,7 +315,30 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <Box style={{ width: '8px', height: '8px', border: '1px solid var(--gray-12)', borderRadius: '2px', position: 'absolute', top: '0', left: '0' }} />
         <Box style={{ width: '4px', height: '4px', borderTop: '1px solid var(--gray-12)', borderRight: '1px solid var(--gray-12)', position: 'absolute', bottom: '0', right: '0' }} />
       </Box>,
-      children: [],
+      children: [
+        {
+          id: 'integrations-clickup',
+          label: 'ClickUp',
+          icon: <DotsHorizontalIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+          children: [],
+        },
+        {
+          id: 'integrations-notion',
+          label: 'Notion',
+          icon: <Box style={{ width: '16px', height: '16px', border: '1px solid var(--gray-12)', borderRadius: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1px' }}>
+            <Box style={{ width: '2px', height: '2px', borderRadius: '50%', backgroundColor: 'var(--gray-12)' }} />
+            <Box style={{ width: '2px', height: '2px', borderRadius: '50%', backgroundColor: 'var(--gray-12)' }} />
+            <Box style={{ width: '2px', height: '2px', borderRadius: '50%', backgroundColor: 'var(--gray-12)' }} />
+          </Box>,
+          children: [],
+        },
+        {
+          id: 'integrations-hh',
+          label: 'HeadHunter.ru',
+          icon: <Text size="1" weight="bold" style={{ color: 'var(--gray-12)', width: '16px', textAlign: 'center' }}>H</Text>,
+          children: [],
+        },
+      ],
     },
     {
       id: 'wiki',
@@ -237,8 +349,44 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     {
       id: 'reporting',
       label: 'Отчетность',
-      icon: <ListBulletIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-      children: [],
+      icon: <BarChartIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+      children: [
+        {
+          id: 'reporting-main',
+          label: 'Главная',
+          icon: <ClockIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+        },
+        {
+          id: 'reporting-hiring-plan',
+          label: 'План найма',
+          icon: <ClipboardIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+        },
+        {
+          id: 'reporting-company',
+          label: 'По компании',
+          icon: <Box style={{ width: '16px', height: '16px', border: '1px solid var(--gray-12)', borderRadius: '2px', position: 'relative' }}>
+            <Box style={{ width: '10px', height: '6px', border: '1px solid var(--gray-12)', borderRadius: '1px', position: 'absolute', top: '2px', left: '2px' }} />
+          </Box>,
+        },
+        {
+          id: 'reporting-recruiter',
+          label: 'По рекрутеру',
+          icon: <PersonIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+        },
+        {
+          id: 'reporting-vacancy',
+          label: 'По вакансии',
+          icon: <Box style={{ width: '16px', height: '16px', border: '1px solid var(--gray-12)', borderRadius: '2px' }} />,
+        },
+        {
+          id: 'reporting-interviewer',
+          label: 'По интервьюеру',
+          icon: <Box style={{ width: '16px', height: '16px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <PersonIcon width={12} height={12} style={{ color: 'var(--gray-12)' }} />
+            <CheckIcon width={8} height={8} style={{ color: 'var(--gray-12)', position: 'absolute', bottom: '-2px', right: '-2px' }} />
+          </Box>,
+        },
+      ],
     },
   ]
 
@@ -264,6 +412,51 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       icon: <Box style={{ width: '16px', height: '16px', border: '1px solid var(--gray-12)', borderRadius: '2px', position: 'relative' }}>
         <Box style={{ width: '10px', height: '6px', border: '1px solid var(--gray-12)', borderRadius: '1px', position: 'absolute', top: '2px', left: '2px' }} />
       </Box>,
+      children: [
+        {
+          id: 'company-settings-general',
+          label: 'Общие',
+          icon: <GearIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+        },
+        {
+          id: 'company-settings-benchmark',
+          label: 'Бенчмарк',
+          icon: <BarChartIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+        },
+        {
+          id: 'company-settings-scorecard',
+          label: 'Scorecard',
+          icon: <Box style={{ width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Box style={{ width: '2px', height: '12px', backgroundColor: 'var(--gray-12)', marginRight: '2px' }} />
+            <Box style={{ width: '2px', height: '12px', backgroundColor: 'var(--gray-12)' }} />
+          </Box>,
+        },
+        {
+          id: 'company-settings-integrations',
+          label: 'Интеграции',
+          icon: <Box style={{ width: '16px', height: '16px', position: 'relative' }}>
+            <Box style={{ width: '8px', height: '8px', border: '1px solid var(--gray-12)', borderRadius: '2px', position: 'absolute', top: '0', left: '0' }} />
+            <Box style={{ width: '4px', height: '4px', borderTop: '1px solid var(--gray-12)', borderRight: '1px solid var(--gray-12)', position: 'absolute', bottom: '0', right: '0' }} />
+          </Box>,
+        },
+        {
+          id: 'company-settings-ai',
+          label: 'AI & n8n',
+          icon: <Box style={{ width: '16px', height: '16px', borderRadius: '50%', border: '1px solid var(--gray-12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Box style={{ width: '6px', height: '6px', backgroundColor: 'var(--gray-12)', borderRadius: '50%' }} />
+          </Box>,
+        },
+        {
+          id: 'company-settings-rules',
+          label: 'Правила привлечения',
+          icon: <GearIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+        },
+        {
+          id: 'company-settings-responses',
+          label: 'Ответы кандидатам',
+          icon: <FileTextIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+        },
+      ],
     },
     {
       id: 'admin',
@@ -290,16 +483,23 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     >
       <Flex direction="column" p="2" gap="1">
         {/* Основное меню */}
-        {menuItems.map((item) => (
-          <MenuItemComponent
-            key={item.id}
-            item={item}
-            isActive={pathname === item.href || 
-              (item.id === 'home' && pathname === '/workflow') ||
-              (item.id === 'wiki' && pathname?.startsWith('/wiki'))}
-            onNavigate={onClose}
-          />
-        ))}
+        {menuItems.map((item) => {
+          // Определяем активность пункта меню
+          let isActive = pathname === item.href || 
+            (item.id === 'home' && pathname === '/workflow') ||
+            (item.id === 'wiki' && pathname?.startsWith('/wiki')) ||
+            (item.id === 'aichat' && pathname?.startsWith('/aichat'))
+          
+          return (
+            <MenuItemComponent
+              key={item.id}
+              item={item}
+              isActive={isActive}
+              onNavigate={onClose}
+              pathname={pathname}
+            />
+          )
+        })}
 
         {/* Разделитель */}
         <Separator size="4" my="2" />
@@ -329,6 +529,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               item={item}
               isActive={isActive}
               onNavigate={onClose}
+              pathname={pathname}
             />
           )
         })}

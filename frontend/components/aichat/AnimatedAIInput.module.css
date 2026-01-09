@@ -1,0 +1,375 @@
+.inputContainer {
+  background: var(--gray-2);
+  border-radius: 12px;
+  border: 1px solid var(--gray-6);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.inputContainer:focus-within {
+  border-color: var(--accent-9);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Контейнер для прикрепленных файлов */
+.attachedFilesContainer {
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--gray-6);
+}
+
+.attachedFilesList {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-6) transparent;
+  padding-bottom: 4px;
+}
+
+.attachedFilesList::-webkit-scrollbar {
+  height: 6px;
+}
+
+.attachedFilesList::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.attachedFilesList::-webkit-scrollbar-thumb {
+  background: var(--gray-6);
+  border-radius: 3px;
+}
+
+.attachedFilesList::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-8);
+}
+
+.fileTag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--gray-3);
+  border: 1px solid var(--gray-6);
+  border-radius: 6px;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.fileTag:hover {
+  background: var(--gray-4);
+  border-color: var(--gray-7);
+}
+
+.fileName {
+  color: var(--gray-12);
+  font-weight: 500;
+  white-space: nowrap;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fileSize {
+  color: var(--gray-10);
+  white-space: nowrap;
+  font-size: 10px;
+}
+
+.removeFileButton {
+  padding: 2px !important;
+  min-width: auto !important;
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  color: var(--gray-10) !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.removeFileButton:hover {
+  background: var(--gray-5) !important;
+  color: var(--gray-12) !important;
+}
+
+/* Темная тема */
+:global([data-theme='dark']) .fileTag {
+  background: var(--gray-4);
+  border-color: var(--gray-6);
+}
+
+:global([data-theme='dark']) .fileTag:hover {
+  background: var(--gray-5);
+  border-color: var(--gray-7);
+}
+
+.textArea {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--gray-12);
+  resize: none;
+  overflow: hidden;
+  min-height: 24px;
+  max-height: 200px;
+}
+
+.textArea:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.textArea::placeholder {
+  color: var(--gray-10);
+}
+
+.actionBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.modelSelector {
+  background: transparent !important;
+  border: none !important;
+  padding: 4px 8px !important;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: var(--gray-11) !important;
+}
+
+.modelSelector:hover {
+  background: var(--gray-3) !important;
+}
+
+.separator {
+  height: 20px;
+  background: var(--gray-6);
+  margin: 0 4px;
+}
+
+.attachButton {
+  background: transparent !important;
+  border: none !important;
+  padding: 4px 8px !important;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: var(--gray-11) !important;
+}
+
+.attachButton:hover:not(:disabled) {
+  background: var(--gray-3) !important;
+}
+
+.attachButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.paperclipIcon {
+  font-size: 16px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sendButton {
+  background: var(--gray-6) !important;
+  color: var(--gray-11) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 6px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  margin-left: auto;
+  height: auto !important;
+}
+
+.sendButton:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.sendButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: scale(1);
+}
+
+.sendButtonActive {
+  background: var(--gray-11) !important;
+  color: #ffffff !important;
+}
+
+.sendButtonActive:hover:not(:disabled) {
+  background: var(--gray-12) !important;
+  transform: scale(1.05);
+}
+
+/* Иконки моделей */
+.modelIconOpenAI,
+.modelIconGemini,
+.modelIconClaude {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  border-radius: 3px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+  margin-right: 6px;
+}
+
+.modelItem:hover .modelIconOpenAI,
+.modelItem:hover .modelIconGemini,
+.modelItem:hover .modelIconClaude {
+  transform: scale(1.1);
+}
+
+.modelIconOpenAI {
+  background: #000000;
+  color: #ffffff;
+}
+
+.modelIconGemini {
+  background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+  color: #ffffff;
+  font-size: 9px;
+  transform: rotate(45deg);
+}
+
+.modelItem:hover .modelIconGemini {
+  transform: rotate(45deg) scale(1.1);
+}
+
+.modelIconClaude {
+  background: #d97706;
+  color: #ffffff;
+}
+
+/* Выпадающее меню моделей */
+.modelDropdown {
+  background: var(--gray-2) !important;
+  border: 1px solid var(--gray-6) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  padding: 6px !important;
+  min-width: 140px;
+  max-width: 160px;
+  z-index: 1000;
+  animation: dropdownShow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dropdownShow {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modelList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modelItem {
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.modelItem:hover {
+  background: var(--gray-3);
+  transform: translateX(2px);
+}
+
+.modelItemSelected {
+  background: var(--gray-3);
+  border: 1px solid var(--gray-6);
+}
+
+.modelItemSelected:hover {
+  background: var(--gray-4);
+  border-color: var(--gray-7);
+}
+
+.checkIcon {
+  color: var(--accent-9);
+  flex-shrink: 0;
+  animation: checkIconShow 0.2s ease;
+}
+
+@keyframes checkIconShow {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Темная тема */
+:global([data-theme='dark']) .inputContainer {
+  background: var(--gray-3);
+  border-color: var(--gray-6);
+}
+
+:global([data-theme='dark']) .inputContainer:focus-within {
+  border-color: var(--accent-9);
+}
+
+:global([data-theme='dark']) .modelSelector:hover,
+:global([data-theme='dark']) .attachButton:hover:not(:disabled) {
+  background: var(--gray-4) !important;
+}
+
+:global([data-theme='dark']) .modelDropdown {
+  background: var(--gray-3) !important;
+  border-color: var(--gray-6) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+:global([data-theme='dark']) .modelItem:hover {
+  background: var(--gray-4);
+}
+
+:global([data-theme='dark']) .modelItemSelected {
+  background: var(--gray-4);
+  border-color: var(--gray-7);
+}
+
+:global([data-theme='dark']) .modelItemSelected:hover {
+  background: var(--gray-5);
+  border-color: var(--gray-8);
+}

@@ -43,13 +43,13 @@ export default function WikiDetailContent({ content }: WikiDetailContentProps) {
             )}
             
             {section.items && (
-              <Box as="ul" className={styles.itemsList}>
+              <ul className={styles.itemsList}>
                 {section.items.map((item, itemIndex) => (
-                  <Box as="li" key={itemIndex} className={styles.listItem}>
+                  <li key={itemIndex} className={styles.listItem}>
                     <Text size="3">{item}</Text>
-                  </Box>
+                  </li>
                 ))}
-              </Box>
+              </ul>
             )}
             
             {section.subsections && section.subsections.map((subsection, subIndex) => (
@@ -58,13 +58,13 @@ export default function WikiDetailContent({ content }: WikiDetailContentProps) {
                   {subsection.title}
                 </Text>
                 {subsection.items && (
-                  <Box as="ul" className={styles.itemsList}>
+                  <ul className={styles.itemsList}>
                     {subsection.items.map((item, itemIndex) => (
-                      <Box as="li" key={itemIndex} className={styles.listItem}>
+                      <li key={itemIndex} className={styles.listItem}>
                         <Text size="3">{item}</Text>
-                      </Box>
+                      </li>
                     ))}
-                  </Box>
+                  </ul>
                 )}
               </Box>
             ))}
