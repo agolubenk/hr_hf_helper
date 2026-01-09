@@ -18,7 +18,7 @@
 }
 
 .panelContent {
-  padding: 16px;
+  padding: 8px;
   background: var(--gray-2); /* Адаптивный фон для светлой и темной темы */
 }
 
@@ -43,7 +43,7 @@
 }
 
 .reportItem {
-  padding: 12px;
+  padding: 8px 12px;
   background: var(--gray-2);
   border-radius: 8px;
   border: 1px solid var(--gray-6);
@@ -54,4 +54,38 @@
   background: var(--gray-3);
   border-color: var(--gray-8);
   transform: translateX(4px);
+}
+
+.reportTable {
+  margin-top: 8px;
+  padding: 0;
+  background: var(--gray-2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Для темной темы */
+[data-theme="dark"] .reportTable,
+.radix-themes[data-appearance="dark"] .reportTable {
+  background: var(--gray-3);
+}
+
+.tableHeader {
+  text-align: center;
+  background: var(--gray-4);
+  font-weight: 600;
+}
+
+/* Для темной темы */
+[data-theme="dark"] .tableHeader,
+.radix-themes[data-appearance="dark"] .tableHeader {
+  background: var(--gray-4);
+}
+
+.reportTable :global(.rt-TableCell) {
+  text-align: left;
+}
+
+.reportTable :global(.rt-TableCell:last-child) {
+  text-align: center;
 }

@@ -186,20 +186,7 @@ export default function WorkflowHeader({ onSlotsClick, slotsOpen }: WorkflowHead
               style={{ backgroundColor: 'var(--gray-3)' }}
             >
               <CalendarIcon width={12} height={12} />
-              <OpenInNewWindowIcon width={10} height={10} />
-            </Button>
-            
-            {/* Кнопка 2: Портфель с иконкой "Поделиться" (темно-синяя) */}
-            <Button
-              variant="soft"
-              size="1"
-              className={styles.controlButton}
-              style={{ 
-                backgroundColor: '#1e40af', 
-                color: '#ffffff' 
-              }}
-            >
-              <BoxIcon width={12} height={12} />
+              <Text size="1" className={styles.calendarText}>Календарь</Text>
               <OpenInNewWindowIcon width={10} height={10} />
             </Button>
             

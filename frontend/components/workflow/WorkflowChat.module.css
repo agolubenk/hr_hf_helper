@@ -20,19 +20,109 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
+  gap: 20px;
 }
 
 .messageWrapper {
   width: 100%;
+  align-items: flex-end;
 }
 
-.userMessage {
-  background: var(--accent-9);
+.messageUser {
+  justify-content: flex-end;
+}
+
+.messageAssistant {
+  justify-content: flex-start;
+}
+
+.userMessageContainer {
+  align-items: flex-end;
+  width: 100%;
+  max-width: 80%;
+  display: flex;
+  flex-direction: column;
+}
+
+.assistantMessageContainer {
+  align-items: flex-start;
+  max-width: 70%;
+  display: flex;
+  flex-direction: column;
+}
+
+.avatarUser,
+.avatarAssistant {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid var(--gray-6);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  align-self: flex-end;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+.avatarUser {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.avatarAssistant {
+  background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.avatarIcon {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.messageBubble {
   padding: 12px 16px;
   border-radius: 12px;
-  max-width: 70%;
   word-wrap: break-word;
+}
+
+.messageBubbleUser {
+  background-color: var(--accent-9);
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+  max-width: none;
+  width: fit-content;
+  margin-left: auto;
+}
+
+.messageTimestamp {
+  color: var(--gray-10);
+  font-size: 10px;
+  margin-top: 4px;
+  align-self: flex-end;
+  white-space: nowrap;
+}
+
+.tagContainer {
+  margin-top: -12px;
+  margin-right: 10px;
+  align-self: flex-end;
+  position: relative;
+  z-index: 1;
+}
+
+.tag {
+  padding: 0px 2px;
+  border-radius: 4px;
+  display: inline-block;
 }
 
 .inviteMessage {
@@ -58,22 +148,6 @@
   border-radius: 12px 12px 0 0;
 }
 
-.tag {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 2px 8px;
-  border-radius: 4px;
-}
-
-.avatar {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .botIcon {
   font-size: 20px;
 }
@@ -95,8 +169,8 @@
   background: var(--gray-2); /* Адаптивный фон для светлой и темной темы */
   border-radius: 0 0 12px 12px;
   display: flex;
-  align-items: flex-start; /* Выравнивание по верхнему краю */
-  gap: 4px; /* Небольшой отступ между textarea и кнопкой */
+  flex-direction: column;
+  gap: 8px;
 }
 
 /* Для темной темы */
@@ -111,6 +185,83 @@
 
 .inputContainer :global(.rt-Button) {
   flex-shrink: 0; /* Кнопка не сжимается */
+}
+
+.attachedFilesContainer {
+  padding: 8px;
+  background: var(--gray-3);
+  border-radius: 8px;
+  border: 1px solid var(--gray-6);
+}
+
+.attachedFilesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.fileTag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--gray-4);
+  border: 1px solid var(--gray-6);
+  border-radius: 6px;
+  flex-shrink: 0;
+  max-width: 200px;
+}
+
+.fileName {
+  font-size: 11px;
+  color: var(--gray-12);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+
+.fileSize {
+  font-size: 10px;
+  color: var(--gray-11);
+  font-style: italic;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.removeFileButton {
+  padding: 0 !important;
+  min-width: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.removeFileButton:hover {
+  background: var(--gray-6) !important;
+}
+
+/* Для темной темы */
+[data-theme="dark"] .attachedFilesContainer,
+.radix-themes[data-appearance="dark"] .attachedFilesContainer {
+  background: var(--gray-4);
+  border-color: var(--gray-6);
+}
+
+[data-theme="dark"] .fileTag,
+.radix-themes[data-appearance="dark"] .fileTag {
+  background: var(--gray-5);
+  border-color: var(--gray-7);
 }
 
 /* Скроллбар */

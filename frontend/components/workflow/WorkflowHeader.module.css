@@ -40,7 +40,7 @@
 
 .headerRow {
   display: flex;
-  align-items: flex-start; /* Выравнивание по верхнему краю */
+  align-items: center; /* Центрирование по вертикали - центры блоков на одном уровне */
   justify-content: space-between; /* Левая и правая части */
   width: 100%;
   gap: 16px;
@@ -52,14 +52,14 @@
 .leftSection {
   flex: 1;
   display: flex;
-  align-items: flex-start; /* Выравнивание по верхнему краю */
+  align-items: center; /* Центрирование по вертикали */
   justify-content: space-between; /* Быстрые кнопки слева, тогглеры справа */
   gap: 16px;
   min-width: 0;
   padding: 5px; /* Внутренний отступ 3px */
   border: 1px solid var(--gray-6); /* Тонкая граница */
   border-radius: 6px; /* Скругление углов */
-  margin-top: 0; /* Убираем верхний отступ */
+  margin: 0; /* Убираем все отступы для правильного выравнивания */
 }
 
 .quickButtonsGroup {
@@ -77,18 +77,20 @@
 .rightSection {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center; /* Центрирование по вертикали */
   gap: 8px;
   min-width: 200px;
   max-width: 360px; /* Максимальная ширина для правой части */
   flex: 0 0 auto; /* Не растягивается, фиксированный размер */
   margin-left: auto; /* Прижимается к правому краю */
-  padding-top: 0; /* Убираем верхний отступ */
-  margin-top: 0; /* Убираем верхний отступ */
+  margin: 0 0 0 auto; /* Убираем все отступы кроме левого для правильного выравнивания */
+  padding: 0; /* Убираем все внутренние отступы */
 }
 
 .vacancySelect {
-  width: 100% !important; /* Растягивается на всю ширину rightSection */
+  width: calc(100% + 80px) !important; /* Увеличиваем на 80px */
+  max-width: 100% !important; /* Максимум 100% */
   min-width: 200px;
   height: 44px !important; /* Та же высота, что и у быстрых кнопок */
   margin-top: 0 !important; /* Убираем верхний отступ */
@@ -108,6 +110,16 @@
 .controlButton {
   flex-shrink: 0;
   white-space: nowrap;
+}
+
+.calendarText {
+  display: inline;
+}
+
+@media (max-width: 768px) {
+  .calendarText {
+    display: none;
+  }
 }
 
 .quickButton {
@@ -222,6 +234,8 @@
   background: var(--gray-3) !important;
   border: 1px solid var(--gray-6) !important;
   border-radius: 6px !important;
+  width: calc(100% + 80px) !important; /* Увеличиваем на 80px */
+  max-width: 100% !important; /* Максимум 100% */
   min-width: 200px;
 }
 
