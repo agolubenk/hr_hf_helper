@@ -7,6 +7,7 @@ import RequestsSearchFilters from "@/components/requests/RequestsSearchFilters"
 import RequestsStats from "@/components/requests/RequestsStats"
 import RequestListItem from "@/components/requests/RequestListItem"
 import RequestsTable from "@/components/requests/RequestsTable"
+import CreateRequestModal from "@/components/requests/CreateRequestModal"
 import { HamburgerMenuIcon, DownloadIcon, UploadIcon, DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { useRouter } from "next/navigation"
 import styles from './hiring-requests.module.css'
@@ -167,6 +168,7 @@ export default function HiringRequestsPage() {
   const [selectedRecruiter, setSelectedRecruiter] = useState('all')
   const [selectedStatus, setSelectedStatus] = useState('all')
   const [selectedPriority, setSelectedPriority] = useState('all')
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   const totalRequests = mockRequests.length
   const plannedRequests = mockRequests.filter(r => r.status === 'planned').length
@@ -282,7 +284,11 @@ export default function HiringRequestsPage() {
               </SegmentedControl.Item>
             </SegmentedControl.Root>
             
-            <Button size="3" className={styles.addButton}>
+            <Button 
+              size="3" 
+              className={styles.addButton}
+              onClick={() => setIsCreateModalOpen(true)}
+            >
               + Добавить заявку
             </Button>
           </Flex>
@@ -308,6 +314,18 @@ export default function HiringRequestsPage() {
             ))}
           </Box>
         )}
+
+        {/* Модальное окно создания заявки */}
+        <CreateRequestModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onSave={(data) => {
+            // TODO: Реализовать сохранение заявки
+            console.log('Создание заявки:', data)
+            alert('Заявка будет создана: ' + JSON.stringify(data, null, 2))
+            setIsCreateModalOpen(false)
+          }}
+        />
       </Box>
     </AppLayout>
   )

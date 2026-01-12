@@ -79,6 +79,9 @@ function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefi
   if (item.id === 'vacancies-requests' && pathname.startsWith('/hiring-requests')) {
     return true
   }
+  if (item.id === 'interviewers' && pathname.startsWith('/interviewers')) {
+    return true
+  }
   
   // Проверяем сам элемент
   if (item.href) {
@@ -365,18 +368,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       id: 'interviewers',
       label: 'Интервьюеры',
       icon: <PersonIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-      children: [
-        {
-          id: 'interviewers-list',
-          label: 'Интервьюеры',
-          icon: <Box style={{ width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px' }}>
-            <Box style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'var(--gray-12)' }} />
-            <Box style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'var(--gray-12)' }} />
-            <Box style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'var(--gray-12)' }} />
-          </Box>,
-          href: '/interviewers',
-        },
-      ],
+      href: '/interviewers',
     },
     {
       id: 'integrations',
