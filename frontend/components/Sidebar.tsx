@@ -163,16 +163,27 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
         window.open(item.href, '_blank')
       } else {
         // Внутренняя ссылка - используем Next.js роутер
-        // Если это ссылка на профиль с интеграциями, устанавливаем активную вкладку
-        if (item.id === 'settings-integrations' && item.href === '/profile') {
-          // Сохраняем активную вкладку в localStorage для открытия страницы с интеграциями
+        // Если это ссылка на профиль, устанавливаем активную вкладку
+        if (item.href === '/profile') {
           if (typeof window !== 'undefined') {
-            localStorage.setItem('profileActiveTab', 'integrations')
+            let tabValue = 'profile' // По умолчанию вкладка "Профиль"
+            
+            // Если это "Интеграции и API", устанавливаем вкладку integrations
+            if (item.id === 'settings-integrations') {
+              tabValue = 'integrations'
+            }
+            // Если это "Профиль", устанавливаем вкладку profile
+            else if (item.id === 'profile') {
+              tabValue = 'profile'
+            }
+            
+            // Сохраняем активную вкладку в localStorage
+            localStorage.setItem('profileActiveTab', tabValue)
             // Отправляем кастомное событие для синхронизации в той же вкладке
             window.dispatchEvent(new CustomEvent('localStorageChange', {
               detail: {
                 key: 'profileActiveTab',
-                value: 'integrations'
+                value: tabValue
               }
             }))
           }
