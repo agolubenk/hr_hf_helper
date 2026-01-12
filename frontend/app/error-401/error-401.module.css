@@ -1,0 +1,192 @@
+.container {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 64px);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.floatingIcon {
+  position: absolute;
+  left: var(--start-x, 50%);
+  top: var(--start-y, 50%);
+  width: var(--size, 32px);
+  height: var(--size, 32px);
+  opacity: var(--opacity, 0.4);
+  color: var(--accent-9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: float var(--duration, 20s) var(--delay, 0s) infinite ease-in-out;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15)) 
+          drop-shadow(0 0 12px rgba(59, 130, 246, 0.4));
+  transition: opacity 0.3s ease, filter 0.3s ease;
+  will-change: transform, opacity, filter;
+  z-index: 0;
+}
+
+.floatingIcon svg {
+  width: 100%;
+  height: 100%;
+  stroke-width: 1.5;
+}
+
+.floatingIcon:hover {
+  opacity: calc(var(--opacity, 0.4) * 1.8);
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25)) 
+          drop-shadow(0 0 20px rgba(59, 130, 246, 0.6));
+}
+
+@keyframes float {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    filter: brightness(1);
+  }
+  25% {
+    transform: translate(
+      calc(var(--amplitude-x, 50px) * 0.7), 
+      calc(-1 * var(--amplitude-y, 50px) * 0.7)
+    ) rotate(90deg) scale(1.15);
+    filter: brightness(1.2);
+  }
+  50% {
+    transform: translate(
+      calc(-1 * var(--amplitude-x, 50px) * 0.5), 
+      calc(-1 * var(--amplitude-y, 50px) * 0.5)
+    ) rotate(180deg) scale(0.95);
+    filter: brightness(1);
+  }
+  75% {
+    transform: translate(
+      calc(-1 * var(--amplitude-x, 50px) * 0.7), 
+      calc(var(--amplitude-y, 50px) * 0.7)
+    ) rotate(270deg) scale(1.15);
+    filter: brightness(1.2);
+  }
+  100% {
+    transform: translate(0, 0) rotate(360deg) scale(1);
+    filter: brightness(1);
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 10;
+  padding: 48px 64px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .content {
+  background: rgba(28, 28, 31, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.errorCode {
+  font-size: 120px;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--accent-9) 0%, var(--accent-11) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.title {
+  color: var(--gray-12);
+}
+
+.personIcon {
+  color: var(--accent-9);
+  animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@media (max-width: 768px) {
+  .errorCode {
+    font-size: 80px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .floatingIcon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .floatingIcon svg {
+    width: 24px !important;
+    height: 24px !important;
+  }
+  
+  .content {
+    padding: 32px 24px;
+    border-radius: 16px;
+  }
+  
+  .personIcon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+[data-theme="dark"] .floatingIcon {
+  color: var(--accent-9);
+  opacity: calc(var(--opacity, 0.4) * 1.4);
+  filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.15)) 
+          drop-shadow(0 0 16px rgba(59, 130, 246, 0.5))
+          drop-shadow(0 0 24px rgba(59, 130, 246, 0.3));
+}
+
+[data-theme="dark"] .floatingIcon:hover {
+  opacity: calc(var(--opacity, 0.4) * 2);
+  filter: drop-shadow(0 4px 16px rgba(255, 255, 255, 0.2)) 
+          drop-shadow(0 0 24px rgba(59, 130, 246, 0.7))
+          drop-shadow(0 0 32px rgba(59, 130, 246, 0.4));
+}
+
+[data-theme="dark"] .errorCode {
+  background: linear-gradient(135deg, var(--accent-9) 0%, var(--accent-11) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
