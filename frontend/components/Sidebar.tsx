@@ -85,6 +85,9 @@ function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefi
   if (item.id === 'integrations-huntflow' && pathname.startsWith('/huntflow')) {
     return true
   }
+  if (item.id === 'reporting' && pathname.startsWith('/reporting')) {
+    return true
+  }
   
   // Проверяем сам элемент
   if (item.href) {
@@ -273,11 +276,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       label: 'Главная',
       icon: <HomeIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
       href: '/workflow',
-    },
-    {
-      id: 'huntflow',
-      label: 'Huntflow',
-      icon: <PersonIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
     },
     {
       id: 'google-related',
@@ -472,6 +470,16 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             <CheckIcon width={8} height={8} style={{ color: 'var(--gray-12)', position: 'absolute', bottom: '-2px', right: '-2px' }} />
           </Box>,
           href: '/reporting/interviewer',
+        },
+        {
+          id: 'reporting-funnel',
+          label: 'Воронка',
+          icon: <Box style={{ width: '16px', height: '16px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 2L6 6V12L10 14V6L14 2H2Z" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </Box>,
+          href: '/reporting/funnel',
         },
       ],
     },

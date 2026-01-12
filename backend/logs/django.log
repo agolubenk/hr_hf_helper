@@ -122145,3 +122145,103 @@ DEBUG: Статус успешно обновлен через /accounts/291341/
 [12/Jan/2026 21:52:10] "GET /interviewers/19/edit/ HTTP/1.1" 200 123073
 [12/Jan/2026 21:53:02] "GET /interviewers/create/ HTTP/1.1" 200 122844
 [12/Jan/2026 22:02:06] "GET /huntflow/ HTTP/1.1" 200 122526
+
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 DEBUG: folder_structure = [{'type': 'text', 'value': 'automations'}, {'type': 'mixed', 'value': '[vacancy_title]', 'patterns': []}, {'type': 'mixed', 'value': '[year_full]', 'patterns': []}, {'type': 'mixed', 'value': '[month_num] [month_full_ru]', 'patterns': []}, {'type': 'mixed', 'value': '[day] [month_full_ru] ([weekday_short_ru])', 'patterns': []}]
+🔍 DEBUG: path_preview = automations/Frontend Engineer (React)/2026/01 январь/12 январь (ПН)
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+✅ Рекрутер andrei.golubenko синхронизирован с вакансией Project Manager
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/me
+📥 Ответ API: 200
+📥 Тело ответа: {"id":332858,"name":"API: API","position":null,"email":"api-291341-2@huntflow.ru","phone":null,"locale":"ru_RU"}...
+✅ Подключение к Huntflow успешно!
+👤 Пользователь: API: API
+📧 Email: api-291341-2@huntflow.ru
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts[12/Jan/2026 22:25:00] "GET /reporting/ HTTP/1.1" 200 121609
+[12/Jan/2026 22:32:33] "GET /reporting/company/ HTTP/1.1" 200 143842
+[12/Jan/2026 22:32:34] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-12&end_date=2026-01-12&recruiter_id=1 HTTP/1.1" 200 741
+[12/Jan/2026 22:32:35] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-12&end_date=2026-01-12&recruiter_id=3 HTTP/1.1" 200 670
+[12/Jan/2026 22:32:35] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-12&end_date=2026-01-12&recruiter_id=9 HTTP/1.1" 200 1128
+[12/Jan/2026 22:34:03] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-12&end_date=2026-01-12&vacancy_id=25 HTTP/1.1" 200 203
+[12/Jan/2026 22:34:04] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-12&end_date=2026-01-12&vacancy_id=33 HTTP/1.1" 200 203
+[12/Jan/2026 22:34:04] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-12&end_date=2026-01-12&vacancy_id=10 HTTP/1.1" 200 947
+[12/Jan/2026 22:34:04] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-12&end_date=2026-01-12&vacancy_id=13 HTTP/1.1" 200 429
+[12/Jan/2026 22:34:04] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-12&end_date=2026-01-12&vacancy_id=32 HTTP/1.1" 200 1036
+[12/Jan/2026 22:34:04] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-12&end_date=2026-01-12&vacancy_id=26 HTTP/1.1" 200 352
+[12/Jan/2026 22:34:04] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-12&end_date=2026-01-12&vacancy_id=9 HTTP/1.1" 200 1030
+[12/Jan/2026 22:34:04] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-12&end_date=2026-01-12&vacancy_id=3 HTTP/1.1" 200 1124
+[12/Jan/2026 22:34:04] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-12&end_date=2026-01-12&vacancy_id=1 HTTP/1.1" 200 1121
