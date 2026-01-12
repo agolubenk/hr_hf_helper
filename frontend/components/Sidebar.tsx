@@ -82,6 +82,9 @@ function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefi
   if (item.id === 'interviewers' && pathname.startsWith('/interviewers')) {
     return true
   }
+  if (item.id === 'integrations-huntflow' && pathname.startsWith('/huntflow')) {
+    return true
+  }
   
   // Проверяем сам элемент
   if (item.href) {
@@ -143,10 +146,14 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
     setIsExpanded(shouldBeExpanded)
   }, [shouldBeExpanded])
 
-  const handleClick = () => {
-    if (hasChildren) {
-      setIsExpanded(!isExpanded)
-    } else if (item.href) {
+  const handleClick = (e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+    
+    // Если есть href, всегда выполняем навигацию (даже если есть children)
+    if (item.href) {
       // Если это ссылка, выполняем навигацию
       if (item.external) {
         // Внешняя ссылка открывается в новой вкладке
@@ -167,14 +174,17 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
             }))
           }
         }
-        router.push(item.href, { scroll: false })
+        router.push(item.href)
         // Закрываем меню при навигации только на мобильных устройствах (< 768px)
         if (onNavigate && typeof window !== 'undefined' && window.innerWidth < 768) {
           onNavigate()
         }
       }
-    } else if (hasChildren) {
-      // Если у элемента есть дочерние элементы, но нет href, просто раскрываем/сворачиваем
+      return // Важно: выходим, чтобы не обрабатывать раскрытие/сворачивание
+    }
+    
+    // Если у элемента есть дочерние элементы, но нет href, просто раскрываем/сворачиваем
+    if (hasChildren) {
       setIsExpanded(!isExpanded)
     }
   }
@@ -190,15 +200,15 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
         style={{
           backgroundColor: isActive ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
           borderRadius: '6px',
-          cursor: item.href || hasChildren ? 'pointer' : 'default',
+          cursor: (item.href || hasChildren) ? 'pointer' : 'default',
           paddingLeft: level > 0 ? `${16 + level * 20}px` : '12px',
           position: 'relative',
           marginBottom: '2px',
           transition: 'all 0.2s ease-in-out',
         }}
         onClick={(e) => {
-          e.preventDefault()
-          handleClick()
+          e.stopPropagation()
+          handleClick(e)
         }}
         onMouseEnter={(e) => {
           if (!isActive && (item.href || hasChildren)) {
@@ -233,17 +243,20 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
         )}
       </Flex>
       {hasChildren && isExpanded && (
-        <Flex direction="column" style={{ marginTop: '4px' }}>
-          {item.children!.map((child) => (
-            <MenuItemComponent
-              key={child.id}
-              item={child}
-              level={level + 1}
-              onNavigate={onNavigate}
-              pathname={pathname}
-            />
-          ))}
-        </Flex>
+        <Box onClick={(e) => e.stopPropagation()} onMouseEnter={(e) => e.stopPropagation()} onMouseLeave={(e) => e.stopPropagation()}>
+          <Flex direction="column" style={{ marginTop: '4px' }}>
+            {item.children!.map((child) => (
+              <MenuItemComponent
+                key={child.id}
+                item={child}
+                level={level + 1}
+                onNavigate={onNavigate}
+                pathname={pathname}
+                isActive={isItemOrChildrenActive(child, pathname)}
+              />
+            ))}
+          </Flex>
+        </Box>
       )}
     </Box>
   )
@@ -378,6 +391,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <Box style={{ width: '4px', height: '4px', borderTop: '1px solid var(--gray-12)', borderRight: '1px solid var(--gray-12)', position: 'absolute', bottom: '0', right: '0' }} />
       </Box>,
       children: [
+        {
+          id: 'integrations-huntflow',
+          label: 'Huntflow',
+          icon: <Text size="1" weight="bold" style={{ color: 'var(--gray-12)', width: '16px', textAlign: 'center' }}>H</Text>,
+          href: '/huntflow',
+        },
         {
           id: 'integrations-clickup',
           label: 'ClickUp',

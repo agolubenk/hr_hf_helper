@@ -122144,3 +122144,4 @@ DEBUG: Статус успешно обновлен через /accounts/291341/
 [12/Jan/2026 21:49:14] "GET /interviewers/list/ HTTP/1.1" 200 165940
 [12/Jan/2026 21:52:10] "GET /interviewers/19/edit/ HTTP/1.1" 200 123073
 [12/Jan/2026 21:53:02] "GET /interviewers/create/ HTTP/1.1" 200 122844
+[12/Jan/2026 22:02:06] "GET /huntflow/ HTTP/1.1" 200 122526
