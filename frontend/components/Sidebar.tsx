@@ -509,6 +509,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           href: '/company-settings/grades',
         },
         {
+          id: 'company-settings-sla',
+          label: 'SLA',
+          icon: <ClockIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+          href: '/company-settings/sla',
+        },
+        {
           id: 'company-settings-benchmark',
           label: 'Бенчмарк',
           icon: <BarChartIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,

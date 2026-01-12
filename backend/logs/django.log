@@ -122131,3 +122131,11 @@ DEBUG: Статус успешно обновлен через /accounts/291341/
 [12/Jan/2026 20:36:26] "GET /hiring-plans/requests/create/ HTTP/1.1" 200 127866
 [12/Jan/2026 20:36:45] "POST /hiring-plans/requests/create/ HTTP/1.1" 302 0
 [12/Jan/2026 20:36:45] "GET /hiring-plans/ HTTP/1.1" 200 275773
+[12/Jan/2026 20:58:01] "GET /hiring-plans/metrics/ HTTP/1.1" 200 132486
+[12/Jan/2026 20:58:18] "GET /hiring-plans/metrics/?period=last_year HTTP/1.1" 200 132468
+[12/Jan/2026 20:58:28] "GET /hiring-plans/metrics/?period=current_year HTTP/1.1" 200 132462
+[12/Jan/2026 20:58:48] "GET /hiring-plans/sla/ HTTP/1.1" 200 200072
+[12/Jan/2026 21:07:08] "GET /hiring-plans/sla/49/edit/ HTTP/1.1" 200 125065
+[12/Jan/2026 21:07:08] "GET /static/css/hrhelper.css HTTP/1.1" 304 0
+[12/Jan/2026 21:37:07] "GET /hiring-plans/ HTTP/1.1" 200 275230
+[12/Jan/2026 21:37:17] "GET /hiring-plans/requests/create/ HTTP/1.1" 200 127866

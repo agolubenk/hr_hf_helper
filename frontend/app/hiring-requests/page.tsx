@@ -1,14 +1,13 @@
 'use client'
 
 import AppLayout from "@/components/AppLayout"
-import { Box, Flex, Text, Button, SegmentedControl } from "@radix-ui/themes"
+import { Box, Flex, Text, Button, SegmentedControl, DropdownMenu } from "@radix-ui/themes"
 import { useState } from "react"
 import RequestsSearchFilters from "@/components/requests/RequestsSearchFilters"
 import RequestsStats from "@/components/requests/RequestsStats"
 import RequestListItem from "@/components/requests/RequestListItem"
 import RequestsTable from "@/components/requests/RequestsTable"
-import { GridIcon, ListBulletIcon } from "@radix-ui/react-icons"
-import { HamburgerMenuIcon } from "@radix-ui/react-icons"
+import { HamburgerMenuIcon, DownloadIcon, UploadIcon, DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { useRouter } from "next/navigation"
 import styles from './hiring-requests.module.css'
 
@@ -230,6 +229,46 @@ export default function HiringRequestsPage() {
             <Text size="5" weight="bold">Заявки</Text>
           </Flex>
           <Flex align="center" gap="3">
+            {/* Кнопка импорта/экспорта Excel */}
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <Button 
+                  size="2" 
+                  variant="soft"
+                  className={styles.excelButton}
+                >
+                  <Flex align="center" gap="2">
+                    <DotsHorizontalIcon width={16} height={16} />
+                    <Text>Excel</Text>
+                  </Flex>
+                </Button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                <DropdownMenu.Item
+                  onSelect={() => {
+                    // TODO: Реализовать импорт Excel
+                    alert('Импорт Excel будет реализован')
+                  }}
+                >
+                  <Flex align="center" gap="2">
+                    <UploadIcon width={16} height={16} />
+                    <Text>Импорт Excel</Text>
+                  </Flex>
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  onSelect={() => {
+                    // TODO: Реализовать экспорт Excel
+                    alert('Экспорт Excel будет реализован')
+                  }}
+                >
+                  <Flex align="center" gap="2">
+                    <DownloadIcon width={16} height={16} />
+                    <Text>Экспорт Excel</Text>
+                  </Flex>
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+
             {/* Свитчер "Все" / "Блоками" */}
             <SegmentedControl.Root 
               value={displayMode} 

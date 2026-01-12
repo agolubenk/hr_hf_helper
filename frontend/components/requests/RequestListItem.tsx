@@ -47,10 +47,9 @@ interface RequestListItemProps {
 
 export default function RequestListItem({ request, onClick, requestsCount, requests }: RequestListItemProps) {
   const router = useRouter()
-  const [isExpanded, setIsExpanded] = useState(false)
-  
-  // Если переданы несколько заявок, показываем их в таблице (всегда развернута)
+  // Если переданы несколько заявок, показываем их в таблице (развернута по умолчанию)
   const hasMultipleRequests = requests && requests.length > 1
+  const [isExpanded, setIsExpanded] = useState(hasMultipleRequests || false)
 
   const getStatusLabel = (status: string) => {
     switch (status) {
@@ -72,7 +71,8 @@ export default function RequestListItem({ request, onClick, requestsCount, reque
   }
 
   const hasTableData = request.grade && request.startDate && request.endDate && request.factDays && request.slaDays
-  const shouldShowExpandButton = hasTableData && !hasMultipleRequests
+  // Показываем кнопку разворота если есть данные для таблицы (для одиночных заявок) или если это группа заявок
+  const shouldShowExpandButton = hasTableData || (hasMultipleRequests && requests && requests.some(r => r.grade && r.startDate && r.endDate && r.factDays && r.slaDays))
 
   return (
     <Box className={styles.requestListItem}>
@@ -225,8 +225,8 @@ export default function RequestListItem({ request, onClick, requestsCount, reque
         </Box>
       )}
 
-      {/* Таблица для нескольких заявок (всегда развернута) */}
-      {hasMultipleRequests && requests && (
+      {/* Таблица для нескольких заявок (разворачивается/сворачивается) */}
+      {hasMultipleRequests && requests && isExpanded && (
         <Box mt="3" className={styles.expandedTable}>
           <Table.Root>
             <Table.Header>
