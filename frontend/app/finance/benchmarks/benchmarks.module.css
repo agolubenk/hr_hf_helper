@@ -1,0 +1,80 @@
+.container {
+  padding: 0 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.statCard {
+  padding: 20px;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.statCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.filtersCard {
+  padding: 20px;
+}
+
+.additionalFields {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--gray-2);
+  border-radius: 6px;
+}
+
+.fieldToggle {
+  border-radius: 16px;
+  padding: 4px 12px;
+  font-size: 12px;
+}
+
+.tableContainer {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.pagination {
+  gap: 0;
+  border: 1px solid var(--gray-6);
+  border-radius: 6px;
+  overflow: hidden;
+  display: inline-flex;
+}
+
+.pagination button {
+  border-radius: 0;
+}
+
+/* Единые стили для таблицы */
+.table {
+  width: 100%;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .additionalFields {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

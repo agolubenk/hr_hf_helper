@@ -39,6 +39,59 @@ export interface PLNTax {
   updated_at: string
 }
 
+// Типы для Benchmarks API
+export interface Benchmark {
+  id: number
+  type: 'candidate' | 'vacancy'
+  vacancy: number
+  vacancy_name: string
+  grade: number
+  grade_name: string
+  salary_from: string
+  salary_to?: string | null
+  salary_display: string
+  location: string
+  work_format?: string | null
+  compensation?: string | null
+  benefits?: string | null
+  development?: string | null
+  technologies?: string | null
+  domain?: string | null
+  domain_display?: string | null
+  domain_description?: string | null
+  hh_vacancy_id?: string | null
+  notes?: string | null
+  is_active: boolean
+  type_icon?: string
+  type_color?: string
+  date_added: string
+  created_at: string
+  updated_at: string
+}
+
+export interface BenchmarkSettings {
+  id: number
+  vacancy_fields: string[]
+  candidate_fields: string[]
+}
+
+export interface BenchmarkStats {
+  total_benchmarks: number
+  active_benchmarks: number
+  type_stats: Array<{
+    type: string
+    count: number
+    avg_salary_from: string
+    avg_salary_to: string
+  }>
+  grade_stats: Array<{
+    grade__name: string
+    count: number
+    avg_salary_from: string
+    avg_salary_to: string
+  }>
+}
+
 // Функция для получения CSRF токена из куки
 function getCsrfToken(): string | null {
   if (typeof document === 'undefined') return null
@@ -145,5 +198,72 @@ export const plnTaxesApi = {
   delete: (id: number) =>
     apiRequest<void>(`finance/pln-taxes/${id}/`, {
       method: 'DELETE',
+    }),
+}
+
+// Типы для Vacancies API
+export interface Vacancy {
+  id: number
+  name: string
+  title?: string
+  status?: string
+}
+
+// API для вакансий
+export const vacanciesApi = {
+  getAll: () => apiRequest<Vacancy[]>('vacancies/vacancies/'),
+  getById: (id: number) => apiRequest<Vacancy>(`vacancies/vacancies/${id}/`),
+}
+
+// API для бенчмарков
+export const benchmarksApi = {
+  getAll: (params?: {
+    search?: string
+    type?: string
+    vacancy?: number
+    grade?: number
+    is_active?: boolean
+    page?: number
+    page_size?: number
+  }) => {
+    const queryParams = new URLSearchParams()
+    if (params?.search) queryParams.append('search', params.search)
+    if (params?.type) queryParams.append('type', params.type)
+    if (params?.vacancy) queryParams.append('vacancy', params.vacancy.toString())
+    if (params?.grade) queryParams.append('grade', params.grade.toString())
+    if (params?.is_active !== undefined) queryParams.append('is_active', params.is_active.toString())
+    if (params?.page) queryParams.append('page', params.page.toString())
+    if (params?.page_size) queryParams.append('page_size', params.page_size.toString())
+    
+    const queryString = queryParams.toString()
+    const endpoint = `finance/benchmarks/${queryString ? `?${queryString}` : ''}`
+    return apiRequest<{ results: Benchmark[]; count: number; next: string | null; previous: string | null }>(endpoint)
+  },
+  getById: (id: number) => apiRequest<Benchmark>(`finance/benchmarks/${id}/`),
+  create: (data: Partial<Benchmark>) =>
+    apiRequest<Benchmark>('finance/benchmarks/', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  update: (id: number, data: Partial<Benchmark>) =>
+    apiRequest<Benchmark>(`finance/benchmarks/${id}/`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+  patch: (id: number, data: Partial<Benchmark>) =>
+    apiRequest<Benchmark>(`finance/benchmarks/${id}/`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
+  delete: (id: number) =>
+    apiRequest<void>(`finance/benchmarks/${id}/`, {
+      method: 'DELETE',
+    }),
+  getStats: () => apiRequest<BenchmarkStats>('finance/benchmarks/stats/'),
+  getSettings: () => apiRequest<BenchmarkSettings>('finance/benchmark-settings/'),
+  updateSettings: (data: Partial<BenchmarkSettings>) =>
+    apiRequest<BenchmarkSettings>('finance/benchmark-settings/', {
+      method: 'POST',
+      body: JSON.stringify(data),
     }),
 }

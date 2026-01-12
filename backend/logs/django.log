@@ -122245,3 +122245,11 @@ DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'n
 [12/Jan/2026 22:34:04] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-12&end_date=2026-01-12&vacancy_id=9 HTTP/1.1" 200 1030
 [12/Jan/2026 22:34:04] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-12&end_date=2026-01-12&vacancy_id=3 HTTP/1.1" 200 1124
 [12/Jan/2026 22:34:04] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-01-12&end_date=2026-01-12&vacancy_id=1 HTTP/1.1" 200 1121
+/Users/agolubenko/hrhelper/fullstack/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1595: RuntimeWarning: DateTimeField Benchmark.date_added received a naive datetime (2025-01-12 23:08:48.357847) while time zone support is active.
+  warnings.warn(
+[12/Jan/2026 23:08:49] "GET /finance/benchmarks/ HTTP/1.1" 200 289130
+[12/Jan/2026 23:08:49] "GET /static/css/finance.css HTTP/1.1" 404 1905
+[12/Jan/2026 23:09:05] "GET /finance/benchmarks/list/ HTTP/1.1" 200 255539
+[12/Jan/2026 23:09:05] "GET /static/css/finance.css HTTP/1.1" 404 1905
+[12/Jan/2026 23:17:17] "GET /finance/benchmarks/list/?page=3 HTTP/1.1" 200 256371
+[12/Jan/2026 23:17:17] "GET /static/css/finance.css HTTP/1.1" 404 1905

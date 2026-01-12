@@ -5,6 +5,18 @@ const nextConfig = {
   assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
   // Убеждаемся, что статические файлы правильно обслуживаются
   trailingSlash: false,
+  // Настройки для правильной обработки статических файлов
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      }
+    }
+    return config
+  },
+  // Отключаем оптимизацию CSS для избежания проблем с предзагрузкой
+  swcMinify: true,
 }
 
 module.exports = nextConfig

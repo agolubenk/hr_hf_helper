@@ -10,6 +10,9 @@ export default function CompanyReportPage() {
   const [period, setPeriod] = useState('monthly')
   const [startDate, setStartDate] = useState('12.01.2025')
   const [endDate, setEndDate] = useState('12.01.2026')
+  const [graphPeriod, setGraphPeriod] = useState('months')
+  const [graphUnit, setGraphUnit] = useState('hours')
+  const [graphFilter, setGraphFilter] = useState('vacancies')
 
   // Моковые данные метрик
   const metrics = {
@@ -25,6 +28,19 @@ export default function CompanyReportPage() {
     { value: 'monthly', label: 'Помесячная' },
     { value: 'quarterly', label: 'Поквартальная' },
     { value: 'yearly', label: 'Годовая' }
+  ]
+
+  // Моковые данные вакансий для графика
+  const vacancies = [
+    { id: 1, name: 'AQA Engineer (TS)', checked: true, color: '#06b6d4' },
+    { id: 2, name: 'Backend Engineer (Java)', checked: true, color: '#10b981' },
+    { id: 3, name: 'DevOps Engineer', checked: true, color: '#f97316' },
+    { id: 4, name: 'Frontend Engineer (React)', checked: true, color: '#8b5cf6' },
+    { id: 5, name: 'Manual QA Engineer', checked: true, color: '#ec4899' },
+    { id: 6, name: 'Project Manager', checked: true, color: '#eab308' },
+    { id: 7, name: 'Support Engineer (Service Manager/Sport Analyst)', checked: true, color: '#6b7280' },
+    { id: 8, name: 'System Administrator', checked: true, color: '#3b82f6' },
+    { id: 9, name: 'UX/UI Designer', checked: true, color: '#14b8a6' }
   ]
 
   // Моковые данные для таблицы
@@ -93,6 +109,91 @@ export default function CompanyReportPage() {
             </Box>
           </Card>
         </Flex>
+
+        {/* График */}
+        <Card mb="4" className={styles.graphCard}>
+          <Flex direction="column" gap="4">
+            {/* Заголовок и фильтры графика */}
+            <Flex align="center" style={{ justifyContent: 'space-between' }} wrap="wrap">
+              <Text size="4" weight="bold">График</Text>
+              <Flex gap="2" wrap="wrap">
+                <Box>
+                  <Select.Root value={graphPeriod} onValueChange={setGraphPeriod}>
+                    <Select.Trigger style={{ minWidth: '120px' }} placeholder="Месяцы" />
+                    <Select.Content>
+                      <Select.Item value="months">Месяцы</Select.Item>
+                      <Select.Item value="weeks">Недели</Select.Item>
+                      <Select.Item value="days">Дни</Select.Item>
+                    </Select.Content>
+                  </Select.Root>
+                </Box>
+                <Box>
+                  <Select.Root value={graphUnit} onValueChange={setGraphUnit}>
+                    <Select.Trigger style={{ minWidth: '120px' }} placeholder="Часы" />
+                    <Select.Content>
+                      <Select.Item value="hours">Часы</Select.Item>
+                      <Select.Item value="count">Количество</Select.Item>
+                    </Select.Content>
+                  </Select.Root>
+                </Box>
+              </Flex>
+            </Flex>
+
+            {/* Фильтр по рекрутерам/вакансиям */}
+            <Box>
+              <Select.Root value={graphFilter} onValueChange={setGraphFilter}>
+                <Select.Trigger style={{ minWidth: '150px' }} placeholder="По вакансиям" />
+                <Select.Content>
+                  <Select.Item value="recruiters">По рекрутерам</Select.Item>
+                  <Select.Item value="vacancies">По вакансиям</Select.Item>
+                </Select.Content>
+              </Select.Root>
+            </Box>
+
+            {/* Чекбоксы и легенда */}
+            <Box>
+              <Flex gap="3" wrap="wrap" mb="3">
+                {vacancies.map((item) => (
+                  <Flex key={item.id} align="center" gap="2">
+                    <input
+                      type="checkbox"
+                      checked={item.checked}
+                      onChange={() => {}}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    <Text size="2">{item.name}</Text>
+                  </Flex>
+                ))}
+              </Flex>
+              
+              {/* Легенда */}
+              <Flex gap="3" wrap="wrap" mt="2">
+                {vacancies.map((item) => (
+                  <Flex key={item.id} align="center" gap="2">
+                    <Box
+                      style={{
+                        width: '16px',
+                        height: '16px',
+                        backgroundColor: item.color,
+                        borderRadius: '2px'
+                      }}
+                    />
+                    <Text size="1" color="gray">
+                      {item.name} ({graphUnit === 'hours' ? 'часы' : 'количество'})
+                    </Text>
+                  </Flex>
+                ))}
+              </Flex>
+            </Box>
+
+            {/* Область графика */}
+            <Box className={styles.graphArea}>
+              <Text size="2" color="gray" style={{ textAlign: 'center', padding: '40px' }}>
+                График будет отображаться здесь
+              </Text>
+            </Box>
+          </Flex>
+        </Card>
 
         {/* Таблица детализации */}
         <Card>
