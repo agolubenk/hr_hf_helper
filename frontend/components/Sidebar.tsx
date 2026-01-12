@@ -76,6 +76,9 @@ function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefi
   if (item.id === 'company-settings' && pathname.startsWith('/company-settings')) {
     return true
   }
+  if (item.id === 'vacancies-requests' && pathname.startsWith('/hiring-requests')) {
+    return true
+  }
   
   // Проверяем сам элемент
   if (item.href) {
@@ -321,7 +324,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           id: 'vacancies-requests',
           label: 'Заявки',
           icon: <ClipboardIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-          href: '/vacancies/requests',
+          href: '/hiring-requests',
         },
         {
           id: 'vacancies-salary-ranges',

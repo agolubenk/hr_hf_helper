@@ -2,7 +2,7 @@
 
 import { Box, Flex, Text, Button, Card, TextField, Dialog, Callout } from "@radix-ui/themes"
 import { useState, useEffect } from "react"
-import { PlusIcon, TrashIcon, Cross2Icon, InfoCircledIcon, ListBulletIcon, FileTextIcon, GearIcon, ArrowRightIcon } from "@radix-ui/react-icons"
+import { PlusIcon, TrashIcon, Cross2Icon, InfoCircledIcon, ListBulletIcon, FileTextIcon, GearIcon, ArrowRightIcon, ArrowLeftIcon } from "@radix-ui/react-icons"
 import styles from './ScorecardSettings.module.css'
 
 interface ScorecardCriteria {
@@ -350,24 +350,54 @@ export default function ScorecardSettings() {
           </Text>
 
           <Flex direction="column" gap="3">
-            {flatCriteria.map((item) => {
-              // Генерируем пример значения для предпросмотра в сером блоке
-              let exampleValue = ''
-              if (item.description) {
-                exampleValue = item.description
-                  .replace(/\[candidate_firstname\]/g, 'Иван')
-                  .replace(/\[candidate_lastname\]/g, 'Иванов')
-                  .replace(/\[vacancy_title\]/g, 'Frontend Engineer')
-                  .replace(/\[grade\]/g, 'Senior')
-                  .replace(/\[date_day\]/g, '08')
-                  .replace(/\[month_full_ru\]/g, 'сентябрь')
-                  .replace(/\[year_full\]/g, '2025')
-                  .replace(/\[weekday_short_ru\]/g, 'ПН')
-                  .replace(/\[weekday_full_ru\]/g, 'Понедельник')
-                  .substring(0, 60)
-                if (item.description.length > 60) exampleValue += '...'
-              } else if (item.name) {
-                exampleValue = item.name
+            {flatCriteria.map((item, index) => {
+              // Для первого корневого элемента всегда показываем "G-Drive"
+              let displayValue = ''
+              if (index === 0 && item.level === 0) {
+                displayValue = 'G-Drive'
+              } else {
+                // Функция для генерации примера из описания
+                const generateExample = (description: string) => {
+                  return description
+                    .replace(/\[candidate_firstname\]/g, 'Иван')
+                    .replace(/\[candidate_lastname\]/g, 'Иванов')
+                    .replace(/\[vacancy_title\]/g, 'Frontend Engineer')
+                    .replace(/\[grade\]/g, 'Senior')
+                    .replace(/\[date_day\]/g, '08')
+                    .replace(/\[month_full_ru\]/g, 'сентябрь')
+                    .replace(/\[year_full\]/g, '2025')
+                    .replace(/\[weekday_short_ru\]/g, 'ПН')
+                    .replace(/\[weekday_full_ru\]/g, 'Понедельник')
+                }
+                
+                // Для вложенных элементов: если есть собственное описание - показываем его пример, иначе пример из родителя
+                if (item.level > 0) {
+                  // Находим родительский элемент
+                  const parentItem = item.parentId 
+                    ? flatCriteria.find(c => c.id === item.parentId)
+                    : null
+                  
+                  if (item.description && item.description.trim()) {
+                    // Если у элемента есть описание, показываем пример из него
+                    displayValue = generateExample(item.description)
+                    if (displayValue.length > 60) displayValue = displayValue.substring(0, 60) + '...'
+                  } else if (parentItem && parentItem.description && parentItem.description.trim()) {
+                    // Если у элемента нет описания, но есть у родителя - показываем пример из родителя
+                    displayValue = generateExample(parentItem.description)
+                    if (displayValue.length > 60) displayValue = displayValue.substring(0, 60) + '...'
+                  } else {
+                    // Если ни у элемента, ни у родителя нет описания - показываем прочерк
+                    displayValue = '-'
+                  }
+                } else {
+                  // Для корневых элементов (не первого) показываем пример из собственного описания
+                  if (item.description && item.description.trim()) {
+                    displayValue = generateExample(item.description)
+                    if (displayValue.length > 60) displayValue = displayValue.substring(0, 60) + '...'
+                  } else {
+                    displayValue = '-'
+                  }
+                }
               }
 
               // Вычисляем размеры в зависимости от уровня вложенности
@@ -376,12 +406,26 @@ export default function ScorecardSettings() {
               const iconSize = item.level > 0 ? 12 : 14
               const textSize = item.level > 0 ? '1' : '2'
               
+              // Вычисляем ширину и отступы для эффекта "лестницы"
+              // Каждый последующий элемент уменьшается на 16px по ширине
+              // marginLeft компенсирует уменьшение, чтобы правый край был выровнен
+              const baseWidth = 680
+              const widthReduction = index * 16
+              const itemWidth = Math.max(baseWidth - widthReduction, 200) // Минимальная ширина 200px
+              // marginLeft только для компенсации уменьшения ширины (чтобы правый край был выровнен)
+              const marginLeft = index * 16
+              // paddingLeft для визуального отступа вложенности
+              const paddingLeft = item.level * 16
+              
               return (
                 <Box
                   key={item.id}
                   className={styles.criteriaItem}
                   style={{
-                    paddingLeft: `${item.level * 16}px`,
+                    marginLeft: `${marginLeft}px`,
+                    paddingLeft: `${paddingLeft}px`,
+                    width: `${itemWidth}px`,
+                    maxWidth: `${itemWidth}px`,
                     border: selectedCriteriaId === item.id 
                       ? '2px solid var(--accent-9)' 
                       : '1px solid var(--gray-a6)',
@@ -392,60 +436,68 @@ export default function ScorecardSettings() {
                   }}
                   onClick={() => setSelectedCriteriaId(item.id)}
                 >
-                  {/* Серый тег с примером значения (показывается только если есть название или пример) */}
-                  {(item.name || exampleValue) && (
-                    <Flex
-                      align="center"
-                      justify="between"
-                      p={paddingSize}
-                      style={{
-                        background: 'var(--gray-4)',
-                        borderBottom: '1px solid var(--gray-a6)',
-                        minHeight: item.level > 0 ? '28px' : '32px',
-                      }}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Flex align="center" gap="2" style={{ flex: 1, minWidth: 0 }}>
-                        <FileTextIcon 
-                          width={iconSize} 
-                          height={iconSize} 
-                          style={{ color: 'var(--gray-11)', flexShrink: 0 }}
-                        />
-                        <Text 
-                          size={textSize as any} 
-                          weight="medium" 
-                          style={{ 
-                            color: 'var(--gray-12)',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                            fontSize: `${fontSize}px`,
-                          }}
-                          title={item.name || exampleValue}
-                        >
-                          {item.name || exampleValue || 'Новый критерий'}
-                        </Text>
-                      </Flex>
-                      <Button
-                        variant="ghost"
-                        size="1"
-                        color="red"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleDeleteCriteria(item.id, item.parentId)
-                        }}
-                        title="Удалить"
-                        style={{ 
-                          padding: item.level > 0 ? '2px' : '4px', 
-                          minWidth: 'auto', 
-                          marginLeft: '8px',
-                          height: item.level > 0 ? '20px' : '24px',
-                        }}
+                  {/* Серый тег с примером значения (всегда показывается) */}
+                  <Flex
+                    align="center"
+                    justify="between"
+                    p={paddingSize}
+                    style={{
+                      background: 'var(--gray-4)',
+                      borderBottom: '1px solid var(--gray-a6)',
+                      minHeight: item.level > 0 ? '28px' : '32px',
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Flex align="center" gap="2" style={{ flex: 1, minWidth: 0 }}>
+                      <svg 
+                        width={iconSize} 
+                        height={iconSize} 
+                        viewBox="0 0 15 15" 
+                        fill="none" 
+                        xmlns="http://www.w3.org/2000/svg"
+                        style={{ color: 'var(--gray-11)', flexShrink: 0 }}
                       >
-                        <TrashIcon width={iconSize} height={iconSize} />
-                      </Button>
+                        <path 
+                          d="M1 4.5C1 4.22386 1.22386 4 1.5 4H6.08579C6.21839 4 6.34557 4.05268 6.43934 4.14645L7.85355 5.56066C7.94732 5.65443 8 5.78161 8 5.91421V12.5C8 12.7761 7.77614 13 7.5 13H1.5C1.22386 13 1 12.7761 1 12.5V4.5ZM2 5V12H7V6H5.5C5.22386 6 5 5.77614 5 5.5V5H2ZM6 5.70711L6.79289 5H6V5.70711Z" 
+                          fill="currentColor" 
+                          fillRule="evenodd" 
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <Text 
+                        size={textSize as any} 
+                        weight="medium" 
+                        style={{ 
+                          color: 'var(--gray-12)',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          fontSize: `${fontSize}px`,
+                        }}
+                        title={displayValue || item.name || 'Новый критерий'}
+                      >
+                        {displayValue || item.name || 'Новый критерий'}
+                      </Text>
                     </Flex>
-                  )}
+                    <Button
+                      variant="ghost"
+                      size="1"
+                      color="red"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleDeleteCriteria(item.id, item.parentId)
+                      }}
+                      title="Удалить"
+                      style={{ 
+                        padding: item.level > 0 ? '2px' : '4px', 
+                        minWidth: 'auto', 
+                        marginLeft: '8px',
+                        height: item.level > 0 ? '20px' : '24px',
+                      }}
+                    >
+                      <TrashIcon width={iconSize} height={iconSize} />
+                    </Button>
+                  </Flex>
 
                   {/* Поле ввода с паттернами */}
                   <Box p={paddingSize} style={{ background: 'var(--color-panel)' }}>
@@ -468,6 +520,7 @@ export default function ScorecardSettings() {
                         <Button
                           variant="ghost"
                           size={item.level > 0 ? "1" : "2"}
+                          color="red"
                           onClick={(e) => {
                             e.stopPropagation()
                             handleUpdateCriteria(item.id, 'description', '', item.parentId)
@@ -478,35 +531,43 @@ export default function ScorecardSettings() {
                             padding: '0 4px', 
                             minWidth: 'auto', 
                             flexShrink: 0,
-                            border: '1px solid var(--orange-9)',
+                            border: '1px solid var(--red-9)',
                             borderRadius: '4px',
                             height: item.level > 0 ? '20px' : '28px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
+                            background: 'var(--red-3)',
                           }}
                         >
-                          <Cross2Icon width={iconSize} height={iconSize} style={{ color: 'var(--orange-11)' }} />
+                          <svg 
+                            width={iconSize} 
+                            height={iconSize} 
+                            viewBox="0 0 24 24" 
+                            fill="none" 
+                            xmlns="http://www.w3.org/2000/svg"
+                            style={{ color: 'var(--red-11)' }}
+                          >
+                            <path 
+                              d="M8 19L3 12L8 5" 
+                              stroke="currentColor" 
+                              strokeWidth="2" 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round"
+                            />
+                            <line 
+                              x1="3" 
+                              y1="12" 
+                              x2="21" 
+                              y2="12" 
+                              stroke="currentColor" 
+                              strokeWidth="2" 
+                              strokeLinecap="round"
+                            />
+                          </svg>
                         </Button>
                       )}
                     </Flex>
-                    
-                    {/* Превью значения под полем ввода (если есть описание) */}
-                    {item.description && exampleValue && (
-                      <Box 
-                        mt="2" 
-                        p={paddingSize}
-                        style={{ 
-                          background: 'var(--gray-2)',
-                          borderRadius: '4px',
-                          border: '1px solid var(--gray-a6)',
-                        }}
-                      >
-                        <Text size={textSize as any} color="gray" style={{ fontSize: `${fontSize - 1}px` }}>
-                          {exampleValue}
-                        </Text>
-                      </Box>
-                    )}
                     
                     {/* Поле названия критерия (если нет названия, показываем отдельно) */}
                     {!item.name && (

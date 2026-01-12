@@ -1,0 +1,118 @@
+.tableContainer {
+  background: var(--gray-2);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid var(--gray-6);
+  overflow-x: auto;
+}
+
+.tableRow {
+  transition: background-color 0.2s;
+}
+
+.tableRow:hover {
+  background: var(--gray-3);
+}
+
+.gradeTag {
+  background: var(--gray-4);
+  color: var(--gray-11);
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.statusTag {
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.statusblue {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+
+.statusorange {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+.statusteal {
+  background: rgba(18, 165, 148, 0.2);
+  color: #12a594;
+}
+
+.statusred {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.slaTag {
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.slagray {
+  background: var(--gray-4);
+  color: var(--gray-11);
+}
+
+.slaorange {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+.slared {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.slateal {
+  background: rgba(18, 165, 148, 0.2);
+  color: #12a594;
+}
+
+.t2hTag {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.t2hSlaTag {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.actionButton {
+  background: var(--gray-3) !important;
+  color: var(--gray-11) !important;
+  border: 1px solid var(--gray-6) !important;
+  border-radius: 6px !important;
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  padding: 0 !important;
+  margin-left: 2px !important;
+  margin-right: 2px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease-in-out;
+}
+
+.actionButton:hover {
+  background: var(--gray-4) !important;
+  border-color: var(--gray-7) !important;
+  transform: scale(1.05);
+}
