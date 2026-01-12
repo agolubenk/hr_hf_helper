@@ -517,6 +517,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             <Box style={{ width: '2px', height: '12px', backgroundColor: 'var(--gray-12)', marginRight: '2px' }} />
             <Box style={{ width: '2px', height: '12px', backgroundColor: 'var(--gray-12)' }} />
           </Box>,
+          href: '/company-settings/scorecard',
         },
         {
           id: 'company-settings-integrations',

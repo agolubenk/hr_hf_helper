@@ -1,0 +1,22 @@
+.card {
+  padding: 24px;
+  border: 1px solid var(--gray-a6);
+  border-radius: 8px;
+  background: var(--color-panel);
+}
+
+.criteriaItem {
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.criteriaItem:hover {
+  border-color: var(--accent-9) !important;
+  background-color: var(--accent-2) !important;
+}
+
+.actionButton {
+  margin-left: 2px;
+  margin-right: 2px;
+}
