@@ -1,5 +1,9 @@
 .sidebar {
   width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .panel {
@@ -7,6 +11,15 @@
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.quickActionsPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .panelHeader {
@@ -20,6 +33,34 @@
 .panelContent {
   padding: 8px;
   background: var(--gray-2); /* Адаптивный фон для светлой и темной темы */
+}
+
+.quickActionsPanel .panelContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  max-height: 100%;
+}
+
+/* Стили для скроллбара */
+.quickActionsPanel .panelContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.quickActionsPanel .panelContent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.quickActionsPanel .panelContent::-webkit-scrollbar-thumb {
+  background: var(--gray-8);
+  border-radius: 3px;
+}
+
+.quickActionsPanel .panelContent::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-9);
 }
 
 /* Для темной темы */
@@ -91,26 +132,25 @@
 }
 
 .quickActionBlock {
-  flex: 1 1 calc(50% - 4px);
-  min-width: 120px;
+  width: 100%;
   padding: 10px 12px;
   border-radius: 8px;
+  border: 2px solid;
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
+  background: transparent;
   transition: all 0.2s ease-in-out;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .quickActionBlock:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  opacity: 0.9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background: rgba(0, 0, 0, 0.02);
 }
 
 .quickActionBlock:active {
   transform: translateY(0);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
