@@ -104,6 +104,7 @@ const mockVacancy = {
     { id: 23, name: 'Petravets Ilya', email: 'ilya.petravets@softnetix.io', selected: false }
   ],
   analysisPrompt: `Ты - HR-аналитик, который анализирует ответы кандидатов на вопросы рекрутера. Твоя задача - проанализировать ответы кандидата и извлечь структурированную информацию в формате JSON.`,
+  useCommonPrompt: false,
   scorecard: {
     title: '| Scorecard FE',
     link: 'https://docs.google.com/spreadsheets/d/1Zz61HtsXAWvfHtlTucfJQnJEDCKLwcVRybmT9BHfZqg/edit?gi'
@@ -191,7 +192,9 @@ export default function VacancyEditPage() {
 
         <AnalysisPromptEditSection
           prompt={formData.analysisPrompt}
+          useCommonPrompt={formData.useCommonPrompt}
           onChange={(prompt) => setFormData({ ...formData, analysisPrompt: prompt })}
+          onUseCommonPromptChange={(useCommon) => setFormData({ ...formData, useCommonPrompt: useCommon })}
         />
 
         <InterviewersEditSection

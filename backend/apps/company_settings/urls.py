@@ -9,6 +9,7 @@ urlpatterns = [
     path('grades/', views.company_settings_grades, name='grades'),
     path('templates/', views.company_settings_templates, name='templates'),
     path('vacancy-prompt/', views.company_settings_vacancy_prompt, name='vacancy_prompt'),
+    path('vacancy-prompt/api/', views.vacancy_prompt_api, name='vacancy_prompt_api'),
     # API endpoints
     path('api/', views.company_settings_api, name='company_settings_api'),
     path('rejection-templates/api/', views.rejection_templates_api, name='rejection_templates_api'),

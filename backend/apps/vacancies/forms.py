@@ -163,7 +163,7 @@ class VacancyForm(forms.ModelForm):
             'name', 'external_id', 'recruiter', 'technologies', 'tech_interview_duration', 'mandatory_tech_interviewers',
             'invite_title', 'invite_text', 'tech_invite_title', 'tech_invite_text', 'scorecard_title', 'scorecard_link', 
             'questions_belarus', 'questions_poland', 'vacancy_link_belarus', 'vacancy_link_poland',
-            'candidate_update_prompt', 'screening_duration',
+            'candidate_update_prompt', 'use_common_prompt', 'screening_duration',
             'hr_screening_stage', 'tech_screening_stage', 'tech_interview_stage',
             'available_grades', 'interviewers', 'is_active'
         ]
@@ -239,7 +239,12 @@ class VacancyForm(forms.ModelForm):
             'candidate_update_prompt': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 4,
-                'placeholder': 'Промпт для обновления информации о кандидате'
+                'placeholder': 'Промпт для обновления информации о кандидате',
+                'id': 'id_candidate_update_prompt'
+            }),
+            'use_common_prompt': forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+                'id': 'id_use_common_prompt'
             }),
             'screening_duration': forms.NumberInput(attrs={
                 'class': 'form-control',
@@ -275,6 +280,7 @@ class VacancyForm(forms.ModelForm):
             'vacancy_link_belarus': 'Ссылка на вакансию (Беларусь)',
             'vacancy_link_poland': 'Ссылка на вакансию (Польша)',
             'candidate_update_prompt': 'Промпт для обновления кандидата',
+            'use_common_prompt': 'Использовать общий промпт',
             'screening_duration': 'Длительность скринингов',
             'available_grades': 'Доступные грейды',
             'interviewers': 'Интервьюеры',
@@ -293,6 +299,7 @@ class VacancyForm(forms.ModelForm):
             'vacancy_link_belarus': 'Ссылка на вакансию в Беларуси (например, rabota.by, jobs.tut.by)',
             'vacancy_link_poland': 'Ссылка на вакансию в Польше (например, pracuj.pl, nofluffjobs.com)',
             'candidate_update_prompt': 'Промпт для обновления информации о кандидате',
+            'use_common_prompt': 'Если включено, используется единый промпт из настроек компании. Если выключено, используется индивидуальный промпт.',
             'screening_duration': 'Длительность скринингов в минутах (по умолчанию 45 минут)',
             'available_grades': 'Грейды, доступные для данной вакансии',
             'interviewers': 'Интервьюеры, привязанные к вакансии',

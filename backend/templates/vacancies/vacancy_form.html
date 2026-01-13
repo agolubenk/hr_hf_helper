@@ -400,18 +400,58 @@
                             </h6>
                         </div>
                         <div class="col-12">
-                            <div class="mb-3">
-                                <label for="{{ form.candidate_update_prompt.id_for_label }}" class="form-label">
-                                    {{ form.candidate_update_prompt.label }}
-                                </label>
-                                {{ form.candidate_update_prompt }}
-                                {% if form.candidate_update_prompt.help_text %}
-                                    <div class="form-text">{{ form.candidate_update_prompt.help_text }}</div>
-                                {% endif %}
-                                {% if form.candidate_update_prompt.errors %}
-                                    <div class="text-danger">{{ form.candidate_update_prompt.errors }}</div>
-                                {% endif %}
-                            </div>
+                            {% if has_active_common_prompt %}
+                                <!-- Переключатель типа промпта -->
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        {{ form.use_common_prompt }}
+                                        <label class="form-check-label ms-2" for="{{ form.use_common_prompt.id_for_label }}">
+                                            <strong>{{ form.use_common_prompt.label }}</strong>
+                                        </label>
+                                    </div>
+                                    {% if form.use_common_prompt.help_text %}
+                                        <div class="form-text">{{ form.use_common_prompt.help_text }}</div>
+                                    {% endif %}
+                                    {% if form.use_common_prompt.errors %}
+                                        <div class="text-danger">{{ form.use_common_prompt.errors }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Информация об общем промпте -->
+                                <div id="common-prompt-info" class="alert alert-info mb-3" style="display: {% if form.use_common_prompt.value %}block{% else %}none{% endif %};">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Используется общий промпт:</strong>
+                                    <div class="mt-2 p-2 bg-light rounded" style="font-family: 'Courier New', monospace; font-size: 0.9em; white-space: pre-wrap;">{{ common_prompt }}</div>
+                                </div>
+                                
+                                <!-- Поле для индивидуального промпта -->
+                                <div id="individual-prompt-field" class="mb-3" style="display: {% if form.use_common_prompt.value %}none{% else %}block{% endif %};">
+                                    <label for="{{ form.candidate_update_prompt.id_for_label }}" class="form-label">
+                                        {{ form.candidate_update_prompt.label }}
+                                    </label>
+                                    {{ form.candidate_update_prompt }}
+                                    {% if form.candidate_update_prompt.help_text %}
+                                        <div class="form-text">{{ form.candidate_update_prompt.help_text }}</div>
+                                    {% endif %}
+                                    {% if form.candidate_update_prompt.errors %}
+                                        <div class="text-danger">{{ form.candidate_update_prompt.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <!-- Если общего промпта нет, показываем только индивидуальный -->
+                                <div class="mb-3">
+                                    <label for="{{ form.candidate_update_prompt.id_for_label }}" class="form-label">
+                                        {{ form.candidate_update_prompt.label }}
+                                    </label>
+                                    {{ form.candidate_update_prompt }}
+                                    {% if form.candidate_update_prompt.help_text %}
+                                        <div class="form-text">{{ form.candidate_update_prompt.help_text }}</div>
+                                    {% endif %}
+                                    {% if form.candidate_update_prompt.errors %}
+                                        <div class="text-danger">{{ form.candidate_update_prompt.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
 
@@ -575,6 +615,42 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Управление переключателем типа промпта
+    {% if has_active_common_prompt %}
+    const useCommonPromptCheckbox = document.getElementById('{{ form.use_common_prompt.id_for_label }}');
+    const commonPromptInfo = document.getElementById('common-prompt-info');
+    const individualPromptField = document.getElementById('individual-prompt-field');
+    const individualPromptTextarea = document.getElementById('{{ form.candidate_update_prompt.id_for_label }}');
+    
+    if (useCommonPromptCheckbox) {
+        function togglePromptFields() {
+            if (useCommonPromptCheckbox.checked) {
+                // Используется общий промпт
+                if (commonPromptInfo) commonPromptInfo.style.display = 'block';
+                if (individualPromptField) individualPromptField.style.display = 'none';
+                if (individualPromptTextarea) {
+                    individualPromptTextarea.required = false;
+                    individualPromptTextarea.disabled = true;
+                }
+            } else {
+                // Используется индивидуальный промпт
+                if (commonPromptInfo) commonPromptInfo.style.display = 'none';
+                if (individualPromptField) individualPromptField.style.display = 'block';
+                if (individualPromptTextarea) {
+                    individualPromptTextarea.required = true;
+                    individualPromptTextarea.disabled = false;
+                }
+            }
+        }
+        
+        // Инициализация при загрузке
+        togglePromptFields();
+        
+        // Обработчик изменения переключателя
+        useCommonPromptCheckbox.addEventListener('change', togglePromptFields);
+    }
+    {% endif %}
+    
     // Улучшаем UX для поля технологий
     const technologiesInput = document.getElementById('{{ form.technologies.id_for_label }}');
     if (technologiesInput) {

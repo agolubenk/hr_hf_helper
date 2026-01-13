@@ -224,6 +224,26 @@ def company_settings_vacancy_prompt(request):
     return render(request, 'company_settings/vacancy-prompt.html', context)
 
 
+@login_required
+@require_http_methods(["GET"])
+def vacancy_prompt_api(request):
+    """API для получения единого промпта для вакансий"""
+    try:
+        prompt_obj = VacancyPrompt.get_prompt()
+        
+        # Возвращаем данные в формате, который ожидает фронтенд
+        return JsonResponse({
+            'prompt': prompt_obj.prompt,
+            'is_active': prompt_obj.is_active,
+            'created_at': prompt_obj.created_at.isoformat() if prompt_obj.created_at else None,
+            'updated_at': prompt_obj.updated_at.isoformat() if prompt_obj.updated_at else None,
+        })
+    except Exception as e:
+        return JsonResponse({
+            'error': str(e)
+        }, status=500)
+
+
 # Оставляем старую функцию для обратной совместимости
 @login_required
 @require_http_methods(["GET", "POST"])

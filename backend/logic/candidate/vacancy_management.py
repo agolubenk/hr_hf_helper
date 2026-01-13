@@ -202,13 +202,28 @@ def vacancy_detail(request, pk):
             vacancy=vacancy
         ).order_by('-created_at')
         
+        # Получаем информацию об общем промпте, если используется
+        common_prompt = None
+        is_using_common_prompt = False
+        if vacancy.use_common_prompt:
+            try:
+                from apps.company_settings.models import VacancyPrompt
+                prompt_obj = VacancyPrompt.get_prompt()
+                if prompt_obj.is_active:
+                    common_prompt = prompt_obj.prompt
+                    is_using_common_prompt = True
+            except Exception:
+                pass
+        
         context = ContextHelper.get_base_context(
             request,
             f'Вакансия: {vacancy.name}',
             {
                 'vacancy': vacancy,
                 'salary_ranges': salary_ranges,
-                'can_edit': PermissionHelper.can_user_edit_object(request.user, vacancy, 'recruiter')
+                'can_edit': PermissionHelper.can_user_edit_object(request.user, vacancy, 'recruiter'),
+                'common_prompt': common_prompt,
+                'is_using_common_prompt': is_using_common_prompt,
             }
         )
         

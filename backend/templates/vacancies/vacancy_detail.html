@@ -288,9 +288,36 @@
                         </h6>
                     </div>
                     <div class="card-body">
-                        <div class="bg-light p-3 rounded">
-                            {{ vacancy.candidate_update_prompt|linebreaks|default:"Не указан" }}
-                        </div>
+                        {% if is_using_common_prompt %}
+                            <!-- Информация об использовании общего промпта -->
+                            <div class="alert alert-info mb-3">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Используется общий промпт из настроек компании</strong>
+                            </div>
+                            
+                            <!-- Разворачивающийся блок с текстом промпта -->
+                            <div class="mb-3">
+                                <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#commonPromptCollapse" aria-expanded="false" aria-controls="commonPromptCollapse">
+                                    <i class="fas fa-chevron-down me-2" id="promptToggleIcon"></i>
+                                    <span id="promptToggleText">Показать текст промпта</span>
+                                </button>
+                            </div>
+                            
+                            <div class="collapse" id="commonPromptCollapse">
+                                <div class="bg-light p-3 rounded" style="font-family: 'Courier New', monospace; white-space: pre-wrap; max-height: 400px; overflow-y: auto;">
+                                    {{ common_prompt|linebreaks }}
+                                </div>
+                            </div>
+                        {% else %}
+                            <!-- Индивидуальный промпт -->
+                            <div class="bg-light p-3 rounded">
+                                {% if vacancy.candidate_update_prompt %}
+                                    <div style="font-family: 'Courier New', monospace; white-space: pre-wrap;">{{ vacancy.candidate_update_prompt|linebreaks }}</div>
+                                {% else %}
+                                    <span class="text-muted">Не указан</span>
+                                {% endif %}
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -415,4 +442,29 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Управление кнопкой разворачивания/сворачивания промпта
+    const promptCollapse = document.getElementById('commonPromptCollapse');
+    const promptToggleIcon = document.getElementById('promptToggleIcon');
+    const promptToggleText = document.getElementById('promptToggleText');
+    
+    if (promptCollapse && promptToggleIcon && promptToggleText) {
+        promptCollapse.addEventListener('show.bs.collapse', function() {
+            promptToggleIcon.classList.remove('fa-chevron-down');
+            promptToggleIcon.classList.add('fa-chevron-up');
+            promptToggleText.textContent = 'Скрыть текст промпта';
+        });
+        
+        promptCollapse.addEventListener('hide.bs.collapse', function() {
+            promptToggleIcon.classList.remove('fa-chevron-up');
+            promptToggleIcon.classList.add('fa-chevron-down');
+            promptToggleText.textContent = 'Показать текст промпта';
+        });
+    }
+});
+</script>
 {% endblock %}

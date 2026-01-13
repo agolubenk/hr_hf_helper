@@ -74,6 +74,8 @@ const mockVacancy = {
 ОСОБЫЕ ПРАВИЛА ДЛЯ SELECT ПОЛЕЙ:
 - Для поля "Офис" используй только "Да" или "Нет".
 - Для поля "Офисный формат" используй всю доступную информацию относительно формата работы в офисе.`,
+  useCommonPrompt: false,
+  commonPrompt: null,
   scorecard: {
     title: 'Scorecard FE',
     link: 'https://example.com/scorecard'
@@ -148,7 +150,11 @@ export default function VacancyDetailPage() {
           interviewQuestions={mockVacancy.interviewQuestions}
         />
 
-        <AnalysisPromptSection prompt={mockVacancy.analysisPrompt} />
+        <AnalysisPromptSection 
+          prompt={mockVacancy.analysisPrompt} 
+          useCommonPrompt={mockVacancy.useCommonPrompt}
+          commonPrompt={mockVacancy.commonPrompt}
+        />
 
         <InterviewersSection 
           interviewers={mockVacancy.interviewers}

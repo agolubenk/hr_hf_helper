@@ -4351,10 +4351,25 @@ class HRScreening(models.Model):
             # Получаем промпт из вакансии
             from apps.vacancies.models import Vacancy
             vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
-            base_prompt = vacancy.candidate_update_prompt
             
-            if not base_prompt:
-                return False, f"Промпт для обновления кандидата не настроен для вакансии {vacancy.name}"
+            # Проверяем, используется ли общий промпт
+            if vacancy.use_common_prompt:
+                # Получаем общий промпт из настроек компании
+                try:
+                    from apps.company_settings.models import VacancyPrompt
+                    prompt_obj = VacancyPrompt.get_prompt()
+                    if prompt_obj.is_active and prompt_obj.prompt:
+                        base_prompt = prompt_obj.prompt
+                    else:
+                        return False, f"Общий промпт для вакансий не активен или не настроен"
+                except Exception as e:
+                    return False, f"Ошибка получения общего промпта: {str(e)}"
+            else:
+                # Используем локальный промпт вакансии
+                base_prompt = vacancy.candidate_update_prompt
+                
+                if not base_prompt:
+                    return False, f"Промпт для обновления кандидата не настроен для вакансии {vacancy.name}"
             
             # Получаем account_id для формирования ссылки
             account_id = self._get_user_account_id()

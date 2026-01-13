@@ -215,6 +215,18 @@ export const vacanciesApi = {
   getById: (id: number) => apiRequest<Vacancy>(`vacancies/vacancies/${id}/`),
 }
 
+// API для единого промпта вакансий
+export interface VacancyPrompt {
+  prompt: string
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export const vacancyPromptApi = {
+  get: () => apiRequest<VacancyPrompt>('company-settings/vacancy-prompt/api/'),
+}
+
 // API для бенчмарков
 export const benchmarksApi = {
   getAll: (params?: {
