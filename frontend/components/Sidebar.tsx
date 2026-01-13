@@ -559,6 +559,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           href: '/company-settings/scorecard',
         },
         {
+          id: 'company-settings-vacancy-prompt',
+          label: 'Единый промпт для вакансий',
+          icon: <FileTextIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+          href: '/company-settings/vacancy-prompt',
+        },
+        {
           id: 'company-settings-integrations',
           label: 'Интеграции',
           icon: <Box style={{ width: '16px', height: '16px', position: 'relative' }}>

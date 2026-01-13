@@ -1,0 +1,36 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.card {
+  padding: 24px;
+}
+
+.historyContainer {
+  overflow-x: auto;
+}
+
+.historyContainer table {
+  width: 100%;
+  min-width: 800px;
+}
+
+.promptText {
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: help;
+}
+
+@media (max-width: 768px) {
+  .container {
+    gap: 16px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+}
