@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 from django.core.exceptions import PermissionDenied
 import json
 
-from .models import CompanySettings, RejectionTemplate
+from .models import CompanySettings, RejectionTemplate, VacancyPrompt, VacancyPromptHistory
 from .forms import CompanySettingsForm, RejectionTemplateForm
 
 
@@ -191,6 +191,37 @@ def company_settings_templates(request):
     }
     
     return render(request, 'company_settings/templates.html', context)
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def company_settings_vacancy_prompt(request):
+    """Страница настроек единого промпта для вакансий"""
+    check_staff_permission(request.user)
+    
+    prompt_obj = VacancyPrompt.get_prompt()
+    history = VacancyPromptHistory.objects.filter(prompt=prompt_obj).order_by('-updated_at')[:50]  # Последние 50 записей
+    
+    if request.method == 'POST':
+        prompt_text = request.POST.get('prompt', '').strip()
+        is_active = request.POST.get('is_active') == 'on'
+        
+        if not prompt_text:
+            messages.error(request, 'Текст промпта не может быть пустым')
+        else:
+            prompt_obj.prompt = prompt_text
+            prompt_obj.is_active = is_active
+            prompt_obj.save(updated_by=request.user)
+            messages.success(request, 'Промпт успешно сохранен')
+            return redirect('company_settings:vacancy_prompt')
+    
+    context = {
+        'settings': CompanySettings.get_settings(),
+        'prompt': prompt_obj,
+        'history': history,
+    }
+    
+    return render(request, 'company_settings/vacancy-prompt.html', context)
 
 
 # Оставляем старую функцию для обратной совместимости

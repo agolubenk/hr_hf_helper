@@ -292,3 +292,125 @@ class RejectionTemplate(models.Model):
         
         return queryset.order_by('title')
 
+
+class VacancyPrompt(models.Model):
+    """Единый промпт для анализа вакансий - синглтон модель"""
+    
+    prompt = models.TextField(
+        verbose_name='Текст промпта',
+        help_text='Промпт для анализа вакансий с помощью AI',
+        default='Проанализируй вакансию и предоставь детальную информацию о требованиях, зарплате и условиях работы.'
+    )
+    
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name='Активен',
+        help_text='Используется ли этот промпт для анализа вакансий'
+    )
+    
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата создания'
+    )
+    
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name='Дата обновления'
+    )
+    
+    class Meta:
+        verbose_name = 'Промпт для вакансий'
+        verbose_name_plural = 'Промпты для вакансий'
+    
+    def __str__(self):
+        status = 'Активен' if self.is_active else 'Неактивен'
+        return f"Промпт для вакансий ({status})"
+    
+    def save(self, *args, **kwargs):
+        # Извлекаем updated_by из kwargs перед сохранением
+        updated_by = kwargs.pop('updated_by', None)
+        
+        # Проверяем, были ли изменения (только если объект уже существует)
+        if self.pk:
+            try:
+                old_obj = VacancyPrompt.objects.get(pk=self.pk)
+                prompt_changed = old_obj.prompt != self.prompt
+                status_changed = old_obj.is_active != self.is_active
+                has_changes = prompt_changed or status_changed
+            except VacancyPrompt.DoesNotExist:
+                has_changes = True
+        else:
+            has_changes = True
+        
+        # Принудительно устанавливаем ID=1 для синглтона
+        self.pk = 1
+        super().save(*args, **kwargs)
+        
+        # Создаем запись в истории только при наличии изменений
+        if has_changes and self.prompt and updated_by:  # Только если промпт не пустой и есть пользователь
+            VacancyPromptHistory.objects.create(
+                prompt=self,
+                prompt_text=self.prompt,
+                is_active=self.is_active,
+                updated_by=updated_by
+            )
+    
+    @classmethod
+    def get_prompt(cls):
+        """Получает или создает промпт для вакансий (синглтон)"""
+        prompt, created = cls.objects.get_or_create(
+            pk=1,
+            defaults={
+                'prompt': 'Проанализируй вакансию и предоставь детальную информацию о требованиях, зарплате и условиях работы.',
+                'is_active': True
+            }
+        )
+        return prompt
+
+
+class VacancyPromptHistory(models.Model):
+    """История изменений промпта для вакансий"""
+    
+    prompt = models.ForeignKey(
+        VacancyPrompt,
+        on_delete=models.CASCADE,
+        related_name='history',
+        verbose_name='Промпт',
+        null=True,
+        blank=True
+    )
+    
+    prompt_text = models.TextField(
+        verbose_name='Текст промпта',
+        help_text='Текст промпта на момент сохранения'
+    )
+    
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name='Активен',
+        help_text='Был ли промпт активен на момент сохранения'
+    )
+    
+    updated_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name='Обновил',
+        help_text='Пользователь, который внес изменения'
+    )
+    
+    updated_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата обновления'
+    )
+    
+    class Meta:
+        verbose_name = 'История промпта'
+        verbose_name_plural = 'История промптов'
+        ordering = ['-updated_at']
+    
+    def __str__(self):
+        user_name = self.updated_by.get_full_name() or self.updated_by.username if self.updated_by else 'Неизвестно'
+        return f"История от {self.updated_at.strftime('%d.%m.%Y %H:%M')} ({user_name})"
+
