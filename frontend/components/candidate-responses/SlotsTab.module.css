@@ -1,0 +1,29 @@
+.container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.settingsCard {
+  padding: 24px;
+}
+
+.exampleCallout {
+  margin-top: 8px;
+}
+
+.exampleBox {
+  padding: 12px;
+  background: var(--gray-2);
+  border: 1px solid var(--gray-4);
+  border-radius: 6px;
+  margin-top: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .settingsCard {
+    padding: 16px;
+  }
+}

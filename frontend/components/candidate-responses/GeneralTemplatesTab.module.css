@@ -1,0 +1,55 @@
+.container {
+  width: 100%;
+}
+
+.accordionItem {
+  margin-bottom: 16px;
+  border: 1px solid var(--gray-6);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.accordionHeader {
+  background: linear-gradient(135deg, var(--accent-9) 0%, var(--accent-10) 100%);
+  color: white;
+  padding: 16px 20px;
+  transition: background 0.2s ease;
+}
+
+.accordionHeader:hover {
+  background: linear-gradient(135deg, var(--accent-10) 0%, var(--accent-11) 100%);
+}
+
+.accordionContent {
+  padding: 20px;
+  background: white;
+}
+
+.templateCard {
+  padding: 16px;
+  border: 1px solid var(--gray-6);
+  border-radius: 8px;
+  background: var(--gray-2);
+}
+
+.messageBox {
+  padding: 12px;
+  background: var(--gray-1);
+  border: 1px solid var(--gray-4);
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .accordionContent {
+    padding: 16px;
+  }
+
+  .templateCard {
+    padding: 12px;
+  }
+}

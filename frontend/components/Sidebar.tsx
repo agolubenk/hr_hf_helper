@@ -21,7 +21,8 @@ import {
   ClockIcon,
   StarIcon,
   ReloadIcon,
-  MixerHorizontalIcon
+  MixerHorizontalIcon,
+  ChatBubbleIcon
 } from "@radix-ui/react-icons"
 import { useState, ReactNode, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
@@ -563,6 +564,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           label: 'Единый промпт для вакансий',
           icon: <FileTextIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
           href: '/company-settings/vacancy-prompt',
+        },
+        {
+          id: 'candidate-responses',
+          label: 'Ответы кандидатам',
+          icon: <ChatBubbleIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+          href: '/candidate-responses',
         },
         {
           id: 'company-settings-integrations',

@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Text, Flex, Button, Table } from "@radix-ui/themes"
-import { ChevronDownIcon, CalendarIcon, ChevronUpIcon, OpenInNewWindowIcon } from "@radix-ui/react-icons"
+import { ChevronDownIcon, CalendarIcon, ChevronUpIcon, OpenInNewWindowIcon, PaperPlaneIcon, EnvelopeClosedIcon } from "@radix-ui/react-icons"
 import { useState } from "react"
 import styles from './WorkflowSidebar.module.css'
 
@@ -175,6 +175,70 @@ export default function WorkflowSidebar() {
             </Box>
           </Box>
         )}
+      </Box>
+
+      {/* Карточка быстрых действий */}
+      <Box className={styles.panel}>
+        <Flex
+          align="center"
+          justify="between"
+          className={styles.panelHeader}
+        >
+          <Text size="3" weight="bold" style={{ color: '#ffffff' }}>
+            Быстрые действия
+          </Text>
+        </Flex>
+
+        <Box className={styles.panelContent}>
+          <Flex gap="2" wrap="wrap">
+            {/* Telegram */}
+            <Box
+              className={styles.quickActionBlock}
+              onClick={() => window.open('https://web.telegram.org', '_blank')}
+              style={{ backgroundColor: '#0088cc' }}
+            >
+              <PaperPlaneIcon width={18} height={18} style={{ color: '#ffffff' }} />
+              <Text size="2" weight="medium" style={{ color: '#ffffff' }}>Telegram</Text>
+            </Box>
+
+            {/* WhatsApp */}
+            <Box
+              className={styles.quickActionBlock}
+              onClick={() => window.open('https://web.whatsapp.com', '_blank')}
+              style={{ backgroundColor: '#25D366' }}
+            >
+              <Text size="2" weight="medium" style={{ color: '#ffffff' }}>WhatsApp</Text>
+            </Box>
+
+            {/* Viber */}
+            <Box
+              className={styles.quickActionBlock}
+              onClick={() => window.open('https://web.viber.com', '_blank')}
+              style={{ backgroundColor: '#665CAC' }}
+            >
+              <Text size="2" weight="medium" style={{ color: '#ffffff' }}>Viber</Text>
+            </Box>
+
+            {/* LinkedIn */}
+            <Box
+              className={styles.quickActionBlock}
+              onClick={() => window.open('https://www.linkedin.com', '_blank')}
+              style={{ backgroundColor: '#0077B5' }}
+            >
+              <Text size="2" weight="medium" style={{ color: '#ffffff' }}>LinkedIn</Text>
+            </Box>
+
+            {/* Email */}
+            <Box
+              className={styles.quickActionBlock}
+              onClick={() => window.open('mailto:', '_blank')}
+              style={{ backgroundColor: '#EA4335', flex: '1 1 100%' }}
+            >
+              <EnvelopeClosedIcon width={18} height={18} style={{ color: '#ffffff' }} />
+              <Text size="2" weight="medium" style={{ color: '#ffffff' }}>Email</Text>
+            </Box>
+          </Flex>
+        </Box>
       </Box>
     </Flex>
   )

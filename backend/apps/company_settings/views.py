@@ -302,16 +302,20 @@ def rejection_templates_api(request):
     rejection_type = request.GET.get('rejection_type')
     grade_id = request.GET.get('grade_id')
     
-    templates = RejectionTemplate.objects.filter(is_active=True)
+    # Получаем все шаблоны (включая неактивные для редактирования)
+    templates = RejectionTemplate.objects.all()
     
     if rejection_type:
         templates = templates.filter(rejection_type=rejection_type)
     
     if grade_id:
         templates = templates.filter(grade_id=grade_id)
+    elif rejection_type and rejection_type != 'grade':
+        # Для не-грейдовых типов grade должен быть null
+        templates = templates.filter(grade__isnull=True)
     
     templates_data = []
-    for template in templates:
+    for template in templates.order_by('title'):
         templates_data.append({
             'id': template.id,
             'rejection_type': template.rejection_type,
@@ -320,6 +324,9 @@ def rejection_templates_api(request):
             'grade_name': template.grade.name if template.grade else None,
             'title': template.title,
             'message': template.message,
+            'is_active': template.is_active,
+            'created_at': template.created_at.isoformat() if template.created_at else None,
+            'updated_at': template.updated_at.isoformat() if template.updated_at else None,
         })
     
     return JsonResponse({

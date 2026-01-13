@@ -227,6 +227,45 @@ export const vacancyPromptApi = {
   get: () => apiRequest<VacancyPrompt>('company-settings/vacancy-prompt/api/'),
 }
 
+// API для шаблонов отказов
+export interface RejectionTemplate {
+  id: number
+  rejection_type: 'office_format' | 'finance' | 'finance_more' | 'finance_less' | 'grade' | 'general'
+  rejection_type_display: string
+  grade_id: number | null
+  grade_name: string | null
+  title: string
+  message: string
+  is_active: boolean
+  created_at?: string
+  updated_at?: string
+}
+
+export const rejectionTemplatesApi = {
+  getAll: (params?: { rejection_type?: string; grade_id?: number }) => {
+    const queryParams = new URLSearchParams()
+    if (params?.rejection_type) queryParams.append('rejection_type', params.rejection_type)
+    if (params?.grade_id) queryParams.append('grade_id', params.grade_id.toString())
+    const queryString = queryParams.toString()
+    return apiRequest<{ success: boolean; templates: RejectionTemplate[] }>(`company-settings/rejection-templates/api/${queryString ? `?${queryString}` : ''}`)
+  },
+  getById: (id: number) => apiRequest<RejectionTemplate>(`company-settings/rejection-templates/${id}/get/`),
+  create: (data: Partial<RejectionTemplate>) =>
+    apiRequest<RejectionTemplate>('company-settings/rejection-templates/create/', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  update: (id: number, data: Partial<RejectionTemplate>) =>
+    apiRequest<RejectionTemplate>(`company-settings/rejection-templates/${id}/update/`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  delete: (id: number) =>
+    apiRequest<void>(`company-settings/rejection-templates/${id}/delete/`, {
+      method: 'POST',
+    }),
+}
+
 // API для бенчмарков
 export const benchmarksApi = {
   getAll: (params?: {
