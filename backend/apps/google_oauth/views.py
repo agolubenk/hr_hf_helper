@@ -5803,6 +5803,97 @@ def chat_workflow(request, session_id=None):
     from apps.accounts.models import QuickButton
     quick_buttons = QuickButton.objects.filter(user=request.user).order_by('order', 'created_at')
     
+    # Получаем ссылки на соцсети из последнего HR-скрининга или инвайта
+    candidate_social_links = {}
+    try:
+        from apps.huntflow.services import HuntflowService
+        
+        # Ищем последний HR-скрининг или инвайт в сообщениях
+        candidate_id = None
+        
+        # Проверяем последние сообщения с HR-скринингом или инвайтом
+        for msg in reversed(messages_list):
+            if msg.message_type == 'hrscreening' and msg.hr_screening:
+                if msg.hr_screening.candidate_id:
+                    candidate_id = msg.hr_screening.candidate_id
+                    print(f"🔍 CANDIDATE_SOCIAL_LINKS: Найден candidate_id из HR-скрининга: {candidate_id}")
+                    break
+            elif msg.message_type == 'invite' and msg.invite:
+                if msg.invite.candidate_id:
+                    candidate_id = msg.invite.candidate_id
+                    print(f"🔍 CANDIDATE_SOCIAL_LINKS: Найден candidate_id из инвайта: {candidate_id}")
+                    break
+        
+        if candidate_id:
+            # Получаем данные кандидата из Huntflow API
+            huntflow_service = HuntflowService(request.user)
+            accounts = huntflow_service.get_accounts()
+            
+            if accounts and 'items' in accounts and accounts['items']:
+                account_id = accounts['items'][0]['id']
+                print(f"🔍 CANDIDATE_SOCIAL_LINKS: Используем account_id: {account_id}, candidate_id: {candidate_id}")
+                candidate_data = huntflow_service.get_applicant(account_id, int(candidate_id))
+                
+                if candidate_data:
+                    print(f"🔍 CANDIDATE_SOCIAL_LINKS: Получены данные кандидата, social: {candidate_data.get('social', [])}")
+                    # Извлекаем социальные сети из поля social
+                    social = candidate_data.get('social', [])
+                    for soc in social:
+                        # В Huntflow API используется поле social_type
+                        soc_type = (soc.get('social_type', '') or soc.get('type', '') or '').upper()
+                        soc_value = soc.get('value', '') or soc.get('url', '') or ''
+                        
+                        if not soc_value:
+                            continue
+                        
+                        print(f"🔍 CANDIDATE_SOCIAL_LINKS: Обрабатываем соцсеть: type={soc_type}, value={soc_value}")
+                        
+                        # Telegram
+                        if soc_type == 'TELEGRAM' or 'TELEGRAM' in soc_type:
+                            # Убираем @ если есть
+                            telegram_value = soc_value.lstrip('@')
+                            candidate_social_links['telegram'] = telegram_value
+                            print(f"✅ CANDIDATE_SOCIAL_LINKS: Добавлен Telegram: {telegram_value}")
+                        # WhatsApp
+                        elif soc_type == 'WHATSAPP' or 'WHATSAPP' in soc_type:
+                            candidate_social_links['whatsapp'] = soc_value
+                            print(f"✅ CANDIDATE_SOCIAL_LINKS: Добавлен WhatsApp: {soc_value}")
+                        # Viber
+                        elif soc_type == 'VIBER' or 'VIBER' in soc_type:
+                            candidate_social_links['viber'] = soc_value
+                            print(f"✅ CANDIDATE_SOCIAL_LINKS: Добавлен Viber: {soc_value}")
+                        # LinkedIn
+                        elif soc_type == 'LINKEDIN' or 'LINKEDIN' in soc_type:
+                            candidate_social_links['linkedin'] = soc_value
+                            print(f"✅ CANDIDATE_SOCIAL_LINKS: Добавлен LinkedIn: {soc_value}")
+                    
+                    # Также проверяем questionary на наличие LinkedIn
+                    if 'linkedin' not in candidate_social_links:
+                        print(f"🔍 CANDIDATE_SOCIAL_LINKS: LinkedIn не найден в social, проверяем questionary")
+                        questionary = huntflow_service.get_applicant_questionary(account_id, int(candidate_id))
+                        if questionary:
+                            print(f"🔍 CANDIDATE_SOCIAL_LINKS: Получена анкета, поля: {list(questionary.keys())}")
+                            # Ищем LinkedIn в значениях questionary
+                            for field_key, field_value in questionary.items():
+                                if field_value and isinstance(field_value, str):
+                                    # Проверяем, содержит ли значение LinkedIn URL
+                                    if 'linkedin.com' in field_value.lower():
+                                        candidate_social_links['linkedin'] = field_value
+                                        print(f"✅ CANDIDATE_SOCIAL_LINKS: Добавлен LinkedIn из questionary (поле {field_key}): {field_value}")
+                                        break
+                else:
+                    print(f"⚠️ CANDIDATE_SOCIAL_LINKS: Данные кандидата не получены из Huntflow API")
+            else:
+                print(f"⚠️ CANDIDATE_SOCIAL_LINKS: Нет доступных аккаунтов Huntflow")
+        else:
+            print(f"⚠️ CANDIDATE_SOCIAL_LINKS: candidate_id не найден в последних HR-скринингах или инвайтах")
+    except Exception as e:
+        import traceback
+        print(f"⚠️ Ошибка получения ссылок на соцсети: {e}")
+        print(f"⚠️ Traceback: {traceback.format_exc()}")
+    
+    print(f"🔍 CANDIDATE_SOCIAL_LINKS: Итоговые ссылки: {candidate_social_links}")
+    
     context = {
         'form': form,
         'chat_session': chat_session,
@@ -5822,6 +5913,7 @@ def chat_workflow(request, session_id=None):
         'company_calendar_warning': company_calendar_warning,
         'title': 'Чат-помощник',
         'quick_buttons': quick_buttons,
+        'candidate_social_links': candidate_social_links,
     }
 
     # Отладочная информация (как на странице gdata_automation)
