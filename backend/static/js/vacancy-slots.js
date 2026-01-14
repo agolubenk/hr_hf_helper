@@ -791,7 +791,11 @@ window.copyAllSlots = function() {
         currentWeekSlots.forEach(slot => {
             // Пропускаем дни без свободных слотов
             if (slot.slots && slot.slots !== 'Нет свободных слотов') {
-                text += `${slot.weekday} ${slot.slots}\n`;
+                console.log('🔍 copyAllSlots current: slot.date =', slot.date);
+                const relativeDay = getRelativeDayLabel(slot.date);
+                console.log('🔍 copyAllSlots current: relativeDay =', relativeDay);
+                const relativeDayText = relativeDay ? ` (${relativeDay})` : '';
+                text += `${slot.weekday} ${slot.slots}${relativeDayText}\n`;
             }
         });
     }
@@ -808,7 +812,11 @@ window.copyAllSlots = function() {
         nextWeekSlots.forEach(slot => {
             // Пропускаем дни без свободных слотов
             if (slot.slots && slot.slots !== 'Нет свободных слотов') {
-                text += `${slot.weekday} (${slot.date}) ${slot.slots}\n`;
+                console.log('🔍 copyAllSlots next: slot.date =', slot.date);
+                const relativeDay = getRelativeDayLabel(slot.date);
+                console.log('🔍 copyAllSlots next: relativeDay =', relativeDay);
+                const relativeDayText = relativeDay ? ` (${relativeDay})` : '';
+                text += `${slot.weekday} (${slot.date}) ${slot.slots}${relativeDayText}\n`;
             }
         });
     }
@@ -889,11 +897,15 @@ window.copyWeekSlots = function(weekType) {
         if (slotsSettings.currentWeekPrefix) {
             text += `${slotsSettings.currentWeekPrefix}\n`;
         }
-        // Формат для текущей недели: ПН 12-15, 17
+        // Формат для текущей недели: ПН 12-15, 17 (завтра) или ПН 12-15, 17 (послезавтра)
         // Пропускаем дни без свободных слотов
         slots.forEach(slot => {
             if (slot.slots && slot.slots !== 'Нет свободных слотов') {
-                text += `${slot.weekday} ${slot.slots}\n`;
+                console.log('🔍 copyWeekSlots current: slot.date =', slot.date);
+                const relativeDay = getRelativeDayLabel(slot.date);
+                console.log('🔍 copyWeekSlots current: relativeDay =', relativeDay);
+                const relativeDayText = relativeDay ? ` (${relativeDay})` : '';
+                text += `${slot.weekday} ${slot.slots}${relativeDayText}\n`;
             }
         });
     } else if (weekType === 'next') {
@@ -901,15 +913,21 @@ window.copyWeekSlots = function(weekType) {
         if (slotsSettings.nextWeekPrefix) {
             text += `${slotsSettings.nextWeekPrefix}\n`;
         }
-        // Формат для следующей недели: ПН (15.09) 11-14, 15
+        // Формат для следующей недели: ПН (15.09) 11-14, 15 (завтра) или ПН (15.09) 11-14, 15 (послезавтра)
         // Пропускаем дни без свободных слотов
         slots.forEach(slot => {
             if (slot.slots && slot.slots !== 'Нет свободных слотов') {
-                text += `${slot.weekday} (${slot.date}) ${slot.slots}\n`;
+                console.log('🔍 copyWeekSlots next: slot =', slot);
+                console.log('🔍 copyWeekSlots next: slot.date =', slot.date, 'тип:', typeof slot.date);
+                const relativeDay = getRelativeDayLabel(slot.date);
+                console.log('🔍 copyWeekSlots next: relativeDay =', relativeDay);
+                const relativeDayText = relativeDay ? ` (${relativeDay})` : '';
+                text += `${slot.weekday} (${slot.date}) ${slot.slots}${relativeDayText}\n`;
+                console.log('🔍 copyWeekSlots next: сформированная строка =', `${slot.weekday} (${slot.date}) ${slot.slots}${relativeDayText}`);
             }
         });
     } else if (weekType === 'third') {
-        // Для третьей недели используем тот же формат, что и для следующей
+        // Для третьей недели используем тот же формат, что и для следующей (без завтра/послезавтра)
         slots.forEach(slot => {
             if (slot.slots && slot.slots !== 'Нет свободных слотов') {
                 text += `${slot.weekday} (${slot.date}) ${slot.slots}\n`;
@@ -925,6 +943,85 @@ window.copyWeekSlots = function(weekType) {
     
     copySlotsToClipboard(text.trim());
 };
+
+/**
+ * Определяет, является ли дата "завтра" или "послезавтра" от текущей даты
+ * @param {string} dateStr - Строка даты в формате "DD.MM"
+ * @returns {string|null} - "завтра", "послезавтра" или null
+ */
+function getRelativeDayLabel(dateStr) {
+    try {
+        if (!dateStr) {
+            console.warn('⚠️ getRelativeDayLabel: dateStr пустой');
+            return null;
+        }
+        
+        // Убираем лишние пробелы и нормализуем строку
+        const normalizedDateStr = dateStr.trim();
+        
+        let day, month, year;
+        
+        // Парсим строку даты - поддерживаем форматы "DD.MM" и "DD.MM.YYYY"
+        const dateMatchWithYear = normalizedDateStr.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+        const dateMatchWithoutYear = normalizedDateStr.match(/^(\d{1,2})\.(\d{1,2})$/);
+        
+        if (dateMatchWithYear) {
+            // Формат "DD.MM.YYYY"
+            day = parseInt(dateMatchWithYear[1], 10);
+            month = parseInt(dateMatchWithYear[2], 10);
+            year = parseInt(dateMatchWithYear[3], 10);
+        } else if (dateMatchWithoutYear) {
+            // Формат "DD.MM"
+            day = parseInt(dateMatchWithoutYear[1], 10);
+            month = parseInt(dateMatchWithoutYear[2], 10);
+            const today = new Date();
+            year = today.getFullYear();
+        } else {
+            console.warn('⚠️ getRelativeDayLabel: не удалось распарсить дату (формат должен быть DD.MM или DD.MM.YYYY):', normalizedDateStr);
+            return null;
+        }
+        
+        if (isNaN(day) || isNaN(month) || day < 1 || day > 31 || month < 1 || month > 12) {
+            console.warn('⚠️ getRelativeDayLabel: невалидные значения дня/месяца:', day, month);
+            return null;
+        }
+        
+        // Создаем дату из строки (месяц в JS начинается с 0)
+        const slotDate = new Date(year, month - 1, day);
+        
+        // Проверяем, что дата валидна (защита от 31 февраля и т.д.)
+        if (slotDate.getDate() !== day || slotDate.getMonth() !== month - 1 || slotDate.getFullYear() !== year) {
+            console.warn('⚠️ getRelativeDayLabel: невалидная дата (например, 31 февраля):', normalizedDateStr);
+            return null;
+        }
+        
+        // Нормализуем время для сравнения только дат
+        const today = new Date();
+        const todayNormalized = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const slotDateNormalized = new Date(slotDate.getFullYear(), slotDate.getMonth(), slotDate.getDate());
+        
+        // Вычисляем разницу в днях
+        const diffTime = slotDateNormalized - todayNormalized;
+        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+        
+        console.log(`🔍 getRelativeDayLabel: дата "${normalizedDateStr}" -> ${day}.${month}.${year}, разница: ${diffDays} дней`);
+        console.log(`🔍 getRelativeDayLabel: сегодня = ${todayNormalized.toISOString().split('T')[0]}, дата слота = ${slotDateNormalized.toISOString().split('T')[0]}`);
+        
+        if (diffDays === 1) {
+            console.log(`✅ getRelativeDayLabel: возвращаем "завтра" для даты ${normalizedDateStr}`);
+            return 'завтра';
+        } else if (diffDays === 2) {
+            console.log(`✅ getRelativeDayLabel: возвращаем "послезавтра" для даты ${normalizedDateStr}`);
+            return 'послезавтра';
+        }
+        
+        console.log(`ℹ️ getRelativeDayLabel: дата ${normalizedDateStr} не является завтра или послезавтра (разница: ${diffDays} дней)`);
+        return null;
+    } catch (e) {
+        console.error('❌ Ошибка определения относительного дня:', e, 'dateStr:', dateStr);
+        return null;
+    }
+}
 
 function extractSlotData(card) {
     try {
@@ -947,13 +1044,15 @@ function extractSlotData(card) {
             return null;
         }
         
+        const dateText = dateElement.textContent.trim();
         const slotData = {
-            date: dateElement.textContent.trim(),
+            date: dateText,
             weekday: weekdayElement.textContent.trim(),
             slots: slotsElement.textContent.trim()
         };
         
         console.log('🔍 Извлеченные данные слота:', slotData);
+        console.log('🔍 Дата из DOM (raw):', dateText, 'тип:', typeof dateText, 'длина:', dateText.length);
         return slotData;
     } catch (e) {
         console.error('Ошибка извлечения данных слота:', e);
