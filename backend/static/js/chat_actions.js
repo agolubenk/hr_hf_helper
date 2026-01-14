@@ -161,62 +161,71 @@ document.addEventListener('DOMContentLoaded', () => {
         // Формируем HTML для контактной информации
         let contactHtml = '<div class="mt-3">';
         
-        // Где ведется коммуникация
+        // Если заполнено "Где ведется коммуникация", показываем только его
         if (contactInfo.communication_where) {
             const isLink = contactInfo.communication_where.toLowerCase().includes('http');
-            contactHtml += `
-                <div class="card mb-2" style="border: 1px solid #0088cc; border-radius: 8px;">
-                    <div class="card-body p-3">
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-comments me-2" style="color: #0088cc;"></i>
-                            <div>
-                                <strong style="color: #0088cc;">Где ведется коммуникация:</strong>
+            if (isLink) {
+                // Если это ссылка, показываем как кнопку-ссылку
+                contactHtml += `
+                    <a href="${contactInfo.communication_where}" target="_blank" rel="noopener noreferrer"
+                       class="btn btn-outline-primary w-100 mb-2" 
+                       style="border-color: #0088cc; color: #0088cc;">
+                        <i class="fas fa-comments me-2"></i>Где ведется коммуникация: ${contactInfo.communication_where}
+                    </a>
+                `;
+            } else {
+                // Если не ссылка, показываем как карточку
+                contactHtml += `
+                    <div class="card mb-2" style="border: 1px solid #0088cc; border-radius: 8px;">
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-comments me-2" style="color: #0088cc;"></i>
                                 <div>
-                                    ${isLink ? 
-                                        `<a href="${contactInfo.communication_where}" target="_blank" rel="noopener noreferrer" style="color: #0088cc;">${contactInfo.communication_where}</a>` :
-                                        contactInfo.communication_where
-                                    }
+                                    <strong style="color: #0088cc;">Где ведется коммуникация:</strong>
+                                    <div>${contactInfo.communication_where}</div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            `;
-        }
-        
-        // Telegram
-        if (contactInfo.telegram) {
-            contactHtml += `
-                <a href="https://t.me/${contactInfo.telegram}" target="_blank" rel="noopener noreferrer"
-                   class="btn btn-outline-primary w-100 mb-2" 
-                   style="border-color: #0088cc; color: #0088cc;">
-                    <i class="fab fa-telegram me-2"></i>Telegram: ${contactInfo.telegram}
-                </a>
-            `;
-        }
-        
-        // LinkedIn
-        if (contactInfo.linkedin) {
-            const linkedinUrl = contactInfo.linkedin.includes('http') ? 
-                contactInfo.linkedin : `https://${contactInfo.linkedin}`;
-            contactHtml += `
-                <a href="${linkedinUrl}" target="_blank" rel="noopener noreferrer"
-                   class="btn btn-outline-info w-100 mb-2" 
-                   style="border-color: #0077B5; color: #0077B5;">
-                    <i class="fab fa-linkedin me-2"></i>LinkedIn: ${contactInfo.linkedin}
-                </a>
-            `;
-        }
-        
-        // Email
-        if (contactInfo.email) {
-            contactHtml += `
-                <a href="mailto:${contactInfo.email}" 
-                   class="btn btn-outline-secondary w-100 mb-2" 
-                   style="border-color: #6c757d; color: #6c757d;">
-                    <i class="fas fa-envelope me-2"></i>Email: ${contactInfo.email}
-                </a>
-            `;
+                `;
+            }
+        } else {
+            // Если "Где ведется коммуникация" не заполнено, показываем остальные поля
+            
+            // Telegram
+            if (contactInfo.telegram) {
+                contactHtml += `
+                    <a href="https://t.me/${contactInfo.telegram}" target="_blank" rel="noopener noreferrer"
+                       class="btn btn-outline-primary w-100 mb-2" 
+                       style="border-color: #0088cc; color: #0088cc;">
+                        <i class="fab fa-telegram me-2"></i>Telegram: ${contactInfo.telegram}
+                    </a>
+                `;
+            }
+            
+            // LinkedIn
+            if (contactInfo.linkedin) {
+                const linkedinUrl = contactInfo.linkedin.includes('http') ? 
+                    contactInfo.linkedin : `https://${contactInfo.linkedin}`;
+                contactHtml += `
+                    <a href="${linkedinUrl}" target="_blank" rel="noopener noreferrer"
+                       class="btn btn-outline-info w-100 mb-2" 
+                       style="border-color: #0077B5; color: #0077B5;">
+                        <i class="fab fa-linkedin me-2"></i>LinkedIn: ${contactInfo.linkedin}
+                    </a>
+                `;
+            }
+            
+            // Email
+            if (contactInfo.email) {
+                contactHtml += `
+                    <a href="mailto:${contactInfo.email}" 
+                       class="btn btn-outline-secondary w-100 mb-2" 
+                       style="border-color: #6c757d; color: #6c757d;">
+                        <i class="fas fa-envelope me-2"></i>Email: ${contactInfo.email}
+                    </a>
+                `;
+            }
         }
         
         contactHtml += '</div>';
