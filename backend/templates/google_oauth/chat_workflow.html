@@ -456,29 +456,31 @@
                                                         </div>
                                                         
                                                         <!-- Форма отказа кандидата -->
-                                                        {% if message.metadata.show_rejection_form and not message.metadata.rejection_form_answered %}
-                                                        <div class="rejection-form-container mt-3 p-3 bg-warning bg-opacity-10 rounded border border-warning">
-                                                            <div class="d-flex align-items-center justify-content-between">
-                                                                <div class="d-flex align-items-center">
-                                                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
-                                                                    <strong>Отказать кандидату?</strong>
-                                                                </div>
-                                                                <div class="rejection-buttons">
-                                                                    <button type="button" 
-                                                                            class="btn btn-sm btn-danger me-2 reject-candidate-btn" 
-                                                                            data-hr-screening-id="{{ message.metadata.hr_screening_id }}"
-                                                                            data-message-id="{{ message.id }}"
-                                                                            title="Отказать кандидату">
-                                                                        <i class="fas fa-times me-1"></i>Да
-                                                                    </button>
-                                                                    <button type="button" 
-                                                                            class="btn btn-sm btn-success reject-candidate-no-btn" 
-                                                                            title="Не отказывать">
-                                                                        <i class="fas fa-check me-1"></i>Нет
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                        {% comment %}DEBUG: message.id={{ message.id }}, show_rejection_form={{ message.metadata.show_rejection_form|default:"NOT SET" }}, rejection_form_answered={{ message.metadata.rejection_form_answered|default:"NOT SET" }}, rejected={{ message.metadata.rejected|default:"NOT SET" }}, should_show_rejection_form={{ message.should_show_rejection_form|default:"NOT SET" }}{% endcomment %}
+                                                        {% if message.should_show_rejection_form %}
+                                                                    <div class="rejection-form-container mt-3 p-3 bg-warning bg-opacity-10 rounded border border-warning">
+                                                                        <div class="d-flex align-items-center justify-content-between">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                                                                <strong>Отказать кандидату?</strong>
+                                                                            </div>
+                                                                            <div class="rejection-buttons">
+                                                                                <button type="button" 
+                                                                                        class="btn btn-sm btn-danger me-2 reject-candidate-btn" 
+                                                                                        data-hr-screening-id="{{ message.metadata.hr_screening_id }}"
+                                                                                        data-message-id="{{ message.id }}"
+                                                                                        title="Отказать кандидату">
+                                                                                    <i class="fas fa-times me-1"></i>Да
+                                                                                </button>
+                                                                                <button type="button" 
+                                                                                        class="btn btn-sm btn-success reject-candidate-no-btn" 
+                                                                                        data-message-id="{{ message.id }}"
+                                                                                        title="Не отказывать">
+                                                                                    <i class="fas fa-check me-1"></i>Нет
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
                                                         {% endif %}
                                                     </div>
                                                     
@@ -4295,6 +4297,11 @@ window.userPhotoUrl = null;
                                 
                                 // Показываем уведомление
                                 alert('Кандидат успешно отклонен');
+                                
+                                // Перезагружаем страницу, чтобы убедиться, что форма не появится снова
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1000);
                             } else {
                                 alert('Ошибка при отклонении кандидата: ' + (data.error || 'Неизвестная ошибка'));
                                 btn.disabled = false;
@@ -4314,14 +4321,21 @@ window.userPhotoUrl = null;
                         e.preventDefault();
                         const btn = e.target.closest('.reject-candidate-no-btn');
                         const rejectionForm = btn.closest('.rejection-form-container');
-                        const messageId = rejectionForm.querySelector('.reject-candidate-btn')?.getAttribute('data-message-id');
+                        // Получаем message_id напрямую из кнопки "Нет"
+                        const messageId = btn.getAttribute('data-message-id') || rejectionForm.querySelector('.reject-candidate-btn')?.getAttribute('data-message-id');
+                        
+                        if (!messageId) {
+                            console.error('❌ Не найден message_id для сохранения ответа');
+                            alert('Ошибка: не найден ID сообщения');
+                            return;
+                        }
                         
                         if (rejectionForm) {
                             // Скрываем форму
                             rejectionForm.style.display = 'none';
                             
                             // Сохраняем в metadata, что пользователь ответил на форму
-                            if (messageId) {
+                            console.log(`💾 Сохраняем ответ "нет" для сообщения ${messageId}`);
                                 fetch('{% url "google_oauth:chat_ajax_handler" chat_session.id %}', {
                                     method: 'POST',
                                     headers: {
@@ -4337,13 +4351,22 @@ window.userPhotoUrl = null;
                                 .then(response => response.json())
                                 .then(data => {
                                     if (data.success) {
-                                        console.log('✅ Форма отказа скрыта, ответ сохранен');
+                                        console.log(`✅ Форма отказа скрыта, ответ "нет" сохранен для сообщения ${messageId}`);
+                                        // Перезагружаем страницу, чтобы убедиться, что форма не появится снова
+                                        setTimeout(() => {
+                                            window.location.reload();
+                                        }, 500);
+                                    } else {
+                                        console.error('❌ Ошибка при сохранении ответа:', data.error);
+                                        alert('Ошибка при сохранении ответа: ' + (data.error || 'Неизвестная ошибка'));
+                                        rejectionForm.style.display = 'block'; // Показываем форму обратно
                                     }
                                 })
                                 .catch(error => {
-                                    console.error('Ошибка при сохранении ответа:', error);
+                                    console.error('❌ Ошибка при сохранении ответа:', error);
+                                    alert('Ошибка при сохранении ответа');
+                                    rejectionForm.style.display = 'block'; // Показываем форму обратно
                                 });
-                            }
                         }
                     }
                 });

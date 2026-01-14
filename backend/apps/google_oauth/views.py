@@ -2915,6 +2915,13 @@ def reject_candidate(request, hr_screening_id):
         
         print(f"🔍 REJECT_CANDIDATE: rejection_status_id={rejection_status_id}, rejection_reason_id={rejection_reason_id}, comment='{comment}'")
         
+        # Формируем текст статуса для отображения (нужен и для ответа, и для metadata)
+        status_text = "Данные сохранены. Статус - Отказ"
+        if salary_above_range:
+            status_text = "Данные сохранены. Статус - Отказ: Высокие ЗП ожидания"
+        elif office_format_rejected:
+            status_text = "Данные сохранены. Статус - Отказ: Офисный формат"
+
         # Обновляем статус в Huntflow
         status_result = hr_screening._update_applicant_status_with_rejection(
             huntflow_service,
@@ -2933,28 +2940,34 @@ def reject_candidate(request, hr_screening_id):
         if message_id:
             try:
                 from .models import ChatMessage
-                chat_message = ChatMessage.objects.get(id=message_id)
-                if chat_message.metadata:
-                    chat_message.metadata['rejected'] = True
-                    chat_message.metadata['rejection_status_id'] = rejection_status_id
-                    chat_message.metadata['rejection_reason_id'] = rejection_reason_id
-                    chat_message.metadata['rejection_comment'] = comment
-                    chat_message.metadata['rejection_status_text'] = status_text
-                    # Сохраняем, что пользователь ответил на форму отказа
-                    chat_message.metadata['rejection_form_answered'] = True
-                    chat_message.save(update_fields=['metadata'])
-                    print(f"✅ REJECT_CANDIDATE: Metadata сообщения {message_id} обновлено")
+                
+                # Получаем текущие metadata из базы
+                chat_message = ChatMessage.objects.get(id=int(message_id), session__user=request.user)
+                current_metadata = chat_message.metadata or {}
+                
+                # Создаем НОВЫЙ словарь с обновленными данными
+                new_metadata = dict(current_metadata)
+                new_metadata['rejected'] = True
+                new_metadata['rejection_status_id'] = rejection_status_id
+                new_metadata['rejection_reason_id'] = rejection_reason_id
+                new_metadata['rejection_comment'] = comment
+                new_metadata['rejection_status_text'] = status_text
+                new_metadata['rejection_form_answered'] = True  # Ключевое поле!
+
+                # Сохраняем через ORM (корректно для SQLite/PostgreSQL и не падает на debug_sql)
+                ChatMessage.objects.filter(id=chat_message.id, session__user=request.user).update(metadata=new_metadata)
+                chat_message.refresh_from_db(fields=['metadata'])
+                
+                # Проверяем, что данные действительно сохранились
+                saved_answered = chat_message.metadata.get('rejection_form_answered', False)
+                saved_rejected = chat_message.metadata.get('rejected', False)
+                print(f"✅ REJECT_CANDIDATE: Metadata сообщения {message_id} сохранено. rejection_form_answered={saved_answered} (тип: {type(saved_answered)}), rejected={saved_rejected}, все ключи: {list(chat_message.metadata.keys())}")
             except ChatMessage.DoesNotExist:
                 print(f"⚠️ REJECT_CANDIDATE: Сообщение {message_id} не найдено")
             except Exception as e:
                 print(f"⚠️ REJECT_CANDIDATE: Ошибка обновления metadata: {e}")
-        
-        # Формируем текст статуса для отображения
-        status_text = "Данные сохранены. Статус - Отказ"
-        if salary_above_range:
-            status_text = "Данные сохранены. Статус - Отказ: Высокие ЗП ожидания"
-        elif office_format_rejected:
-            status_text = "Данные сохранены. Статус - Отказ: Офисный формат"
+                import traceback
+                traceback.print_exc()
         
         return JsonResponse({
             'success': True,
@@ -4002,15 +4015,25 @@ def chat_ajax_handler(request, session_id):
             
             try:
                 from .models import ChatMessage
-                chat_message = ChatMessage.objects.get(id=message_id, session__user=request.user)
-                if chat_message.metadata:
-                    chat_message.metadata['rejection_form_answered'] = True
-                    chat_message.metadata['rejection_form_answer'] = answer
-                    chat_message.save(update_fields=['metadata'])
-                    print(f"✅ CHAT AJAX: Сохранен ответ на форму отказа для сообщения {message_id}: {answer}")
-                    return JsonResponse({'success': True, 'message': 'Ответ сохранен'})
-                else:
-                    return JsonResponse({'success': False, 'error': 'Metadata сообщения не найдена'})
+                
+                # Получаем текущие metadata из базы
+                chat_message = ChatMessage.objects.get(id=int(message_id), session__user=request.user)
+                current_metadata = chat_message.metadata or {}
+                
+                # Создаем НОВЫЙ словарь с обновленными данными
+                new_metadata = dict(current_metadata)
+                new_metadata['rejection_form_answered'] = True  # Ключевое поле!
+                new_metadata['rejection_form_answer'] = answer
+                
+                # Сохраняем через ORM (корректно для SQLite/PostgreSQL и не падает на debug_sql)
+                ChatMessage.objects.filter(id=chat_message.id, session__user=request.user).update(metadata=new_metadata)
+                chat_message.refresh_from_db(fields=['metadata'])
+                
+                # Проверяем, что данные действительно сохранились
+                saved_answered = chat_message.metadata.get('rejection_form_answered', False)
+                print(f"✅ CHAT AJAX: Сохранен ответ на форму отказа для сообщения {message_id}: {answer}. rejection_form_answered={saved_answered} (тип: {type(saved_answered)}), все ключи: {list(chat_message.metadata.keys())}")
+                
+                return JsonResponse({'success': True, 'message': 'Ответ сохранен'})
             except ChatMessage.DoesNotExist:
                 return JsonResponse({'success': False, 'error': 'Сообщение не найдено'})
             except Exception as e:
@@ -6318,10 +6341,58 @@ def chat_workflow(request, session_id=None):
         )
 
     # Получаем все сообщения в этой сессии
+    # Важно: используем select_related/prefetch_related если нужно, но для JSONField это не требуется
     messages_queryset = chat_session.messages.all().order_by('created_at')
     
     # Добавляем информацию о команде для каждого пользовательского сообщения
     messages_list = list(messages_queryset)
+    
+    # Логируем информацию о формах отказа для отладки и нормализуем данные
+    # ВАЖНО: Инициализируем флаг для всех сообщений
+    for msg in messages_list:
+        msg.should_show_rejection_form = False  # По умолчанию форма не показывается
+        
+        if msg.message_type == 'hrscreening':
+            # Принудительно обновляем объект из базы для получения актуальных данных
+            msg.refresh_from_db()
+            
+            if msg.metadata:
+                # КРИТИЧЕСКИ ВАЖНО: Создаем копию metadata для нормализации, чтобы не изменять оригинал
+                normalized_metadata = dict(msg.metadata)
+                
+                # Нормализуем булевы значения - убеждаемся, что они действительно булевы
+                if 'rejection_form_answered' in normalized_metadata:
+                    val = normalized_metadata['rejection_form_answered']
+                    if isinstance(val, str):
+                        normalized_metadata['rejection_form_answered'] = val.lower() in ('true', '1', 'yes')
+                    elif not isinstance(val, bool):
+                        normalized_metadata['rejection_form_answered'] = bool(val)
+                
+                if 'rejected' in normalized_metadata:
+                    val = normalized_metadata['rejected']
+                    if isinstance(val, str):
+                        normalized_metadata['rejected'] = val.lower() in ('true', '1', 'yes')
+                    elif not isinstance(val, bool):
+                        normalized_metadata['rejected'] = bool(val)
+                
+                # Присваиваем нормализованные значения обратно
+                msg.metadata = normalized_metadata
+                
+                show_form = msg.metadata.get('show_rejection_form', False)
+                answered = msg.metadata.get('rejection_form_answered', False)
+                rejected = msg.metadata.get('rejected', False)
+                answered_type = type(answered).__name__
+                rejected_type = type(rejected).__name__
+                
+                # КРИТИЧЕСКИ ВАЖНО: Добавляем флаг прямо в объект сообщения для упрощения проверки в шаблоне
+                should_show_rejection_form = bool(show_form and not answered and not rejected)
+                msg.should_show_rejection_form = should_show_rejection_form
+                
+                print(f"🔍 CHAT_WORKFLOW: Сообщение {msg.id} - show_rejection_form={show_form} (тип: {type(show_form).__name__}), rejection_form_answered={answered} (тип: {answered_type}), rejected={rejected} (тип: {rejected_type}), metadata_keys={list(msg.metadata.keys())}")
+                print(f"🔍 CHAT_WORKFLOW: Должна ли форма показываться? show_form=True AND answered=False AND rejected=False = {should_show_rejection_form}")
+                print(f"🔍 CHAT_WORKFLOW: Установлен флаг msg.should_show_rejection_form = {should_show_rejection_form}")
+            else:
+                print(f"🔍 CHAT_WORKFLOW: Сообщение {msg.id} - metadata отсутствует или пуст")
     for i, msg in enumerate(messages_list):
         if msg.message_type == 'user':
             command_used = None
@@ -7208,7 +7279,7 @@ def chat_workflow(request, session_id=None):
     context = {
         'form': form,
         'chat_session': chat_session,
-        'messages': messages,
+        'messages': messages_list,  # Используем messages_list, который обновлен через refresh_from_db
         'active_vacancies': active_vacancies,
         'selected_vacancy': vacancy,
         'timestamp': int(time()),
