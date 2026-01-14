@@ -832,6 +832,17 @@ document.addEventListener('DOMContentLoaded', () => {
             'message': text,
             'session_id': sessionId
         };
+
+        // Если выбраны интервьюеры в UI (пилюли), отправляем их на сервер.
+        // ВАЖНО: именно это используется для создания календарного события, иначе сервер падает на fallback "обязательные".
+        const selectedInterviewerIds = [];
+        document.querySelectorAll('.btn-interviewer-pill.active').forEach(btn => {
+            const id = btn.getAttribute('data-interviewer-id');
+            if (id) selectedInterviewerIds.push(parseInt(id, 10));
+        });
+        if (selectedInterviewerIds.length > 0) {
+            sendMessagePayload.selected_interviewer_ids = selectedInterviewerIds;
+        }
         
         // Если есть распарсенные данные файла, добавляем их
         if (window.parsedFileData) {

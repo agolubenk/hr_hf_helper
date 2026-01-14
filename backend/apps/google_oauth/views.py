@@ -5994,6 +5994,10 @@ def send_chat_message(request):
             # Передаем данные об интервьюере, если они есть
             if 'selected_interviewer' in data:
                 invite_form_data['selected_interviewer'] = data['selected_interviewer']
+
+            # Поддержка множественного выбора интервьюеров из UI (пилюли).
+            # Эти данные приходят из frontend как массив ID и используются для attendees календарного события.
+            selected_interviewer_ids = data.get('selected_interviewer_ids') or []
             
             invite_form = InviteCombinedForm(invite_form_data, user=request.user)
             
@@ -6001,6 +6005,22 @@ def send_chat_message(request):
                 try:
                     # Создаем инвайт без сохранения (commit=False)
                     invite = invite_form.save(commit=False)
+
+                    # Если пользователь выбрал интервьюеров в UI, используем только их.
+                    # 1) Сохраняем "первого" как основного (для отображения в UI, FK interviewer)
+                    # 2) Все выбранные используем как attendees при создании события (через временный атрибут)
+                    if selected_interviewer_ids:
+                        try:
+                            from apps.interviewers.models import Interviewer
+                            selected_objs = list(Interviewer.objects.filter(id__in=selected_interviewer_ids, is_active=True))
+                            if selected_objs:
+                                # основной интервьюер для UI
+                                invite.interviewer = selected_objs[0]
+                                # все выбранные для календаря
+                                invite._selected_interviewer_ids = [i.id for i in selected_objs]
+                                print(f"✅ SEND_CHAT_MESSAGE: Выбраны интервьюеры из UI: {invite._selected_interviewer_ids}")
+                        except Exception as e:
+                            print(f"⚠️ SEND_CHAT_MESSAGE: Не удалось обработать выбранных интервьюеров: {e}")
                     
                     # Устанавливаем формат интервью (онлайн/офис)
                     interview_format = data.get('interview_format', 'online')

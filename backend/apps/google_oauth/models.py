@@ -1797,27 +1797,26 @@ class Invite(models.Model):
             if self.interviewer and self.interviewer.email:
                 attendees.append(self.interviewer.email)
                 print(f"👥 Добавляем интервьюера в участники: {self.interviewer.email}")
-            
-            # Добавляем обязательных интервьюеров из вакансии (для интервью)
-            if is_interview and self.vacancy_id:
+
+            # Если интервьюеры выбраны явно в UI (пилюли), они передаются через временный атрибут.
+            # Используем только их (и не подтягиваем mandatory_interviewers).
+            selected_ids = getattr(self, '_selected_interviewer_ids', None)
+            if selected_ids:
                 try:
-                    from apps.vacancies.models import Vacancy
-                    vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
-                    mandatory_interviewers = vacancy.mandatory_tech_interviewers.filter(is_active=True)
-                    print(f"👥 CALENDAR_EVENT: Найдено {len(mandatory_interviewers)} обязательных интервьюеров")
-                    
-                    for interviewer in mandatory_interviewers:
+                    from apps.interviewers.models import Interviewer
+                    selected = Interviewer.objects.filter(id__in=selected_ids, is_active=True)
+                    for interviewer in selected:
                         if interviewer.email and interviewer.email not in attendees:
                             attendees.append(interviewer.email)
-                            print(f"👥 Добавляем обязательного интервьюера: {interviewer.email} ({interviewer.get_full_name()})")
-                        else:
-                            print(f"⚠️ CALENDAR_EVENT: Интервьюер {interviewer.email} уже в списке или email отсутствует")
+                            print(f"👥 Добавляем выбранного интервьюера (UI): {interviewer.email} ({interviewer.get_full_name()})")
                 except Exception as e:
-                    print(f"⚠️ CALENDAR_EVENT: Ошибка получения обязательных интервьюеров: {e}")
-            
-            # Извлекаем упоминания через @ из original_form_data
+                    print(f"⚠️ CALENDAR_EVENT: Ошибка добавления выбранных интервьюеров (UI): {e}")
+
+            # Извлекаем упоминания через @ из original_form_data.
+            # ВАЖНО: это тоже считается "явным" выбором участников пользователем.
             print(f"🔍 CALENDAR_EVENT: Проверяем original_form_data для упоминаний")
             print(f"🔍 CALENDAR_EVENT: original_form_data существует: {bool(self.original_form_data)}")
+            mentioned_emails = []
             if self.original_form_data:
                 print(f"🔍 CALENDAR_EVENT: original_form_data длина: {len(self.original_form_data)}")
                 print(f"🔍 CALENDAR_EVENT: original_form_data содержимое: {self.original_form_data}")
@@ -1831,6 +1830,27 @@ class Invite(models.Model):
                         print(f"⚠️ CALENDAR_EVENT: Email {email} уже в списке участников, пропускаем")
             else:
                 print(f"⚠️ CALENDAR_EVENT: original_form_data пуст, упоминания не извлекаются")
+
+            # Добавляем обязательных интервьюеров из вакансии (для интервью) ТОЛЬКО если
+            # пользователь не выбрал участников явно (через UI или @упоминания).
+            has_explicit_interviewers = bool(selected_ids) or bool(self.interviewer and self.interviewer.email) or bool(mentioned_emails)
+            if is_interview and self.vacancy_id and not has_explicit_interviewers:
+                try:
+                    from apps.vacancies.models import Vacancy
+                    vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
+                    mandatory_interviewers = vacancy.mandatory_tech_interviewers.filter(is_active=True)
+                    print(f"👥 CALENDAR_EVENT: Явные интервьюеры не выбраны — добавляем {len(mandatory_interviewers)} обязательных интервьюеров")
+
+                    for interviewer in mandatory_interviewers:
+                        if interviewer.email and interviewer.email not in attendees:
+                            attendees.append(interviewer.email)
+                            print(f"👥 Добавляем обязательного интервьюера: {interviewer.email} ({interviewer.get_full_name()})")
+                        else:
+                            print(f"⚠️ CALENDAR_EVENT: Интервьюер {interviewer.email} уже в списке или email отсутствует")
+                except Exception as e:
+                    print(f"⚠️ CALENDAR_EVENT: Ошибка получения обязательных интервьюеров: {e}")
+            elif is_interview and self.vacancy_id and has_explicit_interviewers:
+                print("👥 CALENDAR_EVENT: Явные интервьюеры выбраны — обязательных интервьюеров из вакансии НЕ добавляем")
             
             # Получаем адрес офиса для офисного формата
             office_location = ""
