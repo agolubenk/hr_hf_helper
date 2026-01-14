@@ -842,7 +842,10 @@ window.copyAllSlots = function() {
     // Добавляем информацию о продолжительности встречи
     const meetingDuration = getMeetingDuration();
     if (meetingDuration) {
-        text += `\n\nПо времени нужно будет примерно ${meetingDuration} минут.\nКогда комфортнее?`;
+        const durationText = formatMeetingDurationForCopy(meetingDuration);
+        if (durationText) {
+            text += `\n\nПо времени нужно будет примерно ${durationText}.\nКогда комфортнее?`;
+        }
     }
     
     copySlotsToClipboard(text.trim());
@@ -938,7 +941,10 @@ window.copyWeekSlots = function(weekType) {
     // Добавляем информацию о продолжительности встречи
     const meetingDuration = getMeetingDuration();
     if (meetingDuration) {
-        text += `\n\nПо времени нужно будет примерно ${meetingDuration} минут.\nКогда комфортнее?`;
+        const durationText = formatMeetingDurationForCopy(meetingDuration);
+        if (durationText) {
+            text += `\n\nПо времени нужно будет примерно ${durationText}.\nКогда комфортнее?`;
+        }
     }
     
     copySlotsToClipboard(text.trim());
@@ -1094,6 +1100,26 @@ function fallbackCopySlotsToClipboard(text) {
     }
     
     document.body.removeChild(textArea);
+}
+
+function formatMeetingDurationForCopy(meetingDurationMinutes) {
+    const minutes = parseInt(meetingDurationMinutes, 10);
+    if (!Number.isFinite(minutes) || minutes <= 0) return null;
+
+    const meetingType = document.querySelector('.btn-meeting-type.active')?.id === 'btnInterview'
+        ? 'interview'
+        : 'screening';
+
+    // Для интервью: если длительность кратна 60 или 90 (60/90/120/180/...),
+    // показываем в часах.
+    if (meetingType === 'interview' && (minutes % 60 === 0 || minutes % 90 === 0)) {
+        const hours = minutes / 60;
+        const unit = hours === 1 ? 'час' : 'часа';
+        return `${hours} ${unit}`;
+    }
+
+    // Иначе показываем как было — в минутах
+    return `${minutes} минут`;
 }
 
 // Функция для обновления слотов
