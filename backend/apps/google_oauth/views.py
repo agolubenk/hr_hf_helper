@@ -4467,10 +4467,28 @@ def chat_ajax_handler(request, session_id):
                         if last_message.hr_screening.candidate_id:
                             candidate_contact_info = _get_candidate_contact_info(request.user, last_message.hr_screening.candidate_id)
                             print(f"🔍 CHAT AJAX: Получена контактная информация для ответа (из API): {candidate_contact_info}")
+                            # Обновляем метаданные сообщения, чтобы сохранить контактную информацию
+                            if last_message.metadata:
+                                last_message.metadata['candidate_contact_info'] = candidate_contact_info
+                                last_message.save(update_fields=['metadata'])
                     elif last_message.message_type == 'invite' and last_message.invite:
                         if last_message.invite.candidate_id:
                             candidate_contact_info = _get_candidate_contact_info(request.user, last_message.invite.candidate_id)
                             print(f"🔍 CHAT AJAX: Получена контактная информация для ответа (из API): {candidate_contact_info}")
+                            # Обновляем метаданные сообщения, чтобы сохранить контактную информацию
+                            if last_message.metadata:
+                                last_message.metadata['candidate_contact_info'] = candidate_contact_info
+                                last_message.save(update_fields=['metadata'])
+                    elif last_message.metadata and last_message.metadata.get('action_type') == 'add_candidate':
+                        # Для add_candidate получаем по applicant_id из метаданных
+                        applicant_id = last_message.metadata.get('applicant_id')
+                        if applicant_id:
+                            candidate_contact_info = _get_candidate_contact_info(request.user, applicant_id)
+                            print(f"🔍 CHAT AJAX: Получена контактная информация для add_candidate (из API): {candidate_contact_info}")
+                            # Обновляем метаданные сообщения, чтобы сохранить контактную информацию
+                            if last_message.metadata:
+                                last_message.metadata['candidate_contact_info'] = candidate_contact_info
+                                last_message.save(update_fields=['metadata'])
                 else:
                     print(f"🔍 CHAT AJAX: Используем контактную информацию из metadata: {candidate_contact_info}")
                 
@@ -5298,6 +5316,10 @@ def send_chat_message(request):
                             # Fallback на старый формат
                             candidate_url = f"https://huntflow.ru/my/org{correct_account_id}#/applicants/{applicant_id}"
                     
+                    # Получаем контактную информацию кандидата для истории
+                    candidate_contact_info = _get_candidate_contact_info(request.user, applicant_id)
+                    print(f"🔍 SEND_CHAT_MESSAGE: Получена контактная информация для созданного кандидата: {candidate_contact_info}")
+                    
                     # Формируем улучшенное сообщение о созданном кандидате
                     response_content = f"✅ **Кандидат успешно создан и привязан к вакансии**\n\n"
                     response_content += f"👤 **Кандидат:** {candidate_name}\n"
@@ -5310,13 +5332,14 @@ def send_chat_message(request):
                         response_content += f"{file_info}\n\n"
                     response_content += f"🔗 [Открыть кандидата в Huntflow]({candidate_url})"
                     
-                    # Формируем метаданные с информацией о файле
+                    # Формируем метаданные с информацией о файле и контактах
                     metadata = {
                         'action_type': 'add_candidate',
                         'applicant_id': applicant_id,
                         'candidate_name': candidate_name,
                         'vacancy_name': vacancy.name,
-                        'candidate_url': candidate_url
+                        'candidate_url': candidate_url,
+                        'candidate_contact_info': candidate_contact_info
                     }
                     if attached_file_name:
                         metadata['attached_file_name'] = attached_file_name
@@ -5418,6 +5441,12 @@ def send_chat_message(request):
                     # Используем полную ссылку, если она сгенерирована, иначе исходную
                     candidate_url_for_metadata = full_candidate_url or screening.candidate_url
                     
+                    # Получаем контактную информацию кандидата
+                    candidate_contact_info = {}
+                    if screening.candidate_id:
+                        candidate_contact_info = _get_candidate_contact_info(request.user, screening.candidate_id)
+                        print(f"🔍 SEND_CHAT_MESSAGE: Получена контактная информация кандидата: {candidate_contact_info}")
+                    
                     response_content = ""  # Пустой контент, данные будут браться из metadata
                     
                     ChatMessage.objects.create(
@@ -5433,7 +5462,8 @@ def send_chat_message(request):
                             'determined_grade': screening.determined_grade,
                             'candidate_url': candidate_url_for_metadata,
                             'extracted_salary': str(screening.extracted_salary) if screening.extracted_salary else None,
-                            'salary_currency': screening.salary_currency
+                            'salary_currency': screening.salary_currency,
+                            'candidate_contact_info': candidate_contact_info
                         }
                     )
                     
@@ -6175,6 +6205,12 @@ def chat_workflow(request, session_id=None):
                             
                             print(f"🔍 CHAT: HR-скрининг перезагружен, зарплата: {hr_screening.extracted_salary}, валюта: {hr_screening.salary_currency}")
                             
+                            # Получаем контактную информацию кандидата
+                            candidate_contact_info = {}
+                            if hr_screening.candidate_id:
+                                candidate_contact_info = _get_candidate_contact_info(request.user, hr_screening.candidate_id)
+                                print(f"🔍 CHAT: Получена контактная информация кандидата: {candidate_contact_info}")
+                            
                             response_content = ""  # Пустой контент, данные будут браться из metadata
                             
                             ChatMessage.objects.create(
@@ -6190,7 +6226,8 @@ def chat_workflow(request, session_id=None):
                                     'determined_grade': hr_screening.determined_grade,
                                     'candidate_url': hr_screening.candidate_url,
                                     'extracted_salary': str(hr_screening.extracted_salary) if hr_screening.extracted_salary else None,
-                                    'salary_currency': hr_screening.salary_currency
+                                    'salary_currency': hr_screening.salary_currency,
+                                    'candidate_contact_info': candidate_contact_info
                                 }
                             )
                         except Exception as e:
@@ -6779,10 +6816,15 @@ def chat_workflow(request, session_id=None):
     # Получаем историю контактной информации из сообщений сессии
     contact_history = []
     try:
-        # Получаем все сообщения с контактной информацией (hrscreening и invite)
+        # Получаем все сообщения с контактной информацией (hrscreening, invite и add_candidate)
+        # Для add_candidate ищем по metadata.action_type, так как message_type='system'
+        from django.db.models import Q
+        
         messages_with_contacts = ChatMessage.objects.filter(
-            session=chat_session,
-            message_type__in=['hrscreening', 'invite']
+            session=chat_session
+        ).filter(
+            Q(message_type__in=['hrscreening', 'invite']) |
+            Q(message_type='system', metadata__action_type='add_candidate')
         ).order_by('-created_at')[:50]  # Берем последние 50
         
         for msg in messages_with_contacts:
@@ -6817,6 +6859,7 @@ def chat_workflow(request, session_id=None):
         'active_vacancies': active_vacancies,
         'selected_vacancy': vacancy,
         'timestamp': int(time()),
+        'contact_history': contact_history_json,  # Передаем JSON-строку для шаблона
         'calendar_events_data': calendar_events_data,
         'slots_settings': slots_settings,
         'slots_settings_json': json.dumps(slots_settings.to_dict()) if slots_settings else '{}',
