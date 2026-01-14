@@ -762,15 +762,21 @@ window.copyAllSlots = function() {
         });
     }
     
-    // Копируем слоты из третьей недели, если она загружена
+    // Копируем слоты из третьей недели, если она загружена.
+    // ВАЖНО: не полагаемся на inline style.display (он может быть пустым при показе через CSS),
+    // а ориентируемся на наличие карточек и фактическую видимость.
     const thirdWeekSection = document.querySelector('.week-section.third-week');
-    if (thirdWeekSection && thirdWeekSection.style.display !== 'none') {
-        thirdWeekSection.querySelectorAll('.slot-card').forEach(card => {
-            const slotData = extractSlotData(card);
-            if (slotData) {
-                thirdWeekSlots.push(slotData);
-            }
-        });
+    if (thirdWeekSection) {
+        const computedDisplay = window.getComputedStyle(thirdWeekSection).display;
+        const thirdWeekCards = thirdWeekSection.querySelectorAll('.slot-card');
+        if (computedDisplay !== 'none' && thirdWeekCards.length > 0) {
+            thirdWeekCards.forEach(card => {
+                const slotData = extractSlotData(card);
+                if (slotData) {
+                    thirdWeekSlots.push(slotData);
+                }
+            });
+        }
     }
     
     if (currentWeekSlots.length === 0 && nextWeekSlots.length === 0 && thirdWeekSlots.length === 0) {
