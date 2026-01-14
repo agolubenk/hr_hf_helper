@@ -454,6 +454,32 @@
                                                             <i class="fas fa-check-circle me-1"></i>
                                                             Данные сохранены и переданы в Huntflow
                                                         </div>
+                                                        
+                                                        <!-- Форма отказа кандидата -->
+                                                        {% if message.metadata.show_rejection_form %}
+                                                        <div class="rejection-form-container mt-3 p-3 bg-warning bg-opacity-10 rounded border border-warning">
+                                                            <div class="d-flex align-items-center justify-content-between">
+                                                                <div class="d-flex align-items-center">
+                                                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                                                    <strong>Отказать кандидату?</strong>
+                                                                </div>
+                                                                <div class="rejection-buttons">
+                                                                    <button type="button" 
+                                                                            class="btn btn-sm btn-danger me-2 reject-candidate-btn" 
+                                                                            data-hr-screening-id="{{ message.metadata.hr_screening_id }}"
+                                                                            data-message-id="{{ message.id }}"
+                                                                            title="Отказать кандидату">
+                                                                        <i class="fas fa-times me-1"></i>Да
+                                                                    </button>
+                                                                    <button type="button" 
+                                                                            class="btn btn-sm btn-success reject-candidate-no-btn" 
+                                                                            title="Не отказывать">
+                                                                        <i class="fas fa-check me-1"></i>Нет
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
                                                     </div>
                                                     
                                                     <!-- Кнопки действий справа -->
@@ -1572,6 +1598,21 @@
 #contactHistoryContainer {
     height: calc(100vh - 560px);
     min-height: 200px;
+}
+
+/* Стили для формы отказа кандидата */
+.rejection-form-container {
+    border-left: 4px solid #ffc107 !important;
+}
+
+.rejection-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.reject-candidate-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 #contactHistoryList {
@@ -4199,7 +4240,102 @@ window.userPhotoUrl = null;
                 } else {
                     console.warn('⚠️ Bootstrap недоступен, tooltips не будут работать');
                 }
+                
+                // Обработчик для кнопки "Да" (отказать кандидата)
+                document.addEventListener('click', function(e) {
+                    if (e.target.closest('.reject-candidate-btn')) {
+                        e.preventDefault();
+                        const btn = e.target.closest('.reject-candidate-btn');
+                        const hrScreeningId = btn.getAttribute('data-hr-screening-id');
+                        const messageId = btn.getAttribute('data-message-id');
+                        
+                        if (!hrScreeningId) {
+                            alert('Ошибка: не указан ID скрининга');
+                            return;
+                        }
+                        
+                        // Подтверждение
+                        if (!confirm('Вы уверены, что хотите отказать кандидату?')) {
+                            return;
+                        }
+                        
+                        // Блокируем кнопку
+                        btn.disabled = true;
+                        const originalHtml = btn.innerHTML;
+                        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обработка...';
+                        
+                        // Формируем URL для отказа
+                        const rejectUrl = '{% url "google_oauth:reject_candidate" 999999 %}'.replace('999999', hrScreeningId);
+                        
+                        // Отправляем запрос
+                        fetch(rejectUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': getCookie('csrftoken') || document.querySelector('[name=csrfmiddlewaretoken]').value
+                            },
+                            body: JSON.stringify({
+                                message_id: messageId
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Обновляем статус в сообщении
+                                const rejectionForm = btn.closest('.rejection-form-container');
+                                if (rejectionForm) {
+                                    const statusMessage = rejectionForm.previousElementSibling;
+                                    if (statusMessage && statusMessage.classList.contains('status-message-compact')) {
+                                        statusMessage.innerHTML = '<i class="fas fa-times-circle me-1 text-danger"></i>' + (data.status_text || 'Кандидат отклонен');
+                                    }
+                                    
+                                    // Скрываем форму отказа
+                                    rejectionForm.style.display = 'none';
+                                }
+                                
+                                // Показываем уведомление
+                                alert('Кандидат успешно отклонен');
+                            } else {
+                                alert('Ошибка при отклонении кандидата: ' + (data.error || 'Неизвестная ошибка'));
+                                btn.disabled = false;
+                                btn.innerHTML = originalHtml;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Ошибка при отправке запроса:', error);
+                            alert('Ошибка при отправке запроса');
+                            btn.disabled = false;
+                            btn.innerHTML = originalHtml;
+                        });
+                    }
+                    
+                    // Обработчик для кнопки "Нет" (скрыть форму)
+                    if (e.target.closest('.reject-candidate-no-btn')) {
+                        e.preventDefault();
+                        const btn = e.target.closest('.reject-candidate-no-btn');
+                        const rejectionForm = btn.closest('.rejection-form-container');
+                        if (rejectionForm) {
+                            rejectionForm.style.display = 'none';
+                        }
+                    }
+                });
             });
+            
+            // Функция для получения CSRF токена
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
             
             </script>
             
