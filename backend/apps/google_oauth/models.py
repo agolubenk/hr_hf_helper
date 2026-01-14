@@ -5365,7 +5365,7 @@ class HRScreening(models.Model):
     
     def _find_salary_rejection_status(self, huntflow_service, account_id):
         """
-        Ищет статус отказа по зарплате в Huntflow (статус с type='trash' и rejection_reason "Высокие запросы по зарплате")
+        Ищет причину отказа по зарплате в Huntflow через endpoint rejection_reasons
         
         Args:
             huntflow_service: Сервис Huntflow
@@ -5375,41 +5375,96 @@ class HRScreening(models.Model):
             tuple: (status_id, rejection_reason_id) или (None, None) если не найден
         """
         try:
-            statuses = huntflow_service.get_vacancy_statuses(account_id)
-            if not statuses or 'items' not in statuses:
+            # Получаем причины отказа через отдельный endpoint
+            rejection_reasons_data = huntflow_service.get_rejection_reasons(account_id)
+            if not rejection_reasons_data or 'items' not in rejection_reasons_data:
+                print(f"⚠️ HR_SCREENING_SALARY_REJECTION_STATUS: Причины отказа не получены или пусты")
                 return None, None
             
-            # Ищем статус с type='trash' (это статус отказа)
-            print(f"🔍 HR_SCREENING_SALARY_REJECTION_STATUS: Ищем статус отказа по зарплате среди {len(statuses['items'])} статусов")
-            for status in statuses['items']:
-                status_type = status.get('type', '').lower()
-                status_name = status.get('name', '').lower().strip()
-                status_id = status.get('id')
-                
-                # Ищем статус типа 'trash' (отказ)
-                if status_type == 'trash':
-                    print(f"🔍 HR_SCREENING_SALARY_REJECTION_STATUS: Найден статус отказа '{status.get('name')}' (ID: {status_id}, type: {status_type})")
-                    
-                    # Получаем rejection_reasons для этого статуса
-                    rejection_reasons = status.get('reject_reasons', [])
-                    if rejection_reasons:
-                        print(f"🔍 HR_SCREENING_SALARY_REJECTION_STATUS: Найдено {len(rejection_reasons)} причин отказа")
-                        # Ищем причину отказа по зарплате
-                        for reason in rejection_reasons:
-                            reason_name = reason.get('name', '').lower()
-                            reason_id = reason.get('id')
-                            
-                            # Ключевые слова для поиска причины отказа по зарплате
-                            salary_keywords = ['зарплат', 'запрос', 'высок', 'финанс', 'salary', 'high', 'finance']
-                            if any(keyword in reason_name for keyword in salary_keywords):
-                                print(f"✅ HR_SCREENING_SALARY_REJECTION_STATUS: Найдена причина отказа '{reason.get('name')}' (ID: {reason_id})")
-                                return status_id, reason_id
-                    else:
-                        # Если нет rejection_reasons, используем сам статус
-                        print(f"⚠️ HR_SCREENING_SALARY_REJECTION_STATUS: У статуса '{status.get('name')}' нет rejection_reasons, используем сам статус")
-                        return status_id, None
+            rejection_reasons = rejection_reasons_data.get('items', [])
+            print(f"🔍 HR_SCREENING_SALARY_REJECTION_STATUS: Получено {len(rejection_reasons)} причин отказа")
             
-            print(f"⚠️ HR_SCREENING_SALARY_REJECTION_STATUS: Статус отказа по зарплате не найден")
+            # Ищем причину отказа "Высокие запросы по зарплате"
+            search_patterns = [
+                'высокие запросы по зарплате',
+                'высокие запросы',
+                'высок запрос',
+                'запрос по зарплате',
+                'зарплат запрос',
+            ]
+            
+            for reason in rejection_reasons:
+                if not isinstance(reason, dict):
+                    continue
+                    
+                reason_name = reason.get('name', '')
+                reason_id = reason.get('id')
+                
+                if not reason_name or reason_id is None:
+                    continue
+                
+                reason_name_lower = reason_name.lower().strip()
+                normalized_reason_name = ' '.join(reason_name_lower.split())
+                
+                print(f"  🔍 Проверяем причину: '{reason_name}' (ID: {reason_id})")
+                
+                # Проверяем точные совпадения
+                for pattern in search_patterns:
+                    if pattern in normalized_reason_name:
+                        print(f"✅ HR_SCREENING_SALARY_REJECTION_STATUS: Найдена причина отказа '{reason_name}' (ID: {reason_id}) по паттерну '{pattern}'")
+                        
+                        # Теперь нужно найти статус отказа типа 'trash' для использования с этой причиной
+                        statuses = huntflow_service.get_vacancy_statuses(account_id)
+                        if statuses and 'items' in statuses:
+                            for status in statuses['items']:
+                                status_type = status.get('type', '').lower()
+                                if status_type == 'trash':
+                                    status_id = status.get('id')
+                                    print(f"✅ HR_SCREENING_SALARY_REJECTION_STATUS: Найден статус отказа (ID: {status_id}) для причины отказа (ID: {reason_id})")
+                                    return status_id, reason_id
+                        
+                        # Если статус не найден, все равно возвращаем reason_id (может быть использован без статуса)
+                        print(f"⚠️ HR_SCREENING_SALARY_REJECTION_STATUS: Статус отказа не найден, но причина отказа найдена (ID: {reason_id})")
+                        return None, reason_id
+            
+            # Если точное совпадение не найдено, ищем по ключевым словам
+            for reason in rejection_reasons:
+                if not isinstance(reason, dict):
+                    continue
+                    
+                reason_name = reason.get('name', '')
+                reason_id = reason.get('id')
+                
+                if not reason_name or reason_id is None:
+                    continue
+                
+                reason_name_lower = reason_name.lower().strip()
+                normalized_reason_name = ' '.join(reason_name_lower.split())
+                
+                # Ключевые слова для поиска причины отказа по зарплате
+                salary_keywords = ['зарплат', 'запрос', 'высок', 'финанс', 'salary', 'high', 'finance', 'запросы']
+                if any(keyword in normalized_reason_name for keyword in salary_keywords):
+                    # Проверяем, что это не "Другие" или общая причина
+                    if 'други' not in normalized_reason_name and 'other' not in normalized_reason_name:
+                        print(f"✅ HR_SCREENING_SALARY_REJECTION_STATUS: Найдена причина отказа '{reason_name}' (ID: {reason_id}) по ключевым словам")
+                        
+                        # Находим статус отказа
+                        statuses = huntflow_service.get_vacancy_statuses(account_id)
+                        if statuses and 'items' in statuses:
+                            for status in statuses['items']:
+                                status_type = status.get('type', '').lower()
+                                if status_type == 'trash':
+                                    status_id = status.get('id')
+                                    return status_id, reason_id
+                        
+                        return None, reason_id
+            
+            print(f"⚠️ HR_SCREENING_SALARY_REJECTION_STATUS: Причина отказа по зарплате не найдена среди {len(rejection_reasons)} причин")
+            if rejection_reasons:
+                print(f"⚠️ HR_SCREENING_SALARY_REJECTION_STATUS: Доступные причины отказа:")
+                for r in rejection_reasons:
+                    print(f"  - '{r.get('name', '')}' (ID: {r.get('id')})")
+            
             return None, None
         except Exception as e:
             print(f"❌ HR_SCREENING_SALARY_REJECTION_STATUS: Ошибка при поиске статуса отказа по зарплате: {e}")

@@ -2848,10 +2848,47 @@ def reject_candidate(request, hr_screening_id):
         if salary_above_range:
             # Приоритет 1: Зарплата превышает вилку
             rejection_status_id, rejection_reason_id = hr_screening._find_salary_rejection_status(huntflow_service, account_id)
-            if rejection_reason_id:
-                comment = f"Отказ: Высокие запросы по зарплате ({hr_screening.extracted_salary} {hr_screening.salary_currency})"
-            else:
-                comment = f"Отказ: Высокие запросы по зарплате ({hr_screening.extracted_salary} {hr_screening.salary_currency})"
+            
+            # При отказе по ЗП не передаем комментарий - только причину отказа
+            comment = ""
+            
+            # Причина отказа обязательна для отказа по ЗП
+            if not rejection_reason_id:
+                # Получаем список всех причин отказа для более информативного сообщения
+                try:
+                    rejection_reasons_data = huntflow_service.get_rejection_reasons(account_id)
+                    all_reasons = []
+                    if rejection_reasons_data and 'items' in rejection_reasons_data:
+                        for reason in rejection_reasons_data['items']:
+                            if isinstance(reason, dict) and reason.get('name'):
+                                all_reasons.append(f"'{reason.get('name')}'")
+                    
+                    error_msg = 'Причина отказа "Высокие запросы по зарплате" не найдена в Huntflow.'
+                    if all_reasons:
+                        error_msg += f' Доступные причины отказа: {", ".join(all_reasons)}. Убедитесь, что в списке причин отказа есть причина с названием, содержащим "Высокие запросы по зарплате" или похожим.'
+                    else:
+                        error_msg += ' В списке причин отказа не найдено ни одной причины. Убедитесь, что причины отказа настроены в Huntflow.'
+                    
+                    return JsonResponse({
+                        'success': False, 
+                        'error': error_msg
+                    })
+                except Exception as e:
+                    print(f"⚠️ REJECT_CANDIDATE: Ошибка при получении списка причин отказа: {e}")
+                    return JsonResponse({
+                        'success': False, 
+                        'error': 'Причина отказа "Высокие запросы по зарплате" не найдена в Huntflow. Убедитесь, что в списке причин отказа есть причина с таким названием.'
+                    })
+            
+            # Если статус не найден, но причина найдена, ищем статус отказа
+            if not rejection_status_id and rejection_reason_id:
+                statuses = huntflow_service.get_vacancy_statuses(account_id)
+                if statuses and 'items' in statuses:
+                    for status in statuses['items']:
+                        if status.get('type', '').lower() == 'trash':
+                            rejection_status_id = status.get('id')
+                            print(f"✅ REJECT_CANDIDATE: Найден статус отказа (ID: {rejection_status_id}) для причины отказа (ID: {rejection_reason_id})")
+                            break
         elif office_format_rejected:
             # Приоритет 2: Офисный формат
             rejection_status_id, rejection_reason_id = hr_screening._find_rejection_status_with_reason(huntflow_service, account_id, 'office_format')
@@ -2868,6 +2905,15 @@ def reject_candidate(request, hr_screening_id):
         
         if not rejection_status_id:
             return JsonResponse({'success': False, 'error': 'Статус отказа не найден в Huntflow'})
+        
+        # Убеждаемся, что комментарий не пустой (только для не-ЗП отказов)
+        if not comment and not salary_above_range:
+            if office_format_rejected:
+                comment = "Отказ по офисному формату"
+            else:
+                comment = "Отказ кандидата"
+        
+        print(f"🔍 REJECT_CANDIDATE: rejection_status_id={rejection_status_id}, rejection_reason_id={rejection_reason_id}, comment='{comment}'")
         
         # Обновляем статус в Huntflow
         status_result = hr_screening._update_applicant_status_with_rejection(
@@ -2894,6 +2940,8 @@ def reject_candidate(request, hr_screening_id):
                     chat_message.metadata['rejection_reason_id'] = rejection_reason_id
                     chat_message.metadata['rejection_comment'] = comment
                     chat_message.metadata['rejection_status_text'] = status_text
+                    # Сохраняем, что пользователь ответил на форму отказа
+                    chat_message.metadata['rejection_form_answered'] = True
                     chat_message.save(update_fields=['metadata'])
                     print(f"✅ REJECT_CANDIDATE: Metadata сообщения {message_id} обновлено")
             except ChatMessage.DoesNotExist:
@@ -3936,11 +3984,38 @@ def chat_ajax_handler(request, session_id):
             data = json.loads(request.body)
             message_text = data.get('text', '').strip()
             action_type_from_js = data.get('action_type', '')
+            action = data.get('action', '')
         else:
             # FormData
             data = request.POST
             message_text = data.get('text', '').strip()
             action_type_from_js = data.get('action_type', '')
+            action = data.get('action', '')
+        
+        # Обработка специальных действий (не требующих сообщения)
+        if action == 'save_rejection_form_answer':
+            message_id = data.get('message_id')
+            answer = data.get('answer')  # 'yes' или 'no'
+            
+            if not message_id:
+                return JsonResponse({'success': False, 'error': 'Не указан ID сообщения'})
+            
+            try:
+                from .models import ChatMessage
+                chat_message = ChatMessage.objects.get(id=message_id, session__user=request.user)
+                if chat_message.metadata:
+                    chat_message.metadata['rejection_form_answered'] = True
+                    chat_message.metadata['rejection_form_answer'] = answer
+                    chat_message.save(update_fields=['metadata'])
+                    print(f"✅ CHAT AJAX: Сохранен ответ на форму отказа для сообщения {message_id}: {answer}")
+                    return JsonResponse({'success': True, 'message': 'Ответ сохранен'})
+                else:
+                    return JsonResponse({'success': False, 'error': 'Metadata сообщения не найдена'})
+            except ChatMessage.DoesNotExist:
+                return JsonResponse({'success': False, 'error': 'Сообщение не найдено'})
+            except Exception as e:
+                print(f"❌ CHAT AJAX: Ошибка при сохранении ответа на форму отказа: {e}")
+                return JsonResponse({'success': False, 'error': str(e)})
         
         print(f"🔍 CHAT AJAX HANDLER: Получен message_text (длина: {len(message_text)}): {message_text}")
         print(f"🔍 CHAT AJAX HANDLER: Проверяем наличие @ в message_text: {'@' in message_text}")

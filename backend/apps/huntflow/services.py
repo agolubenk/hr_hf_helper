@@ -617,6 +617,18 @@ class HuntflowService:
         """
         return self._make_request('GET', f"/accounts/{account_id}/vacancies/statuses")
     
+    def get_rejection_reasons(self, account_id: int) -> Optional[Dict[str, Any]]:
+        """
+        Получает список причин отказа
+        
+        Args:
+            account_id: ID организации
+            
+        Returns:
+            Список причин отказа или None
+        """
+        return self._make_request('GET', f"/accounts/{account_id}/rejection_reasons")
+    
     def get_vacancy_additional_fields(self, account_id: int) -> Optional[Dict[str, Any]]:
         """
         Получает схему дополнительных полей вакансий

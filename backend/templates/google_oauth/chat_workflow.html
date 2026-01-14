@@ -456,7 +456,7 @@
                                                         </div>
                                                         
                                                         <!-- Форма отказа кандидата -->
-                                                        {% if message.metadata.show_rejection_form %}
+                                                        {% if message.metadata.show_rejection_form and not message.metadata.rejection_form_answered %}
                                                         <div class="rejection-form-container mt-3 p-3 bg-warning bg-opacity-10 rounded border border-warning">
                                                             <div class="d-flex align-items-center justify-content-between">
                                                                 <div class="d-flex align-items-center">
@@ -4309,13 +4309,41 @@ window.userPhotoUrl = null;
                         });
                     }
                     
-                    // Обработчик для кнопки "Нет" (скрыть форму)
+                    // Обработчик для кнопки "Нет" (скрыть форму и сохранить ответ)
                     if (e.target.closest('.reject-candidate-no-btn')) {
                         e.preventDefault();
                         const btn = e.target.closest('.reject-candidate-no-btn');
                         const rejectionForm = btn.closest('.rejection-form-container');
+                        const messageId = rejectionForm.querySelector('.reject-candidate-btn')?.getAttribute('data-message-id');
+                        
                         if (rejectionForm) {
+                            // Скрываем форму
                             rejectionForm.style.display = 'none';
+                            
+                            // Сохраняем в metadata, что пользователь ответил на форму
+                            if (messageId) {
+                                fetch('{% url "google_oauth:chat_ajax_handler" chat_session.id %}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRFToken': getCookie('csrftoken') || document.querySelector('[name=csrfmiddlewaretoken]').value
+                                    },
+                                    body: JSON.stringify({
+                                        action: 'save_rejection_form_answer',
+                                        message_id: messageId,
+                                        answer: 'no'
+                                    })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        console.log('✅ Форма отказа скрыта, ответ сохранен');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Ошибка при сохранении ответа:', error);
+                                });
+                            }
                         }
                     }
                 });
