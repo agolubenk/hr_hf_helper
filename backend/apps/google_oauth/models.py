@@ -5241,24 +5241,41 @@ class HRScreening(models.Model):
             'офис', 'office', 'формат_работы', 'work format', 'work_format'
         ]
         
-        # Список значений, которые означают "нет" офисного формата (расширенный список)
-        rejection_values = ['нет', 'no', 'false', '0', 'не', 'не подходит', 'не готов', 
-                           'не могу', 'не хочу', 'не подходит', 'удаленка', 'remote', 
-                           'гибрид', 'hybrid', 'только удаленка', 'только гибрид',
-                           'не готов работать в офисе', 'не готов работать в офис', 
-                           'не готов к офисной работе', 'не готов к работе в офисе',
-                           'готов только удаленка', 'готов только гибрид', 'только удаленно',
-                           'не подходит офис', 'не подходит офисный формат']
+        # Список значений, которые означают "нет" офисного формата.
+        #
+        # ВАЖНО: НЕ считаем слова "удаленка/remote/гибрид/hybrid" сами по себе отказом,
+        # чтобы не ловить ложные срабатывания вроде "к офису готов, идеально гибрид".
+        rejection_values = [
+            'нет', 'no', 'false', '0',
+            'не подходит', 'не готов', 'не могу', 'не хочу',
+            'не готов работать в офисе', 'не готов работать в офис',
+            'не готов к офисной работе', 'не готов к работе в офисе',
+            'не подходит офис', 'не подходит офисный формат',
+            # Контекстные формулировки про удалёнку/гибрид (только/исключительно)
+            'только удаленка', 'только удалёнка', 'только удаленно', 'только удалённо',
+            'только гибрид', 'только hybrid', 'только remote',
+            'готов только удаленка', 'готов только удалёнка',
+            'готов только гибрид', 'готов только hybrid', 'готов только remote',
+        ]
         
         # Сначала проверяем все ключи в анализе
         for key, value in parsed_analysis.items():
             key_lower = str(key).lower()
             print(f"🔍 HR_SCREENING_OFFICE_CHECK: Проверяем ключ '{key}' со значением: {value}")
+
+            # В некоторых местах ключом может быть ID поля (например "CsWOTY..."),
+            # а человеко-читаемое название лежит в value['field_title'].
+            # Учитываем это, чтобы корректно отработал триггер "Офис = Нет".
+            field_title_lower = ""
+            if isinstance(value, dict):
+                field_title_lower = str(value.get('field_title', '')).lower()
+
+            combined_key_lower = f"{key_lower} {field_title_lower}".strip()
             
             # Проверяем, содержит ли ключ название поля офисного формата
             for field_name in office_field_names:
-                if field_name.lower() in key_lower:
-                    print(f"🔍 HR_SCREENING_OFFICE_CHECK: Найден ключ '{key}' похожий на поле офисного формата '{field_name}'")
+                if field_name.lower() in combined_key_lower:
+                    print(f"🔍 HR_SCREENING_OFFICE_CHECK: Найдено поле офисного формата '{field_name}' (key='{key}', field_title='{field_title_lower}')")
                     
                     # Извлекаем значение
                     field_value = None
@@ -5266,6 +5283,8 @@ class HRScreening(models.Model):
                         field_value = value.get('value', '')
                         if not field_value:
                             field_value = value.get('quote', '')
+                        if not field_value:
+                            field_value = value.get('display', '')
                     elif isinstance(value, str):
                         field_value = value
                     else:
@@ -5274,6 +5293,14 @@ class HRScreening(models.Model):
                     if field_value:
                         field_value_lower = str(field_value).lower().strip()
                         print(f"🔍 HR_SCREENING_OFFICE_CHECK: Значение поля '{key}': '{field_value_lower}'")
+
+                        # Приоритет: если это бинарный ответ (Да/Нет), то считаем отказом только "Нет"
+                        if field_value_lower in ('да', 'yes', 'true', '1'):
+                            print(f"ℹ️ HR_SCREENING_OFFICE_CHECK: Явный ответ 'да' — офисный формат не отклонен")
+                            return False
+                        if field_value_lower in ('нет', 'no', 'false', '0'):
+                            print(f"✅ HR_SCREENING_OFFICE_CHECK: Явный ответ 'нет' — офисный формат отклонен")
+                            return True
                         
                         # Проверяем, является ли значение отказом
                         for rejection_val in rejection_values:
@@ -5287,10 +5314,11 @@ class HRScreening(models.Model):
                 value_str = str(value.get('value', '')).lower()
                 quote_str = str(value.get('quote', '')).lower()
                 combined_str = f"{value_str} {quote_str}".strip()
+                title_str = str(value.get('field_title', '')).lower()
                 
                 # Проверяем, содержит ли значение слова об отказе офисного формата
                 if any(rejection_val in combined_str for rejection_val in rejection_values):
-                    if any(field_name in key.lower() for field_name in office_field_names):
+                    if any(field_name in key.lower() for field_name in office_field_names) or any(field_name in title_str for field_name in office_field_names):
                         print(f"✅ HR_SCREENING_OFFICE_CHECK: Найдено в значении поля '{key}': '{combined_str}' - офисный формат = нет")
                         return True
         
@@ -5488,42 +5516,65 @@ class HRScreening(models.Model):
             statuses = huntflow_service.get_vacancy_statuses(account_id)
             if not statuses or 'items' not in statuses:
                 return None, None
-            
-            # Ключевые слова для поиска причины отказа
-            if reason_type == 'office_format':
-                reason_keywords = ['удаленка', 'гибрид', 'формат', 'remote', 'hybrid', 'format', 'офис']
-            else:
-                reason_keywords = []
-            
-            # Ищем статус с type='trash' (это статус отказа)
-            print(f"🔍 HR_SCREENING_REJECTION_STATUS_WITH_REASON: Ищем статус отказа '{reason_type}' среди {len(statuses['items'])} статусов")
+
+            # Всегда нужен статус типа 'trash' (отказ)
+            status_id = None
             for status in statuses['items']:
-                status_type = status.get('type', '').lower()
-                status_id = status.get('id')
-                
-                # Ищем статус типа 'trash' (отказ)
-                if status_type == 'trash':
-                    print(f"🔍 HR_SCREENING_REJECTION_STATUS_WITH_REASON: Найден статус отказа '{status.get('name')}' (ID: {status_id})")
-                    
-                    # Получаем rejection_reasons для этого статуса
-                    rejection_reasons = status.get('reject_reasons', [])
-                    if rejection_reasons:
-                        print(f"🔍 HR_SCREENING_REJECTION_STATUS_WITH_REASON: Найдено {len(rejection_reasons)} причин отказа")
-                        # Ищем причину отказа
-                        for reason in rejection_reasons:
-                            reason_name = reason.get('name', '').lower()
-                            reason_id = reason.get('id')
-                            
-                            if reason_keywords and any(keyword in reason_name for keyword in reason_keywords):
-                                print(f"✅ HR_SCREENING_REJECTION_STATUS_WITH_REASON: Найдена причина отказа '{reason.get('name')}' (ID: {reason_id})")
-                                return status_id, reason_id
+                if status.get('type', '').lower() == 'trash':
+                    status_id = status.get('id')
+                    break
+
+            if not status_id:
+                print(f"⚠️ HR_SCREENING_REJECTION_STATUS_WITH_REASON: Статус типа 'trash' не найден")
+                return None, None
+
+            # Для офисного формата нужна конкретная причина: "Удалёнка/гибрид"
+            if reason_type == 'office_format':
+                try:
+                    rejection_reasons_data = huntflow_service.get_rejection_reasons(account_id)
+                    items = (rejection_reasons_data or {}).get('items', [])
+                    if not items:
+                        print(f"⚠️ HR_SCREENING_REJECTION_STATUS_WITH_REASON: Причины отказа не получены (endpoint rejection_reasons)")
                     else:
-                        # Если нет rejection_reasons, используем сам статус
-                        print(f"⚠️ HR_SCREENING_REJECTION_STATUS_WITH_REASON: У статуса '{status.get('name')}' нет rejection_reasons, используем сам статус")
-                        return status_id, None
-            
-            print(f"⚠️ HR_SCREENING_REJECTION_STATUS_WITH_REASON: Статус отказа '{reason_type}' не найден")
-            return None, None
+                        def _norm(s: str) -> str:
+                            return str(s or '').lower().replace('ё', 'е').replace(' ', '')
+
+                        target_patterns = [
+                            _norm('Удалёнка/гибрид'),
+                            _norm('Удаленка/гибрид'),
+                            _norm('Удаленка-гибрид'),
+                            _norm('Remote/Hybrid'),
+                        ]
+
+                        for reason in items:
+                            if not isinstance(reason, dict):
+                                continue
+                            name = reason.get('name', '')
+                            name_norm = _norm(name)
+                            if any(pat in name_norm for pat in target_patterns):
+                                reason_id = reason.get('id')
+                                print(f"✅ HR_SCREENING_REJECTION_STATUS_WITH_REASON: Найдена причина '{name}' (ID: {reason_id}) для офисного формата")
+                                return status_id, reason_id
+                except Exception as e:
+                    print(f"⚠️ HR_SCREENING_REJECTION_STATUS_WITH_REASON: Не удалось получить причины отказа через endpoint: {e}")
+
+                # Fallback: если endpoint недоступен, попробуем найти причину в statuses.items[*].reject_reasons
+                reason_keywords = ['удаленка', 'удалёнка', 'гибрид', 'remote', 'hybrid']
+                for st in statuses['items']:
+                    if st.get('type', '').lower() != 'trash':
+                        continue
+                    for reason in (st.get('reject_reasons', []) or []):
+                        reason_name = str(reason.get('name', '')).lower()
+                        if any(kw in reason_name for kw in reason_keywords):
+                            reason_id = reason.get('id')
+                            print(f"✅ HR_SCREENING_REJECTION_STATUS_WITH_REASON: Fallback причина '{reason.get('name')}' (ID: {reason_id})")
+                            return status_id, reason_id
+
+                print(f"⚠️ HR_SCREENING_REJECTION_STATUS_WITH_REASON: Причина 'Удалёнка/гибрид' не найдена, используем отказ без причины")
+                return status_id, None
+
+            # Для остальных типов пока нет специальных правил
+            return status_id, None
         except Exception as e:
             print(f"❌ HR_SCREENING_REJECTION_STATUS_WITH_REASON: Ошибка при поиске статуса отказа: {e}")
             import traceback

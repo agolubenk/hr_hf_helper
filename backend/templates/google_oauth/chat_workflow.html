@@ -495,12 +495,11 @@
                                                                     {% comment %}Кнопка копирования шаблона отказа по офисному формату{% endcomment %}
                                                                     {% if message.metadata.office_format_rejected %}
                                                                     {% if message.metadata.rejection_template_message %}
-                                                                <button type="button" class="btn btn-sm btn-outline-warning copy-rejection-template-btn" 
+                                                                <button type="button" class="btn btn-sm btn-outline-danger copy-rejection-template-btn" 
                                                                         data-template-message="{{ message.metadata.rejection_template_message|escapejs }}" 
                                                                         data-template-title="{% if message.metadata.rejection_template_title %}{{ message.metadata.rejection_template_title|escapejs }}{% endif %}"
                                                                         title="Скопировать шаблон отказа по офисному формату">
-                                                                            <i class="fas fa-copy me-1"></i>
-                                                                            Скопировать отказ
+                                                                            <i class="fas fa-times"></i>
                                                                         </button>
                                                                     {% else %}
                                                                     <!-- DEBUG: office_format_rejected=True, но rejection_template_message отсутствует -->
@@ -3399,10 +3398,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Обработчик кнопки копирования шаблона отказа по офисному формату
 document.addEventListener('click', function(e) {
+    function decodeEscapeJsString(value) {
+        if (!value) return value;
+        // data-* заполнено через Django |escapejs, поэтому получаем строки вида "\u002D", "\n" и т.п.
+        // Декодируем их обратно в "нормальный" текст.
+        try {
+            return JSON.parse('"' + String(value).replace(/"/g, '\\"') + '"');
+        } catch (err) {
+            return value;
+        }
+    }
+
     if (e.target.closest('.copy-rejection-template-btn')) {
         const btn = e.target.closest('.copy-rejection-template-btn');
-        const templateMessage = btn.getAttribute('data-template-message');
-        const templateTitle = btn.getAttribute('data-template-title');
+        const templateMessageRaw = btn.getAttribute('data-template-message');
+        const templateTitleRaw = btn.getAttribute('data-template-title');
+        const templateMessage = decodeEscapeJsString(templateMessageRaw);
+        const templateTitle = decodeEscapeJsString(templateTitleRaw);
         
         if (!templateMessage) {
             alert('Текст шаблона не найден');
@@ -3414,14 +3426,14 @@ document.addEventListener('click', function(e) {
         
         // Копируем текст шаблона в буфер обмена
         navigator.clipboard.writeText(templateMessage).then(() => {
-            btn.innerHTML = '<i class="fas fa-check"></i> Скопировано';
-            btn.classList.remove('btn-outline-warning');
+            btn.innerHTML = '<i class="fas fa-check"></i>';
+            btn.classList.remove('btn-outline-danger');
             btn.classList.add('btn-success');
             
             setTimeout(() => {
                 btn.innerHTML = originalText;
                 btn.classList.remove('btn-success');
-                btn.classList.add('btn-outline-warning');
+                btn.classList.add('btn-outline-danger');
                 btn.disabled = false;
             }, 2000);
         }).catch(err => {
@@ -3435,14 +3447,14 @@ document.addEventListener('click', function(e) {
             textArea.select();
             try {
                 document.execCommand('copy');
-                btn.innerHTML = '<i class="fas fa-check"></i> Скопировано';
-                btn.classList.remove('btn-outline-warning');
+                btn.innerHTML = '<i class="fas fa-check"></i>';
+                btn.classList.remove('btn-outline-danger');
                 btn.classList.add('btn-success');
                 
                 setTimeout(() => {
                     btn.innerHTML = originalText;
                     btn.classList.remove('btn-success');
-                    btn.classList.add('btn-outline-warning');
+                    btn.classList.add('btn-outline-danger');
                     btn.disabled = false;
                 }, 2000);
             } catch (err2) {
@@ -3459,8 +3471,10 @@ document.addEventListener('click', function(e) {
     // Обработчик для кнопки копирования шаблона отказа "Финансы - больше"
     if (e.target.closest('.copy-finance-more-template-btn')) {
         const btn = e.target.closest('.copy-finance-more-template-btn');
-        const templateMessage = btn.getAttribute('data-template-message');
-        const templateTitle = btn.getAttribute('data-template-title');
+        const templateMessageRaw = btn.getAttribute('data-template-message');
+        const templateTitleRaw = btn.getAttribute('data-template-title');
+        const templateMessage = decodeEscapeJsString(templateMessageRaw);
+        const templateTitle = decodeEscapeJsString(templateTitleRaw);
         
         if (!templateMessage) {
             alert('Текст шаблона не найден');
