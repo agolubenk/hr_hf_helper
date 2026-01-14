@@ -4865,23 +4865,7 @@ class HRScreening(models.Model):
                         
                         print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле {field_key} = {field_value}")
             
-            # Обновляем основные поля (money) если есть
-            if money_data:
-                print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем основные поля")
-                result = huntflow_service.update_applicant(account_id, int(self.candidate_id), money_data)
-                if not result:
-                    print(f"❌ HR_SCREENING_UPDATE_CANDIDATE: Ошибка при обновлении основных полей")
-                    return False, "Ошибка при обновлении основных полей"
-            
-            # Обновляем дополнительные поля (questionary) если есть
-            if questionary_data:
-                print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем дополнительные поля")
-                result = huntflow_service.update_applicant_questionary(account_id, int(self.candidate_id), questionary_data)
-                if not result:
-                    print(f"❌ HR_SCREENING_UPDATE_CANDIDATE: Ошибка при обновлении дополнительных полей")
-                    return False, "Ошибка при обновлении дополнительных полей"
-            
-            # Обновляем уровень кандидата если он был определен
+            # Обновляем уровень кандидата если он был определен (перед обновлением полей)
             if self.huntflow_grade_id:
                 print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем уровень кандидата: {self.huntflow_grade_id}")
                 level_result = self._update_huntflow_level(self.huntflow_grade_id)
@@ -4891,6 +4875,265 @@ class HRScreening(models.Model):
                     print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Не удалось обновить уровень кандидата")
             else:
                 print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: ID уровня не определен, пропускаем обновление уровня")
+            
+            # После определения грейда добавляем поле "Где ведется коммуникация" в questionary_data
+            print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Добавляем поле 'Где ведется коммуникация' в questionary_data")
+            try:
+                # Получаем данные кандидата для извлечения соцсетей
+                candidate_data = huntflow_service.get_applicant(account_id, int(self.candidate_id))
+                if candidate_data:
+                    print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Получены данные кандидата")
+                    print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Ключи в candidate_data: {list(candidate_data.keys())}")
+                    print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: social: {candidate_data.get('social', [])}")
+                    print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: external: {candidate_data.get('external', [])}")
+                    # Извлекаем Telegram и LinkedIn
+                    telegram_link = None
+                    linkedin_link = None
+                    
+                    # Проверяем поле external/externals (может содержать LinkedIn как источник резюме)
+                    external = candidate_data.get('external', []) or candidate_data.get('externals', [])
+                    linkedin_from_source = None
+                    if external:
+                        print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Обрабатываем {len(external)} внешних источников")
+                        for ext in external:
+                            print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Внешний источник: {ext}")
+                            auth_type = ext.get('auth_type', '').upper()
+                            print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: auth_type={auth_type}")
+                            
+                            if auth_type == 'LI' or 'LINKEDIN' in auth_type:
+                                # LinkedIn найден как источник резюме
+                                external_id = ext.get('id')
+                                print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Найден LinkedIn во external (auth_type: {auth_type}, external_id: {external_id})")
+                                
+                                # Согласно спецификации API, для получения полной информации о резюме
+                                # нужно делать запрос к /accounts/{account_id}/applicants/{applicant_id}/externals/{external_id}
+                                # Там будет поле source_url с ссылкой на LinkedIn профиль
+                                if external_id:
+                                    try:
+                                        print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Получаем детали резюме для external_id={external_id}")
+                                        external_detail = huntflow_service._make_request(
+                                            'GET', 
+                                            f"/accounts/{account_id}/applicants/{int(self.candidate_id)}/externals/{external_id}"
+                                        )
+                                        if external_detail:
+                                            print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Получены детали резюме, ключи: {list(external_detail.keys())}")
+                                            # Проверяем source_url - это основное поле для LinkedIn URL
+                                            source_url = external_detail.get('source_url')
+                                            if source_url and 'linkedin.com' in source_url.lower():
+                                                linkedin_from_source = source_url
+                                                print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Найден LinkedIn в external_detail.source_url: {linkedin_from_source}")
+                                                break
+                                            # Также проверяем data
+                                            ext_data = external_detail.get('data', {})
+                                            if isinstance(ext_data, dict):
+                                                for key in ['url', 'profile_url', 'linkedin_url', 'link', 'source_url']:
+                                                    if key in ext_data and ext_data[key]:
+                                                        value = ext_data[key]
+                                                        if isinstance(value, str) and 'linkedin.com' in value.lower():
+                                                            linkedin_from_source = value if 'http' in value.lower() else f"https://{value}"
+                                                            print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Найден LinkedIn в external_detail.data.{key}: {linkedin_from_source}")
+                                                            break
+                                    except Exception as e:
+                                        print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Ошибка получения деталей резюме: {e}")
+                                        import traceback
+                                        traceback.print_exc()
+                                
+                                # Если не получили через API, проверяем локальные данные
+                                if not linkedin_from_source:
+                                    ext_data = ext.get('data', {})
+                                    print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: ext_data: {ext_data}")
+                                    if isinstance(ext_data, dict):
+                                        for key in ['url', 'profile_url', 'linkedin_url', 'link', 'source_url']:
+                                            if key in ext_data and ext_data[key]:
+                                                value = ext_data[key]
+                                                if isinstance(value, str) and 'linkedin.com' in value.lower():
+                                                    linkedin_from_source = value if 'http' in value.lower() else f"https://{value}"
+                                                    print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Найден LinkedIn в ext.data.{key}: {linkedin_from_source}")
+                                                    break
+                                
+                                if linkedin_from_source:
+                                    break
+                    
+                    # Проверяем поле social
+                    social = candidate_data.get('social', [])
+                    if social:
+                        print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Обрабатываем {len(social)} соцсетей из поля social")
+                    for soc in social:
+                        print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Соцсеть: {soc}")
+                        soc_type = (soc.get('social_type', '') or soc.get('type', '') or '').upper()
+                        soc_value = soc.get('value', '') or soc.get('url', '') or ''
+                        
+                        if not soc_value:
+                            continue
+                        
+                        print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Обрабатываем соцсеть: type={soc_type}, value={soc_value}")
+                        
+                        if soc_type == 'TELEGRAM' or 'TELEGRAM' in soc_type:
+                            telegram_value = soc_value.lstrip('@')
+                            telegram_link = f"https://t.me/{telegram_value}"
+                            print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Найден Telegram: {telegram_link}")
+                        elif soc_type == 'LINKEDIN' or 'LINKEDIN' in soc_type or soc_type == 'LI':
+                            # Если value содержит linkedin.com, это URL
+                            if 'linkedin.com' in soc_value.lower():
+                                linkedin_link = soc_value if 'http' in soc_value.lower() else f"https://{soc_value}"
+                            else:
+                                # Если это username, формируем URL
+                                linkedin_link = f"https://www.linkedin.com/in/{soc_value.lstrip('/')}"
+                            print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Найден LinkedIn в social: {linkedin_link}")
+                        # Также проверяем, может быть value содержит linkedin.com даже если тип другой
+                        elif 'linkedin.com' in soc_value.lower():
+                            linkedin_link = soc_value if 'http' in soc_value.lower() else f"https://{soc_value}"
+                            print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Найден LinkedIn в social (по URL в value): {linkedin_link}")
+                    
+                    # Если не нашли LinkedIn в social и external, делаем глубокий поиск
+                    if not linkedin_link and not linkedin_from_source:
+                        print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: LinkedIn не найден в social/external, делаем глубокий поиск")
+                        import json
+                        
+                        # Рекурсивно ищем все строки, содержащие linkedin.com
+                        def find_linkedin_recursive(obj, path=""):
+                            if isinstance(obj, dict):
+                                for key, value in obj.items():
+                                    current_path = f"{path}.{key}" if path else key
+                                    if isinstance(value, str) and ('linkedin.com' in value.lower() or ('linkedin' in value.lower() and 'http' in value.lower())):
+                                        print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Найден LinkedIn в {current_path}: {value[:100]}")
+                                        return value
+                                    result = find_linkedin_recursive(value, current_path)
+                                    if result:
+                                        return result
+                            elif isinstance(obj, list):
+                                for i, item in enumerate(obj):
+                                    current_path = f"{path}[{i}]" if path else f"[{i}]"
+                                    result = find_linkedin_recursive(item, current_path)
+                                    if result:
+                                        return result
+                            return None
+                        
+                        linkedin_found = find_linkedin_recursive(candidate_data)
+                        if linkedin_found:
+                            linkedin_from_source = linkedin_found if 'http' in linkedin_found.lower() else f"https://{linkedin_found}"
+                            print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Найден LinkedIn через глубокий поиск: {linkedin_from_source}")
+                    
+                    # Если не нашли LinkedIn в social, проверяем questionary
+                    if not linkedin_link:
+                        print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: LinkedIn не найден в social, проверяем questionary")
+                        questionary = huntflow_service.get_applicant_questionary(account_id, int(self.candidate_id))
+                        if questionary:
+                            # Сначала проверяем поле "Где ведется коммуникация" - может там уже есть LinkedIn
+                            questionary_schema_temp = huntflow_service.get_applicant_questionary_schema(account_id)
+                            if questionary_schema_temp:
+                                for field_id, field_info in questionary_schema_temp.items():
+                                    field_title = field_info.get('title', '').lower()
+                                    if ('коммуникац' in field_title or 'communication' in field_title or 
+                                        'где ведется' in field_title or 'где ведётся' in field_title):
+                                        if field_id in questionary:
+                                            comm_value = questionary[field_id]
+                                            if comm_value and isinstance(comm_value, str):
+                                                comm_value_lower = comm_value.lower()
+                                                if 'linkedin.com' in comm_value_lower or 'linkedin' in comm_value_lower:
+                                                    linkedin_link = comm_value if 'http' in comm_value_lower else f"https://{comm_value}"
+                                                    print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Найден LinkedIn в поле 'Где ведется коммуникация': {linkedin_link}")
+                                                    break
+                        if questionary:
+                            print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Получена анкета, полей: {len(questionary)}")
+                            print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Ключи в questionary: {list(questionary.keys())[:10]}")
+                            
+                            # Получаем схему для понимания названий полей
+                            questionary_schema = huntflow_service.get_applicant_questionary_schema(account_id)
+                            
+                            for field_key, field_value in questionary.items():
+                                if field_value and isinstance(field_value, str):
+                                    field_title = ""
+                                    if questionary_schema and field_key in questionary_schema:
+                                        field_title = questionary_schema[field_key].get('title', '')
+                                    
+                                    # Логируем все поля для отладки
+                                    print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Поле questionary: {field_key} '{field_title}' = {field_value[:150]}")
+                                    
+                                    # Проверяем, содержит ли значение LinkedIn URL
+                                    field_value_lower = field_value.lower()
+                                    if 'linkedin.com' in field_value_lower or 'linkedin' in field_value_lower:
+                                        linkedin_link = field_value if 'http' in field_value_lower else f"https://{field_value}"
+                                        print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Найден LinkedIn в questionary (поле {field_key} '{field_title}'): {linkedin_link}")
+                                        break
+                                    # Также логируем все поля, содержащие "linkedin" в названии
+                                    if questionary_schema and field_key in questionary_schema:
+                                        if 'linkedin' in field_title.lower():
+                                            print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Найдено поле с 'linkedin' в названии: {field_key} '{field_title}' = {field_value[:100]}")
+                        else:
+                            print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Анкета пуста или не получена")
+                    
+                    # Определяем значение для поля "Где ведется коммуникация"
+                    # Логика: 1) Если есть Telegram - используем его
+                    #         2) Если нет Telegram, но есть LinkedIn в social - используем его
+                    #         3) Если нет Telegram и LinkedIn в social, но источник резюме - LinkedIn, используем LinkedIn из источника
+                    #         4) Иначе оставляем пустым
+                    communication_value = None
+                    if telegram_link:
+                        communication_value = telegram_link
+                        print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Используем Telegram для коммуникации: {communication_value}")
+                    elif linkedin_link:
+                        communication_value = linkedin_link
+                        print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Используем LinkedIn из social для коммуникации: {communication_value}")
+                    elif linkedin_from_source:
+                        communication_value = linkedin_from_source
+                        print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Используем LinkedIn из источника резюме для коммуникации: {communication_value}")
+                    else:
+                        print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Не найдены ни Telegram, ни LinkedIn (ни в social, ни в источнике резюме)")
+                    
+                    # Если нашли значение, находим поле в схеме и добавляем в questionary_data
+                    if communication_value:
+                        questionary_schema = huntflow_service.get_applicant_questionary_schema(account_id)
+                        if questionary_schema:
+                            print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Получена схема анкеты, полей: {len(questionary_schema)}")
+                            # Ищем поле "Где ведется коммуникация"
+                            communication_field_id = None
+                            for field_id, field_info in questionary_schema.items():
+                                field_title = field_info.get('title', '').lower()
+                                # Ищем по различным вариантам названия
+                                if ('коммуникац' in field_title or 'communication' in field_title or 
+                                    'где ведется' in field_title or 'где ведётся' in field_title):
+                                    communication_field_id = field_id
+                                    print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Найдено поле 'Где ведется коммуникация': {field_id} = {field_info.get('title')}")
+                                    break
+                            
+                            if communication_field_id:
+                                # Добавляем в questionary_data для обновления одним запросом
+                                questionary_data[communication_field_id] = communication_value
+                                print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Добавлено поле коммуникации в questionary_data: {communication_field_id} = {communication_value}")
+                                print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: questionary_data теперь содержит: {list(questionary_data.keys())}")
+                            else:
+                                print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Поле 'Где ведется коммуникация' не найдено в схеме")
+                                # Выводим все поля схемы для отладки
+                                print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Все поля в схеме:")
+                                for field_id, field_info in list(questionary_schema.items())[:20]:
+                                    print(f"  - {field_id}: '{field_info.get('title', '')}' (тип: {field_info.get('type', '')})")
+                        else:
+                            print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Не удалось получить схему анкеты")
+                    else:
+                        print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Не найдены Telegram или LinkedIn для записи в поле коммуникации")
+                else:
+                    print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Не удалось получить данные кандидата для извлечения соцсетей")
+            except Exception as e:
+                print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Ошибка при добавлении поля коммуникации: {e}")
+                import traceback
+                traceback.print_exc()
+            
+            # Обновляем основные поля (money) если есть
+            if money_data:
+                print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем основные поля")
+                result = huntflow_service.update_applicant(account_id, int(self.candidate_id), money_data)
+                if not result:
+                    print(f"❌ HR_SCREENING_UPDATE_CANDIDATE: Ошибка при обновлении основных полей")
+                    return False, "Ошибка при обновлении основных полей"
+            
+            # Обновляем дополнительные поля (questionary) если есть (включая поле коммуникации)
+            if questionary_data:
+                print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем дополнительные поля (включая поле коммуникации)")
+                result = huntflow_service.update_applicant_questionary(account_id, int(self.candidate_id), questionary_data)
+                if not result:
+                    print(f"❌ HR_SCREENING_UPDATE_CANDIDATE: Ошибка при обновлении дополнительных полей")
+                    return False, "Ошибка при обновлении дополнительных полей"
             
             if not money_data and not questionary_data and not self.huntflow_grade_id:
                 print(f"❌ HR_SCREENING_UPDATE_CANDIDATE: Нет данных для обновления")

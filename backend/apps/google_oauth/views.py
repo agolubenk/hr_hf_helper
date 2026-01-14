@@ -4058,6 +4058,12 @@ def chat_ajax_handler(request, session_id):
                         metadata=metadata
                     )
                     
+                    # Получаем контактную информацию кандидата
+                    candidate_contact_info = {}
+                    if hr_screening.candidate_id:
+                        candidate_contact_info = _get_candidate_contact_info(request.user, hr_screening.candidate_id)
+                        print(f"🔍 CHAT AJAX: Получена контактная информация кандидата: {candidate_contact_info}")
+                    
                     print(f"✅ CHAT AJAX: Сообщение создано успешно")
                 except Exception as e:
                     print(f"🔍 CHAT AJAX: Ошибка сохранения HR: {str(e)}")
@@ -4250,11 +4256,23 @@ def chat_ajax_handler(request, session_id):
                 })
                 print(f"🔍 CHAT AJAX: HTML сгенерирован, длина: {len(message_html)}")
                 
+                # Получаем контактную информацию кандидата для ответа
+                candidate_contact_info = {}
+                if last_message.message_type == 'hrscreening' and last_message.hr_screening:
+                    if last_message.hr_screening.candidate_id:
+                        candidate_contact_info = _get_candidate_contact_info(request.user, last_message.hr_screening.candidate_id)
+                        print(f"🔍 CHAT AJAX: Получена контактная информация для ответа: {candidate_contact_info}")
+                elif last_message.message_type == 'invite' and last_message.invite:
+                    if last_message.invite.candidate_id:
+                        candidate_contact_info = _get_candidate_contact_info(request.user, last_message.invite.candidate_id)
+                        print(f"🔍 CHAT AJAX: Получена контактная информация для ответа: {candidate_contact_info}")
+                
                 return JsonResponse({
                     "success": True,
                     "message_html": message_html,
                     "message_type": last_message.message_type,
-                    "message_id": last_message.id
+                    "message_id": last_message.id,
+                    "candidate_contact_info": candidate_contact_info
                 })
             except Exception as e:
                 import traceback
@@ -4278,6 +4296,228 @@ def chat_ajax_handler(request, session_id):
     except Exception as e:
         print(f"🔍 CHAT AJAX: Ошибка обработки действия: {str(e)}")
         return JsonResponse({'success': False, 'error': str(e)})
+
+
+def _get_candidate_contact_info(user, candidate_id):
+    """
+    Получает контактную информацию кандидата из Huntflow
+    
+    Returns:
+        dict: Словарь с ключами: email, telegram, linkedin, communication_where
+    """
+    contact_info = {
+        'email': None,
+        'telegram': None,
+        'linkedin': None,
+        'communication_where': None
+    }
+    
+    try:
+        from apps.huntflow.services import HuntflowService
+        
+        huntflow_service = HuntflowService(user)
+        accounts = huntflow_service.get_accounts()
+        
+        if not accounts or 'items' not in accounts or not accounts['items']:
+            return contact_info
+        
+        account_id = accounts['items'][0]['id']
+        candidate_data = huntflow_service.get_applicant(account_id, int(candidate_id))
+        
+        if not candidate_data:
+            return contact_info
+        
+        # Получаем email
+        contact_info['email'] = candidate_data.get('email')
+        
+        # Получаем социальные сети
+        social = candidate_data.get('social', [])
+        print(f"🔍 LINKEDIN_SEARCH: Проверяем social: {social}")
+        for soc in social:
+            # В спецификации API поле называется social_type, но проверяем оба варианта
+            soc_type = (soc.get('social_type', '') or soc.get('type', '') or '').upper()
+            # В спецификации API поле называется value
+            soc_value = soc.get('value', '') or soc.get('url', '') or ''
+            
+            if not soc_value:
+                continue
+            
+            print(f"🔍 LINKEDIN_SEARCH: Соцсеть type={soc_type}, value={soc_value}, полный объект: {soc}")
+            
+            # Проверяем Telegram
+            if soc_type == 'TELEGRAM' or 'TELEGRAM' in soc_type:
+                contact_info['telegram'] = soc_value.lstrip('@')
+                print(f"✅ LINKEDIN_SEARCH: Найден Telegram: {contact_info['telegram']}")
+            # Проверяем LinkedIn - может быть в разных форматах
+            elif soc_type == 'LINKEDIN' or 'LINKEDIN' in soc_type or soc_type == 'LI':
+                # Если value содержит linkedin.com, это URL
+                if 'linkedin.com' in soc_value.lower():
+                    contact_info['linkedin'] = soc_value if 'http' in soc_value.lower() else f"https://{soc_value}"
+                else:
+                    # Если это username, формируем URL
+                    contact_info['linkedin'] = f"https://www.linkedin.com/in/{soc_value.lstrip('/')}"
+                print(f"✅ LINKEDIN_SEARCH: Найден LinkedIn в social: {contact_info['linkedin']}")
+            # Также проверяем, может быть value содержит linkedin.com даже если тип другой
+            elif 'linkedin.com' in soc_value.lower():
+                contact_info['linkedin'] = soc_value if 'http' in soc_value.lower() else f"https://{soc_value}"
+                print(f"✅ LINKEDIN_SEARCH: Найден LinkedIn в social (по URL в value): {contact_info['linkedin']}")
+        
+        # Если LinkedIn не найден в social, проверяем источник резюме (external/externals)
+        if not contact_info['linkedin']:
+            # Проверяем оба варианта: external и externals
+            external = candidate_data.get('external', []) or candidate_data.get('externals', [])
+            print(f"🔍 LINKEDIN_SEARCH: Проверяем external/externals: {external}")
+            
+            for ext in external:
+                print(f"🔍 LINKEDIN_SEARCH: Обрабатываем external: {ext}")
+                auth_type = ext.get('auth_type', '').upper()
+                external_id = ext.get('id')
+                print(f"🔍 LINKEDIN_SEARCH: auth_type={auth_type}, external_id={external_id}")
+                
+                if auth_type == 'LI' or 'LINKEDIN' in auth_type:
+                    print(f"✅ LINKEDIN_SEARCH: Найден LinkedIn в external с auth_type={auth_type}")
+                    
+                    # Согласно спецификации API, для получения полной информации о резюме
+                    # нужно делать запрос к /accounts/{account_id}/applicants/{applicant_id}/externals/{external_id}
+                    # Там будет поле source_url с ссылкой на LinkedIn профиль
+                    if external_id:
+                        try:
+                            print(f"🔍 LINKEDIN_SEARCH: Получаем детали резюме для external_id={external_id}")
+                            external_detail = huntflow_service._make_request(
+                                'GET', 
+                                f"/accounts/{account_id}/applicants/{int(candidate_id)}/externals/{external_id}"
+                            )
+                            if external_detail:
+                                print(f"🔍 LINKEDIN_SEARCH: Получены детали резюме, ключи: {list(external_detail.keys())}")
+                                # Проверяем source_url - это основное поле для LinkedIn URL
+                                source_url = external_detail.get('source_url')
+                                if source_url and 'linkedin.com' in source_url.lower():
+                                    contact_info['linkedin'] = source_url
+                                    print(f"✅ LINKEDIN_SEARCH: Найден LinkedIn в external_detail.source_url: {contact_info['linkedin']}")
+                                    break
+                                # Также проверяем data и resume
+                                ext_data = external_detail.get('data', {})
+                                if isinstance(ext_data, dict):
+                                    for key in ['url', 'profile_url', 'linkedin_url', 'link', 'source_url']:
+                                        if key in ext_data and ext_data[key]:
+                                            value = ext_data[key]
+                                            if isinstance(value, str) and 'linkedin.com' in value.lower():
+                                                contact_info['linkedin'] = value if 'http' in value.lower() else f"https://{value}"
+                                                print(f"✅ LINKEDIN_SEARCH: Найден LinkedIn в external_detail.data.{key}: {contact_info['linkedin']}")
+                                                break
+                        except Exception as e:
+                            print(f"⚠️ LINKEDIN_SEARCH: Ошибка получения деталей резюме: {e}")
+                            import traceback
+                            traceback.print_exc()
+                    
+                    # Если не получили через API, проверяем локальные данные
+                    if not contact_info['linkedin']:
+                        ext_data = ext.get('data', {})
+                        print(f"🔍 LINKEDIN_SEARCH: ext_data: {ext_data}")
+                        
+                        if isinstance(ext_data, dict):
+                            for key in ['url', 'profile_url', 'linkedin_url', 'link', 'source_url']:
+                                if key in ext_data and ext_data[key]:
+                                    value = ext_data[key]
+                                    if isinstance(value, str) and 'linkedin.com' in value.lower():
+                                        contact_info['linkedin'] = value if 'http' in value.lower() else f"https://{value}"
+                                        print(f"✅ LINKEDIN_SEARCH: Найден LinkedIn в ext.data.{key}: {contact_info['linkedin']}")
+                                        break
+                        
+                        if not contact_info['linkedin']:
+                            # Проверяем поле resume
+                            resume_data = ext.get('resume', {})
+                            if isinstance(resume_data, dict) and 'url' in resume_data:
+                                resume_url = resume_data['url']
+                                if 'linkedin.com' in resume_url.lower():
+                                    contact_info['linkedin'] = resume_url if 'http' in resume_url.lower() else f"https://{resume_url}"
+                                    print(f"✅ LINKEDIN_SEARCH: Найден LinkedIn в ext.resume.url: {contact_info['linkedin']}")
+                    
+                    if contact_info['linkedin']:
+                        break
+        
+        # Если LinkedIn не найден в social и external, проверяем questionary
+        if not contact_info['linkedin']:
+            print(f"🔍 LINKEDIN_SEARCH: LinkedIn не найден в social/external, проверяем questionary")
+            questionary = huntflow_service.get_applicant_questionary(account_id, int(candidate_id))
+            if questionary:
+                print(f"🔍 LINKEDIN_SEARCH: Получена анкета, полей: {len(questionary)}")
+                questionary_schema = huntflow_service.get_applicant_questionary_schema(account_id)
+                for field_key, field_value in questionary.items():
+                    if field_value and isinstance(field_value, str):
+                        field_title = ""
+                        if questionary_schema and field_key in questionary_schema:
+                            field_title = questionary_schema[field_key].get('title', '')
+                        
+                        print(f"🔍 LINKEDIN_SEARCH: Поле questionary: {field_key} '{field_title}' = {field_value[:100]}")
+                        if 'linkedin.com' in field_value.lower() or ('linkedin' in field_value.lower() and 'http' in field_value.lower()):
+                            contact_info['linkedin'] = field_value if 'http' in field_value.lower() else f"https://{field_value}"
+                            print(f"✅ LINKEDIN_SEARCH: Найден LinkedIn в questionary: {contact_info['linkedin']}")
+                            break
+        
+        # Если все еще не нашли, делаем глубокий поиск по всему объекту candidate_data
+        if not contact_info['linkedin']:
+            print(f"⚠️ LINKEDIN_SEARCH: LinkedIn не найден стандартными методами, делаем глубокий поиск")
+            import json
+            
+            # Рекурсивно ищем все строки, содержащие linkedin.com
+            def find_linkedin_recursive(obj, path=""):
+                if isinstance(obj, dict):
+                    for key, value in obj.items():
+                        current_path = f"{path}.{key}" if path else key
+                        if isinstance(value, str) and ('linkedin.com' in value.lower() or ('linkedin' in value.lower() and 'http' in value.lower())):
+                            print(f"🔍 LINKEDIN_SEARCH: Найден LinkedIn в {current_path}: {value[:100]}")
+                            return value
+                        result = find_linkedin_recursive(value, current_path)
+                        if result:
+                            return result
+                elif isinstance(obj, list):
+                    for i, item in enumerate(obj):
+                        current_path = f"{path}[{i}]" if path else f"[{i}]"
+                        result = find_linkedin_recursive(item, current_path)
+                        if result:
+                            return result
+                return None
+            
+            linkedin_found = find_linkedin_recursive(candidate_data)
+            if linkedin_found:
+                contact_info['linkedin'] = linkedin_found if 'http' in linkedin_found.lower() else f"https://{linkedin_found}"
+                print(f"✅ LINKEDIN_SEARCH: Найден LinkedIn через глубокий поиск: {contact_info['linkedin']}")
+        
+        # Если все еще не нашли, выводим полную структуру данных для отладки
+        if not contact_info['linkedin']:
+            print(f"⚠️ LINKEDIN_SEARCH: LinkedIn не найден. Структура candidate_data:")
+            print(f"  - Ключи верхнего уровня: {list(candidate_data.keys())}")
+            print(f"  - social: {candidate_data.get('social', [])}")
+            print(f"  - external: {candidate_data.get('external', [])}")
+            print(f"  - externals: {candidate_data.get('externals', [])}")
+            # Выводим первые 500 символов JSON для отладки
+            try:
+                import json
+                candidate_json = json.dumps(candidate_data, ensure_ascii=False, indent=2)
+                print(f"  - Первые 1000 символов JSON: {candidate_json[:1000]}")
+            except:
+                pass
+        
+        # Получаем поле "Где ведется коммуникация" из questionary
+        questionary = huntflow_service.get_applicant_questionary(account_id, int(candidate_id))
+        if questionary:
+            questionary_schema = huntflow_service.get_applicant_questionary_schema(account_id)
+            if questionary_schema:
+                for field_id, field_info in questionary_schema.items():
+                    field_title = field_info.get('title', '').lower()
+                    if ('коммуникац' in field_title or 'communication' in field_title or 
+                        'где ведется' in field_title or 'где ведётся' in field_title):
+                        if field_id in questionary:
+                            contact_info['communication_where'] = questionary[field_id]
+                            break
+        
+    except Exception as e:
+        print(f"⚠️ Ошибка получения контактной информации кандидата: {e}")
+        import traceback
+        traceback.print_exc()
+    
+    return contact_info
 
 
 def _generate_full_huntflow_link(vacancy_id, candidate_id, user):
@@ -5803,8 +6043,9 @@ def chat_workflow(request, session_id=None):
     from apps.accounts.models import QuickButton
     quick_buttons = QuickButton.objects.filter(user=request.user).order_by('order', 'created_at')
     
-    # Получаем ссылки на соцсети из последнего HR-скрининга или инвайта
+    # Получаем ссылки на соцсети и контактную информацию из последнего HR-скрининга или инвайта
     candidate_social_links = {}
+    candidate_contact_info = {}
     try:
         from apps.huntflow.services import HuntflowService
         
@@ -5873,14 +6114,23 @@ def chat_workflow(request, session_id=None):
                         questionary = huntflow_service.get_applicant_questionary(account_id, int(candidate_id))
                         if questionary:
                             print(f"🔍 CANDIDATE_SOCIAL_LINKS: Получена анкета, поля: {list(questionary.keys())}")
+                            # Получаем схему для понимания названий полей
+                            questionary_schema = huntflow_service.get_applicant_questionary_schema(account_id)
                             # Ищем LinkedIn в значениях questionary
                             for field_key, field_value in questionary.items():
                                 if field_value and isinstance(field_value, str):
+                                    field_title = ""
+                                    if questionary_schema and field_key in questionary_schema:
+                                        field_title = questionary_schema[field_key].get('title', '')
                                     # Проверяем, содержит ли значение LinkedIn URL
                                     if 'linkedin.com' in field_value.lower():
-                                        candidate_social_links['linkedin'] = field_value
-                                        print(f"✅ CANDIDATE_SOCIAL_LINKS: Добавлен LinkedIn из questionary (поле {field_key}): {field_value}")
+                                        linkedin_value = field_value if 'http' in field_value.lower() else f"https://{field_value}"
+                                        candidate_social_links['linkedin'] = linkedin_value
+                                        print(f"✅ CANDIDATE_SOCIAL_LINKS: Добавлен LinkedIn из questionary (поле {field_key} '{field_title}'): {linkedin_value}")
                                         break
+                                    # Также логируем все поля для отладки
+                                    if 'linkedin' in field_value.lower() or 'linkedin' in field_title.lower():
+                                        print(f"🔍 CANDIDATE_SOCIAL_LINKS: Найдено похожее поле: {field_key} '{field_title}' = {field_value[:100]}")
                 else:
                     print(f"⚠️ CANDIDATE_SOCIAL_LINKS: Данные кандидата не получены из Huntflow API")
             else:
@@ -5893,6 +6143,21 @@ def chat_workflow(request, session_id=None):
         print(f"⚠️ Traceback: {traceback.format_exc()}")
     
     print(f"🔍 CANDIDATE_SOCIAL_LINKS: Итоговые ссылки: {candidate_social_links}")
+    
+    # Получаем полную контактную информацию кандидата
+    if candidate_id:
+        candidate_contact_info = _get_candidate_contact_info(request.user, candidate_id)
+        print(f"🔍 CANDIDATE_CONTACT_INFO: Получена контактная информация: {candidate_contact_info}")
+        
+        # Объединяем данные из candidate_social_links и candidate_contact_info
+        if candidate_contact_info.get('telegram'):
+            candidate_social_links['telegram'] = candidate_contact_info['telegram']
+        if candidate_contact_info.get('linkedin'):
+            candidate_social_links['linkedin'] = candidate_contact_info['linkedin']
+        if candidate_contact_info.get('email'):
+            candidate_social_links['email'] = candidate_contact_info['email']
+        if candidate_contact_info.get('communication_where'):
+            candidate_social_links['communication_where'] = candidate_contact_info['communication_where']
     
     context = {
         'form': form,
@@ -5914,6 +6179,7 @@ def chat_workflow(request, session_id=None):
         'title': 'Чат-помощник',
         'quick_buttons': quick_buttons,
         'candidate_social_links': candidate_social_links,
+        'candidate_contact_info': candidate_contact_info,
     }
 
     # Отладочная информация (как на странице gdata_automation)

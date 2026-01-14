@@ -120,6 +120,113 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
+     * Обновляет контактную информацию кандидата на странице
+     * @param {Object} contactInfo - Объект с контактной информацией
+     */
+    function updateCandidateContactInfo(contactInfo) {
+        // Находим контейнер для контактной информации (под блоком отчетов)
+        // Ищем блок с отчетами и следующий за ним контейнер
+        const reportsCard = document.querySelector('#weeklyReportsCardBody');
+        if (!reportsCard) {
+            console.warn('⚠️ UPDATE_CONTACT_INFO: Блок отчетов не найден');
+            return;
+        }
+        
+        // Находим родительский контейнер отчетов
+        const reportsCardParent = reportsCard.closest('.card');
+        if (!reportsCardParent) {
+            console.warn('⚠️ UPDATE_CONTACT_INFO: Родительский контейнер отчетов не найден');
+            return;
+        }
+        
+        // Ищем следующий элемент после карточки отчетов
+        let contactContainer = reportsCardParent.nextElementSibling;
+        
+        // Если контейнера нет, создаем его
+        if (!contactContainer || !contactContainer.classList.contains('mt-3')) {
+            contactContainer = document.createElement('div');
+            contactContainer.className = 'mt-3';
+            reportsCardParent.parentNode.insertBefore(contactContainer, reportsCardParent.nextSibling);
+        }
+
+        // Проверяем, есть ли данные для отображения
+        const hasData = contactInfo.communication_where || contactInfo.telegram || 
+                       contactInfo.linkedin || contactInfo.email;
+        
+        if (!hasData) {
+            console.log('ℹ️ UPDATE_CONTACT_INFO: Нет данных для отображения');
+            return;
+        }
+
+        // Формируем HTML для контактной информации
+        let contactHtml = '<div class="mt-3">';
+        
+        // Где ведется коммуникация
+        if (contactInfo.communication_where) {
+            const isLink = contactInfo.communication_where.toLowerCase().includes('http');
+            contactHtml += `
+                <div class="card mb-2" style="border: 1px solid #0088cc; border-radius: 8px;">
+                    <div class="card-body p-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-comments me-2" style="color: #0088cc;"></i>
+                            <div>
+                                <strong style="color: #0088cc;">Где ведется коммуникация:</strong>
+                                <div>
+                                    ${isLink ? 
+                                        `<a href="${contactInfo.communication_where}" target="_blank" rel="noopener noreferrer" style="color: #0088cc;">${contactInfo.communication_where}</a>` :
+                                        contactInfo.communication_where
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Telegram
+        if (contactInfo.telegram) {
+            contactHtml += `
+                <a href="https://t.me/${contactInfo.telegram}" target="_blank" rel="noopener noreferrer"
+                   class="btn btn-outline-primary w-100 mb-2" 
+                   style="border-color: #0088cc; color: #0088cc;">
+                    <i class="fab fa-telegram me-2"></i>Telegram: ${contactInfo.telegram}
+                </a>
+            `;
+        }
+        
+        // LinkedIn
+        if (contactInfo.linkedin) {
+            const linkedinUrl = contactInfo.linkedin.includes('http') ? 
+                contactInfo.linkedin : `https://${contactInfo.linkedin}`;
+            contactHtml += `
+                <a href="${linkedinUrl}" target="_blank" rel="noopener noreferrer"
+                   class="btn btn-outline-info w-100 mb-2" 
+                   style="border-color: #0077B5; color: #0077B5;">
+                    <i class="fab fa-linkedin me-2"></i>LinkedIn: ${contactInfo.linkedin}
+                </a>
+            `;
+        }
+        
+        // Email
+        if (contactInfo.email) {
+            contactHtml += `
+                <a href="mailto:${contactInfo.email}" 
+                   class="btn btn-outline-secondary w-100 mb-2" 
+                   style="border-color: #6c757d; color: #6c757d;">
+                    <i class="fas fa-envelope me-2"></i>Email: ${contactInfo.email}
+                </a>
+            `;
+        }
+        
+        contactHtml += '</div>';
+        
+        // Обновляем контейнер
+        contactContainer.innerHTML = contactHtml;
+        console.log('✅ UPDATE_CONTACT_INFO: Контактная информация обновлена');
+    }
+
+    /**
      * Добавляет пользовательское сообщение в чат
      * @param {string} text - Текст сообщения
      * @param {string} actionType - Тип действия (hrscreening/invite)
@@ -568,6 +675,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     console.warn('⚠️ SUBMIT: message_html отсутствует в ответе');
                     console.log('✅ SUBMIT: Полный ответ:', JSON.stringify(data, null, 2));
+                }
+                
+                // Обновляем контактную информацию кандидата, если она пришла в ответе
+                if (data.candidate_contact_info) {
+                    console.log('✅ SUBMIT: Обновляем контактную информацию:', data.candidate_contact_info);
+                    updateCandidateContactInfo(data.candidate_contact_info);
                 }
                 
                 // Обрабатываем переадресацию, если вакансия изменилась

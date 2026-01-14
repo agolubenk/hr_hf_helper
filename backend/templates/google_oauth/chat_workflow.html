@@ -843,9 +843,33 @@
                         </div>
                     </div>
                     
-                    <!-- Кнопки контактов кандидата под блоком отчетов -->
-                    {% if candidate_social_links %}
+                    <!-- Контактная информация кандидата под блоком отчетов -->
+                    {% if candidate_social_links.communication_where or candidate_social_links.telegram or candidate_social_links.linkedin or candidate_social_links.email %}
                     <div class="mt-3">
+                        <!-- Где ведется коммуникация -->
+                        {% if candidate_social_links.communication_where %}
+                        <div class="card mb-2" style="border: 1px solid #0088cc; border-radius: 8px;">
+                            <div class="card-body p-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-comments me-2" style="color: #0088cc;"></i>
+                                    <div>
+                                        <strong style="color: #0088cc;">Где ведется коммуникация:</strong>
+                                        <div>
+                                            {% if 'http' in candidate_social_links.communication_where|lower %}
+                                            <a href="{{ candidate_social_links.communication_where }}" target="_blank" rel="noopener noreferrer" style="color: #0088cc;">
+                                                {{ candidate_social_links.communication_where }}
+                                            </a>
+                                            {% else %}
+                                            {{ candidate_social_links.communication_where }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Telegram -->
                         {% if candidate_social_links.telegram %}
                         <a href="https://t.me/{{ candidate_social_links.telegram }}" target="_blank" rel="noopener noreferrer"
                            class="btn btn-outline-primary w-100 mb-2" 
@@ -853,25 +877,22 @@
                             <i class="fab fa-telegram me-2"></i>Telegram: {{ candidate_social_links.telegram }}
                         </a>
                         {% endif %}
-                        {% if candidate_social_links.whatsapp %}
-                        <a href="https://wa.me/{{ candidate_social_links.whatsapp|slice:'1:'|default:candidate_social_links.whatsapp }}" target="_blank" rel="noopener noreferrer"
-                           class="btn btn-outline-success w-100 mb-2" 
-                           style="border-color: #25D366; color: #25D366;">
-                            <i class="fab fa-whatsapp me-2"></i>WhatsApp: {{ candidate_social_links.whatsapp }}
-                        </a>
-                        {% endif %}
-                        {% if candidate_social_links.viber %}
-                        <a href="viber://chat?number={{ candidate_social_links.viber }}" target="_blank" rel="noopener noreferrer"
-                           class="btn btn-outline-secondary w-100 mb-2" 
-                           style="border-color: #665CAC; color: #665CAC;">
-                            <i class="fab fa-viber me-2"></i>Viber: {{ candidate_social_links.viber }}
-                        </a>
-                        {% endif %}
+                        
+                        <!-- LinkedIn -->
                         {% if candidate_social_links.linkedin %}
                         <a href="{% if 'http' not in candidate_social_links.linkedin %}https://{% endif %}{{ candidate_social_links.linkedin }}" target="_blank" rel="noopener noreferrer"
                            class="btn btn-outline-info w-100 mb-2" 
                            style="border-color: #0077B5; color: #0077B5;">
                             <i class="fab fa-linkedin me-2"></i>LinkedIn: {{ candidate_social_links.linkedin }}
+                        </a>
+                        {% endif %}
+                        
+                        <!-- Email -->
+                        {% if candidate_social_links.email %}
+                        <a href="mailto:{{ candidate_social_links.email }}" 
+                           class="btn btn-outline-secondary w-100 mb-2" 
+                           style="border-color: #6c757d; color: #6c757d;">
+                            <i class="fas fa-envelope me-2"></i>Email: {{ candidate_social_links.email }}
                         </a>
                         {% endif %}
                     </div>
