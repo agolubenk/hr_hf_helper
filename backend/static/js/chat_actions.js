@@ -164,26 +164,33 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Если заполнено "Где ведется коммуникация", показываем только его
         if (contactInfo.communication_where) {
-            const isLink = contactInfo.communication_where.toLowerCase().includes('http');
+            const communicationWhereRaw = String(contactInfo.communication_where || '');
+            const isLink = communicationWhereRaw.toLowerCase().includes('http');
+            const isTelegramLink = /^https?:\/\/t\.me\//i.test(communicationWhereRaw.trim());
+            const telegramDisplay = communicationWhereRaw.trim().replace(/^https?:\/\/t\.me\/+/i, '');
             if (isLink) {
+                const iconClass = isTelegramLink ? 'fab fa-telegram' : 'fas fa-comments';
+                const displayText = isTelegramLink ? telegramDisplay : communicationWhereRaw;
                 // Если это ссылка, показываем как кнопку-ссылку
                 contactHtml += `
-                    <a href="${contactInfo.communication_where}" target="_blank" rel="noopener noreferrer"
+                    <a href="${communicationWhereRaw}" target="_blank" rel="noopener noreferrer"
                        class="btn btn-outline-primary w-100 mb-2" 
                        style="border-color: #0088cc; color: #0088cc;">
-                        <i class="fas fa-comments me-2"></i>Где ведется коммуникация: ${contactInfo.communication_where}
+                        <i class="${iconClass} me-2"></i>Где ведется коммуникация: ${displayText}
                     </a>
                 `;
             } else {
+                const iconClass = isTelegramLink ? 'fab fa-telegram' : 'fas fa-comments';
+                const displayText = isTelegramLink ? telegramDisplay : communicationWhereRaw;
                 // Если не ссылка, показываем как карточку
                 contactHtml += `
                     <div class="card mb-2" style="border: 1px solid #0088cc; border-radius: 8px;">
                         <div class="card-body p-3">
                             <div class="d-flex align-items-center">
-                                <i class="fas fa-comments me-2" style="color: #0088cc;"></i>
+                                <i class="${iconClass} me-2" style="color: #0088cc;"></i>
                                 <div>
                                     <strong style="color: #0088cc;">Где ведется коммуникация:</strong>
-                                    <div>${contactInfo.communication_where}</div>
+                                    <div>${displayText}</div>
                                 </div>
                             </div>
                         </div>
@@ -372,19 +379,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Если заполнено "Где ведется коммуникация", показываем только его
                 if (entry.communication_where) {
-                    const isLink = entry.communication_where.toLowerCase().includes('http');
+                    const communicationWhereRaw = String(entry.communication_where || '');
+                    const isLink = communicationWhereRaw.toLowerCase().includes('http');
+                    const isTelegramLink = /^https?:\/\/t\.me\//i.test(communicationWhereRaw.trim());
+                    const telegramDisplay = communicationWhereRaw.trim().replace(/^https?:\/\/t\.me\/+/i, '');
                     if (isLink) {
+                        const iconClass = isTelegramLink ? 'fab fa-telegram' : 'fas fa-comments';
+                        const displayText = isTelegramLink ? telegramDisplay : communicationWhereRaw;
                         historyHtml += `
-                            <a href="${entry.communication_where}" target="_blank" rel="noopener noreferrer"
+                            <a href="${communicationWhereRaw}" target="_blank" rel="noopener noreferrer"
                                class="btn btn-outline-primary btn-sm w-100" 
                                style="border-color: #0088cc; color: #0088cc; font-size: 0.85rem;">
-                                <i class="fas fa-comments me-1"></i>${entry.communication_where}
+                                <i class="${iconClass} me-1"></i>${displayText}
                             </a>
                         `;
                     } else {
+                        const iconClass = isTelegramLink ? 'fab fa-telegram' : 'fas fa-comments';
+                        const displayText = isTelegramLink ? telegramDisplay : communicationWhereRaw;
                         historyHtml += `
                             <div class="small text-muted">
-                                <i class="fas fa-comments me-1"></i>${entry.communication_where}
+                                <i class="${iconClass} me-1"></i>${displayText}
                             </div>
                         `;
                     }

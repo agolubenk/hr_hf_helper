@@ -916,7 +916,11 @@
                         <a href="{{ candidate_social_links.communication_where }}" target="_blank" rel="noopener noreferrer"
                            class="btn btn-outline-primary w-100 mb-2" 
                            style="border-color: #0088cc; color: #0088cc;">
-                            <i class="fas fa-comments me-2"></i>Где ведется коммуникация: {{ candidate_social_links.communication_where }}
+                            {% if 't.me/' in candidate_social_links.communication_where|lower %}
+                                <i class="fab fa-telegram me-2"></i>Где ведется коммуникация: {{ candidate_social_links.communication_where|cut:"https://t.me/"|cut:"http://t.me/" }}
+                            {% else %}
+                                <i class="fas fa-comments me-2"></i>Где ведется коммуникация: {{ candidate_social_links.communication_where }}
+                            {% endif %}
                         </a>
                         {% else %}
                         <div class="card mb-2" style="border: 1px solid #0088cc; border-radius: 8px;">

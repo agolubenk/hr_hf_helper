@@ -695,21 +695,56 @@ function updateSlotButtons(currentWeekSlots, nextWeekSlots) {
         }
     }
     
-    // Кнопка копирования всех слотов (деактивируется, если хотя бы одна неделя не имеет слотов)
-    const allSlotsBtn = document.querySelector('.btn-copy-all-slots');
-    if (allSlotsBtn) {
-        if (currentWeekHasSlots && nextWeekHasSlots) {
-            allSlotsBtn.disabled = false;
-            allSlotsBtn.classList.remove('disabled');
-            allSlotsBtn.title = 'Скопировать все слоты';
-        } else {
-            allSlotsBtn.disabled = true;
-            allSlotsBtn.classList.add('disabled');
-            allSlotsBtn.title = 'Не все недели имеют доступные слоты';
-        }
-    }
+    // Кнопка копирования всех слотов:
+    // должна быть активна, если доступно хотя бы 2 недели из 2-х или 3-х.
+    updateAllSlotsButtonState();
     
     console.log('✅ Состояние кнопок слотов обновлено');
+}
+
+function getWeekVisibilityAndHasSlots(weekSelector) {
+    const section = document.querySelector(weekSelector);
+    if (!section) return { visible: false, hasSlots: false };
+
+    const display = window.getComputedStyle(section).display;
+    const visible = display !== 'none';
+
+    const cards = section.querySelectorAll('.slot-card');
+    const hasSlots = visible && Array.from(cards).some(card => {
+        const slotsEl = card.querySelector('.text-primary');
+        const slotsText = (slotsEl?.textContent || '').trim();
+        return slotsText && slotsText !== 'Нет свободных слотов';
+    });
+
+    return { visible, hasSlots };
+}
+
+function updateAllSlotsButtonState() {
+    const allSlotsBtn = document.querySelector('.btn-copy-all-slots');
+    if (!allSlotsBtn) return;
+
+    const current = getWeekVisibilityAndHasSlots('.week-section.current-week');
+    const next = getWeekVisibilityAndHasSlots('.week-section.next-week');
+    const third = getWeekVisibilityAndHasSlots('.week-section.third-week');
+
+    // Всегда считаем минимум 2 недели (current + next). Третья учитывается только если показана.
+    const weeksTotal = 2 + (third.visible ? 1 : 0);
+    const weeksWithSlots = (current.hasSlots ? 1 : 0) + (next.hasSlots ? 1 : 0) + (third.visible && third.hasSlots ? 1 : 0);
+
+    if (weeksWithSlots >= 2) {
+        allSlotsBtn.disabled = false;
+        allSlotsBtn.classList.remove('disabled');
+        allSlotsBtn.title = 'Скопировать все слоты';
+        return;
+    }
+
+    allSlotsBtn.disabled = true;
+    allSlotsBtn.classList.add('disabled');
+    if (weeksWithSlots === 0) {
+        allSlotsBtn.title = 'Нет доступных слотов';
+    } else {
+        allSlotsBtn.title = `Доступна только одна неделя из ${weeksTotal}`;
+    }
 }
 
 function createSlotCard(slot) {
@@ -1279,6 +1314,12 @@ function displayThirdWeekSlots(slots) {
     });
     
     console.log(`✅ Отображено ${slots.length} слотов третьей недели`);
+
+    // После загрузки/отрисовки третьей недели пересчитываем доступность "Копировать все слоты"
+    // (кнопка должна активироваться, если теперь доступно 2 недели из 3).
+    if (typeof updateAllSlotsButtonState === 'function') {
+        updateAllSlotsButtonState();
+    }
 }
 
 // Функция для перезагрузки слотов третьей недели при смене типа встречи
