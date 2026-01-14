@@ -1496,7 +1496,17 @@ class HuntflowService:
             print(f"📥 Тело ответа: {response.text[:500]}...")
             
             if response.status_code in [200, 201]:
-                return response.json()
+                try:
+                    result = response.json()
+                    if result and isinstance(result, dict):
+                        return result
+                    else:
+                        print(f"⚠️ Ответ API не является словарем: {type(result)}")
+                        return None
+                except Exception as e:
+                    print(f"❌ Ошибка парсинга JSON ответа: {e}")
+                    print(f"📥 Тело ответа: {response.text[:500]}")
+                    return None
             else:
                 print(f"❌ Ошибка загрузки файла: {response.status_code} - {response.text}")
                 return None

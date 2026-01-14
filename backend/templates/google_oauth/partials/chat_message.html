@@ -6,6 +6,7 @@
     {% elif message.message_type == 'hrscreening' %}system-message hr-screening-message
     {% elif message.message_type == 'invite' %}system-message invite-message
     {% elif message.message_type == 'delete' %}system-message delete-message
+    {% elif message.metadata.action_type == 'add_candidate' %}system-message add-candidate-message
     {% else %}system-message{% endif %}">
     
     <div class="d-flex {% if message.message_type == 'user' %}justify-content-end{% else %}justify-content-start{% endif %} align-items-end">
@@ -188,6 +189,70 @@
                     <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
                 </div>
                 <div class="message-content bot-content-fixed">{{ message.content|safe }}</div>
+            </div>
+            
+        {% elif message.metadata.action_type == 'add_candidate' %}
+            {# Добавление кандидата #}
+            <div class="message-avatar me-2" style="margin-bottom: -18px; position: relative; z-index: 100;">
+                <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
+                <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
+            </div>
+            <div class="message-bubble system-bubble" style="margin-left: -26px;">
+                <div class="message-header">
+                    <i class="fas fa-user-plus me-1"></i>
+                    <strong>Добавление кандидата</strong>
+                    <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                </div>
+                <div class="message-content bot-content-fixed">
+                    <div class="message-body-with-buttons">
+                        <div class="message-info">
+                            <div class="candidate-info-table">
+                                {% if message.metadata.candidate_name %}
+                                <div class="info-row-table">
+                                    <span class="info-label-table">Кандидат:</span>
+                                    <span class="info-value-table">{{ message.metadata.candidate_name }}</span>
+                                </div>
+                                {% endif %}
+                                {% if message.metadata.vacancy_name %}
+                                <div class="info-row-table">
+                                    <span class="info-label-table">Вакансия:</span>
+                                    <span class="info-value-table">{{ message.metadata.vacancy_name }}</span>
+                                </div>
+                                {% endif %}
+                                {% if message.metadata.applicant_id %}
+                                <div class="info-row-table">
+                                    <span class="info-label-table">ID кандидата:</span>
+                                    <span class="info-value-table">{{ message.metadata.applicant_id }}</span>
+                                </div>
+                                {% endif %}
+                                {% if message.metadata.attached_file_name %}
+                                <div class="info-row-table">
+                                    <span class="info-label-table">Файл:</span>
+                                    <span class="info-value-table">
+                                        {{ message.metadata.attached_file_name }}
+                                        {% if message.metadata.attached_file_type %}
+                                        <span class="badge bg-secondary ms-2">{{ message.metadata.attached_file_type }}</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="status-message-compact">
+                                <i class="fas fa-check-circle me-1"></i>
+                                Данные сохранены и переданы в Huntflow
+                            </div>
+                        </div>
+                        {% if message.metadata %}
+                        <div class="action-buttons-right">
+                            {% if message.metadata.candidate_url %}
+                            <a href="{{ message.metadata.candidate_url }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Открыть в Huntflow">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
             
         {% else %}

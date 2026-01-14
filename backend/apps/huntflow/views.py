@@ -2157,13 +2157,27 @@ def parse_resume_file_ajax(request):
                 'message': 'Не удалось обработать файл через парсер Huntflow'
             }, status=400)
         
-        # Извлекаем данные из распарсенного файла
-        fields = parsed_data.get('fields', {})
-        name_data = fields.get('name', {})
+        # Проверяем, что parsed_data - это словарь
+        if not isinstance(parsed_data, dict):
+            logger.error(f"parsed_data не является словарем: {type(parsed_data)}")
+            return JsonResponse({
+                'success': False,
+                'message': 'Неверный формат данных от парсера Huntflow'
+            }, status=400)
+        
+        # Извлекаем данные из распарсенного файла (безопасно)
+        fields = parsed_data.get('fields') if parsed_data else {}
+        if not fields or not isinstance(fields, dict):
+            fields = {}
+        
+        name_data = fields.get('name') if fields else {}
+        if not name_data or not isinstance(name_data, dict):
+            name_data = {}
         
         # Формируем ответ с данными для автозаполнения
         response_data = {
             'success': True,
+            'parsed_data': parsed_data,  # Полные распарсенные данные для создания кандидата
             'data': {
                 'first_name': name_data.get('first', ''),
                 'last_name': name_data.get('last', ''),

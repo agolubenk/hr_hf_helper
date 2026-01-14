@@ -380,7 +380,7 @@
                     <!-- Сообщения чата -->
                     <div id="chat-messages" class="chat-messages" style="overflow-y: auto;">
                                 {% for message in messages %}
-                            <div class="message mb-3 {% if message.message_type == 'user' %}user-message{% elif message.message_type == 'hrscreening' %}system-message hr-screening-message{% elif message.message_type == 'invite' %}system-message invite-message{% elif message.message_type == 'delete' %}system-message delete-message{% else %}system-message{% endif %}">
+                            <div class="message mb-3 {% if message.message_type == 'user' %}user-message{% elif message.message_type == 'hrscreening' %}system-message hr-screening-message{% elif message.message_type == 'invite' %}system-message invite-message{% elif message.message_type == 'delete' %}system-message delete-message{% elif message.metadata and message.metadata.action_type == 'add_candidate' %}system-message add-candidate-message{% else %}system-message{% endif %}">
                                         <div class="d-flex {% if message.message_type == 'user' %}justify-content-end{% else %}justify-content-start{% endif %} align-items-end">
                                             {% if message.message_type != 'user' %}
                                             <!-- Аватар системы слева -->
@@ -586,6 +586,72 @@
                                                         </div>
                                                         <div class="message-content bot-content-fixed">{{ message.content|safe }}</div>
                                                 
+                                        <!-- Добавление кандидата -->
+                                                {% elif message.metadata and message.metadata.action_type == 'add_candidate' %}
+                                                        <div class="message-header">
+                                                            <i class="fas fa-user-plus me-1"></i>
+                                                            <strong>Добавление кандидата</strong>
+                                                            <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                        </div>
+                                            <div class="message-content bot-content-fixed">
+                                                <!-- Контейнер с информацией и кнопками -->
+                                                <div class="message-body-with-buttons">
+                                                    <div class="message-info">
+                                                        <!-- Информация о кандидате -->
+                                                        <div class="candidate-info-table">
+                                                            {% if message.metadata.candidate_name %}
+                                                                <div class="info-row-table">
+                                                                    <span class="info-label-table">Кандидат:</span>
+                                                                    <span class="info-value-table">{{ message.metadata.candidate_name }}</span>
+                                                                </div>
+                                                            {% endif %}
+                                                            
+                                                            {% if message.metadata.vacancy_name %}
+                                                                <div class="info-row-table">
+                                                                    <span class="info-label-table">Вакансия:</span>
+                                                                    <span class="info-value-table">{{ message.metadata.vacancy_name }}</span>
+                                                                </div>
+                                                            {% endif %}
+                                                            
+                                                            {% if message.metadata.applicant_id %}
+                                                                <div class="info-row-table">
+                                                                    <span class="info-label-table">ID кандидата:</span>
+                                                                    <span class="info-value-table">{{ message.metadata.applicant_id }}</span>
+                                                                </div>
+                                                            {% endif %}
+                                                            
+                                                            {% if message.metadata.attached_file_name %}
+                                                                <div class="info-row-table">
+                                                                    <span class="info-label-table">Файл:</span>
+                                                                    <span class="info-value-table">
+                                                                        {{ message.metadata.attached_file_name }}
+                                                                        {% if message.metadata.attached_file_type %}
+                                                                        <span class="badge bg-secondary ms-2">{{ message.metadata.attached_file_type }}</span>
+                                                                        {% endif %}
+                                                                    </span>
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                        
+                                                        <div class="status-message-compact">
+                                                            <i class="fas fa-check-circle me-1"></i>
+                                                            Данные сохранены и переданы в Huntflow
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <!-- Кнопки действий справа -->
+                                                    {% if message.metadata %}
+                                                    <div class="action-buttons-right">
+                                                        {% if message.metadata.candidate_url %}
+                                                        <a href="{{ message.metadata.candidate_url }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Открыть в Huntflow">
+                                                            <i class="fas fa-external-link-alt"></i>
+                                                        </a>
+                                                        {% endif %}
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                                
                                         <!-- Системное сообщение -->
                                                 {% else %}
                                                         <div class="message-header">
@@ -625,8 +691,32 @@
                                               class="tag-label badge bg-primary me-2"
                                               style="display:none; font-weight:bold;">
                                         </span>
+                                        
+                                        <!-- Отображение прикрепленного файла -->
+                                        <div id="attached-file-info" class="mb-2" style="display: none;">
+                                            <div class="d-flex align-items-center bg-light p-2 rounded" style="border: 1px solid #dee2e6;">
+                                                <i class="fas fa-file-alt text-primary me-2"></i>
+                                                <span id="attached-file-name" class="flex-grow-1"></span>
+                                                <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="removeAttachedFile()">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
 
                                         <div class="input-group position-relative">
+                                            <!-- Кнопка прикрепления файла -->
+                                            <label for="resume-file-input" class="btn btn-outline-secondary rounded-circle me-2" 
+                                                   style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer;"
+                                                   title="Прикрепить файл резюме">
+                                                <i class="fas fa-paperclip"></i>
+                                            </label>
+                                            <input type="file" 
+                                                   id="resume-file-input" 
+                                                   name="resume_file" 
+                                                   accept=".pdf,.doc,.docx,.txt"
+                                                   style="display: none;"
+                                                   onchange="handleFileSelect(event)">
+                                            
                                             {{ form.message }}
                                             <button type="submit" class="btn btn-primary" id="send-btn">
                                                 <i class="fas fa-paper-plane"></i>
@@ -659,9 +749,9 @@
                 </div>
 
                 <!-- Блок команд -->
-                <div class="col-lg-4">
+                <div class="col-lg-4" style="display: flex; flex-direction: column; min-height: 0;">
                     <!-- Инструкция по командам -->
-                    <div class="card shadow">
+                    <div class="card shadow" style="flex-shrink: 0;">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center" style="cursor: pointer;" onclick="toggleCommandsCard()">
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-keyboard me-2"></i>Команды чата
@@ -737,7 +827,7 @@
                     </div>
 
                     <!-- Отчеты последних недель -->
-                    <div class="card shadow mt-3">
+                    <div class="card shadow mt-3" style="flex-shrink: 0;">
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">
                                 <i class="fas fa-chart-line me-2"></i>Отчеты последних недель
@@ -845,7 +935,7 @@
                     
                     <!-- Контактная информация кандидата под блоком отчетов -->
                     {% if candidate_social_links.communication_where or candidate_social_links.telegram or candidate_social_links.linkedin or candidate_social_links.email %}
-                    <div class="mt-3">
+                    <div class="mt-3" id="currentContactInfo" style="flex-shrink: 0;">
                         <!-- Если заполнено "Где ведется коммуникация", показываем только его -->
                         {% if candidate_social_links.communication_where %}
                         {% if 'http' in candidate_social_links.communication_where|lower %}
@@ -899,6 +989,21 @@
                         {% endif %}
                     </div>
                     {% endif %}
+                    
+                    <!-- История контактной информации -->
+                    <div class="mt-3" id="contactHistoryContainer" style="flex: 1; display: flex; flex-direction: column; min-height: 0; max-height: calc(100vh - 600px);">
+                        <div class="card shadow" style="display: flex; flex-direction: column; flex: 1; min-height: 0;">
+                            <div class="card-header py-2" style="flex-shrink: 0;">
+                                <h6 class="m-0 font-weight-bold text-primary">
+                                    <i class="fas fa-history me-2"></i>История контактов
+                                    <span class="badge bg-secondary ms-2" id="contactHistoryCount">{% if contact_history %}{{ contact_history|length }}{% else %}0{% endif %}</span>
+                                </h6>
+                            </div>
+                            <div class="card-body p-2" id="contactHistoryList" style="flex: 1; overflow-y: auto; min-height: 0;">
+                                <!-- История будет загружена через JavaScript из бэкенда и localStorage -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1308,13 +1413,13 @@
 }
 
 /* Ограничение ширины системных сообщений (ответы HR-системы) - только для базового класса без дополнительных */
-.card .system-message:not(.hr-screening-message):not(.invite-message):not(.delete-message) .d-flex {
+.card .system-message:not(.hr-screening-message):not(.invite-message):not(.delete-message):not(.add-candidate-message) .d-flex {
     max-width: 60% !important;
     word-wrap: break-word !important;
     overflow-wrap: break-word !important;
 }
 
-.card .system-message:not(.hr-screening-message):not(.invite-message):not(.delete-message) .message-bubble {
+.card .system-message:not(.hr-screening-message):not(.invite-message):not(.delete-message):not(.add-candidate-message) .message-bubble {
     word-wrap: break-word !important;
     overflow-wrap: break-word !important;
 }
@@ -1390,6 +1495,15 @@
 }
 
 .card .hr-screening-message .message-header {
+    color: #2e7d32;
+}
+
+.card .add-candidate-message .system-bubble {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.08) 0%, rgba(76, 175, 80, 0.03) 100%);
+    border-color: rgba(76, 175, 80, 0.2);
+}
+
+.card .add-candidate-message .message-header {
     color: #2e7d32;
 }
 
@@ -1511,6 +1625,30 @@
     border-radius: 0 18px 18px 0;
     padding: 8px 12px;
     min-height: 36px;
+}
+
+/* Стили для истории контактов */
+#contactHistoryContainer {
+    max-height: calc(100vh - 650px);
+    min-height: 200px;
+}
+
+#contactHistoryList {
+    max-height: 100%;
+}
+
+.contact-history-item {
+    transition: opacity 0.2s ease;
+}
+
+.contact-history-item:hover {
+    opacity: 1 !important;
+}
+
+.contact-history-item .btn {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Заголовок карточки */
@@ -1705,6 +1843,15 @@
 }
 
 [data-theme="dark"] .card .hr-screening-message .message-header {
+    color: #81c784;
+}
+
+[data-theme="dark"] .card .add-candidate-message .system-bubble {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.12) 0%, rgba(76, 175, 80, 0.06) 100%);
+    border-color: rgba(76, 175, 80, 0.3);
+}
+
+[data-theme="dark"] .card .add-candidate-message .message-header {
     color: #81c784;
 }
 
@@ -4059,6 +4206,311 @@ window.userPhotoUrl = null;
                 window.sessionId = {{ chat_session.id }};
             </script>
             <script src="{% static 'js/chat_actions.js' %}?v={{ timestamp }}"></script>
+            
+            <!-- Передача истории контактов с бэкенда в JavaScript -->
+            <script id="backendContactHistory" type="application/json" style="display: none;">
+                {% if contact_history %}{{ contact_history|safe }}{% else %}[]{% endif %}
+            </script>
+            <script>
+                // Сохраняем историю в глобальную переменную
+                try {
+                    const backendHistoryScript = document.getElementById('backendContactHistory');
+                    if (backendHistoryScript) {
+                        window.contactHistory = JSON.parse(backendHistoryScript.textContent || '[]');
+                        console.log('✅ CONTACT_HISTORY: Загружено с бэкенда:', window.contactHistory.length, 'записей');
+                    }
+                } catch (e) {
+                    console.warn('⚠️ CONTACT_HISTORY: Ошибка загрузки истории с бэкенда:', e);
+                    window.contactHistory = [];
+                }
+            </script>
+            
+            <!-- Функция обработки выбора файла -->
+            <script>
+                let attachedFile = null;
+                let parsedFileData = null;
+                
+                function handleFileSelect(event) {
+                    const fileInput = event.target;
+                    const file = fileInput.files[0];
+                    
+                    if (file) {
+                        console.log('✅ Файл выбран:', file.name, file.size, 'байт');
+                        attachedFile = file;
+                        
+                        // Показываем информацию о файле
+                        const fileInfo = document.getElementById('attached-file-info');
+                        const fileName = document.getElementById('attached-file-name');
+                        if (fileInfo && fileName) {
+                            fileName.textContent = file.name + ' (' + (file.size / 1024).toFixed(2) + ' KB)';
+                            fileInfo.style.display = 'block';
+                        }
+                        
+                        // Обновляем иконку кнопки
+                        const fileLabel = fileInput.previousElementSibling;
+                        if (fileLabel && fileLabel.tagName === 'LABEL') {
+                            const icon = fileLabel.querySelector('i');
+                            if (icon) {
+                                icon.className = 'fas fa-file-check text-success';
+                                fileLabel.title = `Файл: ${file.name}`;
+                            }
+                        }
+                        
+                        // Автоматически отправляем файл для парсинга
+                        parseFile(file);
+                    }
+                }
+                
+                function removeAttachedFile() {
+                    attachedFile = null;
+                    parsedFileData = null;
+                    window.parsedFileData = null;
+                    
+                    const fileInput = document.getElementById('resume-file-input');
+                    if (fileInput) {
+                        fileInput.value = '';
+                    }
+                    
+                    const fileInfo = document.getElementById('attached-file-info');
+                    if (fileInfo) {
+                        fileInfo.style.display = 'none';
+                    }
+                    
+                    const fileLabel = document.querySelector('label[for="resume-file-input"]');
+                    if (fileLabel) {
+                        const icon = fileLabel.querySelector('i');
+                        if (icon) {
+                            icon.className = 'fas fa-paperclip';
+                            fileLabel.title = 'Прикрепить файл резюме';
+                        }
+                    }
+                }
+                
+                function parseFile(file) {
+                    console.log('🔍 Парсинг файла:', file.name);
+                    
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    
+                    const csrfToken = getCSRFToken();
+                    if (!csrfToken) {
+                        console.error('❌ CSRF токен не найден');
+                        return;
+                    }
+                    
+                    fetch('/huntflow/parse-resume-file/', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: formData,
+                        credentials: 'same-origin'
+                    })
+                    .then(response => {
+                        // Сначала получаем JSON, потом проверяем статус
+                        return response.json().then(data => {
+                            if (!response.ok) {
+                                throw new Error(data.message || `HTTP error! status: ${response.status}`);
+                            }
+                            return data;
+                        });
+                    })
+                    .then(data => {
+                        if (data.success && data.parsed_data) {
+                            console.log('✅ Файл успешно распарсен:', data);
+                            parsedFileData = data.parsed_data;
+                            // Сохраняем в глобальной переменной для использования при отправке
+                            window.parsedFileData = parsedFileData;
+                            
+                            // Проверяем, что parsed_data - это объект
+                            if (!parsedFileData || typeof parsedFileData !== 'object') {
+                                throw new Error('Неверный формат данных от парсера');
+                            }
+                            
+                            // Обновляем индикатор файла
+                            const fileName = document.getElementById('attached-file-name');
+                            if (fileName) {
+                                const originalText = fileName.textContent.split(' <span')[0]; // Убираем предыдущий badge если есть
+                                fileName.innerHTML = originalText + ' <span class="badge bg-info ms-2"><i class="fas fa-spinner fa-spin"></i> Создание кандидата...</span>';
+                            }
+                            
+                            // Автоматически создаем кандидата после парсинга файла
+                            createCandidateFromParsedFile(parsedFileData);
+                        } else {
+                            const errorMessage = data.message || 'Не удалось обработать файл';
+                            console.error('❌ Ошибка парсинга файла:', errorMessage);
+                            throw new Error(errorMessage);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('❌ Ошибка при парсинге файла:', error);
+                        const errorMsg = error.message || 'Неизвестная ошибка';
+                        alert('Ошибка обработки файла: ' + errorMsg);
+                        
+                        // Обновляем индикатор файла при ошибке
+                        const fileName = document.getElementById('attached-file-name');
+                        if (fileName) {
+                            const originalText = fileName.textContent.split(' <span')[0];
+                            fileName.innerHTML = originalText + ' <span class="badge bg-danger ms-2"><i class="fas fa-times"></i> Ошибка</span>';
+                        }
+                        
+                        // Очищаем файл при ошибке
+                        removeAttachedFile();
+                    });
+                }
+                
+                function createCandidateFromParsedFile(parsedData) {
+                    console.log('🔍 Автоматически создаем кандидата из распарсенного файла');
+                    
+                    const csrfToken = getCSRFToken();
+                    if (!csrfToken) {
+                        console.error('❌ CSRF токен не найден');
+                        alert('Ошибка: CSRF токен не найден. Перезагрузите страницу.');
+                        return;
+                    }
+                    
+                    const sessionId = window.sessionId;
+                    if (!sessionId) {
+                        console.error('❌ Session ID не найден');
+                        alert('Ошибка: Session ID не найден. Перезагрузите страницу.');
+                        return;
+                    }
+                    
+                    // Получаем информацию о файле
+                    const fileInput = document.getElementById('resume-file-input');
+                    let attachedFileName = '';
+                    let attachedFileType = '';
+                    if (fileInput && fileInput.files && fileInput.files[0]) {
+                        const file = fileInput.files[0];
+                        attachedFileName = file.name;
+                        // Определяем тип файла по расширению
+                        const extension = file.name.split('.').pop().toLowerCase();
+                        const typeMap = {
+                            'pdf': 'PDF',
+                            'doc': 'DOC',
+                            'docx': 'DOCX',
+                            'txt': 'TXT'
+                        };
+                        attachedFileType = typeMap[extension] || extension.toUpperCase();
+                    }
+                    
+                    // Формируем payload для команды /add
+                    const payload = {
+                        'message': '/add',  // Команда /add без дополнительного текста
+                        'session_id': sessionId,
+                        'parsed_file_data': parsedData,
+                        'attached_file_name': attachedFileName,
+                        'attached_file_type': attachedFileType
+                    };
+                    
+                    console.log('✅ Отправляем команду /add с распарсенными данными');
+                    
+                    fetch('/google-oauth/api/send-message/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: JSON.stringify(payload),
+                        credentials: 'same-origin'
+                    })
+                    .then(response => {
+                        console.log('✅ Response status:', response.status);
+                        if (!response.ok) {
+                            return response.text().then(text => {
+                                console.error('❌ Response error:', text);
+                                throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('✅ Response data:', data);
+                        if (data.success) {
+                            // Обновляем индикатор файла
+                            const fileName = document.getElementById('attached-file-name');
+                            if (fileName) {
+                                const originalText = fileName.textContent.split(' <span')[0];
+                                fileName.innerHTML = originalText + ' <span class="badge bg-success ms-2"><i class="fas fa-check"></i> Кандидат создан</span>';
+                            }
+                            
+                            // Добавляем ответ в чат
+                            if (data.message_html) {
+                                console.log('✅ Добавляем HTML сообщение, длина:', data.message_html.length);
+                                if (typeof addMessageToChat === 'function') {
+                                    addMessageToChat(data.message_html);
+                                }
+                            }
+                            
+                            // Обновляем страницу после создания кандидата
+                            if (data.reload_page) {
+                                console.log('🔄 Обновляем страницу после создания кандидата');
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1500); // Задержка, чтобы пользователь увидел сообщение
+                                return;
+                            }
+                            
+                            // Очищаем файл после успешного создания (если не обновляем страницу)
+                            setTimeout(() => {
+                                removeAttachedFile();
+                            }, 2000);
+                        } else {
+                            console.error('❌ Ошибка создания кандидата:', data.error);
+                            alert('Ошибка создания кандидата: ' + (data.error || 'Неизвестная ошибка'));
+                            
+                            // Обновляем индикатор файла при ошибке
+                            const fileName = document.getElementById('attached-file-name');
+                            if (fileName) {
+                                const originalText = fileName.textContent.split(' <span')[0];
+                                fileName.innerHTML = originalText + ' <span class="badge bg-danger ms-2"><i class="fas fa-times"></i> Ошибка создания</span>';
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('❌ Ошибка при создании кандидата:', error);
+                        alert('Ошибка при создании кандидата: ' + error.message);
+                        
+                        // Обновляем индикатор файла при ошибке
+                        const fileName = document.getElementById('attached-file-name');
+                        if (fileName) {
+                            const originalText = fileName.textContent.split(' <span')[0];
+                            fileName.innerHTML = originalText + ' <span class="badge bg-danger ms-2"><i class="fas fa-times"></i> Ошибка</span>';
+                        }
+                    });
+                }
+                
+                function getCSRFToken() {
+                    const cookies = document.cookie.split(';');
+                    for (let cookie of cookies) {
+                        const [name, value] = cookie.trim().split('=');
+                        if (name === 'csrftoken') {
+                            return value;
+                        }
+                    }
+                    // Также проверяем в meta теге
+                    const metaTag = document.querySelector('meta[name="csrf-token"]');
+                    if (metaTag) {
+                        return metaTag.getAttribute('content');
+                    }
+                    // И в скрытом поле формы
+                    const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+                    if (csrfInput) {
+                        return csrfInput.value;
+                    }
+                    return null;
+                }
+            </script>
+            
+            <!-- Инициализация истории контактов при загрузке страницы -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Загружаем историю контактов (из localStorage и бэкенда)
+                    if (typeof renderContactHistory === 'function') {
+                        renderContactHistory();
+                    }
+                });
+            </script>
             
             <!-- Плавающий блок с быстрыми кнопками -->
             {% if quick_buttons %}

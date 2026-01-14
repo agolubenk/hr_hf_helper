@@ -68,7 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
         '/t':      'tech_screening',
         '/in':     'final_interview',
         '/invite': 'final_interview',
-        '/inv':    'final_interview'
+        '/inv':    'final_interview',
+        '/add':    'add_candidate'
     };
 
     /**
@@ -233,6 +234,201 @@ document.addEventListener('DOMContentLoaded', () => {
         // Обновляем контейнер
         contactContainer.innerHTML = contactHtml;
         console.log('✅ UPDATE_CONTACT_INFO: Контактная информация обновлена');
+        
+        // Сохраняем в историю и обновляем отображение
+        if (hasData) {
+            saveContactToHistory(contactInfo);
+            renderContactHistory();
+        }
+    }
+
+    /**
+     * Сохраняет контактную информацию в историю (localStorage)
+     * @param {Object} contactInfo - Объект с контактной информацией
+     */
+    function saveContactToHistory(contactInfo) {
+        try {
+            const storageKey = `contact_history_${sessionId}`;
+            let history = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            
+            // Добавляем новую запись в начало (последняя будет первой)
+            const historyEntry = {
+                timestamp: new Date().toISOString(),
+                communication_where: contactInfo.communication_where || null,
+                telegram: contactInfo.telegram || null,
+                linkedin: contactInfo.linkedin || null,
+                email: contactInfo.email || null
+            };
+            
+            // Проверяем, не является ли это дубликатом последней записи
+            if (history.length > 0) {
+                const lastEntry = history[0];
+                if (JSON.stringify(lastEntry) === JSON.stringify(historyEntry)) {
+                    console.log('ℹ️ CONTACT_HISTORY: Пропускаем дубликат');
+                    return;
+                }
+            }
+            
+            history.unshift(historyEntry);
+            
+            // Ограничиваем до 50 записей
+            if (history.length > 50) {
+                history = history.slice(0, 50);
+            }
+            
+            localStorage.setItem(storageKey, JSON.stringify(history));
+            console.log(`✅ CONTACT_HISTORY: Сохранено в историю (всего: ${history.length})`);
+        } catch (e) {
+            console.error('❌ CONTACT_HISTORY: Ошибка сохранения:', e);
+        }
+    }
+
+    /**
+     * Отображает историю контактной информации
+     * Объединяет данные из localStorage и бэкенда
+     */
+    function renderContactHistory() {
+        try {
+            const historyList = document.getElementById('contactHistoryList');
+            const historyCount = document.getElementById('contactHistoryCount');
+            
+            if (!historyList) {
+                console.warn('⚠️ CONTACT_HISTORY: Контейнер истории не найден');
+                return;
+            }
+            
+            // Получаем историю из localStorage
+            const storageKey = `contact_history_${sessionId}`;
+            const localStorageHistory = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            
+            // Получаем историю из бэкенда (если есть в DOM)
+            let backendHistory = [];
+            try {
+                // Пытаемся получить данные из скрытого элемента или глобальной переменной
+                const backendHistoryScript = document.getElementById('backendContactHistory');
+                if (backendHistoryScript) {
+                    backendHistory = JSON.parse(backendHistoryScript.textContent || '[]');
+                } else if (window.contactHistory) {
+                    backendHistory = window.contactHistory;
+                }
+            } catch (e) {
+                console.warn('⚠️ CONTACT_HISTORY: Не удалось получить историю с бэкенда:', e);
+            }
+            
+            // Объединяем истории (приоритет у localStorage, так как там более свежие данные)
+            // Создаем Map для дедупликации по timestamp
+            const historyMap = new Map();
+            
+            // Сначала добавляем из localStorage (более свежие)
+            localStorageHistory.forEach(entry => {
+                const key = entry.timestamp;
+                if (!historyMap.has(key)) {
+                    historyMap.set(key, entry);
+                }
+            });
+            
+            // Затем добавляем из бэкенда (если нет в localStorage)
+            backendHistory.forEach(entry => {
+                const key = entry.timestamp;
+                if (!historyMap.has(key)) {
+                    historyMap.set(key, entry);
+                }
+            });
+            
+            // Сортируем по timestamp (от последнего к старому)
+            const history = Array.from(historyMap.values()).sort((a, b) => {
+                return new Date(b.timestamp) - new Date(a.timestamp);
+            }).slice(0, 50); // Ограничиваем до 50 записей
+            
+            // Обновляем счетчик
+            if (historyCount) {
+                historyCount.textContent = history.length;
+            }
+            
+            if (history.length === 0) {
+                historyList.innerHTML = `
+                    <div class="text-center text-muted py-3">
+                        <i class="fas fa-history fa-2x mb-2"></i>
+                        <p class="mb-0 small">История контактов появится здесь</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Формируем HTML для истории (от последнего к старому)
+            let historyHtml = '';
+            history.forEach((entry, index) => {
+                const date = new Date(entry.timestamp);
+                const dateStr = date.toLocaleString('ru-RU', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                historyHtml += `<div class="contact-history-item mb-2" style="opacity: ${Math.max(0.3, 1 - index * 0.02)}; border-left: 3px solid #0088cc; padding-left: 8px;">`;
+                historyHtml += `<small class="text-muted d-block mb-1">${dateStr}</small>`;
+                
+                // Если заполнено "Где ведется коммуникация", показываем только его
+                if (entry.communication_where) {
+                    const isLink = entry.communication_where.toLowerCase().includes('http');
+                    if (isLink) {
+                        historyHtml += `
+                            <a href="${entry.communication_where}" target="_blank" rel="noopener noreferrer"
+                               class="btn btn-outline-primary btn-sm w-100" 
+                               style="border-color: #0088cc; color: #0088cc; font-size: 0.85rem;">
+                                <i class="fas fa-comments me-1"></i>${entry.communication_where}
+                            </a>
+                        `;
+                    } else {
+                        historyHtml += `
+                            <div class="small text-muted">
+                                <i class="fas fa-comments me-1"></i>${entry.communication_where}
+                            </div>
+                        `;
+                    }
+                } else {
+                    // Если "Где ведется коммуникация" не заполнено, показываем остальные поля
+                    if (entry.telegram) {
+                        historyHtml += `
+                            <a href="https://t.me/${entry.telegram}" target="_blank" rel="noopener noreferrer"
+                               class="btn btn-outline-primary btn-sm w-100 mb-1" 
+                               style="border-color: #0088cc; color: #0088cc; font-size: 0.85rem;">
+                                <i class="fab fa-telegram me-1"></i>${entry.telegram}
+                            </a>
+                        `;
+                    }
+                    if (entry.linkedin) {
+                        const linkedinUrl = entry.linkedin.includes('http') ? 
+                            entry.linkedin : `https://${entry.linkedin}`;
+                        historyHtml += `
+                            <a href="${linkedinUrl}" target="_blank" rel="noopener noreferrer"
+                               class="btn btn-outline-info btn-sm w-100 mb-1" 
+                               style="border-color: #0077B5; color: #0077B5; font-size: 0.85rem;">
+                                <i class="fab fa-linkedin me-1"></i>${entry.linkedin.length > 30 ? entry.linkedin.substring(0, 30) + '...' : entry.linkedin}
+                            </a>
+                        `;
+                    }
+                    if (entry.email) {
+                        historyHtml += `
+                            <a href="mailto:${entry.email}" 
+                               class="btn btn-outline-secondary btn-sm w-100 mb-1" 
+                               style="border-color: #6c757d; color: #6c757d; font-size: 0.85rem;">
+                                <i class="fas fa-envelope me-1"></i>${entry.email}
+                            </a>
+                        `;
+                    }
+                }
+                
+                historyHtml += `</div>`;
+            });
+            
+            historyList.innerHTML = historyHtml;
+            console.log(`✅ CONTACT_HISTORY: Отображено ${history.length} записей`);
+        } catch (e) {
+            console.error('❌ CONTACT_HISTORY: Ошибка отображения:', e);
+        }
     }
 
     /**
@@ -637,6 +833,12 @@ document.addEventListener('DOMContentLoaded', () => {
             'session_id': sessionId
         };
         
+        // Если есть распарсенные данные файла, добавляем их
+        if (window.parsedFileData) {
+            sendMessagePayload.parsed_file_data = window.parsedFileData;
+            console.log('✅ SUBMIT: Добавляем распарсенные данные файла');
+        }
+        
         fetch(url, {
             method: 'POST',
             headers: {
@@ -690,6 +892,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.candidate_contact_info) {
                     console.log('✅ SUBMIT: Обновляем контактную информацию:', data.candidate_contact_info);
                     updateCandidateContactInfo(data.candidate_contact_info);
+                }
+                
+                // Обновляем страницу после создания кандидата
+                if (data.reload_page) {
+                    console.log('🔄 SUBMIT: Обновляем страницу после создания кандидата');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000); // Небольшая задержка, чтобы пользователь увидел сообщение
+                    return;
                 }
                 
                 // Обрабатываем переадресацию, если вакансия изменилась
@@ -756,6 +967,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Инициализируем состояние кнопки при загрузке
     updateSendButtonState();
+    
+    // Загружаем историю контактов при загрузке страницы
+    if (typeof renderContactHistory === 'function') {
+        renderContactHistory();
+    }
 });
 
 // Функция для получения CSRF токена
