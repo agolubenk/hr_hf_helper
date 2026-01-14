@@ -830,7 +830,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Обновляем payload для send_chat_message
         const sendMessagePayload = {
             'message': text,
-            'session_id': sessionId
+            'session_id': sessionId,
+            // ВАЖНО: формат интервью нужен бэкенду для корректного создания события (office vs online)
+            'interview_format': interviewFormat
         };
 
         // Если выбраны интервьюеры в UI (пилюли), отправляем их на сервер.

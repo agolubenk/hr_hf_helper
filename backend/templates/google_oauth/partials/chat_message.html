@@ -137,13 +137,20 @@
                                     </a>
                                 </div>
                                 {% endif %}
-                                {% if message.invite.google_meet_url %}
-                                <div class="info-row-table">
-                                    <span class="info-label-table">Google Meet:</span>
-                                    <a href="{{ message.invite.google_meet_url }}" target="_blank" class="info-link-compact">
-                                        Присоединиться <i class="fas fa-external-link-alt ms-1"></i>
-                                    </a>
-                                </div>
+                                {% if message.invite %}
+                                    {% if message.invite.interview_format == 'office' %}
+                                    <div class="info-row-table">
+                                        <span class="info-label-table">Офис:</span>
+                                        <span class="info-value-table">{{ message.invite.google_meet_url }}</span>
+                                    </div>
+                                    {% elif message.invite.google_meet_url %}
+                                    <div class="info-row-table">
+                                        <span class="info-label-table">Google Meet:</span>
+                                        <a href="{{ message.invite.google_meet_url }}" target="_blank" class="info-link-compact">
+                                            Присоединиться <i class="fas fa-external-link-alt ms-1"></i>
+                                        </a>
+                                    </div>
+                                    {% endif %}
                                 {% endif %}
                                 {% if message.invite.interview_datetime %}
                                 <div class="info-row-table">
