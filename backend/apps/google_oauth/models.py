@@ -1831,26 +1831,14 @@ class Invite(models.Model):
             else:
                 print(f"⚠️ CALENDAR_EVENT: original_form_data пуст, упоминания не извлекаются")
 
-            # Добавляем обязательных интервьюеров из вакансии (для интервью) ТОЛЬКО если
-            # пользователь не выбрал участников явно (через UI или @упоминания).
-            has_explicit_interviewers = bool(selected_ids) or bool(self.interviewer and self.interviewer.email) or bool(mentioned_emails)
-            if is_interview and self.vacancy_id and not has_explicit_interviewers:
-                try:
-                    from apps.vacancies.models import Vacancy
-                    vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
-                    mandatory_interviewers = vacancy.mandatory_tech_interviewers.filter(is_active=True)
-                    print(f"👥 CALENDAR_EVENT: Явные интервьюеры не выбраны — добавляем {len(mandatory_interviewers)} обязательных интервьюеров")
-
-                    for interviewer in mandatory_interviewers:
-                        if interviewer.email and interviewer.email not in attendees:
-                            attendees.append(interviewer.email)
-                            print(f"👥 Добавляем обязательного интервьюера: {interviewer.email} ({interviewer.get_full_name()})")
-                        else:
-                            print(f"⚠️ CALENDAR_EVENT: Интервьюер {interviewer.email} уже в списке или email отсутствует")
-                except Exception as e:
-                    print(f"⚠️ CALENDAR_EVENT: Ошибка получения обязательных интервьюеров: {e}")
-            elif is_interview and self.vacancy_id and has_explicit_interviewers:
-                print("👥 CALENDAR_EVENT: Явные интервьюеры выбраны — обязательных интервьюеров из вакансии НЕ добавляем")
+            # ВАЖНО: Никаких fallback-интервьюеров не добавляем.
+            # Если пользователь никого не выбрал (пилюли/@/selected_interviewer), то из интервьюеров
+            # не зовем никого. Это правило действует для всех встреч.
+            if is_interview and self.vacancy_id:
+                if selected_ids or (self.interviewer and self.interviewer.email) or mentioned_emails:
+                    print("👥 CALENDAR_EVENT: Интервьюеры выбраны явно — используем только выбранных")
+                else:
+                    print("👥 CALENDAR_EVENT: Интервьюеры НЕ выбраны — не добавляем никого из интервьюеров")
             
             # Получаем адрес офиса для офисного формата
             office_location = ""

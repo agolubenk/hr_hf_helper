@@ -3389,10 +3389,10 @@ def api_interview_slots(request):
                     'message': 'Неверный формат ID интервьюеров'
                 })
         
-        # Если интервьюеры не выбраны, используем обязательных
+        # ВАЖНО: если интервьюеры не выбраны — НЕ используем обязательных.
+        # Слоты считаются только по календарю пользователя и компании.
         if not selected_interviewers:
-            selected_interviewers = vacancy.mandatory_tech_interviewers.filter(is_active=True)
-            print(f"🔍 API INTERVIEW SLOTS: Используем {len(selected_interviewers)} обязательных интервьюеров")
+            print("🔍 API INTERVIEW SLOTS: Интервьюеры не выбраны — считаем слоты без календарей интервьюеров")
         
         # Получаем OAuth аккаунт
         oauth_service = GoogleOAuthService(request.user)
@@ -3905,34 +3905,10 @@ def api_third_week_slots(request):
             events_data = calendar_service.get_events(days_ahead=21, force_refresh=True)  # Получаем на 3 недели
             duration = vacancy.screening_duration if hasattr(vacancy, 'screening_duration') and vacancy.screening_duration else 45
         else:
-            # Для интервью календарь пользователя + интервьюеров
+            # Для интервью: по умолчанию только календарь пользователя (и компании, если добавлена отдельно).
+            # ВАЖНО: если интервьюеры не выбраны — никого не подтягиваем автоматически.
             print(f"📅 THIRD WEEK: Получение слотов для интервью")
             events_data = calendar_service.get_events(days_ahead=21, force_refresh=True)
-            
-            mandatory_interviewers = vacancy.mandatory_tech_interviewers.filter(is_active=True)
-            print(f"📅 THIRD WEEK: Найдено {len(mandatory_interviewers)} обязательных интервьюеров")
-            
-            for interviewer in mandatory_interviewers:
-                calendar_id = None
-                
-                if interviewer.calendar_link:
-                    calendar_id = _extract_calendar_id_from_link(interviewer.calendar_link)
-                
-                if not calendar_id:
-                    calendar = calendar_service.get_calendar_by_email(interviewer.email)
-                    if calendar:
-                        calendar_id = calendar['id']
-                
-                if not calendar_id:
-                    calendar_id = interviewer.email
-                
-                if calendar_id:
-                    try:
-                        interviewer_events = calendar_service.get_events(calendar_id=calendar_id, days_ahead=21, force_refresh=True)
-                        events_data.extend(interviewer_events)
-                        print(f"📅 THIRD WEEK: Добавлено {len(interviewer_events)} событий от {interviewer.email}")
-                    except Exception as e:
-                        print(f"⚠️ THIRD WEEK: Ошибка получения событий для {interviewer.email}: {e}")
             
             duration = vacancy.tech_interview_duration if hasattr(vacancy, 'tech_interview_duration') and vacancy.tech_interview_duration else 90
         
