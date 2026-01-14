@@ -2745,16 +2745,17 @@
     display: flex !important;
     align-items: center !important;
     flex-wrap: wrap !important;
-    gap: 6px !important;
+    gap: 15px !important;
     flex: 1 !important;
     justify-content: flex-start !important;
     min-width: 0 !important;
 }
 
-/* Если интервьюеров много, они равномерно распределяются */
+/* На десктопе тоже оставляем порядок слева направо (без space-between) */
 @media (min-width: 768px) {
     .interviewers-container {
-        justify-content: space-between !important;
+        justify-content: flex-start !important;
+        gap: 15px !important;
     }
 }
 

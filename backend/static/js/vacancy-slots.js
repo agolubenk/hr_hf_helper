@@ -1167,11 +1167,21 @@ window.addThirdWeek = function() {
     // Получаем параметры для запроса
     const meetingType = document.querySelector('.btn-meeting-type.active')?.id === 'btnInterview' ? 'interview' : 'screening';
     const vacancyId = new URLSearchParams(window.location.search).get('vacancy_id');
+
+    // Для интервью подтягиваем слоты ТОЛЬКО по выбранным интервьюерам
+    const selectedInterviewerIds = [];
+    if (meetingType === 'interview') {
+        document.querySelectorAll('.btn-interviewer-pill.active').forEach(btn => {
+            const id = btn.getAttribute('data-interviewer-id');
+            if (id) selectedInterviewerIds.push(id);
+        });
+    }
+    const interviewerIdsQuery = selectedInterviewerIds.length > 0 ? `&interviewer_ids=${selectedInterviewerIds.join(',')}` : '';
     
     console.log(`📡 Запрос слотов третьей недели: meetingType=${meetingType}, vacancyId=${vacancyId}`);
     
     // Делаем AJAX запрос на бэкенд
-    fetch(`/google-oauth/api/third-week-slots/?vacancy_id=${vacancyId}&meeting_type=${meetingType}`)
+    fetch(`/google-oauth/api/third-week-slots/?vacancy_id=${vacancyId}&meeting_type=${meetingType}${interviewerIdsQuery}`)
         .then(response => response.json())
         .then(data => {
             console.log('✅ Получены слоты третьей недели:', data);
@@ -1243,11 +1253,20 @@ function displayThirdWeekSlots(slots) {
 function reloadThirdWeekSlots() {
     const meetingType = document.querySelector('.btn-meeting-type.active')?.id === 'btnInterview' ? 'interview' : 'screening';
     const vacancyId = new URLSearchParams(window.location.search).get('vacancy_id');
+
+    const selectedInterviewerIds = [];
+    if (meetingType === 'interview') {
+        document.querySelectorAll('.btn-interviewer-pill.active').forEach(btn => {
+            const id = btn.getAttribute('data-interviewer-id');
+            if (id) selectedInterviewerIds.push(id);
+        });
+    }
+    const interviewerIdsQuery = selectedInterviewerIds.length > 0 ? `&interviewer_ids=${selectedInterviewerIds.join(',')}` : '';
     
     console.log(`📡 Перезагрузка слотов третьей недели: meetingType=${meetingType}, vacancyId=${vacancyId}`);
     
     // Делаем AJAX запрос на бэкенд
-    fetch(`/google-oauth/api/third-week-slots/?vacancy_id=${vacancyId}&meeting_type=${meetingType}`)
+    fetch(`/google-oauth/api/third-week-slots/?vacancy_id=${vacancyId}&meeting_type=${meetingType}${interviewerIdsQuery}`)
         .then(response => response.json())
         .then(data => {
             console.log('✅ Получены слоты третьей недели:', data);

@@ -3844,8 +3844,9 @@ def api_third_week_slots(request):
     try:
         vacancy_id = request.GET.get('vacancy_id')
         meeting_type = request.GET.get('meeting_type', 'screening')
+        interviewer_ids_str = request.GET.get('interviewer_ids', '')
         
-        print(f"📅 API THIRD WEEK: vacancy_id={vacancy_id}, meeting_type={meeting_type}")
+        print(f"📅 API THIRD WEEK: vacancy_id={vacancy_id}, meeting_type={meeting_type}, interviewer_ids={interviewer_ids_str}")
         
         if not vacancy_id:
             return JsonResponse({
@@ -3898,17 +3899,72 @@ def api_third_week_slots(request):
         calendar_service = GoogleCalendarService(oauth_service)
         
         events_data = []
+
+        # Добавляем календарь компании (если настроен) — влияет и на screening, и на interview
+        company_calendar_id = None
+        try:
+            from apps.company_settings.models import CompanySettings
+            company_settings = CompanySettings.get_settings()
+            if company_settings.main_calendar_id:
+                company_calendar_id = _extract_calendar_id_from_link(company_settings.main_calendar_id.strip())
+        except Exception as e:
+            print(f"⚠️ THIRD WEEK: Ошибка получения календаря компании: {e}")
         
         if meeting_type == 'screening':
             # Для скринингов только календарь пользователя
             print(f"📅 THIRD WEEK: Получение слотов для скринингов")
             events_data = calendar_service.get_events(days_ahead=21, force_refresh=True)  # Получаем на 3 недели
+            if company_calendar_id:
+                try:
+                    company_events_data = calendar_service.get_events(calendar_id=company_calendar_id, days_ahead=21, force_refresh=True)
+                    events_data.extend(company_events_data)
+                except Exception as e:
+                    print(f"⚠️ THIRD WEEK: Ошибка получения событий календаря компании: {e}")
             duration = vacancy.screening_duration if hasattr(vacancy, 'screening_duration') and vacancy.screening_duration else 45
         else:
             # Для интервью: по умолчанию только календарь пользователя (и компании, если добавлена отдельно).
             # ВАЖНО: если интервьюеры не выбраны — никого не подтягиваем автоматически.
             print(f"📅 THIRD WEEK: Получение слотов для интервью")
             events_data = calendar_service.get_events(days_ahead=21, force_refresh=True)
+            if company_calendar_id:
+                try:
+                    company_events_data = calendar_service.get_events(calendar_id=company_calendar_id, days_ahead=21, force_refresh=True)
+                    events_data.extend(company_events_data)
+                except Exception as e:
+                    print(f"⚠️ THIRD WEEK: Ошибка получения событий календаря компании: {e}")
+
+            # Если интервьюеры выбраны — добавляем их календари; если нет — считаем без них
+            selected_interviewers = []
+            if interviewer_ids_str:
+                try:
+                    from apps.interviewers.models import Interviewer
+                    interviewer_ids = [int(i.strip()) for i in interviewer_ids_str.split(',') if i.strip()]
+                    selected_interviewers = list(Interviewer.objects.filter(id__in=interviewer_ids, is_active=True))
+                    print(f"📅 THIRD WEEK: Выбрано интервьюеров: {len(selected_interviewers)}")
+                except Exception as e:
+                    print(f"⚠️ THIRD WEEK: Ошибка парсинга interviewer_ids: {e}")
+
+            for interviewer in selected_interviewers:
+                calendar_id = None
+                if interviewer.calendar_link:
+                    calendar_id = _extract_calendar_id_from_link(interviewer.calendar_link)
+                if not calendar_id:
+                    try:
+                        calendar = calendar_service.get_calendar_by_email(interviewer.email)
+                        if calendar:
+                            calendar_id = calendar.get('id')
+                    except Exception:
+                        calendar_id = None
+                if not calendar_id:
+                    calendar_id = interviewer.email
+
+                if calendar_id:
+                    try:
+                        interviewer_events = calendar_service.get_events(calendar_id=calendar_id, days_ahead=21, force_refresh=True)
+                        events_data.extend(interviewer_events)
+                        print(f"📅 THIRD WEEK: Добавлено {len(interviewer_events)} событий от {interviewer.email}")
+                    except Exception as e:
+                        print(f"⚠️ THIRD WEEK: Ошибка получения событий для {interviewer.email}: {e}")
             
             duration = vacancy.tech_interview_duration if hasattr(vacancy, 'tech_interview_duration') and vacancy.tech_interview_duration else 90
         
