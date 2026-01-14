@@ -81,6 +81,14 @@
                                 <i class="fas fa-external-link-alt"></i>
                             </a>
                             {% endif %}
+                            {% if message.metadata.finance_more_template_message %}
+                            <button type="button" class="btn btn-sm btn-outline-danger copy-finance-more-template-btn" 
+                                    data-template-message="{{ message.metadata.finance_more_template_message|escapejs }}" 
+                                    data-template-title="{% if message.metadata.finance_more_template_title %}{{ message.metadata.finance_more_template_title|escapejs }}{% endif %}"
+                                    title="Скопировать шаблон отказа 'Финансы - больше'">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            {% endif %}
                         </div>
                         {% endif %}
                     </div>

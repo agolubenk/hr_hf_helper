@@ -478,6 +478,19 @@
                                                                     <!-- DEBUG: office_format_rejected=True, но rejection_template_message отсутствует -->
                                                                     {% endif %}
                                                                     {% endif %}
+                                                                    {% comment %}Кнопка копирования шаблона отказа "Финансы - больше"{% endcomment %}
+                                                                    {% if message.metadata.salary_above_range %}
+                                                                    {% if message.metadata.finance_more_template_message %}
+                                                                <button type="button" class="btn btn-sm btn-outline-danger copy-finance-more-template-btn" 
+                                                                        data-template-message="{{ message.metadata.finance_more_template_message|escapejs }}" 
+                                                                        data-template-title="{% if message.metadata.finance_more_template_title %}{{ message.metadata.finance_more_template_title|escapejs }}{% endif %}"
+                                                                        title="Скопировать шаблон отказа 'Финансы - больше'">
+                                                                            <i class="fas fa-times"></i>
+                                                                        </button>
+                                                                    {% else %}
+                                                                    <!-- DEBUG: salary_above_range=True, но finance_more_template_message отсутствует -->
+                                                                    {% endif %}
+                                                                    {% endif %}
                                                             </div>
                                                         {% endif %}
                                                     </div>
@@ -3465,6 +3478,65 @@ document.addEventListener('click', function(e) {
             }
             document.body.removeChild(textArea);
         });
+        return;
+    }
+    
+    // Обработчик для кнопки копирования шаблона отказа "Финансы - больше"
+    if (e.target.closest('.copy-finance-more-template-btn')) {
+        const btn = e.target.closest('.copy-finance-more-template-btn');
+        const templateMessage = btn.getAttribute('data-template-message');
+        const templateTitle = btn.getAttribute('data-template-title');
+        
+        if (!templateMessage) {
+            alert('Текст шаблона не найден');
+            return;
+        }
+        
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        
+        // Копируем текст шаблона в буфер обмена
+        navigator.clipboard.writeText(templateMessage).then(() => {
+            btn.innerHTML = '<i class="fas fa-check"></i>';
+            btn.classList.remove('btn-outline-danger');
+            btn.classList.add('btn-success');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-outline-danger');
+                btn.disabled = false;
+            }, 2000);
+        }).catch(err => {
+            console.error('Clipboard error:', err);
+            // Fallback для старых браузеров
+            const textArea = document.createElement('textarea');
+            textArea.value = templateMessage;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                btn.innerHTML = '<i class="fas fa-check"></i>';
+                btn.classList.remove('btn-outline-danger');
+                btn.classList.add('btn-success');
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-outline-danger');
+                    btn.disabled = false;
+                }, 2000);
+            } catch (err2) {
+                console.error('Fallback copy error:', err2);
+                alert('Ошибка копирования в буфер обмена');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+            document.body.removeChild(textArea);
+        });
+        return;
     }
 });
 

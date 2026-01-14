@@ -5436,24 +5436,99 @@ class HRScreening(models.Model):
             print(f"❌ HR_SCREENING_REJECTION_TEMPLATE: Ошибка при получении шаблона отказа: {e}")
             return None
     
+    def is_salary_above_range(self):
+        """
+        Проверяет, превышает ли зарплата кандидата максимальную вилку для вакансии
+
+        Returns:
+            bool: True если зарплата выше максимальной вилки, False иначе
+        """
+        if not self.extracted_salary or not self.salary_currency:
+            print(f"⚠️ HR_SCREENING_SALARY_ABOVE: Зарплата не извлечена")
+            return False
+        
+        try:
+            from apps.finance.models import SalaryRange
+            from apps.vacancies.models import Vacancy
+            
+            # Получаем вакансию
+            vacancy = Vacancy.objects.get(external_id=str(self.vacancy_id))
+            
+            # Определяем поле максимальной зарплаты в зависимости от валюты
+            if self.salary_currency == 'USD':
+                max_field = 'salary_max_usd'
+            elif self.salary_currency == 'PLN':
+                max_field = 'salary_max_pln'
+            elif self.salary_currency == 'BYN':
+                max_field = 'salary_max_byn'
+            else:
+                print(f"❌ HR_SCREENING_SALARY_ABOVE: Неподдерживаемая валюта: {self.salary_currency}")
+                return False
+            
+            # Получаем максимальную зарплатную вилку для этой вакансии
+            salary_ranges = SalaryRange.objects.filter(
+                vacancy=vacancy,
+                is_active=True
+            ).order_by(f'-{max_field}')
+            
+            if not salary_ranges.exists():
+                print(f"⚠️ HR_SCREENING_SALARY_ABOVE: Нет зарплатных вилок для вакансии")
+                return False
+            
+            # Берем максимальную вилку
+            max_salary_range = salary_ranges.first()
+            max_salary = getattr(max_salary_range, max_field)
+            
+            if max_salary and self.extracted_salary > max_salary:
+                print(f"✅ HR_SCREENING_SALARY_ABOVE: Зарплата {self.extracted_salary} {self.salary_currency} превышает максимальную вилку {max_salary} {self.salary_currency}")
+                return True
+            else:
+                print(f"ℹ️ HR_SCREENING_SALARY_ABOVE: Зарплата {self.extracted_salary} {self.salary_currency} не превышает максимальную вилку {max_salary} {self.salary_currency}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ HR_SCREENING_SALARY_ABOVE: Ошибка при проверке превышения зарплаты: {e}")
+            import traceback
+            traceback.print_exc()
+            return False
+    
+    def get_finance_more_rejection_template(self):
+        """
+        Получает активный шаблон отказа типа "Финансы - больше"
+
+        Returns:
+            RejectionTemplate или None
+        """
+        try:
+            from apps.company_settings.models import RejectionTemplate
+            template = RejectionTemplate.get_template('finance_more')
+            if template:
+                print(f"✅ HR_SCREENING_FINANCE_MORE_TEMPLATE: Найден шаблон отказа: {template.title}")
+            else:
+                print(f"⚠️ HR_SCREENING_FINANCE_MORE_TEMPLATE: Шаблон отказа не найден")
+            return template
+        except Exception as e:
+            print(f"❌ HR_SCREENING_FINANCE_MORE_TEMPLATE: Ошибка при получении шаблона отказа: {e}")
+            return None
+
     def is_office_format_rejected(self):
         """
         Проверяет, был ли отклонен кандидат по офисному формату
-        
+
         Returns:
             bool: True если офисный формат отклонен, False иначе
         """
         print(f"🔍 HR_SCREENING_IS_OFFICE_REJECTED: Проверяем офисный формат для скрининга ID {self.id}")
-        
+
         if not self.gemini_analysis:
             print(f"⚠️ HR_SCREENING_IS_OFFICE_REJECTED: gemini_analysis пуст")
             return False
-        
+
         parsed_analysis = self.get_parsed_analysis()
         if not parsed_analysis:
             print(f"⚠️ HR_SCREENING_IS_OFFICE_REJECTED: parsed_analysis пуст или None")
             return False
-        
+
         print(f"🔍 HR_SCREENING_IS_OFFICE_REJECTED: parsed_analysis получен, тип: {type(parsed_analysis)}")
         result = self._check_office_format_rejection(parsed_analysis)
         print(f"🔍 HR_SCREENING_IS_OFFICE_REJECTED: Результат проверки: {result}")

@@ -4028,6 +4028,23 @@ def chat_ajax_handler(request, session_id):
                     else:
                         print(f"ℹ️ CHAT AJAX: Кандидат не отклонен по офисному формату")
                     
+                    # Проверяем, превышает ли зарплата максимальную вилку
+                    print(f"🔍 CHAT AJAX: Проверяем превышение зарплаты над вилкой...")
+                    salary_above_range = hr_screening.is_salary_above_range()
+                    print(f"🔍 CHAT AJAX: Результат проверки превышения зарплаты: {salary_above_range}")
+                    
+                    finance_more_template = None
+                    if salary_above_range:
+                        print(f"🔍 CHAT AJAX: Зарплата превышает вилку, получаем шаблон отказа 'Финансы - больше'...")
+                        finance_more_template = hr_screening.get_finance_more_rejection_template()
+                        if finance_more_template:
+                            print(f"✅ CHAT AJAX: Найден шаблон отказа 'Финансы - больше': {finance_more_template.title} (ID: {finance_more_template.id})")
+                            print(f"✅ CHAT AJAX: Текст шаблона (первые 100 символов): {finance_more_template.message[:100]}")
+                        else:
+                            print(f"⚠️ CHAT AJAX: Шаблон отказа 'Финансы - больше' не найден")
+                    else:
+                        print(f"ℹ️ CHAT AJAX: Зарплата не превышает вилку")
+                    
                     response_content = ""  # Пустой контент, данные будут браться из metadata
                     
                     # Получаем контактную информацию кандидата
@@ -4063,6 +4080,22 @@ def chat_ajax_handler(request, session_id):
                             print(f"⚠️ CHAT AJAX: Кандидат отклонен по офисному формату, но шаблон отказа не найден. office_format_rejected=True установлен в метаданные")
                     else:
                         print(f"ℹ️ CHAT AJAX: Кандидат не отклонен по офисному формату. office_format_rejected={office_format_rejected} (type: {type(office_format_rejected)})")
+                    
+                    # Добавляем информацию о шаблоне отказа "Финансы - больше", если зарплата превышает вилку
+                    if salary_above_range:
+                        # Сохраняем флаг отказа в метаданные, даже если шаблон не найден
+                        metadata['salary_above_range'] = True
+                        
+                        if finance_more_template:
+                            metadata['finance_more_template_id'] = finance_more_template.id
+                            metadata['finance_more_template_title'] = finance_more_template.title
+                            metadata['finance_more_template_message'] = finance_more_template.message
+                            print(f"✅ CHAT AJAX: Метаданные обновлены с информацией об отказе 'Финансы - больше'. salary_above_range=True, template_id={finance_more_template.id}")
+                            print(f"✅ CHAT AJAX: Текст шаблона (первые 200 символов): {finance_more_template.message[:200]}")
+                        else:
+                            print(f"⚠️ CHAT AJAX: Зарплата превышает вилку, но шаблон отказа 'Финансы - больше' не найден. salary_above_range=True установлен в метаданные")
+                    else:
+                        print(f"ℹ️ CHAT AJAX: Зарплата не превышает вилку. salary_above_range={salary_above_range}")
                     
                     print(f"🔍 CHAT AJAX: Сохраняем сообщение с метаданными. Ключи: {list(metadata.keys())}")
                     print(f"🔍 CHAT AJAX: office_format_rejected в метаданных: {metadata.get('office_format_rejected', 'NOT SET')}")
@@ -5447,24 +5480,49 @@ def send_chat_message(request):
                         candidate_contact_info = _get_candidate_contact_info(request.user, screening.candidate_id)
                         print(f"🔍 SEND_CHAT_MESSAGE: Получена контактная информация кандидата: {candidate_contact_info}")
                     
+                    # Проверяем, превышает ли зарплата максимальную вилку
+                    print(f"🔍 SEND_CHAT_MESSAGE: Проверяем превышение зарплаты над вилкой...")
+                    salary_above_range = screening.is_salary_above_range()
+                    print(f"🔍 SEND_CHAT_MESSAGE: Результат проверки превышения зарплаты: {salary_above_range}")
+                    
+                    finance_more_template = None
+                    if salary_above_range:
+                        print(f"🔍 SEND_CHAT_MESSAGE: Зарплата превышает вилку, получаем шаблон отказа 'Финансы - больше'...")
+                        finance_more_template = screening.get_finance_more_rejection_template()
+                        if finance_more_template:
+                            print(f"✅ SEND_CHAT_MESSAGE: Найден шаблон отказа 'Финансы - больше': {finance_more_template.title} (ID: {finance_more_template.id})")
+                        else:
+                            print(f"⚠️ SEND_CHAT_MESSAGE: Шаблон отказа 'Финансы - больше' не найден")
+                    
                     response_content = ""  # Пустой контент, данные будут браться из metadata
+                    
+                    metadata = {
+                        'action_type': 'hrscreening',
+                        'screening_id': screening.id,
+                        'candidate_name': screening.candidate_name,
+                        'vacancy_name': screening.vacancy_title,
+                        'determined_grade': screening.determined_grade,
+                        'candidate_url': candidate_url_for_metadata,
+                        'extracted_salary': str(screening.extracted_salary) if screening.extracted_salary else None,
+                        'salary_currency': screening.salary_currency,
+                        'candidate_contact_info': candidate_contact_info
+                    }
+                    
+                    # Добавляем информацию о шаблоне отказа "Финансы - больше", если зарплата превышает вилку
+                    if salary_above_range:
+                        metadata['salary_above_range'] = True
+                        if finance_more_template:
+                            metadata['finance_more_template_id'] = finance_more_template.id
+                            metadata['finance_more_template_title'] = finance_more_template.title
+                            metadata['finance_more_template_message'] = finance_more_template.message
+                            print(f"✅ SEND_CHAT_MESSAGE: Метаданные обновлены с информацией об отказе 'Финансы - больше'")
                     
                     ChatMessage.objects.create(
                         session=chat_session,
                         message_type='hrscreening',
                         content=response_content,
                         hr_screening=screening,
-                        metadata={
-                            'action_type': 'hrscreening',
-                            'screening_id': screening.id,
-                            'candidate_name': screening.candidate_name,
-                            'vacancy_name': screening.vacancy_title,
-                            'determined_grade': screening.determined_grade,
-                            'candidate_url': candidate_url_for_metadata,
-                            'extracted_salary': str(screening.extracted_salary) if screening.extracted_salary else None,
-                            'salary_currency': screening.salary_currency,
-                            'candidate_contact_info': candidate_contact_info
-                        }
+                        metadata=metadata
                     )
                     
                     # Формируем URL для перенаправления
@@ -6211,24 +6269,49 @@ def chat_workflow(request, session_id=None):
                                 candidate_contact_info = _get_candidate_contact_info(request.user, hr_screening.candidate_id)
                                 print(f"🔍 CHAT: Получена контактная информация кандидата: {candidate_contact_info}")
                             
+                            # Проверяем, превышает ли зарплата максимальную вилку
+                            print(f"🔍 CHAT: Проверяем превышение зарплаты над вилкой...")
+                            salary_above_range = hr_screening.is_salary_above_range()
+                            print(f"🔍 CHAT: Результат проверки превышения зарплаты: {salary_above_range}")
+                            
+                            finance_more_template = None
+                            if salary_above_range:
+                                print(f"🔍 CHAT: Зарплата превышает вилку, получаем шаблон отказа 'Финансы - больше'...")
+                                finance_more_template = hr_screening.get_finance_more_rejection_template()
+                                if finance_more_template:
+                                    print(f"✅ CHAT: Найден шаблон отказа 'Финансы - больше': {finance_more_template.title} (ID: {finance_more_template.id})")
+                                else:
+                                    print(f"⚠️ CHAT: Шаблон отказа 'Финансы - больше' не найден")
+                            
                             response_content = ""  # Пустой контент, данные будут браться из metadata
+                            
+                            metadata = {
+                                'action_type': 'hrscreening',
+                                'hr_screening_id': hr_screening.id,
+                                'candidate_name': hr_screening.candidate_name,
+                                'vacancy_name': hr_screening.vacancy_title,
+                                'determined_grade': hr_screening.determined_grade,
+                                'candidate_url': hr_screening.candidate_url,
+                                'extracted_salary': str(hr_screening.extracted_salary) if hr_screening.extracted_salary else None,
+                                'salary_currency': hr_screening.salary_currency,
+                                'candidate_contact_info': candidate_contact_info
+                            }
+                            
+                            # Добавляем информацию о шаблоне отказа "Финансы - больше", если зарплата превышает вилку
+                            if salary_above_range:
+                                metadata['salary_above_range'] = True
+                                if finance_more_template:
+                                    metadata['finance_more_template_id'] = finance_more_template.id
+                                    metadata['finance_more_template_title'] = finance_more_template.title
+                                    metadata['finance_more_template_message'] = finance_more_template.message
+                                    print(f"✅ CHAT: Метаданные обновлены с информацией об отказе 'Финансы - больше'")
                             
                             ChatMessage.objects.create(
                                 session=chat_session,
                                 message_type='hrscreening',
                                 content=response_content,
                                 hr_screening=hr_screening,
-                                metadata={
-                                    'action_type': 'hrscreening',
-                                    'hr_screening_id': hr_screening.id,
-                                    'candidate_name': hr_screening.candidate_name,
-                                    'vacancy_name': hr_screening.vacancy_title,
-                                    'determined_grade': hr_screening.determined_grade,
-                                    'candidate_url': hr_screening.candidate_url,
-                                    'extracted_salary': str(hr_screening.extracted_salary) if hr_screening.extracted_salary else None,
-                                    'salary_currency': hr_screening.salary_currency,
-                                    'candidate_contact_info': candidate_contact_info
-                                }
+                                metadata=metadata
                             )
                         except Exception as e:
                             print(f"🔍 CHAT: Ошибка сохранения HR: {str(e)}")
