@@ -66,6 +66,7 @@ urlpatterns = [
     path('hr-screening/<int:pk>/', views.hr_screening_detail, name='hr_screening_detail'),
     path('hr-screening/<int:pk>/delete/', views.hr_screening_delete, name='hr_screening_delete'),
     path('hr-screening/<int:pk>/retry-analysis/', views.hr_screening_retry_analysis, name='hr_screening_retry_analysis'),
+    path('reject-candidate/<int:hr_screening_id>/', views.reject_candidate, name='reject_candidate'),
     
     # Объединенный рабочий процесс
     path('combined-workflow/', views.combined_workflow, name='combined_workflow'),

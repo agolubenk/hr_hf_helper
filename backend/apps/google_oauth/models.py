@@ -5173,85 +5173,31 @@ class HRScreening(models.Model):
                             hr_screening_status_id = status.get('id')
                             break
             
-            if not hr_screening_status_id:
+            # ВАЖНО: ВСЕГДА устанавливаем статус HR Screening
+            # Отказ теперь обрабатывается через форму на фронте по запросу пользователя
+            if hr_screening_status_id:
+                # Формируем комментарий из поля comment
+                comment_text = ""
+                if 'comment' in parsed_analysis and parsed_analysis['comment']:
+                    comment_text = f"Доп. инфо: {parsed_analysis['comment']}"
+                else:
+                    comment_text = ""
+                
+                # Обновляем статус на "HR Screening"
+                status_result = huntflow_service.update_applicant_status(
+                    account_id, 
+                    int(self.candidate_id), 
+                    status_id=hr_screening_status_id,
+                    comment=comment_text,
+                    vacancy_id=int(self.vacancy_id) if self.vacancy_id else None
+                )
+                if status_result:
+                    print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Статус обновлен на HR Screening (ID: {hr_screening_status_id})")
+                else:
+                    print(f"❌ HR_SCREENING_UPDATE_CANDIDATE: Не удалось обновить статус на HR Screening")
+            else:
                 print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Статус HR Screening не найден")
                 status_result = None
-            else:
-                # Проверяем офисный формат перед обновлением статуса
-                print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Проверяем офисный формат перед обновлением статуса")
-                print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: parsed_analysis ключи: {list(parsed_analysis.keys()) if isinstance(parsed_analysis, dict) else 'NOT DICT'}")
-                office_format_rejected = self._check_office_format_rejection(parsed_analysis)
-                print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Результат проверки офисного формата: {office_format_rejected}")
-                
-                # Сохраняем результат проверки для использования в views.py
-                # Используем временное поле через JSON в gemini_analysis или создадим отдельное поле
-                # Пока что будем использовать метод is_office_format_rejected() который перепроверит
-                
-                if office_format_rejected:
-                    # Ищем статус "Отказ Удаленка/гибрид"
-                    rejection_status_id = self._find_rejection_status(huntflow_service, account_id)
-                    if rejection_status_id:
-                        print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Офисный формат = нет, переводим на статус отказа: {rejection_status_id}")
-                        # Формируем комментарий из поля comment
-                        comment_text = ""
-                        if 'comment' in parsed_analysis and parsed_analysis['comment']:
-                            comment_text = f"Доп. инфо: {parsed_analysis['comment']}"
-                        else:
-                            comment_text = "Отказ по офисному формату"
-                        
-                        # Обновляем статус на "Отказ Удаленка/гибрид"
-                        status_result = huntflow_service.update_applicant_status(
-                            account_id, 
-                            int(self.candidate_id), 
-                            status_id=rejection_status_id,
-                            comment=comment_text,
-                            vacancy_id=int(self.vacancy_id) if self.vacancy_id else None
-                        )
-                        if status_result:
-                            print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Статус обновлен на 'Отказ Удаленка/гибрид' (ID: {rejection_status_id})")
-                        else:
-                            print(f"❌ HR_SCREENING_UPDATE_CANDIDATE: Не удалось обновить статус на 'Отказ Удаленка/гибрид'")
-                    else:
-                        print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Статус 'Отказ Удаленка/гибрид' не найден, используем обычный статус HR Screening")
-                        # Формируем комментарий из поля comment
-                        comment_text = ""
-                        if 'comment' in parsed_analysis and parsed_analysis['comment']:
-                            comment_text = f"Доп. инфо: {parsed_analysis['comment']}"
-                        else:
-                            comment_text = ""
-                        
-                        # Обновляем статус на "HR Screening"
-                        status_result = huntflow_service.update_applicant_status(
-                            account_id, 
-                            int(self.candidate_id), 
-                            status_id=hr_screening_status_id,
-                            comment=comment_text,
-                            vacancy_id=int(self.vacancy_id) if self.vacancy_id else None
-                        )
-                        if status_result:
-                            print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Статус обновлен на HR Screening (ID: {hr_screening_status_id})")
-                        else:
-                            print(f"❌ HR_SCREENING_UPDATE_CANDIDATE: Не удалось обновить статус на HR Screening")
-                else:
-                    # Формируем комментарий из поля comment
-                    comment_text = ""
-                    if 'comment' in parsed_analysis and parsed_analysis['comment']:
-                        comment_text = f"Доп. инфо: {parsed_analysis['comment']}"
-                    else:
-                        comment_text = ""
-                    
-                    # Обновляем статус на "HR Screening"
-                    status_result = huntflow_service.update_applicant_status(
-                        account_id, 
-                        int(self.candidate_id), 
-                        status_id=hr_screening_status_id,
-                        comment=comment_text,
-                        vacancy_id=int(self.vacancy_id) if self.vacancy_id else None
-                    )
-                    if status_result:
-                        print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Статус обновлен на HR Screening (ID: {hr_screening_status_id})")
-                    else:
-                        print(f"❌ HR_SCREENING_UPDATE_CANDIDATE: Не удалось обновить статус на HR Screening")
             
             if not status_result:
                 print(f"⚠️ HR_SCREENING_UPDATE_CANDIDATE: Не удалось обновить статус (status_result = None)")
@@ -5417,6 +5363,118 @@ class HRScreening(models.Model):
             print(f"❌ HR_SCREENING_REJECTION_STATUS: Ошибка при поиске статуса отказа: {e}")
             return None
     
+    def _find_salary_rejection_status(self, huntflow_service, account_id):
+        """
+        Ищет статус отказа по зарплате в Huntflow (статус с type='trash' и rejection_reason "Высокие запросы по зарплате")
+        
+        Args:
+            huntflow_service: Сервис Huntflow
+            account_id: ID аккаунта
+            
+        Returns:
+            tuple: (status_id, rejection_reason_id) или (None, None) если не найден
+        """
+        try:
+            statuses = huntflow_service.get_vacancy_statuses(account_id)
+            if not statuses or 'items' not in statuses:
+                return None, None
+            
+            # Ищем статус с type='trash' (это статус отказа)
+            print(f"🔍 HR_SCREENING_SALARY_REJECTION_STATUS: Ищем статус отказа по зарплате среди {len(statuses['items'])} статусов")
+            for status in statuses['items']:
+                status_type = status.get('type', '').lower()
+                status_name = status.get('name', '').lower().strip()
+                status_id = status.get('id')
+                
+                # Ищем статус типа 'trash' (отказ)
+                if status_type == 'trash':
+                    print(f"🔍 HR_SCREENING_SALARY_REJECTION_STATUS: Найден статус отказа '{status.get('name')}' (ID: {status_id}, type: {status_type})")
+                    
+                    # Получаем rejection_reasons для этого статуса
+                    rejection_reasons = status.get('reject_reasons', [])
+                    if rejection_reasons:
+                        print(f"🔍 HR_SCREENING_SALARY_REJECTION_STATUS: Найдено {len(rejection_reasons)} причин отказа")
+                        # Ищем причину отказа по зарплате
+                        for reason in rejection_reasons:
+                            reason_name = reason.get('name', '').lower()
+                            reason_id = reason.get('id')
+                            
+                            # Ключевые слова для поиска причины отказа по зарплате
+                            salary_keywords = ['зарплат', 'запрос', 'высок', 'финанс', 'salary', 'high', 'finance']
+                            if any(keyword in reason_name for keyword in salary_keywords):
+                                print(f"✅ HR_SCREENING_SALARY_REJECTION_STATUS: Найдена причина отказа '{reason.get('name')}' (ID: {reason_id})")
+                                return status_id, reason_id
+                    else:
+                        # Если нет rejection_reasons, используем сам статус
+                        print(f"⚠️ HR_SCREENING_SALARY_REJECTION_STATUS: У статуса '{status.get('name')}' нет rejection_reasons, используем сам статус")
+                        return status_id, None
+            
+            print(f"⚠️ HR_SCREENING_SALARY_REJECTION_STATUS: Статус отказа по зарплате не найден")
+            return None, None
+        except Exception as e:
+            print(f"❌ HR_SCREENING_SALARY_REJECTION_STATUS: Ошибка при поиске статуса отказа по зарплате: {e}")
+            import traceback
+            traceback.print_exc()
+            return None, None
+    
+    def _find_rejection_status_with_reason(self, huntflow_service, account_id, reason_type='office_format'):
+        """
+        Ищет статус отказа с указанной причиной в Huntflow
+        
+        Args:
+            huntflow_service: Сервис Huntflow
+            account_id: ID аккаунта
+            reason_type: Тип причины ('office_format' или другой)
+            
+        Returns:
+            tuple: (status_id, rejection_reason_id) или (None, None) если не найден
+        """
+        try:
+            statuses = huntflow_service.get_vacancy_statuses(account_id)
+            if not statuses or 'items' not in statuses:
+                return None, None
+            
+            # Ключевые слова для поиска причины отказа
+            if reason_type == 'office_format':
+                reason_keywords = ['удаленка', 'гибрид', 'формат', 'remote', 'hybrid', 'format', 'офис']
+            else:
+                reason_keywords = []
+            
+            # Ищем статус с type='trash' (это статус отказа)
+            print(f"🔍 HR_SCREENING_REJECTION_STATUS_WITH_REASON: Ищем статус отказа '{reason_type}' среди {len(statuses['items'])} статусов")
+            for status in statuses['items']:
+                status_type = status.get('type', '').lower()
+                status_id = status.get('id')
+                
+                # Ищем статус типа 'trash' (отказ)
+                if status_type == 'trash':
+                    print(f"🔍 HR_SCREENING_REJECTION_STATUS_WITH_REASON: Найден статус отказа '{status.get('name')}' (ID: {status_id})")
+                    
+                    # Получаем rejection_reasons для этого статуса
+                    rejection_reasons = status.get('reject_reasons', [])
+                    if rejection_reasons:
+                        print(f"🔍 HR_SCREENING_REJECTION_STATUS_WITH_REASON: Найдено {len(rejection_reasons)} причин отказа")
+                        # Ищем причину отказа
+                        for reason in rejection_reasons:
+                            reason_name = reason.get('name', '').lower()
+                            reason_id = reason.get('id')
+                            
+                            if reason_keywords and any(keyword in reason_name for keyword in reason_keywords):
+                                print(f"✅ HR_SCREENING_REJECTION_STATUS_WITH_REASON: Найдена причина отказа '{reason.get('name')}' (ID: {reason_id})")
+                                return status_id, reason_id
+                    else:
+                        # Если нет rejection_reasons, используем сам статус
+                        print(f"⚠️ HR_SCREENING_REJECTION_STATUS_WITH_REASON: У статуса '{status.get('name')}' нет rejection_reasons, используем сам статус")
+                        return status_id, None
+            
+            print(f"⚠️ HR_SCREENING_REJECTION_STATUS_WITH_REASON: Статус отказа '{reason_type}' не найден")
+            return None, None
+        except Exception as e:
+            print(f"❌ HR_SCREENING_REJECTION_STATUS_WITH_REASON: Ошибка при поиске статуса отказа: {e}")
+            import traceback
+            traceback.print_exc()
+            return None, None
+    
     def get_office_format_rejection_template(self):
         """
         Получает активный шаблон отказа по офисному формату
@@ -5488,6 +5546,55 @@ class HRScreening(models.Model):
                 
         except Exception as e:
             print(f"❌ HR_SCREENING_SALARY_ABOVE: Ошибка при проверке превышения зарплаты: {e}")
+            import traceback
+            traceback.print_exc()
+            return False
+    
+    def _update_applicant_status_with_rejection(self, huntflow_service, account_id, applicant_id, status_id, comment, vacancy_id, rejection_reason_id=None):
+        """
+        Обновляет статус кандидата с указанием причины отказа (rejection_reason_id)
+        
+        Args:
+            huntflow_service: Сервис Huntflow
+            account_id: ID аккаунта
+            applicant_id: ID кандидата
+            status_id: ID статуса отказа
+            comment: Комментарий
+            vacancy_id: ID вакансии
+            rejection_reason_id: ID причины отказа (опционально)
+            
+        Returns:
+            bool: True если успешно, False иначе
+        """
+        try:
+            # Используем прямой API вызов для обновления статуса с rejection_reason_id
+            endpoint = f"/accounts/{account_id}/applicants/{applicant_id}/vacancy"
+            
+            # Формируем данные для обновления статуса
+            data = {
+                'vacancy': vacancy_id,
+                'status': status_id
+            }
+            
+            if comment:
+                data['comment'] = comment
+            
+            # Добавляем rejection_reason_id если указан
+            if rejection_reason_id:
+                data['rejection_reason'] = rejection_reason_id
+                print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Используем rejection_reason_id={rejection_reason_id}")
+            
+            print(f"🔍 HR_SCREENING_UPDATE_CANDIDATE: Обновляем статус через {endpoint} с данными: {data}")
+            result = huntflow_service._make_request('POST', endpoint, json=data)
+            
+            if result:
+                print(f"✅ HR_SCREENING_UPDATE_CANDIDATE: Статус успешно обновлен")
+                return True
+            else:
+                print(f"❌ HR_SCREENING_UPDATE_CANDIDATE: Не удалось обновить статус")
+                return False
+        except Exception as e:
+            print(f"❌ HR_SCREENING_UPDATE_CANDIDATE: Ошибка при обновлении статуса с причиной отказа: {e}")
             import traceback
             traceback.print_exc()
             return False

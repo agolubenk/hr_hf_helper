@@ -2813,6 +2813,120 @@ def hr_screening_delete(request, pk):
 @login_required
 @permission_required('google_oauth.change_hrscreening', raise_exception=True)
 @require_POST
+def reject_candidate(request, hr_screening_id):
+    """Обработка отказа кандидата после HR-скрининга"""
+    try:
+        hr_screening = get_object_or_404(HRScreening, pk=hr_screening_id, user=request.user)
+        
+        # Получаем данные из запроса
+        data = json.loads(request.body) if request.body else {}
+        message_id = data.get('message_id')
+        
+        # Определяем причину отказа и статус
+        rejection_status_id = None
+        rejection_reason_id = None
+        comment = ""
+        
+        from apps.huntflow.services import HuntflowService
+        huntflow_service = HuntflowService(request.user)
+        accounts = huntflow_service.get_accounts()
+        
+        if not accounts or 'items' not in accounts:
+            return JsonResponse({'success': False, 'error': 'Нет доступных аккаунтов Huntflow'})
+        
+        account_id = accounts['items'][0]['id']
+        
+        # Проверяем превышение зарплаты
+        salary_above_range = False
+        if hr_screening.extracted_salary and hr_screening.salary_currency:
+            salary_above_range = hr_screening.is_salary_above_range()
+        
+        # Проверяем офисный формат
+        office_format_rejected = hr_screening.is_office_format_rejected()
+        
+        # Определяем причину отказа
+        if salary_above_range:
+            # Приоритет 1: Зарплата превышает вилку
+            rejection_status_id, rejection_reason_id = hr_screening._find_salary_rejection_status(huntflow_service, account_id)
+            if rejection_reason_id:
+                comment = f"Отказ: Высокие запросы по зарплате ({hr_screening.extracted_salary} {hr_screening.salary_currency})"
+            else:
+                comment = f"Отказ: Высокие запросы по зарплате ({hr_screening.extracted_salary} {hr_screening.salary_currency})"
+        elif office_format_rejected:
+            # Приоритет 2: Офисный формат
+            rejection_status_id, rejection_reason_id = hr_screening._find_rejection_status_with_reason(huntflow_service, account_id, 'office_format')
+            comment = "Отказ по офисному формату"
+        else:
+            # Общий отказ (если нет специфической причины)
+            # Ищем статус отказа типа 'trash'
+            statuses = huntflow_service.get_vacancy_statuses(account_id)
+            if statuses and 'items' in statuses:
+                for status in statuses['items']:
+                    if status.get('type', '').lower() == 'trash':
+                        rejection_status_id = status.get('id')
+                        break
+        
+        if not rejection_status_id:
+            return JsonResponse({'success': False, 'error': 'Статус отказа не найден в Huntflow'})
+        
+        # Обновляем статус в Huntflow
+        status_result = hr_screening._update_applicant_status_with_rejection(
+            huntflow_service,
+            account_id,
+            int(hr_screening.candidate_id),
+            rejection_status_id,
+            comment,
+            int(hr_screening.vacancy_id) if hr_screening.vacancy_id else None,
+            rejection_reason_id
+        )
+        
+        if not status_result:
+            return JsonResponse({'success': False, 'error': 'Не удалось обновить статус в Huntflow'})
+        
+        # Обновляем metadata сообщения, если указан message_id
+        if message_id:
+            try:
+                from .models import ChatMessage
+                chat_message = ChatMessage.objects.get(id=message_id)
+                if chat_message.metadata:
+                    chat_message.metadata['rejected'] = True
+                    chat_message.metadata['rejection_status_id'] = rejection_status_id
+                    chat_message.metadata['rejection_reason_id'] = rejection_reason_id
+                    chat_message.metadata['rejection_comment'] = comment
+                    chat_message.metadata['rejection_status_text'] = status_text
+                    chat_message.save(update_fields=['metadata'])
+                    print(f"✅ REJECT_CANDIDATE: Metadata сообщения {message_id} обновлено")
+            except ChatMessage.DoesNotExist:
+                print(f"⚠️ REJECT_CANDIDATE: Сообщение {message_id} не найдено")
+            except Exception as e:
+                print(f"⚠️ REJECT_CANDIDATE: Ошибка обновления metadata: {e}")
+        
+        # Формируем текст статуса для отображения
+        status_text = "Данные сохранены. Статус - Отказ"
+        if salary_above_range:
+            status_text = "Данные сохранены. Статус - Отказ: Высокие ЗП ожидания"
+        elif office_format_rejected:
+            status_text = "Данные сохранены. Статус - Отказ: Офисный формат"
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Кандидат успешно отклонен',
+            'rejection_status_id': rejection_status_id,
+            'rejection_reason_id': rejection_reason_id,
+            'status_text': status_text,
+            'rejection_type': 'salary' if salary_above_range else ('office_format' if office_format_rejected else 'general')
+        })
+        
+    except Exception as e:
+        print(f"❌ REJECT_CANDIDATE: Ошибка при отказе кандидата: {e}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({'success': False, 'error': str(e)})
+
+
+@login_required
+@permission_required('google_oauth.change_hrscreening', raise_exception=True)
+@require_POST
 def hr_screening_retry_analysis(request, pk):
     """Повторный анализ HR-скрининга с помощью Gemini"""
     hr_screening = get_object_or_404(HRScreening, pk=pk, user=request.user)
@@ -4065,10 +4179,14 @@ def chat_ajax_handler(request, session_id):
                         'candidate_contact_info': candidate_contact_info
                     }
                     
+                    # Определяем, нужно ли показывать форму отказа (только при потенциальном отказе)
+                    show_rejection_form = False
+                    
                     # Добавляем информацию о шаблоне отказа, если кандидат отклонен по офисному формату
                     if office_format_rejected:
                         # Сохраняем флаг отказа в метаданные, даже если шаблон не найден
                         metadata['office_format_rejected'] = True
+                        show_rejection_form = True
                         
                         if rejection_template:
                             metadata['rejection_template_id'] = rejection_template.id
@@ -4085,6 +4203,7 @@ def chat_ajax_handler(request, session_id):
                     if salary_above_range:
                         # Сохраняем флаг отказа в метаданные, даже если шаблон не найден
                         metadata['salary_above_range'] = True
+                        show_rejection_form = True
                         
                         if finance_more_template:
                             metadata['finance_more_template_id'] = finance_more_template.id
@@ -4096,6 +4215,10 @@ def chat_ajax_handler(request, session_id):
                             print(f"⚠️ CHAT AJAX: Зарплата превышает вилку, но шаблон отказа 'Финансы - больше' не найден. salary_above_range=True установлен в метаданные")
                     else:
                         print(f"ℹ️ CHAT AJAX: Зарплата не превышает вилку. salary_above_range={salary_above_range}")
+                    
+                    # Добавляем флаг для отображения формы отказа
+                    metadata['show_rejection_form'] = show_rejection_form
+                    print(f"🔍 CHAT AJAX: show_rejection_form={show_rejection_form} (salary_above_range={salary_above_range}, office_format_rejected={office_format_rejected})")
                     
                     print(f"🔍 CHAT AJAX: Сохраняем сообщение с метаданными. Ключи: {list(metadata.keys())}")
                     print(f"🔍 CHAT AJAX: office_format_rejected в метаданных: {metadata.get('office_format_rejected', 'NOT SET')}")
@@ -4503,6 +4626,29 @@ def chat_ajax_handler(request, session_id):
                             # Обновляем метаданные сообщения, чтобы сохранить контактную информацию
                             if last_message.metadata:
                                 last_message.metadata['candidate_contact_info'] = candidate_contact_info
+                                
+                                # Также обновляем show_rejection_form, если его нет
+                                if 'show_rejection_form' not in last_message.metadata:
+                                    # Проверяем потенциальный отказ
+                                    hr_screening = last_message.hr_screening
+                                    show_rejection_form = False
+                                    
+                                    # Проверяем превышение зарплаты
+                                    if hr_screening.extracted_salary and hr_screening.salary_currency:
+                                        salary_above_range = hr_screening.is_salary_above_range()
+                                        if salary_above_range:
+                                            show_rejection_form = True
+                                    
+                                    # Проверяем офисный формат
+                                    if not show_rejection_form:
+                                        office_format_rejected = hr_screening.is_office_format_rejected()
+                                        if office_format_rejected:
+                                            show_rejection_form = True
+                                    
+                                    last_message.metadata['show_rejection_form'] = show_rejection_form
+                                    last_message.metadata['hr_screening_id'] = hr_screening.id  # Убеждаемся, что ID есть
+                                    print(f"🔍 CHAT AJAX: Обновлен show_rejection_form={show_rejection_form} для существующего сообщения")
+                                
                                 last_message.save(update_fields=['metadata'])
                     elif last_message.message_type == 'invite' and last_message.invite:
                         if last_message.invite.candidate_id:
@@ -5496,16 +5642,29 @@ def send_chat_message(request):
                     
                     response_content = ""  # Пустой контент, данные будут браться из metadata
                     
+                    # Определяем, нужно ли показывать форму отказа (только при потенциальном отказе)
+                    show_rejection_form = False
+                    
+                    # Проверяем превышение зарплаты
+                    if salary_above_range:
+                        show_rejection_form = True
+                    
+                    # Проверяем офисный формат
+                    office_format_rejected = screening.is_office_format_rejected()
+                    if office_format_rejected:
+                        show_rejection_form = True
+                    
                     metadata = {
                         'action_type': 'hrscreening',
-                        'screening_id': screening.id,
+                        'hr_screening_id': screening.id,  # Исправлено: было screening_id
                         'candidate_name': screening.candidate_name,
                         'vacancy_name': screening.vacancy_title,
                         'determined_grade': screening.determined_grade,
                         'candidate_url': candidate_url_for_metadata,
                         'extracted_salary': str(screening.extracted_salary) if screening.extracted_salary else None,
                         'salary_currency': screening.salary_currency,
-                        'candidate_contact_info': candidate_contact_info
+                        'candidate_contact_info': candidate_contact_info,
+                        'show_rejection_form': show_rejection_form
                     }
                     
                     # Добавляем информацию о шаблоне отказа "Финансы - больше", если зарплата превышает вилку
@@ -5516,6 +5675,17 @@ def send_chat_message(request):
                             metadata['finance_more_template_title'] = finance_more_template.title
                             metadata['finance_more_template_message'] = finance_more_template.message
                             print(f"✅ SEND_CHAT_MESSAGE: Метаданные обновлены с информацией об отказе 'Финансы - больше'")
+                    
+                    # Добавляем информацию об офисном формате
+                    if office_format_rejected:
+                        metadata['office_format_rejected'] = True
+                        rejection_template = screening.get_office_format_rejection_template()
+                        if rejection_template:
+                            metadata['rejection_template_id'] = rejection_template.id
+                            metadata['rejection_template_title'] = rejection_template.title
+                            metadata['rejection_template_message'] = rejection_template.message
+                    
+                    print(f"🔍 SEND_CHAT_MESSAGE: show_rejection_form={show_rejection_form} (salary_above_range={salary_above_range}, office_format_rejected={office_format_rejected})")
                     
                     ChatMessage.objects.create(
                         session=chat_session,
@@ -5557,13 +5727,14 @@ def send_chat_message(request):
                         'message_html': message_html,
                         'metadata': {
                             'action_type': 'hrscreening',
-                            'screening_id': screening.id,
+                            'hr_screening_id': screening.id,
                             'candidate_name': screening.candidate_name,
                             'vacancy_name': screening.vacancy_title,
                             'determined_grade': screening.determined_grade,
                             'candidate_url': candidate_url_for_metadata,
                             'extracted_salary': str(screening.extracted_salary) if screening.extracted_salary else None,
-                            'salary_currency': screening.salary_currency
+                            'salary_currency': screening.salary_currency,
+                            'show_rejection_form': show_rejection_form
                         }
                     })
                     
@@ -6285,6 +6456,18 @@ def chat_workflow(request, session_id=None):
                             
                             response_content = ""  # Пустой контент, данные будут браться из metadata
                             
+                            # Определяем, нужно ли показывать форму отказа (только при потенциальном отказе)
+                            show_rejection_form = False
+                            
+                            # Проверяем офисный формат
+                            office_format_rejected = hr_screening.is_office_format_rejected()
+                            if office_format_rejected:
+                                show_rejection_form = True
+                            
+                            # Проверяем превышение зарплаты
+                            if salary_above_range:
+                                show_rejection_form = True
+                            
                             metadata = {
                                 'action_type': 'hrscreening',
                                 'hr_screening_id': hr_screening.id,
@@ -6294,7 +6477,8 @@ def chat_workflow(request, session_id=None):
                                 'candidate_url': hr_screening.candidate_url,
                                 'extracted_salary': str(hr_screening.extracted_salary) if hr_screening.extracted_salary else None,
                                 'salary_currency': hr_screening.salary_currency,
-                                'candidate_contact_info': candidate_contact_info
+                                'candidate_contact_info': candidate_contact_info,
+                                'show_rejection_form': show_rejection_form
                             }
                             
                             # Добавляем информацию о шаблоне отказа "Финансы - больше", если зарплата превышает вилку
@@ -6305,6 +6489,17 @@ def chat_workflow(request, session_id=None):
                                     metadata['finance_more_template_title'] = finance_more_template.title
                                     metadata['finance_more_template_message'] = finance_more_template.message
                                     print(f"✅ CHAT: Метаданные обновлены с информацией об отказе 'Финансы - больше'")
+                            
+                            # Добавляем информацию об офисном формате
+                            if office_format_rejected:
+                                metadata['office_format_rejected'] = True
+                                rejection_template = hr_screening.get_office_format_rejection_template()
+                                if rejection_template:
+                                    metadata['rejection_template_id'] = rejection_template.id
+                                    metadata['rejection_template_title'] = rejection_template.title
+                                    metadata['rejection_template_message'] = rejection_template.message
+                            
+                            print(f"🔍 CHAT: show_rejection_form={show_rejection_form} (salary_above_range={salary_above_range}, office_format_rejected={office_format_rejected})")
                             
                             ChatMessage.objects.create(
                                 session=chat_session,
