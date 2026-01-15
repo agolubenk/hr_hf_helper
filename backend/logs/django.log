@@ -81962,3 +81962,100 @@ Not Found: /favicon.ico
 [15/Jan/2026 19:03:51] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fvadzim-dziubau%2F HTTP/1.1" 200 217
 [15/Jan/2026 19:04:42] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fvadzim-dziubau%2F HTTP/1.1" 200 217
 [15/Jan/2026 19:05:18] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fvadzim-dziubau%2F HTTP/1.1" 200 217
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/models.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+
+You have 1 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): authtoken.
+Run 'python manage.py migrate' to apply them.
+January 15, 2026 - 17:46:39
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/views_api.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+
+You have 1 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): authtoken.
+Run 'python manage.py migrate' to apply them.
+January 15, 2026 - 20:27:39
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/apps/huntflow/views_api.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+
+You have 1 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): authtoken.
+Run 'python manage.py migrate' to apply them.
+January 15, 2026 - 20:27:51
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/config/api_urls.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+
+You have 1 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): authtoken.
+Run 'python manage.py migrate' to apply them.
+January 15, 2026 - 20:28:36
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+/Users/agolubenko/hrhelper/fullstack/backend/config/api_urls.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+
+You have 1 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): authtoken.
+Run 'python manage.py migrate' to apply them.
+January 15, 2026 - 20:28:44
+Django version 4.2.16, using settings 'config.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Watching for file changes with StatReloader
+[15/Jan/2026 20:30:35] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fvadzim-dziubau%2F HTTP/1.1" 200 217
+[15/Jan/2026 20:30:58] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fvadzim-dziubau%2F HTTP/1.1" 200 217
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[15/Jan/2026 20:31:00] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[15/Jan/2026 20:37:19] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fvadzim-dziubau%2F HTTP/1.1" 200 217
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[15/Jan/2026 20:37:31] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[15/Jan/2026 20:38:00] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Filyamankouski%2F HTTP/1.1" 200 91
+[15/Jan/2026 20:38:47] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Filyamankouski%2F HTTP/1.1" 200 91
+[15/Jan/2026 20:39:08] "POST /api/v1/huntflow/linkedin-applicants/set-link/ HTTP/1.1" 200 307
+WARNING Not Found: /api/v1/linkedin/thread-mapping/
+Not Found: /api/v1/linkedin/thread-mapping/
+[15/Jan/2026 20:39:29] "GET /api/v1/linkedin/thread-mapping/?thread_id=2-ZDdiZmMzYmQtNzIwZi00OTAxLWJhY2QtMWZjZDJlNGQ5MDZmXzEwMA== HTTP/1.1" 404 62
+[15/Jan/2026 20:39:30] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2FACoAADDyfHgBqtz1hNOydZEGOYEmkN0M4DHO2s8%2F HTTP/1.1" 200 117
+[15/Jan/2026 20:39:36] "POST /api/v1/huntflow/linkedin-applicants/set-link/ HTTP/1.1" 200 333
+WARNING Not Found: /api/v1/linkedin/thread-mapping/
+Not Found: /api/v1/linkedin/thread-mapping/
+[15/Jan/2026 20:39:44] "GET /api/v1/linkedin/thread-mapping/?thread_id=2-ZDdiZmMzYmQtNzIwZi00OTAxLWJhY2QtMWZjZDJlNGQ5MDZmXzEwMA== HTTP/1.1" 404 62
+[15/Jan/2026 20:39:49] "POST /api/v1/huntflow/linkedin-applicants/set-link/ HTTP/1.1" 200 333
+WARNING Not Found: /api/v1/linkedin/thread-mapping/
+Not Found: /api/v1/linkedin/thread-mapping/
+[15/Jan/2026 20:39:58] "GET /api/v1/linkedin/thread-mapping/?thread_id=2-ZDdiZmMzYmQtNzIwZi00OTAxLWJhY2QtMWZjZDJlNGQ5MDZmXzEwMA== HTTP/1.1" 404 62
+WARNING Not Found: /api/v1/linkedin/thread-mapping/
+Not Found: /api/v1/linkedin/thread-mapping/
+[15/Jan/2026 20:40:13] "GET /api/v1/linkedin/thread-mapping/?thread_id=2-ZDdiZmMzYmQtNzIwZi00OTAxLWJhY2QtMWZjZDJlNGQ5MDZmXzEwMA== HTTP/1.1" 404 62
+[15/Jan/2026 20:40:14] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2FACoAADDyfHgBqtz1hNOydZEGOYEmkN0M4DHO2s8%2F HTTP/1.1" 200 242

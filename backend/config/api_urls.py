@@ -13,7 +13,7 @@ from apps.vacancies.views_api import VacancyViewSet
 from apps.interviewers.views_api import InterviewerViewSet, InterviewRuleViewSet
 from apps.huntflow.views_api import (
     HuntflowCacheViewSet, HuntflowLogViewSet, HuntflowApiRequestViewSet,
-    HHResponsesViewSet, LinkedInApplicantsViewSet
+    HHResponsesViewSet, LinkedInApplicantsViewSet, LinkedInThreadMappingViewSet
 )
 from apps.google_oauth.views_api import (
     GoogleOAuthAccountViewSet, SyncSettingsViewSet, ScorecardPathSettingsViewSet,
@@ -66,6 +66,9 @@ router.register(r'huntflow/logs', HuntflowLogViewSet, basename='huntflow-log')
 router.register(r'huntflow/api', HuntflowApiRequestViewSet, basename='huntflow-api')
 router.register(r'huntflow/hh-responses', HHResponsesViewSet, basename='hh-responses')
 router.register(r'huntflow/linkedin-applicants', LinkedInApplicantsViewSet, basename='huntflow-linkedin-applicants')
+
+# LinkedIn Integration
+router.register(r'linkedin/thread-mapping', LinkedInThreadMappingViewSet, basename='linkedin-thread-mapping')
 
 # Google OAuth
 router.register(r'google-oauth/accounts', GoogleOAuthAccountViewSet, basename='google-oauth-account')

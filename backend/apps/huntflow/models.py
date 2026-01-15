@@ -115,6 +115,52 @@ class LinkedInHuntflowLink(models.Model):
         return f"{self.linkedin_url} -> {self.account_id}/{self.applicant_id} ({self.user.username})"
 
 
+class LinkedInThreadProfile(models.Model):
+    """
+    Маппинг LinkedIn thread_id (из /messaging/thread/<id>/) → profile_url.
+    
+    Используется Chrome-расширением для определения профиля кандидата
+    на странице сообщений LinkedIn, где нет прямой ссылки на профиль.
+    
+    Расширение автоматически сохраняет thread_id при посещении профиля,
+    затем использует его на странице /messaging/ для восстановления профиля.
+    """
+    
+    user = models.ForeignKey(
+        'accounts.User',
+        on_delete=models.CASCADE,
+        related_name='linkedin_thread_profiles',
+        verbose_name=_("Пользователь"),
+    )
+    
+    thread_id = models.CharField(
+        _("LinkedIn Thread ID"),
+        max_length=255,
+        help_text="ID треда из URL /messaging/thread/<thread_id>/"
+    )
+    
+    profile_url = models.URLField(
+        _("LinkedIn Profile URL"),
+        max_length=500,
+        help_text="Нормализованный URL профиля (https://www.linkedin.com/in/<username>/)"
+    )
+    
+    created_at = models.DateTimeField(_("Создано"), default=timezone.now)
+    last_accessed_at = models.DateTimeField(_("Последний доступ"), default=timezone.now)
+    
+    class Meta:
+        verbose_name = _("Маппинг LinkedIn Thread→Profile")
+        verbose_name_plural = _("Маппинги LinkedIn Thread→Profile")
+        unique_together = (('user', 'thread_id'),)
+        indexes = [
+            models.Index(fields=['user', 'thread_id']),
+            models.Index(fields=['user', 'profile_url']),
+        ]
+    
+    def __str__(self):
+        return f"{self.thread_id} -> {self.profile_url} ({self.user.username})"
+
+
 # ==================== МОДЕЛИ ДЛЯ HH.RU ИНТЕГРАЦИИ ====================
 
 class HHResponse(models.Model):

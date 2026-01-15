@@ -2,7 +2,7 @@ from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Count, Q
-from .models import HuntflowCache, HuntflowLog, LinkedInHuntflowLink
+from .models import HuntflowCache, HuntflowLog, LinkedInHuntflowLink, LinkedInThreadProfile
 from .serializers import (
     HuntflowCacheSerializer, HuntflowLogSerializer, HuntflowLogCreateSerializer,
     HuntflowStatsSerializer, HuntflowApiRequestSerializer
@@ -386,6 +386,107 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
                 status=status.HTTP_200_OK,
             )
 
+        except Exception as e:
+            return Response(
+                {"success": False, "message": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+class LinkedInThreadMappingViewSet(viewsets.ViewSet):
+    """
+    API для маппинга LinkedIn thread_id → profile_url.
+    
+    Используется Chrome-расширением для работы на страницах /messaging/:
+    - POST: сохранить маппинг thread_id → profile_url (автоматически при посещении профиля)
+    - GET: получить profile_url по thread_id (на странице сообщений)
+    """
+    
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def create(self, request):
+        """
+        POST /api/v1/linkedin/thread-mapping/
+        Body: { "thread_id": "2-ABC...", "profile_url": "https://linkedin.com/in/..." }
+        """
+        try:
+            thread_id = (request.data or {}).get("thread_id", "").strip()
+            raw_profile = (request.data or {}).get("profile_url", "").strip()
+            
+            if not thread_id:
+                return Response(
+                    {"success": False, "message": "Нужен thread_id"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            
+            profile_url = _normalize_linkedin_profile_url(raw_profile)
+            if not profile_url:
+                return Response(
+                    {"success": False, "message": "Нужен корректный LinkedIn profile URL"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            
+            obj, created = LinkedInThreadProfile.objects.update_or_create(
+                user=request.user,
+                thread_id=thread_id,
+                defaults={
+                    "profile_url": profile_url,
+                    "last_accessed_at": timezone.now(),
+                },
+            )
+            
+            return Response(
+                {
+                    "success": True,
+                    "created": created,
+                    "thread_id": obj.thread_id,
+                    "profile_url": obj.profile_url,
+                },
+                status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
+            )
+        
+        except Exception as e:
+            return Response(
+                {"success": False, "message": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+    
+    def list(self, request):
+        """
+        GET /api/v1/linkedin/thread-mapping/?thread_id=...
+        """
+        try:
+            thread_id = request.query_params.get("thread_id", "").strip()
+            
+            if not thread_id:
+                return Response(
+                    {"success": False, "message": "Нужен параметр thread_id"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            
+            obj = LinkedInThreadProfile.objects.filter(
+                user=request.user,
+                thread_id=thread_id
+            ).first()
+            
+            if not obj:
+                return Response(
+                    {"success": False, "message": "Маппинг не найден"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+            
+            # Обновляем last_accessed_at
+            obj.last_accessed_at = timezone.now()
+            obj.save(update_fields=['last_accessed_at'])
+            
+            return Response(
+                {
+                    "success": True,
+                    "thread_id": obj.thread_id,
+                    "profile_url": obj.profile_url,
+                },
+                status=status.HTTP_200_OK,
+            )
+        
         except Exception as e:
             return Response(
                 {"success": False, "message": str(e)},
