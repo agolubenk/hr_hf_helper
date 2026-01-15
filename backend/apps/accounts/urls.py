@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth.decorators import login_required
 from . import views
 from . import test_views
 
@@ -6,14 +7,14 @@ app_name = 'accounts'
 
 urlpatterns = [
     # Основные маршруты профиля
-    path('', views.unified_template_view, {'template_name': 'profile/profile.html', 'handler_func': views.profile_template_handler}, name='profile'),
-    path('edit/', views.unified_template_view, {'template_name': 'profile/profile_edit.html', 'handler_func': views.profile_edit_template_handler}, name='profile_edit'),
+    path('', login_required(views.unified_template_view), {'template_name': 'profile/profile.html', 'handler_func': views.profile_template_handler}, name='profile'),
+    path('edit/', login_required(views.unified_template_view), {'template_name': 'profile/profile_edit.html', 'handler_func': views.profile_edit_template_handler}, name='profile_edit'),
     
     # Интеграции
-    path('integrations/', views.unified_template_view, {'template_name': 'profile/integrations.html', 'handler_func': views.integrations_template_handler}, name='integrations'),
-    path('api-keys/', views.unified_template_view, {'template_name': 'profile/api_keys.html', 'handler_func': views.api_keys_template_handler}, name='api_keys'),
-    path('quick-buttons/', views.unified_template_view, {'template_name': 'profile/quick_buttons.html', 'handler_func': views.quick_buttons_template_handler}, name='quick_buttons'),
-    path('components/', views.unified_template_view, {'template_name': 'account/test_google_oauth.html', 'handler_func': views.components_template_handler}, name='components'),
+    path('integrations/', login_required(views.unified_template_view), {'template_name': 'profile/integrations.html', 'handler_func': views.integrations_template_handler}, name='integrations'),
+    path('api-keys/', login_required(views.unified_template_view), {'template_name': 'profile/api_keys.html', 'handler_func': views.api_keys_template_handler}, name='api_keys'),
+    path('quick-buttons/', login_required(views.unified_template_view), {'template_name': 'profile/quick_buttons.html', 'handler_func': views.quick_buttons_template_handler}, name='quick_buttons'),
+    path('components/', login_required(views.unified_template_view), {'template_name': 'account/test_google_oauth.html', 'handler_func': views.components_template_handler}, name='components'),
     
     # Аутентификация
     path('login/', views.unified_login, name='account_login'),

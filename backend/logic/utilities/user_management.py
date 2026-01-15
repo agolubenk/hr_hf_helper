@@ -7,11 +7,36 @@ from django.http import JsonResponse, HttpResponseNotAllowed
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 import json
+import re
+from functools import lru_cache
+
+from django.contrib.staticfiles import finders
 
 from apps.accounts.models import User
 from apps.accounts.forms import ProfileEditForm
 from logic.utilities.account_services import UserService
 from logic.base.response_handler import UnifiedResponseHandler
+
+
+@lru_cache(maxsize=1)
+def get_fontawesome_icon_names_from_css():
+    """
+    Достаём имена иконок из подключенного Font Awesome CSS (static `css/all.min.css`).
+
+    Возвращает список имён без префикса стиля, например: ['address-book', 'calendar', ...]
+    """
+    css_path = finders.find('css/all.min.css')
+    if not css_path:
+        return []
+
+    try:
+        with open(css_path, 'r', encoding='utf-8', errors='ignore') as f:
+            css = f.read()
+    except OSError:
+        return []
+
+    names = set(re.findall(r'\.fa-([a-z0-9-]+):before', css))
+    return sorted(names)
 
 
 # =============================================================================
@@ -495,6 +520,18 @@ def quick_buttons_template_handler(request):
         ('fas fa-copy', 'Копировать'),
         ('fas fa-paste', 'Вставить'),
     ]
+
+    # Полный список иконок из подключенного Font Awesome (если доступно).
+    # Важно: у Font Awesome разные "семейства" (solid/regular/brands). В UI покажем все три варианта.
+    popular_icon_classes = {cls for cls, _ in popular_icons}
+    icon_names = get_fontawesome_icon_names_from_css()
+    all_icons_by_style = {
+        'fas': [(f'fas fa-{n}', n) for n in icon_names],
+        'far': [(f'far fa-{n}', n) for n in icon_names],
+        'fab': [(f'fab fa-{n}', n) for n in icon_names],
+    }
+    # Убираем дубли популярных из solid-группы (чтобы не повторялись подряд)
+    all_icons_by_style['fas'] = [(cls, name) for cls, name in all_icons_by_style['fas'] if cls not in popular_icon_classes]
     
     # Преобразуем QuerySet в список для отладки
     quick_buttons_list = list(quick_buttons)
@@ -505,6 +542,7 @@ def quick_buttons_template_handler(request):
         'quick_buttons': quick_buttons,  # Оставляем QuerySet для шаблона
         'button_types': button_types_list,
         'popular_icons': popular_icons,
+        'all_icons_by_style': all_icons_by_style,
     }
     
     print(f"🔍 QUICK_BUTTONS: Контекст создан, quick_buttons в контексте: {len(context.get('quick_buttons', []))}")

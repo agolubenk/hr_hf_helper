@@ -3,10 +3,18 @@
 """
 from django.core.management.base import BaseCommand
 from apps.wiki.models import WikiPage, WikiTag
+from django.db import transaction
 
 
 class Command(BaseCommand):
     help = 'Создает полную документацию Wiki по всем разделам системы с тегами и хештегами'
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--prune',
+            action='store_true',
+            help='Снять публикацию со страниц, которых нет в seed-данных (оставить в БД, но скрыть из /wiki/).'
+        )
 
     def handle(self, *args, **options):
         self.stdout.write('Создание полной документации Wiki...')
@@ -43,322 +51,51 @@ class Command(BaseCommand):
             # Если файл не найден, используем базовые страницы
             pages_data = []
         
-        # Обновляем существующие страницы тегами
-        existing_pages_mapping = {
-            'welcome': ['настройка', 'использование'],
-            'architecture': [],
-            'company-setup': ['настройка'],
-            'grades-setup': ['финансы', 'настройка'],
-            'user-setup': ['пользователи', 'настройка'],
-            'finance-setup': ['финансы', 'настройка'],
-            'interviewers-setup': ['интервьюеры', 'настройка'],
-            'vacancies-setup': ['вакансии', 'настройка'],
-            'chat-usage': ['ai', 'использование'],
-            'invites-usage': ['календарь', 'использование'],
-            'rejection-templates': ['вакансии', 'использование'],
-            'hiring-plan-usage': ['вакансии', 'метрики', 'использование'],
-            'metrics-usage': ['метрики', 'использование'],
-            'integrations': ['интеграции', 'использование'],
-        }
-        
-        # Обновляем существующие страницы
-        for slug, tags_list in existing_pages_mapping.items():
-            try:
-                page = WikiPage.objects.get(slug=slug)
-                for tag_name in tags_list:
-                    if tag_name in created_tags:
-                        page.tags.add(created_tags[tag_name])
-                self.stdout.write(self.style.SUCCESS(f'✓ Обновлена страница: {page.title}'))
-            except WikiPage.DoesNotExist:
-                pass
-        
-        # Страницы вики с тегами и связями (дополнительные страницы для каждого приложения)
-        additional_pages = [
-            {
-                'title': 'Google OAuth и Calendar интеграция',
-                'slug': 'google-oauth-integration',
-                'category': 'Интеграции',
-                'related_app': 'google_oauth',
-                'description': 'Подробное руководство по интеграции с Google OAuth и Calendar',
-                'order': 15,
-                'tags': ['календарь', 'интеграции'],
-                'content': '''# Google OAuth и Calendar интеграция
-
-## Описание
-
-Интеграция с Google OAuth позволяет работать с Google Calendar, создавать инвайты, управлять слотами и синхронизировать события.
-
-## Настройка
-
-1. Перейдите в **Профиль → Интеграции**
-2. Нажмите **Подключить Google**
-3. Разрешите доступ к календарю
-4. Проверьте подключение
-
-## Возможности
-
-### Создание инвайтов
-- Автоматическое создание событий в календаре
-- Генерация текста инвайта с информацией о рекрутере
-- Интеграция с Telegram для связи с кандидатами
-
-### Управление слотами
-- Просмотр доступных слотов для интервью
-- Автоматическое обновление слотов из календаря
-- Резервирование времени для собеседований
-
-### Chat-бот
-- Создание инвайтов через команды
-- Управление слотами через команды
-- Автоматизация работы с кандидатами
-
-## Связи
-
-- **Вакансии** — для создания инвайтов (#вакансии)
-- **Интервьюеры** — для привлечения интервьюеров (#интервьюеры)
-- **Chat-бот** — для автоматизации (#ai)
-
-## Теги
-
-#календарь #интеграции #использование
-
----
-*Подробнее см. [Использование инвайтов](/wiki/page/invites-usage/) и [Использование Chat-бота](/wiki/page/chat-usage/)*
-'''
-            },
-            {
-                'title': 'Huntflow интеграция',
-                'slug': 'huntflow-integration',
-                'category': 'Интеграции',
-                'related_app': 'huntflow',
-                'description': 'Руководство по интеграции с Huntflow и работе с откликами HH.ru',
-                'order': 16,
-                'tags': ['интеграции', 'вакансии'],
-                'content': '''# Huntflow интеграция
-
-## Описание
-
-Интеграция с Huntflow позволяет синхронизировать вакансии, импортировать кандидатов и работать с откликами из HH.ru.
-
-## Настройка
-
-1. Получите API ключ в Huntflow
-2. Перейдите в **Профиль → API ключи**
-3. Введите ключ Huntflow API
-4. Укажите URL (prod или sandbox)
-5. Перейдите в **Huntflow → Настройки**
-6. Выберите организацию и аккаунт
-
-## Возможности
-
-### Синхронизация вакансий
-- Импорт вакансий из Huntflow
-- Синхронизация статусов вакансий
-- Связывание локальных вакансий с Huntflow
-
-### Импорт кандидатов
-- Импорт кандидатов из Huntflow
-- Синхронизация статусов кандидатов
-- Управление кандидатами
-
-### Работа с HH.ru откликами
-- Просмотр откликов из HH.ru
-- Импорт откликов в систему
-- Фильтрация откликов по критериям
-- Управление статусами откликов
-
-## Связи
-
-- **Вакансии** — для синхронизации вакансий (#вакансии)
-- **Пользователи** — для API ключей (#пользователи)
-
-## Теги
-
-#интеграции #вакансии #использование
-
----
-*Подробнее см. [Настройка вакансий](/wiki/page/vacancies-setup/)*
-'''
-            },
-            {
-                'title': 'ClickUp интеграция',
-                'slug': 'clickup-integration',
-                'category': 'Интеграции',
-                'related_app': 'clickup_int',
-                'description': 'Руководство по интеграции с ClickUp и импорту задач',
-                'order': 17,
-                'tags': ['интеграции'],
-                'content': '''# ClickUp интеграция
-
-## Описание
-
-Интеграция с ClickUp позволяет синхронизировать задачи, импортировать кандидатов из задач и управлять задачами по найму.
-
-## Настройка
-
-1. Получите API токен в ClickUp
-2. Перейдите в **Профиль → API ключи**
-3. Введите токен ClickUp API
-4. Перейдите в **ClickUp → Настройки**
-5. Выберите workspace, space и list
-
-## Возможности
-
-### Синхронизация задач
-- Автоматическая синхронизация задач из ClickUp
-- Просмотр задач с фильтрацией
-- Детальная информация о задачах
-
-### Импорт кандидатов
-- Импорт кандидатов из задач ClickUp
-- Массовый импорт задач
-- Перенос кандидатов в Huntflow
-
-### Управление задачами
-- Создание задач для вакансий
-- Синхронизация статусов
-- Автоматическое тегирование обработанных задач
-
-## Связи
-
-- **Вакансии** — для создания задач по вакансиям (#вакансии)
-- **Huntflow** — для переноса кандидатов (#интеграции)
-
-## Теги
-
-#интеграции #использование
-
----
-*Подробнее см. [Интеграции с внешними системами](/wiki/page/integrations/)*
-'''
-            },
-            {
-                'title': 'Использование вакансий',
-                'slug': 'vacancies-usage',
-                'category': 'Использование',
-                'related_app': 'vacancies',
-                'description': 'Руководство по работе с вакансиями в системе',
-                'order': 19,
-                'tags': ['вакансии', 'использование'],
-                'content': '''# Использование вакансий
-
-## Описание
-
-Вакансии — это центральный элемент системы найма. После настройки вакансий вы можете работать с кандидатами, создавать инвайты и отслеживать процесс найма.
-
-## Основные действия
-
-### Просмотр вакансий
-
-1. Перейдите в **Вакансии → Список вакансий**
-2. Используйте фильтры для поиска нужных вакансий
-3. Просмотрите детальную информацию о вакансии
-
-### Работа с кандидатами
-
-1. Выберите вакансию
-2. Используйте [Chat-бот](/wiki/page/chat-usage/) для работы с кандидатами #ai
-3. Создавайте [Инвайты](/wiki/page/invites-usage/) на собеседования #календарь
-
-### Отслеживание метрик
-
-1. Перейдите в **План найма → Метрики и KPI**
-2. Просмотрите метрики по вакансиям
-3. Анализируйте эффективность найма
-
-## Связи
-
-- **Финансы** — зарплатные вилки (#финансы)
-- **План найма** — заявки на найм (#метрики)
-- **Интервьюеры** — привлечение интервьюеров (#интервьюеры)
-- **Google Calendar** — создание инвайтов (#календарь)
-- **AI-помощник** — автоматизация работы (#ai)
-
-## Теги
-
-#вакансии #использование
-
----
-*Подробнее см. [Настройка вакансий](/wiki/page/vacancies-setup/) и [Использование Chat-бота](/wiki/page/chat-usage/)*
-'''
-            },
-            {
-                'title': 'Notion интеграция',
-                'slug': 'notion-integration',
-                'category': 'Интеграции',
-                'related_app': 'notion_int',
-                'description': 'Руководство по интеграции с Notion и импорту страниц',
-                'order': 18,
-                'tags': ['интеграции'],
-                'content': '''# Notion интеграция
-
-## Описание
-
-Интеграция с Notion позволяет синхронизировать страницы, импортировать кандидатов из Notion и управлять документацией.
-
-## Настройка
-
-1. Получите Integration Token в Notion
-2. Перейдите в **Профиль → API ключи**
-3. Введите токен Notion API
-4. Перейдите в **Notion → Настройки**
-5. Выберите базу данных
-6. Настройте маппинг полей
-
-## Возможности
-
-### Синхронизация страниц
-- Автоматическая синхронизация страниц из Notion
-- Просмотр страниц с фильтрацией
-- Детальная информация о страницах
-
-### Импорт кандидатов
-- Импорт кандидатов из страниц Notion
-- Массовый импорт страниц
-- Перенос кандидатов в Huntflow
-
-### Управление документацией
-- Синхронизация документации
-- Импорт данных из Notion
-- Экспорт отчетов в Notion
-
-## Связи
-
-- **Вакансии** — для синхронизации вакансий (#вакансии)
-- **Huntflow** — для переноса кандидатов (#интеграции)
-
-## Теги
-
-#интеграции #использование
-
----
-*Подробнее см. [Интеграции с внешними системами](/wiki/page/integrations/)*
-'''
-            },
-        ]
-        
-        # Объединяем все страницы
-        all_pages = pages_data + additional_pages
+        # Важно: набор страниц берём из seed-данных.
+        # Если нужно расширить документацию — добавляйте страницы в wiki_pages_data.py
+        all_pages = list(pages_data)
         
         created_count = 0
-        for page_data in all_pages:
-            tags = page_data.pop('tags', [])
-            page, created = WikiPage.objects.get_or_create(
-                slug=page_data['slug'],
-                defaults=page_data
-            )
-            
-            # Добавляем теги
-            for tag_name in tags:
-                if tag_name in created_tags:
-                    page.tags.add(created_tags[tag_name])
-            
-            if created:
-                created_count += 1
-                self.stdout.write(self.style.SUCCESS(f'✓ Создана страница: {page.title}'))
-            else:
-                self.stdout.write(self.style.WARNING(f'→ Страница уже существует: {page.title}'))
+        updated_count = 0
+        seed_slugs = []
+
+        with transaction.atomic():
+            for page_data in all_pages:
+                page_payload = dict(page_data)  # не мутируем исходные данные
+                tags = page_payload.pop('tags', [])
+                slug = page_payload.get('slug')
+                if not slug:
+                    continue
+
+                seed_slugs.append(slug)
+
+                # Принудительно публикуем сидовые страницы
+                page_payload['is_published'] = True
+
+                page, created = WikiPage.objects.update_or_create(
+                    slug=slug,
+                    defaults=page_payload
+                )
+
+                # Проставляем теги строго по seed-данным
+                tag_objs = [created_tags[name] for name in tags if name in created_tags]
+                page.tags.set(tag_objs)
+
+                if created:
+                    created_count += 1
+                    self.stdout.write(self.style.SUCCESS(f'✓ Создана страница: {page.title}'))
+                else:
+                    updated_count += 1
+                    self.stdout.write(self.style.SUCCESS(f'✓ Обновлена страница: {page.title}'))
+
+            # Подчистка: снимаем публикацию с несидовых страниц (по желанию)
+            if options.get('prune'):
+                pruned_qs = WikiPage.objects.exclude(slug__in=seed_slugs).filter(is_published=True)
+                pruned_count = pruned_qs.update(is_published=False)
+                if pruned_count:
+                    self.stdout.write(self.style.WARNING(f'→ Снята публикация с {pruned_count} страниц (prune)'))
         
         self.stdout.write(self.style.SUCCESS(f'\nСоздано страниц: {created_count}'))
+        self.stdout.write(self.style.SUCCESS(f'Обновлено страниц: {updated_count}'))
         self.stdout.write(self.style.SUCCESS('Документация Wiki успешно создана!'))
 

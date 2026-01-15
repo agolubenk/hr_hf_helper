@@ -147,10 +147,36 @@
                             <select class="form-select" id="buttonIcon" name="icon" required>
                                 <option value="">Выберите иконку...</option>
                                 {% if popular_icons %}
-                                    {% for icon_class, icon_name in popular_icons %}
-                                    <option value="{{ icon_class }}" data-icon="{{ icon_class }}">{{ icon_name }} ({{ icon_class }})</option>
-                                    {% endfor %}
-                                {% else %}
+                                    <optgroup label="Популярные">
+                                        {% for icon_class, icon_name in popular_icons %}
+                                        <option value="{{ icon_class }}" data-icon="{{ icon_class }}">{{ icon_name }} ({{ icon_class }})</option>
+                                        {% endfor %}
+                                    </optgroup>
+                                {% endif %}
+                                {% if all_icons_by_style %}
+                                    {% if all_icons_by_style.fas %}
+                                        <optgroup label="Все (Solid)">
+                                            {% for icon_class, icon_name in all_icons_by_style.fas %}
+                                            <option value="{{ icon_class }}" data-icon="{{ icon_class }}">{{ icon_name }} ({{ icon_class }})</option>
+                                            {% endfor %}
+                                        </optgroup>
+                                    {% endif %}
+                                    {% if all_icons_by_style.far %}
+                                        <optgroup label="Все (Regular)">
+                                            {% for icon_class, icon_name in all_icons_by_style.far %}
+                                            <option value="{{ icon_class }}" data-icon="{{ icon_class }}">{{ icon_name }} ({{ icon_class }})</option>
+                                            {% endfor %}
+                                        </optgroup>
+                                    {% endif %}
+                                    {% if all_icons_by_style.fab %}
+                                        <optgroup label="Все (Brands)">
+                                            {% for icon_class, icon_name in all_icons_by_style.fab %}
+                                            <option value="{{ icon_class }}" data-icon="{{ icon_class }}">{{ icon_name }} ({{ icon_class }})</option>
+                                            {% endfor %}
+                                        </optgroup>
+                                    {% endif %}
+                                {% endif %}
+                                {% if not popular_icons and not all_icons_by_style %}
                                     <option value="fas fa-circle">Круг (fas fa-circle)</option>
                                 {% endif %}
                             </select>

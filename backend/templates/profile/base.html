@@ -453,7 +453,11 @@
                             {% else %}
                                 <div class="mx-auto d-flex align-items-center justify-content-center profile-photo-border" style="width: 104px; height: 104px; border-radius: 50%; padding: 2px; box-shadow: var(--shadow-md);">
                                     <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; background-color: var(--color-surface); color: var(--color-text);">
-                                        {{ user.first_name.0|default:user.email.0|upper }}
+                                        {% if user.is_authenticated %}
+                                            {{ user.first_name|default:user.username|slice:":1"|upper }}
+                                        {% else %}
+                                            ?
+                                        {% endif %}
                                     </div>
                                 </div>
                             {% endif %}
