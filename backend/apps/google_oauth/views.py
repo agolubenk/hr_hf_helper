@@ -2242,7 +2242,47 @@ def api_scorecard_path_settings(request):
         
         # Получаем данные из запроса
         data = json.loads(request.body)
-        folder_structure = data.get('folder_structure', [])
+        folder_structure = data.get('folder_structure', None)
+        protected_sheet_names = data.get('protected_sheet_names', None)
+        
+        # Получаем или создаем настройки (нужно и для частичных обновлений)
+        settings_obj, created = ScorecardPathSettings.objects.get_or_create(
+            user=request.user,
+            defaults={'folder_structure': []}
+        )
+        
+        # Если обновляем только защищённые листы — структуру не трогаем
+        if folder_structure is None and protected_sheet_names is None:
+            return JsonResponse({
+                'success': False,
+                'message': 'Не переданы данные для обновления'
+            })
+
+        # Обновляем список защищённых листов (если пришёл)
+        if protected_sheet_names is not None:
+            raw = (protected_sheet_names or '').strip()
+            # Нормализуем: split по запятым, trim, удаляем пустые, убираем дубли
+            parts = [p.strip() for p in raw.split(',')] if raw else []
+            seen = set()
+            normalized = []
+            for p in parts:
+                if not p:
+                    continue
+                key = p.lower()
+                if key in seen:
+                    continue
+                seen.add(key)
+                normalized.append(p)
+            settings_obj.protected_sheet_names = ', '.join(normalized)
+
+        # Если folder_structure не передали — просто сохраняем защищённые листы и выходим
+        if folder_structure is None:
+            settings_obj.save()
+            return JsonResponse({
+                'success': True,
+                'message': 'Настройки сохранены успешно',
+                'path_preview': settings_obj.generate_path_preview()
+            })
         
         print(f"🔍 DEBUG: Received folder_structure: {folder_structure}")
         for i, item in enumerate(folder_structure):
@@ -2315,12 +2355,6 @@ def api_scorecard_path_settings(request):
                 'success': False,
                 'message': 'Структура папок не может быть пустой'
             })
-        
-        # Получаем или создаем настройки
-        settings_obj, created = ScorecardPathSettings.objects.get_or_create(
-            user=request.user,
-            defaults={'folder_structure': folder_structure}
-        )
         
         # Обновляем структуру
         settings_obj.folder_structure = folder_structure

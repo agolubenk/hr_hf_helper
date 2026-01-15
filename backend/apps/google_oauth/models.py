@@ -3468,6 +3468,13 @@ class ScorecardPathSettings(models.Model):
         verbose_name='Структура папок',
         help_text='JSON структура папок для создания scorecard'
     )
+
+    protected_sheet_names = models.TextField(
+        blank=True,
+        default='',
+        verbose_name='Защищённые листы scorecard',
+        help_text='Список названий листов (через запятую), которые нельзя удалять при обработке scorecard'
+    )
     
     # Метаданные
     created_at = models.DateTimeField(
@@ -3486,6 +3493,28 @@ class ScorecardPathSettings(models.Model):
     
     def __str__(self):
         return f"Настройки структуры папок для {self.user.username}"
+
+    def get_protected_sheet_names_list(self):
+        """
+        Возвращает список защищённых листов (нормализованный).
+        Разделитель: запятая.
+        """
+        raw = (self.protected_sheet_names or '').strip()
+        if not raw:
+            return []
+        items = [p.strip() for p in raw.split(',')]
+        # Убираем пустые и дубли (с сохранением порядка)
+        seen = set()
+        result = []
+        for name in items:
+            if not name:
+                continue
+            key = name.lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            result.append(name)
+        return result
     
     def _parse_mixed_content(self, mixed_content, sample_data):
         """Парсит содержимое mixed типа и заменяет паттерны на реальные данные"""

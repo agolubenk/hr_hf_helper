@@ -133,6 +133,15 @@ class ScorecardProcessor:
         }
         
         try:
+            # Получаем список защищённых листов пользователя (их нельзя удалять)
+            protected_lower = []
+            try:
+                from apps.google_oauth.models import ScorecardPathSettings
+                settings_obj = ScorecardPathSettings.get_or_create_for_user(invite.user)
+                protected_lower = [s.lower() for s in settings_obj.get_protected_sheet_names_list()]
+            except Exception as e:
+                print(f"⚠️ SCORECARD: Не удалось получить список защищённых листов: {e}")
+
             # Получаем список всех листов
             sheets = self.sheets_service.get_sheets(file_id)
             if not sheets:
@@ -157,9 +166,19 @@ class ScorecardProcessor:
                 # Проверяем, нужно ли сохранить или удалить лист (регистронезависимо)
                 should_keep = sheet_title_lower in sheets_to_keep_lower
                 should_delete = sheet_title_lower in sheets_to_delete_lower
+                is_protected = sheet_title_lower in protected_lower
                 
                 print(f"🔍 SCORECARD: Обработка листа: '{sheet_title}' (keep: {should_keep}, delete: {should_delete})")
                 
+                if is_protected:
+                    result['sheets_processed'].append({
+                        'name': sheet_title,
+                        'action': 'protected',
+                        'success': True
+                    })
+                    result['actions_performed'].append(f"Оставлен защищённый лист: {sheet_title}")
+                    continue
+
                 if should_delete:
                     try:
                         self.sheets_service.delete_sheet(file_id, sheet_id)

@@ -615,17 +615,25 @@
                 
                 <!-- Селектор года справа -->
                 <div class="year-selector">
-                    <form method="get" class="d-inline">
-                        <div class="input-group">
-                            <select name="year" class="form-select" onchange="this.form.submit()">
-                                {% for available_year in available_years %}
-                                    <option value="{{ available_year }}" {% if available_year == year %}selected{% endif %}>
-                                        {{ available_year }} год
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </form>
+                    <div class="d-flex gap-2 align-items-center">
+                        <a class="btn btn-outline-success btn-sm"
+                           href="{% url 'hiring_plan:yearly_hiring_plan_export_excel' %}?year={{ year }}"
+                           title="Скачать таблицу в XLSX">
+                            <i class="fas fa-file-excel me-1"></i>
+                            Excel
+                        </a>
+                        <form method="get" class="d-inline">
+                            <div class="input-group">
+                                <select name="year" class="form-select" onchange="this.form.submit()">
+                                    {% for available_year in available_years %}
+                                        <option value="{{ available_year }}" {% if available_year == year %}selected{% endif %}>
+                                            {{ available_year }} год
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
             

@@ -32,7 +32,7 @@ class UserViewSet(BaseAPIViewSet):
             return UserProfileSerializer
         elif self.action == 'change_password':
             return UserChangePasswordSerializer
-        elif self.action == 'settings':
+        elif self.action in ['user_settings', 'update_settings']:
             return UserSettingsSerializer
         return UserSerializer
     
@@ -114,7 +114,7 @@ class UserViewSet(BaseAPIViewSet):
             return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     @action(detail=False, methods=['get'], url_path='settings')
-    def settings(self, request):
+    def user_settings(self, request):
         """Получение настроек текущего пользователя"""
         try:
             serializer = UserSettingsSerializer(request.user)

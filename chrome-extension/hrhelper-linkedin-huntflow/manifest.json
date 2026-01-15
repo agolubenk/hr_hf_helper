@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "HRHelper LinkedIn → Huntflow",
+  "version": "0.1.0",
+  "description": "Кнопка Huntflow на профилях LinkedIn: открыть кандидата или сохранить в Huntflow через HRHelper.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://www.linkedin.com/*",
+    "http://localhost:8000/*",
+    "http://127.0.0.1:8000/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://linkedin.com/*", "*://www.linkedin.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_page": "options.html"
+}

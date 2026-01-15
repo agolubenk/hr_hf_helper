@@ -96,6 +96,7 @@ INSTALLED_APPS = [
     
     # Django REST Framework
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
     
     # Django Allauth
@@ -275,6 +276,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ],

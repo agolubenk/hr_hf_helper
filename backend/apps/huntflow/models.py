@@ -75,6 +75,46 @@ class HuntflowLog(models.Model):
         return self.log_type == 'ERROR' or (self.status_code and self.status_code >= 400)
 
 
+class LinkedInHuntflowLink(models.Model):
+    """
+    Связка LinkedIn профиля с кандидатом в Huntflow (на уровне нашего приложения).
+
+    Используется расширением Chrome, чтобы определять "сохранён/не сохранён"
+    без обращения к поиску в Huntflow.
+    """
+
+    user = models.ForeignKey(
+        'accounts.User',
+        on_delete=models.CASCADE,
+        related_name='linkedin_huntflow_links',
+        verbose_name=_("Пользователь"),
+    )
+
+    linkedin_url = models.URLField(_("LinkedIn URL"), max_length=500)
+
+    # Можно хранить либо точные идентификаторы, либо просто ссылку на карточку кандидата
+    # (например URL на страницу кандидата в нашем веб-интерфейсе).
+    target_url = models.URLField(_("Ссылка на кандидата (Huntflow/HRHelper)"), max_length=800, blank=True, null=True)
+
+    account_id = models.IntegerField(_("Huntflow account_id"), blank=True, null=True)
+    applicant_id = models.IntegerField(_("Huntflow applicant_id"), blank=True, null=True)
+
+    created_at = models.DateTimeField(_("Создано"), default=timezone.now)
+    updated_at = models.DateTimeField(_("Обновлено"), auto_now=True)
+
+    class Meta:
+        verbose_name = _("Связка LinkedIn↔Huntflow")
+        verbose_name_plural = _("Связки LinkedIn↔Huntflow")
+        unique_together = (('user', 'linkedin_url'),)
+        indexes = [
+            models.Index(fields=['user', 'linkedin_url']),
+            models.Index(fields=['user', 'account_id', 'applicant_id']),
+        ]
+
+    def __str__(self):
+        return f"{self.linkedin_url} -> {self.account_id}/{self.applicant_id} ({self.user.username})"
+
+
 # ==================== МОДЕЛИ ДЛЯ HH.RU ИНТЕГРАЦИИ ====================
 
 class HHResponse(models.Model):

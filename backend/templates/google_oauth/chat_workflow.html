@@ -5015,6 +5015,14 @@ window.userPhotoUrl = null;
                     // Заменяем все возможные escape-последовательности на нормальные символы
                     // Обрабатываем Unicode escape-последовательности из escapejs
                     decoded = decoded
+                        // Общий случай: \uXXXX (например, \u002D для '-')
+                        .replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => {
+                            try {
+                                return String.fromCharCode(parseInt(hex, 16));
+                            } catch (e) {
+                                return _;
+                            }
+                        })
                         // Unicode escape-последовательности (CRLF, LF, CR)
                         .replace(/\\u000D\\u000A/g, '\n')  // CRLF -> \n
                         .replace(/\\u000A/g, '\n')         // LF -> \n

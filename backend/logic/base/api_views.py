@@ -27,6 +27,22 @@ class BaseAPIViewSet(viewsets.ModelViewSet):
         СВЯЗИ: UnifiedResponseHandler.error_response()
         ФОРМАТ: Response с error_response
         """
+        # Важно: DRF исключения (NotAuthenticated/PermissionDenied/ValidationError и т.п.)
+        # должны отдавать корректный HTTP статус, иначе клиентам (в т.ч. расширению)
+        # невозможно отличать 401/403 от реальной 500.
+        try:
+            from rest_framework.exceptions import APIException
+        except Exception:
+            APIException = None
+
+        if APIException is not None and isinstance(exc, APIException):
+            detail = getattr(exc, "detail", str(exc))
+            # detail может быть dict/list/str
+            return Response(
+                UnifiedResponseHandler.error_response(str(detail), getattr(exc, "status_code", 400)),
+                status=getattr(exc, "status_code", status.HTTP_400_BAD_REQUEST),
+            )
+
         import traceback
         error_msg = f"BaseAPIViewSet error: {str(exc)}\n{traceback.format_exc()}"
         print(f"🚨 BaseAPIViewSet.handle_exception: {error_msg}")
