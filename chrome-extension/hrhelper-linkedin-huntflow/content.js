@@ -15,6 +15,7 @@ const THROTTLE_MS = IS_MESSAGING_PAGE ? 500 : 1500; // Messaging быстрее,
 
 const STATE = {
   lastProfileUrl: null,
+  lastThreadId: null, // Отслеживаем thread ID для messaging страницы
   buttons: new Map(),
   current: {
     mode: "idle",
@@ -287,6 +288,16 @@ function createWidget(anchorEl, container, isMessaging = false) {
   btn.addEventListener("click", onButtonClick);
   wrapper.appendChild(btn);
   
+  // Кнопка копирования ссылки (только в режиме "open")
+  const copyBtn = document.createElement("button");
+  copyBtn.type = "button";
+  copyBtn.className = "hrhelper-copy-btn";
+  copyBtn.innerHTML = "📋"; // Иконка копирования
+  copyBtn.title = "Копировать ссылку на Huntflow";
+  copyBtn.style.cssText = "display:none;width:32px;height:32px;border-radius:50%;border:1px solid rgba(0,0,0,.15);background:#28a745;color:#fff;font-size:14px;cursor:pointer;padding:0;line-height:1;";
+  copyBtn.addEventListener("click", onCopyClick);
+  wrapper.appendChild(copyBtn);
+  
   // Кнопка редактирования (только в режиме "open")
   const editBtn = document.createElement("button");
   editBtn.type = "button";
@@ -320,7 +331,12 @@ function createWidget(anchorEl, container, isMessaging = false) {
   saveBtn.textContent = "Сохранить";
   saveBtn.className = "hrhelper-save-btn";
   saveBtn.style.cssText = "padding:8px 16px;border-radius:999px;border:1px solid rgba(0,0,0,.15);background:#0a66c2;color:#fff;font-weight:600;cursor:pointer;line-height:1;font-size:13px;";
-  saveBtn.addEventListener("click", onSaveLinkClick);
+  saveBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    log(' Save button clicked');
+    onSaveLinkClick();
+  });
 
   const cancelBtn = document.createElement("button");
   cancelBtn.type = "button";
@@ -342,12 +358,12 @@ function createWidget(anchorEl, container, isMessaging = false) {
     container.insertBefore(wrapper, anchorEl.nextSibling);
   }
 
-  return { wrapper, btn, input, inputGroup, saveBtn, cancelBtn, editBtn };
+  return { wrapper, btn, input, inputGroup, saveBtn, cancelBtn, editBtn, copyBtn };
 }
 
 function updateWidget(widgets, force) {
   if (!widgets) return;
-  const { btn, input, inputGroup, saveBtn, cancelBtn, editBtn } = widgets;
+  const { btn, input, inputGroup, saveBtn, cancelBtn, editBtn, copyBtn } = widgets;
   if (!btn || !input || !saveBtn || !inputGroup) return;
 
   const stateKey = STATE.current.mode + '|' + (STATE.current.appUrl || '') + STATE.current.disabled;
@@ -362,6 +378,11 @@ function updateWidget(widgets, force) {
     btn.disabled = !!STATE.current.disabled;
     btn.style.background = STATE.current.color || "#0a66c2";
     btn.style.opacity = btn.disabled ? "0.7" : "1";
+    
+    // Показываем кнопку копирования
+    if (copyBtn) {
+      copyBtn.style.display = STATE.current.appUrl ? "block" : "none";
+    }
     
     // Показываем кнопку редактирования
     if (editBtn) {
@@ -384,6 +405,11 @@ function updateWidget(widgets, force) {
     // Скрываем кнопку редактирования
     if (editBtn) {
       editBtn.style.display = "none";
+    }
+    
+    // Скрываем кнопку копирования
+    if (copyBtn) {
+      copyBtn.style.display = "none";
     }
   }
 }
@@ -574,12 +600,19 @@ async function checkStatus(linkedinUrl) {
 }
 
 async function setLink(linkedinUrl, targetUrl) {
+  log(' setLink called:', { linkedinUrl, targetUrl });
   const res = await apiFetch('/api/v1/huntflow/linkedin-applicants/set-link/', {
     method: "POST",
     body: JSON.stringify({ linkedin_url: linkedinUrl, target_url: targetUrl })
   });
+  log(' setLink response:', { ok: res.ok, status: res.status });
   const data = await res.json().catch(() => null);
-  if (!res.ok) return { error: data?.message || data?.error || 'HTTP ' + res.status };
+  log(' setLink data:', data);
+  if (!res.ok) {
+    const error = data?.message || data?.error || 'HTTP ' + res.status;
+    error(' setLink error:', error);
+    return { error };
+  }
   
   // Обновляем кэш после сохранения
   if (data && data.success) {
@@ -649,10 +682,18 @@ async function refreshButtonForCurrentProfile() {
   STATE.current.show = true;
   if (status.exists && status.app_url) {
     log(' Candidate exists, showing button');
+    log(' Status data:', { vacancy_name: status.vacancy_name, app_url: status.app_url });
     STATE.current.mode = "open";
     STATE.current.appUrl = status.app_url;
     STATE.current.disabled = false;
-    setButtonState({ text: "Huntflow", disabled: false, title: "Открыть в Huntflow", color: "#0a66c2" });
+    
+    // Формируем текст кнопки: "Huntflow | Название вакансии" или просто "Huntflow"
+    const buttonText = status.vacancy_name 
+      ? `Huntflow | ${status.vacancy_name}` 
+      : "Huntflow";
+    
+    log(' Button text:', buttonText);
+    setButtonState({ text: buttonText, disabled: false, title: "Открыть в Huntflow", color: "#0a66c2" });
   } else {
     log(' Candidate not found, showing input');
     STATE.current.mode = "input";
@@ -665,22 +706,42 @@ async function refreshButtonForCurrentProfile() {
 }
 
 async function onSaveLinkClick() {
-  if (STATE.busy) return;
+  log(' onSaveLinkClick called');
+  
+  if (STATE.busy) {
+    log(' Already busy, ignoring click');
+    return;
+  }
+  
   let canonical = normalizeLinkedInProfileUrl(location.href);
+  log(' Canonical URL:', canonical);
   
   if (!canonical && IS_MESSAGING_PAGE) {
     try {
       canonical = await getProfileLinkFromMessaging();
+      log(' Profile from messaging:', canonical);
     } catch (e) {
       error(' Error getting profile from messaging:', e);
     }
   }
 
-  if (!canonical) return;
-  if (STATE.apiCallsThisProfile >= 2) return;
+  if (!canonical) {
+    error(' No canonical URL found');
+    STATE.current.title = "Не удалось определить профиль LinkedIn";
+    applyStateToAllButtons();
+    return;
+  }
+  
+  if (STATE.apiCallsThisProfile >= 2) {
+    warn(' API call limit reached');
+    return;
+  }
 
   const target = (STATE.current.inputValue || "").trim();
+  log(' Target URL:', target);
+  
   if (!target) {
+    log(' No target URL provided');
     STATE.current.title = "Вставь ссылку на кандидата";
     applyStateToAllButtons();
     return;
@@ -695,23 +756,51 @@ async function onSaveLinkClick() {
     applyStateToAllButtons();
     
     STATE.apiCallsThisProfile += 1;
+    log(' Calling setLink...');
     const saved = await setLink(canonical, target);
+    log(' setLink result:', saved);
     
     if (saved?.error) {
+      error(' Save error:', saved.error);
       STATE.current.title = saved.error;
       STATE.current.disabled = false;
       applyStateToAllButtons();
       return;
     }
     
-    if (saved?.app_url) {
-      log(' Saved! Final URL:', saved.app_url);
-      STATE.current.mode = "open";
-      STATE.current.appUrl = saved.app_url;
-      STATE.current.title = "Открыть в Huntflow";
+    if (!saved || (!saved.app_url && !saved.target_url)) {
+      error(' Save failed: no URL in response', saved);
+      STATE.current.title = "Ошибка сохранения: нет ссылки в ответе";
       STATE.current.disabled = false;
       applyStateToAllButtons();
+      return;
     }
+    
+    const finalUrl = saved.app_url || saved.target_url;
+    log(' Saved! Final URL:', finalUrl);
+    
+    STATE.current.mode = "open";
+    STATE.current.appUrl = finalUrl;
+    STATE.current.title = "Открыть в Huntflow";
+    STATE.current.disabled = false;
+    
+    // Обновляем текст кнопки с названием вакансии, если есть
+    const buttonText = saved.vacancy_name 
+      ? `Huntflow | ${saved.vacancy_name}` 
+      : "Huntflow";
+    log(' Button text after save:', buttonText);
+    setButtonState({ text: buttonText, disabled: false, title: "Открыть в Huntflow", color: "#0a66c2" });
+    
+    // Сбрасываем счетчик API вызовов для этого профиля, чтобы можно было обновить статус
+    STATE.apiCallsThisProfile = 0;
+    STATE.statusFetchedFor = null;
+    
+    applyStateToAllButtons();
+  } catch (e) {
+    error(' Exception in onSaveLinkClick:', e);
+    STATE.current.title = "Ошибка: " + (e.message || String(e));
+    STATE.current.disabled = false;
+    applyStateToAllButtons();
   } finally {
     STATE.busy = false;
   }
@@ -769,22 +858,108 @@ async function onCancelClick(e) {
   applyStateToAllButtons();
 }
 
+async function onCopyClick(e) {
+  e.stopPropagation();
+
+  log(' Copy button clicked');
+
+  if (!STATE.current.appUrl) {
+    log(' No URL to copy');
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(STATE.current.appUrl);
+    log(' URL copied to clipboard:', STATE.current.appUrl);
+    
+    // Визуальная обратная связь - временно меняем иконку
+    const copyBtn = e.target.closest('.hrhelper-copy-btn');
+    if (copyBtn) {
+      const originalHTML = copyBtn.innerHTML;
+      copyBtn.innerHTML = "✓";
+      copyBtn.style.background = "#28a745";
+      setTimeout(() => {
+        copyBtn.innerHTML = originalHTML;
+      }, 1000);
+    }
+  } catch (err) {
+    error(' Failed to copy URL:', err);
+    // Fallback для старых браузеров
+    const textArea = document.createElement("textarea");
+    textArea.value = STATE.current.appUrl;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-999999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      log(' URL copied using fallback method');
+    } catch (fallbackErr) {
+      error(' Fallback copy also failed:', fallbackErr);
+    }
+    document.body.removeChild(textArea);
+  }
+}
+
 function startObserver() {
+  // Отслеживаем текущий URL
+  let currentUrl = location.href;
+  
+  const resetState = () => {
+    log(' Resetting state due to URL change');
+    STATE.apiCallsThisProfile = 0;
+    STATE.statusFetchedFor = null;
+    STATE.statusInFlight = null;
+    STATE.current.mode = "idle";
+    STATE.current.appUrl = null;
+    STATE.current.show = false;
+    STATE.current.inputValue = "";
+    STATE.messagingProfileCache = null;
+    STATE.lastProfileUrl = null;
+    STATE.lastThreadId = null;
+    
+    // Удаляем старые виджеты
+    STATE.buttons.forEach((widgets) => {
+      if (widgets?.wrapper?.parentNode) {
+        widgets.wrapper.parentNode.removeChild(widgets.wrapper);
+      }
+    });
+    STATE.buttons.clear();
+  };
+  
   const schedule = () => {
     if (STATE.scheduled) return;
     STATE.scheduled = true;
     requestAnimationFrame(() => {
       STATE.scheduled = false;
       
-      // Быстрый выход: если виджет уже есть и показан, не делаем лишних проверок
-      if (hasExistingWidget() && STATE.statusFetchedFor) {
-        return;
+      // Проверяем изменение URL
+      const urlChanged = location.href !== currentUrl;
+      if (urlChanged) {
+        log(' URL changed detected:', location.href);
+        currentUrl = location.href;
+        resetState();
       }
       
       let canonical = normalizeLinkedInProfileUrl(location.href);
       
       if (!canonical && IS_MESSAGING_PAGE) {
-        // На messaging-странице запускаем проверку профиля
+        // На messaging-странице проверяем изменение thread ID
+        const currentThreadId = extractThreadIdFromMessageButton();
+        const threadChanged = currentThreadId && currentThreadId !== STATE.lastThreadId;
+        
+        if (threadChanged || urlChanged) {
+          log(' Thread changed or URL changed, resetting state');
+          resetState();
+          STATE.lastThreadId = currentThreadId;
+          
+          // Запускаем проверку профиля для нового чата
+          refreshButtonForCurrentProfile();
+          return;
+        }
+        
+        // Если thread не изменился, но профиль еще не определен
         if (!STATE.statusFetchedFor) {
           refreshButtonForCurrentProfile();
         } else {
@@ -794,16 +969,9 @@ function startObserver() {
       }
       if (!canonical) return;
 
-      const changed = STATE.lastProfileUrl !== canonical;
+      const changed = STATE.lastProfileUrl !== canonical || urlChanged;
       if (changed) {
-        STATE.apiCallsThisProfile = 0;
-        STATE.statusFetchedFor = null;
-        STATE.statusInFlight = null;
-        STATE.current.mode = "idle";
-        STATE.current.appUrl = null;
-        STATE.current.show = false;
-        STATE.current.inputValue = "";
-        STATE.messagingProfileCache = null; // Сбрасываем кэш при смене профиля
+        resetState();
         STATE.lastProfileUrl = canonical;
         refreshButtonForCurrentProfile();
       } else {
@@ -816,6 +984,7 @@ function startObserver() {
     if (STATE.suppressObserver) return;
     schedule();
   });
+  
 
   // Наблюдаем только за конкретными контейнерами, а не за всем body
   const observeTargets = IS_MESSAGING_PAGE
@@ -840,6 +1009,50 @@ function startObserver() {
     obs.observe(document.documentElement, { childList: true, subtree: true });
   }
 
+  // Отслеживаем изменения URL для всех страниц
+  // Отслеживаем изменения через popstate (назад/вперед в истории)
+  window.addEventListener('popstate', () => {
+    log(' URL changed (popstate)');
+    currentUrl = location.href;
+    schedule();
+  });
+  
+  // Отслеживаем изменения через pushState/replaceState (SPA навигация)
+  const originalPushState = history.pushState;
+  const originalReplaceState = history.replaceState;
+  
+  history.pushState = function(...args) {
+    originalPushState.apply(history, args);
+    log(' URL changed (pushState)');
+    currentUrl = location.href;
+    schedule();
+  };
+  
+  history.replaceState = function(...args) {
+    originalReplaceState.apply(history, args);
+    log(' URL changed (replaceState)');
+    currentUrl = location.href;
+    schedule();
+  };
+  
+  // Для messaging страницы также периодически проверяем URL
+  if (IS_MESSAGING_PAGE) {
+    setInterval(() => {
+      if (location.href !== currentUrl) {
+        log(' URL changed (interval check)');
+        currentUrl = location.href;
+        schedule();
+      } else {
+        // Даже если URL не изменился, проверяем thread ID
+        const currentThreadId = extractThreadIdFromMessageButton();
+        if (currentThreadId && currentThreadId !== STATE.lastThreadId) {
+          log(' Thread ID changed (interval check)');
+          schedule();
+        }
+      }
+    }, 300); // Проверяем каждые 300мс для более быстрой реакции
+  }
+
   log(' Observer started');
   log(' IS_MESSAGING_PAGE:', IS_MESSAGING_PAGE);
   log(' IS_PROFILE_PAGE:', IS_PROFILE_PAGE);
@@ -852,6 +1065,7 @@ function startObserver() {
     refreshButtonForCurrentProfile();
   } else if (IS_MESSAGING_PAGE) {
     log(' Messaging page detected, resolving profile...');
+    STATE.lastThreadId = extractThreadIdFromMessageButton();
     refreshButtonForCurrentProfile();
   } else if (IS_PROFILE_PAGE) {
     log(' Profile page detected');

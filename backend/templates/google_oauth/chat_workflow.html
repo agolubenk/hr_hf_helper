@@ -208,7 +208,8 @@
                         </form>
                         {% if selected_vacancy %}
                         <div class="mt-2 text-end">
-                            <!-- Переключатель часового пояса -->
+                            <!-- Переключатель часового пояса - показываем только если есть вопросы и ссылка для Польши -->
+                            {% if selected_vacancy.questions_poland and selected_vacancy.vacancy_link_poland %}
                             <div class="btn-group me-3" role="group" style="vertical-align: middle; box-shadow: 0 2px 6px rgba(0,0,0,0.15); border-radius: 8px; overflow: hidden;">
                                 <input type="radio" class="btn-check" name="timezone-toggle" id="timezone-minsk" value="minsk" checked>
                                 <label class="btn" for="timezone-minsk" title="Часовой пояс: Минск (UTC+3)" style="font-weight: 600; padding: 4px 12px; font-size: 12px; background-color: #ffffff; color: #0d6efd; border: 2px solid #0d6efd; border-radius: 8px 0 0 8px;">
@@ -253,6 +254,10 @@
                                     opacity: 0.9 !important;
                                 }
                             </style>
+                            {% else %}
+                            <!-- Скрытый переключатель с выбранным Минском по умолчанию -->
+                            <input type="radio" class="btn-check" name="timezone-toggle" id="timezone-minsk" value="minsk" checked style="display: none;">
+                            {% endif %}
                             <a href="https://calendar.google.com/calendar/u/0/r/week" target="_blank" class="badge bg-info fs-6 me-2 clickable-badge" style="text-decoration: none; cursor: pointer;" title="Календарь">
                                 <i class="fas fa-calendar"></i>
                                 <i class="fas fa-external-link-alt ms-1"></i>

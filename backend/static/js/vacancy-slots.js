@@ -1193,26 +1193,34 @@ function extractSlotData(card) {
 
 // Настройка обработчика переключателя часового пояса
 function setupTimezoneToggle() {
+    // Всегда устанавливаем Минск по умолчанию
+    currentTimezone = 'minsk';
+    
     const timezoneInputs = document.querySelectorAll('input[name="timezone-toggle"]');
     
-    timezoneInputs.forEach(input => {
-        input.addEventListener('change', function() {
-            const selectedTimezone = this.value;
-            console.log('🕐 Изменен часовой пояс:', selectedTimezone);
-            
-            // Обновляем глобальную переменную
-            currentTimezone = selectedTimezone;
-            
-            // Пересчитываем и обновляем отображение слотов
-            updateSlotsForTimezone();
+    // Если переключатель видим, устанавливаем значение из него
+    if (timezoneInputs.length > 0) {
+        const checkedInput = document.querySelector('input[name="timezone-toggle"]:checked');
+        if (checkedInput) {
+            currentTimezone = checkedInput.value;
+            console.log('🕐 Начальный часовой пояс из переключателя:', currentTimezone);
+        }
+        
+        timezoneInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                const selectedTimezone = this.value;
+                console.log('🕐 Изменен часовой пояс:', selectedTimezone);
+                
+                // Обновляем глобальную переменную
+                currentTimezone = selectedTimezone;
+                
+                // Пересчитываем и обновляем отображение слотов
+                updateSlotsForTimezone();
+            });
         });
-    });
-    
-    // Устанавливаем начальное значение из выбранного переключателя
-    const checkedInput = document.querySelector('input[name="timezone-toggle"]:checked');
-    if (checkedInput) {
-        currentTimezone = checkedInput.value;
-        console.log('🕐 Начальный часовой пояс:', currentTimezone);
+    } else {
+        // Если переключатель скрыт, всегда используем Минск
+        console.log('🕐 Переключатель часового пояса скрыт, используем Минск по умолчанию');
     }
 }
 

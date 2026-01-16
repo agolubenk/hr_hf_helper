@@ -310,7 +310,7 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
         
         return result
     
-    def _get_latest_vacancy_for_applicant(self, account_name: str, applicant_id: int) -> tuple[int | None, int | None]:
+    def _get_latest_vacancy_for_applicant(self, account_name: str, applicant_id: int, user=None) -> tuple[int | None, int | None]:
         """
         Получает ID последней вакансии кандидата в работе через Huntflow API.
         
@@ -329,7 +329,9 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
             
             logger.info(f"Getting vacancy for account={account_name}, applicant={applicant_id}")
             
-            api = HuntflowService(user=self.request.user)
+            # Используем переданного пользователя или self.request.user
+            api_user = user or self.request.user
+            api = HuntflowService(user=api_user)
             
             # Получаем account_id по имени
             accounts_response = api.get_accounts()
@@ -436,6 +438,126 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
             else:
                 app_url = None
 
+            # Получаем название вакансии из ссылки или через applicant_id
+            vacancy_name = None
+            vacancy_id = None
+            account_id = None
+            
+            # Сначала пробуем извлечь vacancy_id из target_url или app_url
+            url_to_check = link.target_url or app_url
+            if url_to_check:
+                huntflow_ids = self._extract_huntflow_ids(url_to_check)
+                if huntflow_ids.get('vacancy_id'):
+                    vacancy_id = huntflow_ids['vacancy_id']
+                    # Если есть account_name, получаем account_id
+                    if huntflow_ids.get('account_name'):
+                        try:
+                            from apps.huntflow.services import HuntflowService
+                            api = HuntflowService(user=request.user)
+                            accounts_response = api.get_accounts()
+                            if isinstance(accounts_response, dict) and 'items' in accounts_response:
+                                accounts = accounts_response['items']
+                            elif isinstance(accounts_response, list):
+                                accounts = accounts_response
+                            else:
+                                accounts = []
+                            
+                            for a in accounts:
+                                if (a.get('name', '').lower() == huntflow_ids['account_name'].lower() or 
+                                    a.get('nick', '').lower() == huntflow_ids['account_name'].lower()):
+                                    account_id = a.get('id')
+                                    break
+                        except Exception as e:
+                            import logging
+                            logger = logging.getLogger(__name__)
+                            logger.warning(f"Error getting account_id from account_name: {e}")
+                    # Если account_id уже есть в link, используем его
+                    elif link.account_id is not None:
+                        account_id = int(link.account_id)
+            
+            # Если vacancy_id не найден в ссылке, но есть сохраненный vacancy_id в связи
+            if not vacancy_id and link.vacancy_id is not None:
+                vacancy_id = int(link.vacancy_id)
+                account_id = int(link.account_id) if link.account_id is not None else account_id
+                logger.info(f"Using saved vacancy_id from link: {vacancy_id}")
+            
+            # Если vacancy_id все еще не найден, но есть account_id и applicant_id, получаем через applicant_data
+            if not vacancy_id and link.account_id is not None and link.applicant_id is not None:
+                try:
+                    import logging
+                    logger = logging.getLogger(__name__)
+                    from apps.huntflow.services import HuntflowService
+                    api = HuntflowService(user=request.user)
+                    
+                    account_id = int(link.account_id)
+                    applicant_id = int(link.applicant_id)
+                    
+                    logger.info(f"Getting vacancy name for account_id={account_id}, applicant_id={applicant_id}")
+                    
+                    # Получаем данные кандидата
+                    applicant_data = api.get_applicant(account_id, applicant_id)
+                    if applicant_data:
+                        # Сначала пробуем получить vacancy_id из links (для новых вакансий)
+                        links = applicant_data.get('links', [])
+                        if links and len(links) > 0:
+                            vacancy_id_from_links = links[0].get('vacancy')
+                            if vacancy_id_from_links:
+                                vacancy_id = vacancy_id_from_links
+                                logger.info(f"Found vacancy_id from links: {vacancy_id}")
+                        
+                        # Если не нашли в links, ищем в vacancy_statuses
+                        if not vacancy_id:
+                            vacancies = applicant_data.get('vacancy_statuses', [])
+                            logger.info(f"Found {len(vacancies)} vacancies for applicant")
+                            
+                            if vacancies:
+                                # Сортируем по дате изменения статуса (последняя = самая свежая)
+                                vacancies_in_work = [
+                                    v for v in vacancies 
+                                    if v.get('status', {}).get('type') == 'workon'
+                                ]
+                                
+                                if vacancies_in_work:
+                                    # Берём последнюю
+                                    latest = sorted(
+                                        vacancies_in_work, 
+                                        key=lambda x: x.get('changed', ''),
+                                        reverse=True
+                                    )[0]
+                                    vacancy_id = latest.get('vacancy')
+                                else:
+                                    # Если нет "в работе", берём просто последнюю вакансию
+                                    latest = sorted(
+                                        vacancies, 
+                                        key=lambda x: x.get('changed', ''),
+                                        reverse=True
+                                    )[0]
+                                    vacancy_id = latest.get('vacancy')
+                except Exception as e:
+                    import logging
+                    logger = logging.getLogger(__name__)
+                    logger.error(f"Error getting vacancy_id from applicant: {e}", exc_info=True)
+            
+            # Если нашли vacancy_id, получаем название вакансии
+            if vacancy_id and account_id:
+                try:
+                    import logging
+                    logger = logging.getLogger(__name__)
+                    from apps.huntflow.services import HuntflowService
+                    api = HuntflowService(user=request.user)
+                    
+                    logger.info(f"Getting vacancy name for vacancy_id={vacancy_id}, account_id={account_id}")
+                    vacancy_data = api.get_vacancy(account_id, vacancy_id)
+                    if vacancy_data:
+                        vacancy_name = vacancy_data.get('position')
+                        logger.info(f"Vacancy name: {vacancy_name}")
+                    else:
+                        logger.warning(f"Vacancy data not found for vacancy_id={vacancy_id}")
+                except Exception as e:
+                    import logging
+                    logger = logging.getLogger(__name__)
+                    logger.error(f"Error getting vacancy name: {e}", exc_info=True)
+
             return Response(
                 {
                     "success": True,
@@ -444,6 +566,7 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
                     "account_id": int(link.account_id) if link.account_id is not None else None,
                     "applicant_id": int(link.applicant_id) if link.applicant_id is not None else None,
                     "app_url": app_url,
+                    "vacancy_name": vacancy_name,
                 },
                 status=status.HTTP_200_OK,
             )
@@ -488,14 +611,16 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
             
             account_id = None
             applicant_id = None
+            vacancy_id = None
             final_url = target_url
             
             # Если это Huntflow URL — извлекаем applicant_id
             if huntflow_ids["applicant_id"]:
                 applicant_id = huntflow_ids["applicant_id"]
+                vacancy_id = huntflow_ids.get("vacancy_id")
                 
                 # Если нет vacancy_id — определяем вакансию автоматически
-                if huntflow_ids["account_name"] and not huntflow_ids["vacancy_id"]:
+                if huntflow_ids["account_name"] and not vacancy_id:
                     import logging
                     logger = logging.getLogger(__name__)
                     logger.info(f"Huntflow URL detected: account={huntflow_ids['account_name']}, applicant={huntflow_ids['applicant_id']}")
@@ -503,7 +628,8 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
                     try:
                         determined_account_id, vacancy_id = self._get_latest_vacancy_for_applicant(
                             huntflow_ids["account_name"], 
-                            huntflow_ids["applicant_id"]
+                            huntflow_ids["applicant_id"],
+                            user=request.user
                         )
                         
                         logger.info(f"Account ID: {determined_account_id}, Vacancy ID: {vacancy_id}")
@@ -527,6 +653,28 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
                         logger.error(f"Could not determine vacancy for applicant {huntflow_ids['applicant_id']}: {e}", exc_info=True)
                         logger.warning(f"Возможно, кандидат {huntflow_ids['applicant_id']} существует только в production, а используется sandbox API")
                         final_url = target_url
+                elif huntflow_ids["account_name"]:
+                    # Если vacancy_id уже есть в URL, получаем account_id
+                    try:
+                        from apps.huntflow.services import HuntflowService
+                        api = HuntflowService(user=request.user)
+                        accounts_response = api.get_accounts()
+                        if isinstance(accounts_response, dict) and 'items' in accounts_response:
+                            accounts = accounts_response['items']
+                        elif isinstance(accounts_response, list):
+                            accounts = accounts_response
+                        else:
+                            accounts = []
+                        
+                        for a in accounts:
+                            if (a.get('name', '').lower() == huntflow_ids['account_name'].lower() or 
+                                a.get('nick', '').lower() == huntflow_ids['account_name'].lower()):
+                                account_id = a.get('id')
+                                break
+                    except Exception as e:
+                        import logging
+                        logger = logging.getLogger(__name__)
+                        logger.warning(f"Error getting account_id from account_name: {e}")
             else:
                 # Извлекаем account/applicant из URL нашего веб-интерфейса (если это не Huntflow)
                 m = re.search(r"/huntflow/accounts/(?P<acc>\d+)/applicants/(?P<app>\d+)/", target_url)
@@ -534,16 +682,97 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
                     account_id = int(m.group("acc"))
                     applicant_id = int(m.group("app"))
 
-            obj, _ = LinkedInHuntflowLink.objects.update_or_create(
-                user=request.user,
-                linkedin_url=linkedin_url,
-                defaults={
-                    "target_url": final_url,
-                    "account_id": account_id,
-                    "applicant_id": applicant_id,
-                },
-            )
+            # Если vacancy_id не определен, но есть account_id и applicant_id, пытаемся получить его
+            if not vacancy_id and account_id and applicant_id:
+                try:
+                    from apps.huntflow.services import HuntflowService
+                    api = HuntflowService(user=request.user)
+                    applicant_data = api.get_applicant(account_id, applicant_id)
+                    if applicant_data:
+                        # Сначала пробуем получить vacancy_id из links (для новых вакансий)
+                        links = applicant_data.get('links', [])
+                        if links and len(links) > 0:
+                            vacancy_id_from_links = links[0].get('vacancy')
+                            if vacancy_id_from_links:
+                                vacancy_id = vacancy_id_from_links
+                        # Если не нашли в links, ищем в vacancy_statuses
+                        if not vacancy_id:
+                            vacancies = applicant_data.get('vacancy_statuses', [])
+                            if vacancies:
+                                vacancies_in_work = [
+                                    v for v in vacancies 
+                                    if v.get('status', {}).get('type') == 'workon'
+                                ]
+                                if vacancies_in_work:
+                                    latest = sorted(
+                                        vacancies_in_work, 
+                                        key=lambda x: x.get('changed', ''),
+                                        reverse=True
+                                    )[0]
+                                    vacancy_id = latest.get('vacancy')
+                                else:
+                                    latest = sorted(
+                                        vacancies, 
+                                        key=lambda x: x.get('changed', ''),
+                                        reverse=True
+                                    )[0]
+                                    vacancy_id = latest.get('vacancy')
+                except Exception as e:
+                    import logging
+                    logger = logging.getLogger(__name__)
+                    logger.warning(f"Error getting vacancy_id when saving link: {e}")
+            
+            # Формируем defaults для сохранения
+            defaults = {
+                "target_url": final_url,
+                "account_id": account_id,
+                "applicant_id": applicant_id,
+            }
+            # Добавляем vacancy_id только если он определен
+            if vacancy_id is not None:
+                defaults["vacancy_id"] = vacancy_id
+            
+            try:
+                obj, _ = LinkedInHuntflowLink.objects.update_or_create(
+                    user=request.user,
+                    linkedin_url=linkedin_url,
+                    defaults=defaults,
+                )
+            except Exception as e:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f"Error saving LinkedInHuntflowLink: {e}", exc_info=True)
+                # Пробуем сохранить без vacancy_id, если была ошибка
+                if "vacancy_id" in defaults:
+                    del defaults["vacancy_id"]
+                    obj, _ = LinkedInHuntflowLink.objects.update_or_create(
+                        user=request.user,
+                        linkedin_url=linkedin_url,
+                        defaults=defaults,
+                    )
+                else:
+                    raise
 
+            # Получаем название вакансии для ответа
+            vacancy_name = None
+            if obj.vacancy_id and obj.account_id:
+                try:
+                    from apps.huntflow.services import HuntflowService
+                    api = HuntflowService(user=request.user)
+                    vacancy_data = api.get_vacancy(int(obj.account_id), int(obj.vacancy_id))
+                    if vacancy_data:
+                        vacancy_name = vacancy_data.get('position')
+                except Exception as e:
+                    import logging
+                    logger = logging.getLogger(__name__)
+                    logger.warning(f"Error getting vacancy name in set_link: {e}")
+            
+            app_url = obj.target_url or (
+                self._build_app_url(request, int(obj.account_id), int(obj.applicant_id))
+                if obj.account_id is not None and obj.applicant_id is not None
+                else None
+            )
+            
             return Response(
                 {
                     "success": True,
@@ -552,11 +781,9 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
                     "target_url": obj.target_url,
                     "account_id": obj.account_id,
                     "applicant_id": obj.applicant_id,
-                    "app_url": obj.target_url or (
-                        self._build_app_url(request, int(obj.account_id), int(obj.applicant_id))
-                        if obj.account_id is not None and obj.applicant_id is not None
-                        else None
-                    ),
+                    "vacancy_id": obj.vacancy_id,
+                    "app_url": app_url,
+                    "vacancy_name": vacancy_name,
                 },
                 status=status.HTTP_200_OK,
             )

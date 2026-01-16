@@ -98,6 +98,7 @@ class LinkedInHuntflowLink(models.Model):
 
     account_id = models.IntegerField(_("Huntflow account_id"), blank=True, null=True)
     applicant_id = models.IntegerField(_("Huntflow applicant_id"), blank=True, null=True)
+    vacancy_id = models.IntegerField(_("Huntflow vacancy_id"), blank=True, null=True)
 
     created_at = models.DateTimeField(_("Создано"), default=timezone.now)
     updated_at = models.DateTimeField(_("Обновлено"), auto_now=True)
