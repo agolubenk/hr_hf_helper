@@ -11,12 +11,22 @@
    - Расширение автоматически извлекает `thread_id` из кнопки "Message" (без кликов!)
    - Сохраняет маппинг `thread_id → profile_url` в localStorage и на backend
    - Проверяет, есть ли кандидат в базе через API `/api/v1/huntflow/linkedin-applicants/status/`
-   - Показывает кнопку "Huntflow" (открыть) или инпут (сохранить ссылку)
+   - **Если кандидат найден:**
+     - Показывает кнопку **"Huntflow"** (открыть в Huntflow)
+     - Показывает **красную кнопку ✏️** (редактировать ссылку)
+   - **Если кандидата нет:**
+     - Показывает инпут для ввода ссылки на Huntflow
 
 2. **На странице сообщений** (`/messaging/thread/...`):
    - Расширение извлекает `thread_id` из URL
    - Ищет `profile_url` в localStorage или запрашивает с backend `/api/v1/linkedin/thread-mapping/`
    - Показывает ту же кнопку/инпут, что и на профиле
+
+3. **Редактирование ссылки:**
+   - Нажмите на **красную кнопку ✏️** рядом с кнопкой "Huntflow"
+   - Появится поле ввода с текущей ссылкой + кнопки "Сохранить" и "Отмена"
+   - Измените ссылку и нажмите **"Сохранить"** (backend автоматически определит последнюю вакансию)
+   - Или нажмите **"Отмена"** для возврата без изменений
 
 ### Установка (локально, без Chrome Web Store)
 
@@ -40,6 +50,7 @@
 **Huntflow integration:**
 - `GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=...` — проверка, есть ли кандидат в базе
 - `POST /api/v1/huntflow/linkedin-applicants/set-link/` — сохранение связки LinkedIn → Huntflow URL
+  - **Автоматическая обработка Huntflow URL**: если вставить `https://huntflow.ru/my/softnetix#/applicants/filter/all/79149055`, backend сам определит последнюю вакансию и вернёт `https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/79149055`
 
 **Thread mapping (для /messaging/):**
 - `POST /api/v1/linkedin/thread-mapping/` — сохранение `thread_id → profile_url` (автоматически)

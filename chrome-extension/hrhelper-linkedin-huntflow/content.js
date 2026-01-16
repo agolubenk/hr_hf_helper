@@ -2,9 +2,16 @@ const DEFAULTS = {
   baseUrl: "http://localhost:8000",
 };
 
+// Debug mode - установи в false для production
+const DEBUG = false;
+const log = (...args) => DEBUG && console.log('[HRHelper]', ...args);
+const warn = (...args) => DEBUG && console.warn('[HRHelper]', ...args);
+const error = (...args) => console.error('[HRHelper]', ...args);
+
 const MAX_WIDGETS = 2;
 const IS_MESSAGING_PAGE = location.href.includes('/messaging/');
 const IS_PROFILE_PAGE = location.href.includes('/in/') && !location.href.includes('/search/');
+const THROTTLE_MS = IS_MESSAGING_PAGE ? 500 : 1500; // Messaging быстрее, профиль медленнее
 
 const STATE = {
   lastProfileUrl: null,
@@ -18,6 +25,7 @@ const STATE = {
     disabled: false,
     show: false,
     inputValue: "",
+    originalAppUrl: null, // Сохраняем оригинальный URL перед редактированием
   },
   busy: false,
   suppressObserver: false,
@@ -26,6 +34,9 @@ const STATE = {
   apiCallsThisProfile: 0,
   statusFetchedFor: null,
   statusInFlight: null,
+  messagingProfileCache: null, // Кэш для профиля на messaging-странице
+  statusCache: new Map(), // Кэш статусов профилей (linkedin_url -> {status, timestamp})
+  CACHE_TTL: 5 * 60 * 1000, // 5 минут
 };
 
 function normalizeLinkedInProfileUrl(url) {
@@ -79,10 +90,10 @@ async function saveThreadMappingToBackend(threadId, profileUrl) {
     });
 
     if (result.ok) {
-      console.log('[HRHelper] Thread mapping saved:', threadId.substring(0, 10) + '...');
+      log(' Thread mapping saved:', threadId.substring(0, 10) + '...');
     }
   } catch (e) {
-    console.warn('[HRHelper] Failed to save thread mapping:', e);
+    warn(' Failed to save thread mapping:', e);
   }
 }
 
@@ -94,7 +105,7 @@ function captureProfileToThreadMapping() {
 
   const threadId = extractThreadIdFromMessageButton();
   if (threadId) {
-    console.log('[HRHelper] Found thread:', threadId.substring(0, 10) + '...', 'for', profileUrl);
+    log(' Found thread:', threadId.substring(0, 10) + '...', 'for', profileUrl);
     
     try {
       const mapping = JSON.parse(localStorage.getItem('hrhelper_thread_profile_map') || '{}');
@@ -110,7 +121,7 @@ function captureProfileToThreadMapping() {
     const newThreadId = extractThreadIdFromMessageButton();
     if (newThreadId && newThreadId !== lastThreadId) {
       lastThreadId = newThreadId;
-      console.log('[HRHelper] New thread detected:', newThreadId.substring(0, 10) + '...');
+      log(' New thread detected:', newThreadId.substring(0, 10) + '...');
       
       try {
         const mapping = JSON.parse(localStorage.getItem('hrhelper_thread_profile_map') || '{}');
@@ -127,17 +138,24 @@ function captureProfileToThreadMapping() {
 }
 
 async function getProfileLinkFromMessaging() {
+  // Используем кэш, чтобы не искать профиль повторно
+  if (STATE.messagingProfileCache) {
+    return STATE.messagingProfileCache;
+  }
+
+  // 1. Быстрый путь: ищем в DOM
   const profileLinks = Array.from(document.querySelectorAll('a[href*="/in/"]'));
-  
   for (const link of profileLinks) {
     if (link.href.includes('/me/') || link.href.includes('/jobs/')) continue;
     const normalized = normalizeLinkedInProfileUrl(link.href);
     if (normalized) {
-      console.log('[HRHelper] Profile found in DOM:', normalized);
+      log(' Profile found in DOM:', normalized);
+      STATE.messagingProfileCache = normalized;
       return normalized;
     }
   }
 
+  // 2. Средний путь: localStorage (синхронно, быстро)
   try {
     const currentUrl = location.href;
     const threadMatch = currentUrl.match(/thread\/([^/?]+)/);
@@ -146,23 +164,32 @@ async function getProfileLinkFromMessaging() {
       
       const mapping = JSON.parse(localStorage.getItem('hrhelper_thread_profile_map') || '{}');
       if (mapping[threadId]) {
-        console.log('[HRHelper] Profile from cache:', mapping[threadId]);
+        log(' Profile from localStorage:', mapping[threadId]);
+        STATE.messagingProfileCache = mapping[threadId];
         return mapping[threadId];
       }
       
+      // 3. Медленный путь: backend API (асинхронно)
       const result = await apiFetch('/api/v1/linkedin/thread-mapping/?thread_id=' + threadId, { method: "GET" });
       if (result.ok) {
         const data = await result.json().catch(() => null);
         if (data?.profile_url) {
-          console.log('[HRHelper] Profile from backend:', data.profile_url);
+          log(' Profile from backend:', data.profile_url);
+          STATE.messagingProfileCache = data.profile_url;
+          // Сохраняем в localStorage для следующего раза
+          try {
+            const mapping = JSON.parse(localStorage.getItem('hrhelper_thread_profile_map') || '{}');
+            mapping[threadId] = data.profile_url;
+            localStorage.setItem('hrhelper_thread_profile_map', JSON.stringify(mapping));
+          } catch (e) {}
           return data.profile_url;
         }
       }
       
-      console.warn('[HRHelper] Thread not mapped:', threadId);
+      warn(' Thread not mapped:', threadId);
     }
   } catch (e) {
-    console.error('[HRHelper] Error getting profile:', e);
+    error(' Error getting profile:', e);
   }
 
   return null;
@@ -259,6 +286,16 @@ function createWidget(anchorEl, container, isMessaging = false) {
   btn.style.cssText = "padding:8px 12px;border-radius:999px;border:1px solid rgba(0,0,0,.15);color:#fff;font-weight:600;cursor:pointer;line-height:1;";
   btn.addEventListener("click", onButtonClick);
   wrapper.appendChild(btn);
+  
+  // Кнопка редактирования (только в режиме "open")
+  const editBtn = document.createElement("button");
+  editBtn.type = "button";
+  editBtn.className = "hrhelper-edit-btn";
+  editBtn.innerHTML = "✏️"; // Иконка карандаша
+  editBtn.title = "Редактировать ссылку";
+  editBtn.style.cssText = "display:none;width:32px;height:32px;border-radius:50%;border:1px solid rgba(0,0,0,.15);background:#dc3545;color:#fff;font-size:14px;cursor:pointer;padding:0;line-height:1;";
+  editBtn.addEventListener("click", onEditClick);
+  wrapper.appendChild(editBtn);
 
   const inputGroup = document.createElement("div");
   inputGroup.className = "hrhelper-input-group";
@@ -266,7 +303,7 @@ function createWidget(anchorEl, container, isMessaging = false) {
 
   const input = document.createElement("input");
   input.type = "text";
-  input.placeholder = "Ссылка на кандидата в Huntflow";
+  input.placeholder = "Ссылка на кандидата (Huntflow или HRHelper)";
   input.className = "hrhelper-input";
   input.style.cssText = isMessaging 
     ? "flex:1;padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,.2);font-size:13px;"
@@ -285,8 +322,16 @@ function createWidget(anchorEl, container, isMessaging = false) {
   saveBtn.style.cssText = "padding:8px 16px;border-radius:999px;border:1px solid rgba(0,0,0,.15);background:#0a66c2;color:#fff;font-weight:600;cursor:pointer;line-height:1;font-size:13px;";
   saveBtn.addEventListener("click", onSaveLinkClick);
 
+  const cancelBtn = document.createElement("button");
+  cancelBtn.type = "button";
+  cancelBtn.textContent = "Отмена";
+  cancelBtn.className = "hrhelper-cancel-btn";
+  cancelBtn.style.cssText = "padding:8px 16px;border-radius:999px;border:1px solid rgba(0,0,0,.15);background:#6c757d;color:#fff;font-weight:600;cursor:pointer;line-height:1;font-size:13px;";
+  cancelBtn.addEventListener("click", onCancelClick);
+
   inputGroup.appendChild(input);
   inputGroup.appendChild(saveBtn);
+  inputGroup.appendChild(cancelBtn);
   wrapper.appendChild(inputGroup);
   
   if (isMessaging) {
@@ -297,12 +342,12 @@ function createWidget(anchorEl, container, isMessaging = false) {
     container.insertBefore(wrapper, anchorEl.nextSibling);
   }
 
-  return { wrapper, btn, input, inputGroup, saveBtn };
+  return { wrapper, btn, input, inputGroup, saveBtn, cancelBtn, editBtn };
 }
 
 function updateWidget(widgets, force) {
   if (!widgets) return;
-  const { btn, input, inputGroup, saveBtn } = widgets;
+  const { btn, input, inputGroup, saveBtn, cancelBtn, editBtn } = widgets;
   if (!btn || !input || !saveBtn || !inputGroup) return;
 
   const stateKey = STATE.current.mode + '|' + (STATE.current.appUrl || '') + STATE.current.disabled;
@@ -317,21 +362,48 @@ function updateWidget(widgets, force) {
     btn.disabled = !!STATE.current.disabled;
     btn.style.background = STATE.current.color || "#0a66c2";
     btn.style.opacity = btn.disabled ? "0.7" : "1";
+    
+    // Показываем кнопку редактирования
+    if (editBtn) {
+      editBtn.style.display = "block";
+    }
   } else {
     btn.style.display = "none";
     inputGroup.style.display = "flex";
     input.value = STATE.current.inputValue || "";
-    input.placeholder = STATE.current.title || "Ссылка на кандидата в Huntflow";
+    input.placeholder = STATE.current.title || "Ссылка на кандидата (Huntflow или HRHelper)";
     saveBtn.disabled = !!STATE.current.disabled;
     saveBtn.style.opacity = saveBtn.disabled ? "0.6" : "1";
+    
+    // Показываем/скрываем кнопку отмены в зависимости от того, редактируем ли мы существующую ссылку
+    if (cancelBtn) {
+      // Показываем "Отмена" только если это редактирование (есть сохранённый app_url)
+      cancelBtn.style.display = STATE.current.appUrl ? "block" : "none";
+    }
+    
+    // Скрываем кнопку редактирования
+    if (editBtn) {
+      editBtn.style.display = "none";
+    }
   }
 }
 
 function ensureButtons() {
-  if (!STATE.current.show) return;
+  log(' ensureButtons called, show:', STATE.current.show);
+  
+  if (!STATE.current.show) {
+    log(' STATE.current.show is false, not showing buttons');
+    return;
+  }
+  
   const now = Date.now();
-  if (now - STATE.lastScanAt < 3000) return;
+  if (now - STATE.lastScanAt < THROTTLE_MS) {
+    log(' Throttled, skipping');
+    return;
+  }
   STATE.lastScanAt = now;
+  
+  log(' Creating/updating buttons...');
 
   Array.from(STATE.buttons.entries()).forEach(([anchorEl, widgetsData]) => {
     if (!anchorEl?.isConnected || !widgetsData?.wrapper?.isConnected) {
@@ -349,7 +421,7 @@ function ensureButtons() {
         if (STATE.buttons.has(composer)) {
           const existing = STATE.buttons.get(composer);
           if (existing?.wrapper?.isConnected) {
-            updateWidget(existing, true);
+            updateWidget(existing, false); // false = не force, только если изменилось
             return;
           }
           STATE.buttons.delete(composer);
@@ -377,7 +449,7 @@ function ensureButtons() {
         if (STATE.buttons.has(moreBtn)) {
           const existing = STATE.buttons.get(moreBtn);
           if (existing?.wrapper?.isConnected) {
-            updateWidget(existing, true);
+            updateWidget(existing, false); // false = не force, только если изменилось
             return;
           }
           STATE.buttons.delete(moreBtn);
@@ -398,6 +470,11 @@ function ensureButtons() {
   }
 }
 
+// Быстрая проверка: есть ли уже виджет на странице
+function hasExistingWidget() {
+  return STATE.buttons.size > 0 && Array.from(STATE.buttons.values()).some(w => w?.wrapper?.isConnected);
+}
+
 function setButtonState(obj) {
   if (obj.text != null) STATE.current.text = obj.text;
   if (obj.title != null) STATE.current.title = obj.title;
@@ -411,6 +488,41 @@ function applyStateToAllButtons() {
     if (!widgets?.wrapper?.isConnected) return;
     updateWidget(widgets, true);
   });
+}
+
+// Кэш статусов в localStorage
+function getCachedStatus(linkedinUrl) {
+  try {
+    const cacheKey = `hrhelper_status_${linkedinUrl}`;
+    const cached = localStorage.getItem(cacheKey);
+    if (!cached) return null;
+    
+    const { status, timestamp } = JSON.parse(cached);
+    const age = Date.now() - timestamp;
+    
+    // Кэш валиден 5 минут
+    if (age < STATE.CACHE_TTL) {
+      return status;
+    }
+    
+    // Устаревший кэш — удаляем
+    localStorage.removeItem(cacheKey);
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function setCachedStatus(linkedinUrl, status) {
+  try {
+    const cacheKey = `hrhelper_status_${linkedinUrl}`;
+    localStorage.setItem(cacheKey, JSON.stringify({
+      status,
+      timestamp: Date.now()
+    }));
+  } catch (e) {
+    // Игнорируем ошибки localStorage
+  }
 }
 
 async function apiFetch(path, init) {
@@ -436,6 +548,13 @@ async function apiFetch(path, init) {
 }
 
 async function checkStatus(linkedinUrl) {
+  // Проверяем кэш
+  const cached = getCachedStatus(linkedinUrl);
+  if (cached) {
+    return cached;
+  }
+  
+  // Запрашиваем с сервера
   const qp = new URLSearchParams({ linkedin_url: linkedinUrl });
   const res = await apiFetch('/api/v1/huntflow/linkedin-applicants/status/?' + qp.toString(), { method: "GET" });
 
@@ -447,6 +566,10 @@ async function checkStatus(linkedinUrl) {
   if (!res.ok) {
     return { error: data?.message || data?.error || 'HTTP ' + res.status };
   }
+  
+  // Сохраняем в кэш
+  setCachedStatus(linkedinUrl, data);
+  
   return data;
 }
 
@@ -457,27 +580,49 @@ async function setLink(linkedinUrl, targetUrl) {
   });
   const data = await res.json().catch(() => null);
   if (!res.ok) return { error: data?.message || data?.error || 'HTTP ' + res.status };
+  
+  // Обновляем кэш после сохранения
+  if (data && data.success) {
+    setCachedStatus(linkedinUrl, data);
+  }
+  
   return data;
 }
 
 async function refreshButtonForCurrentProfile() {
-  let canonical = normalizeLinkedInProfileUrl(location.href);
+  log(' refreshButtonForCurrentProfile called');
   
+  let canonical = normalizeLinkedInProfileUrl(location.href);
+  log(' Canonical URL:', canonical);
+
   if (!canonical && IS_MESSAGING_PAGE) {
+    log(' Messaging page, trying to get profile...');
     try {
       canonical = await getProfileLinkFromMessaging();
+      log(' Profile from messaging:', canonical);
     } catch (e) {
-      console.error('[HRHelper] Error getting profile from messaging:', e);
+      error(' Error getting profile from messaging:', e);
     }
   }
 
-  if (!canonical) return;
+  if (!canonical) {
+    warn(' No canonical URL, exiting');
+    return;
+  }
+  
   if (STATE.statusFetchedFor === canonical) {
+    log(' Status already fetched, applying state');
     applyStateToAllButtons();
     return;
   }
-  if (STATE.apiCallsThisProfile >= 1) return;
+  
+  if (STATE.apiCallsThisProfile >= 1) {
+    log(' API call limit reached');
+    return;
+  }
 
+  log(' Fetching status from API...');
+  
   if (!STATE.statusInFlight) {
     STATE.apiCallsThisProfile += 1;
     STATE.statusInFlight = checkStatus(canonical).finally(() => {
@@ -486,7 +631,11 @@ async function refreshButtonForCurrentProfile() {
   }
 
   const status = await STATE.statusInFlight;
+  
+  log(' Status received:', status);
+  
   if (status.authRequired || status.error) {
+    warn(' Auth required or error:', status.error || 'No token');
     STATE.current.show = true;
     STATE.current.mode = "input";
     STATE.current.appUrl = null;
@@ -499,11 +648,13 @@ async function refreshButtonForCurrentProfile() {
 
   STATE.current.show = true;
   if (status.exists && status.app_url) {
+    log(' Candidate exists, showing button');
     STATE.current.mode = "open";
     STATE.current.appUrl = status.app_url;
     STATE.current.disabled = false;
     setButtonState({ text: "Huntflow", disabled: false, title: "Открыть в Huntflow", color: "#0a66c2" });
   } else {
+    log(' Candidate not found, showing input');
     STATE.current.mode = "input";
     STATE.current.appUrl = null;
     STATE.current.disabled = false;
@@ -521,7 +672,7 @@ async function onSaveLinkClick() {
     try {
       canonical = await getProfileLinkFromMessaging();
     } catch (e) {
-      console.error('[HRHelper] Error getting profile from messaging:', e);
+      error(' Error getting profile from messaging:', e);
     }
   }
 
@@ -537,17 +688,28 @@ async function onSaveLinkClick() {
 
   try {
     STATE.busy = true;
+    
+    // Показываем индикатор загрузки
+    STATE.current.title = "Сохранение...";
+    STATE.current.disabled = true;
+    applyStateToAllButtons();
+    
     STATE.apiCallsThisProfile += 1;
     const saved = await setLink(canonical, target);
+    
     if (saved?.error) {
       STATE.current.title = saved.error;
+      STATE.current.disabled = false;
       applyStateToAllButtons();
       return;
     }
+    
     if (saved?.app_url) {
+      log(' Saved! Final URL:', saved.app_url);
       STATE.current.mode = "open";
       STATE.current.appUrl = saved.app_url;
       STATE.current.title = "Открыть в Huntflow";
+      STATE.current.disabled = false;
       applyStateToAllButtons();
     }
   } finally {
@@ -558,12 +720,12 @@ async function onSaveLinkClick() {
 async function onButtonClick() {
   if (STATE.busy) return;
   let canonical = normalizeLinkedInProfileUrl(location.href);
-  
+
   if (!canonical && IS_MESSAGING_PAGE) {
     try {
       canonical = await getProfileLinkFromMessaging();
     } catch (e) {
-      console.error('[HRHelper] Error getting profile from messaging:', e);
+      error(' Error getting profile from messaging:', e);
     }
   }
 
@@ -574,12 +736,51 @@ async function onButtonClick() {
   }
 }
 
+async function onEditClick(e) {
+  e.stopPropagation();
+
+  log(' Edit button clicked');
+
+  // Сохраняем оригинальный URL перед редактированием
+  STATE.current.originalAppUrl = STATE.current.appUrl;
+
+  // Переключаемся в режим редактирования
+  STATE.current.mode = "input";
+  STATE.current.inputValue = STATE.current.appUrl || "";
+  STATE.current.disabled = false;
+  STATE.current.title = "Редактировать ссылку";
+
+  applyStateToAllButtons();
+}
+
+async function onCancelClick(e) {
+  e.stopPropagation();
+
+  log(' Cancel button clicked');
+
+  // Возвращаемся в режим просмотра с оригинальным URL
+  STATE.current.mode = "open";
+  STATE.current.appUrl = STATE.current.originalAppUrl;
+  STATE.current.inputValue = "";
+  STATE.current.disabled = false;
+  STATE.current.title = "Открыть в Huntflow";
+  STATE.current.originalAppUrl = null; // Очищаем сохранённый URL
+
+  applyStateToAllButtons();
+}
+
 function startObserver() {
   const schedule = () => {
     if (STATE.scheduled) return;
     STATE.scheduled = true;
     requestAnimationFrame(() => {
       STATE.scheduled = false;
+      
+      // Быстрый выход: если виджет уже есть и показан, не делаем лишних проверок
+      if (hasExistingWidget() && STATE.statusFetchedFor) {
+        return;
+      }
+      
       let canonical = normalizeLinkedInProfileUrl(location.href);
       
       if (!canonical && IS_MESSAGING_PAGE) {
@@ -602,6 +803,7 @@ function startObserver() {
         STATE.current.appUrl = null;
         STATE.current.show = false;
         STATE.current.inputValue = "";
+        STATE.messagingProfileCache = null; // Сбрасываем кэш при смене профиля
         STATE.lastProfileUrl = canonical;
         refreshButtonForCurrentProfile();
       } else {
@@ -615,24 +817,51 @@ function startObserver() {
     schedule();
   });
 
-  if (document.body) {
+  // Наблюдаем только за конкретными контейнерами, а не за всем body
+  const observeTargets = IS_MESSAGING_PAGE
+    ? [
+        document.querySelector('.msg-form'),
+        document.querySelector('.msg-s-message-list-container'),
+        document.querySelector('main')
+      ].filter(Boolean)
+    : [
+        document.querySelector('[data-view-name="profile-top-card"]'),
+        document.querySelector('.scaffold-layout__sticky'),
+        document.querySelector('main')
+      ].filter(Boolean);
+
+  if (observeTargets.length > 0) {
+    observeTargets.forEach(target => {
+      obs.observe(target, { childList: true, subtree: true });
+    });
+  } else if (document.body) {
     obs.observe(document.body, { childList: true, subtree: true });
   } else {
     obs.observe(document.documentElement, { childList: true, subtree: true });
   }
 
+  log(' Observer started');
+  log(' IS_MESSAGING_PAGE:', IS_MESSAGING_PAGE);
+  log(' IS_PROFILE_PAGE:', IS_PROFILE_PAGE);
+  log(' Location:', location.href);
+  
   const canonical = normalizeLinkedInProfileUrl(location.href);
   if (canonical) {
+    log(' Found canonical URL on init:', canonical);
     STATE.lastProfileUrl = canonical;
     refreshButtonForCurrentProfile();
   } else if (IS_MESSAGING_PAGE) {
-    console.log('[HRHelper] Messaging page detected, waiting for profile resolution...');
-    // Запускаем проверку профиля через небольшую задержку (чтобы DOM успел загрузиться)
-    setTimeout(() => refreshButtonForCurrentProfile(), 1000);
+    log(' Messaging page detected, resolving profile...');
+    refreshButtonForCurrentProfile();
   } else if (IS_PROFILE_PAGE) {
-    console.log('[HRHelper] Profile page detected');
+    log(' Profile page detected');
+  } else {
+    warn(' Unknown page type');
   }
 }
+
+log(' Content script loaded');
+log(' Starting initialization...');
 
 captureProfileToThreadMapping();
 startObserver();
