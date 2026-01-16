@@ -7362,6 +7362,67 @@ def chat_workflow(request, session_id=None):
     contact_history_json = json.dumps(contact_history, ensure_ascii=False, default=str)
     print(f"🔍 CONTACT_HISTORY: JSON длина: {len(contact_history_json)} символов")
     
+    # Загружаем данные по скринингам и интервью из БД для текущей вакансии
+    screenings_data = []
+    interviews_data = []
+    try:
+        from apps.google_oauth.models import HRScreening, Invite
+        from datetime import datetime, timedelta
+        
+        # Получаем вакансию по external_id для фильтрации
+        vacancy_external_id = None
+        if vacancy and hasattr(vacancy, 'external_id'):
+            vacancy_external_id = str(vacancy.external_id)
+        
+        # Загружаем скрининги за последние 30 дней
+        if vacancy_external_id:
+            screenings = HRScreening.objects.filter(
+                vacancy_id=vacancy_external_id,
+                created_at__gte=datetime.now() - timedelta(days=30)
+            ).order_by('-created_at')[:50]  # Берем последние 50
+            
+            for screening in screenings:
+                screenings_data.append({
+                    'id': screening.id,
+                    'candidate_name': screening.candidate_name or 'Не указан',
+                    'candidate_id': screening.candidate_id,
+                    'created_at': screening.created_at.isoformat() if screening.created_at else None,
+                    'status': screening.status,
+                    'score': getattr(screening, 'score', None),
+                })
+            
+            print(f"🔍 SCREENINGS_DATA: Загружено {len(screenings_data)} скринингов для вакансии {vacancy_external_id}")
+        
+        # Загружаем интервью (инвайты) за последние 30 дней
+        if vacancy_external_id:
+            invites = Invite.objects.filter(
+                vacancy_id=vacancy_external_id,
+                created_at__gte=datetime.now() - timedelta(days=30)
+            ).order_by('-created_at')[:50]  # Берем последние 50
+            
+            for invite in invites:
+                # Определяем тип события (скрининг или интервью)
+                event_type = 'interview' if not invite.google_drive_file_id else 'screening'
+                
+                interviews_data.append({
+                    'id': invite.id,
+                    'candidate_name': invite.candidate_name or 'Не указан',
+                    'candidate_id': invite.candidate_id,
+                    'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
+                    'status': invite.status,
+                    'event_type': event_type,
+                    'calendar_event_id': invite.calendar_event_id,
+                    'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
+                    'created_at': invite.created_at.isoformat() if invite.created_at else None,
+                })
+            
+            print(f"🔍 INTERVIEWS_DATA: Загружено {len(interviews_data)} интервью/скринингов для вакансии {vacancy_external_id}")
+        
+    except Exception as e:
+        print(f"⚠️ Ошибка загрузки данных по скринингам и интервью: {e}")
+        import traceback
+        traceback.print_exc()
+    
     context = {
         'form': form,
         'chat_session': chat_session,
@@ -7385,6 +7446,8 @@ def chat_workflow(request, session_id=None):
         'candidate_social_links': candidate_social_links,
         'candidate_contact_info': candidate_contact_info,
         'contact_history': contact_history_json,
+        'screenings_data': json.dumps(screenings_data, ensure_ascii=False, default=str),
+        'interviews_data': json.dumps(interviews_data, ensure_ascii=False, default=str),
     }
 
     # Отладочная информация (как на странице gdata_automation)

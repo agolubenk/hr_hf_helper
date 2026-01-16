@@ -1897,6 +1897,72 @@ class Invite(models.Model):
                 
                 self.save()  # Сохраняем изменения в БД
                 
+                # Сохраняем событие в CalendarEvent для отчетности
+                try:
+                    from apps.reporting.models import CalendarEvent
+                    from apps.vacancies.models import Vacancy
+                    
+                    # Получаем вакансию по external_id
+                    vacancy_obj = None
+                    if self.vacancy_id:
+                        try:
+                            vacancy_obj = Vacancy.objects.get(external_id=str(self.vacancy_id))
+                        except Vacancy.DoesNotExist:
+                            pass
+                    
+                    # Определяем тип события
+                    event_type = 'interview' if is_interview else 'screening'
+                    if not is_interview and not self.google_drive_file_id:
+                        # Если нет скоркарда, но это не интервью, проверяем по названию
+                        if 'interview' in event_title.lower():
+                            event_type = 'interview'
+                    
+                    # Формируем список участников
+                    attendees_list = []
+                    for email in attendees:
+                        attendees_list.append({
+                            'email': email,
+                            'name': email  # Имя будет обновлено при синхронизации
+                        })
+                    
+                    # Получаем время обновления из Google
+                    google_updated = None
+                    if 'updated' in created_event:
+                        try:
+                            from datetime import datetime
+                            google_updated_str = created_event['updated'].replace('Z', '+00:00')
+                            google_updated = datetime.fromisoformat(google_updated_str)
+                        except:
+                            pass
+                    
+                    # Создаем или обновляем событие в БД
+                    calendar_event, created = CalendarEvent.objects.update_or_create(
+                        event_id=self.calendar_event_id,
+                        defaults={
+                            'recruiter': self.user,
+                            'title': event_title,
+                            'start_time': start_time,
+                            'end_time': end_time,
+                            'attendees': attendees_list,
+                            'description': description,
+                            'location': office_location or '',
+                            'google_updated_at': google_updated,
+                            'event_type': event_type,
+                            'vacancy': vacancy_obj,
+                        }
+                    )
+                    
+                    if created:
+                        print(f"✅ CalendarEvent создан в БД: {calendar_event.id} (тип: {event_type})")
+                    else:
+                        print(f"✅ CalendarEvent обновлен в БД: {calendar_event.id} (тип: {event_type})")
+                        
+                except Exception as e:
+                    print(f"⚠️ Ошибка сохранения события в CalendarEvent: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    # Не прерываем выполнение, продолжаем работу
+                
                 print(f"✅ Календарное событие создано: {event_title}")
                 print(f"🔗 Ссылка на событие: {self.calendar_event_url}")
                 return True

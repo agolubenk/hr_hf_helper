@@ -208,6 +208,51 @@
                         </form>
                         {% if selected_vacancy %}
                         <div class="mt-2 text-end">
+                            <!-- Переключатель часового пояса -->
+                            <div class="btn-group me-3" role="group" style="vertical-align: middle; box-shadow: 0 2px 6px rgba(0,0,0,0.15); border-radius: 8px; overflow: hidden;">
+                                <input type="radio" class="btn-check" name="timezone-toggle" id="timezone-minsk" value="minsk" checked>
+                                <label class="btn" for="timezone-minsk" title="Часовой пояс: Минск (UTC+3)" style="font-weight: 600; padding: 4px 12px; font-size: 12px; background-color: #ffffff; color: #0d6efd; border: 2px solid #0d6efd; border-radius: 8px 0 0 8px;">
+                                    <i class="fas fa-map-marker-alt me-1"></i>Минск
+                                </label>
+                                
+                                <input type="radio" class="btn-check" name="timezone-toggle" id="timezone-warsaw" value="warsaw">
+                                <label class="btn" for="timezone-warsaw" title="Часовой пояс: Варшава (UTC+1)" style="font-weight: 600; padding: 4px 12px; font-size: 12px; background-color: #0d6efd; color: white; border: 2px solid #0d6efd; border-radius: 0 8px 8px 0;">
+                                    <i class="fas fa-map-marker-alt me-1"></i>Варшава
+                                </label>
+                            </div>
+                            <style>
+                                /* Стили для активного состояния переключателя (белый фон, синий текст) */
+                                #timezone-minsk:checked + label {
+                                    background-color: #ffffff !important;
+                                    color: #0d6efd !important;
+                                    border-color: #0d6efd !important;
+                                    border-radius: 8px 0 0 8px !important;
+                                }
+                                #timezone-warsaw:checked + label {
+                                    background-color: #ffffff !important;
+                                    color: #0d6efd !important;
+                                    border-color: #0d6efd !important;
+                                    border-radius: 0 8px 8px 0 !important;
+                                }
+                                /* Стили для неактивного состояния (синий фон, белый текст) */
+                                #timezone-minsk:not(:checked) + label {
+                                    background-color: #0d6efd !important;
+                                    color: white !important;
+                                    border-color: #0d6efd !important;
+                                    border-radius: 8px 0 0 8px !important;
+                                }
+                                #timezone-warsaw:not(:checked) + label {
+                                    background-color: #0d6efd !important;
+                                    color: white !important;
+                                    border-color: #0d6efd !important;
+                                    border-radius: 0 8px 8px 0 !important;
+                                }
+                                /* Hover эффект */
+                                #timezone-minsk + label:hover,
+                                #timezone-warsaw + label:hover {
+                                    opacity: 0.9 !important;
+                                }
+                            </style>
                             <a href="https://calendar.google.com/calendar/u/0/r/week" target="_blank" class="badge bg-info fs-6 me-2 clickable-badge" style="text-decoration: none; cursor: pointer;" title="Календарь">
                                 <i class="fas fa-calendar"></i>
                                 <i class="fas fa-external-link-alt ms-1"></i>
@@ -3678,6 +3723,43 @@ window.userPhotoUrl = null;
 {% endif %}
 </script>
 
+<!-- Данные по скринингам и интервью из БД -->
+<script type="application/json" id="screenings-data">
+{{ screenings_data|safe }}
+</script>
+<script type="application/json" id="interviews-data">
+{{ interviews_data|safe }}
+</script>
+<script>
+// Загружаем данные по скринингам и интервью
+const screeningsDataElement = document.getElementById('screenings-data');
+const interviewsDataElement = document.getElementById('interviews-data');
+if (screeningsDataElement) {
+    try {
+        window.screeningsData = JSON.parse(screeningsDataElement.textContent);
+        console.log('📊 Загружено скринингов из БД:', window.screeningsData.length);
+    } catch (e) {
+        console.error('❌ Ошибка парсинга данных скринингов:', e);
+        window.screeningsData = [];
+    }
+} else {
+    window.screeningsData = [];
+}
+
+if (interviewsDataElement) {
+    try {
+        window.interviewsData = JSON.parse(interviewsDataElement.textContent);
+        console.log('📊 Загружено интервью/скринингов из БД:', window.interviewsData.length);
+    } catch (e) {
+        console.error('❌ Ошибка парсинга данных интервью:', e);
+        window.interviewsData = [];
+    }
+} else {
+    window.interviewsData = [];
+}
+</script>
+
+            <script src="{% static 'js/copy-buttons.js' %}"></script>
             <script src="{% static 'js/vacancy-slots.js' %}"></script>
             <script src="{% static 'js/meeting-type-switcher.js' %}"></script>
             

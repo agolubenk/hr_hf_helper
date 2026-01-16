@@ -8,6 +8,13 @@ console.log('🔍 DEBUG: Начинаем загрузку событий...');
 // Переменные будут объявлены в шаблоне
 let vacancyData = {};
 
+// Текущий выбранный часовой пояс (по умолчанию Минск)
+let currentTimezone = 'minsk'; // 'minsk' или 'warsaw'
+
+// Исходные слоты в Минске (для конвертации в другие часовые пояса)
+window.originalScreeningSlots = null;
+window.originalInterviewSlots = null;
+
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🔍 DEBUG: Количество событий в контексте:', calendarEvents ? calendarEvents.length : 0);
@@ -34,9 +41,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Настраиваем обработчики для кнопок сворачивания
     setupCollapseButtons();
     
+    // Настраиваем обработчик изменения часового пояса (до загрузки слотов)
+    setupTimezoneToggle();
+    
     // Если есть предрассчитанные слоты, используем их, иначе генерируем на клиенте
     if (window.screeningSlots && window.screeningSlots.length > 0) {
         console.log('✅ [SLOTS] Используем предрассчитанные слоты с backend');
+        // Применяем текущий часовой пояс к слотам
+        applyTimezoneToSlots();
         window.switchSlotsByMeetingType('screening');
     } else {
         console.log('⚠️ [SLOTS] Предрассчитанные слоты не найдены, генерируем на клиенте');
@@ -265,7 +277,7 @@ function calculateAvailableSlots(dayEvents, date) {
                 end: intervalEnd
             });
             
-            console.log(`🚫 Занятый интервал: ${formatTime(intervalStart)} - ${formatTime(intervalEnd)} (событие: ${formatTime(eventStart)} - ${formatTime(eventEnd)})`);
+            console.log(`🚫 Занятый интервал: ${formatTime(intervalStart, currentTimezone)} - ${formatTime(intervalEnd, currentTimezone)} (событие: ${formatTime(eventStart, currentTimezone)} - ${formatTime(eventEnd, currentTimezone)})`);
         }
     });
     
@@ -327,8 +339,8 @@ function calculateAvailableSlots(dayEvents, date) {
         
         // Показываем интервал только если он длится больше 15 минут И больше или равен требуемой продолжительности
         if (durationMinutes >= 15 && durationMinutes >= requiredDuration) {
-            const startTime = formatTime(interval.start);
-            const endTime = formatTime(interval.end);
+            const startTime = formatTime(interval.start, currentTimezone);
+            const endTime = formatTime(interval.end, currentTimezone);
             
             if (startTime === endTime) {
                 availableRanges.push(startTime);
@@ -338,8 +350,8 @@ function calculateAvailableSlots(dayEvents, date) {
             
             console.log(`✅ Свободный интервал: ${startTime} - ${endTime} (${durationMinutes} мин) - подходит для встречи ${requiredDuration} мин`);
         } else if (durationMinutes >= 15) {
-            const startTime = formatTime(interval.start);
-            const endTime = formatTime(interval.end);
+            const startTime = formatTime(interval.start, currentTimezone);
+            const endTime = formatTime(interval.end, currentTimezone);
             console.log(`❌ Свободный интервал: ${startTime} - ${endTime} (${durationMinutes} мин) - слишком короткий для встречи ${requiredDuration} мин`);
         }
     });
@@ -347,10 +359,82 @@ function calculateAvailableSlots(dayEvents, date) {
     return availableRanges.length > 0 ? availableRanges.join(', ') : 'Нет свободных слотов';
 }
 
-// Вспомогательная функция для форматирования времени
-function formatTime(date) {
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
+// Функция для конвертации времени между часовыми поясами
+function convertTimezone(date, targetTimezone) {
+    if (!date) return date;
+    
+    // Если date - это строка, преобразуем в Date объект
+    let dateObj = date;
+    if (typeof date === 'string') {
+        dateObj = new Date(date);
+    }
+    
+    // Минск: Europe/Minsk (UTC+3, не переходит на летнее время)
+    // Варшава: Europe/Warsaw (UTC+1 зимой, UTC+2 летом)
+    
+    try {
+        if (targetTimezone === 'minsk') {
+            // Конвертируем в Минск
+            return new Date(dateObj.toLocaleString('en-US', { timeZone: 'Europe/Minsk' }));
+        } else if (targetTimezone === 'warsaw') {
+            // Конвертируем в Варшаву
+            return new Date(dateObj.toLocaleString('en-US', { timeZone: 'Europe/Warsaw' }));
+        }
+    } catch (e) {
+        console.error('Ошибка конвертации часового пояса:', e);
+        return dateObj;
+    }
+    
+    return dateObj;
+}
+
+// Вспомогательная функция для форматирования времени с учетом часового пояса
+function formatTime(date, timezone = null) {
+    if (!date) return '';
+    
+    // Если date - это строка, преобразуем в Date объект
+    let dateObj = date;
+    if (typeof date === 'string') {
+        dateObj = new Date(date);
+    }
+    
+    // Используем текущий часовой пояс или переданный
+    const tz = timezone || currentTimezone;
+    
+    // Конвертируем в нужный часовой пояс
+    const convertedDate = convertTimezone(dateObj, tz);
+    
+    // Получаем часы и минуты в нужном часовом поясе
+    let hours, minutes;
+    
+    if (tz === 'minsk') {
+        // Используем Intl API для получения времени в Минске
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            timeZone: 'Europe/Minsk',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+        const parts = formatter.formatToParts(dateObj);
+        hours = parseInt(parts.find(p => p.type === 'hour').value);
+        minutes = parseInt(parts.find(p => p.type === 'minute').value);
+    } else if (tz === 'warsaw') {
+        // Используем Intl API для получения времени в Варшаве
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            timeZone: 'Europe/Warsaw',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+        const parts = formatter.formatToParts(dateObj);
+        hours = parseInt(parts.find(p => p.type === 'hour').value);
+        minutes = parseInt(parts.find(p => p.type === 'minute').value);
+    } else {
+        // По умолчанию используем локальное время
+        hours = convertedDate.getHours();
+        minutes = convertedDate.getMinutes();
+    }
+    
     return `${hours}.${minutes.toString().padStart(2, '0')}`;
 }
 
@@ -1104,6 +1188,304 @@ function extractSlotData(card) {
     } catch (e) {
         console.error('Ошибка извлечения данных слота:', e);
         return null;
+    }
+}
+
+// Настройка обработчика переключателя часового пояса
+function setupTimezoneToggle() {
+    const timezoneInputs = document.querySelectorAll('input[name="timezone-toggle"]');
+    
+    timezoneInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const selectedTimezone = this.value;
+            console.log('🕐 Изменен часовой пояс:', selectedTimezone);
+            
+            // Обновляем глобальную переменную
+            currentTimezone = selectedTimezone;
+            
+            // Пересчитываем и обновляем отображение слотов
+            updateSlotsForTimezone();
+        });
+    });
+    
+    // Устанавливаем начальное значение из выбранного переключателя
+    const checkedInput = document.querySelector('input[name="timezone-toggle"]:checked');
+    if (checkedInput) {
+        currentTimezone = checkedInput.value;
+        console.log('🕐 Начальный часовой пояс:', currentTimezone);
+    }
+}
+
+// Функция для применения часового пояса к слотам при первой загрузке
+function applyTimezoneToSlots() {
+    // Сохраняем исходные слоты в Минске (если еще не сохранены)
+    if (window.screeningSlots && window.screeningSlots.length > 0 && !window.originalScreeningSlots) {
+        window.originalScreeningSlots = JSON.parse(JSON.stringify(window.screeningSlots));
+        console.log('💾 Сохранены исходные слоты скринингов в Минске');
+    }
+    
+    if (window.interviewSlots && window.interviewSlots.length > 0 && !window.originalInterviewSlots) {
+        window.originalInterviewSlots = JSON.parse(JSON.stringify(window.interviewSlots));
+        console.log('💾 Сохранены исходные слоты интервью в Минске');
+    }
+    
+    if (currentTimezone === 'minsk') {
+        // Если выбран Минск, слоты уже в правильном часовом поясе
+        return;
+    }
+    
+    // Применяем часовой пояс к предрассчитанным слотам
+    if (window.screeningSlots && window.screeningSlots.length > 0) {
+        window.screeningSlots = window.screeningSlots.map(slot => 
+            recalculateSlotTimes(slot, currentTimezone)
+        );
+    }
+    
+    if (window.interviewSlots && window.interviewSlots.length > 0) {
+        window.interviewSlots = window.interviewSlots.map(slot => 
+            recalculateSlotTimes(slot, currentTimezone)
+        );
+    }
+}
+
+// Функция для обновления слотов при изменении часового пояса
+function updateSlotsForTimezone() {
+    console.log('🔄 Обновление слотов для часового пояса:', currentTimezone);
+    
+    // Получаем текущий тип встречи
+    const meetingType = window.getCurrentMeetingType ? window.getCurrentMeetingType() : 'screening';
+    
+    // Получаем исходные слоты (в Минске) для текущего типа встречи
+    let originalSlots = [];
+    if (meetingType === 'screening' && window.screeningSlots) {
+        // Сохраняем исходные слоты в Минске (если еще не сохранены)
+        if (!window.originalScreeningSlots) {
+            window.originalScreeningSlots = JSON.parse(JSON.stringify(window.screeningSlots));
+        }
+        originalSlots = window.originalScreeningSlots;
+    } else if (meetingType === 'interview' && window.interviewSlots) {
+        // Сохраняем исходные слоты в Минске (если еще не сохранены)
+        if (!window.originalInterviewSlots) {
+            window.originalInterviewSlots = JSON.parse(JSON.stringify(window.interviewSlots));
+        }
+        originalSlots = window.originalInterviewSlots;
+    }
+    
+    // Если нет исходных слотов, используем текущие
+    if (originalSlots.length === 0) {
+        if (meetingType === 'screening' && window.screeningSlots) {
+            originalSlots = window.screeningSlots;
+        } else if (meetingType === 'interview' && window.interviewSlots) {
+            originalSlots = window.interviewSlots;
+        }
+    }
+    
+    if (originalSlots.length === 0) {
+        console.warn('⚠️ Нет слотов для обновления');
+        return;
+    }
+    
+    // Пересчитываем слоты с учетом нового часового пояса
+    const updatedSlots = recalculateSlotsForTimezone(originalSlots);
+    
+    // Обновляем отображение
+    if (updatedSlots.currentWeek && updatedSlots.nextWeek) {
+        window.updateSlotsDisplay(updatedSlots.currentWeek, updatedSlots.nextWeek);
+    }
+    
+    // Также обновляем третью неделю, если она загружена
+    const thirdWeekSection = document.querySelector('.week-section.third-week');
+    if (thirdWeekSection) {
+        const thirdWeekCards = thirdWeekSection.querySelectorAll('.slot-card');
+        thirdWeekCards.forEach(card => {
+            const slotData = extractSlotData(card);
+            if (slotData) {
+                // Получаем исходное время из данных карточки и конвертируем
+                const updatedSlot = recalculateSlotTimes(slotData, currentTimezone);
+                // Обновляем текст в карточке
+                const slotsElement = card.querySelector('.text-primary');
+                if (slotsElement) {
+                    slotsElement.textContent = updatedSlot.availableSlots || updatedSlot.slots;
+                }
+            }
+        });
+    }
+}
+
+// Функция для пересчета слотов с учетом часового пояса
+function recalculateSlotsForTimezone(slots) {
+    const currentWeek = [];
+    const nextWeek = [];
+    
+    // Разделяем слоты на текущую и следующую неделю
+    const now = new Date();
+    const currentWeekStart = new Date(now);
+    currentWeekStart.setDate(now.getDate() - now.getDay() + 1); // Понедельник текущей недели
+    currentWeekStart.setHours(0, 0, 0, 0);
+    
+    const nextWeekStart = new Date(currentWeekStart);
+    nextWeekStart.setDate(currentWeekStart.getDate() + 7);
+    
+    const thirdWeekStart = new Date(nextWeekStart);
+    thirdWeekStart.setDate(nextWeekStart.getDate() + 7);
+    
+    slots.forEach(slot => {
+        // Парсим дату слота - может быть в разных форматах
+        let slotDate = null;
+        
+        // Пробуем разные форматы даты
+        if (slot.date) {
+            // Если date - это строка в формате ISO или другой
+            if (typeof slot.date === 'string') {
+                slotDate = parseSlotDate(slot.date) || new Date(slot.date);
+            } else if (slot.date instanceof Date) {
+                slotDate = slot.date;
+            }
+        } else if (slot.dateStr) {
+            slotDate = parseSlotDate(slot.dateStr);
+        }
+        
+        if (!slotDate || isNaN(slotDate.getTime())) {
+            console.warn('⚠️ Не удалось распарсить дату слота:', slot);
+            return;
+        }
+        
+        // Пересчитываем время слотов с учетом часового пояса
+        const updatedSlots = recalculateSlotTimes(slot, currentTimezone);
+        
+        // Определяем, к какой неделе относится слот
+        if (slotDate >= currentWeekStart && slotDate < nextWeekStart) {
+            currentWeek.push(updatedSlots);
+        } else if (slotDate >= nextWeekStart && slotDate < thirdWeekStart) {
+            nextWeek.push(updatedSlots);
+        }
+    });
+    
+    return { currentWeek, nextWeek };
+}
+
+// Функция для парсинга даты слота
+function parseSlotDate(dateStr) {
+    if (!dateStr) return null;
+    
+    try {
+        // Формат может быть "DD.MM" или "DD.MM.YYYY"
+        const parts = dateStr.split('.');
+        if (parts.length < 2) return null;
+        
+        const day = parseInt(parts[0]);
+        const month = parseInt(parts[1]) - 1; // Месяц в JS начинается с 0
+        const year = parts[2] ? parseInt(parts[2]) : new Date().getFullYear();
+        
+        return new Date(year, month, day);
+    } catch (e) {
+        console.error('Ошибка парсинга даты:', e);
+        return null;
+    }
+}
+
+// Функция для пересчета времени слотов с учетом часового пояса
+function recalculateSlotTimes(slot, timezone) {
+    if (!slot.availableSlots || slot.availableSlots === 'Нет свободных слотов') {
+        return slot;
+    }
+    
+    // Получаем дату слота в разных форматах
+    const dateStr = slot.dateStr || (slot.date ? (typeof slot.date === 'string' ? slot.date : slot.date.toLocaleDateString('ru-RU')) : '');
+    
+    // Парсим временные интервалы из строки слотов
+    const timeRanges = slot.availableSlots.split(',').map(s => s.trim());
+    const updatedRanges = [];
+    
+    timeRanges.forEach(range => {
+        if (range.includes('-')) {
+            // Интервал вида "11.00-12.00"
+            const [startStr, endStr] = range.split('-').map(s => s.trim());
+            const updatedStart = convertSlotTime(startStr, dateStr, timezone);
+            const updatedEnd = convertSlotTime(endStr, dateStr, timezone);
+            updatedRanges.push(`${updatedStart}-${updatedEnd}`);
+        } else {
+            // Одно время вида "11.00"
+            const updatedTime = convertSlotTime(range, dateStr, timezone);
+            updatedRanges.push(updatedTime);
+        }
+    });
+    
+    // Создаем копию слота с обновленными временами
+    const updatedSlot = { ...slot };
+    updatedSlot.availableSlots = updatedRanges.join(', ');
+    
+    return updatedSlot;
+}
+
+// Функция для конвертации времени слота в другой часовой пояс
+// Предполагается, что исходное время всегда в Минске (UTC+3)
+function convertSlotTime(timeStr, dateStr, targetTimezone) {
+    if (!timeStr || !dateStr) return timeStr;
+    
+    // Если часовой пояс не изменился, возвращаем исходное время
+    if (targetTimezone === 'minsk') {
+        return timeStr;
+    }
+    
+    try {
+        // Парсим время (формат: "HH.MM" или "HH:MM")
+        const timeMatch = timeStr.match(/(\d{1,2})[.:](\d{2})/);
+        if (!timeMatch) return timeStr;
+        
+        const hours = parseInt(timeMatch[1]);
+        const minutes = parseInt(timeMatch[2]);
+        
+        // Парсим дату
+        const slotDate = parseSlotDate(dateStr);
+        if (!slotDate || isNaN(slotDate.getTime())) {
+            console.warn('⚠️ Не удалось распарсить дату для конвертации времени:', dateStr);
+            return timeStr;
+        }
+        
+        // Создаем Date объект с временем в Минске
+        // Используем правильный подход: создаем дату в формате ISO с указанием часового пояса Минска
+        const year = slotDate.getFullYear();
+        const month = String(slotDate.getMonth() + 1).padStart(2, '0');
+        const day = String(slotDate.getDate()).padStart(2, '0');
+        const hoursStr = String(hours).padStart(2, '0');
+        const minutesStr = String(minutes).padStart(2, '0');
+        
+        // Создаем строку даты и времени в формате ISO для Минска (UTC+3)
+        // Формат: YYYY-MM-DDTHH:MM:00+03:00
+        const minskDateTimeStr = `${year}-${month}-${day}T${hoursStr}:${minutesStr}:00+03:00`;
+        const minskDate = new Date(minskDateTimeStr);
+        
+        // Проверяем, что дата валидна
+        if (isNaN(minskDate.getTime())) {
+            console.warn('⚠️ Невалидная дата после создания:', minskDateTimeStr);
+            return timeStr;
+        }
+        
+        // Конвертируем в целевой часовой пояс
+        if (targetTimezone === 'warsaw') {
+            // Используем Intl API для получения времени в Варшаве
+            // API автоматически учитывает переход на летнее время
+            const formatter = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'Europe/Warsaw',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+            
+            // Форматируем дату в Варшаве
+            const parts = formatter.formatToParts(minskDate);
+            const warHours = parseInt(parts.find(p => p.type === 'hour').value);
+            const warMinutes = parseInt(parts.find(p => p.type === 'minute').value);
+            
+            return `${warHours}.${warMinutes.toString().padStart(2, '0')}`;
+        } else {
+            // Минск - возвращаем исходное время
+            return timeStr;
+        }
+    } catch (e) {
+        console.error('Ошибка конвертации времени:', e, 'timeStr:', timeStr, 'dateStr:', dateStr);
+        return timeStr;
     }
 }
 
