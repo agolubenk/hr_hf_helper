@@ -417,10 +417,11 @@ function updateWidget(widgets, force) {
 function ensureButtons() {
   log(' ensureButtons called, show:', STATE.current.show);
   
-  if (!STATE.current.show) {
-    log(' STATE.current.show is false, not showing buttons');
-    return;
-  }
+  // Всегда показываем кнопки, даже если show=false, чтобы форма была доступна сразу
+  // if (!STATE.current.show) {
+  //   log(' STATE.current.show is false, not showing buttons');
+  //   return;
+  // }
   
   const now = Date.now();
   if (now - STATE.lastScanAt < THROTTLE_MS) {
@@ -628,6 +629,22 @@ async function refreshButtonForCurrentProfile() {
   let canonical = normalizeLinkedInProfileUrl(location.href);
   log(' Canonical URL:', canonical);
 
+  // Сначала показываем кнопки в режиме загрузки для мгновенного отображения
+  const showLoadingState = () => {
+    STATE.current.show = true;
+    STATE.current.mode = "input";
+    STATE.current.appUrl = null;
+    STATE.current.disabled = false;
+    STATE.current.title = "Загрузка...";
+    STATE.current.text = "Huntflow";
+    ensureButtons();
+  };
+
+  // Показываем кнопки сразу, если еще не показаны
+  if (!STATE.current.show) {
+    showLoadingState();
+  }
+
   if (!canonical && IS_MESSAGING_PAGE) {
     log(' Messaging page, trying to get profile...');
     try {
@@ -639,8 +656,37 @@ async function refreshButtonForCurrentProfile() {
   }
 
   if (!canonical) {
-    warn(' No canonical URL, exiting');
+    warn(' No canonical URL, showing input form');
+    STATE.current.show = true;
+    STATE.current.mode = "input";
+    STATE.current.appUrl = null;
+    STATE.current.disabled = false;
+    STATE.current.title = "Укажи ссылку на кандидата";
+    ensureButtons();
     return;
+  }
+  
+  // Проверяем кэш для мгновенного отображения
+  const cached = getCachedStatus(canonical);
+  if (cached && cached.exists !== undefined) {
+    log(' Using cached status for instant display');
+    STATE.current.show = true;
+    if (cached.exists && cached.app_url) {
+      STATE.current.mode = "open";
+      STATE.current.appUrl = cached.app_url;
+      STATE.current.disabled = false;
+      const buttonText = cached.vacancy_name 
+        ? `Huntflow | ${cached.vacancy_name}` 
+        : "Huntflow";
+      setButtonState({ text: buttonText, disabled: false, title: "Открыть в Huntflow", color: "#0a66c2" });
+    } else {
+      STATE.current.mode = "input";
+      STATE.current.appUrl = null;
+      STATE.current.disabled = false;
+      setButtonState({ text: "Huntflow", disabled: false, title: "Укажи ссылку на кандидата", color: "#0a66c2" });
+    }
+    ensureButtons();
+    // Продолжаем обновление в фоне
   }
   
   if (STATE.statusFetchedFor === canonical) {
@@ -954,25 +1000,54 @@ function startObserver() {
           resetState();
           STATE.lastThreadId = currentThreadId;
           
-          // Запускаем проверку профиля для нового чата
+          // Показываем кнопки сразу
+          STATE.current.show = true;
+          STATE.current.mode = "input";
+          STATE.current.title = "Загрузка...";
+          ensureButtons();
+          
+          // Запускаем проверку профиля для нового чата в фоне
           refreshButtonForCurrentProfile();
           return;
         }
         
         // Если thread не изменился, но профиль еще не определен
         if (!STATE.statusFetchedFor) {
+          // Показываем кнопки сразу
+          if (!STATE.current.show) {
+            STATE.current.show = true;
+            STATE.current.mode = "input";
+            STATE.current.title = "Загрузка...";
+            ensureButtons();
+          }
           refreshButtonForCurrentProfile();
         } else {
           ensureButtons();
         }
         return;
       }
-      if (!canonical) return;
+      
+      // Для профилей показываем кнопки сразу
+      if (!canonical) {
+        STATE.current.show = true;
+        STATE.current.mode = "input";
+        STATE.current.title = "Укажи ссылку на кандидата";
+        ensureButtons();
+        return;
+      }
 
       const changed = STATE.lastProfileUrl !== canonical || urlChanged;
       if (changed) {
         resetState();
         STATE.lastProfileUrl = canonical;
+        
+        // Показываем кнопки сразу
+        STATE.current.show = true;
+        STATE.current.mode = "input";
+        STATE.current.title = "Загрузка...";
+        ensureButtons();
+        
+        // Загружаем данные в фоне
         refreshButtonForCurrentProfile();
       } else {
         ensureButtons();
@@ -1058,19 +1133,31 @@ function startObserver() {
   log(' IS_PROFILE_PAGE:', IS_PROFILE_PAGE);
   log(' Location:', location.href);
   
+  // Показываем кнопки сразу при загрузке страницы
+  STATE.current.show = true;
+  STATE.current.mode = "input";
+  STATE.current.title = "Загрузка...";
+  ensureButtons();
+  
   const canonical = normalizeLinkedInProfileUrl(location.href);
   if (canonical) {
     log(' Found canonical URL on init:', canonical);
     STATE.lastProfileUrl = canonical;
+    // Загружаем данные в фоне
     refreshButtonForCurrentProfile();
   } else if (IS_MESSAGING_PAGE) {
     log(' Messaging page detected, resolving profile...');
     STATE.lastThreadId = extractThreadIdFromMessageButton();
+    // Загружаем данные в фоне
     refreshButtonForCurrentProfile();
   } else if (IS_PROFILE_PAGE) {
     log(' Profile page detected');
+    STATE.current.title = "Укажи ссылку на кандидата";
+    ensureButtons();
   } else {
     warn(' Unknown page type');
+    STATE.current.title = "Укажи ссылку на кандидата";
+    ensureButtons();
   }
 }
 
