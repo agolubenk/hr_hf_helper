@@ -244,6 +244,48 @@ function calculateAvailableSlots(dayEvents, date) {
             return;
         }
         
+        // Пропускаем отклоненные события (статус 'declined' или 'cancelled')
+        // Событие считается отклоненным, если:
+        // 1. Статус самого события 'cancelled'
+        // 2. Статус события 'declined' (если есть такое поле)
+        // 3. Текущий пользователь отклонил событие (если он участник)
+        // 4. Все участники отклонили приглашение (если есть информация об участниках)
+        if (event.status === 'cancelled' || event.status === 'declined') {
+            console.log(`  ❌ Исключаем отклоненное событие: "${event.title}" (статус: ${event.status})`);
+            return;
+        }
+        
+        // Проверяем, отклонил ли текущий пользователь событие
+        if (window.currentUserEmail && event.attendees && Array.isArray(event.attendees) && event.attendees.length > 0) {
+            const currentUserAttendee = event.attendees.find(attendee => {
+                const attendeeEmail = (attendee.email || '').toLowerCase();
+                return attendeeEmail === window.currentUserEmail;
+            });
+            
+            if (currentUserAttendee) {
+                const userResponseStatus = currentUserAttendee.response_status || currentUserAttendee.responseStatus || 'needsAction';
+                if (userResponseStatus === 'declined') {
+                    console.log(`  ❌ Исключаем событие, которое отклонил текущий пользователь: "${event.title}"`);
+                    return;
+                }
+            }
+        }
+        
+        // Проверяем участников: если все отклонили, пропускаем событие
+        if (event.attendees && Array.isArray(event.attendees) && event.attendees.length > 0) {
+            // Проверяем, есть ли хотя бы один участник, который принял или еще не ответил
+            const hasAcceptedOrPending = event.attendees.some(attendee => {
+                const responseStatus = attendee.response_status || attendee.responseStatus || 'needsAction';
+                return responseStatus === 'accepted' || responseStatus === 'tentative' || responseStatus === 'needsAction';
+            });
+            
+            // Если все участники отклонили, пропускаем событие
+            if (!hasAcceptedOrPending) {
+                console.log(`  ❌ Исключаем событие с отклоненными участниками: "${event.title}"`);
+                return;
+            }
+        }
+        
         const eventStart = new Date(event.start);
         const eventEnd = new Date(event.end);
         
@@ -463,6 +505,43 @@ function generateWeekSlots(weekOffset) {
                     title.includes('выходной') || title.includes('day off')) {
                     console.log(`  🏖️ Исключаем нерабочее событие: "${event.title}"`);
                     return false;
+                }
+                
+                // Исключаем отклоненные события (статус 'declined' или 'cancelled')
+                if (event.status === 'cancelled' || event.status === 'declined') {
+                    console.log(`  ❌ Исключаем отклоненное событие: "${event.title}" (статус: ${event.status})`);
+                    return false;
+                }
+                
+                // Проверяем, отклонил ли текущий пользователь событие
+                if (window.currentUserEmail && event.attendees && Array.isArray(event.attendees) && event.attendees.length > 0) {
+                    const currentUserAttendee = event.attendees.find(attendee => {
+                        const attendeeEmail = (attendee.email || '').toLowerCase();
+                        return attendeeEmail === window.currentUserEmail;
+                    });
+                    
+                    if (currentUserAttendee) {
+                        const userResponseStatus = currentUserAttendee.response_status || currentUserAttendee.responseStatus || 'needsAction';
+                        if (userResponseStatus === 'declined') {
+                            console.log(`  ❌ Исключаем событие, которое отклонил текущий пользователь: "${event.title}"`);
+                            return false;
+                        }
+                    }
+                }
+                
+                // Проверяем участников: если все отклонили, исключаем событие
+                if (event.attendees && Array.isArray(event.attendees) && event.attendees.length > 0) {
+                    // Проверяем, есть ли хотя бы один участник, который принял или еще не ответил
+                    const hasAcceptedOrPending = event.attendees.some(attendee => {
+                        const responseStatus = attendee.response_status || attendee.responseStatus || 'needsAction';
+                        return responseStatus === 'accepted' || responseStatus === 'tentative' || responseStatus === 'needsAction';
+                    });
+                    
+                    // Если все участники отклонили, исключаем событие
+                    if (!hasAcceptedOrPending) {
+                        console.log(`  ❌ Исключаем событие с отклоненными участниками: "${event.title}"`);
+                        return false;
+                    }
                 }
                 
                 return true;

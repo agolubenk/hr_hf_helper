@@ -3726,6 +3726,15 @@ window.userPhotoUrl = "{{ user_photo_url|escapejs }}";
 {% else %}
 window.userPhotoUrl = null;
 {% endif %}
+
+// Email пользователя для фильтрации отклоненных событий
+{% if user_email %}
+window.currentUserEmail = "{{ user_email|escapejs }}".toLowerCase();
+console.log('📧 Email текущего пользователя для фильтрации событий:', window.currentUserEmail);
+{% else %}
+window.currentUserEmail = null;
+console.warn('⚠️ Email пользователя не найден, фильтрация отклоненных событий может работать некорректно');
+{% endif %}
 </script>
 
 <!-- Данные по скринингам и интервью из БД -->

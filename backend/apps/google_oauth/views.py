@@ -3461,9 +3461,33 @@ def api_interview_slots(request):
                 print(f"⚠️ API INTERVIEW SLOTS: Ошибка получения событий календаря компании: {e}")
         
         # Преобразуем события в формат для калькулятора
+        # ВАЖНО: Фильтруем отклоненные события перед расчетом слотов
         interview_events_for_calc = []
+        current_user_email_lower = request.user.email.lower() if request.user.email else None
+        
         for event in events_data:
             try:
+                # Пропускаем отмененные события
+                event_status = event.get('status', 'confirmed')
+                if event_status == 'cancelled' or event_status == 'declined':
+                    print(f"  ❌ API INTERVIEW SLOTS: Исключаем отклоненное событие: \"{event.get('summary', 'Без названия')}\" (статус: {event_status})")
+                    continue
+                
+                # Проверяем, отклонил ли текущий пользователь событие
+                if current_user_email_lower and 'attendees' in event:
+                    current_user_attendee = None
+                    for attendee in event.get('attendees', []):
+                        attendee_email = (attendee.get('email') or '').lower()
+                        if attendee_email == current_user_email_lower:
+                            current_user_attendee = attendee
+                            break
+                    
+                    if current_user_attendee:
+                        user_response_status = current_user_attendee.get('responseStatus', 'needsAction')
+                        if user_response_status == 'declined':
+                            print(f"  ❌ API INTERVIEW SLOTS: Исключаем событие, которое отклонил пользователь: \"{event.get('summary', 'Без названия')}\"")
+                            continue
+                
                 start_time = None
                 if 'dateTime' in event.get('start', {}):
                     start_time = datetime.fromisoformat(event['start']['dateTime'].replace('Z', '+00:00'))
@@ -3519,6 +3543,28 @@ def api_interview_slots(request):
                     
                     for event_data in interviewer_events:
                         try:
+                            # Пропускаем отмененные события интервьюера
+                            event_status = event_data.get('status', 'confirmed')
+                            if event_status == 'cancelled' or event_status == 'declined':
+                                print(f"  ❌ API INTERVIEW SLOTS: Исключаем отклоненное событие интервьюера {interviewer.email}: \"{event_data.get('summary', 'Без названия')}\" (статус: {event_status})")
+                                continue
+                            
+                            # Проверяем, отклонил ли интервьюер событие
+                            interviewer_email_lower = interviewer.email.lower()
+                            if 'attendees' in event_data:
+                                interviewer_attendee = None
+                                for attendee in event_data.get('attendees', []):
+                                    attendee_email = (attendee.get('email') or '').lower()
+                                    if attendee_email == interviewer_email_lower:
+                                        interviewer_attendee = attendee
+                                        break
+                                
+                                if interviewer_attendee:
+                                    interviewer_response_status = interviewer_attendee.get('responseStatus', 'needsAction')
+                                    if interviewer_response_status == 'declined':
+                                        print(f"  ❌ API INTERVIEW SLOTS: Исключаем событие, которое отклонил интервьюер {interviewer.email}: \"{event_data.get('summary', 'Без названия')}\"")
+                                        continue
+                            
                             start_time = None
                             if 'dateTime' in event_data.get('start', {}):
                                 start_time = datetime.fromisoformat(event_data['start']['dateTime'].replace('Z', '+00:00'))
@@ -4010,9 +4056,108 @@ def api_third_week_slots(request):
                 title = event.get('summary', 'N/A')
                 print(f"📅 THIRD WEEK: Событие {i+1}: {title} - {start_str}")
         
+        # Преобразуем события в формат для калькулятора и фильтруем отклоненные
+        events_for_calc = []
+        current_user_email_lower = request.user.email.lower() if request.user.email else None
+        
+        # Получаем список выбранных интервьюеров для проверки их отклоненных событий (если еще не получен)
+        if meeting_type == 'interview' and 'selected_interviewers' not in locals():
+            selected_interviewers = []
+            if interviewer_ids_str:
+                try:
+                    from apps.interviewers.models import Interviewer
+                    interviewer_ids = [int(i.strip()) for i in interviewer_ids_str.split(',') if i.strip()]
+                    selected_interviewers = list(Interviewer.objects.filter(id__in=interviewer_ids, is_active=True))
+                except Exception as e:
+                    print(f"⚠️ THIRD WEEK: Ошибка парсинга interviewer_ids: {e}")
+                    selected_interviewers = []
+        elif meeting_type != 'interview':
+            selected_interviewers = []
+        
+        for event in events_data:
+            try:
+                # Пропускаем отмененные события
+                event_status = event.get('status', 'confirmed')
+                if event_status == 'cancelled' or event_status == 'declined':
+                    print(f"  ❌ THIRD WEEK: Исключаем отклоненное событие: \"{event.get('summary', 'Без названия')}\" (статус: {event_status})")
+                    continue
+                
+                # Проверяем, отклонил ли текущий пользователь событие
+                if current_user_email_lower and 'attendees' in event:
+                    current_user_attendee = None
+                    for attendee in event.get('attendees', []):
+                        attendee_email = (attendee.get('email') or '').lower()
+                        if attendee_email == current_user_email_lower:
+                            current_user_attendee = attendee
+                            break
+                    
+                    if current_user_attendee:
+                        user_response_status = current_user_attendee.get('responseStatus', 'needsAction')
+                        if user_response_status == 'declined':
+                            print(f"  ❌ THIRD WEEK: Исключаем событие, которое отклонил пользователь: \"{event.get('summary', 'Без названия')}\"")
+                            continue
+                
+                # Для интервью также проверяем, отклонил ли интервьюер событие
+                if meeting_type == 'interview' and selected_interviewers:
+                    event_skipped = False
+                    for interviewer in selected_interviewers:
+                        interviewer_email_lower = interviewer.email.lower()
+                        if 'attendees' in event:
+                            interviewer_attendee = None
+                            for attendee in event.get('attendees', []):
+                                attendee_email = (attendee.get('email') or '').lower()
+                                if attendee_email == interviewer_email_lower:
+                                    interviewer_attendee = attendee
+                                    break
+                            
+                            if interviewer_attendee:
+                                interviewer_response_status = interviewer_attendee.get('responseStatus', 'needsAction')
+                                if interviewer_response_status == 'declined':
+                                    print(f"  ❌ THIRD WEEK: Исключаем событие, которое отклонил интервьюер {interviewer.email}: \"{event.get('summary', 'Без названия')}\"")
+                                    event_skipped = True
+                                    break
+                    
+                    if event_skipped:
+                        continue  # Пропускаем событие, если его отклонил интервьюер
+                
+                # Преобразуем событие в формат для калькулятора
+                import pytz
+                start_time = None
+                if 'dateTime' in event.get('start', {}):
+                    start_time = datetime.fromisoformat(event['start']['dateTime'].replace('Z', '+00:00'))
+                    minsk_tz = pytz.timezone('Europe/Minsk')
+                    start_time = start_time.astimezone(minsk_tz)
+                elif 'date' in event.get('start', {}):
+                    start_time = datetime.fromisoformat(event['start']['date'])
+                    minsk_tz = pytz.timezone('Europe/Minsk')
+                    start_time = minsk_tz.localize(start_time)
+                
+                end_time = None
+                if 'dateTime' in event.get('end', {}):
+                    end_time = datetime.fromisoformat(event['end']['dateTime'].replace('Z', '+00:00'))
+                    minsk_tz = pytz.timezone('Europe/Minsk')
+                    end_time = end_time.astimezone(minsk_tz)
+                elif 'date' in event.get('end', {}):
+                    end_time = datetime.fromisoformat(event['end']['date'])
+                    minsk_tz = pytz.timezone('Europe/Minsk')
+                    end_time = minsk_tz.localize(end_time)
+                
+                if start_time:
+                    is_all_day = 'date' in event.get('start', {})
+                    events_for_calc.append({
+                        'start': start_time.isoformat(),
+                        'end': end_time.isoformat() if end_time else start_time.isoformat(),
+                        'is_all_day': is_all_day,
+                    })
+            except Exception as e:
+                print(f"⚠️ THIRD WEEK: Ошибка обработки события: {e}")
+                continue
+        
+        print(f"📅 THIRD WEEK: После фильтрации осталось {len(events_for_calc)} событий для расчета")
+        
         # Рассчитываем слоты для третьей недели
         third_week_slots = calculator.calculate_slots_for_week(
-            events_data,
+            events_for_calc,
             required_duration_minutes=duration,
             week_offset=2  # Третья неделя
         )
@@ -7039,6 +7184,22 @@ def chat_workflow(request, session_id=None):
                                 description = description.replace('"', "'").replace("'", "'")
                             
                             is_all_day_event = 'date' in event_data['start']
+                            
+                            # Извлекаем участников для проверки статуса ответа
+                            attendees = []
+                            if 'attendees' in event_data:
+                                for attendee in event_data['attendees']:
+                                    attendee_info = {
+                                        'email': attendee.get('email', ''),
+                                        'name': attendee.get('displayName', ''),
+                                        'response_status': attendee.get('responseStatus', 'needsAction'),
+                                        'organizer': attendee.get('organizer', False),
+                                    }
+                                    attendees.append(attendee_info)
+                            
+                            # Получаем статус события
+                            event_status = event_data.get('status', 'confirmed')
+                            
                             # Добавляем информацию об организаторе и источнике в данные для фронтенда
                             event_obj = {
                                 'id': event_data['id'],
@@ -7049,6 +7210,8 @@ def chat_workflow(request, session_id=None):
                                 'isallday': is_all_day_event,  # Для совместимости с существующим кодом
                                 'location': event_data.get('location', ''),
                                 'description': description,
+                                'status': event_status,  # Статус события для фильтрации отклоненных
+                                'attendees': attendees,  # Участники для проверки статуса ответа
                             }
                             # Добавляем метаданные для отладки в браузерной консоли
                             if organizer_email:
@@ -7137,8 +7300,32 @@ def chat_workflow(request, session_id=None):
         
         # Создаем список событий для калькулятора слотов (в формате для SlotsCalculator)
         # Преобразуем calendar_events_data в формат, который понимает калькулятор
+        # ВАЖНО: Фильтруем отклоненные события перед расчетом слотов
         screening_events_for_calc = []
+        current_user_email_lower = request.user.email.lower() if request.user.email else None
+        
         for event in calendar_events_data:
+            # Пропускаем отмененные события
+            if event.get('status') == 'cancelled' or event.get('status') == 'declined':
+                print(f"  ❌ СЛОТЫ СКРИНИНГОВ: Исключаем отклоненное событие: \"{event.get('title', 'Без названия')}\" (статус: {event.get('status')})")
+                continue
+            
+            # Проверяем, отклонил ли текущий пользователь событие
+            if current_user_email_lower and event.get('attendees'):
+                current_user_attendee = None
+                for attendee in event.get('attendees', []):
+                    attendee_email = (attendee.get('email') or '').lower()
+                    if attendee_email == current_user_email_lower:
+                        current_user_attendee = attendee
+                        break
+                
+                if current_user_attendee:
+                    user_response_status = current_user_attendee.get('response_status') or current_user_attendee.get('responseStatus') or 'needsAction'
+                    if user_response_status == 'declined':
+                        print(f"  ❌ СЛОТЫ СКРИНИНГОВ: Исключаем событие, которое отклонил пользователь: \"{event.get('title', 'Без названия')}\"")
+                        continue
+            
+            # Если событие не отклонено, добавляем его в расчет
             screening_events_for_calc.append({
                 'start': event['start'],
                 'end': event['end'],
@@ -7159,8 +7346,32 @@ def chat_workflow(request, session_id=None):
         # Для интервью мы должны учитывать занятость ВСЕХ участников
         # Поэтому объединяем события из календарей пользователя, компании и интервьюеров
         # Начинаем с событий пользователя и компании (уже объединены в calendar_events_data)
+        # ВАЖНО: Фильтруем отклоненные события перед расчетом слотов
         interview_events_for_calc = []
+        current_user_email_lower = request.user.email.lower() if request.user.email else None
+        
         for event in calendar_events_data:
+            # Пропускаем отмененные события
+            if event.get('status') == 'cancelled' or event.get('status') == 'declined':
+                print(f"  ❌ СЛОТЫ ИНТЕРВЬЮ: Исключаем отклоненное событие: \"{event.get('title', 'Без названия')}\" (статус: {event.get('status')})")
+                continue
+            
+            # Проверяем, отклонил ли текущий пользователь событие
+            if current_user_email_lower and event.get('attendees'):
+                current_user_attendee = None
+                for attendee in event.get('attendees', []):
+                    attendee_email = (attendee.get('email') or '').lower()
+                    if attendee_email == current_user_email_lower:
+                        current_user_attendee = attendee
+                        break
+                
+                if current_user_attendee:
+                    user_response_status = current_user_attendee.get('response_status') or current_user_attendee.get('responseStatus') or 'needsAction'
+                    if user_response_status == 'declined':
+                        print(f"  ❌ СЛОТЫ ИНТЕРВЬЮ: Исключаем событие, которое отклонил пользователь: \"{event.get('title', 'Без названия')}\"")
+                        continue
+            
+            # Если событие не отклонено, добавляем его в расчет
             interview_events_for_calc.append({
                 'start': event['start'],
                 'end': event['end'],
@@ -7423,6 +7634,9 @@ def chat_workflow(request, session_id=None):
         import traceback
         traceback.print_exc()
     
+    # Получаем email текущего пользователя для фильтрации отклоненных событий
+    current_user_email = request.user.email.lower() if request.user.email else None
+    
     context = {
         'form': form,
         'chat_session': chat_session,
@@ -7435,6 +7649,7 @@ def chat_workflow(request, session_id=None):
         'slots_settings': slots_settings,
         'slots_settings_json': json.dumps(slots_settings.to_dict()) if slots_settings else '{}',
         'user_photo_url': user_photo_url,
+        'user_email': current_user_email,  # Email пользователя для фильтрации отклоненных событий
         'mandatory_interviewers': mandatory_interviewers,
         'vacancy_interviewers': vacancy_interviewers,
         'screening_slots_json': json.dumps(screening_slots),
