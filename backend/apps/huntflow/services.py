@@ -1895,14 +1895,6 @@ class HuntflowService:
                     # Собираем все метки для добавления
                     tags_to_add = []
                     
-                    # Добавляем метку clickup-new
-                    clickup_tag_id = self._find_tag_by_name(account_id, "clickup-new")
-                    if clickup_tag_id:
-                        tags_to_add.append(clickup_tag_id)
-                        print(f"🏷️ Добавляем метку clickup-new (ID: {clickup_tag_id})")
-                    else:
-                        print(f"❌ Не удалось найти метку clickup-new")
-                    
                     # Добавляем тег с исполнителем, если есть
                     if assignee_info:
                         executor_tag_id = self._find_tag_by_name(account_id, assignee_info)

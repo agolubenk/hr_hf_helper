@@ -3392,8 +3392,10 @@ def api_interview_slots(request):
         # Получаем параметры запроса
         vacancy_id = request.GET.get('vacancy_id') or (json.loads(request.body).get('vacancy_id') if request.method == 'POST' else None)
         interviewer_ids_str = request.GET.get('interviewer_ids') or (json.loads(request.body).get('interviewer_ids') if request.method == 'POST' else None)
+        include_user = request.GET.get('include_user', '1')  # По умолчанию включаем пользователя
+        include_user = include_user == '1' or include_user == 'true' or include_user == True
         
-        print(f"🔍 API INTERVIEW SLOTS: vacancy_id={vacancy_id}, interviewer_ids={interviewer_ids_str}")
+        print(f"🔍 API INTERVIEW SLOTS: vacancy_id={vacancy_id}, interviewer_ids={interviewer_ids_str}, include_user={include_user}")
         
         if not vacancy_id:
             return JsonResponse({
@@ -3451,12 +3453,22 @@ def api_interview_slots(request):
         
         # Получаем события календаря пользователя и компании
         calendar_service = GoogleCalendarService(oauth_service)
-        events_data = calendar_service.get_events(calendar_id='primary', days_ahead=14)
+        events_data = []
         
+        # Добавляем события календаря пользователя только если он выбран как участник
+        if include_user:
+            user_events = calendar_service.get_events(calendar_id='primary', days_ahead=14)
+            events_data.extend(user_events)
+            print(f"🔍 API INTERVIEW SLOTS: Добавлены события календаря пользователя: {len(user_events)} событий")
+        else:
+            print(f"🔍 API INTERVIEW SLOTS: События календаря пользователя не учитываются (пользователь не выбран)")
+        
+        # Всегда добавляем события календаря компании
         if company_calendar_id:
             try:
                 company_events_data = calendar_service.get_events(calendar_id=company_calendar_id, days_ahead=14)
                 events_data.extend(company_events_data)
+                print(f"🔍 API INTERVIEW SLOTS: Добавлены события календаря компании: {len(company_events_data)} событий")
             except Exception as e:
                 print(f"⚠️ API INTERVIEW SLOTS: Ошибка получения событий календаря компании: {e}")
         

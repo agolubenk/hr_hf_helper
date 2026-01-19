@@ -313,34 +313,52 @@
                                 </div>
                                 
                                 <!-- Разделитель -->
-                                {% if vacancy_interviewers %}
                                 <span class="interview-separator">|</span>
-                                {% endif %}
                                 
-                                <!-- Интервьюеры -->
-                                {% if vacancy_interviewers %}
+                                <!-- Участники интервью (пользователь + интервьюеры) -->
                                 <div class="interviewers-container">
-                                    {% for interviewer in vacancy_interviewers %}
+                                    <!-- Кнопка для выбора самого пользователя -->
                                     <button type="button" 
-                                            class="btn-interviewer-pill{% if vacancy_interviewers|length == 1 %} active{% endif %}" 
-                                            id="interviewer_{{ interviewer.id }}"
-                                            onclick="toggleInterviewer({{ interviewer.id }})"
-                                            data-interviewer-id="{{ interviewer.id }}"
+                                            class="btn-interviewer-pill active" 
+                                            id="interviewer_user"
+                                            onclick="toggleInterviewer('user')"
+                                            data-interviewer-id="user"
+                                            data-is-user="true"
                                             data-bs-toggle="tooltip" 
                                             data-bs-placement="top"
-                                            title="Выберите интервьюера: {{ interviewer.get_full_name }}{% if interviewer.email %} ({{ interviewer.email }}){% endif %}. Нажмите для выбора/отмены">
-                                        <span class="interviewer-name-full d-none d-md-inline">{{ interviewer.last_name }} {{ interviewer.first_name }}</span>
-                                        <span class="interviewer-name-short d-md-none">{{ interviewer.last_name }}</span>
+                                            title="Выберите себя как участника интервью. Нажмите для выбора/отмены">
+                                        <span class="interviewer-name-full d-none d-md-inline">Я ({{ user.get_full_name|default:user.email }})</span>
+                                        <span class="interviewer-name-short d-md-none">Я</span>
                                     </button>
                                     <input type="hidden" 
                                            name="interviewers" 
-                                           id="interviewer_input_{{ interviewer.id }}" 
-                                           value="{{ interviewer.id }}"
-                                           {% if vacancy_interviewers|length != 1 %}disabled{% endif %}>
-                                    {% endfor %}
+                                           id="interviewer_input_user" 
+                                           value="user">
+                                    
+                                    <!-- Интервьюеры -->
+                                    {% if vacancy_interviewers %}
+                                        {% for interviewer in vacancy_interviewers %}
+                                        <button type="button" 
+                                                class="btn-interviewer-pill{% if vacancy_interviewers|length == 1 %} active{% endif %}" 
+                                                id="interviewer_{{ interviewer.id }}"
+                                                onclick="toggleInterviewer({{ interviewer.id }})"
+                                                data-interviewer-id="{{ interviewer.id }}"
+                                                data-bs-toggle="tooltip" 
+                                                data-bs-placement="top"
+                                                title="Выберите интервьюера: {{ interviewer.get_full_name }}{% if interviewer.email %} ({{ interviewer.email }}){% endif %}. Нажмите для выбора/отмены">
+                                            <span class="interviewer-name-full d-none d-md-inline">{{ interviewer.last_name }} {{ interviewer.first_name }}</span>
+                                            <span class="interviewer-name-short d-md-none">{{ interviewer.last_name }}</span>
+                                        </button>
+                                        <input type="hidden" 
+                                               name="interviewers" 
+                                               id="interviewer_input_{{ interviewer.id }}" 
+                                               value="{{ interviewer.id }}"
+                                               {% if vacancy_interviewers|length != 1 %}disabled{% endif %}>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
-                                {% else %}
-                                <div class="alert alert-info alert-sm">
+                                {% if not vacancy_interviewers %}
+                                <div class="alert alert-info alert-sm mt-2">
                                     <i class="fas fa-info-circle me-2"></i>
                                     Для этой вакансии не назначены интервьюеры. Добавьте их в настройках вакансии.
                                 </div>
@@ -3862,16 +3880,20 @@ if (interviewsDataElement) {
                     return;
                 }
                 
-                // Получаем выбранных интервьюеров
+                // Получаем выбранных участников (пользователь + интервьюеры)
                 const selectedInterviewers = [];
+                const includeUser = document.getElementById('interviewer_user')?.classList.contains('active') || false;
+                
                 document.querySelectorAll('.btn-interviewer-pill.active').forEach(button => {
                     const interviewerId = button.getAttribute('data-interviewer-id');
-                    if (interviewerId) {
+                    const isUser = button.getAttribute('data-is-user') === 'true';
+                    // Добавляем только интервьюеров (не пользователя, он обрабатывается отдельно)
+                    if (interviewerId && !isUser) {
                         selectedInterviewers.push(interviewerId);
                     }
                 });
                 
-                console.log(`🔍 [SLOTS] Выбранные интервьюеры: ${selectedInterviewers.length > 0 ? selectedInterviewers.join(', ') : 'нет (будут использованы обязательные)'}`);
+                console.log(`🔍 [SLOTS] Выбранные участники: пользователь=${includeUser ? 'да' : 'нет'}, интервьюеры=${selectedInterviewers.length > 0 ? selectedInterviewers.join(', ') : 'нет'}`);
                 
                 // Показываем индикатор загрузки (если есть элемент для этого)
                 const slotsCardBody = document.getElementById('slotsCardBody');
@@ -3890,9 +3912,10 @@ if (interviewsDataElement) {
                 }
                 
                 // Формируем URL для API
-                // Если интервьюеры не выбраны, отправляем пустую строку - API использует обязательных
+                // Передаем информацию о том, включен ли пользователь, и список интервьюеров
                 const interviewerIds = selectedInterviewers.length > 0 ? selectedInterviewers.join(',') : '';
-                const apiUrl = `/google-oauth/api/interview-slots/?vacancy_id=${vacancyId}&interviewer_ids=${interviewerIds}`;
+                const includeUserParam = includeUser ? '1' : '0';
+                const apiUrl = `/google-oauth/api/interview-slots/?vacancy_id=${vacancyId}&interviewer_ids=${interviewerIds}&include_user=${includeUserParam}`;
                 
                 console.log(`🔍 [SLOTS] Запрос к API: ${apiUrl}`);
                 
@@ -4017,7 +4040,17 @@ if (interviewsDataElement) {
             // Автоматическое выделение единственного интервьюера при загрузке страницы
             // и инициализация слотов для выбранных участников
             document.addEventListener('DOMContentLoaded', function() {
-                const interviewerPills = document.querySelectorAll('.btn-interviewer-pill');
+                // Пользователь всегда выбран по умолчанию
+                const userPill = document.getElementById('interviewer_user');
+                if (userPill && !userPill.classList.contains('active')) {
+                    userPill.classList.add('active');
+                    const userInput = document.getElementById('interviewer_input_user');
+                    if (userInput) {
+                        userInput.disabled = false;
+                    }
+                }
+                // Автоматически активируем единственного интервьюера (если есть только один, кроме пользователя)
+                const interviewerPills = document.querySelectorAll('.btn-interviewer-pill:not([data-is-user="true"])');
                 if (interviewerPills.length === 1) {
                     const singlePill = interviewerPills[0];
                     const interviewerId = singlePill.getAttribute('data-interviewer-id');
