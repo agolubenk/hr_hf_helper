@@ -154,6 +154,97 @@
   padding: 12px 0;
 }
 
+/* Социальные сети */
+.socialButtonWrapper {
+  position: relative;
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+}
+
+.socialButton {
+  transition: all 0.2s ease-in-out;
+  width: 35px;
+  height: 35px;
+  border-radius: 8px;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+
+.socialButton:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.socialEditButton {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  pointer-events: none;
+}
+
+.socialButtonWrapper:hover .socialEditButton {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.socialEditContainer {
+  animation: expandSocial 0.3s ease-in-out;
+  height: 35px !important;
+  box-sizing: border-box;
+}
+
+.socialEditInput :global(.rt-TextFieldRoot) {
+  height: 35px !important;
+  min-height: 35px !important;
+  max-height: 35px !important;
+  display: flex !important;
+  align-items: center !important;
+  overflow: hidden !important;
+  position: relative !important;
+  margin: 0 !important;
+}
+
+.socialEditInput :global(.rt-TextFieldInput) {
+  height: 35px !important;
+  min-height: 35px !important;
+  max-height: 35px !important;
+  padding-top: 12px !important;
+  padding-bottom: 2px !important;
+  padding-left: calc(0.5rem + 1px) !important;
+  padding-right: calc(0.5rem + 1px) !important;
+  font-size: calc(0.875rem + 1px) !important;
+  line-height: calc(0.875rem + 1px) !important;
+  box-sizing: border-box;
+  vertical-align: middle !important;
+  margin: 0 !important;
+  border: none !important;
+  position: relative !important;
+  top: -12px !important;
+}
+
+.socialEditInput :global(.rt-TextFieldSlot) {
+  padding: calc(0.25rem + 1px) calc(0.5rem + 1px) !important;
+  width: calc(1rem + 2px) !important;
+  height: calc(1rem + 2px) !important;
+}
+
+.socialEditInput :global(.rt-TextFieldSlot svg),
+.socialEditInput :global(.rt-TextFieldSlot *) {
+  width: calc(0.875rem + 1px) !important;
+  height: calc(0.875rem + 1px) !important;
+}
+
+@keyframes expandSocial {
+  from {
+    width: 48px;
+    opacity: 0.8;
+  }
+  to {
+    width: auto;
+    opacity: 1;
+  }
+}
+
 /* Адаптивность */
 @media (min-width: 800px) {
   .container {

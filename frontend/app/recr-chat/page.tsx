@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import AppLayout from "@/components/AppLayout"
 import WorkflowChat from "@/components/workflow/WorkflowChat"
 import { Box, Flex, Text, TextField, Button, Tabs, Badge, Avatar, Separator, Card, Table, Select } from "@radix-ui/themes"
@@ -22,8 +22,24 @@ import {
   PlusIcon,
   DownloadIcon,
   EyeOpenIcon,
-  Cross2Icon
+  Cross2Icon,
+  ExternalLinkIcon
 } from "@radix-ui/react-icons"
+import { 
+  BiLogoWhatsapp,
+  BiLogoTelegram,
+  BiLogoVk,
+  BiLogoLinkedin,
+  BiLogoDribbble,
+  BiLogoBehance,
+  BiLogoPinterest,
+  BiLogoGithub,
+  BiLogoInstagram,
+  BiLogoFacebook,
+  BiLogoTwitter,
+  BiCodeAlt
+} from "react-icons/bi"
+import { SiViber } from "react-icons/si"
 import styles from './recr-chat.module.css'
 
 // Моковые данные
@@ -40,7 +56,20 @@ const mockCandidates = [
     email: 'john@example.com',
     phone: '+1 (555) 123-4567',
     location: 'New York, USA',
+    // Социальные сети и мессенджеры
+    whatsapp: '+15551234567',
+    viber: '+15551234567',
+    telegram: '@johndoe',
+    vk: 'johndoe',
     linkedin: '/in/johndoe',
+    dribbble: 'johndoe',
+    behance: 'johndoe',
+    pinterest: 'johndoe',
+    habrCareer: 'johndoe',
+    github: 'johndoe',
+    instagram: '@johndoe',
+    facebook: 'johndoe',
+    twitter: '@johndoe',
     rating: 4,
     vacancy: 'Frontend Senior',
     applied: 'Jan 15, 2026',
@@ -58,7 +87,12 @@ const mockCandidates = [
     email: 'jane@example.com',
     phone: '+1 (555) 234-5678',
     location: 'San Francisco, USA',
+    // Социальные сети и мессенджеры
+    whatsapp: '+15552345678',
+    telegram: '@janesmith',
     linkedin: '/in/janesmith',
+    behance: 'janesmith',
+    habrCareer: 'janesmith',
     rating: 5,
     vacancy: 'Product Designer',
     applied: 'Jan 20, 2026',
@@ -76,7 +110,12 @@ const mockCandidates = [
     email: 'mike@example.com',
     phone: '+1 (555) 345-6789',
     location: 'Los Angeles, USA',
+    // Социальные сети и мессенджеры
     linkedin: '/in/mikechen',
+    dribbble: 'mikechen',
+    behance: 'mikechen',
+    pinterest: 'mikechen',
+    instagram: '@mikechen',
     rating: 3,
     vacancy: 'UI Designer',
     applied: 'Jan 18, 2026',
@@ -158,6 +197,54 @@ const mockHistory = [
   }
 ]
 
+// Функция для получения URL социальной сети
+const getSocialUrl = (platform: string, value: string): string => {
+  if (!value) return ''
+  
+  const cleanValue = value.replace(/^[@\/]/, '')
+  
+  const urls: Record<string, (val: string) => string> = {
+    whatsapp: (val) => `https://wa.me/${val.replace(/[^\d]/g, '')}`,
+    viber: (val) => `viber://chat?number=${val.replace(/[^\d]/g, '')}`,
+    telegram: (val) => `https://t.me/${cleanValue}`,
+    vk: (val) => `https://vk.com/${cleanValue}`,
+    linkedin: (val) => val.startsWith('http') ? val : `https://linkedin.com${val.startsWith('/') ? val : '/' + val}`,
+    dribbble: (val) => `https://dribbble.com/${cleanValue}`,
+    behance: (val) => `https://behance.net/${cleanValue}`,
+    pinterest: (val) => `https://pinterest.com/${cleanValue}`,
+    habrCareer: (val) => `https://career.habr.com/${cleanValue}`,
+    github: (val) => `https://github.com/${cleanValue}`,
+    instagram: (val) => `https://instagram.com/${cleanValue}`,
+    facebook: (val) => `https://facebook.com/${cleanValue}`,
+    twitter: (val) => `https://twitter.com/${cleanValue}`,
+  }
+  
+  return urls[platform]?.(value) || ''
+}
+
+// Функция для получения названия, цвета и иконки платформы
+const getPlatformInfo = (platform: string): { name: string; color: string; icon: React.ReactNode } => {
+  const iconSize = 16 // Размер для круглых кнопок 35x35 (уменьшен на 25%)
+  
+  const platforms: Record<string, { name: string; color: string; icon: React.ReactNode }> = {
+    whatsapp: { name: 'WhatsApp', color: '#25D366', icon: <BiLogoWhatsapp size={iconSize} /> },
+    viber: { name: 'Viber', color: '#665CAC', icon: <SiViber size={iconSize} /> },
+    telegram: { name: 'Telegram', color: '#0088cc', icon: <BiLogoTelegram size={iconSize} /> },
+    vk: { name: 'VK', color: '#0077FF', icon: <BiLogoVk size={iconSize} /> },
+    linkedin: { name: 'LinkedIn', color: '#0077B5', icon: <BiLogoLinkedin size={iconSize} /> },
+    dribbble: { name: 'Dribbble', color: '#EA4C89', icon: <BiLogoDribbble size={iconSize} /> },
+    behance: { name: 'Behance', color: '#1769FF', icon: <BiLogoBehance size={iconSize} /> },
+    pinterest: { name: 'Pinterest', color: '#BD081C', icon: <BiLogoPinterest size={iconSize} /> },
+    habrCareer: { name: 'Хабр Карьера', color: '#2A7DE1', icon: <BiCodeAlt size={iconSize} /> }, // Используем CodeAlt для Хабра
+    github: { name: 'GitHub', color: '#181717', icon: <BiLogoGithub size={iconSize} /> },
+    instagram: { name: 'Instagram', color: '#E4405F', icon: <BiLogoInstagram size={iconSize} /> },
+    facebook: { name: 'Facebook', color: '#1877F2', icon: <BiLogoFacebook size={iconSize} /> },
+    twitter: { name: 'Twitter', color: '#1DA1F2', icon: <BiLogoTwitter size={iconSize} /> },
+  }
+  
+  return platforms[platform] || { name: platform, color: '#6B7280', icon: <ExternalLinkIcon width={iconSize} height={iconSize} /> }
+}
+
 export default function RecrChatPage() {
   const [leftTab, setLeftTab] = useState<'candidates' | 'chat' | 'vacancy-settings'>('candidates')
   const [rightTab, setRightTab] = useState<'info' | 'history' | 'activity' | 'documents'>('info')
@@ -168,6 +255,70 @@ export default function RecrChatPage() {
   
   // Настройки вакансии
   const [selectedSettingTab, setSelectedSettingTab] = useState<'text' | 'recruiters' | 'customers' | 'questions' | 'integrations' | 'statuses' | 'salary'>('text')
+  
+  // Состояние редактирования социальных сетей
+  const [editingSocial, setEditingSocial] = useState<string | null>(null)
+  const [socialValues, setSocialValues] = useState<Record<string, string>>({})
+  
+  // Получить все социальные сети (включая те, у которых нет контакта)
+  const getAllSocialNetworks = () => {
+    const socialPlatforms = ['whatsapp', 'viber', 'telegram', 'vk', 'linkedin', 'dribbble', 'behance', 'pinterest', 'habrCareer', 'github', 'instagram', 'facebook', 'twitter'] as const
+    return socialPlatforms.map(platform => {
+      const value = socialValues[platform] || selectedCandidate[platform as keyof typeof selectedCandidate]
+      const hasContact = value && typeof value === 'string' && value.trim() !== ''
+      return {
+        platform,
+        value: hasContact ? (value as string) : '',
+        hasContact,
+        ...getPlatformInfo(platform)
+      }
+    })
+  }
+  
+  // Инициализация значений социальных сетей
+  useEffect(() => {
+    const values: Record<string, string> = {}
+    const socialPlatforms = ['whatsapp', 'viber', 'telegram', 'vk', 'linkedin', 'dribbble', 'behance', 'pinterest', 'habrCareer', 'github', 'instagram', 'facebook', 'twitter'] as const
+    socialPlatforms.forEach(platform => {
+      const value = selectedCandidate[platform as keyof typeof selectedCandidate]
+      values[platform] = (value && typeof value === 'string') ? value : ''
+    })
+    setSocialValues(values)
+  }, [selectedCandidate])
+  
+  const handleSocialEdit = (platform: string) => {
+    setEditingSocial(platform)
+  }
+  
+  const handleSocialSave = (platform: string) => {
+    // TODO: Сохранить значение в базу данных
+    // Пока просто обновляем локальное состояние
+    const newValue = socialValues[platform] || ''
+    setSelectedCandidate(prev => ({
+      ...prev,
+      [platform]: newValue
+    }))
+    setEditingSocial(null)
+  }
+  
+  const handleSocialCancel = () => {
+    // Восстанавливаем исходное значение
+    const originalValue = selectedCandidate[editingSocial as keyof typeof selectedCandidate] as string || ''
+    setSocialValues(prev => ({ ...prev, [editingSocial!]: originalValue }))
+    setEditingSocial(null)
+  }
+  
+  const handleSocialValueChange = (platform: string, value: string) => {
+    setSocialValues(prev => ({ ...prev, [platform]: value }))
+  }
+  
+  const handleSocialInputKeyDown = (e: React.KeyboardEvent, platform: string) => {
+    if (e.key === 'Enter') {
+      handleSocialSave(platform)
+    } else if (e.key === 'Escape') {
+      handleSocialCancel()
+    }
+  }
   
   useEffect(() => {
     const checkMobile = () => {
@@ -426,24 +577,6 @@ export default function RecrChatPage() {
               </Badge>
             </Flex>
 
-            <Flex align="center" gap="2">
-              <Text size="2" weight="medium">Rating:</Text>
-              <Flex gap="1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <StarIcon
-                    key={star}
-                    width={16}
-                    height={16}
-                    style={{
-                      color: star <= selectedCandidate.rating ? '#F59E0B' : '#E5E7EB',
-                      fill: star <= selectedCandidate.rating ? '#F59E0B' : 'none'
-                    }}
-                  />
-                ))}
-              </Flex>
-              <Text size="2" color="gray">({selectedCandidate.rating}/5)</Text>
-            </Flex>
-
             <Badge size="2" color="blue">
               🎯 {selectedCandidate.vacancy} · {selectedCandidate.status}
             </Badge>
@@ -465,54 +598,235 @@ export default function RecrChatPage() {
                 <Flex direction="column" gap="4">
                   <Box>
                     <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>
-                      Personal Information
+                      Контакты
                     </Text>
-                    <Table.Root>
-                      <Table.Body>
-                        <Table.Row>
-                          <Table.Cell>
-                            <Text size="2" weight="medium">Email:</Text>
-                          </Table.Cell>
-                          <Table.Cell>
-                            <Flex align="center" gap="2">
-                              <Text size="2">{selectedCandidate.email}</Text>
-                              <Button size="1" variant="soft">Copy</Button>
-                              <Button size="1" variant="soft">
-                                <EnvelopeClosedIcon width={14} height={14} />
+                    
+                    {/* Email */}
+                    <Box mb="3">
+                      <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                        <EnvelopeClosedIcon width={16} height={16} style={{ flexShrink: 0 }} />
+                        <Text size="2" weight="medium" style={{ flexShrink: 0 }}>Email:</Text>
+                        <Text size="2" style={{ flex: 1, minWidth: 0 }}>{selectedCandidate.email}</Text>
+                        <Button 
+                          size="1" 
+                          variant="soft"
+                          onClick={() => {
+                            navigator.clipboard.writeText(selectedCandidate.email)
+                          }}
+                          style={{ flexShrink: 0 }}
+                        >
+                          Copy
+                        </Button>
+                        <Button 
+                          size="1" 
+                          variant="soft"
+                          asChild
+                          style={{ flexShrink: 0 }}
+                        >
+                          <a href={`mailto:${selectedCandidate.email}`} style={{ textDecoration: 'none' }}>
+                            <EnvelopeClosedIcon width={14} height={14} />
+                          </a>
+                        </Button>
+                      </Flex>
+                    </Box>
+                    
+                    {/* Phone */}
+                    <Box mb="3">
+                      <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                        <Text size="2" weight="medium" style={{ flexShrink: 0 }}>📞 Телефон:</Text>
+                        <Text size="2" style={{ flex: 1, minWidth: 0 }}>{selectedCandidate.phone}</Text>
+                        <Button 
+                          size="1" 
+                          variant="soft"
+                          onClick={() => {
+                            navigator.clipboard.writeText(selectedCandidate.phone)
+                          }}
+                          style={{ flexShrink: 0 }}
+                        >
+                          Copy
+                        </Button>
+                        <Button 
+                          size="1" 
+                          variant="soft"
+                          asChild
+                          style={{ flexShrink: 0 }}
+                        >
+                          <a href={`tel:${selectedCandidate.phone.replace(/[^\d+]/g, '')}`} style={{ textDecoration: 'none' }}>
+                            Call
+                          </a>
+                        </Button>
+                      </Flex>
+                    </Box>
+                    
+                    {/* Location */}
+                    <Box mb="4">
+                      <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                        <Text size="2" weight="medium" style={{ flexShrink: 0 }}>📍 Локация:</Text>
+                        <Text size="2" style={{ flex: 1, minWidth: 0 }}>{selectedCandidate.location}</Text>
+                      </Flex>
+                    </Box>
+                    
+                    <Separator size="4" mb="3" />
+                    
+                    {/* Социальные сети и мессенджеры */}
+                    <Box>
+                      <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>
+                        Социальные сети и мессенджеры
+                      </Text>
+                      <Flex gap="2" wrap="wrap" style={{ alignItems: 'flex-start' }}>
+                        {getAllSocialNetworks().map((social) => {
+                          const isEditing = editingSocial === social.platform
+                          const currentValue = socialValues[social.platform] || ''
+                          const url = social.hasContact && !isEditing ? getSocialUrl(social.platform, currentValue) : '#'
+                          
+                          if (isEditing) {
+                            return (
+                              <Box
+                                key={social.platform}
+                                className={styles.socialEditContainer}
+                                  style={{
+                                    backgroundColor: social.color,
+                                    borderRadius: '8px',
+                                    padding: '0 12px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    minWidth: '200px',
+                                    height: '35px',
+                                    transition: 'all 0.3s ease-in-out',
+                                }}
+                              >
+                                <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', width: '16px', height: '16px' }}>
+                                  {social.icon}
+                                </Box>
+                                <TextField.Root
+                                  value={currentValue}
+                                  onChange={(e) => handleSocialValueChange(social.platform, e.target.value)}
+                                  onKeyDown={(e) => handleSocialInputKeyDown(e, social.platform)}
+                                  placeholder={`Введите ${social.name}`}
+                                  style={{ flex: 1, minWidth: '150px', margin: 0 }}
+                                  size="1"
+                                  className={styles.socialEditInput}
+                                  autoFocus
+                                />
+                                <Button
+                                  size="1"
+                                  variant="ghost"
+                                  onClick={handleSocialCancel}
+                                  style={{
+                                    borderRadius: '2px',
+                                    width: '16px',
+                                    height: '16px',
+                                    padding: 0,
+                                    minWidth: '16px',
+                                    color: 'white',
+                                  }}
+                                >
+                                  <Cross2Icon width={10} height={10} />
+                                </Button>
+                              </Box>
+                            )
+                          }
+                          
+                          return (
+                            <Box
+                              key={social.platform}
+                              className={styles.socialButtonWrapper}
+                              style={{ position: 'relative' }}
+                            >
+                              {social.hasContact ? (
+                                <Box
+                                  asChild
+                                  className={styles.socialButton}
+                                  style={{
+                                    borderRadius: '8px',
+                                    width: '35px',
+                                    height: '35px',
+                                    backgroundColor: social.color,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease-in-out',
+                                    flexShrink: 0,
+                                  }}
+                                >
+                                  <a 
+                                    href={url} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    style={{ 
+                                      textDecoration: 'none',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      width: '35px',
+                                      height: '35px',
+                                      color: 'white',
+                                      borderRadius: '8px',
+                                    }}
+                                  >
+                                    {social.icon}
+                                  </a>
+                                </Box>
+                              ) : (
+                                <Box
+                                  className={styles.socialButton}
+                                  style={{
+                                    borderRadius: '8px',
+                                    width: '35px',
+                                    height: '35px',
+                                    backgroundColor: 'var(--gray-4)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    opacity: 0.5,
+                                    flexShrink: 0,
+                                    cursor: 'not-allowed',
+                                  }}
+                                >
+                                  <Box style={{ 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center', 
+                                    width: '35px',
+                                    height: '35px',
+                                    color: 'var(--gray-9)' 
+                                  }}>
+                                    {social.icon}
+                                  </Box>
+                                </Box>
+                              )}
+                              <Button
+                                size="1"
+                                variant="solid"
+                                className={styles.socialEditButton}
+                                onClick={() => handleSocialEdit(social.platform)}
+                                style={{
+                                  position: 'absolute',
+                                  top: '-4px',
+                                  right: '-4px',
+                                  borderRadius: '2px',
+                                  width: '16px',
+                                  height: '16px',
+                                  padding: 0,
+                                  minWidth: '16px',
+                                  backgroundColor: 'var(--accent-9)',
+                                  color: 'white',
+                                  border: '2px solid var(--color-surface)',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  zIndex: 10,
+                                }}
+                              >
+                                <Pencil1Icon width={8} height={8} />
                               </Button>
-                            </Flex>
-                          </Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                          <Table.Cell>
-                            <Text size="2" weight="medium">Phone:</Text>
-                          </Table.Cell>
-                          <Table.Cell>
-                            <Flex align="center" gap="2">
-                              <Text size="2">{selectedCandidate.phone}</Text>
-                              <Button size="1" variant="soft">Copy</Button>
-                              <Button size="1" variant="soft">Call</Button>
-                            </Flex>
-                          </Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                          <Table.Cell>
-                            <Text size="2" weight="medium">Location:</Text>
-                          </Table.Cell>
-                          <Table.Cell>
-                            <Text size="2">{selectedCandidate.location}</Text>
-                          </Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                          <Table.Cell>
-                            <Text size="2" weight="medium">LinkedIn:</Text>
-                          </Table.Cell>
-                          <Table.Cell>
-                            <Text size="2">{selectedCandidate.linkedin}</Text>
-                          </Table.Cell>
-                        </Table.Row>
-                      </Table.Body>
-                    </Table.Root>
+                            </Box>
+                          )
+                        })}
+                      </Flex>
+                    </Box>
                   </Box>
 
                   <Box>
