@@ -1350,15 +1350,21 @@ function updateSlotsForTimezone() {
             window.originalScreeningSlots = JSON.parse(JSON.stringify(window.screeningSlots));
         }
         originalSlots = window.originalScreeningSlots;
-    } else if (meetingType === 'interview' && window.interviewSlots) {
-        // Сохраняем исходные слоты в Минске (если еще не сохранены)
-        if (!window.originalInterviewSlots) {
+    } else if (meetingType === 'interview') {
+        // Для интервью всегда используем сохраненные исходные слоты в Минске
+        // Они должны быть сохранены при обновлении через API
+        if (window.originalInterviewSlots && window.originalInterviewSlots.length > 0) {
+            originalSlots = window.originalInterviewSlots;
+            console.log('✅ [TIMEZONE] Используем сохраненные исходные слоты интервью в Минске');
+        } else if (window.interviewSlots && window.interviewSlots.length > 0) {
+            // Если исходные слоты не сохранены, сохраняем текущие как исходные
             window.originalInterviewSlots = JSON.parse(JSON.stringify(window.interviewSlots));
+            originalSlots = window.originalInterviewSlots;
+            console.log('💾 [TIMEZONE] Сохранены текущие слоты интервью как исходные в Минске');
         }
-        originalSlots = window.originalInterviewSlots;
     }
     
-    // Если нет исходных слотов, используем текущие
+    // Если нет исходных слотов, используем текущие (fallback)
     if (originalSlots.length === 0) {
         if (meetingType === 'screening' && window.screeningSlots) {
             originalSlots = window.screeningSlots;

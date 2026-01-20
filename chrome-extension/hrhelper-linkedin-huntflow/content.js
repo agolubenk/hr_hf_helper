@@ -37,7 +37,7 @@ const STATE = {
   statusInFlight: null,
   messagingProfileCache: null, // Кэш для профиля на messaging-странице
   statusCache: new Map(), // Кэш статусов профилей (linkedin_url -> {status, timestamp})
-  CACHE_TTL: 5 * 60 * 1000, // 5 минут
+  CACHE_TTL: 2 * 60 * 1000, // 2 минуты (уменьшено для более частого обновления статуса)
 };
 
 function normalizeLinkedInProfileUrl(url) {
@@ -275,10 +275,10 @@ function createWidget(anchorEl, container, isMessaging = false) {
   
   if (isMessaging) {
     // На странице messaging — блок над формой ввода
-    wrapper.style.cssText = "padding:12px 16px;border-bottom:1px solid rgba(0,0,0,.08);background:#f3f6f8;display:flex;align-items:center;gap:8px;";
+    wrapper.style.cssText = "padding:12px 16px;border-bottom:1px solid rgba(0,0,0,.08);background:#f3f6f8;display:flex;align-items:center;gap:8px;position:relative;";
   } else {
     // На странице профиля — inline рядом с кнопкой More
-    wrapper.style.cssText = "margin-left:8px;display:inline-flex;align-items:center;gap:6px;";
+    wrapper.style.cssText = "margin-left:8px;display:inline-flex;align-items:center;gap:6px;position:relative;";
   }
 
   const btn = document.createElement("button");
@@ -307,6 +307,22 @@ function createWidget(anchorEl, container, isMessaging = false) {
   editBtn.style.cssText = "display:none;width:32px;height:32px;border-radius:50%;border:1px solid rgba(0,0,0,.15);background:#dc3545;color:#fff;font-size:14px;cursor:pointer;padding:0;line-height:1;";
   editBtn.addEventListener("click", onEditClick);
   wrapper.appendChild(editBtn);
+  
+  // Кнопка изменения статуса (только в режиме "open")
+  const statusBtn = document.createElement("button");
+  statusBtn.type = "button";
+  statusBtn.className = "hrhelper-status-btn";
+  statusBtn.innerHTML = "🔄"; // Иконка обновления
+  statusBtn.title = "Изменить статус";
+  statusBtn.style.cssText = "display:none;width:32px;height:32px;border-radius:50%;border:1px solid rgba(0,0,0,.15);background:#17a2b8;color:#fff;font-size:14px;cursor:pointer;padding:0;line-height:1;";
+  statusBtn.addEventListener("click", onStatusClick);
+  wrapper.appendChild(statusBtn);
+  
+  // Контейнер для выпадающих списков статуса
+  const statusDropdown = document.createElement("div");
+  statusDropdown.className = "hrhelper-status-dropdown";
+  statusDropdown.style.cssText = "display:none;position:absolute;background:#fff;border:1px solid rgba(0,0,0,.2);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.15);z-index:10000;min-width:200px;max-width:300px;margin-top:4px;";
+  wrapper.appendChild(statusDropdown);
 
   const inputGroup = document.createElement("div");
   inputGroup.className = "hrhelper-input-group";
@@ -358,12 +374,12 @@ function createWidget(anchorEl, container, isMessaging = false) {
     container.insertBefore(wrapper, anchorEl.nextSibling);
   }
 
-  return { wrapper, btn, input, inputGroup, saveBtn, cancelBtn, editBtn, copyBtn };
+  return { wrapper, btn, input, inputGroup, saveBtn, cancelBtn, editBtn, copyBtn, statusBtn, statusDropdown };
 }
 
 function updateWidget(widgets, force) {
   if (!widgets) return;
-  const { btn, input, inputGroup, saveBtn, cancelBtn, editBtn, copyBtn } = widgets;
+  const { btn, input, inputGroup, saveBtn, cancelBtn, editBtn, copyBtn, statusBtn, statusDropdown } = widgets;
   if (!btn || !input || !saveBtn || !inputGroup) return;
 
   const stateKey = STATE.current.mode + '|' + (STATE.current.appUrl || '') + STATE.current.disabled;
@@ -388,6 +404,16 @@ function updateWidget(widgets, force) {
     if (editBtn) {
       editBtn.style.display = "block";
     }
+    
+    // Показываем кнопку изменения статуса (только если есть app_url)
+    if (statusBtn) {
+      statusBtn.style.display = STATE.current.appUrl ? "block" : "none";
+    }
+    
+    // Скрываем выпадающий список статуса
+    if (statusDropdown) {
+      statusDropdown.style.display = "none";
+    }
   } else {
     btn.style.display = "none";
     inputGroup.style.display = "flex";
@@ -410,6 +436,16 @@ function updateWidget(widgets, force) {
     // Скрываем кнопку копирования
     if (copyBtn) {
       copyBtn.style.display = "none";
+    }
+    
+    // Скрываем кнопку изменения статуса
+    if (statusBtn) {
+      statusBtn.style.display = "none";
+    }
+    
+    // Скрываем выпадающий список статуса
+    if (statusDropdown) {
+      statusDropdown.style.display = "none";
     }
   }
 }
@@ -574,15 +610,29 @@ async function apiFetch(path, init) {
   };
 }
 
-async function checkStatus(linkedinUrl) {
-  // Проверяем кэш
-  const cached = getCachedStatus(linkedinUrl);
-  if (cached) {
-    return cached;
+async function checkStatus(linkedinUrl, forceRefresh = false) {
+  // Проверяем кэш только если не требуется принудительное обновление
+  if (!forceRefresh) {
+    const cached = getCachedStatus(linkedinUrl);
+    if (cached) {
+      return cached;
+    }
+  } else {
+    // При принудительном обновлении очищаем кэш
+    try {
+      const cacheKey = `hrhelper_status_${linkedinUrl}`;
+      localStorage.removeItem(cacheKey);
+      log(' Cache cleared for force refresh');
+    } catch (e) {
+      // Игнорируем ошибки
+    }
   }
   
   // Запрашиваем с сервера
   const qp = new URLSearchParams({ linkedin_url: linkedinUrl });
+  if (forceRefresh) {
+    qp.append('force_refresh', 'true');
+  }
   const res = await apiFetch('/api/v1/huntflow/linkedin-applicants/status/?' + qp.toString(), { method: "GET" });
 
   if (res.status === 401 || res.status === 403) {
@@ -616,8 +666,11 @@ async function setLink(linkedinUrl, targetUrl) {
   }
   
   // Обновляем кэш после сохранения
+  // Сохраняем данные, но с пометкой времени, чтобы при следующей проверке
+  // (если прошло больше 30 секунд) было принудительное обновление
   if (data && data.success) {
     setCachedStatus(linkedinUrl, data);
+    log(' Cache updated after saving link');
   }
   
   return data;
@@ -667,17 +720,42 @@ async function refreshButtonForCurrentProfile() {
   }
   
   // Проверяем кэш для мгновенного отображения
+  // При перезагрузке страницы делаем принудительное обновление, если кэш старше 30 секунд
   const cached = getCachedStatus(canonical);
-  if (cached && cached.exists !== undefined) {
+  let shouldForceRefresh = false;
+  if (cached) {
+    try {
+      const cacheKey = `hrhelper_status_${canonical}`;
+      const cachedData = localStorage.getItem(cacheKey);
+      if (cachedData) {
+        const { timestamp } = JSON.parse(cachedData);
+        const age = Date.now() - timestamp;
+        // Если кэш старше 30 секунд, делаем принудительное обновление при перезагрузке
+        if (age > 30 * 1000) {
+          shouldForceRefresh = true;
+          log(' Cache is older than 30 seconds, forcing refresh');
+        }
+      }
+    } catch (e) {
+      // Игнорируем ошибки
+    }
+  }
+  
+  if (cached && cached.exists !== undefined && !shouldForceRefresh) {
     log(' Using cached status for instant display');
     STATE.current.show = true;
     if (cached.exists && cached.app_url) {
       STATE.current.mode = "open";
       STATE.current.appUrl = cached.app_url;
       STATE.current.disabled = false;
-      const buttonText = cached.vacancy_name 
-        ? `Huntflow | ${cached.vacancy_name}` 
-        : "Huntflow";
+      // Формируем текст кнопки: "Huntflow | Название вакансии | Статус"
+      let buttonText = "Huntflow";
+      if (cached.vacancy_name) {
+        buttonText = `Huntflow | ${cached.vacancy_name}`;
+        if (cached.status_name) {
+          buttonText += ` | ${cached.status_name}`;
+        }
+      }
       setButtonState({ text: buttonText, disabled: false, title: "Открыть в Huntflow", color: "#0a66c2" });
     } else {
       STATE.current.mode = "input";
@@ -704,7 +782,8 @@ async function refreshButtonForCurrentProfile() {
   
   if (!STATE.statusInFlight) {
     STATE.apiCallsThisProfile += 1;
-    STATE.statusInFlight = checkStatus(canonical).finally(() => {
+    // Используем принудительное обновление, если кэш устарел
+    STATE.statusInFlight = checkStatus(canonical, shouldForceRefresh).finally(() => {
       STATE.statusInFlight = null;
     });
   }
@@ -728,15 +807,19 @@ async function refreshButtonForCurrentProfile() {
   STATE.current.show = true;
   if (status.exists && status.app_url) {
     log(' Candidate exists, showing button');
-    log(' Status data:', { vacancy_name: status.vacancy_name, app_url: status.app_url });
+    log(' Status data:', { vacancy_name: status.vacancy_name, status_name: status.status_name, app_url: status.app_url });
     STATE.current.mode = "open";
     STATE.current.appUrl = status.app_url;
     STATE.current.disabled = false;
     
-    // Формируем текст кнопки: "Huntflow | Название вакансии" или просто "Huntflow"
-    const buttonText = status.vacancy_name 
-      ? `Huntflow | ${status.vacancy_name}` 
-      : "Huntflow";
+    // Формируем текст кнопки: "Huntflow | Название вакансии | Статус"
+    let buttonText = "Huntflow";
+    if (status.vacancy_name) {
+      buttonText = `Huntflow | ${status.vacancy_name}`;
+      if (status.status_name) {
+        buttonText += ` | ${status.status_name}`;
+      }
+    }
     
     log(' Button text:', buttonText);
     setButtonState({ text: buttonText, disabled: false, title: "Открыть в Huntflow", color: "#0a66c2" });
@@ -830,10 +913,14 @@ async function onSaveLinkClick() {
     STATE.current.title = "Открыть в Huntflow";
     STATE.current.disabled = false;
     
-    // Обновляем текст кнопки с названием вакансии, если есть
-    const buttonText = saved.vacancy_name 
-      ? `Huntflow | ${saved.vacancy_name}` 
-      : "Huntflow";
+    // Обновляем текст кнопки с названием вакансии и статусом, если есть
+    let buttonText = "Huntflow";
+    if (saved.vacancy_name) {
+      buttonText = `Huntflow | ${saved.vacancy_name}`;
+      if (saved.status_name) {
+        buttonText += ` | ${saved.status_name}`;
+      }
+    }
     log(' Button text after save:', buttonText);
     setButtonState({ text: buttonText, disabled: false, title: "Открыть в Huntflow", color: "#0a66c2" });
     
@@ -945,6 +1032,303 @@ async function onCopyClick(e) {
       error(' Fallback copy also failed:', fallbackErr);
     }
     document.body.removeChild(textArea);
+  }
+}
+
+async function onStatusClick(e) {
+  e.stopPropagation();
+  
+  log(' Status button clicked');
+  
+  let canonical = normalizeLinkedInProfileUrl(location.href);
+  if (!canonical && IS_MESSAGING_PAGE) {
+    try {
+      canonical = await getProfileLinkFromMessaging();
+    } catch (e) {
+      error(' Error getting profile from messaging:', e);
+    }
+  }
+  
+  if (!canonical) {
+    error(' No canonical URL found');
+    return;
+  }
+  
+  // Находим выпадающий список для этого виджета
+  const statusBtn = e.target.closest('.hrhelper-status-btn');
+  if (!statusBtn) return;
+  
+  const wrapper = statusBtn.closest('[data-hrhelper-huntflow="1"]');
+  if (!wrapper) return;
+  
+  const statusDropdown = wrapper.querySelector('.hrhelper-status-dropdown');
+  if (!statusDropdown) return;
+  
+  // Переключаем видимость выпадающего списка
+  const isVisible = statusDropdown.style.display !== 'none';
+  if (isVisible) {
+    statusDropdown.style.display = 'none';
+    return;
+  }
+  
+  // Показываем загрузку
+  statusDropdown.innerHTML = '<div style="padding:12px;text-align:center;color:#666;">Загрузка...</div>';
+  statusDropdown.style.display = 'block';
+  
+  // Позиционируем выпадающий список
+  const rect = statusBtn.getBoundingClientRect();
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  
+  let left = rect.left + window.scrollX;
+  let top = rect.bottom + window.scrollY + 4;
+  
+  // Проверяем, не выходит ли список за правую границу экрана
+  if (left + 300 > viewportWidth) {
+    left = viewportWidth - 300 - 10;
+  }
+  
+  // Проверяем, не выходит ли список за нижнюю границу экрана
+  if (top + 300 > viewportHeight + window.scrollY) {
+    top = rect.top + window.scrollY - 300 - 4;
+  }
+  
+  statusDropdown.style.position = 'fixed';
+  statusDropdown.style.top = `${top}px`;
+  statusDropdown.style.left = `${left}px`;
+  
+  try {
+    // Получаем список статусов и причин отказа
+    const qp = new URLSearchParams({ linkedin_url: canonical });
+    const res = await apiFetch('/api/v1/huntflow/linkedin-applicants/status-options/?' + qp.toString(), { method: "GET" });
+    
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      statusDropdown.innerHTML = `<div style="padding:12px;color:#dc3545;">Ошибка: ${data?.message || 'Не удалось загрузить статусы'}</div>`;
+      return;
+    }
+    
+    const data = await res.json().catch(() => null);
+    if (!data || !data.success) {
+      statusDropdown.innerHTML = '<div style="padding:12px;color:#dc3545;">Ошибка загрузки статусов</div>';
+      return;
+    }
+    
+    const statuses = data.statuses || [];
+    const rejectionReasons = data.rejection_reasons || [];
+    
+    // Создаем выпадающий список
+    createStatusDropdown(statusDropdown, statuses, rejectionReasons, canonical);
+    
+    // Закрываем выпадающий список при клике вне его
+    setTimeout(() => {
+      const closeHandler = (event) => {
+        if (!statusDropdown.contains(event.target) && !statusBtn.contains(event.target)) {
+          statusDropdown.style.display = 'none';
+          document.removeEventListener('click', closeHandler);
+        }
+      };
+      document.addEventListener('click', closeHandler);
+    }, 100);
+    
+  } catch (err) {
+    error(' Error loading status options:', err);
+    statusDropdown.innerHTML = '<div style="padding:12px;color:#dc3545;">Ошибка загрузки</div>';
+  }
+}
+
+function createStatusDropdown(container, statuses, rejectionReasons, linkedinUrl) {
+  // Сохраняем данные в контейнере для возможности возврата
+  container.dataset.statuses = JSON.stringify(statuses);
+  container.dataset.rejectionReasons = JSON.stringify(rejectionReasons);
+  container.dataset.linkedinUrl = linkedinUrl;
+  container.dataset.currentView = 'statuses';
+  
+  showStatusesList(container, statuses, rejectionReasons, linkedinUrl);
+}
+
+function showStatusesList(container, statuses, rejectionReasons, linkedinUrl) {
+  container.innerHTML = '';
+  container.dataset.currentView = 'statuses';
+  
+  if (statuses.length === 0) {
+    container.innerHTML = '<div style="padding:12px;color:#666;">Нет доступных статусов</div>';
+    return;
+  }
+  
+  // Создаем список статусов
+  const statusList = document.createElement('div');
+  statusList.style.cssText = "max-height:300px;overflow-y:auto;";
+  
+  statuses.forEach(status => {
+    const statusItem = document.createElement('div');
+    statusItem.className = 'hrhelper-status-item';
+    statusItem.dataset.statusId = status.id;
+    statusItem.dataset.statusName = status.name || '';
+    statusItem.style.cssText = "padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,.05);";
+    statusItem.textContent = status.name || `Статус #${status.id}`;
+    
+    // Определяем, является ли статус отказом
+    // Проверяем тип статуса и название
+    const statusType = status.type || '';
+    const statusName = (status.name || '').toLowerCase();
+    const isRejection = statusType === 'rejected' || 
+                       statusType === 'rejection' ||
+                       statusName.includes('отказ') || 
+                       statusName.includes('reject') ||
+                       statusName.includes('rejected') ||
+                       statusName.includes('отклонен');
+    
+    if (isRejection && rejectionReasons.length > 0) {
+      // Для статуса отказа при клике показываем список причин отказа
+      statusItem.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showRejectionReasonsList(container, rejectionReasons, status.id, linkedinUrl);
+      });
+    } else {
+      // Для обычных статусов добавляем обработчик клика
+      statusItem.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        await updateStatus(linkedinUrl, status.id, null);
+        container.style.display = 'none';
+      });
+    }
+    
+    statusItem.addEventListener('mouseenter', () => {
+      statusItem.style.background = '#f0f0f0';
+    });
+    
+    statusItem.addEventListener('mouseleave', () => {
+      statusItem.style.background = '';
+    });
+    
+    statusList.appendChild(statusItem);
+  });
+  
+  container.appendChild(statusList);
+}
+
+function showRejectionReasonsList(container, rejectionReasons, statusId, linkedinUrl) {
+  container.innerHTML = '';
+  container.dataset.currentView = 'rejection_reasons';
+  container.dataset.selectedStatusId = statusId;
+  
+  if (rejectionReasons.length === 0) {
+    container.innerHTML = '<div style="padding:12px;color:#666;">Нет доступных причин отказа</div>';
+    return;
+  }
+  
+  // Кнопка "Назад"
+  const backButton = document.createElement('div');
+  backButton.className = 'hrhelper-back-button';
+  backButton.style.cssText = "padding:8px 12px;cursor:pointer;border-bottom:2px solid rgba(0,0,0,.1);background:#f8f9fa;font-weight:600;display:flex;align-items:center;gap:8px;";
+  backButton.innerHTML = '← Назад';
+  
+  backButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const statuses = JSON.parse(container.dataset.statuses || '[]');
+    const rejectionReasonsData = JSON.parse(container.dataset.rejectionReasons || '[]');
+    const linkedinUrlData = container.dataset.linkedinUrl;
+    showStatusesList(container, statuses, rejectionReasonsData, linkedinUrlData);
+  });
+  
+  backButton.addEventListener('mouseenter', () => {
+    backButton.style.background = '#e9ecef';
+  });
+  
+  backButton.addEventListener('mouseleave', () => {
+    backButton.style.background = '#f8f9fa';
+  });
+  
+  container.appendChild(backButton);
+  
+  // Создаем список причин отказа
+  const reasonsList = document.createElement('div');
+  reasonsList.style.cssText = "max-height:300px;overflow-y:auto;";
+  
+  rejectionReasons.forEach(reason => {
+    const reasonItem = document.createElement('div');
+    reasonItem.className = 'hrhelper-rejection-reason-item';
+    reasonItem.dataset.reasonId = reason.id;
+    reasonItem.style.cssText = "padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,.05);";
+    reasonItem.textContent = reason.name || `Причина #${reason.id}`;
+    
+    reasonItem.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      await updateStatus(linkedinUrl, statusId, reason.id);
+      container.style.display = 'none';
+    });
+    
+    reasonItem.addEventListener('mouseenter', () => {
+      reasonItem.style.background = '#f0f0f0';
+    });
+    
+    reasonItem.addEventListener('mouseleave', () => {
+      reasonItem.style.background = '';
+    });
+    
+    reasonsList.appendChild(reasonItem);
+  });
+  
+  container.appendChild(reasonsList);
+}
+
+
+async function updateStatus(linkedinUrl, statusId, rejectionReasonId) {
+  log(' Updating status:', { linkedinUrl, statusId, rejectionReasonId });
+  
+  try {
+    const res = await apiFetch('/api/v1/huntflow/linkedin-applicants/update-status/', {
+      method: "POST",
+      body: JSON.stringify({
+        linkedin_url: linkedinUrl,
+        status_id: statusId,
+        rejection_reason_id: rejectionReasonId || null
+      })
+    });
+    
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      error(' Failed to update status:', data?.message || 'Unknown error');
+      alert(`Ошибка обновления статуса: ${data?.message || 'Неизвестная ошибка'}`);
+      return;
+    }
+    
+    const data = await res.json().catch(() => null);
+    if (data && data.success) {
+      log(' Status updated successfully');
+      
+      // Очищаем кэш и обновляем статус
+      try {
+        const cacheKey = `hrhelper_status_${linkedinUrl}`;
+        localStorage.removeItem(cacheKey);
+      } catch (e) {
+        // Игнорируем ошибки
+      }
+      
+      // Обновляем кнопку с новым статусом
+      STATE.statusFetchedFor = null;
+      STATE.apiCallsThisProfile = 0;
+      await refreshButtonForCurrentProfile();
+      
+      // Показываем уведомление об успехе
+      const statusBtn = document.querySelector('.hrhelper-status-btn');
+      if (statusBtn) {
+        const originalHTML = statusBtn.innerHTML;
+        statusBtn.innerHTML = "✓";
+        statusBtn.style.background = "#28a745";
+        setTimeout(() => {
+          statusBtn.innerHTML = originalHTML;
+          statusBtn.style.background = "#17a2b8";
+        }, 2000);
+      }
+    } else {
+      error(' Status update failed:', data);
+      alert('Не удалось обновить статус');
+    }
+  } catch (err) {
+    error(' Exception updating status:', err);
+    alert(`Ошибка: ${err.message || String(err)}`);
   }
 }
 

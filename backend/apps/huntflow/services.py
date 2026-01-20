@@ -1098,7 +1098,7 @@ class HuntflowService:
         
         return result
     
-    def update_applicant_status(self, account_id: int, applicant_id: int, status_id: int, comment: str = None, vacancy_id: int = None) -> Optional[Dict[str, Any]]:
+    def update_applicant_status(self, account_id: int, applicant_id: int, status_id: int, comment: str = None, vacancy_id: int = None, rejection_reason_id: int = None) -> Optional[Dict[str, Any]]:
         """
         Обновляет статус кандидата через добавление на вакансию с привязкой к вакансии и статусу
         
@@ -1108,6 +1108,7 @@ class HuntflowService:
             status_id: ID нового статуса
             comment: Комментарий к изменению статуса
             vacancy_id: ID вакансии (если не указан, получаем из данных кандидата)
+            rejection_reason_id: ID причины отказа (опционально)
             
         Returns:
             Результат обновления или None
@@ -1126,7 +1127,7 @@ class HuntflowService:
             print(f"DEBUG: У кандидата {applicant_id} нет привязанной вакансии ({vacancy_id})")
             return None
         
-        print(f"DEBUG: Обновляем статус кандидата {applicant_id} на статус {status_id} для вакансии {vacancy_id} с комментарием: {comment}")
+        print(f"DEBUG: Обновляем статус кандидата {applicant_id} на статус {status_id} для вакансии {vacancy_id} с комментарием: {comment}, rejection_reason_id: {rejection_reason_id}")
         
         # Используем проверенный эндпоинт с множественным числом
         endpoint = f"/accounts/{account_id}/applicants/{applicant_id}/vacancy"
@@ -1139,6 +1140,11 @@ class HuntflowService:
         
         if comment:
             data['comment'] = comment
+        
+        # Добавляем rejection_reason_id если указан
+        if rejection_reason_id:
+            data['rejection_reason'] = rejection_reason_id
+            print(f"DEBUG: Добавляем rejection_reason={rejection_reason_id} в запрос")
         
         print(f"DEBUG: Пробуем эндпоинт {endpoint} с данными {data}")
         

@@ -327,8 +327,8 @@
                                             data-bs-toggle="tooltip" 
                                             data-bs-placement="top"
                                             title="Выберите себя как участника интервью. Нажмите для выбора/отмены">
-                                        <span class="interviewer-name-full d-none d-md-inline">Я ({{ user.get_full_name|default:user.email }})</span>
-                                        <span class="interviewer-name-short d-md-none">Я</span>
+                                        <span class="interviewer-name-full d-none d-md-inline">Я ({% if user.last_name %}{{ user.last_name }} {{ user.first_name|default:"" }}{% else %}{{ user.get_full_name|default:user.email }}{% endif %})</span>
+                                        <span class="interviewer-name-short d-md-none">Я{% if user.last_name %} ({{ user.last_name }}){% endif %}</span>
                                     </button>
                                     <input type="hidden" 
                                            name="interviewers" 
@@ -357,6 +357,16 @@
                                         {% endfor %}
                                     {% endif %}
                                 </div>
+                                
+                                <!-- Индикатор статуса обновления слотов -->
+                                <span class="interview-separator">|</span>
+                                <div class="slots-status-indicator" id="slotsStatusIndicator" style="display: none;">
+                                    <span class="slots-status-text">
+                                        <i class="fas fa-spinner fa-spin me-1"></i>
+                                        <span class="slots-status-message">Обновление слотов...</span>
+                                    </span>
+                                </div>
+                                
                                 {% if not vacancy_interviewers %}
                                 <div class="alert alert-info alert-sm mt-2">
                                     <i class="fas fa-info-circle me-2"></i>
@@ -2830,6 +2840,29 @@
     }
 }
 
+.slots-status-indicator {
+    display: inline-flex !important;
+    align-items: center !important;
+    font-size: 13px !important;
+    padding: 2px 8px !important;
+    margin-left: 8px !important;
+    white-space: nowrap !important;
+}
+
+.slots-status-indicator .slots-status-text {
+    display: inline-flex !important;
+    align-items: center !important;
+}
+
+.slots-status-indicator i {
+    font-size: 12px !important;
+    margin-right: 4px !important;
+}
+
+[data-theme="dark"] .slots-status-indicator {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
 .alert-sm {
     padding: 6px 10px !important;
     font-size: 0.85rem !important;
@@ -3895,20 +3928,18 @@ if (interviewsDataElement) {
                 
                 console.log(`🔍 [SLOTS] Выбранные участники: пользователь=${includeUser ? 'да' : 'нет'}, интервьюеры=${selectedInterviewers.length > 0 ? selectedInterviewers.join(', ') : 'нет'}`);
                 
-                // Показываем индикатор загрузки (если есть элемент для этого)
-                const slotsCardBody = document.getElementById('slotsCardBody');
-                if (slotsCardBody) {
-                    const loadingIndicator = slotsCardBody.querySelector('.slots-loading-indicator');
-                    if (!loadingIndicator) {
-                        // Создаем индикатор загрузки, если его нет
-                        const loadingDiv = document.createElement('div');
-                        loadingDiv.className = 'slots-loading-indicator text-center py-3';
-                        loadingDiv.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Обновление слотов...';
-                        loadingDiv.style.display = 'block';
-                        slotsCardBody.insertBefore(loadingDiv, slotsCardBody.firstChild);
-                    } else {
-                        loadingIndicator.style.display = 'block';
+                // Показываем индикатор статуса в строке с интервьюерами
+                const slotsStatusIndicator = document.getElementById('slotsStatusIndicator');
+                const slotsStatusMessage = slotsStatusIndicator?.querySelector('.slots-status-message');
+                if (slotsStatusIndicator) {
+                    slotsStatusIndicator.style.display = 'inline-flex';
+                    if (slotsStatusMessage) {
+                        slotsStatusMessage.textContent = 'Обновление слотов...';
                     }
+                    // Убираем классы успеха/ошибки, оставляем только загрузку
+                    slotsStatusIndicator.className = 'slots-status-indicator';
+                    slotsStatusIndicator.querySelector('i')?.classList.remove('fa-check-circle', 'fa-exclamation-circle', 'fa-spinner', 'fa-spin');
+                    slotsStatusIndicator.querySelector('i')?.classList.add('fa-spinner', 'fa-spin');
                 }
                 
                 // Формируем URL для API
@@ -3936,23 +3967,52 @@ if (interviewsDataElement) {
                 .then(data => {
                     console.log(`🔍 [SLOTS] Данные от API:`, data);
                     
-                    // Скрываем индикатор загрузки
-                    const slotsCardBody = document.getElementById('slotsCardBody');
-                    if (slotsCardBody) {
-                        const loadingIndicator = slotsCardBody.querySelector('.slots-loading-indicator');
-                        if (loadingIndicator) {
-                            loadingIndicator.style.display = 'none';
-                        }
+                    // Обновляем индикатор статуса - показываем успех
+                    const slotsStatusIndicator = document.getElementById('slotsStatusIndicator');
+                    const slotsStatusMessage = slotsStatusIndicator?.querySelector('.slots-status-message');
+                    if (slotsStatusIndicator && slotsStatusMessage) {
+                        slotsStatusMessage.textContent = 'Слоты обновлены';
+                        slotsStatusIndicator.querySelector('i')?.classList.remove('fa-spinner', 'fa-spin');
+                        slotsStatusIndicator.querySelector('i')?.classList.add('fa-check-circle');
+                        slotsStatusIndicator.classList.add('text-success');
+                        
+                        // Скрываем индикатор через 2 секунды
+                        setTimeout(() => {
+                            if (slotsStatusIndicator) {
+                                slotsStatusIndicator.style.display = 'none';
+                            }
+                        }, 2000);
                     }
                     
                     if (data.success && data.slots) {
                         console.log(`✅ [SLOTS] Получено ${data.slots.length} дней со слотами для ${data.interviewer_count || 0} интервьюеров`);
-                        // Обновляем глобальную переменную
-                        window.interviewSlots = data.slots;
+                        
+                        // ВАЖНО: Всегда сохраняем исходные слоты в Минске (они приходят с сервера в Минске)
+                        // Это нужно для правильного пересчета при смене локации
+                        window.originalInterviewSlots = JSON.parse(JSON.stringify(data.slots));
+                        console.log(`💾 [SLOTS] Сохранены исходные слоты интервью в Минске: ${window.originalInterviewSlots.length} дней`);
+                        
+                        // Обновляем глобальную переменную с учетом текущего часового пояса
+                        // Если текущий часовой пояс Минск, используем слоты как есть
+                        // Если другой часовой пояс, пересчитываем слоты
+                        if (typeof currentTimezone !== 'undefined' && currentTimezone === 'minsk') {
+                            window.interviewSlots = data.slots;
+                        } else {
+                            // Применяем часовой пояс к слотам через функцию пересчета
+                            if (typeof recalculateSlotsForTimezone === 'function') {
+                                const updatedSlots = recalculateSlotsForTimezone(data.slots);
+                                // Объединяем слоты для window.interviewSlots
+                                window.interviewSlots = [...(updatedSlots.currentWeek || []), ...(updatedSlots.nextWeek || [])];
+                                console.log(`🔄 [SLOTS] Применен часовой пояс ${currentTimezone}, пересчитано слотов: ${window.interviewSlots.length}`);
+                            } else {
+                                window.interviewSlots = data.slots;
+                            }
+                        }
+                        
                         // Сбрасываем флаг перед обновлением отображения
                         window.isUpdatingInterviewSlots = false;
                         // Обновляем отображение напрямую, используя логику из switchSlotsByMeetingType
-                        if (data.slots && data.slots.length > 0) {
+                        if (window.interviewSlots && window.interviewSlots.length > 0) {
                             const today = new Date();
                             const currentWeekSlots = [];
                             const nextWeekSlots = [];
@@ -3964,8 +4024,8 @@ if (interviewsDataElement) {
                             nextMonday.setDate(today.getDate() + daysUntilMonday);
                             nextMonday.setHours(0, 0, 0, 0);
                             
-                            // Разделяем слоты по неделям
-                            data.slots.forEach(slot => {
+                            // Разделяем слоты по неделям (используем уже пересчитанные слоты с учетом часового пояса)
+                            window.interviewSlots.forEach(slot => {
                                 const slotDate = new Date(slot.date);
                                 if (slotDate < nextMonday) {
                                     currentWeekSlots.push(slot);
@@ -4012,25 +4072,22 @@ if (interviewsDataElement) {
                 .catch(error => {
                     console.error(`❌ [SLOTS] Ошибка при запросе к API:`, error);
                     
-                    // Скрываем индикатор загрузки
-                    const slotsCardBody = document.getElementById('slotsCardBody');
-                    if (slotsCardBody) {
-                        const loadingIndicator = slotsCardBody.querySelector('.slots-loading-indicator');
-                        if (loadingIndicator) {
-                            loadingIndicator.style.display = 'none';
-                        }
+                    // Обновляем индикатор статуса - показываем ошибку
+                    const slotsStatusIndicator = document.getElementById('slotsStatusIndicator');
+                    const slotsStatusMessage = slotsStatusIndicator?.querySelector('.slots-status-message');
+                    if (slotsStatusIndicator && slotsStatusMessage) {
+                        slotsStatusMessage.textContent = 'Ошибка обновления';
+                        slotsStatusIndicator.querySelector('i')?.classList.remove('fa-spinner', 'fa-spin');
+                        slotsStatusIndicator.querySelector('i')?.classList.add('fa-exclamation-circle');
+                        slotsStatusIndicator.classList.remove('text-success');
+                        slotsStatusIndicator.classList.add('text-danger');
                         
-                        // Показываем сообщение об ошибке
-                        const errorDiv = document.createElement('div');
-                        errorDiv.className = 'alert alert-danger alert-sm';
-                        errorDiv.innerHTML = `<i class="fas fa-exclamation-circle me-2"></i>Ошибка при обновлении слотов: ${error.message}`;
-                        slotsCardBody.insertBefore(errorDiv, slotsCardBody.firstChild);
-                        // Удаляем сообщение через 5 секунд
+                        // Скрываем индикатор через 3 секунды
                         setTimeout(() => {
-                            if (errorDiv.parentNode) {
-                                errorDiv.parentNode.removeChild(errorDiv);
+                            if (slotsStatusIndicator) {
+                                slotsStatusIndicator.style.display = 'none';
                             }
-                        }, 5000);
+                        }, 3000);
                     }
                     
                     window.isUpdatingInterviewSlots = false;

@@ -413,6 +413,9 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
     def status(self, request):
         """
         GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=...
+        Параметры:
+        - linkedin_url: URL профиля LinkedIn
+        - force_refresh: если true, инвалидирует кэш кандидата в Huntflow
         """
         try:
             raw_url = request.query_params.get("linkedin_url") or request.query_params.get("url") or ""
@@ -423,6 +426,9 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            # Проверяем параметр принудительного обновления
+            force_refresh = request.query_params.get("force_refresh", "").lower() == "true"
+            
             link = self._get_link(request, linkedin_url)
             if not link:
                 # Кандидат не найден в БД — показываем инпут
@@ -442,6 +448,8 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
             vacancy_name = None
             vacancy_id = None
             account_id = None
+            status_name = None
+            status_id = None
             
             # Сначала пробуем извлечь vacancy_id из target_url или app_url
             url_to_check = link.target_url or app_url
@@ -481,16 +489,22 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
                 account_id = int(link.account_id) if link.account_id is not None else account_id
                 logger.info(f"Using saved vacancy_id from link: {vacancy_id}")
             
-            # Если vacancy_id все еще не найден, но есть account_id и applicant_id, получаем через applicant_data
-            if not vacancy_id and link.account_id is not None and link.applicant_id is not None:
+            # Если vacancy_id или status_id еще не найдены, но есть account_id и applicant_id, получаем через applicant_data
+            if (not vacancy_id or not status_id) and link.account_id is not None and link.applicant_id is not None:
                 try:
                     import logging
                     logger = logging.getLogger(__name__)
                     from apps.huntflow.services import HuntflowService
+                    from apps.google_oauth.cache_service import HuntflowAPICache
                     api = HuntflowService(user=request.user)
                     
                     account_id = int(link.account_id)
                     applicant_id = int(link.applicant_id)
+                    
+                    # Если требуется принудительное обновление, очищаем кэш кандидата
+                    if force_refresh:
+                        logger.info(f"Force refresh requested, clearing cache for applicant_id={applicant_id}")
+                        HuntflowAPICache.clear_candidate(request.user.id, account_id, applicant_id)
                     
                     logger.info(f"Getting vacancy name for account_id={account_id}, applicant_id={applicant_id}")
                     
@@ -504,9 +518,15 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
                             if vacancy_id_from_links:
                                 vacancy_id = vacancy_id_from_links
                                 logger.info(f"Found vacancy_id from links: {vacancy_id}")
+                            
+                            # Получаем статус ID из links
+                            status_id_from_links = links[0].get('status')
+                            if status_id_from_links:
+                                status_id = status_id_from_links
+                                logger.info(f"Found status_id from links: {status_id}")
                         
-                        # Если не нашли в links, ищем в vacancy_statuses
-                        if not vacancy_id:
+                        # Если не нашли vacancy_id или status_id в links, ищем в vacancy_statuses
+                        if not vacancy_id or not status_id:
                             vacancies = applicant_data.get('vacancy_statuses', [])
                             logger.info(f"Found {len(vacancies)} vacancies for applicant")
                             
@@ -524,7 +544,15 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
                                         key=lambda x: x.get('changed', ''),
                                         reverse=True
                                     )[0]
-                                    vacancy_id = latest.get('vacancy')
+                                    if not vacancy_id:
+                                        vacancy_id = latest.get('vacancy')
+                                    # Получаем статус ID из vacancy_statuses, если еще не получен
+                                    if not status_id:
+                                        status_obj = latest.get('status', {})
+                                        if isinstance(status_obj, dict):
+                                            status_id = status_obj.get('id')
+                                        elif status_obj:
+                                            status_id = status_obj
                                 else:
                                     # Если нет "в работе", берём просто последнюю вакансию
                                     latest = sorted(
@@ -532,7 +560,15 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
                                         key=lambda x: x.get('changed', ''),
                                         reverse=True
                                     )[0]
-                                    vacancy_id = latest.get('vacancy')
+                                    if not vacancy_id:
+                                        vacancy_id = latest.get('vacancy')
+                                    # Получаем статус ID из vacancy_statuses, если еще не получен
+                                    if not status_id:
+                                        status_obj = latest.get('status', {})
+                                        if isinstance(status_obj, dict):
+                                            status_id = status_obj.get('id')
+                                        elif status_obj:
+                                            status_id = status_obj
                 except Exception as e:
                     import logging
                     logger = logging.getLogger(__name__)
@@ -557,6 +593,44 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
                     import logging
                     logger = logging.getLogger(__name__)
                     logger.error(f"Error getting vacancy name: {e}", exc_info=True)
+            
+            # Если нашли status_id, получаем название статуса
+            # Убеждаемся, что account_id определен (используем из link, если не был получен ранее)
+            if status_id:
+                # Если account_id еще не определен, но есть в link, используем его
+                if not account_id and link.account_id is not None:
+                    account_id = int(link.account_id)
+                
+                if account_id:
+                    try:
+                        import logging
+                        logger = logging.getLogger(__name__)
+                        from apps.huntflow.services import HuntflowService
+                        api = HuntflowService(user=request.user)
+                        
+                        logger.info(f"Getting status name for status_id={status_id}, account_id={account_id}")
+                        statuses_data = api.get_vacancy_statuses(account_id)
+                        if statuses_data:
+                            # Ищем статус по ID
+                            statuses_list = statuses_data.get('items', [])
+                            if isinstance(statuses_list, list):
+                                for status_item in statuses_list:
+                                    if status_item.get('id') == status_id:
+                                        status_name = status_item.get('name')
+                                        logger.info(f"Status name: {status_name}")
+                                        break
+                            else:
+                                logger.warning(f"Statuses list is not a list: {type(statuses_list)}")
+                        else:
+                            logger.warning(f"Statuses data is None for account_id={account_id}")
+                    except Exception as e:
+                        import logging
+                        logger = logging.getLogger(__name__)
+                        logger.error(f"Error getting status name: {e}", exc_info=True)
+                else:
+                    import logging
+                    logger = logging.getLogger(__name__)
+                    logger.warning(f"Cannot get status name: status_id={status_id} but account_id is None")
 
             return Response(
                 {
@@ -567,6 +641,7 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
                     "applicant_id": int(link.applicant_id) if link.applicant_id is not None else None,
                     "app_url": app_url,
                     "vacancy_name": vacancy_name,
+                    "status_name": status_name,
                 },
                 status=status.HTTP_200_OK,
             )
@@ -755,6 +830,7 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
 
             # Получаем название вакансии для ответа
             vacancy_name = None
+            status_name = None
             if obj.vacancy_id and obj.account_id:
                 try:
                     from apps.huntflow.services import HuntflowService
@@ -766,6 +842,81 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
                     import logging
                     logger = logging.getLogger(__name__)
                     logger.warning(f"Error getting vacancy name in set_link: {e}")
+            
+            # Получаем статус кандидата для ответа
+            if obj.account_id and obj.applicant_id:
+                try:
+                    from apps.huntflow.services import HuntflowService
+                    api = HuntflowService(user=request.user)
+                    applicant_data = api.get_applicant(int(obj.account_id), int(obj.applicant_id))
+                    if applicant_data:
+                        # Получаем статус ID из links
+                        links = applicant_data.get('links', [])
+                        status_id = None
+                        if links and len(links) > 0:
+                            status_id = links[0].get('status')
+                        
+                        # Если не нашли в links, ищем в vacancy_statuses
+                        if not status_id:
+                            vacancies = applicant_data.get('vacancy_statuses', [])
+                            if vacancies:
+                                # Сортируем по дате изменения статуса (последняя = самая свежая)
+                                vacancies_in_work = [
+                                    v for v in vacancies 
+                                    if v.get('status', {}).get('type') == 'workon'
+                                ]
+                                
+                                if vacancies_in_work:
+                                    latest = sorted(
+                                        vacancies_in_work, 
+                                        key=lambda x: x.get('changed', ''),
+                                        reverse=True
+                                    )[0]
+                                    status_obj = latest.get('status', {})
+                                    if isinstance(status_obj, dict):
+                                        status_id = status_obj.get('id')
+                                    elif status_obj:
+                                        status_id = status_obj
+                                else:
+                                    latest = sorted(
+                                        vacancies, 
+                                        key=lambda x: x.get('changed', ''),
+                                        reverse=True
+                                    )[0]
+                                    status_obj = latest.get('status', {})
+                                    if isinstance(status_obj, dict):
+                                        status_id = status_obj.get('id')
+                                    elif status_obj:
+                                        status_id = status_obj
+                        
+                        # Получаем название статуса
+                        if status_id:
+                            import logging
+                            logger = logging.getLogger(__name__)
+                            logger.info(f"Getting status name for status_id={status_id}, account_id={obj.account_id}")
+                            statuses_data = api.get_vacancy_statuses(int(obj.account_id))
+                            if statuses_data:
+                                statuses_list = statuses_data.get('items', [])
+                                if isinstance(statuses_list, list):
+                                    for status_item in statuses_list:
+                                        if status_item.get('id') == status_id:
+                                            status_name = status_item.get('name')
+                                            logger.info(f"Status name found: {status_name}")
+                                            break
+                                    if not status_name:
+                                        logger.warning(f"Status with id={status_id} not found in statuses list")
+                                else:
+                                    logger.warning(f"Statuses list is not a list: {type(statuses_list)}")
+                            else:
+                                logger.warning(f"Statuses data is None for account_id={obj.account_id}")
+                        else:
+                            import logging
+                            logger = logging.getLogger(__name__)
+                            logger.warning(f"Status ID is None, cannot get status name")
+                except Exception as e:
+                    import logging
+                    logger = logging.getLogger(__name__)
+                    logger.error(f"Error getting status name in set_link: {e}", exc_info=True)
             
             app_url = obj.target_url or (
                 self._build_app_url(request, int(obj.account_id), int(obj.applicant_id))
@@ -784,11 +935,153 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
                     "vacancy_id": obj.vacancy_id,
                     "app_url": app_url,
                     "vacancy_name": vacancy_name,
+                    "status_name": status_name,
                 },
                 status=status.HTTP_200_OK,
             )
 
         except Exception as e:
+            return Response(
+                {"success": False, "message": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    @action(detail=False, methods=["get"], url_path="status-options")
+    def status_options(self, request):
+        """
+        GET /api/v1/huntflow/linkedin-applicants/status-options/?linkedin_url=...
+        Возвращает список доступных статусов и причин отказа для кандидата
+        """
+        try:
+            raw_url = request.query_params.get("linkedin_url") or request.query_params.get("url") or ""
+            linkedin_url = _normalize_linkedin_profile_url(raw_url)
+            if not linkedin_url:
+                return Response(
+                    {"success": False, "message": "Нужен корректный LinkedIn URL профиля (/in/<slug>/)."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            link = self._get_link(request, linkedin_url)
+            if not link or not link.account_id:
+                return Response(
+                    {"success": False, "message": "Кандидат не найден или не привязан к организации."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            from apps.huntflow.services import HuntflowService
+            api = HuntflowService(user=request.user)
+            account_id = int(link.account_id)
+
+            # Получаем список статусов
+            statuses_data = api.get_vacancy_statuses(account_id)
+            statuses = []
+            if statuses_data and 'items' in statuses_data:
+                statuses = statuses_data['items']
+
+            # Получаем список причин отказа
+            rejection_reasons_data = api.get_rejection_reasons(account_id)
+            rejection_reasons = []
+            if rejection_reasons_data:
+                if 'items' in rejection_reasons_data:
+                    rejection_reasons = rejection_reasons_data['items']
+                elif isinstance(rejection_reasons_data, list):
+                    rejection_reasons = rejection_reasons_data
+            
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.info(f"Status options: {len(statuses)} statuses, {len(rejection_reasons)} rejection reasons")
+
+            return Response(
+                {
+                    "success": True,
+                    "statuses": statuses,
+                    "rejection_reasons": rejection_reasons,
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error getting status options: {e}", exc_info=True)
+            return Response(
+                {"success": False, "message": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    @action(detail=False, methods=["post"], url_path="update-status")
+    def update_status(self, request):
+        """
+        POST /api/v1/huntflow/linkedin-applicants/update-status/
+        Body: { "linkedin_url": "...", "status_id": 123, "rejection_reason_id": 456 (опционально), "comment": "..." (опционально) }
+        Обновляет статус кандидата
+        """
+        try:
+            raw_li = (request.data or {}).get("linkedin_url") or ""
+            linkedin_url = _normalize_linkedin_profile_url(raw_li)
+            if not linkedin_url:
+                return Response(
+                    {"success": False, "message": "Нужен корректный LinkedIn URL профиля (/in/<slug>/)."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            link = self._get_link(request, linkedin_url)
+            if not link or not link.account_id or not link.applicant_id:
+                return Response(
+                    {"success": False, "message": "Кандидат не найден или не привязан к организации."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            status_id = (request.data or {}).get("status_id")
+            if not status_id:
+                return Response(
+                    {"success": False, "message": "Нужен status_id."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            rejection_reason_id = (request.data or {}).get("rejection_reason_id")
+            comment = (request.data or {}).get("comment", "")
+
+            from apps.huntflow.services import HuntflowService
+            from apps.google_oauth.cache_service import HuntflowAPICache
+            api = HuntflowService(user=request.user)
+            account_id = int(link.account_id)
+            applicant_id = int(link.applicant_id)
+
+            # Формируем комментарий, если указан
+            final_comment = comment if comment else None
+
+            # Обновляем статус с передачей rejection_reason_id отдельным параметром
+            result = api.update_applicant_status(
+                account_id=account_id,
+                applicant_id=applicant_id,
+                status_id=int(status_id),
+                comment=final_comment,
+                vacancy_id=int(link.vacancy_id) if link.vacancy_id else None,
+                rejection_reason_id=int(rejection_reason_id) if rejection_reason_id else None
+            )
+
+            if result:
+                # Очищаем кэш кандидата
+                HuntflowAPICache.clear_candidate(request.user.id, account_id, applicant_id)
+                
+                return Response(
+                    {
+                        "success": True,
+                        "message": "Статус успешно обновлен",
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            else:
+                return Response(
+                    {"success": False, "message": "Не удалось обновить статус"},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error updating status: {e}", exc_info=True)
             return Response(
                 {"success": False, "message": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
