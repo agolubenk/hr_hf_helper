@@ -6,6 +6,8 @@
   "permissions": ["storage"],
   "host_permissions": [
     "https://www.linkedin.com/*",
+    "https://calendar.google.com/*",
+    "https://meet.google.com/*",
     "http://localhost:8000/*",
     "http://127.0.0.1:8000/*"
   ],
@@ -19,6 +21,20 @@
         "*://www.linkedin.com/in/*",
         "*://linkedin.com/messaging/*",
         "*://www.linkedin.com/messaging/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://calendar.google.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://meet.google.com/*"
       ],
       "js": ["content.js"],
       "run_at": "document_end"

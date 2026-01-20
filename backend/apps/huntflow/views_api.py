@@ -367,6 +367,76 @@ def _update_communication_field_if_empty(api, account_id, applicant_id, linkedin
         logger.error(f"Error updating communication field: {e}", exc_info=True)
         return False
 
+def _get_communication_field_value(api, account_id, applicant_id):
+    """
+    Получает значение поля "Где ведется коммуникация" для кандидата
+    
+    Args:
+        api: HuntflowService instance
+        account_id: ID организации
+        applicant_id: ID кандидата
+        
+    Returns:
+        Значение поля или None
+    """
+    try:
+        import logging
+        logger = logging.getLogger(__name__)
+        
+        # Получаем схему анкеты для поиска поля "Где ведется коммуникация"
+        questionary_schema = api.get_applicant_questionary_schema(account_id)
+        if not questionary_schema:
+            logger.warning(f"Cannot get questionary schema for account_id={account_id}")
+            return None
+        
+        # Ищем поле "Где ведется коммуникация"
+        communication_field_id = None
+        for field_id, field_info in questionary_schema.items():
+            if isinstance(field_info, dict):
+                field_title = field_info.get('title', '').lower()
+                # Ищем поле по различным вариантам названия
+                if ('коммуникация' in field_title or 'communication' in field_title) and \
+                   ('ведется' in field_title or 'где' in field_title or 'where' in field_title or 'place' in field_title):
+                    communication_field_id = field_id
+                    logger.info(f"Found communication field: {field_id} - {field_info.get('title')}")
+                    break
+        
+        # Если не нашли точное совпадение, ищем просто по слову "коммуникация"
+        if not communication_field_id:
+            for field_id, field_info in questionary_schema.items():
+                if isinstance(field_info, dict):
+                    field_title = field_info.get('title', '').lower()
+                    if 'коммуникация' in field_title or 'communication' in field_title:
+                        communication_field_id = field_id
+                        logger.info(f"Found communication field (loose match): {field_id} - {field_info.get('title')}")
+                        break
+        
+        if not communication_field_id:
+            logger.warning(f"Communication field not found in questionary schema")
+            return None
+        
+        # Получаем текущую анкету кандидата
+        questionary = api.get_applicant_questionary(account_id, applicant_id)
+        if not questionary:
+            logger.warning(f"Cannot get questionary for applicant_id={applicant_id}")
+            return None
+        
+        # Получаем значение поля
+        communication_value = questionary.get(communication_field_id)
+        if communication_value:
+            communication_value_str = str(communication_value).strip()
+            if communication_value_str:
+                logger.info(f"Communication field value: {communication_value_str}")
+                return communication_value_str
+        
+        return None
+        
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error getting communication field: {e}", exc_info=True)
+        return None
+
 class LinkedInApplicantsViewSet(viewsets.ViewSet):
     """
     API под Chrome-расширение:
@@ -1247,6 +1317,113 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
             import logging
             logger = logging.getLogger(__name__)
             logger.error(f"Error updating status: {e}", exc_info=True)
+            return Response(
+                {"success": False, "message": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    @action(detail=False, methods=["get"], url_path="communication-link")
+    def get_communication_link(self, request):
+        """
+        GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=...
+        
+        Получает ссылку на Telegram или LinkedIn из поля "Где ведется коммуникация"
+        для кандидата по ссылке на Huntflow.
+        
+        Параметры:
+        - huntflow_url: URL на Huntflow в формате:
+          https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/79149055
+        
+        Возвращает:
+        {
+            "success": true,
+            "communication_link": "https://t.me/username" или "https://www.linkedin.com/in/username/",
+            "link_type": "telegram" или "linkedin"
+        }
+        """
+        try:
+            import logging
+            logger = logging.getLogger(__name__)
+            
+            huntflow_url = request.query_params.get("huntflow_url", "").strip()
+            if not huntflow_url:
+                return Response(
+                    {"success": False, "message": "Нужен параметр huntflow_url"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            
+            # Извлекаем данные из URL
+            ids = self._extract_huntflow_ids(huntflow_url)
+            if not ids.get("account_name") or not ids.get("applicant_id"):
+                return Response(
+                    {"success": False, "message": "Не удалось извлечь данные из URL Huntflow"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            
+            account_name = ids["account_name"]
+            applicant_id = ids["applicant_id"]
+            
+            # Получаем account_id по account_name
+            from apps.huntflow.services import HuntflowService
+            api = HuntflowService(user=request.user)
+            accounts = api.get_accounts()
+            
+            account_id = None
+            if accounts and 'items' in accounts:
+                account_name_lower = account_name.lower()
+                for account in accounts['items']:
+                    # Проверяем name, nick и id (без учета регистра)
+                    account_name_field = (account.get('name') or '').lower()
+                    account_nick_field = (account.get('nick') or '').lower()
+                    account_id_str = str(account.get('id') or '')
+                    
+                    if (account_name_field == account_name_lower or 
+                        account_nick_field == account_name_lower or
+                        account_id_str == account_name):
+                        account_id = account.get('id')
+                        break
+            
+            if not account_id:
+                logger.warning(f"Account '{account_name}' not found. Available accounts: {[a.get('name') for a in (accounts.get('items', []) if accounts else [])]}")
+                return Response(
+                    {"success": False, "message": f"Организация '{account_name}' не найдена"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+            
+            # Получаем значение поля "Где ведется коммуникация"
+            communication_value = _get_communication_field_value(api, account_id, applicant_id)
+            
+            if not communication_value:
+                return Response(
+                    {"success": False, "message": "Поле 'Где ведется коммуникация' не заполнено"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+            
+            # Определяем тип ссылки
+            communication_value_lower = communication_value.lower()
+            link_type = None
+            
+            if 't.me' in communication_value_lower or 'telegram' in communication_value_lower:
+                link_type = "telegram"
+            elif 'linkedin.com' in communication_value_lower or 'linked.in' in communication_value_lower:
+                link_type = "linkedin"
+            else:
+                # Если не удалось определить тип, возвращаем как есть
+                link_type = "unknown"
+            
+            return Response(
+                {
+                    "success": True,
+                    "communication_link": communication_value,
+                    "link_type": link_type,
+                },
+                status=status.HTTP_200_OK,
+            )
+            
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error getting communication link: {e}", exc_info=True)
             return Response(
                 {"success": False, "message": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

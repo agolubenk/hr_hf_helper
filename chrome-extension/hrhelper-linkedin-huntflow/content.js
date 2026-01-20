@@ -4,13 +4,16 @@ const DEFAULTS = {
 
 // Debug mode - установи в false для production
 const DEBUG = false;
-const log = (...args) => DEBUG && console.log('[HRHelper]', ...args);
-const warn = (...args) => DEBUG && console.warn('[HRHelper]', ...args);
+// Для Google Calendar и Google Meet всегда включаем логирование
+const log = (...args) => (DEBUG || IS_GOOGLE_CALENDAR || IS_GOOGLE_MEET) && console.log('[HRHelper]', ...args);
+const warn = (...args) => (DEBUG || IS_GOOGLE_CALENDAR || IS_GOOGLE_MEET) && console.warn('[HRHelper]', ...args);
 const error = (...args) => console.error('[HRHelper]', ...args);
 
 const MAX_WIDGETS = 2;
 const IS_MESSAGING_PAGE = location.href.includes('/messaging/');
 const IS_PROFILE_PAGE = location.href.includes('/in/') && !location.href.includes('/search/');
+const IS_GOOGLE_CALENDAR = location.href.includes('calendar.google.com');
+const IS_GOOGLE_MEET = location.href.includes('meet.google.com');
 const THROTTLE_MS = IS_MESSAGING_PAGE ? 500 : 1500; // Messaging быстрее, профиль медленнее
 
 const STATE = {
@@ -1545,8 +1548,623 @@ function startObserver() {
   }
 }
 
-log(' Content script loaded');
-log(' Starting initialization...');
+// Функция для работы с Google Calendar
+function initGoogleCalendar() {
+  if (!IS_GOOGLE_CALENDAR) return;
+  
+  log(' Google Calendar detected, initializing...');
+  log(' Current URL:', location.href);
+  
+  // Функция для поиска и обработки текста "Для интервьюеров:"
+  function processInterviewerLinks() {
+    log(' Processing interviewer links...');
+    
+    // Ищем все элементы, содержащие текст "Для интервьюеров:"
+    const walker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_TEXT,
+      null
+    );
+    
+    let textNode;
+    const interviewerNodes = [];
+    
+    while (textNode = walker.nextNode()) {
+      if (textNode.textContent && textNode.textContent.includes('Для интервьюеров:')) {
+        interviewerNodes.push(textNode);
+      }
+    }
+    
+    log(` Found ${interviewerNodes.length} text nodes with "Для интервьюеров:"`);
+    
+    // Также ищем через поиск по всему документу
+    const allText = document.body.innerText || document.body.textContent || '';
+    if (allText.includes('Для интервьюеров:')) {
+      log(' Text "Для интервьюеров:" found in document body');
+    } else {
+      log(' Text "Для интервьюеров:" NOT found in document body');
+    }
+    
+    // Ищем все ссылки на Huntflow
+    const allLinks = Array.from(document.querySelectorAll('a[href*="huntflow"]'));
+    log(` Found ${allLinks.length} links containing "huntflow"`);
+    allLinks.forEach((link, idx) => {
+      log(` Link ${idx + 1}: ${link.href}`);
+    });
+    
+    // Обрабатываем каждый найденный узел
+    interviewerNodes.forEach((textNode, idx) => {
+      log(` Processing text node ${idx + 1}`);
+      const parent = textNode.parentElement;
+      if (!parent) {
+        log('  No parent element');
+        return;
+      }
+      
+      // Проверяем, не обработали ли мы уже этот элемент
+      if (parent.dataset.hrhelperProcessed === 'true') {
+        log('  Already processed');
+        return;
+      }
+      parent.dataset.hrhelperProcessed = 'true';
+      
+      // Ищем ссылку на Huntflow в том же контейнере или рядом
+      let container = parent;
+      let huntflowLink = null;
+      
+      // Функция для извлечения реального URL из Google redirect
+      function extractRealUrl(url) {
+        if (!url) return null;
+        try {
+          // Если это Google redirect URL
+          if (url.includes('google.com/url') && url.includes('q=')) {
+            const urlObj = new URL(url);
+            const realUrl = urlObj.searchParams.get('q');
+            if (realUrl) {
+              return decodeURIComponent(realUrl);
+            }
+          }
+          return url;
+        } catch (e) {
+          return url;
+        }
+      }
+      
+      // Функция для проверки, является ли ссылка ссылкой на Huntflow
+      function isHuntflowLink(link) {
+        if (!link || !link.href) return false;
+        // Проверяем href
+        const realUrl = extractRealUrl(link.href);
+        if (realUrl && realUrl.includes('huntflow.ru')) {
+          return true;
+        }
+        // Также проверяем текст ссылки (может содержать реальный URL)
+        const linkText = link.textContent || link.innerText || '';
+        if (linkText.includes('huntflow.ru')) {
+          return true;
+        }
+        return false;
+      }
+      
+      // Пробуем найти в родительских элементах
+      for (let i = 0; i < 10 && container; i++) {
+        // Ищем все ссылки и проверяем каждую
+        const allLinks = Array.from(container.querySelectorAll('a'));
+        huntflowLink = allLinks.find(isHuntflowLink);
+        if (huntflowLink) {
+          log(`  Found Huntflow link in container level ${i}`);
+          break;
+        }
+        container = container.parentElement;
+      }
+      
+      // Если не нашли в контейнере, ищем во всем документе
+      if (!huntflowLink) {
+        const allLinks = Array.from(document.querySelectorAll('a'));
+        huntflowLink = allLinks.find(isHuntflowLink);
+        if (huntflowLink) {
+          log('  Found Huntflow link in document');
+        }
+      }
+      
+      if (!huntflowLink) {
+        log('  No Huntflow link found');
+        return;
+      }
+      
+      // Извлекаем реальный URL (может быть в Google redirect)
+      let huntflowUrl = extractRealUrl(huntflowLink.href);
+      log('  Found Huntflow link (original):', huntflowLink.href);
+      log('  Found Huntflow link (extracted):', huntflowUrl);
+      
+      // Извлекаем данные из URL (используем реальный URL, если был Google redirect)
+      const ids = extractHuntflowIds(huntflowUrl);
+      log('  Extracted IDs:', ids);
+      if (!ids.account_name || !ids.applicant_id) {
+        log('  Could not extract IDs from Huntflow URL');
+        return;
+      }
+      
+      // Используем реальный URL для API запроса
+      const realHuntflowUrl = huntflowUrl;
+      
+      // Определяем контейнер для вставки кнопки (родитель ссылки)
+      const buttonContainer = huntflowLink.parentElement;
+      if (!buttonContainer) {
+        log('  No container for button');
+        return;
+      }
+      
+      // Проверяем, есть ли уже кнопка рядом с этой ссылкой
+      const existingButton = buttonContainer.querySelector('.hrhelper-communication-btn');
+      if (existingButton) {
+        log('  Button already exists');
+        return;
+      }
+      
+      log('  Creating button...');
+      
+      // Создаем кнопку-заглушку
+      const button = document.createElement('a');
+      button.className = 'hrhelper-communication-btn';
+      button.textContent = 'Загрузка...';
+      button.style.cssText = 'display:inline-block;margin-left:8px;padding:4px 8px;background:#0a66c2;color:#fff;text-decoration:none;border-radius:4px;font-size:12px;white-space:nowrap;';
+      button.href = '#';
+      button.onclick = (e) => { e.preventDefault(); return false; };
+      
+      // Вставляем кнопку сразу после ссылки на Huntflow
+      // Пробуем вставить после ссылки, если есть nextSibling
+      if (huntflowLink.nextSibling) {
+        buttonContainer.insertBefore(button, huntflowLink.nextSibling);
+      } else {
+        // Если нет nextSibling, добавляем в конец контейнера
+        buttonContainer.appendChild(button);
+      }
+      
+      log('  Button inserted after Huntflow link');
+      
+      log('  Button created, fetching communication link...');
+      
+      // Получаем ссылку на коммуникацию через API (используем реальный URL)
+      getCommunicationLink(realHuntflowUrl).then(linkData => {
+        log('  Communication link response:', linkData);
+        if (linkData && linkData.success && linkData.communication_link) {
+          button.href = linkData.communication_link;
+          button.target = '_blank';
+          button.rel = 'noopener noreferrer';
+          
+          // Устанавливаем текст и иконку в зависимости от типа
+          if (linkData.link_type === 'telegram') {
+            button.textContent = '💬 Telegram';
+            button.style.background = '#0088cc';
+          } else if (linkData.link_type === 'linkedin') {
+            button.textContent = '💼 LinkedIn';
+            button.style.background = '#0a66c2';
+          } else {
+            button.textContent = '📧 Связаться';
+            button.style.background = '#6c757d';
+          }
+          
+          button.onclick = null; // Убираем preventDefault
+          log('  Button updated successfully');
+        } else {
+          button.textContent = 'Ссылка не найдена';
+          button.style.background = '#6c757d';
+          button.style.cursor = 'not-allowed';
+          log('  Communication link not found');
+        }
+      }).catch(err => {
+        error('  Error getting communication link:', err);
+        button.textContent = 'Ошибка';
+        button.style.background = '#dc3545';
+      });
+    });
+  }
+  
+  // Функция для извлечения данных из Huntflow URL
+  function extractHuntflowIds(url) {
+    const result = { account_name: null, applicant_id: null, vacancy_id: null };
+    
+    // Формат 1: /my/{account}#/applicants/filter/all/{applicant_id}
+    const m1 = url.match(/\/my\/([^/#]+)#\/applicants\/filter\/[^/]+\/(\d+)/);
+    if (m1) {
+      result.account_name = m1[1];
+      result.applicant_id = parseInt(m1[2]);
+      return result;
+    }
+    
+    // Формат 2: /my/{account}#/vacancy/{vacancy_id}/filter/{status}/id/{applicant_id}
+    const m2 = url.match(/\/my\/([^/#]+)#\/vacancy\/(\d+)\/filter\/[^/]+\/id\/(\d+)/);
+    if (m2) {
+      result.account_name = m2[1];
+      result.vacancy_id = parseInt(m2[2]);
+      result.applicant_id = parseInt(m2[3]);
+      return result;
+    }
+    
+    return result;
+  }
+  
+  // Функция для получения ссылки на коммуникацию через API
+  async function getCommunicationLink(huntflowUrl) {
+    try {
+      const config = await getConfig();
+      const qp = new URLSearchParams({ huntflow_url: huntflowUrl });
+      const res = await apiFetch(`/api/v1/huntflow/linkedin-applicants/communication-link/?${qp.toString()}`, {
+        method: "GET"
+      });
+      
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        error(' Failed to get communication link:', data?.message || 'Unknown error');
+        return null;
+      }
+      
+      const data = await res.json().catch(() => null);
+      return data;
+    } catch (err) {
+      error(' Exception getting communication link:', err);
+      return null;
+    }
+  }
+  
+  // Обрабатываем при загрузке с задержкой (Google Calendar загружается динамически)
+  setTimeout(() => {
+    log(' Initial processing after delay...');
+    processInterviewerLinks();
+  }, 1000);
+  
+  // Также обрабатываем сразу
+  processInterviewerLinks();
+  
+  // Наблюдаем за изменениями DOM с debounce
+  let processTimeout = null;
+  const observer = new MutationObserver(() => {
+    if (processTimeout) clearTimeout(processTimeout);
+    processTimeout = setTimeout(() => {
+      processInterviewerLinks();
+    }, 500);
+  });
+  
+  if (document.body) {
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    log(' MutationObserver started');
+  } else {
+    log(' document.body not ready, waiting...');
+    setTimeout(() => {
+      if (document.body) {
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+        log(' MutationObserver started (delayed)');
+      }
+    }, 1000);
+  }
+}
 
-captureProfileToThreadMapping();
-startObserver();
+// Функция для работы с Google Meet (аналогична Google Calendar)
+function initGoogleMeet() {
+  if (!IS_GOOGLE_MEET) return;
+  
+  log(' Google Meet detected, initializing...');
+  log(' Current URL:', location.href);
+  
+  // Функция для поиска и обработки текста "Для интервьюеров:"
+  function processInterviewerLinks() {
+    log(' Processing interviewer links...');
+    
+    // Ищем все элементы, содержащие текст "Для интервьюеров:"
+    const walker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_TEXT,
+      null
+    );
+    
+    let textNode;
+    const interviewerNodes = [];
+    
+    while (textNode = walker.nextNode()) {
+      if (textNode.textContent && textNode.textContent.includes('Для интервьюеров:')) {
+        interviewerNodes.push(textNode);
+      }
+    }
+    
+    log(` Found ${interviewerNodes.length} text nodes with "Для интервьюеров:"`);
+    
+    // Также ищем через поиск по всему документу
+    const allText = document.body.innerText || document.body.textContent || '';
+    if (allText.includes('Для интервьюеров:')) {
+      log(' Text "Для интервьюеров:" found in document body');
+    } else {
+      log(' Text "Для интервьюеров:" NOT found in document body');
+    }
+    
+    // Ищем все ссылки на Huntflow
+    const allLinks = Array.from(document.querySelectorAll('a[href*="huntflow"]'));
+    log(` Found ${allLinks.length} links containing "huntflow"`);
+    allLinks.forEach((link, idx) => {
+      log(` Link ${idx + 1}: ${link.href}`);
+    });
+    
+    // Обрабатываем каждый найденный узел
+    interviewerNodes.forEach((textNode, idx) => {
+      log(` Processing text node ${idx + 1}`);
+      const parent = textNode.parentElement;
+      if (!parent) {
+        log('  No parent element');
+        return;
+      }
+      
+      // Проверяем, не обработали ли мы уже этот элемент
+      if (parent.dataset.hrhelperProcessed === 'true') {
+        log('  Already processed');
+        return;
+      }
+      parent.dataset.hrhelperProcessed = 'true';
+      
+      // Ищем ссылку на Huntflow в том же контейнере или рядом
+      let container = parent;
+      let huntflowLink = null;
+      
+      // Функция для извлечения реального URL из Google redirect
+      function extractRealUrl(url) {
+        if (!url) return null;
+        try {
+          // Если это Google redirect URL
+          if (url.includes('google.com/url') && url.includes('q=')) {
+            const urlObj = new URL(url);
+            const realUrl = urlObj.searchParams.get('q');
+            if (realUrl) {
+              return decodeURIComponent(realUrl);
+            }
+          }
+          return url;
+        } catch (e) {
+          return url;
+        }
+      }
+      
+      // Функция для проверки, является ли ссылка ссылкой на Huntflow
+      function isHuntflowLink(link) {
+        if (!link || !link.href) return false;
+        // Проверяем href
+        const realUrl = extractRealUrl(link.href);
+        if (realUrl && realUrl.includes('huntflow.ru')) {
+          return true;
+        }
+        // Также проверяем текст ссылки (может содержать реальный URL)
+        const linkText = link.textContent || link.innerText || '';
+        if (linkText.includes('huntflow.ru')) {
+          return true;
+        }
+        return false;
+      }
+      
+      // Пробуем найти в родительских элементах
+      for (let i = 0; i < 10 && container; i++) {
+        // Ищем все ссылки и проверяем каждую
+        const allLinks = Array.from(container.querySelectorAll('a'));
+        huntflowLink = allLinks.find(isHuntflowLink);
+        if (huntflowLink) {
+          log(`  Found Huntflow link in container level ${i}`);
+          break;
+        }
+        container = container.parentElement;
+      }
+      
+      // Если не нашли в контейнере, ищем во всем документе
+      if (!huntflowLink) {
+        const allLinks = Array.from(document.querySelectorAll('a'));
+        huntflowLink = allLinks.find(isHuntflowLink);
+        if (huntflowLink) {
+          log('  Found Huntflow link in document');
+        }
+      }
+      
+      if (!huntflowLink) {
+        log('  No Huntflow link found');
+        return;
+      }
+      
+      // Извлекаем реальный URL (может быть в Google redirect)
+      let huntflowUrl = extractRealUrl(huntflowLink.href);
+      log('  Found Huntflow link (original):', huntflowLink.href);
+      log('  Found Huntflow link (extracted):', huntflowUrl);
+      
+      // Извлекаем данные из URL (используем реальный URL, если был Google redirect)
+      const ids = extractHuntflowIds(huntflowUrl);
+      log('  Extracted IDs:', ids);
+      if (!ids.account_name || !ids.applicant_id) {
+        log('  Could not extract IDs from Huntflow URL');
+        return;
+      }
+      
+      // Используем реальный URL для API запроса
+      const realHuntflowUrl = huntflowUrl;
+      
+      // Определяем контейнер для вставки кнопки (родитель ссылки)
+      const buttonContainer = huntflowLink.parentElement;
+      if (!buttonContainer) {
+        log('  No container for button');
+        return;
+      }
+      
+      // Проверяем, есть ли уже кнопка рядом с этой ссылкой
+      const existingButton = buttonContainer.querySelector('.hrhelper-communication-btn');
+      if (existingButton) {
+        log('  Button already exists');
+        return;
+      }
+      
+      log('  Creating button...');
+      
+      // Создаем кнопку-заглушку
+      const button = document.createElement('a');
+      button.className = 'hrhelper-communication-btn';
+      button.textContent = 'Загрузка...';
+      button.style.cssText = 'display:inline-block;margin-left:8px;padding:4px 8px;background:#0a66c2;color:#fff;text-decoration:none;border-radius:4px;font-size:12px;white-space:nowrap;';
+      button.href = '#';
+      button.onclick = (e) => { e.preventDefault(); return false; };
+      
+      // Вставляем кнопку сразу после ссылки на Huntflow
+      // Пробуем вставить после ссылки, если есть nextSibling
+      if (huntflowLink.nextSibling) {
+        buttonContainer.insertBefore(button, huntflowLink.nextSibling);
+      } else {
+        // Если нет nextSibling, добавляем в конец контейнера
+        buttonContainer.appendChild(button);
+      }
+      
+      log('  Button inserted after Huntflow link');
+      
+      log('  Button created, fetching communication link...');
+      
+      // Получаем ссылку на коммуникацию через API (используем реальный URL)
+      getCommunicationLink(realHuntflowUrl).then(linkData => {
+        log('  Communication link response:', linkData);
+        if (linkData && linkData.success && linkData.communication_link) {
+          button.href = linkData.communication_link;
+          button.target = '_blank';
+          button.rel = 'noopener noreferrer';
+          
+          // Устанавливаем текст и иконку в зависимости от типа
+          if (linkData.link_type === 'telegram') {
+            button.textContent = '💬 Telegram';
+            button.style.background = '#0088cc';
+          } else if (linkData.link_type === 'linkedin') {
+            button.textContent = '💼 LinkedIn';
+            button.style.background = '#0a66c2';
+          } else {
+            button.textContent = '📧 Связаться';
+            button.style.background = '#6c757d';
+          }
+          
+          button.onclick = null; // Убираем preventDefault
+          log('  Button updated successfully');
+        } else {
+          button.textContent = 'Ссылка не найдена';
+          button.style.background = '#6c757d';
+          button.style.cursor = 'not-allowed';
+          log('  Communication link not found');
+        }
+      }).catch(err => {
+        error('  Error getting communication link:', err);
+        button.textContent = 'Ошибка';
+        button.style.background = '#dc3545';
+      });
+    });
+  }
+  
+  // Функция для извлечения данных из Huntflow URL
+  function extractHuntflowIds(url) {
+    const result = { account_name: null, applicant_id: null, vacancy_id: null };
+    
+    // Формат 1: /my/{account}#/applicants/filter/all/{applicant_id}
+    const m1 = url.match(/\/my\/([^/#]+)#\/applicants\/filter\/[^/]+\/(\d+)/);
+    if (m1) {
+      result.account_name = m1[1];
+      result.applicant_id = parseInt(m1[2]);
+      return result;
+    }
+    
+    // Формат 2: /my/{account}#/vacancy/{vacancy_id}/filter/{status}/id/{applicant_id}
+    const m2 = url.match(/\/my\/([^/#]+)#\/vacancy\/(\d+)\/filter\/[^/]+\/id\/(\d+)/);
+    if (m2) {
+      result.account_name = m2[1];
+      result.vacancy_id = parseInt(m2[2]);
+      result.applicant_id = parseInt(m2[3]);
+      return result;
+    }
+    
+    return result;
+  }
+  
+  // Функция для получения ссылки на коммуникацию через API
+  async function getCommunicationLink(huntflowUrl) {
+    try {
+      const config = await getConfig();
+      const qp = new URLSearchParams({ huntflow_url: huntflowUrl });
+      const res = await apiFetch(`/api/v1/huntflow/linkedin-applicants/communication-link/?${qp.toString()}`, {
+        method: "GET"
+      });
+      
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        error(' Failed to get communication link:', data?.message || 'Unknown error');
+        return null;
+      }
+      
+      const data = await res.json().catch(() => null);
+      return data;
+    } catch (err) {
+      error(' Exception getting communication link:', err);
+      return null;
+    }
+  }
+  
+  // Обрабатываем при загрузке с задержкой (Google Meet загружается динамически)
+  setTimeout(() => {
+    log(' Initial processing after delay...');
+    processInterviewerLinks();
+  }, 1000);
+  
+  // Также обрабатываем сразу
+  processInterviewerLinks();
+  
+  // Наблюдаем за изменениями DOM с debounce
+  let processTimeout = null;
+  const observer = new MutationObserver(() => {
+    if (processTimeout) clearTimeout(processTimeout);
+    processTimeout = setTimeout(() => {
+      processInterviewerLinks();
+    }, 500);
+  });
+  
+  if (document.body) {
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    log(' MutationObserver started');
+  } else {
+    log(' document.body not ready, waiting...');
+    setTimeout(() => {
+      if (document.body) {
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+        log(' MutationObserver started (delayed)');
+      }
+    }, 1000);
+  }
+}
+
+log(' Content script loaded');
+
+// Инициализируем Google Calendar, если это страница календаря
+if (IS_GOOGLE_CALENDAR) {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGoogleCalendar);
+  } else {
+    initGoogleCalendar();
+  }
+}
+// Инициализируем Google Meet, если это страница Meet
+if (IS_GOOGLE_MEET) {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGoogleMeet);
+  } else {
+    initGoogleMeet();
+  }
+}
+// Инициализация для LinkedIn (не для Google Calendar и не для Google Meet)
+if (!IS_GOOGLE_CALENDAR && !IS_GOOGLE_MEET) {
+  log(' Starting initialization...');
+  captureProfileToThreadMapping();
+  startObserver();
+}
