@@ -249,6 +249,124 @@ def _normalize_linkedin_profile_url(raw_url: str) -> str | None:
     return f"https://www.linkedin.com/in/{slug}/"
 
 
+def _update_communication_field_if_empty(api, account_id, applicant_id, linkedin_url):
+    """
+    Обновляет поле "Где ведется коммуникация" ссылкой на LinkedIn, если оно пустое
+    
+    Args:
+        api: HuntflowService instance
+        account_id: ID организации
+        applicant_id: ID кандидата
+        linkedin_url: URL профиля LinkedIn
+        
+    Returns:
+        True если поле было обновлено, False если нет
+    """
+    try:
+        import logging
+        logger = logging.getLogger(__name__)
+        
+        # Получаем схему анкеты для поиска поля "Где ведется коммуникация"
+        questionary_schema = api.get_applicant_questionary_schema(account_id)
+        if not questionary_schema:
+            logger.warning(f"Cannot get questionary schema for account_id={account_id}")
+            return False
+        
+        logger.info(f"Questionary schema received, {len(questionary_schema)} fields")
+        
+        # Ищем поле "Где ведется коммуникация"
+        communication_field_id = None
+        for field_id, field_info in questionary_schema.items():
+            if isinstance(field_info, dict):
+                field_title = field_info.get('title', '').lower()
+                # Ищем поле по различным вариантам названия
+                if ('коммуникация' in field_title or 'communication' in field_title) and \
+                   ('ведется' in field_title or 'где' in field_title or 'where' in field_title or 'place' in field_title):
+                    communication_field_id = field_id
+                    logger.info(f"Found communication field: {field_id} - {field_info.get('title')}")
+                    break
+        
+        # Если не нашли точное совпадение, ищем просто по слову "коммуникация"
+        if not communication_field_id:
+            for field_id, field_info in questionary_schema.items():
+                if isinstance(field_info, dict):
+                    field_title = field_info.get('title', '').lower()
+                    if 'коммуникация' in field_title or 'communication' in field_title:
+                        communication_field_id = field_id
+                        logger.info(f"Found communication field (loose match): {field_id} - {field_info.get('title')}")
+                        break
+        
+        if not communication_field_id:
+            logger.warning(f"Communication field not found in questionary schema")
+            # Логируем все поля для отладки
+            logger.info(f"Available fields in schema (first 20):")
+            for i, (field_id, field_info) in enumerate(list(questionary_schema.items())[:20]):
+                if isinstance(field_info, dict):
+                    logger.info(f"  {i+1}. {field_id}: '{field_info.get('title', '')}' (type: {field_info.get('type', '')})")
+            return False
+        
+        # Получаем текущую анкету кандидата
+        questionary = api.get_applicant_questionary(account_id, applicant_id)
+        if not questionary:
+            logger.warning(f"Cannot get questionary for applicant_id={applicant_id}")
+            return False
+        
+        logger.info(f"Questionary received, {len(questionary)} fields")
+        
+        # Проверяем, заполнено ли поле
+        current_value = questionary.get(communication_field_id)
+        logger.info(f"Current value of communication field {communication_field_id}: {current_value} (type: {type(current_value)})")
+        
+        # Проверяем, заполнено ли поле (None, пустая строка, или только пробелы считаются пустыми)
+        if current_value is not None:
+            current_value_str = str(current_value).strip()
+            if current_value_str:
+                logger.info(f"Communication field already filled: {current_value_str}")
+                return False
+        
+        logger.info(f"Communication field is empty, will update with: {linkedin_url}")
+        
+        # Используем прямой PATCH запрос через requests, как в успешном примере update_candidate_field
+        import requests
+        url = f"{api._get_base_url()}/v2/accounts/{account_id}/applicants/{applicant_id}/questionary"
+        questionary_data = {communication_field_id: linkedin_url}
+        
+        logger.info(f"Updating communication field {communication_field_id} with value: {linkedin_url}")
+        logger.info(f"PATCH {url} with data: {questionary_data}")
+        
+        # Получаем заголовки для запроса
+        headers = api._get_headers()
+        
+        try:
+            response = requests.patch(
+                url,
+                headers=headers,
+                json=questionary_data,
+                timeout=30
+            )
+            
+            logger.info(f"Response status: {response.status_code}")
+            logger.info(f"Response body: {response.text[:500]}")
+            
+            if response.status_code == 200:
+                logger.info(f"✅ Communication field successfully updated with LinkedIn URL: {linkedin_url}")
+                # Очищаем кэш кандидата
+                from apps.google_oauth.cache_service import HuntflowAPICache
+                HuntflowAPICache.clear_candidate(api.user.id, account_id, applicant_id)
+                return True
+            else:
+                logger.warning(f"❌ Failed to update communication field: HTTP {response.status_code} - {response.text[:500]}")
+                return False
+        except Exception as e:
+            logger.error(f"Error in PATCH request: {e}", exc_info=True)
+            return False
+            
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error updating communication field: {e}", exc_info=True)
+        return False
+
 class LinkedInApplicantsViewSet(viewsets.ViewSet):
     """
     API под Chrome-расширение:
@@ -924,6 +1042,40 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
                 else None
             )
             
+            # Обновляем поле "Где ведется коммуникация", если оно пустое
+            # Это работает и при первом сохранении, и при редактировании существующей ссылки
+            # Используем account_id и applicant_id из обновленного объекта (могут быть из новой ссылки)
+            final_account_id = obj.account_id
+            final_applicant_id = obj.applicant_id
+            
+            # Если account_id и applicant_id не были сохранены в obj, но были извлечены из новой ссылки, используем их
+            if not final_account_id and account_id:
+                final_account_id = account_id
+            if not final_applicant_id and applicant_id:
+                final_applicant_id = applicant_id
+            
+            if final_account_id and final_applicant_id:
+                try:
+                    import logging
+                    logger = logging.getLogger(__name__)
+                    logger.info(f"Checking communication field for account_id={final_account_id}, applicant_id={final_applicant_id}, linkedin_url={linkedin_url}")
+                    from apps.huntflow.services import HuntflowService
+                    api = HuntflowService(user=request.user)
+                    _update_communication_field_if_empty(
+                        api, 
+                        int(final_account_id), 
+                        int(final_applicant_id), 
+                        linkedin_url
+                    )
+                except Exception as e:
+                    import logging
+                    logger = logging.getLogger(__name__)
+                    logger.warning(f"Error updating communication field in set_link: {e}", exc_info=True)
+            else:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(f"Cannot update communication field: account_id={final_account_id}, applicant_id={final_applicant_id}")
+            
             return Response(
                 {
                     "success": True,
@@ -1064,6 +1216,19 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
             if result:
                 # Очищаем кэш кандидата
                 HuntflowAPICache.clear_candidate(request.user.id, account_id, applicant_id)
+                
+                # Обновляем поле "Где ведется коммуникация", если оно пустое
+                try:
+                    _update_communication_field_if_empty(
+                        api, 
+                        account_id, 
+                        applicant_id, 
+                        linkedin_url
+                    )
+                except Exception as e:
+                    import logging
+                    logger = logging.getLogger(__name__)
+                    logger.warning(f"Error updating communication field in update_status: {e}")
                 
                 return Response(
                     {

@@ -27,6 +27,7 @@ const STATE = {
     show: false,
     inputValue: "",
     originalAppUrl: null, // Сохраняем оригинальный URL перед редактированием
+    statusName: null, // Название статуса для отображения в кнопке статуса
   },
   busy: false,
   suppressObserver: false,
@@ -294,7 +295,7 @@ function createWidget(anchorEl, container, isMessaging = false) {
   copyBtn.className = "hrhelper-copy-btn";
   copyBtn.innerHTML = "📋"; // Иконка копирования
   copyBtn.title = "Копировать ссылку на Huntflow";
-  copyBtn.style.cssText = "display:none;width:32px;height:32px;border-radius:50%;border:1px solid rgba(0,0,0,.15);background:#28a745;color:#fff;font-size:14px;cursor:pointer;padding:0;line-height:1;";
+  copyBtn.style.cssText = "display:none;width:32px;height:32px;border-radius:50%;border:1px solid rgba(0,0,0,.15);background:#17a2b8;color:#fff;font-size:14px;cursor:pointer;padding:0;line-height:1;";
   copyBtn.addEventListener("click", onCopyClick);
   wrapper.appendChild(copyBtn);
   
@@ -304,7 +305,7 @@ function createWidget(anchorEl, container, isMessaging = false) {
   editBtn.className = "hrhelper-edit-btn";
   editBtn.innerHTML = "✏️"; // Иконка карандаша
   editBtn.title = "Редактировать ссылку";
-  editBtn.style.cssText = "display:none;width:32px;height:32px;border-radius:50%;border:1px solid rgba(0,0,0,.15);background:#dc3545;color:#fff;font-size:14px;cursor:pointer;padding:0;line-height:1;";
+  editBtn.style.cssText = "display:none;width:32px;height:32px;border-radius:50%;border:1px solid rgba(0,0,0,.15);background:#6c757d;color:#fff;font-size:14px;cursor:pointer;padding:0;line-height:1;";
   editBtn.addEventListener("click", onEditClick);
   wrapper.appendChild(editBtn);
   
@@ -312,9 +313,8 @@ function createWidget(anchorEl, container, isMessaging = false) {
   const statusBtn = document.createElement("button");
   statusBtn.type = "button";
   statusBtn.className = "hrhelper-status-btn";
-  statusBtn.innerHTML = "🔄"; // Иконка обновления
   statusBtn.title = "Изменить статус";
-  statusBtn.style.cssText = "display:none;width:32px;height:32px;border-radius:50%;border:1px solid rgba(0,0,0,.15);background:#17a2b8;color:#fff;font-size:14px;cursor:pointer;padding:0;line-height:1;";
+  statusBtn.style.cssText = "display:none;padding:8px 12px;border-radius:999px;border:1px solid rgba(0,0,0,.15);color:#fff;font-weight:600;cursor:pointer;line-height:1;font-size:12px;white-space:nowrap;";
   statusBtn.addEventListener("click", onStatusClick);
   wrapper.appendChild(statusBtn);
   
@@ -377,6 +377,16 @@ function createWidget(anchorEl, container, isMessaging = false) {
   return { wrapper, btn, input, inputGroup, saveBtn, cancelBtn, editBtn, copyBtn, statusBtn, statusDropdown };
 }
 
+// Функция для определения, является ли статус отказом
+function isRejectionStatus(statusName) {
+  if (!statusName) return false;
+  const statusNameLower = statusName.toLowerCase();
+  return statusNameLower.includes('отказ') || 
+         statusNameLower.includes('reject') || 
+         statusNameLower.includes('rejected') ||
+         statusNameLower.includes('отклонен');
+}
+
 function updateWidget(widgets, force) {
   if (!widgets) return;
   const { btn, input, inputGroup, saveBtn, cancelBtn, editBtn, copyBtn, statusBtn, statusDropdown } = widgets;
@@ -405,9 +415,17 @@ function updateWidget(widgets, force) {
       editBtn.style.display = "block";
     }
     
-    // Показываем кнопку изменения статуса (только если есть app_url)
+    // Обновляем кнопку изменения статуса (только если есть app_url)
     if (statusBtn) {
-      statusBtn.style.display = STATE.current.appUrl ? "block" : "none";
+      if (STATE.current.appUrl && STATE.current.statusName) {
+        statusBtn.style.display = "block";
+        statusBtn.textContent = STATE.current.statusName;
+        // Определяем цвет: красный для отказа, зеленый для остальных
+        const isRejection = isRejectionStatus(STATE.current.statusName);
+        statusBtn.style.background = isRejection ? "#dc3545" : "#28a745";
+      } else {
+        statusBtn.style.display = "none";
+      }
     }
     
     // Скрываем выпадающий список статуса
@@ -543,6 +561,7 @@ function setButtonState(obj) {
   if (obj.title != null) STATE.current.title = obj.title;
   if (obj.color != null) STATE.current.color = obj.color;
   if (obj.disabled != null) STATE.current.disabled = !!obj.disabled;
+  if (obj.statusName != null) STATE.current.statusName = obj.statusName;
   applyStateToAllButtons();
 }
 
@@ -748,15 +767,12 @@ async function refreshButtonForCurrentProfile() {
       STATE.current.mode = "open";
       STATE.current.appUrl = cached.app_url;
       STATE.current.disabled = false;
-      // Формируем текст кнопки: "Huntflow | Название вакансии | Статус"
+      // Формируем текст кнопки: "Huntflow | Название вакансии" (без статуса)
       let buttonText = "Huntflow";
       if (cached.vacancy_name) {
         buttonText = `Huntflow | ${cached.vacancy_name}`;
-        if (cached.status_name) {
-          buttonText += ` | ${cached.status_name}`;
-        }
       }
-      setButtonState({ text: buttonText, disabled: false, title: "Открыть в Huntflow", color: "#0a66c2" });
+      setButtonState({ text: buttonText, disabled: false, title: "Открыть в Huntflow", color: "#0a66c2", statusName: cached.status_name });
     } else {
       STATE.current.mode = "input";
       STATE.current.appUrl = null;
@@ -812,17 +828,14 @@ async function refreshButtonForCurrentProfile() {
     STATE.current.appUrl = status.app_url;
     STATE.current.disabled = false;
     
-    // Формируем текст кнопки: "Huntflow | Название вакансии | Статус"
+    // Формируем текст кнопки: "Huntflow | Название вакансии" (без статуса)
     let buttonText = "Huntflow";
     if (status.vacancy_name) {
       buttonText = `Huntflow | ${status.vacancy_name}`;
-      if (status.status_name) {
-        buttonText += ` | ${status.status_name}`;
-      }
     }
     
     log(' Button text:', buttonText);
-    setButtonState({ text: buttonText, disabled: false, title: "Открыть в Huntflow", color: "#0a66c2" });
+    setButtonState({ text: buttonText, disabled: false, title: "Открыть в Huntflow", color: "#0a66c2", statusName: status.status_name });
   } else {
     log(' Candidate not found, showing input');
     STATE.current.mode = "input";
@@ -913,16 +926,13 @@ async function onSaveLinkClick() {
     STATE.current.title = "Открыть в Huntflow";
     STATE.current.disabled = false;
     
-    // Обновляем текст кнопки с названием вакансии и статусом, если есть
+    // Обновляем текст кнопки с названием вакансии (без статуса)
     let buttonText = "Huntflow";
     if (saved.vacancy_name) {
       buttonText = `Huntflow | ${saved.vacancy_name}`;
-      if (saved.status_name) {
-        buttonText += ` | ${saved.status_name}`;
-      }
     }
     log(' Button text after save:', buttonText);
-    setButtonState({ text: buttonText, disabled: false, title: "Открыть в Huntflow", color: "#0a66c2" });
+    setButtonState({ text: buttonText, disabled: false, title: "Открыть в Huntflow", color: "#0a66c2", statusName: saved.status_name });
     
     // Сбрасываем счетчик API вызовов для этого профиля, чтобы можно было обновить статус
     STATE.apiCallsThisProfile = 0;
@@ -1311,17 +1321,7 @@ async function updateStatus(linkedinUrl, statusId, rejectionReasonId) {
       STATE.apiCallsThisProfile = 0;
       await refreshButtonForCurrentProfile();
       
-      // Показываем уведомление об успехе
-      const statusBtn = document.querySelector('.hrhelper-status-btn');
-      if (statusBtn) {
-        const originalHTML = statusBtn.innerHTML;
-        statusBtn.innerHTML = "✓";
-        statusBtn.style.background = "#28a745";
-        setTimeout(() => {
-          statusBtn.innerHTML = originalHTML;
-          statusBtn.style.background = "#17a2b8";
-        }, 2000);
-      }
+      // Обновление кнопки статуса произойдет автоматически через refreshButtonForCurrentProfile
     } else {
       error(' Status update failed:', data);
       alert('Не удалось обновить статус');

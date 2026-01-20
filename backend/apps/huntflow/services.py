@@ -1241,23 +1241,28 @@ class HuntflowService:
             for data in data_variants:
                 print(f"DEBUG: Пробуем обновить анкету через {endpoint} с данными {data}")
                 result = self._make_request('PATCH', endpoint, json=data)
-                if result:
+                # Проверяем, что результат не None (даже пустой dict считается успешным)
+                if result is not None:
                     # Сбрасываем кэш для этого кандидата
                     user_id = self.user.id
                     HuntflowAPICache.clear_candidate(user_id, account_id, applicant_id)
+                    print(f"✅ Анкета успешно обновлена через {endpoint}")
                     print(f"🗑️ Сброшен кэш для кандидата: {applicant_id}")
                     return result
                     
                 # Также пробуем POST для специального эндпоинта
                 if endpoint.endswith('/questionary'):
                     result = self._make_request('POST', endpoint, json=data)
-                    if result:
+                    # Проверяем, что результат не None
+                    if result is not None:
                         # Сбрасываем кэш для этого кандидата
                         user_id = self.user.id
                         HuntflowAPICache.clear_candidate(user_id, account_id, applicant_id)
+                        print(f"✅ Анкета успешно обновлена через POST {endpoint}")
                         print(f"🗑️ Сброшен кэш для кандидата: {applicant_id}")
                         return result
         
+        print(f"❌ Не удалось обновить анкету ни одним из способов")
         return None
     
     def update_applicant_scorecard_field(self, account_id: int, applicant_id: int, scorecard_url: str) -> Optional[Dict[str, Any]]:
