@@ -2420,8 +2420,7 @@ class HuntflowService:
             endpoint = f"/accounts/{account_id}/applicants/{applicant_id}/vacancy"
             data = {
                 'vacancy': vacancy_id,
-                'status': target_status,
-                'comment': 'Автоматически добавлен из ClickUp'
+                'status': target_status
             }
             
             result = self._make_request('POST', endpoint, json=data)

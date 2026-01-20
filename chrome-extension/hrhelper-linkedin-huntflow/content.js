@@ -9,7 +9,7 @@ const IS_GOOGLE_CALENDAR = location.href.includes('calendar.google.com');
 const IS_GOOGLE_MEET = location.href.includes('meet.google.com');
 const log = (...args) => (DEBUG || IS_GOOGLE_CALENDAR || IS_GOOGLE_MEET) && console.log('[HRHelper]', ...args);
 const warn = (...args) => (DEBUG || IS_GOOGLE_CALENDAR || IS_GOOGLE_MEET) && console.warn('[HRHelper]', ...args);
-const error = (...args) => console.error('[HRHelper]', ...args);
+const logError = (...args) => console.logError('[HRHelper]', ...args);
 
 const MAX_WIDGETS = 2;
 const IS_MESSAGING_PAGE = location.href.includes('/messaging/');
@@ -58,40 +58,86 @@ function normalizeLinkedInProfileUrl(url) {
 }
 
 async function getConfig() {
-  const cfg = await chrome.storage.sync.get(DEFAULTS);
-  return { baseUrl: (cfg.baseUrl || DEFAULTS.baseUrl).replace(/\/+$/, "") };
+  try {
+    const cfg = await chrome.storage.sync.get(DEFAULTS);
+    return { baseUrl: (cfg.baseUrl || DEFAULTS.baseUrl).replace(/\/+$/, "") };
+  } catch (err) {
+    // Extension context invalidated - используем значения по умолчанию
+    if (err.message && err.message.includes('Extension context invalidated')) {
+      warn(' Extension context invalidated in getConfig, using defaults');
+      return { baseUrl: DEFAULTS.baseUrl.replace(/\/+$/, "") };
+    }
+    throw err;
+  }
 }
 
 function extractThreadIdFromMessageButton() {
   // Сначала пробуем извлечь из URL страницы (для страницы messaging)
   const urlMatch = location.href.match(/thread\/([^/?]+)/);
   if (urlMatch) {
+    log(' extractThreadIdFromMessageButton: found in URL', urlMatch[1].substring(0, 10) + '...');
     return urlMatch[1];
   }
   
   // Затем ищем в ссылках на странице
-  const messageLink = document.querySelector('a[href*="/messaging/thread/"]');
-  if (messageLink?.href) {
-    const threadMatch = messageLink.href.match(/thread\/([^/?]+)/);
-    if (threadMatch) return threadMatch[1];
-  }
-
-  // Ищем в кнопке Message
-  const messageBtn = document.querySelector('button[aria-label*="Message"], button[aria-label*="message"]');
-  if (messageBtn) {
-    const link = messageBtn.querySelector('a[href*="/messaging/"]') || 
-                 messageBtn.closest('a[href*="/messaging/"]');
-    if (link?.href) {
-      const threadMatch = link.href.match(/thread\/([^/?]+)/);
-      if (threadMatch) return threadMatch[1];
+  const messageLinks = Array.from(document.querySelectorAll('a[href*="/messaging/thread/"]'));
+  for (const messageLink of messageLinks) {
+    if (messageLink?.href) {
+      const threadMatch = messageLink.href.match(/thread\/([^/?]+)/);
+      if (threadMatch) {
+        log(' extractThreadIdFromMessageButton: found in link', threadMatch[1].substring(0, 10) + '...');
+        return threadMatch[1];
+      }
     }
   }
 
+  // Ищем в кнопке Message - пробуем разные селекторы
+  const messageBtnSelectors = [
+    'button[aria-label*="Message"]',
+    'button[aria-label*="message"]',
+    'button[aria-label*="Сообщение"]',
+    'button[aria-label*="сообщение"]',
+    'a[href*="/messaging/"]',
+    '[data-control-name="send_inmail"]',
+    '[data-control-name="message"]'
+  ];
+  
+  for (const selector of messageBtnSelectors) {
+    const elements = Array.from(document.querySelectorAll(selector));
+    for (const element of elements) {
+      // Ищем ссылку внутри элемента или рядом
+      let link = element.querySelector('a[href*="/messaging/"]') || 
+                 element.closest('a[href*="/messaging/"]') ||
+                 (element.href && element.href.includes('/messaging/') ? element : null);
+      
+      if (!link && element.href) {
+        link = element;
+      }
+      
+      if (link?.href) {
+        const threadMatch = link.href.match(/thread\/([^/?]+)/);
+        if (threadMatch) {
+          log(' extractThreadIdFromMessageButton: found in button/link', threadMatch[1].substring(0, 10) + '...');
+          return threadMatch[1];
+        }
+      }
+    }
+  }
+
+  log(' extractThreadIdFromMessageButton: not found');
   return null;
 }
 
 async function saveThreadMappingToBackend(threadId, profileUrl) {
-  if (!threadId || !profileUrl) return;
+  if (!threadId || !profileUrl) {
+    log(' saveThreadMappingToBackend: missing threadId or profileUrl', { threadId: !!threadId, profileUrl: !!profileUrl });
+    return;
+  }
+  
+  log(' saveThreadMappingToBackend: saving mapping', { 
+    threadId: threadId.substring(0, 10) + '...', 
+    profileUrl 
+  });
   
   try {
     const result = await apiFetch('/api/v1/linkedin/thread-mapping/', {
@@ -102,32 +148,84 @@ async function saveThreadMappingToBackend(threadId, profileUrl) {
       })
     });
 
+    log(' saveThreadMappingToBackend: API response', { 
+      ok: result.ok, 
+      status: result.status 
+    });
+
     if (result.ok) {
-      log(' Thread mapping saved:', threadId.substring(0, 10) + '...');
+      const data = await result.json().catch(() => null);
+      log(' Thread mapping saved successfully:', threadId.substring(0, 10) + '...', data);
+    } else {
+      const data = await result.json().catch(() => null);
+      logError(' Failed to save thread mapping:', { 
+        status: result.status, 
+        data 
+      });
     }
   } catch (e) {
-    warn(' Failed to save thread mapping:', e);
+    logError(' Exception saving thread mapping:', e);
   }
 }
 
 function captureProfileToThreadMapping() {
-  if (!IS_PROFILE_PAGE) return;
+  if (!IS_PROFILE_PAGE) {
+    log(' captureProfileToThreadMapping: not a profile page');
+    return;
+  }
 
   const profileUrl = normalizeLinkedInProfileUrl(location.href);
-  if (!profileUrl) return;
+  if (!profileUrl) {
+    log(' captureProfileToThreadMapping: could not normalize profile URL');
+    return;
+  }
 
-  const threadId = extractThreadIdFromMessageButton();
-  if (threadId) {
+  log(' captureProfileToThreadMapping: starting for', profileUrl);
+
+  // Функция для сохранения маппинга
+  const saveMapping = (threadId) => {
+    if (!threadId) {
+      log(' saveMapping: threadId is empty');
+      return;
+    }
+    
     log(' Found thread:', threadId.substring(0, 10) + '...', 'for', profileUrl);
     
     try {
       const mapping = JSON.parse(localStorage.getItem('hrhelper_thread_profile_map') || '{}');
       mapping[threadId] = profileUrl;
       localStorage.setItem('hrhelper_thread_profile_map', JSON.stringify(mapping));
-    } catch (e) {}
+      log(' Saved thread mapping to localStorage');
+    } catch (e) {
+      logError(' Error saving thread mapping to localStorage:', e);
+    }
 
     saveThreadMappingToBackend(threadId, profileUrl);
+  };
+
+  // Пробуем найти thread_id сразу
+  let threadId = extractThreadIdFromMessageButton();
+  if (threadId) {
+    saveMapping(threadId);
+  } else {
+    log(' captureProfileToThreadMapping: threadId not found immediately, will retry');
   }
+
+  // Также пробуем найти thread_id через небольшие задержки
+  // (кнопка Message может появиться позже при динамической загрузке)
+  const delays = [500, 1000, 2000, 3000, 5000];
+  delays.forEach(delay => {
+    setTimeout(() => {
+      const delayedThreadId = extractThreadIdFromMessageButton();
+      if (delayedThreadId) {
+        if (!threadId || delayedThreadId !== threadId) {
+          log(' captureProfileToThreadMapping: found threadId after delay', delayedThreadId.substring(0, 10) + '...');
+          threadId = delayedThreadId;
+          saveMapping(delayedThreadId);
+        }
+      }
+    }, delay);
+  });
 
   let lastThreadId = threadId;
   const trackMessageButtons = () => {
@@ -140,7 +238,10 @@ function captureProfileToThreadMapping() {
         const mapping = JSON.parse(localStorage.getItem('hrhelper_thread_profile_map') || '{}');
         mapping[newThreadId] = profileUrl;
         localStorage.setItem('hrhelper_thread_profile_map', JSON.stringify(mapping));
-      } catch (e) {}
+        log(' Saved new thread mapping to localStorage');
+      } catch (e) {
+        logError(' Error saving thread mapping to localStorage:', e);
+      }
       
       saveThreadMappingToBackend(newThreadId, profileUrl);
     }
@@ -148,6 +249,7 @@ function captureProfileToThreadMapping() {
 
   const obs = new MutationObserver(trackMessageButtons);
   obs.observe(document.body, { childList: true, subtree: true });
+  log(' captureProfileToThreadMapping: MutationObserver started');
 }
 
 async function getProfileLinkFromMessaging() {
@@ -225,7 +327,7 @@ async function getProfileLinkFromMessaging() {
       
       warn(' Thread not mapped:', threadId);
     } catch (e) {
-      error(' Error getting profile:', e);
+      logError(' Error getting profile:', e);
     }
   }
 
@@ -647,21 +749,57 @@ async function apiFetch(path, init) {
   const method = init.method || "GET";
   const body = init.body ? JSON.parse(init.body) : undefined;
 
-  const result = await new Promise(resolve => {
-    chrome.runtime.sendMessage(
-      {
-        type: "HRHELPER_API",
-        payload: { path, method, body },
-      },
-      (response) => resolve(response)
-    );
-  });
+  try {
+    const result = await new Promise((resolve, reject) => {
+      try {
+        chrome.runtime.sendMessage(
+          {
+            type: "HRHELPER_API",
+            payload: { path, method, body },
+          },
+          (response) => {
+            // Проверяем ошибку chrome.runtime.lastError
+            if (chrome.runtime.lastError) {
+              reject(new Error(chrome.runtime.lastError.message));
+              return;
+            }
+            resolve(response);
+          }
+        );
+      } catch (err) {
+        reject(err);
+      }
+    });
 
-  return {
-    ok: !!result?.ok,
-    status: result?.status ?? 0,
-    json: async () => result?.json,
-  };
+    return {
+      ok: !!result?.ok,
+      status: result?.status ?? 0,
+      json: async () => result?.json,
+    };
+  } catch (err) {
+    // Extension context invalidated - возвращаем ошибку
+    if (err.message && err.message.includes('Extension context invalidated')) {
+      warn(' Extension context invalidated in apiFetch');
+      return {
+        ok: false,
+        status: 0,
+        json: async () => ({ 
+          success: false, 
+          message: 'Extension context invalidated. Please reload the page.' 
+        }),
+      };
+    }
+    // Другие ошибки
+    logError(' Error in apiFetch:', err);
+    return {
+      ok: false,
+      status: 0,
+      json: async () => ({ 
+        success: false, 
+        message: err.message || 'Unknown error' 
+      }),
+    };
+  }
 }
 
 async function checkStatus(linkedinUrl, forceRefresh = false) {
@@ -715,7 +853,7 @@ async function setLink(linkedinUrl, targetUrl) {
   log(' setLink data:', data);
   if (!res.ok) {
     const error = data?.message || data?.error || 'HTTP ' + res.status;
-    error(' setLink error:', error);
+    logError(' setLink error:', error);
     return { error };
   }
   
@@ -758,7 +896,7 @@ async function refreshButtonForCurrentProfile() {
       canonical = await getProfileLinkFromMessaging();
       log(' Profile from messaging:', canonical);
     } catch (e) {
-      error(' Error getting profile from messaging:', e);
+      logError(' Error getting profile from messaging:', e);
     }
   }
 
@@ -792,6 +930,16 @@ async function refreshButtonForCurrentProfile() {
       }
     } catch (e) {
       // Игнорируем ошибки
+    }
+  }
+  
+  // Проверяем, есть ли в кэше vacancy_name и status_name
+  // Если их нет, делаем принудительное обновление
+  if (cached && cached.exists && cached.app_url) {
+    const hasVacancyOrStatus = cached.vacancy_name !== undefined || cached.status_name !== undefined;
+    if (!hasVacancyOrStatus && !shouldForceRefresh) {
+      log(' Cached data missing vacancy_name or status_name, forcing refresh');
+      shouldForceRefresh = true;
     }
   }
   
@@ -842,6 +990,12 @@ async function refreshButtonForCurrentProfile() {
   const status = await STATE.statusInFlight;
   
   log(' Status received:', status);
+  log(' Status fields:', { 
+    vacancy_name: status?.vacancy_name, 
+    status_name: status?.status_name,
+    exists: status?.exists,
+    app_url: status?.app_url 
+  });
   
   if (status.authRequired || status.error) {
     warn(' Auth required or error:', status.error || 'No token');
@@ -898,12 +1052,12 @@ async function onSaveLinkClick() {
       canonical = await getProfileLinkFromMessaging();
       log(' Profile from messaging:', canonical);
     } catch (e) {
-      error(' Error getting profile from messaging:', e);
+      logError(' Error getting profile from messaging:', e);
     }
   }
 
   if (!canonical) {
-    error(' No canonical URL found');
+    logError(' No canonical URL found');
     STATE.current.title = "Не удалось определить профиль LinkedIn";
     applyStateToAllButtons();
     return;
@@ -936,9 +1090,14 @@ async function onSaveLinkClick() {
     log(' Calling setLink...');
     const saved = await setLink(canonical, target);
     log(' setLink result:', saved);
+    log(' setLink fields:', { 
+      vacancy_name: saved?.vacancy_name, 
+      status_name: saved?.status_name,
+      app_url: saved?.app_url 
+    });
     
     if (saved?.error) {
-      error(' Save error:', saved.error);
+      logError(' Save error:', saved.error);
       STATE.current.title = saved.error;
       STATE.current.disabled = false;
       applyStateToAllButtons();
@@ -946,7 +1105,7 @@ async function onSaveLinkClick() {
     }
     
     if (!saved || (!saved.app_url && !saved.target_url)) {
-      error(' Save failed: no URL in response', saved);
+      logError(' Save failed: no URL in response', saved);
       STATE.current.title = "Ошибка сохранения: нет ссылки в ответе";
       STATE.current.disabled = false;
       applyStateToAllButtons();
@@ -955,6 +1114,49 @@ async function onSaveLinkClick() {
     
     const finalUrl = saved.app_url || saved.target_url;
     log(' Saved! Final URL:', finalUrl);
+    
+    // Сохраняем маппинг thread_id -> profile_url, если мы на странице профиля
+    if (IS_PROFILE_PAGE && canonical) {
+      log(' onSaveLinkClick: attempting to save thread mapping for profile page');
+      const saveThreadMapping = (threadId) => {
+        if (!threadId) {
+          log(' saveThreadMapping: threadId is empty');
+          return false;
+        }
+        
+        log(' Saving thread mapping after link save:', threadId.substring(0, 10) + '... -> ' + canonical);
+        try {
+          const mapping = JSON.parse(localStorage.getItem('hrhelper_thread_profile_map') || '{}');
+          mapping[threadId] = canonical;
+          localStorage.setItem('hrhelper_thread_profile_map', JSON.stringify(mapping));
+          saveThreadMappingToBackend(threadId, canonical);
+          return true;
+        } catch (e) {
+          logError(' Error saving thread mapping after link save:', e);
+          return false;
+        }
+      };
+      
+      // Пробуем найти thread_id сразу
+      let threadId = extractThreadIdFromMessageButton();
+      if (threadId) {
+        saveThreadMapping(threadId);
+      } else {
+        log(' Thread ID not found immediately, will retry with delays');
+        // Если thread_id не найден сразу, пробуем найти его через задержки
+        // (кнопка Message может появиться позже при динамической загрузке)
+        const delays = [500, 1000, 2000, 3000, 5000];
+        delays.forEach(delay => {
+          setTimeout(() => {
+            const delayedThreadId = extractThreadIdFromMessageButton();
+            if (delayedThreadId) {
+              log(' Found thread_id after delay, saving mapping:', delayedThreadId.substring(0, 10) + '... -> ' + canonical);
+              saveThreadMapping(delayedThreadId);
+            }
+          }, delay);
+        });
+      }
+    }
     
     STATE.current.mode = "open";
     STATE.current.appUrl = finalUrl;
@@ -975,7 +1177,7 @@ async function onSaveLinkClick() {
     
     applyStateToAllButtons();
   } catch (e) {
-    error(' Exception in onSaveLinkClick:', e);
+    logError(' Exception in onSaveLinkClick:', e);
     STATE.current.title = "Ошибка: " + (e.message || String(e));
     STATE.current.disabled = false;
     applyStateToAllButtons();
@@ -992,7 +1194,7 @@ async function onButtonClick() {
     try {
       canonical = await getProfileLinkFromMessaging();
     } catch (e) {
-      error(' Error getting profile from messaging:', e);
+      logError(' Error getting profile from messaging:', e);
     }
   }
 
@@ -1061,7 +1263,7 @@ async function onCopyClick(e) {
       }, 1000);
     }
   } catch (err) {
-    error(' Failed to copy URL:', err);
+    logError(' Failed to copy URL:', err);
     // Fallback для старых браузеров
     const textArea = document.createElement("textarea");
     textArea.value = STATE.current.appUrl;
@@ -1074,7 +1276,7 @@ async function onCopyClick(e) {
       document.execCommand('copy');
       log(' URL copied using fallback method');
     } catch (fallbackErr) {
-      error(' Fallback copy also failed:', fallbackErr);
+      logError(' Fallback copy also failed:', fallbackErr);
     }
     document.body.removeChild(textArea);
   }
@@ -1090,12 +1292,12 @@ async function onStatusClick(e) {
     try {
       canonical = await getProfileLinkFromMessaging();
     } catch (e) {
-      error(' Error getting profile from messaging:', e);
+      logError(' Error getting profile from messaging:', e);
     }
   }
   
   if (!canonical) {
-    error(' No canonical URL found');
+    logError(' No canonical URL found');
     return;
   }
   
@@ -1177,7 +1379,7 @@ async function onStatusClick(e) {
     }, 100);
     
   } catch (err) {
-    error(' Error loading status options:', err);
+    logError(' Error loading status options:', err);
     statusDropdown.innerHTML = '<div style="padding:12px;color:#dc3545;">Ошибка загрузки</div>';
   }
 }
@@ -1334,7 +1536,7 @@ async function updateStatus(linkedinUrl, statusId, rejectionReasonId) {
     
     if (!res.ok) {
       const data = await res.json().catch(() => null);
-      error(' Failed to update status:', data?.message || 'Unknown error');
+      logError(' Failed to update status:', data?.message || 'Unknown error');
       alert(`Ошибка обновления статуса: ${data?.message || 'Неизвестная ошибка'}`);
       return;
     }
@@ -1358,11 +1560,11 @@ async function updateStatus(linkedinUrl, statusId, rejectionReasonId) {
       
       // Обновление кнопки статуса произойдет автоматически через refreshButtonForCurrentProfile
     } else {
-      error(' Status update failed:', data);
+      logError(' Status update failed:', data);
       alert('Не удалось обновить статус');
     }
   } catch (err) {
-    error(' Exception updating status:', err);
+    logError(' Exception updating status:', err);
     alert(`Ошибка: ${err.message || String(err)}`);
   }
 }
@@ -1826,7 +2028,10 @@ function initGoogleCalendar() {
           log('  Communication link not found');
         }
       }).catch(err => {
-        error('  Error getting communication link:', err);
+        // Не логируем ошибку, если это Extension context invalidated - это нормально при перезагрузке расширения
+        if (err.message && !err.message.includes('Extension context invalidated')) {
+          logError('  Error getting communication link:', err);
+        }
         button.textContent = 'Ошибка';
         button.style.background = '#dc3545';
       });
@@ -1868,14 +2073,20 @@ function initGoogleCalendar() {
       
       if (!res.ok) {
         const data = await res.json().catch(() => null);
-        error(' Failed to get communication link:', data?.message || 'Unknown error');
+        // Не логируем ошибку, если это Extension context invalidated - это нормально при перезагрузке расширения
+        if (data?.message && !data.message.includes('Extension context invalidated')) {
+          logError(' Failed to get communication link:', data.message || 'Unknown error');
+        }
         return null;
       }
       
       const data = await res.json().catch(() => null);
       return data;
     } catch (err) {
-      error(' Exception getting communication link:', err);
+      // Не логируем ошибку, если это Extension context invalidated - это нормально при перезагрузке расширения
+      if (err.message && !err.message.includes('Extension context invalidated')) {
+        logError(' Exception getting communication link:', err);
+      }
       return null;
     }
   }
@@ -1924,6 +2135,35 @@ function initGoogleMeet() {
   
   log(' Google Meet detected, initializing...');
   log(' Current URL:', location.href);
+  
+  // Функция для получения ссылки на Scorecard через API
+  async function getScorecardLink(huntflowUrl) {
+    try {
+      const config = await getConfig();
+      const qp = new URLSearchParams({ huntflow_url: huntflowUrl });
+      const res = await apiFetch(`/api/v1/huntflow/linkedin-applicants/scorecard-link/?${qp.toString()}`, {
+        method: "GET"
+      });
+      
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        // Не логируем ошибку, если это Extension context invalidated - это нормально при перезагрузке расширения
+        if (data?.message && !data.message.includes('Extension context invalidated')) {
+          log(' Failed to get scorecard link:', data.message || 'Unknown error');
+        }
+        return null;
+      }
+      
+      const data = await res.json().catch(() => null);
+      return data;
+    } catch (err) {
+      // Не логируем ошибку, если это Extension context invalidated - это нормально при перезагрузке расширения
+      if (err.message && !err.message.includes('Extension context invalidated')) {
+        logError(' Exception getting scorecard link:', err);
+      }
+      return null;
+    }
+  }
   
   // Функция для поиска и обработки текста "Для интервьюеров:"
   function processInterviewerLinks() {
@@ -2065,69 +2305,136 @@ function initGoogleMeet() {
         return;
       }
       
-      // Проверяем, есть ли уже кнопка рядом с этой ссылкой
-      const existingButton = buttonContainer.querySelector('.hrhelper-communication-btn');
-      if (existingButton) {
-        log('  Button already exists');
+      // Проверяем, есть ли уже кнопки рядом с этой ссылкой
+      const existingCommButton = buttonContainer.querySelector('.hrhelper-communication-btn');
+      const existingScorecardButton = buttonContainer.querySelector('.hrhelper-scorecard-btn');
+      if (existingCommButton && existingScorecardButton) {
+        log('  Buttons already exist');
         return;
       }
       
-      log('  Creating button...');
+      log('  Creating buttons...');
       
-      // Создаем кнопку-заглушку
-      const button = document.createElement('a');
-      button.className = 'hrhelper-communication-btn';
-      button.textContent = 'Загрузка...';
-      button.style.cssText = 'display:inline-block;margin-left:8px;padding:4px 8px;background:#0a66c2;color:#fff;text-decoration:none;border-radius:4px;font-size:12px;white-space:nowrap;';
-      button.href = '#';
-      button.onclick = (e) => { e.preventDefault(); return false; };
-      
-      // Вставляем кнопку сразу после ссылки на Huntflow
-      // Пробуем вставить после ссылки, если есть nextSibling
-      if (huntflowLink.nextSibling) {
-        buttonContainer.insertBefore(button, huntflowLink.nextSibling);
+      // Создаем кнопку-заглушку для коммуникации
+      let button = null;
+      if (!existingCommButton) {
+        button = document.createElement('a');
+        button.className = 'hrhelper-communication-btn';
+        button.setAttribute('data-hrhelper', 'social-button');
+        button.textContent = 'Загрузка...';
+        button.style.cssText = 'display:inline-block;margin-left:8px;padding:4px 8px;background:#0a66c2;color:#fff;text-decoration:none;border-radius:4px;font-size:12px;white-space:nowrap;';
+        button.href = '#';
+        button.onclick = (e) => { e.preventDefault(); return false; };
+        
+        // Вставляем кнопку сразу после ссылки на Huntflow
+        if (huntflowLink.nextSibling) {
+          buttonContainer.insertBefore(button, huntflowLink.nextSibling);
+        } else {
+          buttonContainer.appendChild(button);
+        }
+        
+        log('  Communication button inserted after Huntflow link');
       } else {
-        // Если нет nextSibling, добавляем в конец контейнера
-        buttonContainer.appendChild(button);
+        button = existingCommButton;
       }
       
-      log('  Button inserted after Huntflow link');
+      // Создаем кнопку-заглушку для Scorecard
+      let scorecardButton = null;
+      if (!existingScorecardButton) {
+        scorecardButton = document.createElement('a');
+        scorecardButton.className = 'hrhelper-scorecard-btn';
+        scorecardButton.textContent = 'Загрузка...';
+        scorecardButton.style.cssText = 'display:inline-block;margin-left:8px;padding:4px 8px;background:#6c757d;color:#fff;text-decoration:none;border-radius:4px;font-size:12px;white-space:nowrap;';
+        scorecardButton.href = '#';
+        scorecardButton.onclick = (e) => { e.preventDefault(); return false; };
+        
+        // Вставляем кнопку scorecard после кнопки коммуникации
+        if (button && button.nextSibling) {
+          buttonContainer.insertBefore(scorecardButton, button.nextSibling);
+        } else if (button) {
+          buttonContainer.appendChild(scorecardButton);
+        } else {
+          // Если кнопки коммуникации нет, вставляем после ссылки на Huntflow
+          if (huntflowLink.nextSibling) {
+            buttonContainer.insertBefore(scorecardButton, huntflowLink.nextSibling);
+          } else {
+            buttonContainer.appendChild(scorecardButton);
+          }
+        }
+        
+        log('  Scorecard button inserted');
+      } else {
+        scorecardButton = existingScorecardButton;
+      }
       
-      log('  Button created, fetching communication link...');
+      log('  Buttons created, fetching links...');
       
       // Получаем ссылку на коммуникацию через API (используем реальный URL)
-      getCommunicationLink(realHuntflowUrl).then(linkData => {
-        log('  Communication link response:', linkData);
-        if (linkData && linkData.success && linkData.communication_link) {
-          button.href = linkData.communication_link;
-          button.target = '_blank';
-          button.rel = 'noopener noreferrer';
-          
-          // Устанавливаем текст и иконку в зависимости от типа
-          if (linkData.link_type === 'telegram') {
-            button.textContent = '💬 Telegram';
-            button.style.background = '#0088cc';
-          } else if (linkData.link_type === 'linkedin') {
-            button.textContent = '💼 LinkedIn';
-            button.style.background = '#0a66c2';
+      if (!existingCommButton) {
+        getCommunicationLink(realHuntflowUrl).then(linkData => {
+          log('  Communication link response:', linkData);
+          if (linkData && linkData.success && linkData.communication_link) {
+            button.href = linkData.communication_link;
+            button.target = '_blank';
+            button.rel = 'noopener noreferrer';
+            
+            // Устанавливаем текст и иконку в зависимости от типа
+            if (linkData.link_type === 'telegram') {
+              button.textContent = '💬 Telegram';
+              button.style.background = '#0088cc';
+            } else if (linkData.link_type === 'linkedin') {
+              button.textContent = '💼 LinkedIn';
+              button.style.background = '#0a66c2';
+            } else {
+              button.textContent = '📧 Связаться';
+              button.style.background = '#6c757d';
+            }
+            
+            button.onclick = null; // Убираем preventDefault
+            log('  Communication button updated successfully');
           } else {
-            button.textContent = '📧 Связаться';
+            button.textContent = 'Ссылка не найдена';
             button.style.background = '#6c757d';
+            button.style.cursor = 'not-allowed';
+            log('  Communication link not found');
           }
-          
-          button.onclick = null; // Убираем preventDefault
-          log('  Button updated successfully');
-        } else {
-          button.textContent = 'Ссылка не найдена';
-          button.style.background = '#6c757d';
-          button.style.cursor = 'not-allowed';
-          log('  Communication link not found');
-        }
-      }).catch(err => {
-        error('  Error getting communication link:', err);
-        button.textContent = 'Ошибка';
-        button.style.background = '#dc3545';
-      });
+        }).catch(err => {
+          // Не логируем ошибку, если это Extension context invalidated - это нормально при перезагрузке расширения
+          if (err.message && !err.message.includes('Extension context invalidated')) {
+            logError('  Error getting communication link:', err);
+          }
+          button.textContent = 'Ошибка';
+          button.style.background = '#dc3545';
+        });
+      }
+      
+      // Получаем ссылку на Scorecard через API
+      if (!existingScorecardButton) {
+        getScorecardLink(realHuntflowUrl).then(scorecardData => {
+          log('  Scorecard link response:', scorecardData);
+          if (scorecardData && scorecardData.success && scorecardData.scorecard_link) {
+            scorecardButton.href = scorecardData.scorecard_link;
+            scorecardButton.target = '_blank';
+            scorecardButton.rel = 'noopener noreferrer';
+            scorecardButton.textContent = '📊 Scorecard';
+            scorecardButton.style.background = '#28a745';
+            scorecardButton.onclick = null; // Убираем preventDefault
+            log('  Scorecard button updated successfully');
+          } else {
+            scorecardButton.textContent = 'Scorecard не найден';
+            scorecardButton.style.background = '#6c757d';
+            scorecardButton.style.cursor = 'not-allowed';
+            log('  Scorecard link not found');
+          }
+        }).catch(err => {
+          // Не логируем ошибку, если это Extension context invalidated - это нормально при перезагрузке расширения
+          if (err.message && !err.message.includes('Extension context invalidated')) {
+            logError('  Error getting scorecard link:', err);
+          }
+          scorecardButton.textContent = 'Ошибка';
+          scorecardButton.style.background = '#dc3545';
+        });
+      }
     });
   }
   
@@ -2166,14 +2473,20 @@ function initGoogleMeet() {
       
       if (!res.ok) {
         const data = await res.json().catch(() => null);
-        error(' Failed to get communication link:', data?.message || 'Unknown error');
+        // Не логируем ошибку, если это Extension context invalidated - это нормально при перезагрузке расширения
+        if (data?.message && !data.message.includes('Extension context invalidated')) {
+          logError(' Failed to get communication link:', data.message || 'Unknown error');
+        }
         return null;
       }
       
       const data = await res.json().catch(() => null);
       return data;
     } catch (err) {
-      error(' Exception getting communication link:', err);
+      // Не логируем ошибку, если это Extension context invalidated - это нормально при перезагрузке расширения
+      if (err.message && !err.message.includes('Extension context invalidated')) {
+        logError(' Exception getting communication link:', err);
+      }
       return null;
     }
   }
@@ -2195,7 +2508,7 @@ function initGoogleMeet() {
       
       if (!res.ok) {
         const data = await res.json().catch(() => null);
-        error(' Failed to get candidate level:', data?.message || `HTTP ${res.status}`);
+        logError(' Failed to get candidate level:', data?.message || `HTTP ${res.status}`);
         return { success: false, message: data?.message || `HTTP ${res.status}` };
       }
       
@@ -2203,7 +2516,7 @@ function initGoogleMeet() {
       log(' API response data:', data);
       return data;
     } catch (err) {
-      error(' Exception getting candidate level:', err);
+      logError(' Exception getting candidate level:', err);
       return { success: false, message: err.message || 'Unknown error' };
     }
   }
@@ -2603,19 +2916,19 @@ function initGoogleMeet() {
           log(' ✅ Level button inserted in body as fallback (fixed position)');
           inserted = true;
         } catch (e2) {
-          error(' ❌ Failed to insert level button even in body:', e2);
+          logError(' ❌ Failed to insert level button even in body:', e2);
           return false;
         }
       }
       
       if (!inserted) {
-        error(' ❌ Could not insert level button anywhere!');
+        logError(' ❌ Could not insert level button anywhere!');
         return false;
       }
       
       // Проверяем, что кнопка действительно в DOM
       if (!document.contains(levelButton)) {
-        error(' ❌ Level button was not inserted into DOM!');
+        logError(' ❌ Level button was not inserted into DOM!');
         return false;
       }
       
@@ -2775,7 +3088,7 @@ function initGoogleMeet() {
         
         // Проверяем, что функция getCandidateLevel доступна
         if (typeof getCandidateLevel !== 'function') {
-          error(' getCandidateLevel is not a function!');
+          logError(' getCandidateLevel is not a function!');
           return false;
         }
         
@@ -2785,11 +3098,73 @@ function initGoogleMeet() {
         getCandidateLevel(huntflowUrl).then(levelData => {
         log(' Candidate level response:', levelData);
         if (levelData && levelData.success && levelData.level) {
-          levelButton.textContent = levelData.level;
-          levelButton.title = `Уровень кандидата: ${levelData.level}`;
+          const level = levelData.level;
+          levelButton.textContent = level;
+          levelButton.title = `Уровень кандидата: ${level} (нажмите для копирования текста)`;
+          levelButton.setAttribute('data-level', level); // Сохраняем уровень для использования при клике
           levelButton.style.opacity = '1';
           levelButton.style.cursor = 'pointer';
-          log(' ✅ Level button updated successfully with level:', levelData.level);
+          log(' ✅ Level button updated successfully with level:', level);
+          
+          // Добавляем обработчик клика для копирования текста
+          levelButton.addEventListener('click', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const buttonLevel = this.getAttribute('data-level');
+            if (!buttonLevel) {
+              log(' ⚠️ No level data found on button');
+              return;
+            }
+            
+            log(' Level button clicked, fetching text for level:', buttonLevel);
+            
+            try {
+              // Получаем текст для уровня из API
+              const apiUrl = `/api/v1/huntflow/linkedin-applicants/level-text/?level=${encodeURIComponent(buttonLevel)}`;
+              log(' Fetching level text from:', apiUrl);
+              
+              const res = await apiFetch(apiUrl, {
+                method: 'GET'
+              });
+              
+              const data = await res.json();
+              log(' Level text response:', data);
+              
+              if (data && data.success && data.text) {
+                // Копируем текст в буфер обмена
+                await navigator.clipboard.writeText(data.text);
+                log(' ✅ Text copied to clipboard');
+                
+                // Показываем уведомление
+                const originalText = this.textContent;
+                this.textContent = 'Скопировано!';
+                this.style.background = '#28a745';
+                setTimeout(() => {
+                  this.textContent = originalText;
+                  this.style.background = '#6c757d';
+                }, 2000);
+              } else {
+                log(' ⚠️ No text found for level:', buttonLevel);
+                const originalText = this.textContent;
+                this.textContent = 'Нет текста';
+                this.style.background = '#dc3545';
+                setTimeout(() => {
+                  this.textContent = originalText;
+                  this.style.background = '#6c757d';
+                }, 2000);
+              }
+            } catch (err) {
+              logError(' Error copying level text:', err);
+              const originalText = this.textContent;
+              this.textContent = 'Ошибка';
+              this.style.background = '#dc3545';
+              setTimeout(() => {
+                this.textContent = originalText;
+                this.style.background = '#6c757d';
+              }, 2000);
+            }
+          });
           
           // Проверяем видимость еще раз после обновления
           const rect = levelButton.getBoundingClientRect();
@@ -2820,7 +3195,7 @@ function initGoogleMeet() {
           log(' Level not found or empty. Response:', levelData);
         }
       }).catch(err => {
-          error(' Error getting candidate level:', err);
+          logError(' Error getting candidate level:', err);
           levelButton.textContent = 'Ошибка';
           levelButton.style.cursor = 'not-allowed';
           levelButton.style.opacity = '0.6';
@@ -2854,7 +3229,7 @@ function initGoogleMeet() {
       
       return true; // Успешно создана и вставлена кнопка
     } catch (err) {
-      error(' Error in addLevelButtonToMeetControls:', err);
+      logError(' Error in addLevelButtonToMeetControls:', err);
       return false; // Ошибка при выполнении
     }
   }

@@ -4573,7 +4573,25 @@ class HRScreening(models.Model):
                 return
             
             # Определяем валюту
+            # Если валюта не указана в тексте, но есть сумма, по умолчанию используем USD
             currency = self._detect_currency(str(salary_text))
+            # Если валюта не была найдена в тексте (т.е. _detect_currency вернул USD по умолчанию),
+            # но в тексте нет явного упоминания USD, то это означает, что валюта не указана
+            # и мы используем USD по умолчанию
+            salary_text_lower = str(salary_text).lower()
+            has_explicit_currency = any(keyword in salary_text_lower for keyword in [
+                'usd', '$', 'доллар', 'dollar',
+                'eur', '€', 'евро', 'euro',
+                'rub', '₽', 'рубль', 'ruble',
+                'byn', 'бел.руб', 'белорусский рубль',
+                'pln', 'злотый', 'zloty'
+            ])
+            
+            if not has_explicit_currency:
+                # Валюта не указана явно, но есть сумма - используем USD по умолчанию
+                currency = 'USD'
+                print(f"✅ Валюта не указана, но есть сумма - по умолчанию установлена: {currency}")
+            
             self.salary_currency = currency
             print(f"✅ Определена валюта: {currency}")
             

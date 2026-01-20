@@ -494,6 +494,95 @@ def _get_candidate_level(api, account_id, applicant_id):
         return None
 
 
+def _get_candidate_scorecard(api, account_id, applicant_id):
+    """
+    Получает значение поля "Scorecard" для кандидата
+    
+    Args:
+        api: HuntflowService instance
+        account_id: ID организации
+        applicant_id: ID кандидата
+        
+    Returns:
+        URL scorecard или None
+    """
+    try:
+        import logging
+        logger = logging.getLogger(__name__)
+        
+        # Получаем схему анкеты для поиска поля "Scorecard"
+        questionary_schema = api.get_applicant_questionary_schema(account_id)
+        if not questionary_schema:
+            logger.warning(f"Cannot get questionary schema for account_id={account_id}")
+            return None
+        
+        # Обрабатываем разные структуры схемы
+        fields_dict = {}
+        if isinstance(questionary_schema, dict):
+            if 'fields' in questionary_schema:
+                fields_list = questionary_schema.get('fields', [])
+                for field in fields_list:
+                    if isinstance(field, dict):
+                        field_id = field.get('id') or field.get('key')
+                        if field_id:
+                            fields_dict[field_id] = field
+            else:
+                fields_dict = questionary_schema
+        
+        if not fields_dict:
+            logger.warning(f"Questionary schema is empty or has unexpected structure")
+            return None
+        
+        # Ищем поле "Scorecard"
+        scorecard_field_id = None
+        for field_id, field_info in fields_dict.items():
+            if isinstance(field_info, dict):
+                field_title = field_info.get('title', '').lower()
+                field_type = field_info.get('type', '').lower()
+                # Ищем поле по названию и типу (должно быть url)
+                if ('scorecard' in field_title or 'скоркард' in field_title) and field_type == 'url':
+                    scorecard_field_id = field_id
+                    logger.info(f"Found scorecard field: {field_id} - {field_info.get('title')} (type: {field_info.get('type')})")
+                    break
+        
+        if not scorecard_field_id:
+            logger.warning(f"Scorecard field not found in questionary schema")
+            return None
+        
+        # Получаем текущую анкету кандидата
+        questionary = api.get_applicant_questionary(account_id, applicant_id)
+        if not questionary:
+            logger.warning(f"Cannot get questionary for applicant_id={applicant_id}")
+            return None
+        
+        # Получаем значение поля
+        scorecard_value = questionary.get(scorecard_field_id)
+        if scorecard_value:
+            # Обрабатываем разные форматы значений
+            if isinstance(scorecard_value, str):
+                scorecard_value = scorecard_value.strip()
+                if scorecard_value:
+                    logger.info(f"Scorecard field value: {scorecard_value}")
+                    return scorecard_value
+            elif isinstance(scorecard_value, dict):
+                # Если это объект, пробуем получить value или url
+                scorecard_url = scorecard_value.get('value') or scorecard_value.get('url') or scorecard_value.get('name')
+                if scorecard_url:
+                    scorecard_url = str(scorecard_url).strip()
+                    if scorecard_url:
+                        logger.info(f"Scorecard field value (from object): {scorecard_url}")
+                        return scorecard_url
+        
+        logger.info(f"Scorecard field is empty for applicant_id={applicant_id}")
+        return None
+        
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error getting candidate scorecard: {e}", exc_info=True)
+        return None
+
+
 def _get_communication_field_value(api, account_id, applicant_id):
     """
     Получает значение поля "Где ведется коммуникация" для кандидата
@@ -1643,6 +1732,149 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
             import logging
             logger = logging.getLogger(__name__)
             logger.error(f"Error getting candidate level: {e}", exc_info=True)
+            return Response(
+                {"success": False, "message": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+    
+    @action(detail=False, methods=["get"], url_path="scorecard-link")
+    def get_scorecard_link(self, request):
+        """
+        GET /api/v1/huntflow/linkedin-applicants/scorecard-link/?huntflow_url=...
+        
+        Получает ссылку на Scorecard из соответствующего поля в Huntflow
+        для кандидата по ссылке на Huntflow.
+        
+        Параметры:
+        - huntflow_url: URL на Huntflow в формате:
+          https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/79149055
+        
+        Возвращает:
+        {
+            "success": true,
+            "scorecard_link": "https://docs.google.com/spreadsheets/..."
+        }
+        """
+        try:
+            import logging
+            logger = logging.getLogger(__name__)
+            
+            huntflow_url = request.query_params.get("huntflow_url", "").strip()
+            if not huntflow_url:
+                return Response(
+                    {"success": False, "message": "Нужен параметр huntflow_url"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            
+            # Извлекаем данные из URL
+            ids = self._extract_huntflow_ids(huntflow_url)
+            if not ids.get("account_name") or not ids.get("applicant_id"):
+                return Response(
+                    {"success": False, "message": "Не удалось извлечь данные из URL Huntflow"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            
+            account_name = ids["account_name"]
+            applicant_id = ids["applicant_id"]
+            
+            # Получаем account_id по account_name
+            from apps.huntflow.services import HuntflowService
+            api = HuntflowService(user=request.user)
+            accounts = api.get_accounts()
+            
+            account_id = None
+            if accounts and 'items' in accounts:
+                account_name_lower = account_name.lower()
+                for account in accounts['items']:
+                    account_name_field = (account.get('name') or '').lower()
+                    account_nick_field = (account.get('nick') or '').lower()
+                    account_id_str = str(account.get('id') or '')
+                    
+                    if (account_name_field == account_name_lower or 
+                        account_nick_field == account_name_lower or
+                        account_id_str == account_name):
+                        account_id = account.get('id')
+                        break
+            
+            if not account_id:
+                logger.warning(f"Account '{account_name}' not found")
+                return Response(
+                    {"success": False, "message": f"Организация '{account_name}' не найдена"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+            
+            # Получаем значение поля "Scorecard"
+            scorecard_value = _get_candidate_scorecard(api, account_id, applicant_id)
+            
+            if not scorecard_value:
+                return Response(
+                    {"success": False, "message": "Поле 'Scorecard' не заполнено"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+            
+            return Response(
+                {
+                    "success": True,
+                    "scorecard_link": scorecard_value,
+                },
+                status=status.HTTP_200_OK,
+            )
+            
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error getting scorecard link: {e}", exc_info=True)
+            return Response(
+                {"success": False, "message": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+    
+    @action(detail=False, methods=["get"], url_path="level-text")
+    def get_level_text(self, request):
+        """
+        GET /api/v1/huntflow/linkedin-applicants/level-text/?level=...
+        
+        Получает сохраненный текст для уровня из базы данных.
+        
+        Параметры:
+        - level: Название уровня (например: "Junior", "Middle", "Senior")
+        
+        Возвращает:
+        {
+            "success": true,
+            "text": "Текст для уровня..."
+        }
+        """
+        try:
+            from .models import LevelText
+            
+            level = request.query_params.get("level", "").strip()
+            if not level:
+                return Response(
+                    {"success": False, "message": "Нужен параметр level"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            
+            try:
+                level_text = LevelText.objects.get(user=request.user, level=level)
+                return Response(
+                    {
+                        "success": True,
+                        "text": level_text.text or "",
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            except LevelText.DoesNotExist:
+                return Response(
+                    {
+                        "success": True,
+                        "text": "",
+                    },
+                    status=status.HTTP_200_OK,
+                )
+        
+        except Exception as e:
+            logger.error(f"Error getting level text: {e}", exc_info=True)
             return Response(
                 {"success": False, "message": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

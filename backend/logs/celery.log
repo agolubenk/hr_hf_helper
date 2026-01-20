@@ -1,10 +1,10 @@
  
  -------------- celery@andrei-golubenko-macbook.local v5.5.3 (immunity)
 --- ***** ----- 
--- ******* ---- macOS-26.0.1-arm64-arm-64bit-Mach-O 2026-01-15 10:40:36
+-- ******* ---- macOS-26.0.1-arm64-arm-64bit-Mach-O 2026-01-20 17:20:55
 - *** --- * --- 
 - ** ---------- [config]
-- ** ---------- .> app:         hrhelper:0x109183b60
+- ** ---------- .> app:         hrhelper:0x1090ebb60
 - ** ---------- .> transport:   redis://127.0.0.1:6379/0
 - ** ---------- .> results:     redis://127.0.0.1:6379/0
 - *** --- * --- .> concurrency: 1 (prefork)
@@ -27,6 +27,10 @@
   . apps.finance.tasks.process_hh_queue_with_limit
   . apps.finance.tasks.save_hh_analysis_result
   . apps.finance.tasks.update_currency_rates
+  . apps.google_oauth.tasks.cleanup_expired_oauth_accounts
+  . apps.google_oauth.tasks.refresh_google_oauth_tokens
+  . apps.google_oauth.tasks.sync_calendar_events_by_vacancies
+  . apps.google_oauth.tasks.validate_oauth_tokens
   . apps.huntflow.tasks.check_huntflow_token_health
   . apps.huntflow.tasks.refresh_huntflow_tokens
   . apps.notion_int.tasks.auto_sync_notion_pages
@@ -36,7 +40,7 @@
   . config.celery.save_hh_analysis_result
   . config.celery.update_currency_rates
 
-[2026-01-15 10:40:36,528: INFO/MainProcess] Connected to redis://127.0.0.1:6379/0
-[2026-01-15 10:40:36,530: INFO/MainProcess] mingle: searching for neighbors
-[2026-01-15 10:40:37,536: INFO/MainProcess] mingle: all alone
-[2026-01-15 10:40:37,544: INFO/MainProcess] celery@andrei-golubenko-macbook.local ready.
+[2026-01-20 17:20:55,210: INFO/MainProcess] Connected to redis://127.0.0.1:6379/0
+[2026-01-20 17:20:55,211: INFO/MainProcess] mingle: searching for neighbors
+[2026-01-20 17:20:56,217: INFO/MainProcess] mingle: all alone
+[2026-01-20 17:20:56,230: INFO/MainProcess] celery@andrei-golubenko-macbook.local ready.
