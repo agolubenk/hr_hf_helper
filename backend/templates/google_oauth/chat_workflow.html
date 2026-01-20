@@ -770,6 +770,11 @@
                                                         <a href="{{ message.metadata.candidate_url }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Открыть в Huntflow">
                                                             <i class="fas fa-external-link-alt"></i>
                                                         </a>
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary copy-huntflow-link-btn" 
+                                                                data-huntflow-url="{{ message.metadata.candidate_url|escapejs }}" 
+                                                                title="Копировать ссылку на Huntflow">
+                                                            <i class="fas fa-copy"></i>
+                                                        </button>
                                                         {% endif %}
                                                     </div>
                                                     {% endif %}
@@ -3506,6 +3511,40 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
+    
+    // Копирование ссылки на Huntflow
+    if (e.target.closest('.copy-huntflow-link-btn')) {
+        e.preventDefault();
+        const btn = e.target.closest('.copy-huntflow-link-btn');
+        const huntflowUrl = btn.getAttribute('data-huntflow-url');
+        const originalText = btn.innerHTML;
+        
+        if (!huntflowUrl) {
+            alert('Ссылка на Huntflow не найдена');
+            return;
+        }
+        
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        btn.disabled = true;
+        
+        navigator.clipboard.writeText(huntflowUrl).then(() => {
+            btn.innerHTML = '<i class="fas fa-check"></i>';
+            btn.classList.remove('btn-outline-secondary');
+            btn.classList.add('btn-success');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-outline-secondary');
+                btn.disabled = false;
+            }, 1500);
+        }).catch(err => {
+            console.error('Ошибка копирования ссылки:', err);
+            alert('Не удалось скопировать ссылку в буфер обмена');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
+    }
 });
 
 // Обработчик кнопки копирования шаблона отказа по офисному формату

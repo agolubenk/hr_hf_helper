@@ -2277,14 +2277,45 @@ function initGoogleMeet() {
         }
       }
       
+      // Если не нашли как ссылку, ищем как текст под "Для интервьюеров:"
+      let huntflowUrl = null;
       if (!huntflowLink) {
+        log('  No Huntflow link found as <a> tag, searching as text...');
+        // Ищем текст, содержащий huntflow.ru или huntflow.dev
+        const textWalker = document.createTreeWalker(
+          container || document.body,
+          NodeFilter.SHOW_TEXT,
+          null
+        );
+        
+        let textNodeForUrl;
+        while (textNodeForUrl = textWalker.nextNode()) {
+          const text = textNodeForUrl.textContent || '';
+          // Ищем URL в тексте
+          const urlMatch = text.match(/https?:\/\/[^\s]*huntflow\.(ru|dev)[^\s]*/i);
+          if (urlMatch) {
+            huntflowUrl = urlMatch[0];
+            log('  Found Huntflow URL in text:', huntflowUrl);
+            // Создаем виртуальную ссылку для дальнейшей обработки
+            huntflowLink = {
+              href: huntflowUrl,
+              parentElement: textNodeForUrl.parentElement || container || document.body
+            };
+            break;
+          }
+        }
+      }
+      
+      if (!huntflowLink && !huntflowUrl) {
         log('  No Huntflow link found');
         return;
       }
       
-      // Извлекаем реальный URL (может быть в Google redirect)
-      let huntflowUrl = extractRealUrl(huntflowLink.href);
-      log('  Found Huntflow link (original):', huntflowLink.href);
+      // Извлекаем реальный URL (может быть в Google redirect или из текста)
+      if (!huntflowUrl) {
+        huntflowUrl = extractRealUrl(huntflowLink.href);
+      }
+      log('  Found Huntflow link (original):', huntflowLink?.href || huntflowUrl);
       log('  Found Huntflow link (extracted):', huntflowUrl);
       
       // Извлекаем данные из URL (используем реальный URL, если был Google redirect)
@@ -2298,22 +2329,58 @@ function initGoogleMeet() {
       // Используем реальный URL для API запроса
       const realHuntflowUrl = huntflowUrl;
       
-      // Определяем контейнер для вставки кнопки (родитель ссылки)
-      const buttonContainer = huntflowLink.parentElement;
+      // Определяем контейнер для вставки кнопок - под текстом "Для интервьюеров:"
+      // Используем родительский элемент текста "Для интервьюеров:" как контейнер
+      let buttonContainer = parent;
+      
+      // Ищем подходящий контейнер (div, p, span и т.д.) для размещения кнопок
+      // Обычно это блок, содержащий текст "Для интервьюеров:" и ссылку
+      for (let i = 0; i < 5 && buttonContainer; i++) {
+        // Проверяем, является ли контейнер подходящим для размещения кнопок
+        const computedStyle = window.getComputedStyle(buttonContainer);
+        if (computedStyle.display !== 'none' && 
+            (computedStyle.display === 'block' || 
+             computedStyle.display === 'flex' || 
+             computedStyle.display === 'inline-block')) {
+          break;
+        }
+        buttonContainer = buttonContainer.parentElement;
+      }
+      
       if (!buttonContainer) {
-        log('  No container for button');
+        log('  No container for buttons');
         return;
       }
       
-      // Проверяем, есть ли уже кнопки рядом с этой ссылкой
+      // Проверяем, есть ли уже кнопки в этом контейнере
       const existingCommButton = buttonContainer.querySelector('.hrhelper-communication-btn');
       const existingScorecardButton = buttonContainer.querySelector('.hrhelper-scorecard-btn');
-      if (existingCommButton && existingScorecardButton) {
-        log('  Buttons already exist');
+      const existingLevelButton = buttonContainer.querySelector('.hrhelper-meet-level-btn');
+      if (existingCommButton && existingScorecardButton && existingLevelButton) {
+        log('  All buttons already exist');
         return;
       }
       
-      log('  Creating buttons...');
+      log('  Creating buttons container under "Для интервьюеров:"...');
+      
+      // Создаем контейнер для всех кнопок, если его еще нет
+      let buttonsContainer = buttonContainer.querySelector('.hrhelper-buttons-container');
+      if (!buttonsContainer) {
+        buttonsContainer = document.createElement('div');
+        buttonsContainer.className = 'hrhelper-buttons-container';
+        buttonsContainer.style.cssText = 'display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center;';
+        
+        // Вставляем контейнер после текста "Для интервьюеров:" и ссылки
+        // Ищем место для вставки - после текста или после ссылки
+        if (huntflowLink && huntflowLink.nextSibling) {
+          buttonContainer.insertBefore(buttonsContainer, huntflowLink.nextSibling);
+        } else if (textNode && textNode.nextSibling) {
+          buttonContainer.insertBefore(buttonsContainer, textNode.nextSibling);
+        } else {
+          buttonContainer.appendChild(buttonsContainer);
+        }
+        log('  Buttons container created');
+      }
       
       // Создаем кнопку-заглушку для коммуникации
       let button = null;
@@ -2322,18 +2389,12 @@ function initGoogleMeet() {
         button.className = 'hrhelper-communication-btn';
         button.setAttribute('data-hrhelper', 'social-button');
         button.textContent = 'Загрузка...';
-        button.style.cssText = 'display:inline-block;margin-left:8px;padding:4px 8px;background:#0a66c2;color:#fff;text-decoration:none;border-radius:4px;font-size:12px;white-space:nowrap;';
+        button.style.cssText = 'display:inline-block;padding:4px 8px;background:#0a66c2;color:#fff;text-decoration:none;border-radius:4px;font-size:12px;white-space:nowrap;';
         button.href = '#';
         button.onclick = (e) => { e.preventDefault(); return false; };
         
-        // Вставляем кнопку сразу после ссылки на Huntflow
-        if (huntflowLink.nextSibling) {
-          buttonContainer.insertBefore(button, huntflowLink.nextSibling);
-        } else {
-          buttonContainer.appendChild(button);
-        }
-        
-        log('  Communication button inserted after Huntflow link');
+        buttonsContainer.appendChild(button);
+        log('  Communication button inserted');
       } else {
         button = existingCommButton;
       }
@@ -2344,24 +2405,11 @@ function initGoogleMeet() {
         scorecardButton = document.createElement('a');
         scorecardButton.className = 'hrhelper-scorecard-btn';
         scorecardButton.textContent = 'Загрузка...';
-        scorecardButton.style.cssText = 'display:inline-block;margin-left:8px;padding:4px 8px;background:#6c757d;color:#fff;text-decoration:none;border-radius:4px;font-size:12px;white-space:nowrap;';
+        scorecardButton.style.cssText = 'display:inline-block;padding:4px 8px;background:#6c757d;color:#fff;text-decoration:none;border-radius:4px;font-size:12px;white-space:nowrap;';
         scorecardButton.href = '#';
         scorecardButton.onclick = (e) => { e.preventDefault(); return false; };
         
-        // Вставляем кнопку scorecard после кнопки коммуникации
-        if (button && button.nextSibling) {
-          buttonContainer.insertBefore(scorecardButton, button.nextSibling);
-        } else if (button) {
-          buttonContainer.appendChild(scorecardButton);
-        } else {
-          // Если кнопки коммуникации нет, вставляем после ссылки на Huntflow
-          if (huntflowLink.nextSibling) {
-            buttonContainer.insertBefore(scorecardButton, huntflowLink.nextSibling);
-          } else {
-            buttonContainer.appendChild(scorecardButton);
-          }
-        }
-        
+        buttonsContainer.appendChild(scorecardButton);
         log('  Scorecard button inserted');
       } else {
         scorecardButton = existingScorecardButton;
@@ -2792,6 +2840,15 @@ function initGoogleMeet() {
     
       log(' Creating level button...');
       
+      // Сначала проверяем, есть ли контейнер для кнопок под "Для интервьюеров:"
+      let targetContainer = document.querySelector('.hrhelper-buttons-container');
+      if (targetContainer) {
+        log(' ✅ Found existing buttons container under "Для интервьюеров:", will place level button there');
+        buttonContainer = targetContainer;
+      } else {
+        log(' No buttons container found, will place level button next to info button');
+      }
+      
       // Создаем кнопку уровня
       const levelButton = document.createElement('button');
       levelButton.className = 'hrhelper-meet-level-btn';
@@ -2861,9 +2918,21 @@ function initGoogleMeet() {
         }
       }
       
-      // Вставляем кнопку после названия встречи
+      // Вставляем кнопку в контейнер под "Для интервьюеров:" (если он существует)
       let inserted = false;
-      if (meetingTitleElement) {
+      if (targetContainer) {
+        try {
+          // Вставляем в контейнер кнопок под "Для интервьюеров:"
+          targetContainer.appendChild(levelButton);
+          log(' ✅ Level button inserted into buttons container under "Для интервьюеров:"');
+          inserted = true;
+        } catch (e) {
+          log(' ⚠️ Failed to insert into buttons container:', e);
+        }
+      }
+      
+      // Если контейнера нет, пробуем вставить после названия встречи
+      if (!inserted && meetingTitleElement) {
         try {
           // Ищем родительский контейнер названия
           let container = meetingTitleElement.parentElement;
