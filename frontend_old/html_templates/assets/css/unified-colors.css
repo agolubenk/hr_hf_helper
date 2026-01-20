@@ -1,0 +1,258 @@
+/* 
+ * Объединенная система цветов HRHelper + Bootstrap
+ * Создано: 2025-01-09
+ * Описание: Объединяет цветовые схемы из hrhelper.css и bootstrap.min.css
+ */
+
+:root {
+  /* === БАЗОВЫЕ ЦВЕТА === */
+  --color-white: rgba(255, 255, 255, 1);
+  --color-black: rgba(0, 0, 0, 1);
+  
+  /* === СЕРО-БЕЖЕВАЯ ПАЛИТРА (HRHelper) === */
+  --color-cream-50: rgba(252, 252, 249, 1);
+  --color-cream-100: rgba(255, 255, 253, 1);
+  --color-gray-200: rgba(245, 245, 245, 1);
+  --color-gray-300: rgba(167, 169, 169, 1);
+  --color-gray-400: rgba(119, 124, 124, 1);
+  --color-slate-500: rgba(98, 108, 113, 1);
+  --color-brown-600: rgba(94, 82, 64, 1);
+  --color-charcoal-700: rgba(31, 33, 33, 1);
+  --color-charcoal-800: rgba(38, 40, 40, 1);
+  --color-slate-900: rgba(19, 52, 59, 1);
+  
+  /* === ОСНОВНАЯ ЦВЕТОВАЯ СХЕМА (HRHelper) === */
+  /* Teal - основной цвет */
+  --color-teal-300: rgba(50, 184, 198, 1);
+  --color-teal-400: rgba(45, 166, 178, 1);
+  --color-teal-500: rgba(33, 128, 141, 1);
+  --color-teal-600: rgba(29, 116, 128, 1);
+  --color-teal-700: rgba(26, 104, 115, 1);
+  --color-teal-800: rgba(41, 150, 161, 1);
+  
+  /* Системные цвета */
+  --color-red-400: rgba(255, 84, 89, 1);
+  --color-red-500: rgba(192, 21, 47, 1);
+  --color-orange-400: rgba(230, 129, 97, 1);
+  --color-orange-500: rgba(168, 75, 47, 1);
+  
+  /* Дополнительные цветовые схемы */
+  --color-lime-300: rgba(187, 225, 250, 1);
+  --color-lime-400: rgba(55, 171, 218, 1);
+  --color-lime-500: rgba(73, 141, 176, 1);
+  --color-lime-600: rgba(11, 76, 117, 1);
+  --color-lime-700: rgba(8, 60, 90, 1);
+  --color-lime-800: rgba(5, 45, 70, 1);
+  
+  --color-water-300: rgba(102, 187, 106, 1);
+  --color-water-400: rgba(76, 175, 80, 1);
+  --color-water-500: rgba(45, 126, 45, 1);
+  --color-water-600: rgba(30, 90, 30, 1);
+  --color-water-700: rgba(15, 61, 15, 1);
+  --color-water-800: rgba(10, 40, 10, 1);
+  
+  --color-pink-300: rgba(255, 179, 198, 1);
+  --color-pink-400: rgba(255, 107, 157, 1);
+  --color-pink-500: rgba(255, 64, 129, 1);
+  --color-pink-600: rgba(233, 30, 99, 1);
+  --color-pink-700: rgba(194, 24, 91, 1);
+  --color-pink-800: rgba(183, 5, 115, 1);
+  
+  --color-luna-300: rgba(199, 235, 255, 1);
+  --color-luna-400: rgba(240, 248, 255, 1);
+  --color-luna-500: rgba(176, 196, 222, 1);
+  --color-luna-600: rgba(135, 206, 235, 1);
+  --color-luna-700: rgba(100, 149, 237, 1);
+  --color-luna-800: rgba(70, 130, 180, 1);
+  
+  /* === BOOTSTRAP ЦВЕТА === */
+  /* Основные Bootstrap цвета */
+  --bs-blue: #0d6efd;
+  --bs-indigo: #6610f2;
+  --bs-purple: #6f42c1;
+  --bs-pink: #d63384;
+  --bs-red: #dc3545;
+  --bs-orange: #fd7e14;
+  --bs-yellow: #ffc107;
+  --bs-green: #198754;
+  --bs-teal: #20c997;
+  --bs-cyan: #0dcaf0;
+  --bs-black: #000;
+  --bs-white: #fff;
+  --bs-gray: #6c757d;
+  --bs-gray-dark: #343a40;
+  
+  /* Семантические цвета Bootstrap */
+  --bs-primary: #0d6efd;
+  --bs-secondary: #6c757d;
+  --bs-success: #198754;
+  --bs-info: #0dcaf0;
+  --bs-warning: #ffc107;
+  --bs-danger: #dc3545;
+  --bs-light: #f8f9fa;
+  --bs-dark: #212529;
+  
+  /* === ОБЪЕДИНЕННАЯ СИСТЕМА ЦВЕТОВ === */
+  /* Основные цвета приложения (приоритет HRHelper) */
+  --color-primary: var(--color-lime-500);
+  --color-primary-hover: var(--color-lime-600);
+  --color-primary-active: var(--color-lime-700);
+  
+  --color-secondary: rgba(var(--color-brown-600-rgb), 0.12);
+  --color-secondary-hover: rgba(var(--color-brown-600-rgb), 0.2);
+  --color-secondary-active: rgba(var(--color-brown-600-rgb), 0.25);
+  
+  /* Системные цвета */
+  --color-success: var(--color-water-500);
+  --color-info: var(--color-lime-500);
+  --color-warning: var(--color-orange-500);
+  --color-error: var(--color-red-500);
+  --color-danger: var(--color-red-500);
+  
+  /* Фоновые цвета */
+  --color-background: var(--color-cream-50);
+  --color-background-secondary: var(--color-cream-100);
+  --color-background-dark: var(--color-charcoal-700);
+  --color-background-darker: var(--color-charcoal-800);
+  
+  /* Текстовые цвета */
+  --color-text-primary: var(--color-slate-900);
+  --color-text-secondary: var(--color-slate-500);
+  --color-text-muted: var(--color-gray-400);
+  --color-text-light: var(--color-gray-300);
+  --color-text-white: var(--color-white);
+  
+  /* Границы */
+  --color-border: var(--color-gray-300);
+  --color-border-light: var(--color-gray-200);
+  --color-border-dark: var(--color-gray-400);
+  
+  /* Тени */
+  --color-shadow: rgba(0, 0, 0, 0.1);
+  --color-shadow-dark: rgba(0, 0, 0, 0.2);
+  
+  /* === ДОПОЛНИТЕЛЬНЫЕ ЦВЕТА ИЗ HRHELPER === */
+  /* Фоновые цвета для карточек */
+  --color-bg-1: rgba(59, 130, 246, 0.08); /* Light blue */
+  --color-bg-2: rgba(245, 158, 11, 0.08); /* Light yellow */
+  --color-bg-3: rgba(34, 197, 94, 0.08); /* Light green */
+  --color-bg-4: rgba(239, 68, 68, 0.08); /* Light red */
+  --color-bg-5: rgba(147, 51, 234, 0.08); /* Light purple */
+  --color-bg-6: rgba(249, 115, 22, 0.08); /* Light orange */
+  --color-bg-7: rgba(236, 72, 153, 0.08); /* Light pink */
+  --color-bg-8: rgba(6, 182, 212, 0.08); /* Light cyan */
+  
+  /* Дополнительные семантические цвета */
+  --color-surface: #ffffff;
+  --color-text: var(--color-slate-900);
+  --color-text-secondary: var(--color-slate-500);
+  --color-btn-primary-text: var(--color-cream-50);
+  --color-card-border: rgba(var(--color-brown-600-rgb), 0.12);
+  --color-card-border-inner: rgba(var(--color-brown-600-rgb), 0.12);
+  --color-focus-ring: rgba(var(--color-lime-500-rgb), 0.4);
+  --color-select-caret: rgba(var(--color-slate-900-rgb), 0.8);
+  
+  /* === RGB ЗНАЧЕНИЯ ДЛЯ RGBA === */
+  --color-brown-600-rgb: 94, 82, 64;
+  --color-teal-500-rgb: 33, 128, 141;
+  --color-teal-300-rgb: 50, 184, 198;
+  --color-gray-400-rgb: 119, 124, 124;
+  --color-gray-300-rgb: 167, 169, 169;
+  --color-gray-200-rgb: 245, 245, 245;
+  --color-slate-900-rgb: 19, 52, 59;
+  --color-slate-500-rgb: 98, 108, 113;
+  --color-red-500-rgb: 192, 21, 47;
+  --color-red-400-rgb: 255, 84, 89;
+  --color-orange-500-rgb: 168, 75, 47;
+  --color-orange-400-rgb: 230, 129, 97;
+  --color-lime-500-rgb: 11, 76, 117;
+  --color-water-500-rgb: 45, 126, 45;
+  --color-pink-400-rgb: 255, 107, 157;
+  --color-luna-400-rgb: 240, 248, 255;
+  --color-luna-500-rgb: 176, 196, 222;
+  --color-primary-rgb: 11, 76, 117;
+  --color-secondary-rgb: 119, 124, 124;
+  --color-success-rgb: 45, 126, 45;
+  --color-info-rgb: 73, 141, 176;
+  --color-warning-rgb: 168, 75, 47;
+  --color-danger-rgb: 192, 21, 47;
+}
+
+/* === ТЕМНАЯ ТЕМА === */
+[data-color-scheme="dark"] {
+  /* Основные цвета */
+  --color-primary: var(--color-teal-300);
+  --color-primary-hover: var(--color-teal-400);
+  --color-primary-active: var(--color-teal-800);
+  
+  --color-secondary: rgba(var(--color-gray-400-rgb), 0.15);
+  --color-secondary-hover: rgba(var(--color-gray-400-rgb), 0.25);
+  --color-secondary-active: rgba(var(--color-gray-400-rgb), 0.3);
+  
+  /* Фоновые цвета для карточек (темная тема) */
+  --color-bg-1: rgba(29, 78, 216, 0.15); /* Dark blue */
+  --color-bg-2: rgba(180, 83, 9, 0.15); /* Dark yellow */
+  --color-bg-3: rgba(21, 128, 61, 0.15); /* Dark green */
+  --color-bg-4: rgba(185, 28, 28, 0.15); /* Dark red */
+  --color-bg-5: rgba(107, 33, 168, 0.15); /* Dark purple */
+  --color-bg-6: rgba(194, 65, 12, 0.15); /* Dark orange */
+  --color-bg-7: rgba(190, 24, 93, 0.15); /* Dark pink */
+  --color-bg-8: rgba(8, 145, 178, 0.15); /* Dark cyan */
+  
+  /* Дополнительные семантические цвета для темной темы */
+  --color-surface: var(--color-charcoal-800);
+  --color-text-secondary: rgba(var(--color-gray-300-rgb), 0.7);
+  --color-focus-ring: rgba(var(--color-teal-300-rgb), 0.4);
+  --color-btn-primary-text: var(--color-slate-900);
+  --color-card-border: rgba(var(--color-gray-400-rgb), 0.15);
+  --color-card-border-inner: rgba(var(--color-gray-400-rgb), 0.15);
+  --color-select-caret: rgba(var(--color-gray-200-rgb), 0.8);
+  
+  /* Фоновые цвета */
+  --color-background: var(--color-charcoal-800);
+  --color-background-secondary: var(--color-charcoal-700);
+  --color-background-dark: var(--color-slate-900);
+  
+  /* Текстовые цвета */
+  --color-text-primary: var(--color-luna-400);
+  --color-text-secondary: var(--color-luna-500);
+  --color-text-muted: var(--color-gray-300);
+  --color-text-light: var(--color-gray-400);
+  
+  /* Границы */
+  --color-border: var(--color-gray-500);
+  --color-border-light: var(--color-gray-600);
+  --color-border-dark: var(--color-gray-400);
+  
+  /* Тени */
+  --color-shadow: rgba(0, 0, 0, 0.3);
+  --color-shadow-dark: rgba(0, 0, 0, 0.5);
+}
+
+/* === СОВМЕСТИМОСТЬ С BOOTSTRAP === */
+/* Переопределение Bootstrap переменных для совместимости */
+:root {
+  --bs-primary: var(--color-primary);
+  --bs-secondary: var(--color-secondary);
+  --bs-success: var(--color-success);
+  --bs-info: var(--color-info);
+  --bs-warning: var(--color-warning);
+  --bs-danger: var(--color-danger);
+  --bs-light: var(--color-background-secondary);
+  --bs-dark: var(--color-background-dark);
+  
+  /* RGB значения для Bootstrap */
+  --bs-primary-rgb: var(--color-primary-rgb);
+  --bs-secondary-rgb: var(--color-secondary-rgb);
+  --bs-success-rgb: var(--color-success-rgb);
+  --bs-info-rgb: var(--color-info-rgb);
+  --bs-warning-rgb: var(--color-warning-rgb);
+  --bs-danger-rgb: var(--color-danger-rgb);
+}
+
+[data-color-scheme="dark"] {
+  --bs-primary: var(--color-primary);
+  --bs-secondary: var(--color-secondary);
+  --bs-light: var(--color-background-secondary);
+  --bs-dark: var(--color-background-dark);
+}

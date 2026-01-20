@@ -2,9 +2,11 @@
 
 import { Box, Flex } from "@radix-ui/themes"
 import { useState, useEffect, ReactNode } from "react"
+import { usePathname } from "next/navigation"
 import Header from "./Header"
 import Sidebar from "./Sidebar"
 import FloatingActions from "./FloatingActions"
+import StatusBar from "./StatusBar"
 import { useTheme } from "./ThemeProvider"
 import styles from './AppLayout.module.css'
 
@@ -24,6 +26,9 @@ export default function AppLayout({
   userName = "Голубенко Андрей",
   onLogout,
 }: AppLayoutProps) {
+  const pathname = usePathname()
+  const isRecrChatPage = pathname?.startsWith('/recr-chat')
+  
   // Проверяем, является ли устройство десктопом
   const isDesktop = () => {
     if (typeof window === 'undefined') return false
@@ -127,12 +132,13 @@ export default function AppLayout({
         menuOpen={menuOpen}
         onLogout={handleLogout}
       />
+      {isRecrChatPage && <StatusBar />}
       <Sidebar isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       <FloatingActions />
       
       <Flex
         style={{
-          marginTop: '64px',
+          marginTop: isRecrChatPage ? '112px' : '64px', // 64px (header) + 48px (status bar если есть)
           width: '100%',
           transition: 'all 0.2s ease-in-out',
         }}
@@ -144,9 +150,10 @@ export default function AppLayout({
             borderTop: '1px solid var(--gray-a6)',
             flex: 1,
             minWidth: 0,
-            marginLeft: menuOpen ? '280px' : '0',
-            width: menuOpen ? 'calc(100% - 280px)' : '100%',
-            transition: 'margin-left 0.2s ease-in-out, width 0.2s ease-in-out',
+            marginRight: menuOpen ? '280px' : '0',
+            marginLeft: '24px', // Увеличенный отступ слева
+            width: menuOpen ? 'calc(100% - 280px - 24px)' : 'calc(100% - 24px)',
+            transition: 'margin-right 0.2s ease-in-out, width 0.2s ease-in-out',
           }}
         >
           {children}

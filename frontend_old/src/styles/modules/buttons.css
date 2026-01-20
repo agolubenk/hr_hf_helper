@@ -1,0 +1,49 @@
+/* ============================================
+   КНОПКИ
+   ============================================ */
+
+/* Глобальные компактные стили для всех кнопок */
+.btn {
+  padding: 6px 16px;
+  font-size: 0.95rem;
+  min-height: 32px;
+  border-radius: var(--border-radius);
+  transition: all var(--transition-duration) ease;
+}
+
+.btn-sm, .btn.btn-sm {
+  padding: 3px 10px;
+  font-size: 0.85rem;
+  min-height: 26px;
+  border-radius: var(--border-radius-sm);
+}
+
+.btn-lg, .btn.btn-lg {
+  padding: 10px 24px;
+  font-size: 1.125rem;
+  min-height: 42px;
+  border-radius: var(--border-radius-lg);
+}
+
+/* Кнопки быстрых действий (из Header) */
+.quick-action-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--border-radius);
+  border: 2px solid var(--bs-border-color);
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.quick-action-btn:hover {
+  border-color: var(--bs-primary);
+  color: var(--bs-primary);
+  transform: translateY(-2px);
+}
+

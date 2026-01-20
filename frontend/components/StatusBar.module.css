@@ -1,0 +1,116 @@
+.statusBar {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--gray-a6);
+  z-index: 999;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  overflow: visible;
+}
+
+.vacancySelector {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  flex-shrink: 0;
+  width: 200px;
+  z-index: 3;
+  background-color: var(--color-surface);
+  padding: 0 16px;
+  border-right: 1px solid var(--gray-a6);
+  display: flex;
+  align-items: center;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
+}
+
+.selectTrigger {
+  width: 100%;
+}
+
+.addVacancyItem {
+  border-top: 1px solid var(--gray-a6);
+  margin-top: 4px;
+  padding-top: 8px;
+  color: var(--accent-9);
+  font-weight: 500;
+}
+
+.addVacancyItem:hover {
+  background-color: var(--accent-3);
+  color: var(--accent-11);
+}
+
+.addVacancyItem[data-highlighted] {
+  background-color: var(--accent-3);
+  color: var(--accent-11);
+}
+
+.statusesScroll {
+  flex: 1;
+  margin-left: 200px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-a6) transparent;
+  padding: 0 16px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.statusesScroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.statusesScroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.statusesScroll::-webkit-scrollbar-thumb {
+  background: var(--gray-a6);
+  border-radius: 2px;
+}
+
+.statusesScroll::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-a8);
+}
+
+.statusesContainer {
+  padding: 8px 0;
+  min-width: max-content;
+}
+
+.statusItem {
+  flex-shrink: 0;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.statusItem:hover {
+  background-color: var(--gray-3);
+  transform: translateY(-1px);
+}
+
+/* Темная тема */
+[data-theme="dark"] .statusBar {
+  background-color: var(--gray-2);
+  border-bottom-color: var(--gray-a6);
+}
+
+[data-theme="dark"] .vacancySelector {
+  background-color: var(--gray-2);
+  border-right-color: var(--gray-a6);
+}
+
+[data-theme="dark"] .statusItem:hover {
+  background-color: var(--gray-4);
+}

@@ -1,0 +1,223 @@
+/* ============================================
+   THEME ADAPTER - Маппинг переменных тем на Bootstrap
+   Применяется ПОСЛЕ загрузки тем, чтобы использовать их переменные
+   ============================================ */
+
+/* Orange Light Theme */
+:root[data-theme="soft-black-light"] {
+  /* Основные цвета */
+  --bs-primary: var(--color-primary-orange, #FF9158);
+  --bs-primary-rgb: 255, 145, 88;
+  --bs-body-bg: var(--color-bg-primary, #FFFBF7);
+  --bs-body-bg-rgb: 255, 251, 247;
+  --bs-body-color: var(--color-text-primary, #000000);
+  --bs-secondary-color: var(--color-text-secondary, #2C2C2C);
+  --bs-secondary-bg: var(--color-bg-secondary, #FFF5EE);
+  --bs-tertiary-bg: var(--color-bg-tertiary, #FFFFFF);
+  --bs-border-color: var(--color-border-light, #E8DFD5);
+  --bs-border-color-translucent: var(--color-shadow, rgba(0, 0, 0, 0.15));
+  
+  /* Семантические цвета */
+  --bs-success: var(--color-success, #22C55E);
+  --bs-success-rgb: 34, 197, 94;
+  --bs-warning: var(--color-warning, #F97316);
+  --bs-warning-rgb: 249, 115, 22;
+  --bs-danger: var(--color-danger, #EF4444);
+  --bs-danger-rgb: 239, 68, 68;
+  --bs-info: #0dcaf0;
+  --bs-info-rgb: 13, 202, 240;
+  
+  /* Focus ring для лучшего контраста */
+  --bs-focus-ring-opacity: 0.25;
+  --bs-focus-ring-width: 0.25rem;
+}
+
+/* Orange Dark Theme */
+:root[data-theme="classic-energetic-dark"] {
+  --bs-primary: var(--color-primary-orange, #FF9E70);
+  --bs-primary-rgb: 255, 158, 112;
+  --bs-body-bg: var(--color-bg-primary, #121212);
+  --bs-body-bg-rgb: 18, 18, 18;
+  --bs-body-color: var(--color-text-primary, #FFFFFF);
+  --bs-secondary-color: var(--color-text-secondary, #D0D0D0);
+  --bs-secondary-bg: var(--color-bg-secondary, #1E1E1E);
+  --bs-tertiary-bg: var(--color-bg-tertiary, #262626);
+  --bs-border-color: var(--color-border, #323232);
+  --bs-border-color-translucent: var(--color-shadow, rgba(0, 0, 0, 0.5));
+  
+  --bs-success: var(--color-success, #4ADE80);
+  --bs-success-rgb: 74, 222, 128;
+  --bs-warning: var(--color-warning, #FB923C);
+  --bs-warning-rgb: 251, 146, 60;
+  --bs-danger: var(--color-danger, #F87171);
+  --bs-danger-rgb: 248, 113, 113;
+  --bs-info: #0dcaf0;
+  --bs-info-rgb: 13, 202, 240;
+  
+  /* Focus ring для лучшего контраста */
+  --bs-focus-ring-opacity: 0.4;
+  --bs-focus-ring-width: 0.25rem;
+}
+
+/* Tomato Light Theme */
+:root[data-theme="tomato-black-light"] {
+  --bs-primary: var(--color-primary-tomato, var(--color-red-500, #C0152F));
+  --bs-primary-rgb: 192, 21, 47;
+  --bs-body-bg: var(--color-bg-primary, var(--color-background, #FCFCF9));
+  --bs-body-bg-rgb: 252, 252, 249;
+  --bs-body-color: var(--color-text-primary, var(--color-text, #133452));
+  --bs-secondary-color: var(--color-text-secondary, var(--color-text-secondary, #627D7));
+  --bs-secondary-bg: var(--color-bg-secondary, var(--color-surface, #FFFFFD));
+  --bs-tertiary-bg: var(--color-bg-tertiary, var(--color-cream-100, #FFFFFD));
+  --bs-border-color: var(--color-border, rgba(94, 82, 64, 0.2));
+  --bs-border-color-translucent: var(--color-shadow, rgba(0, 0, 0, 0.1));
+  
+  --bs-success: var(--color-success, #198754);
+  --bs-success-rgb: 25, 135, 84;
+  --bs-warning: var(--color-warning, #ffc107);
+  --bs-warning-rgb: 255, 193, 7;
+  --bs-danger: var(--color-primary-tomato, var(--color-red-500, #C0152F));
+  --bs-danger-rgb: 192, 21, 47;
+  --bs-info: #0dcaf0;
+  --bs-info-rgb: 13, 202, 240;
+  
+  /* Focus ring для лучшего контраста */
+  --bs-focus-ring-opacity: 0.25;
+  --bs-focus-ring-width: 0.25rem;
+}
+
+/* Tomato Dark Theme */
+:root[data-theme="classic-energetic-tomato-dark"] {
+  --bs-primary: var(--color-primary-tomato, var(--color-red-400, #FF5459));
+  --bs-primary-rgb: 255, 84, 89;
+  --bs-body-bg: var(--color-bg-primary, var(--color-charcoal-700, #1F2121));
+  --bs-body-bg-rgb: 31, 33, 33;
+  --bs-body-color: var(--color-text-primary, var(--color-gray-200, #F5F5F5));
+  --bs-secondary-color: var(--color-text-secondary, rgba(245, 245, 245, 0.7));
+  --bs-secondary-bg: var(--color-bg-secondary, var(--color-charcoal-800, #262828));
+  --bs-tertiary-bg: var(--color-bg-tertiary, rgba(38, 40, 40, 0.5));
+  --bs-border-color: var(--color-border, rgba(119, 124, 124, 0.3));
+  --bs-border-color-translucent: var(--color-shadow, rgba(0, 0, 0, 0.3));
+  
+  --bs-success: var(--color-success, #4ADE80);
+  --bs-success-rgb: 74, 222, 128;
+  --bs-warning: var(--color-warning, #FB923C);
+  --bs-warning-rgb: 251, 146, 60;
+  --bs-danger: var(--color-primary-tomato, var(--color-red-400, #FF5459));
+  --bs-danger-rgb: 255, 84, 89;
+  --bs-info: #0dcaf0;
+  --bs-info-rgb: 13, 202, 240;
+  
+  /* Focus ring для лучшего контраста */
+  --bs-focus-ring-opacity: 0.4;
+  --bs-focus-ring-width: 0.25rem;
+}
+
+/* Blackberry Light Theme */
+:root[data-theme="blackberry-black-light"] {
+  --bs-primary: var(--color-primary-blackberry, #3C2549);
+  --bs-primary-rgb: 60, 37, 73;
+  --bs-body-bg: var(--color-bg-primary, var(--color-cream-50, #FCFCF9));
+  --bs-body-bg-rgb: 252, 252, 249;
+  --bs-body-color: var(--color-text-primary, var(--color-slate-900, #133452));
+  --bs-secondary-color: var(--color-text-secondary, var(--color-slate-500, #627D7));
+  --bs-secondary-bg: var(--color-bg-secondary, var(--color-cream-100, #FFFFFD));
+  --bs-tertiary-bg: var(--color-bg-tertiary, var(--color-white, #FFFFFF));
+  --bs-border-color: var(--color-border, rgba(94, 82, 64, 0.2));
+  --bs-border-color-translucent: var(--color-shadow, rgba(0, 0, 0, 0.1));
+  
+  --bs-success: var(--color-success, var(--color-teal-500, #21808D));
+  --bs-success-rgb: 33, 128, 141;
+  --bs-warning: var(--color-warning, var(--color-orange-500, #A84B2F));
+  --bs-warning-rgb: 168, 75, 47;
+  --bs-danger: #dc3545;
+  --bs-danger-rgb: 220, 53, 69;
+  --bs-info: var(--color-info, var(--color-primary-blackberry, #3C2549));
+  --bs-info-rgb: 60, 37, 73;
+  
+  /* Focus ring для лучшего контраста */
+  --bs-focus-ring-opacity: 0.25;
+  --bs-focus-ring-width: 0.25rem;
+}
+
+/* Blackberry Dark Theme */
+:root[data-theme="classic-energetic-blackberry-dark"] {
+  --bs-primary: var(--color-primary-blackberry, #725488);
+  --bs-primary-rgb: 114, 84, 136;
+  --bs-body-bg: var(--color-bg-primary, var(--color-charcoal-700, #1F2121));
+  --bs-body-bg-rgb: 31, 33, 33;
+  --bs-body-color: var(--color-text-primary, var(--color-gray-200, #F5F5F5));
+  --bs-secondary-color: var(--color-text-secondary, var(--color-gray-300, #A7A9A9));
+  --bs-secondary-bg: var(--color-bg-secondary, var(--color-charcoal-800, #262828));
+  --bs-tertiary-bg: var(--color-bg-tertiary, var(--color-surface, rgba(38, 40, 40, 0.5)));
+  --bs-border-color: var(--color-border, rgba(119, 124, 124, 0.3));
+  --bs-border-color-translucent: var(--color-shadow, rgba(0, 0, 0, 0.3));
+  
+  --bs-success: var(--color-success, var(--color-teal-400, #2DB2BE));
+  --bs-success-rgb: 45, 178, 190;
+  --bs-warning: var(--color-warning, var(--color-orange-400, #E68161));
+  --bs-warning-rgb: 230, 129, 97;
+  --bs-danger: #F87171;
+  --bs-danger-rgb: 248, 113, 113;
+  --bs-info: var(--color-info, var(--color-primary-blackberry, #725488));
+  --bs-info-rgb: 114, 84, 136;
+  
+  /* Focus ring для лучшего контраста */
+  --bs-focus-ring-opacity: 0.4;
+  --bs-focus-ring-width: 0.25rem;
+}
+
+/* Banana Light Theme */
+:root[data-theme="banana-black-light"] {
+  --bs-primary: var(--color-primary-banana, var(--color-orange-400, #E68161));
+  --bs-primary-rgb: 230, 129, 97;
+  --bs-body-bg: var(--color-bg-primary, var(--color-background, #FCFCF9));
+  --bs-body-bg-rgb: 252, 252, 249;
+  --bs-body-color: var(--color-text-primary, var(--color-text, #133452));
+  --bs-secondary-color: var(--color-text-secondary, var(--color-text-secondary, #627D7));
+  --bs-secondary-bg: var(--color-bg-secondary, var(--color-surface, #FFFFFD));
+  --bs-tertiary-bg: var(--color-bg-tertiary, var(--color-cream-100, #FFFFFD));
+  --bs-border-color: var(--color-border, rgba(94, 82, 64, 0.2));
+  --bs-border-color-translucent: var(--color-shadow, rgba(0, 0, 0, 0.1));
+  
+  --bs-success: var(--color-success, #198754);
+  --bs-success-rgb: 25, 135, 84;
+  --bs-warning: var(--color-warning, var(--color-orange-500, #A84B2F));
+  --bs-warning-rgb: 168, 75, 47;
+  --bs-danger: #dc3545;
+  --bs-danger-rgb: 220, 53, 69;
+  --bs-info: #0dcaf0;
+  --bs-info-rgb: 13, 202, 240;
+  
+  /* Focus ring для лучшего контраста */
+  --bs-focus-ring-opacity: 0.25;
+  --bs-focus-ring-width: 0.25rem;
+}
+
+/* Banana Dark Theme */
+:root[data-theme="space-banana-dark"] {
+  --bs-primary: #FFD950;
+  --bs-primary-rgb: 255, 217, 80;
+  --bs-body-bg: #141516;
+  --bs-body-bg-rgb: 20, 21, 22;
+  --bs-body-color: #FFFFFF;
+  --bs-secondary-color: rgba(255, 255, 255, 0.7);
+  --bs-secondary-bg: #212124;
+  --bs-tertiary-bg: rgba(33, 33, 36, 0.5);
+  --bs-border-color: #2A2A2D;
+  --bs-border-color-translucent: rgba(0, 0, 0, 0.3);
+  
+  --bs-success: #4ADE80;
+  --bs-success-rgb: 74, 222, 128;
+  --bs-warning: #FB923C;
+  --bs-warning-rgb: 251, 146, 60;
+  --bs-danger: #F87171;
+  --bs-danger-rgb: 248, 113, 113;
+  --bs-info: #0dcaf0;
+  --bs-info-rgb: 13, 202, 240;
+  
+  /* Focus ring для лучшего контраста */
+  --bs-focus-ring-opacity: 0.4;
+  --bs-focus-ring-width: 0.25rem;
+}
+

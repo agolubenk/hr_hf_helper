@@ -1,0 +1,847 @@
+/* CSS переменные Bootstrap для корректной работы компонентов */
+:root {
+  --bs-primary: #0d6efd;
+  --bs-primary-rgb: 13, 110, 253;
+  --bs-secondary: #6c757d;
+  --bs-secondary-rgb: 108, 117, 125;
+  --bs-success: #198754;
+  --bs-success-rgb: 25, 135, 84;
+  --bs-info: #0dcaf0;
+  --bs-info-rgb: 13, 202, 240;
+  --bs-warning: #ffc107;
+  --bs-warning-rgb: 255, 193, 7;
+  --bs-danger: #dc3545;
+  --bs-danger-rgb: 220, 53, 69;
+  --bs-light: #f8f9fa;
+  --bs-light-rgb: 248, 249, 250;
+  --bs-dark: #212529;
+  --bs-dark-rgb: 33, 37, 41;
+  
+  --bs-body-color: #212529;
+  --bs-body-bg: #fff;
+  --bs-secondary-color: #6c757d;
+  --bs-secondary-bg: #f8f9fa;
+  --bs-tertiary-bg: #f8f9fa;
+  --bs-border-color: #dee2e6;
+  --bs-border-color-translucent: rgba(0, 0, 0, 0.175);
+  
+  /* Переменные для контроля анимаций */
+  --animation-duration: 0.3s;
+  --transition-duration: 0.2s;
+  --animation-enabled: 1;
+  --transition-enabled: 1;
+  
+  /* Переменные для контроля отображения сетки */
+  --grid-spacing: 1rem;
+  --grid-gap: 1.5rem;
+  --card-padding: 1.5rem;
+  --section-margin: 2rem;
+  --font-size-base: 1rem;
+  --line-height-base: 1.5;
+  --border-radius: 0.375rem;
+}
+
+[data-bs-theme="dark"] {
+  --bs-body-color: #dee2e6;
+  --bs-body-bg: #212529;
+  --bs-secondary-color: #adb5bd;
+  --bs-secondary-bg: #343a40;
+  --bs-tertiary-bg: #2b3035;
+  --bs-border-color: #495057;
+  --bs-border-color-translucent: rgba(255, 255, 255, 0.175);
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Глобальные компактные стили для всех кнопок */
+.btn {
+  padding: 6px 16px;
+  font-size: 0.95rem;
+  min-height: 32px;
+  border-radius: var(--border-radius);
+}
+
+.btn-sm, .btn.btn-sm {
+  padding: 3px 10px;
+  font-size: 0.85rem;
+  min-height: 26px;
+  border-radius: 5px;
+}
+
+/* Компактные стили для кастомных кнопок в таблицах и карточках */
+.btn-edit,
+.btn-view,
+.action-buttons button,
+.benefit-actions button {
+  padding: 3px 10px;
+  font-size: 0.85rem;
+  min-height: 26px;
+  border-radius: 5px;
+}
+
+.btn-group-sm .btn,
+.btn-group .btn-sm {
+  padding: 3px 10px;
+  font-size: 0.85rem;
+  min-height: 26px;
+  border-radius: 5px;
+}
+
+/* Классы для контроля анимаций */
+.no-transitions * {
+  transition: none !important;
+}
+
+.no-animations * {
+  animation: none !important;
+}
+
+.reduced-animations * {
+  transition-duration: 0.75s !important;
+  animation-duration: 5s !important;
+}
+
+/* Применение CSS переменных для анимаций */
+* {
+  transition-duration: var(--transition-duration);
+  animation-duration: var(--animation-duration);
+}
+
+/* Отключение анимаций при соответствующих настройках */
+[style*="--animation-enabled: 0"] * {
+  animation: none !important;
+}
+
+[style*="--transition-enabled: 0"] * {
+  transition: none !important;
+}
+
+/* Применение CSS переменных для сетки */
+.container, .container-fluid {
+  padding-left: var(--grid-spacing);
+  padding-right: var(--grid-spacing);
+}
+
+.row {
+  margin-left: calc(-1 * var(--grid-gap) / 2);
+  margin-right: calc(-1 * var(--grid-gap) / 2);
+}
+
+.col, [class*="col-"] {
+  padding-left: calc(var(--grid-gap) / 2);
+  padding-right: calc(var(--grid-gap) / 2);
+}
+
+.card, .card-body {
+  padding: var(--card-padding);
+  border-radius: var(--border-radius);
+}
+
+.section, .content-section {
+  margin-bottom: var(--section-margin);
+}
+
+/* Глобальное применение скругления углов */
+.card, .btn, .form-control, .form-select, .alert, .badge, .modal-content, 
+.dropdown-menu, .popover, .tooltip, .toast, .progress, .list-group-item,
+.nav-tabs .nav-link, .nav-pills .nav-link, .breadcrumb-item,
+.pagination .page-link, .btn-group .btn, .input-group-text,
+.modal-content, .popover, .toast {
+  border-radius: var(--bs-border-radius) !important;
+}
+
+/* Применение скругления для основных элементов интерфейса */
+.card, .btn, .form-control, .form-select, .alert, .badge, 
+.dropdown-menu, .tooltip, .progress, .list-group-item,
+.nav-tabs .nav-link, .nav-pills .nav-link, .breadcrumb-item,
+.pagination .page-link, .btn-group .btn, .input-group-text,
+.modal-content, .popover, .toast {
+  border-radius: var(--bs-border-radius) !important;
+}
+
+/* Исключения для элементов, которые не должны иметь скругление */
+img, svg, .rounded-0, .border-0, .btn-0 {
+  border-radius: 0 !important;
+}
+
+/* Исключения для внутренних элементов таблиц */
+table, table *, 
+thead, thead *, 
+tbody, tbody *, 
+tr, tr *, 
+th, th *, 
+td, td *,
+.table, .table *,
+.table thead, .table thead *,
+.table tbody, .table tbody *,
+.table th, .table th *,
+.table td, .table td * {
+  border-radius: 0 !important;
+}
+
+/* Исключения ТОЛЬКО для указанных границ */
+.modal-header {
+  border-bottom: 1px solid var(--bs-border-color) !important;
+  border-radius: 0 !important;
+}
+
+.modal-footer {
+  border-top: 1px solid var(--bs-border-color) !important;
+  border-radius: 0 !important;
+}
+
+.popover-header {
+  border-bottom: 1px solid var(--bs-border-color) !important;
+  border-radius: 0 !important;
+}
+
+.popover-footer {
+  border-top: 1px solid var(--bs-border-color) !important;
+  border-radius: 0 !important;
+}
+
+.table thead {
+  border-bottom: 1px solid var(--bs-border-color) !important;
+  border-radius: 0 !important;
+}
+
+.table tfoot {
+  border-top: 1px solid var(--bs-border-color) !important;
+  border-radius: 0 !important;
+}
+
+/* ВСЕ остальные элементы используют настройки темы */
+* {
+  border-radius: var(--bs-border-radius) !important;
+}
+
+/* Восстанавливаем закругление для основных контейнеров тостов и модальных окон */
+.toast, .toast-body,
+.modal-content, .modal-body,
+.popover, .popover-body {
+  border-radius: var(--bs-border-radius) !important;
+}
+
+/* Специфичные селекторы для страниц профиля и ошибок */
+.profile-header, .profile-section, .module-card, .error-card,
+.profile-page .btn, .error-page .btn, .error-page-btn-primary, .error-page-btn-secondary,
+.profile-page .card, .error-page .card {
+  box-shadow: var(--bs-box-shadow) !important;
+}
+
+/* Специфичные селекторы для всех страниц приложения */
+.profile-header, .profile-section, .module-card, .error-card,
+.login-page .card, .settings-page .card, .activity-log-page .card,
+.cb-page .card, .reset-password-page .card, .new-password-page .card,
+.profile-page .btn, .error-page .btn, .login-page .btn, .settings-page .btn,
+.activity-log-page .btn, .cb-page .btn, .reset-password-page .btn, .new-password-page .btn,
+.error-page-btn-primary, .error-page-btn-secondary,
+.login-form, .settings-form, .activity-form, .cb-form,
+.profile-page .card, .error-page .card, .login-page .card, .settings-page .card,
+.activity-log-page .card, .cb-page .card, .reset-password-page .card, .new-password-page .card {
+  box-shadow: var(--bs-box-shadow) !important;
+}
+
+/* Глобальное применение теней */
+.card, .modal-content, .dropdown-menu, .popover, .toast, .btn {
+  box-shadow: var(--bs-box-shadow) !important;
+}
+
+/* Более агрессивное применение теней для всех блочных элементов */
+.card, .modal, .dropdown, .popover, .toast, .btn, .alert, .badge, .progress,
+.nav-tabs, .nav-pills, .breadcrumb, .pagination, .btn-group, .input-group {
+  box-shadow: var(--bs-box-shadow) !important;
+}
+
+.card.shadow-sm, .btn.shadow-sm {
+  box-shadow: var(--bs-box-shadow-sm) !important;
+}
+
+.card.shadow-lg, .btn.shadow-lg, .modal-content {
+  box-shadow: var(--bs-box-shadow-lg) !important;
+}
+
+.card.shadow-xl, .btn.shadow-xl {
+  box-shadow: var(--bs-box-shadow-xl) !important;
+}
+
+/* Отключение теней при соответствующей настройке */
+[style*="--bs-box-shadow: none"] .card,
+[style*="--bs-box-shadow: none"] .btn,
+[style*="--bs-box-shadow: none"] .modal-content,
+[style*="--bs-box-shadow: none"] .dropdown-menu,
+[style*="--bs-box-shadow: none"] .popover,
+[style*="--bs-box-shadow: none"] .toast,
+[style*="--bs-box-shadow: none"] .alert,
+[style*="--bs-box-shadow: none"] .badge,
+[style*="--bs-box-shadow: none"] .progress,
+[style*="--bs-box-shadow: none"] .nav-tabs,
+[style*="--bs-box-shadow: none"] .nav-pills,
+[style*="--bs-box-shadow: none"] .breadcrumb,
+[style*="--bs-box-shadow: none"] .pagination,
+[style*="--bs-box-shadow: none"] .btn-group,
+[style*="--bs-box-shadow: none"] .input-group,
+[style*="--bs-box-shadow: none"] .profile-header,
+[style*="--bs-box-shadow: none"] .profile-section,
+[style*="--bs-box-shadow: none"] .module-card,
+[style*="--bs-box-shadow: none"] .error-card,
+[style*="--bs-box-shadow: none"] .login-page .card,
+[style*="--bs-box-shadow: none"] .settings-page .card,
+[style*="--bs-box-shadow: none"] .activity-log-page .card,
+[style*="--bs-box-shadow: none"] .cb-page .card,
+[style*="--bs-box-shadow: none"] .reset-password-page .card,
+[style*="--bs-box-shadow: none"] .new-password-page .card,
+[style*="--bs-box-shadow: none"] .profile-page .btn,
+[style*="--bs-box-shadow: none"] .error-page .btn,
+[style*="--bs-box-shadow: none"] .login-page .btn,
+[style*="--bs-box-shadow: none"] .settings-page .btn,
+[style*="--bs-box-shadow: none"] .activity-log-page .btn,
+[style*="--bs-box-shadow: none"] .cb-page .btn,
+[style*="--bs-box-shadow: none"] .reset-password-page .btn,
+[style*="--bs-box-shadow: none"] .new-password-page .btn,
+[style*="--bs-box-shadow: none"] .error-page-btn-primary,
+[style*="--bs-box-shadow: none"] .error-page-btn-secondary,
+[style*="--bs-box-shadow: none"] .login-form,
+[style*="--bs-box-shadow: none"] .settings-form,
+[style*="--bs-box-shadow: none"] .activity-form,
+[style*="--bs-box-shadow: none"] .cb-form {
+  box-shadow: none !important;
+}
+
+/* Отключение теней в компонентах */
+[style*="--bs-box-shadow: none"] .login-form,
+[style*="--bs-box-shadow: none"] .settings-form,
+[style*="--bs-box-shadow: none"] .activity-form,
+[style*="--bs-box-shadow: none"] .cb-form {
+  box-shadow: none !important;
+}
+
+/* Отключение теней в компонентах */
+[style*="--bs-box-shadow: none"] .tray,
+[style*="--bs-box-shadow: none"] .quick-panel,
+[style*="--bs-box-shadow: none"] .context-menu,
+[style*="--bs-box-shadow: none"] .module-grid,
+[style*="--bs-box-shadow: none"] .stat-widgets,
+[style*="--bs-box-shadow: none"] .toast,
+[style*="--bs-box-shadow: none"] .toast-container,
+[style*="--bs-box-shadow: none"] .register-modal,
+[style*="--bs-box-shadow: none"] .navigation,
+[style*="--bs-box-shadow: none"] .command-center,
+[style*="--bs-box-shadow: none"] .floating-actions,
+[style*="--bs-box-shadow: none"] .language-switcher,
+[style*="--bs-box-shadow: none"] .module-submenu,
+[style*="--bs-box-shadow: none"] .tray .card,
+[style*="--bs-box-shadow: none"] .quick-panel .card,
+[style*="--bs-box-shadow: none"] .context-menu .card,
+[style*="--bs-box-shadow: none"] .module-grid .card,
+[style*="--bs-box-shadow: none"] .stat-widgets .card,
+[style*="--bs-box-shadow: none"] .toast .card,
+[style*="--bs-box-shadow: none"] .register-modal .card,
+[style*="--bs-box-shadow: none"] .navigation .card,
+[style*="--bs-box-shadow: none"] .command-center .card,
+[style*="--bs-box-shadow: none"] .floating-actions .card,
+[style*="--bs-box-shadow: none"] .language-switcher .card,
+[style*="--bs-box-shadow: none"] .module-submenu .card,
+[style*="--bs-box-shadow: none"] .tray .btn,
+[style*="--bs-box-shadow: none"] .quick-panel .btn,
+[style*="--bs-box-shadow: none"] .context-menu .btn,
+[style*="--bs-box-shadow: none"] .module-grid .btn,
+[style*="--bs-box-shadow: none"] .stat-widgets .btn,
+[style*="--bs-box-shadow: none"] .toast .btn,
+[style*="--bs-box-shadow: none"] .register-modal .btn,
+[style*="--bs-box-shadow: none"] .navigation .btn,
+[style*="--bs-box-shadow: none"] .command-center .btn,
+[style*="--bs-box-shadow: none"] .floating-actions .btn,
+[style*="--bs-box-shadow: none"] .language-switcher .btn,
+[style*="--bs-box-shadow: none"] .module-submenu .btn {
+  box-shadow: none !important;
+}
+
+/* Глобальное применение размера шрифта */
+body, .card, .btn, .form-control, .form-select, .alert, .badge, .nav-link {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+}
+
+/* Глобальное применение отступов для компактного режима */
+.grid-display-compact .card,
+.grid-display-compact .card-body {
+  padding: 1rem;
+}
+
+.grid-display-compact .btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* Глобальное применение отступов для просторного режима */
+.grid-display-spacious .card,
+.grid-display-spacious .card-body {
+  padding: 2rem;
+}
+
+.grid-display-spacious .btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.125rem;
+}
+
+/* Специфичные селекторы для компонентов */
+.tray, .quick-panel, .context-menu, .module-grid, .stat-widgets,
+.toast, .toast-container, .register-modal, .navigation, .command-center,
+.floating-actions, .language-switcher, .module-submenu,
+.tray .card, .quick-panel .card, .context-menu .card, .module-grid .card,
+.stat-widgets .card, .toast .card, .register-modal .card, .navigation .card,
+.command-center .card, .floating-actions .card, .language-switcher .card,
+.module-submenu .card,
+.tray .btn, .quick-panel .btn, .context-menu .btn, .module-grid .btn,
+.stat-widgets .btn, .toast .btn, .register-modal .btn, .navigation .btn,
+.command-center .btn, .floating-actions .btn, .language-switcher .btn,
+.module-submenu .btn {
+  border-radius: var(--bs-border-radius) !important;
+}
+
+/* Специальные стили для popover - улучшаем видимость */
+.popover {
+  border-radius: var(--bs-border-radius) !important;
+  box-shadow: var(--bs-box-shadow-lg) !important;
+  border: 1px solid var(--bs-border-color) !important;
+  background-color: var(--bs-body-bg) !important;
+  color: var(--bs-body-color) !important;
+  transition: all var(--transition-duration) ease !important;
+}
+
+.popover-header {
+  background-color: var(--bs-secondary-bg) !important;
+  border-bottom: 1px solid var(--bs-border-color) !important;
+  color: var(--bs-heading-color) !important;
+  border-radius: 0 !important;
+}
+
+.popover-body {
+  background-color: var(--bs-body-bg) !important;
+  color: var(--bs-body-color) !important;
+}
+
+.popover-footer {
+  background-color: var(--bs-secondary-bg) !important;
+  border-top: 1px solid var(--bs-border-color) !important;
+  border-radius: 0 !important;
+}
+
+/* Улучшаем видимость модальных окон */
+.modal-content {
+  border-radius: var(--bs-border-radius) !important;
+  box-shadow: var(--bs-box-shadow-lg) !important;
+  border: 1px solid var(--bs-border-color) !important;
+  background-color: var(--bs-body-bg) !important;
+  transition: all var(--transition-duration) ease !important;
+}
+
+.modal-header {
+  background-color: var(--bs-secondary-bg) !important;
+  border-bottom: 1px solid var(--bs-border-color) !important;
+  border-radius: 0 !important;
+}
+
+.modal-body {
+  background-color: var(--bs-body-bg) !important;
+  color: var(--bs-body-color) !important;
+}
+
+.modal-footer {
+  background-color: var(--bs-secondary-bg) !important;
+  border-top: 1px solid var(--bs-border-color) !important;
+  border-radius: 0 !important;
+}
+
+/* Явное применение скругления для всех кастомных бейджей и похожих элементов */
+.trend-badge,
+.benefits-badge,
+.requirements-badge,
+.status-badge,
+.priority-badge,
+.tray-badge,
+.user-status-select,
+.user-role-select,
+.badge.status-active,
+.badge.status-inactive,
+.badge.status-error,
+.badge.status-pending,
+.label,
+.chip,
+.tag {
+  border-radius: var(--bs-border-radius) !important;
+}
+
+/* Явное применение скругления для бейджей и радио/чекбоксов */
+.badge,
+.form-check-input,
+.form-radio,
+.form-switch,
+input[type="radio"],
+input[type="checkbox"] {
+  border-radius: var(--bs-border-radius) !important;
+}
+
+/* Для круглых radio - отдельное правило */
+input[type="radio"] {
+  border-radius: 50% !important;
+}
+
+/* Универсальное скругление для любых псевдо-бейджей */
+span:not([class*="header"]):not([class*="footer"]),
+div:not([class*="header"]):not([class*="footer"]),
+label:not([class*="header"]):not([class*="footer"]),
+small:not([class*="header"]):not([class*="footer"]) {
+  border-radius: var(--bs-border-radius) !important;
+}
+
+/* Скругление для любых элементов с background и padding (визуальные бейджи) */
+span[style*="background"],
+div[style*="background"],
+label[style*="background"],
+small[style*="background"] {
+  border-radius: var(--bs-border-radius) !important;
+}
+
+/* Компактные и современные вкладки */
+.nav-tabs, .nav-pills {
+  padding: 0.25rem 0.5rem !important;
+  gap: 0.25rem;
+  min-height: 36px;
+}
+
+.nav-tabs .nav-link, .nav-pills .nav-link {
+  padding: 0.25rem 0.75rem !important;
+  font-size: 0.97em !important;
+  min-height: 32px;
+  border-radius: var(--bs-border-radius) !important;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.nav-tabs .nav-link.active, .nav-pills .nav-link.active {
+  background: var(--bs-primary, #2563eb) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.nav-tabs .nav-link:hover, .nav-pills .nav-link:hover {
+  background: var(--bs-primary-bg-subtle, #e6edfa) !important;
+  color: var(--bs-primary, #2563eb) !important;
+}
+
+.tab-content {
+  padding: 1rem 0.5rem !important;
+}
+
+.table thead th, .table th {
+  padding: 0.75rem 1rem !important;
+}
+
+.table td {
+  padding: 0.5rem 1rem !important;
+}
+
+.card, .card-header, .card-body, .card-footer {
+  padding: 1rem !important;
+}
+
+.settings-section-header, .settings-title, .settings-header {
+  padding: 1rem 1.5rem !important;
+}
+
+.badge, .status-badge, .label, .chip, .tag {
+  padding: 0.25em 0.75em !important;
+  font-size: 0.95em;
+}
+
+/* Увеличенный отступ между вкладками */
+.nav-tabs .nav-link:not(:last-child),
+.nav-pills .nav-link:not(:last-child) {
+  margin-right: 1.75rem !important;
+}
+
+/* Компактные кнопки действий */
+.btn,
+.action-btn,
+.btn-action,
+.table-actions .btn,
+.btn-group .btn {
+  width: auto !important;
+  min-width: unset !important;
+  max-width: unset !important;
+  flex: 0 0 auto !important;
+  padding-left: 1.1em !important;
+  padding-right: 1.1em !important;
+  align-items: center !important;
+}
+
+/* Контейнер для кнопок действий — компактно и с отступом */
+.table-actions,
+.actions-row,
+.btn-group {
+  display: flex !important;
+  gap: 0.5rem !important;
+  width: auto !important;
+  justify-content: flex-start !important;
+}
+
+/* Корректное позиционирование иконки и текста в поиске навбара */
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 340px;
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  padding-left: 3.2em !important;
+  padding-right: 3.2em !important;
+  height: 3em;
+  border-radius: var(--bs-border-radius);
+  border: 1px solid var(--bs-border-color);
+  background: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  font-size: 1em;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input:focus {
+  border-color: var(--bs-primary);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(var(--bs-primary-rgb,38,99,235), 0.15);
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.3em;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1em;
+  color: var(--bs-secondary-color);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.search-shortcut {
+  position: absolute;
+  right: 0.5em;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--bs-secondary-bg);
+  color: var(--bs-secondary-color);
+  border-radius: 0.5em;
+  font-size: 0.95em;
+  padding: 0.1em 0.7em;
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Универсальные стили для полноэкранных модальных окон на мобильных устройствах */
+@media (max-width: 768px) {
+  /* Полноэкранные модальные окна */
+  .modal.show {
+    padding: 0 !important;
+  }
+  
+  .modal-dialog {
+    margin: 0 !important;
+    max-width: 100vw !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+  }
+  
+  .modal-content {
+    border-radius: 0 !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    margin: 0 !important;
+  }
+  
+  .modal-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--bs-border-color) !important;
+    flex-shrink: 0;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+    flex: 1 !important;
+    overflow-y: auto !important;
+  }
+  
+  .modal-footer {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-top: 1px solid var(--bs-border-color) !important;
+    flex-shrink: 0;
+  }
+  
+  /* Адаптация для кастомных модальных окон */
+  .modal-overlay {
+    padding: 0 !important;
+  }
+  
+  .modal-overlay .modal-content {
+    margin: 0 !important;
+    max-width: 100vw !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  /* Адаптация для модальных окон v2 */
+  .modal-backdrop-v2 {
+    padding: 0 !important;
+  }
+  
+  .modal-backdrop-v2 .modal-content-v2 {
+    margin: 0 !important;
+    max-width: 100vw !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  .modal-header-v2 {
+    flex-shrink: 0;
+  }
+  
+  .modal-body-v2 {
+    flex: 1 !important;
+    overflow-y: auto !important;
+  }
+  
+  .modal-footer-v2 {
+    flex-shrink: 0;
+  }
+  
+  /* Улучшения для кнопок в модальных окнах */
+  .modal-footer .btn {
+    width: 100%;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease;
+    font-weight: 500;
+  }
+  
+  .modal-footer .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  /* Адаптация для выпадающих меню в модальных окнах */
+  .dropdown-menu {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90vw;
+    max-width: 300px;
+    z-index: 1060;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 576px) {
+  /* Дополнительные улучшения для очень маленьких экранов */
+  .modal-header {
+    padding: 0.75rem;
+  }
+  
+  .modal-body {
+    padding: 0.75rem;
+  }
+  
+  .modal-footer {
+    padding: 0.75rem;
+  }
+  
+  .modal-footer .btn {
+    font-size: 0.85rem;
+    padding: 0.6rem 1rem;
+  }
+  
+  /* Адаптация для кастомных модальных окон на маленьких экранах */
+  .modal-overlay .modal-content {
+    padding: 0.75rem;
+  }
+  
+  .modal-backdrop-v2 .modal-content-v2 {
+    padding: 0.75rem;
+  }
+  
+  .modal-header-v2 {
+    padding: 0.75rem;
+  }
+  
+  .modal-body-v2 {
+    padding: 0.75rem;
+  }
+  
+  .modal-footer-v2 {
+    padding: 0.75rem;
+  }
+}
+
+/* Темная тема для полноэкранных модальных окон */
+[data-bs-theme="dark"] .modal-content {
+  background-color: var(--bs-dark);
+  border-color: var(--bs-border-color);
+}
+
+[data-bs-theme="dark"] .modal-header {
+  border-bottom-color: var(--bs-border-color);
+  background-color: var(--bs-dark);
+}
+
+[data-bs-theme="dark"] .modal-footer {
+  border-top-color: var(--bs-border-color);
+  background-color: var(--bs-dark);
+}
+
+[data-bs-theme="dark"] .modal-body {
+  background-color: var(--bs-dark);
+}
+
+[data-bs-theme="dark"] .modal-overlay .modal-content {
+  background-color: var(--bs-dark);
+  border-color: var(--bs-border-color);
+}
+
+[data-bs-theme="dark"] .modal-backdrop-v2 .modal-content-v2 {
+  background-color: var(--bs-dark);
+  border-color: var(--bs-border-color);
+}

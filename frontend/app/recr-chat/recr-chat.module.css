@@ -1,0 +1,232 @@
+.container {
+  display: flex;
+  height: calc(100vh - 112px); /* 64px header + 48px status bar */
+  gap: 16px;
+  padding: 16px;
+  background-color: var(--gray-2);
+}
+
+/* Левая колонка */
+.leftColumn {
+  flex: 1;
+  max-width: 650px;
+  min-width: 380px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--gray-a6);
+  border-radius: 8px;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabSwitcher {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-a6) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tabSwitcher::-webkit-scrollbar {
+  height: 4px;
+}
+
+.tabSwitcher::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tabSwitcher::-webkit-scrollbar-thumb {
+  background: var(--gray-a6);
+  border-radius: 2px;
+}
+
+.tabSwitcher::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-a8);
+}
+
+.tabButton {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+/* Список кандидатов */
+.candidatesList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.candidateItem {
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--gray-a6);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: var(--color-surface);
+}
+
+.candidateItem:hover {
+  background-color: rgba(33, 128, 160, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateX(2px);
+}
+
+.candidateItem.selected {
+  background-color: rgba(33, 128, 160, 0.12);
+  border-left: 3px solid #2180A0;
+}
+
+/* Список диалогов */
+.conversationsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.conversationItem {
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--gray-a6);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: var(--color-surface);
+}
+
+.conversationItem:hover {
+  background-color: rgba(33, 128, 160, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Контейнер чата */
+.chatContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.chatContainer > * {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Настройки вакансии */
+.vacancySettings {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Правая колонка */
+.rightColumn {
+  flex: 2;
+  min-width: 340px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.candidateCard {
+  padding: 24px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--gray-a6);
+  border-radius: 8px;
+}
+
+.subTabs {
+  border-bottom: 1px solid var(--gray-a6);
+}
+
+/* История */
+.historyItem {
+  padding: 12px 0;
+}
+
+/* Адаптивность */
+@media (min-width: 800px) {
+  .container {
+    flex-direction: row;
+  }
+
+  .leftColumn {
+    flex: 1;
+    max-width: 650px;
+  }
+
+  .rightColumn {
+    flex: 2;
+    position: relative !important;
+    transform: none !important;
+    z-index: auto !important;
+  }
+  
+  .modalOverlay {
+    display: none;
+  }
+}
+
+@media (max-width: 799px) {
+  .container {
+    flex-direction: column;
+    position: relative;
+  }
+
+  .leftColumn {
+    width: 100%;
+    max-width: 100%;
+    max-height: calc(100vh - 112px);
+  }
+
+  .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1999;
+    backdrop-filter: blur(2px);
+  }
+
+  .rightColumn {
+    width: 100%;
+    max-width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    background-color: var(--color-surface);
+    padding: 16px;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .rightColumn.open {
+    transform: translateX(0);
+  }
+
+  .tabSwitcher {
+    flex-wrap: wrap;
+  }
+
+  .tabButton {
+    flex: 1;
+    min-width: 120px;
+  }
+}

@@ -1,0 +1,75 @@
+/* ============================================
+   БАЗОВЫЕ СТИЛИ
+   ============================================ */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  overflow-x: hidden;
+}
+
+/* Базовые стили body - с приоритетом над темами */
+body {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 100vh !important;
+  background-color: var(--bs-body-bg, #fff) !important;
+  color: var(--bs-body-color, #212529) !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* App Container */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  margin-top: var(--nav-height);
+  padding-bottom: var(--footer-height);
+  min-height: calc(100vh - var(--nav-height) - var(--footer-height));
+}
+
+/* Темная тема - глубокий черный фон для main */
+[data-bs-theme="dark"] .main-content,
+[data-theme*="dark"] .main-content {
+  background-color: #000000 !important;
+}
+
+[data-bs-theme="dark"] body,
+[data-theme*="dark"] body {
+  background-color: #000000 !important;
+}
+
+[data-bs-theme="dark"] .container,
+[data-theme*="dark"] .container {
+  background-color: #000000 !important;
+}
+
+/* Карточка приветствия сохраняет свой фон */
+[data-bs-theme="dark"] .command-center-card,
+[data-theme*="dark"] .command-center-card {
+  background-color: var(--bs-body-bg) !important;
+}
+

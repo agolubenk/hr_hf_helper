@@ -1,0 +1,66 @@
+/* Стили для кнопок показа/скрытия пароля */
+        .password-toggle-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: color 0.2s ease;
+            z-index: 10;
+        }
+        
+        .password-toggle-btn:hover {
+            color: var(--color-primary);
+        }
+        
+        .password-input-group {
+            position: relative;
+        }
+        
+        .password-input-group .form-control {
+            padding-right: 45px;
+            border-radius: 0.375rem 0 0 0.375rem !important;
+        }
+        
+        .password-input-group:first-child .form-control {
+            border-top-right-radius: 0 !important;
+            border-bottom-right-radius: 0 !important;
+        }
+        
+        [data-theme="dark"] .password-toggle-btn {
+            color: var(--color-text-muted);
+        }
+        
+        [data-theme="dark"] .password-toggle-btn:hover {
+            color: var(--color-primary);
+        }
+        
+        /* Стили для цветового кодирования токенов */
+        .form-text.text-success {
+            color: #28a745 !important;
+        }
+        
+        .form-text.text-warning {
+            color: #ffc107 !important;
+        }
+        
+        .form-text.text-danger {
+            color: #dc3545 !important;
+        }
+        
+        [data-theme="dark"] .form-text.text-success {
+            color: #28a745 !important;
+        }
+        
+        [data-theme="dark"] .form-text.text-warning {
+            color: #ffc107 !important;
+        }
+        
+        [data-theme="dark"] .form-text.text-danger {
+            color: #dc3545 !important;
+        }

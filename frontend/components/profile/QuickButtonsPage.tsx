@@ -408,8 +408,8 @@ export default function QuickButtonsPage() {
   }, [])
 
   const handleCreate = () => {
-    if (buttons.length >= 10) {
-      alert('Максимальное количество быстрых кнопок - 10')
+    if (buttons.length >= 15) {
+      alert('Максимальное количество быстрых кнопок - 15')
       return
     }
     setEditingButton(null)
@@ -437,8 +437,8 @@ export default function QuickButtonsPage() {
       ))
     } else {
       // Создание новой кнопки
-      if (buttons.length >= 10) {
-        alert('Максимальное количество быстрых кнопок - 10')
+      if (buttons.length >= 15) {
+        alert('Максимальное количество быстрых кнопок - 15')
         return
       }
       const newButton: QuickButton = {
@@ -493,7 +493,7 @@ export default function QuickButtonsPage() {
             </Text>
             {buttons.length > 0 && (
               <Text size="2" color="gray" style={{ marginLeft: '8px' }}>
-                ({buttons.length}/10)
+                ({buttons.length}/15)
               </Text>
             )}
           </Flex>
@@ -512,7 +512,7 @@ export default function QuickButtonsPage() {
               variant="solid"
               style={{ backgroundColor: 'var(--accent-9)' }}
               onClick={handleCreate}
-              disabled={buttons.length >= 10}
+              disabled={buttons.length >= 15}
             >
               <PlusIcon width="14" height="14" />
               {buttons.length === 0 ? 'Создать' : 'Добавить'}

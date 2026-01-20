@@ -1,0 +1,18 @@
+{
+  "name": "hrm-pro",
+  "description": "HRM Pro - Human Resource Management System",
+  "repository": "https://github.com/yourusername/HRM-Pro",
+  "logo": "https://node-js-sample.herokuapp.com/node.png",
+  "keywords": ["react", "typescript", "hrm", "human-resources"],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "env": {
+    "NODE_ENV": {
+      "description": "Environment for the application",
+      "value": "production"
+    }
+  }
+} 

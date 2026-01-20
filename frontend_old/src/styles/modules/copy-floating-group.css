@@ -1,0 +1,153 @@
+/* Copy Floating Group Component */
+
+/* Триггер - полукруг с иконкой спидометра */
+.copy-floating-group-trigger {
+  position: fixed;
+  left: -12px; /* Засунут глубже за экран, но иконка видна */
+  bottom: calc(var(--footer-height, 80px) + 12px); /* Выровнено с floating-actions */
+  z-index: 1040;
+  pointer-events: auto;
+}
+
+.copy-floating-trigger-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 0 24px 24px 0;
+  border: none;
+  border-left: none;
+  background: var(--bs-body-bg);
+  border: 2px solid var(--bs-border-color);
+  border-left: none;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: var(--bs-body-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding-left: 11px; /* Иконка сдвинута ближе к правому краю на 3px (было 8px) */
+}
+
+.copy-floating-trigger-btn i {
+  margin-right: -2px; /* Иконка сдвинута еще правее */
+}
+
+.copy-floating-trigger-btn:hover {
+  background: var(--bs-primary);
+  color: white;
+  box-shadow: 2px 0 12px rgba(var(--bs-primary-rgb), 0.4);
+  transform: translateX(4px);
+}
+
+.copy-floating-trigger-btn:active {
+  transform: translateX(2px);
+}
+
+/* Меню с кнопками */
+.copy-floating-group-menu {
+  position: fixed;
+  left: -300px; /* Скрыто за левым краем */
+  top: var(--nav-height, 60px);
+  bottom: var(--footer-height, 60px); /* Не заезжает на футер */
+  width: 60px; /* Отрегулировано под размер кружочков (37.536px + отступы) */
+  background: var(--bs-body-bg);
+  border-right: 2px solid var(--bs-border-color);
+  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.15);
+  z-index: 1035;
+  transition: left 0.3s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.copy-floating-group-menu.open {
+  left: 0;
+}
+
+.copy-floating-group-menu.pinned {
+  left: 0;
+}
+
+/* Контент меню */
+.copy-floating-menu-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem 1rem;
+  align-items: center;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Кнопки действий */
+.copy-floating-action-btn {
+  width: 37.536px; /* Уменьшено еще на 8% (40.8px * 0.92 = 37.536px) */
+  height: 37.536px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9775rem; /* Уменьшено пропорционально (1.0625rem * 0.92) */
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.copy-floating-action-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.copy-floating-action-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  opacity: 0.9;
+}
+
+/* Цвета кнопок */
+.copy-floating-action-btn.btn-primary {
+  background-color: var(--bs-primary);
+}
+
+.copy-floating-action-btn.btn-success {
+  background-color: var(--bs-success);
+}
+
+.copy-floating-action-btn.btn-info {
+  background-color: var(--bs-info);
+}
+
+.copy-floating-action-btn.btn-warning {
+  background-color: var(--bs-warning);
+}
+
+.copy-floating-action-btn.btn-danger {
+  background-color: var(--bs-danger);
+}
+
+.copy-floating-action-btn.btn-secondary {
+  background-color: var(--bs-secondary);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .copy-floating-group-menu {
+    width: 55px; /* Отрегулировано под мобильные размеры */
+  }
+
+  .copy-floating-action-btn {
+    width: 31.9056px; /* Уменьшено еще на 8% (34.68px * 0.92) */
+    height: 31.9056px;
+    font-size: 0.828rem; /* Уменьшено пропорционально */
+  }
+
+  .copy-floating-trigger-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+  }
+}
+

@@ -1,8 +1,8 @@
 'use client'
 
-import { Flex, Button, Text, Box } from "@radix-ui/themes"
-import { SunIcon, MoonIcon, PersonIcon, ExitIcon, HamburgerMenuIcon, ChevronLeftIcon } from "@radix-ui/react-icons"
-import { useState } from "react"
+import { Flex, Button, Text, Box, TextField } from "@radix-ui/themes"
+import { SunIcon, MoonIcon, PersonIcon, ExitIcon, LightningBoltIcon, MagnifyingGlassIcon, BellIcon } from "@radix-ui/react-icons"
+import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import styles from './Header.module.css'
 
@@ -28,6 +28,11 @@ export default function Header({
   const router = useRouter()
   const [userHover, setUserHover] = useState(false)
   const [logoutHover, setLogoutHover] = useState(false)
+  const searchContainerRef = useRef<HTMLDivElement>(null)
+  
+  // Определяем, какая ОС используется для отображения правильной комбинации клавиш
+  const isMac = typeof window !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0
+  const shortcutKey = isMac ? '⌘K' : 'Ctrl+K'
   
   // Извлекаем имя из полного имени (второе слово)
   const firstName = userName.split(' ')[1] || userName
@@ -41,6 +46,35 @@ export default function Header({
     // Переходим на страницу профиля
     router.push('/profile')
   }
+
+  // Обработчик горячих клавиш для поиска (Cmd+K / Ctrl+K)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Проверяем комбинацию Cmd+K (Mac) или Ctrl+K (Windows/Linux)
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        // Предотвращаем стандартное поведение браузера
+        e.preventDefault()
+        
+        // Находим input внутри контейнера поиска
+        if (searchContainerRef.current) {
+          const input = searchContainerRef.current.querySelector('input') as HTMLInputElement
+          if (input) {
+            input.focus()
+            // Выделяем весь текст, если он есть
+            input.select()
+          }
+        }
+      }
+    }
+
+    // Добавляем обработчик события
+    window.addEventListener('keydown', handleKeyDown)
+
+    // Удаляем обработчик при размонтировании компонента
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
   return (
     <header
       id="app-header"
@@ -63,8 +97,52 @@ export default function Header({
       }}
     >
       <Flex align="center" justify="between" width="100%">
-      {/* Левая часть: кнопка меню и название страницы */}
-      <Flex align="center" gap="3">
+      {/* Левая часть: название страницы и форма поиска */}
+      <Flex align="center" gap="3" style={{ flex: 1, minWidth: 0 }}>
+        <Text size="5" weight="bold" className={styles.pageTitle} style={{ flexShrink: 0 }}>
+          {pageTitle}
+        </Text>
+        {/* Форма поиска - занимает всю доступную ширину */}
+        <Box ref={searchContainerRef} style={{ position: 'relative', flex: 1, minWidth: 0, marginRight: '12px' }}>
+          <TextField.Root
+            placeholder="Поиск..."
+            style={{
+              width: '100%',
+              height: '34px',
+            }}
+          >
+            <TextField.Slot>
+              <MagnifyingGlassIcon width={16} height={16} />
+            </TextField.Slot>
+            <TextField.Slot side="right" style={{ paddingRight: '8px' }}>
+              <Box
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                  backgroundColor: currentTheme === 'dark' ? 'var(--gray-4)' : 'var(--gray-3)',
+                  border: '1px solid var(--gray-a6)',
+                  fontSize: '11px',
+                  lineHeight: 1,
+                  color: 'var(--gray-11)',
+                  fontFamily: 'system-ui, -apple-system, sans-serif',
+                  fontWeight: 500,
+                  userSelect: 'none',
+                  pointerEvents: 'none',
+                }}
+                title={`Нажмите ${shortcutKey} для поиска`}
+              >
+                {shortcutKey}
+              </Box>
+            </TextField.Slot>
+          </TextField.Root>
+        </Box>
+      </Flex>
+
+      {/* Правая часть: меню, уведомления, тема и объединенная кнопка пользователя/выхода */}
+      <Flex align="center" gap="3" style={{ flexShrink: 0 }}>
+        {/* Кнопка меню с молнией */}
         <Box
           onClick={onMenuToggle}
           style={{
@@ -81,19 +159,32 @@ export default function Header({
           }}
           title={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
         >
-          {menuOpen ? (
-            <ChevronLeftIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />
-          ) : (
-            <HamburgerMenuIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />
-          )}
+          <LightningBoltIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />
         </Box>
-        <Text size="5" weight="bold" className={styles.pageTitle}>
-          {pageTitle}
-        </Text>
-      </Flex>
 
-      {/* Правая часть: тема и объединенная кнопка пользователя/выхода */}
-      <Flex align="center" gap="3">
+        {/* Кнопка уведомлений */}
+        <Box
+          onClick={() => {
+            // TODO: Добавить обработчик уведомлений
+            console.log('Notifications clicked')
+          }}
+          style={{
+            cursor: 'pointer',
+            backgroundColor: 'transparent',
+            border: '1px solid var(--gray-a6)',
+            borderRadius: '6px',
+            padding: '6px 8px',
+            height: '34px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+          title="Уведомления"
+        >
+          <BellIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />
+        </Box>
+
         {/* Кнопка выбора темы */}
         <Box
           onClick={onThemeToggle}

@@ -1,0 +1,28 @@
+/* Стили для чекбоксов грейдов */
+.grade-checkbox {
+    transition: all 0.2s ease;
+}
+
+.grade-checkbox:hover {
+    background-color: #e9ecef !important;
+    border-color: #0d6efd !important;
+}
+
+.grade-checkbox input[type="checkbox"]:checked ~ label {
+    color: #0d6efd;
+}
+
+.grade-checkbox input[type="checkbox"]:checked {
+    border-color: #0d6efd;
+    background-color: #0d6efd;
+}
+
+.grade-checkbox input[type="checkbox"]:checked + label {
+    font-weight: 600;
+}
+
+/* Подсветка выбранных грейдов */
+.grade-checkbox:has(input[type="checkbox"]:checked) {
+    background-color: #e7f3ff !important;
+    border-color: #0d6efd !important;
+}

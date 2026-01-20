@@ -89,6 +89,9 @@ function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefi
   if (item.id === 'reporting' && pathname.startsWith('/reporting')) {
     return true
   }
+  if (item.id === 'recr-chat' && pathname.startsWith('/recr-chat')) {
+    return true
+  }
   
   // Проверяем сам элемент
   if (item.href) {
@@ -280,6 +283,8 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { theme } = useTheme()
   const pathname = usePathname()
+  const isRecrChatPage = pathname?.startsWith('/recr-chat')
+  const topOffset = isRecrChatPage ? '112px' : '64px' // 64px header + 48px status bar (только для recr-chat)
   
   // Пример структуры меню - можно вынести в отдельный файл или получать из API
   const menuItems: MenuItem[] = [
@@ -328,6 +333,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <Box style={{ width: '6px', height: '6px', backgroundColor: 'var(--gray-12)', borderRadius: '50%' }} />
       </Box>,
       href: '/aichat',
+    },
+    {
+      id: 'recr-chat',
+      label: 'Рекрутинг',
+      icon: <ChatBubbleIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+      href: '/recr-chat',
     },
     {
       id: 'vacancies',
@@ -609,14 +620,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
     <Box
       position="fixed"
-      top="64px"
-      left="0"
+      top={topOffset}
+      right="0"
       bottom="0"
       className={styles.sidebar}
       style={{
         backgroundColor: theme === 'dark' ? 'var(--gray-2, #1c1c1f)' : '#ffffff',
-        borderRight: '1px solid var(--gray-a6)',
-        transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
+        borderLeft: '1px solid var(--gray-a6)',
+        transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
         transition: 'transform 0.2s ease-in-out, background-color 0.2s ease-in-out',
         overflowY: 'auto',
       }}

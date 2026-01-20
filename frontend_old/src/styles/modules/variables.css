@@ -1,0 +1,105 @@
+/* ============================================
+   CSS ПЕРЕМЕННЫЕ - ЕДИНАЯ СИСТЕМА ДИЗАЙНА
+   ============================================ */
+
+:root {
+  /* === Цвета Bootstrap === */
+  --bs-primary: #0d6efd;
+  --bs-primary-rgb: 13, 110, 253;
+  --bs-secondary: #6c757d;
+  --bs-secondary-rgb: 108, 117, 125;
+  --bs-success: #198754;
+  --bs-success-rgb: 25, 135, 84;
+  --bs-info: #0dcaf0;
+  --bs-info-rgb: 13, 202, 240;
+  --bs-warning: #ffc107;
+  --bs-warning-rgb: 255, 193, 7;
+  --bs-danger: #dc3545;
+  --bs-danger-rgb: 220, 53, 69;
+  --bs-light: #f8f9fa;
+  --bs-light-rgb: 248, 249, 250;
+  --bs-dark: #212529;
+  --bs-dark-rgb: 33, 37, 41;
+  
+  /* === Семантические цвета === */
+  --bs-body-color: #212529;
+  --bs-body-bg: #fff;
+  --bs-body-bg-rgb: 255, 255, 255;
+  --bs-secondary-color: #6c757d;
+  --bs-secondary-bg: #f8f9fa;
+  --bs-secondary-bg-rgb: 248, 249, 250;
+  --bs-tertiary-bg: #f8f9fa;
+  --bs-tertiary-bg-rgb: 248, 249, 250;
+  --bs-border-color: #dee2e6;
+  --bs-border-color-rgb: 222, 226, 230;
+  --bs-border-color-translucent: rgba(0, 0, 0, 0.175);
+  
+  /* === Градиенты === */
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --info-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  
+  /* === Размеры и отступы === */
+  --grid-spacing: 1rem;
+  --grid-gap: 1.5rem;
+  --card-padding: 1.5rem;
+  --section-margin: 2rem;
+  
+  /* === Типографика === */
+  --font-size-base: 1rem;
+  --font-size-sm: 0.875rem;
+  --font-size-lg: 1.125rem;
+  --line-height-base: 1.5;
+  
+  /* === Скругления === */
+  --border-radius: 0.75rem;
+  --bs-border-radius: 0.75rem;
+  --border-radius-sm: 0.5rem;
+  --border-radius-lg: 1rem;
+  
+  /* === Высоты компонентов === */
+  --nav-height: 70px;
+  --submenu-height: 50px;
+  --footer-height: 60px;
+  --quick-panel-width: 280px;
+  
+  /* === Анимации === */
+  --animation-duration: 0.3s;
+  --transition-duration: 0.2s;
+  --animation-enabled: 1;
+  --transition-enabled: 1;
+  
+  /* === Focus и контраст === */
+  --bs-focus-ring-opacity: 0.25;
+  --bs-focus-ring-width: 0.25rem;
+  
+  /* === Spacing Scale (8px базовая единица) === */
+  --space-0: 0;
+  --space-1: 0.25rem;  /* 4px */
+  --space-2: 0.5rem;   /* 8px */
+  --space-3: 0.75rem;  /* 12px */
+  --space-4: 1rem;     /* 16px */
+  --space-5: 1.25rem;  /* 20px */
+  --space-6: 1.5rem;   /* 24px */
+  --space-8: 2rem;     /* 32px */
+  --space-10: 2.5rem;  /* 40px */
+  --space-12: 3rem;    /* 48px */
+  --space-16: 4rem;    /* 64px */
+}
+
+/* === Темная тема === */
+[data-bs-theme="dark"] {
+  --bs-body-color: #dee2e6;
+  --bs-body-bg: #212529;
+  --bs-body-bg-rgb: 33, 37, 41;
+  --bs-secondary-color: #adb5bd;
+  --bs-secondary-bg: #343a40;
+  --bs-secondary-bg-rgb: 52, 58, 64;
+  --bs-tertiary-bg: #2b3035;
+  --bs-tertiary-bg-rgb: 43, 48, 53;
+  --bs-border-color: #495057;
+  --bs-border-color-rgb: 73, 80, 87;
+  --bs-border-color-translucent: rgba(255, 255, 255, 0.175);
+}
+
