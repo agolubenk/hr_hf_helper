@@ -162,6 +162,48 @@ class LinkedInThreadProfile(models.Model):
         return f"{self.thread_id} -> {self.profile_url} ({self.user.username})"
 
 
+class LevelText(models.Model):
+    """
+    Тексты для уровней кандидатов из Huntflow
+    
+    Позволяет сохранять многострочный текст для каждого уровня,
+    который можно использовать для заметок, шаблонов и т.д.
+    """
+    
+    user = models.ForeignKey(
+        'accounts.User',
+        on_delete=models.CASCADE,
+        related_name='level_texts',
+        verbose_name=_("Пользователь"),
+    )
+    
+    level = models.CharField(
+        _("Уровень"),
+        max_length=100,
+        help_text="Название уровня из Huntflow (например: Junior, Middle, Senior)"
+    )
+    
+    text = models.TextField(
+        _("Текст"),
+        blank=True,
+        help_text="Многострочный текст для этого уровня"
+    )
+    
+    created_at = models.DateTimeField(_("Создано"), default=timezone.now)
+    updated_at = models.DateTimeField(_("Обновлено"), auto_now=True)
+    
+    class Meta:
+        verbose_name = _("Текст для уровня")
+        verbose_name_plural = _("Тексты для уровней")
+        unique_together = (('user', 'level'),)
+        indexes = [
+            models.Index(fields=['user', 'level']),
+        ]
+    
+    def __str__(self):
+        return f"{self.level} - {self.user.username}"
+
+
 # ==================== МОДЕЛИ ДЛЯ HH.RU ИНТЕГРАЦИИ ====================
 
 class HHResponse(models.Model):

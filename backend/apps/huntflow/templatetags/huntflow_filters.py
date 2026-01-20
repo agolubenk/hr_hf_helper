@@ -256,7 +256,17 @@ def huntflow_sidebar_menu(context):
     
     menu_items.append(organization_item)
     
-    # 3. Gemini AI
+    # 3. Управление Chrome расширением
+    menu_items.append({
+        'type': 'chrome_extension',
+        'name': 'Chrome расширение',
+        'url': 'huntflow:chrome_extension_management',
+        'icon': 'fab fa-chrome',
+        'active': url_name == 'chrome_extension_management',
+        'children': []
+    })
+    
+    # 4. Gemini AI
     menu_items.append({
         'type': 'gemini',
         'name': 'Gemini AI',
@@ -266,7 +276,7 @@ def huntflow_sidebar_menu(context):
         'children': []
     })
     
-    # 4. Админ панель - всегда последний элемент
+    # 5. Админ панель - всегда последний элемент
     menu_items.append({
         'type': 'admin',
         'name': 'Админ панель',

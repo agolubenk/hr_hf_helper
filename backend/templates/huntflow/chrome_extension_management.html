@@ -1,0 +1,699 @@
+{% extends 'common/base.html' %}
+
+{% block title %}Управление данными Chrome расширения - HR Helper{% endblock %}
+{% block page_title %}Управление данными Chrome расширения{% endblock %}
+
+{% block content %}
+<!-- Статистика -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h3 class="mb-0">{{ stats.total_links }}</h3>
+                <p class="text-muted mb-0">Всего связей</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-success">
+            <div class="card-body text-center">
+                <h3 class="mb-0 text-success">{{ stats.links_with_vacancy }}</h3>
+                <p class="text-muted mb-0">С вакансией</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-info">
+            <div class="card-body text-center">
+                <h3 class="mb-0 text-info">{{ stats.recent_links }}</h3>
+                <p class="text-muted mb-0">За неделю</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-primary">
+            <div class="card-body text-center">
+                <h3 class="mb-0 text-primary">{{ stats.total_thread_mappings }}</h3>
+                <p class="text-muted mb-0">Thread маппингов</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Действия -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if levels %}
+                <div class="mb-3">
+                    <h6 class="mb-2">Уровни из Huntflow:</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for level in levels %}
+                        <button type="button" class="btn btn-outline-secondary level-btn" data-level="{{ level }}" data-bs-toggle="modal" data-bs-target="#levelModal{{ forloop.counter0 }}">
+                            {{ level }}
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+                <hr>
+                {% endif %}
+                <button type="button" class="btn btn-warning" id="clearCacheBtn">
+                    <i class="fas fa-trash-alt me-2"></i>
+                    Очистить кэш
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LinkedIn → Huntflow связи -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fab fa-linkedin me-2"></i>
+                    LinkedIn → Huntflow связи
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if links %}
+                <div class="table-responsive">
+                    <table class="table table-hover" id="linksTable">
+                        <thead>
+                            <tr>
+                                <th>LinkedIn URL</th>
+                                <th>Target URL</th>
+                                <th>Account ID</th>
+                                <th>Applicant ID</th>
+                                <th>Vacancy ID</th>
+                                <th>Создано</th>
+                                <th>Обновлено</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for link in links %}
+                            <tr data-link-id="{{ link.id }}">
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="editable flex-grow-1" data-field="linkedin_url" data-link-id="{{ link.id }}">
+                                            {{ link.linkedin_url|truncatechars:60 }}
+                                        </span>
+                                        <a href="{{ link.linkedin_url }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Открыть в новой вкладке">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="editable flex-grow-1" data-field="target_url" data-link-id="{{ link.id }}">
+                                            {% if link.target_url %}
+                                                {{ link.target_url|truncatechars:60 }}
+                                            {% else %}
+                                                <span class="text-muted">—</span>
+                                            {% endif %}
+                                        </span>
+                                        {% if link.target_url %}
+                                        <a href="{{ link.target_url }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Открыть в новой вкладке">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="editable" data-field="account_id" data-link-id="{{ link.id }}" data-type="number">
+                                        {{ link.account_id|default:"—" }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="editable" data-field="applicant_id" data-link-id="{{ link.id }}" data-type="number">
+                                        {{ link.applicant_id|default:"—" }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="editable" data-field="vacancy_id" data-link-id="{{ link.id }}" data-type="number">
+                                        {{ link.vacancy_id|default:"—" }}
+                                    </span>
+                                </td>
+                                <td>{{ link.created_at|date:"d.m.Y H:i" }}</td>
+                                <td>{{ link.updated_at|date:"d.m.Y H:i" }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-danger delete-link-btn" data-link-id="{{ link.id }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center">Нет сохраненных связей</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Thread → Profile маппинги -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-comments me-2"></i>
+                    Thread → Profile маппинги
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if thread_mappings %}
+                <div class="table-responsive">
+                    <table class="table table-hover" id="threadsTable">
+                        <thead>
+                            <tr>
+                                <th>Thread ID</th>
+                                <th>Profile URL</th>
+                                <th>Создано</th>
+                                <th>Последний доступ</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for thread in thread_mappings %}
+                            <tr data-thread-id="{{ thread.id }}">
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="editable flex-grow-1" data-field="thread_id" data-thread-id="{{ thread.id }}">
+                                            {{ thread.thread_id|truncatechars:40 }}
+                                        </span>
+                                        <a href="https://www.linkedin.com/messaging/thread/{{ thread.thread_id }}/" target="_blank" class="btn btn-sm btn-outline-primary" title="Открыть тред в новой вкладке">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="editable flex-grow-1" data-field="profile_url" data-thread-id="{{ thread.id }}">
+                                            {{ thread.profile_url|truncatechars:60 }}
+                                        </span>
+                                        <a href="{{ thread.profile_url }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Открыть профиль в новой вкладке">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>{{ thread.created_at|date:"d.m.Y H:i" }}</td>
+                                <td>{{ thread.last_accessed_at|date:"d.m.Y H:i" }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-danger delete-thread-btn" data-thread-id="{{ thread.id }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center">Нет сохраненных маппингов</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальные окна для уровней -->
+{% for level in levels %}
+<div class="modal fade" id="levelModal{{ forloop.counter0 }}" tabindex="-1" aria-labelledby="levelModalLabel{{ forloop.counter0 }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="levelModalLabel{{ forloop.counter0 }}">Текст для уровня: {{ level }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="levelForm{{ forloop.counter0 }}" data-level="{{ level }}">
+                    <div class="mb-3">
+                        <label for="levelTextarea{{ forloop.counter0 }}" class="form-label">Текст (многострочный):</label>
+                        <textarea class="form-control" id="levelTextarea{{ forloop.counter0 }}" rows="10" placeholder="Введите текст для уровня {{ level }}..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary save-level-text-btn" data-level="{{ level }}" data-modal-id="levelModal{{ forloop.counter0 }}">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    'use strict';
+    
+    // CSRF токен для AJAX запросов
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+    
+    // Инлайн редактирование для связей
+    document.querySelectorAll('.editable[data-link-id]').forEach(function(element) {
+        element.addEventListener('dblclick', function() {
+            const linkId = this.dataset.linkId;
+            const field = this.dataset.field;
+            const type = this.dataset.type || 'text';
+            const currentValue = this.textContent.trim();
+            
+            // Получаем текстовое значение
+            let displayValue = this.textContent.trim();
+            if (displayValue === '—') {
+                displayValue = '';
+            }
+            
+            const input = document.createElement('input');
+            input.type = type === 'number' ? 'number' : 'text';
+            input.className = 'form-control form-control-sm';
+            input.value = displayValue;
+            
+            const originalHTML = this.innerHTML;
+            this.innerHTML = '';
+            this.appendChild(input);
+            input.focus();
+            input.select();
+            
+            const save = () => {
+                const newValue = input.value.trim();
+                updateLink(linkId, field, newValue, this, originalHTML);
+            };
+            
+            const cancel = () => {
+                this.innerHTML = originalHTML;
+            };
+            
+            input.addEventListener('blur', save);
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    save();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    cancel();
+                }
+            });
+        });
+    });
+    
+    // Инлайн редактирование для маппингов
+    document.querySelectorAll('.editable[data-thread-id]').forEach(function(element) {
+        element.addEventListener('dblclick', function() {
+            const threadId = this.dataset.threadId;
+            const field = this.dataset.field;
+            const currentValue = this.textContent.trim();
+            
+            // Получаем текстовое значение
+            let displayValue = this.textContent.trim();
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'form-control form-control-sm';
+            input.value = displayValue;
+            
+            const originalHTML = this.innerHTML;
+            this.innerHTML = '';
+            this.appendChild(input);
+            input.focus();
+            input.select();
+            
+            const save = () => {
+                const newValue = input.value.trim();
+                updateThread(threadId, field, newValue, this, originalHTML);
+            };
+            
+            const cancel = () => {
+                this.innerHTML = originalHTML;
+            };
+            
+            input.addEventListener('blur', save);
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    save();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    cancel();
+                }
+            });
+        });
+    });
+    
+    // Обновление связи
+    function updateLink(linkId, field, value, element, originalHTML) {
+        const data = {};
+        data[field] = value === '' ? null : (field.includes('_id') && value ? parseInt(value) : value);
+        
+        fetch(`/huntflow/chrome-extension/link/${linkId}/`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Обновляем отображение
+                if (field === 'linkedin_url' || field === 'target_url') {
+                    const cell = element.closest('td');
+                    if (value) {
+                        const truncated = value.length > 60 ? value.substring(0, 60) + '...' : value;
+                        element.textContent = truncated;
+                        // Обновляем кнопку открытия
+                        const openBtn = cell.querySelector('a.btn');
+                        if (openBtn) {
+                            openBtn.href = value;
+                        } else {
+                            // Создаем кнопку если её нет
+                            const btn = document.createElement('a');
+                            btn.href = value;
+                            btn.target = '_blank';
+                            btn.className = 'btn btn-sm btn-outline-primary';
+                            btn.title = 'Открыть в новой вкладке';
+                            btn.innerHTML = '<i class="fas fa-external-link-alt"></i>';
+                            cell.querySelector('.d-flex').appendChild(btn);
+                        }
+                    } else {
+                        element.textContent = '—';
+                        element.className = 'editable flex-grow-1 text-muted';
+                        // Удаляем кнопку если значение пустое
+                        const openBtn = cell.querySelector('a.btn');
+                        if (openBtn) openBtn.remove();
+                    }
+                } else if (field.includes('_id')) {
+                    element.textContent = value ? value : '—';
+                    if (!value) element.className = 'editable flex-grow-1 text-muted';
+                } else {
+                    element.textContent = value || '—';
+                    if (!value) element.className = 'editable flex-grow-1 text-muted';
+                }
+                showMessage('Связь обновлена', 'success');
+            } else {
+                element.innerHTML = originalHTML;
+                showMessage('Ошибка: ' + (data.message || 'Неизвестная ошибка'), 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            element.innerHTML = originalHTML;
+            showMessage('Ошибка при обновлении связи', 'danger');
+        });
+    }
+    
+    // Обновление маппинга
+    function updateThread(threadId, field, value, element, originalHTML) {
+        const data = {};
+        data[field] = value;
+        
+        fetch(`/huntflow/chrome-extension/thread/${threadId}/`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Обновляем отображение
+                const cell = element.closest('td');
+                if (field === 'profile_url') {
+                    if (value) {
+                        const truncated = value.length > 60 ? value.substring(0, 60) + '...' : value;
+                        element.textContent = truncated;
+                        // Обновляем кнопку открытия
+                        const openBtn = cell.querySelector('a.btn');
+                        if (openBtn) {
+                            openBtn.href = value;
+                        } else {
+                            // Создаем кнопку если её нет
+                            const btn = document.createElement('a');
+                            btn.href = value;
+                            btn.target = '_blank';
+                            btn.className = 'btn btn-sm btn-outline-primary';
+                            btn.title = 'Открыть профиль в новой вкладке';
+                            btn.innerHTML = '<i class="fas fa-external-link-alt"></i>';
+                            cell.querySelector('.d-flex').appendChild(btn);
+                        }
+                    } else {
+                        element.textContent = '—';
+                        element.className = 'editable flex-grow-1 text-muted';
+                        // Удаляем кнопку если значение пустое
+                        const openBtn = cell.querySelector('a.btn');
+                        if (openBtn) openBtn.remove();
+                    }
+                } else if (field === 'thread_id') {
+                    const truncated = value.length > 40 ? value.substring(0, 40) + '...' : value;
+                    element.textContent = truncated;
+                    // Обновляем кнопку открытия тредса
+                    const openBtn = cell.querySelector('a.btn');
+                    if (openBtn) {
+                        openBtn.href = `https://www.linkedin.com/messaging/thread/${value}/`;
+                    } else {
+                        // Создаем кнопку если её нет
+                        const btn = document.createElement('a');
+                        btn.href = `https://www.linkedin.com/messaging/thread/${value}/`;
+                        btn.target = '_blank';
+                        btn.className = 'btn btn-sm btn-outline-primary';
+                        btn.title = 'Открыть тред в новой вкладке';
+                        btn.innerHTML = '<i class="fas fa-external-link-alt"></i>';
+                        cell.querySelector('.d-flex').appendChild(btn);
+                    }
+                } else {
+                    element.textContent = value || '—';
+                    if (!value) element.className = 'editable flex-grow-1 text-muted';
+                }
+                showMessage('Маппинг обновлен', 'success');
+            } else {
+                element.innerHTML = originalHTML;
+                showMessage('Ошибка: ' + (data.message || 'Неизвестная ошибка'), 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            element.innerHTML = originalHTML;
+            showMessage('Ошибка при обновлении маппинга', 'danger');
+        });
+    }
+    
+    // Удаление связи
+    document.querySelectorAll('.delete-link-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const linkId = this.dataset.linkId;
+            if (confirm('Вы уверены, что хотите удалить эту связь?')) {
+                fetch(`/huntflow/chrome-extension/link/${linkId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.querySelector(`tr[data-link-id="${linkId}"]`).remove();
+                        showMessage('Связь удалена', 'success');
+                    } else {
+                        showMessage('Ошибка: ' + (data.message || 'Неизвестная ошибка'), 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showMessage('Ошибка при удалении связи', 'danger');
+                });
+            }
+        });
+    });
+    
+    // Удаление маппинга
+    document.querySelectorAll('.delete-thread-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const threadId = this.dataset.threadId;
+            if (confirm('Вы уверены, что хотите удалить этот маппинг?')) {
+                fetch(`/huntflow/chrome-extension/thread/${threadId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.querySelector(`tr[data-thread-id="${threadId}"]`).remove();
+                        showMessage('Маппинг удален', 'success');
+                    } else {
+                        showMessage('Ошибка: ' + (data.message || 'Неизвестная ошибка'), 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showMessage('Ошибка при удалении маппинга', 'danger');
+                });
+            }
+        });
+    });
+    
+    // Очистка кэша
+    document.getElementById('clearCacheBtn').addEventListener('click', function() {
+        if (confirm('Вы уверены, что хотите очистить весь кэш?')) {
+            fetch('/huntflow/chrome-extension/clear-cache/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('Кэш очищен', 'success');
+                } else {
+                    showMessage('Ошибка: ' + (data.message || 'Неизвестная ошибка'), 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('Ошибка при очистке кэша', 'danger');
+            });
+        }
+    });
+    
+    // Сохранение текста для уровня
+    document.querySelectorAll('.save-level-text-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const level = this.dataset.level;
+            const modalId = this.dataset.modalId;
+            const modal = document.getElementById(modalId);
+            const textarea = modal.querySelector('textarea');
+            const text = textarea.value.trim();
+            
+            fetch(`/huntflow/chrome-extension/level/${encodeURIComponent(level)}/text/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({ text: text })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('Текст сохранен', 'success');
+                    // Закрываем модальное окно
+                    const bsModal = bootstrap.Modal.getInstance(modal);
+                    if (bsModal) {
+                        bsModal.hide();
+                    }
+                } else {
+                    showMessage('Ошибка: ' + (data.message || 'Неизвестная ошибка'), 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('Ошибка при сохранении текста', 'danger');
+            });
+        });
+    });
+    
+    // Загрузка текста при открытии модального окна
+    document.querySelectorAll('.level-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const level = this.dataset.level;
+            const modalId = this.dataset.bsTarget.replace('#', '');
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            
+            const textarea = modal.querySelector('textarea');
+            if (!textarea) return;
+            
+            // Загружаем сохраненный текст
+            fetch(`/huntflow/chrome-extension/level/${encodeURIComponent(level)}/text/`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    textarea.value = data.text || '';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading level text:', error);
+            });
+        });
+    });
+    
+    // Также загружаем текст при показе модального окна (на случай, если событие click не сработало)
+    document.querySelectorAll('[id^="levelModal"]').forEach(function(modal) {
+        modal.addEventListener('show.bs.modal', function() {
+            const levelBtn = document.querySelector(`[data-bs-target="#${this.id}"]`);
+            if (!levelBtn) return;
+            
+            const level = levelBtn.dataset.level;
+            const textarea = this.querySelector('textarea');
+            if (!textarea) return;
+            
+            // Загружаем сохраненный текст
+            fetch(`/huntflow/chrome-extension/level/${encodeURIComponent(level)}/text/`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    textarea.value = data.text || '';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading level text:', error);
+            });
+        });
+    });
+    
+    // Показ сообщений
+    function showMessage(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
+        alertDiv.style.zIndex = '9999';
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 3000);
+    }
+})();
+</script>
+{% endblock %}

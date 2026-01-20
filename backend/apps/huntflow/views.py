@@ -13,6 +13,8 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
+from datetime import timedelta
 import json
 import logging
 
@@ -2202,4 +2204,315 @@ def parse_resume_file_ajax(request):
         return JsonResponse({
             'success': False,
             'message': f'Ошибка при обработке файла: {str(e)}'
+        }, status=500)
+
+
+@login_required
+def chrome_extension_management(request):
+    """
+    Страница управления данными Chrome расширения
+    
+    Показывает:
+    - Список всех LinkedIn → Huntflow связей пользователя
+    - Список всех Thread → Profile маппингов
+    - Статистику
+    - Кнопки уровней из Huntflow
+    """
+    from .models import LinkedInHuntflowLink, LinkedInThreadProfile
+    from apps.google_oauth.cache_service import HuntflowAPICache
+    
+    # Получаем все связи LinkedIn → Huntflow
+    links = LinkedInHuntflowLink.objects.filter(user=request.user).order_by('-created_at')
+    
+    # Получаем все маппинги Thread → Profile
+    thread_mappings = LinkedInThreadProfile.objects.filter(user=request.user).order_by('-last_accessed_at')
+    
+    # Получаем уровни из Huntflow
+    levels = []
+    try:
+        api = HuntflowService(user=request.user)
+        account_id = get_correct_account_id(request.user)
+        if account_id:
+            questionary_schema = api.get_applicant_questionary_schema(account_id)
+            if questionary_schema:
+                # Ищем поле "Уровень" в схеме
+                fields_dict = {}
+                if isinstance(questionary_schema, dict):
+                    if 'fields' in questionary_schema:
+                        fields_list = questionary_schema.get('fields', [])
+                        for field in fields_list:
+                            if isinstance(field, dict):
+                                field_id = field.get('id') or field.get('key')
+                                if field_id:
+                                    fields_dict[field_id] = field
+                    else:
+                        fields_dict = questionary_schema
+                
+                # Ищем поле "Уровень"
+                for field_id, field_info in fields_dict.items():
+                    if isinstance(field_info, dict):
+                        field_title = field_info.get('title', '').lower()
+                        if 'уровень' in field_title or 'level' in field_title or 'grade' in field_title or 'грейд' in field_title:
+                            # Если это select поле, получаем варианты
+                            if field_info.get('type') == 'select' and 'values' in field_info:
+                                for value in field_info.get('values', []):
+                                    if isinstance(value, dict):
+                                        level_name = value.get('name') or value.get('value') or value.get('id')
+                                        if level_name:
+                                            levels.append(str(level_name))
+                                    elif value:
+                                        levels.append(str(value))
+                            break
+    except Exception as e:
+        logger.warning(f"Failed to get levels from Huntflow: {e}")
+    
+    # Статистика
+    stats = {
+        'total_links': links.count(),
+        'total_thread_mappings': thread_mappings.count(),
+        'links_with_vacancy': links.exclude(vacancy_id__isnull=True).count(),
+        'recent_links': links.filter(created_at__gte=timezone.now() - timedelta(days=7)).count(),
+    }
+    
+    # Получаем уровни из Huntflow
+    levels = []
+    try:
+        api = HuntflowService(user=request.user)
+        account_id = get_correct_account_id(request.user)
+        if account_id:
+            questionary_schema = api.get_applicant_questionary_schema(account_id)
+            if questionary_schema:
+                # Ищем поле "Уровень" в схеме
+                fields_dict = {}
+                if isinstance(questionary_schema, dict):
+                    if 'fields' in questionary_schema:
+                        fields_list = questionary_schema.get('fields', [])
+                        for field in fields_list:
+                            if isinstance(field, dict):
+                                field_id = field.get('id') or field.get('key')
+                                if field_id:
+                                    fields_dict[field_id] = field
+                    else:
+                        fields_dict = questionary_schema
+                
+                # Ищем поле "Уровень"
+                for field_id, field_info in fields_dict.items():
+                    if isinstance(field_info, dict):
+                        field_title = field_info.get('title', '').lower()
+                        if 'уровень' in field_title or 'level' in field_title or 'grade' in field_title or 'грейд' in field_title:
+                            # Если это select поле, получаем варианты
+                            if field_info.get('type') == 'select' and 'values' in field_info:
+                                for value in field_info.get('values', []):
+                                    if isinstance(value, dict):
+                                        level_name = value.get('name') or value.get('value') or value.get('id')
+                                        if level_name:
+                                            levels.append(str(level_name))
+                                    elif value:
+                                        levels.append(str(value))
+                            break
+    except Exception as e:
+        logger.warning(f"Failed to get levels from Huntflow: {e}")
+    
+    # Получаем сохраненные тексты для уровней
+    from .models import LevelText
+    level_texts = {}
+    try:
+        for level_text in LevelText.objects.filter(user=request.user):
+            level_texts[level_text.level] = level_text.text
+    except Exception as e:
+        # Если таблица еще не создана (миграция не выполнена), просто пропускаем
+        logger.warning(f"LevelText table not found, skipping level texts: {e}")
+        level_texts = {}
+    
+    context = {
+        'links': links,
+        'thread_mappings': thread_mappings,
+        'stats': stats,
+        'levels': sorted(set(levels)),  # Уникальные уровни, отсортированные
+        'level_texts': level_texts,  # Сохраненные тексты для каждого уровня
+    }
+    
+    return render(request, 'huntflow/chrome_extension_management.html', context)
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def chrome_extension_level_text_ajax(request, level):
+    """
+    AJAX endpoint для получения или сохранения текста для уровня
+    """
+    from .models import LevelText
+    
+    if request.method == 'GET':
+        # Получаем текст для уровня
+        try:
+            level_text = LevelText.objects.get(user=request.user, level=level)
+            return JsonResponse({
+                'success': True,
+                'text': level_text.text,
+            })
+        except LevelText.DoesNotExist:
+            return JsonResponse({
+                'success': True,
+                'text': '',
+            })
+    
+    elif request.method == 'POST':
+        # Сохраняем текст для уровня
+        try:
+            import json
+            data = json.loads(request.body)
+            text = data.get('text', '').strip()
+            
+            level_text, created = LevelText.objects.get_or_create(
+                user=request.user,
+                level=level,
+                defaults={'text': text}
+            )
+            
+            if not created:
+                level_text.text = text
+                level_text.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Текст сохранен',
+            })
+        except Exception as e:
+            logger.error(f"Error saving level text: {e}")
+            return JsonResponse({
+                'success': False,
+                'message': str(e),
+            }, status=400)
+
+
+@login_required
+@require_http_methods(["PATCH", "DELETE"])
+def chrome_extension_link_ajax(request, link_id):
+    """
+    AJAX endpoint для обновления или удаления LinkedIn → Huntflow связи
+    """
+    from .models import LinkedInHuntflowLink
+    
+    try:
+        link = LinkedInHuntflowLink.objects.get(id=link_id, user=request.user)
+    except LinkedInHuntflowLink.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'message': 'Связь не найдена'
+        }, status=404)
+    
+    if request.method == 'DELETE':
+        link.delete()
+        return JsonResponse({
+            'success': True,
+            'message': 'Связь удалена'
+        })
+    
+    # PATCH - обновление
+    data = json.loads(request.body)
+    
+    if 'linkedin_url' in data:
+        link.linkedin_url = data['linkedin_url']
+    if 'target_url' in data:
+        link.target_url = data['target_url']
+    if 'account_id' in data:
+        try:
+            link.account_id = int(data['account_id']) if data['account_id'] and str(data['account_id']).strip() else None
+        except (ValueError, TypeError):
+            link.account_id = None
+    if 'applicant_id' in data:
+        try:
+            link.applicant_id = int(data['applicant_id']) if data['applicant_id'] and str(data['applicant_id']).strip() else None
+        except (ValueError, TypeError):
+            link.applicant_id = None
+    if 'vacancy_id' in data:
+        try:
+            link.vacancy_id = int(data['vacancy_id']) if data['vacancy_id'] and str(data['vacancy_id']).strip() else None
+        except (ValueError, TypeError):
+            link.vacancy_id = None
+    
+    link.save()
+    
+    return JsonResponse({
+        'success': True,
+        'message': 'Связь обновлена',
+        'data': {
+            'id': link.id,
+            'linkedin_url': link.linkedin_url,
+            'target_url': link.target_url,
+            'account_id': link.account_id,
+            'applicant_id': link.applicant_id,
+            'vacancy_id': link.vacancy_id,
+            'created_at': link.created_at.isoformat(),
+            'updated_at': link.updated_at.isoformat(),
+        }
+    })
+
+
+@login_required
+@require_http_methods(["PATCH", "DELETE"])
+def chrome_extension_thread_ajax(request, thread_id):
+    """
+    AJAX endpoint для обновления или удаления Thread → Profile маппинга
+    """
+    from .models import LinkedInThreadProfile
+    
+    try:
+        thread = LinkedInThreadProfile.objects.get(id=thread_id, user=request.user)
+    except LinkedInThreadProfile.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'message': 'Маппинг не найден'
+        }, status=404)
+    
+    if request.method == 'DELETE':
+        thread.delete()
+        return JsonResponse({
+            'success': True,
+            'message': 'Маппинг удален'
+        })
+    
+    # PATCH - обновление
+    data = json.loads(request.body)
+    
+    if 'thread_id' in data:
+        thread.thread_id = data['thread_id']
+    if 'profile_url' in data:
+        thread.profile_url = data['profile_url']
+    
+    thread.save()
+    
+    return JsonResponse({
+        'success': True,
+        'message': 'Маппинг обновлен',
+        'data': {
+            'id': thread.id,
+            'thread_id': thread.thread_id,
+            'profile_url': thread.profile_url,
+            'created_at': thread.created_at.isoformat(),
+            'last_accessed_at': thread.last_accessed_at.isoformat(),
+        }
+    })
+
+
+@login_required
+@require_http_methods(["POST"])
+def chrome_extension_clear_cache_ajax(request):
+    """
+    AJAX endpoint для очистки кэша расширения
+    """
+    from apps.google_oauth.cache_service import HuntflowAPICache
+    
+    try:
+        HuntflowAPICache.invalidate_user_cache(request.user.id)
+        return JsonResponse({
+            'success': True,
+            'message': 'Кэш очищен'
+        })
+    except Exception as e:
+        logger.error(f"Ошибка очистки кэша: {e}")
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка очистки кэша: {str(e)}'
         }, status=500)

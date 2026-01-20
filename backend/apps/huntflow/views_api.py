@@ -367,6 +367,133 @@ def _update_communication_field_if_empty(api, account_id, applicant_id, linkedin
         logger.error(f"Error updating communication field: {e}", exc_info=True)
         return False
 
+def _get_candidate_level(api, account_id, applicant_id):
+    """
+    Получает значение поля "Уровень" для кандидата
+    
+    Args:
+        api: HuntflowService instance
+        account_id: ID организации
+        applicant_id: ID кандидата
+        
+    Returns:
+        Значение поля или None
+    """
+    try:
+        import logging
+        logger = logging.getLogger(__name__)
+        
+        # Получаем схему анкеты для поиска поля "Уровень"
+        questionary_schema = api.get_applicant_questionary_schema(account_id)
+        if not questionary_schema:
+            logger.warning(f"Cannot get questionary schema for account_id={account_id}")
+            return None
+        
+        # Обрабатываем разные структуры схемы
+        # Схема может быть словарем с ключом 'fields' или просто словарем с полями
+        fields_dict = {}
+        if isinstance(questionary_schema, dict):
+            if 'fields' in questionary_schema:
+                # Если есть ключ 'fields', это список полей
+                fields_list = questionary_schema.get('fields', [])
+                for field in fields_list:
+                    if isinstance(field, dict):
+                        field_id = field.get('id') or field.get('key')
+                        if field_id:
+                            fields_dict[field_id] = field
+            else:
+                # Если это просто словарь, где ключи - это ID полей
+                fields_dict = questionary_schema
+        
+        if not fields_dict:
+            logger.warning(f"Questionary schema is empty or has unexpected structure")
+            return None
+        
+        # Логируем структуру схемы для отладки
+        logger.info(f"Questionary schema: {len(fields_dict)} fields")
+        sample_keys = list(fields_dict.keys())[:5]
+        logger.info(f"Sample schema keys: {sample_keys}")
+        
+        # Ищем поле "Уровень"
+        level_field_id = None
+        # Сначала пробуем найти по точному совпадению
+        for field_id, field_info in fields_dict.items():
+            if isinstance(field_info, dict):
+                field_title = field_info.get('title', '').lower()
+                # Ищем поле по различным вариантам названия
+                if 'уровень' in field_title or 'level' in field_title or 'grade' in field_title or 'грейд' in field_title:
+                    level_field_id = field_id
+                    logger.info(f"Found level field: {field_id} - {field_info.get('title')} (type: {field_info.get('type', 'unknown')})")
+                    break
+        
+        # Если не нашли, пробуем найти по ключу поля (может быть string_field_*, custom_field_*)
+        if not level_field_id:
+            for field_id, field_info in fields_dict.items():
+                if isinstance(field_info, dict):
+                    field_title = field_info.get('title', '').lower()
+                    field_key = str(field_id).lower()
+                    # Ищем по ключу или названию
+                    if 'level' in field_key or 'grade' in field_key or 'уровень' in field_key or 'грейд' in field_key:
+                        level_field_id = field_id
+                        logger.info(f"Found level field by key: {field_id} - {field_info.get('title')}")
+                        break
+        
+        if not level_field_id:
+            logger.warning(f"Level field not found in questionary schema. Available fields: {list(fields_dict.keys())[:10]}")
+            # Логируем все названия полей для отладки
+            all_titles = [f.get('title', '') for f in fields_dict.values() if isinstance(f, dict)]
+            logger.info(f"Available field titles: {all_titles[:20]}")
+            return None
+        
+        # Получаем текущую анкету кандидата
+        questionary = api.get_applicant_questionary(account_id, applicant_id)
+        if not questionary:
+            logger.warning(f"Cannot get questionary for applicant_id={applicant_id}")
+            return None
+        
+        # Получаем значение поля
+        level_value = questionary.get(level_field_id)
+        if level_value:
+            # Обрабатываем разные форматы значений
+            # 1. Если это объект с полем "name" (для select полей)
+            if isinstance(level_value, dict):
+                # Пробуем получить name, value или id
+                level_value_str = level_value.get('name') or level_value.get('value') or level_value.get('id')
+                if level_value_str:
+                    level_value_str = str(level_value_str).strip()
+                    if level_value_str:
+                        logger.info(f"Level field value (from object): {level_value_str}")
+                        return level_value_str
+            # 2. Если это список (для множественного выбора)
+            elif isinstance(level_value, list):
+                if level_value:
+                    # Берем первый элемент
+                    first_item = level_value[0]
+                    if isinstance(first_item, dict):
+                        level_value_str = first_item.get('name') or first_item.get('value') or first_item.get('id')
+                    else:
+                        level_value_str = str(first_item)
+                    if level_value_str:
+                        level_value_str = str(level_value_str).strip()
+                        if level_value_str:
+                            logger.info(f"Level field value (from list): {level_value_str}")
+                            return level_value_str
+            # 3. Если это простое значение (строка, число)
+            else:
+                level_value_str = str(level_value).strip()
+                if level_value_str:
+                    logger.info(f"Level field value (direct): {level_value_str}")
+                    return level_value_str
+        
+        return None
+        
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error getting level field: {e}", exc_info=True)
+        return None
+
+
 def _get_communication_field_value(api, account_id, applicant_id):
     """
     Получает значение поля "Где ведется коммуникация" для кандидата
@@ -1424,6 +1551,98 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
             import logging
             logger = logging.getLogger(__name__)
             logger.error(f"Error getting communication link: {e}", exc_info=True)
+            return Response(
+                {"success": False, "message": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+    
+    @action(detail=False, methods=["get"], url_path="candidate-level")
+    def get_candidate_level(self, request):
+        """
+        GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=...
+        
+        Получает уровень кандидата из поля "Уровень" для кандидата по ссылке на Huntflow.
+        
+        Параметры:
+        - huntflow_url: URL на Huntflow в формате:
+          https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/79149055
+        
+        Возвращает:
+        {
+            "success": true,
+            "level": "Middle" или другое значение уровня
+        }
+        """
+        try:
+            import logging
+            logger = logging.getLogger(__name__)
+            
+            huntflow_url = request.query_params.get("huntflow_url", "").strip()
+            if not huntflow_url:
+                return Response(
+                    {"success": False, "message": "Нужен параметр huntflow_url"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            
+            # Извлекаем данные из URL
+            ids = self._extract_huntflow_ids(huntflow_url)
+            if not ids.get("account_name") or not ids.get("applicant_id"):
+                return Response(
+                    {"success": False, "message": "Не удалось извлечь данные из URL Huntflow"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            
+            account_name = ids["account_name"]
+            applicant_id = ids["applicant_id"]
+            
+            # Получаем account_id по account_name
+            from apps.huntflow.services import HuntflowService
+            api = HuntflowService(user=request.user)
+            accounts = api.get_accounts()
+            
+            account_id = None
+            if accounts and 'items' in accounts:
+                account_name_lower = account_name.lower()
+                for account in accounts['items']:
+                    # Проверяем name, nick и id (без учета регистра)
+                    account_name_field = (account.get('name') or '').lower()
+                    account_nick_field = (account.get('nick') or '').lower()
+                    account_id_str = str(account.get('id') or '')
+                    
+                    if (account_name_field == account_name_lower or 
+                        account_nick_field == account_name_lower or
+                        account_id_str == account_name):
+                        account_id = account.get('id')
+                        break
+            
+            if not account_id:
+                logger.warning(f"Account '{account_name}' not found. Available accounts: {[a.get('name') for a in (accounts.get('items', []) if accounts else [])]}")
+                return Response(
+                    {"success": False, "message": f"Организация '{account_name}' не найдена"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+            
+            # Получаем значение поля "Уровень"
+            level_value = _get_candidate_level(api, account_id, applicant_id)
+            
+            if not level_value:
+                return Response(
+                    {"success": False, "message": "Поле 'Уровень' не заполнено"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+            
+            return Response(
+                {
+                    "success": True,
+                    "level": level_value,
+                },
+                status=status.HTTP_200_OK,
+            )
+            
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error getting candidate level: {e}", exc_info=True)
             return Response(
                 {"success": False, "message": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

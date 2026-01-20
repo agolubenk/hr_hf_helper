@@ -36,4 +36,11 @@ urlpatterns = [
     path('accounts/<int:account_id>/hh/vacancies/<int:vacancy_id>/reject/', views.hh_reject_response_ajax, name='hh_reject_response_ajax'),
     path('accounts/<int:account_id>/hh/vacancies/<int:vacancy_id>/archive/', views.hh_archive_response_ajax, name='hh_archive_response_ajax'),
     path('accounts/<int:account_id>/hh/vacancies/<int:vacancy_id>/mark-viewed/', views.hh_mark_viewed_ajax, name='hh_mark_viewed_ajax'),
+    
+    # Управление данными Chrome расширения
+    path('chrome-extension/', views.chrome_extension_management, name='chrome_extension_management'),
+    path('chrome-extension/link/<int:link_id>/', views.chrome_extension_link_ajax, name='chrome_extension_link_ajax'),
+    path('chrome-extension/thread/<int:thread_id>/', views.chrome_extension_thread_ajax, name='chrome_extension_thread_ajax'),
+    path('chrome-extension/clear-cache/', views.chrome_extension_clear_cache_ajax, name='chrome_extension_clear_cache_ajax'),
+    path('chrome-extension/level/<str:level>/text/', views.chrome_extension_level_text_ajax, name='chrome_extension_level_text_ajax'),
 ]

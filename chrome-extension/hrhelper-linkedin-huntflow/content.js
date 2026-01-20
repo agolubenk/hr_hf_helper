@@ -5,6 +5,8 @@ const DEFAULTS = {
 // Debug mode - установи в false для production
 const DEBUG = false;
 // Для Google Calendar и Google Meet всегда включаем логирование
+const IS_GOOGLE_CALENDAR = location.href.includes('calendar.google.com');
+const IS_GOOGLE_MEET = location.href.includes('meet.google.com');
 const log = (...args) => (DEBUG || IS_GOOGLE_CALENDAR || IS_GOOGLE_MEET) && console.log('[HRHelper]', ...args);
 const warn = (...args) => (DEBUG || IS_GOOGLE_CALENDAR || IS_GOOGLE_MEET) && console.warn('[HRHelper]', ...args);
 const error = (...args) => console.error('[HRHelper]', ...args);
@@ -12,8 +14,6 @@ const error = (...args) => console.error('[HRHelper]', ...args);
 const MAX_WIDGETS = 2;
 const IS_MESSAGING_PAGE = location.href.includes('/messaging/');
 const IS_PROFILE_PAGE = location.href.includes('/in/') && !location.href.includes('/search/');
-const IS_GOOGLE_CALENDAR = location.href.includes('calendar.google.com');
-const IS_GOOGLE_MEET = location.href.includes('meet.google.com');
 const THROTTLE_MS = IS_MESSAGING_PAGE ? 500 : 1500; // Messaging быстрее, профиль медленнее
 
 const STATE = {
@@ -63,12 +63,20 @@ async function getConfig() {
 }
 
 function extractThreadIdFromMessageButton() {
+  // Сначала пробуем извлечь из URL страницы (для страницы messaging)
+  const urlMatch = location.href.match(/thread\/([^/?]+)/);
+  if (urlMatch) {
+    return urlMatch[1];
+  }
+  
+  // Затем ищем в ссылках на странице
   const messageLink = document.querySelector('a[href*="/messaging/thread/"]');
   if (messageLink?.href) {
     const threadMatch = messageLink.href.match(/thread\/([^/?]+)/);
     if (threadMatch) return threadMatch[1];
   }
 
+  // Ищем в кнопке Message
   const messageBtn = document.querySelector('button[aria-label*="Message"], button[aria-label*="message"]');
   if (messageBtn) {
     const link = messageBtn.querySelector('a[href*="/messaging/"]') || 
@@ -148,6 +156,18 @@ async function getProfileLinkFromMessaging() {
     return STATE.messagingProfileCache;
   }
 
+  // Извлекаем thread_id из URL
+  let threadId = null;
+  try {
+    const currentUrl = location.href;
+    const threadMatch = currentUrl.match(/thread\/([^/?]+)/);
+    if (threadMatch) {
+      threadId = threadMatch[1];
+    }
+  } catch (e) {
+    warn(' Error extracting thread_id from URL:', e);
+  }
+
   // 1. Быстрый путь: ищем в DOM
   const profileLinks = Array.from(document.querySelectorAll('a[href*="/in/"]'));
   for (const link of profileLinks) {
@@ -156,17 +176,29 @@ async function getProfileLinkFromMessaging() {
     if (normalized) {
       log(' Profile found in DOM:', normalized);
       STATE.messagingProfileCache = normalized;
+      
+      // Сохраняем маппинг thread_id -> profile_url если thread_id найден
+      if (threadId) {
+        try {
+          const mapping = JSON.parse(localStorage.getItem('hrhelper_thread_profile_map') || '{}');
+          mapping[threadId] = normalized;
+          localStorage.setItem('hrhelper_thread_profile_map', JSON.stringify(mapping));
+          log(' Saved thread mapping to localStorage:', threadId.substring(0, 10) + '... -> ' + normalized);
+          
+          // Сохраняем на backend
+          saveThreadMappingToBackend(threadId, normalized);
+        } catch (e) {
+          warn(' Error saving thread mapping to localStorage:', e);
+        }
+      }
+      
       return normalized;
     }
   }
 
   // 2. Средний путь: localStorage (синхронно, быстро)
-  try {
-    const currentUrl = location.href;
-    const threadMatch = currentUrl.match(/thread\/([^/?]+)/);
-    if (threadMatch) {
-      const threadId = threadMatch[1];
-      
+  if (threadId) {
+    try {
       const mapping = JSON.parse(localStorage.getItem('hrhelper_thread_profile_map') || '{}');
       if (mapping[threadId]) {
         log(' Profile from localStorage:', mapping[threadId]);
@@ -192,9 +224,9 @@ async function getProfileLinkFromMessaging() {
       }
       
       warn(' Thread not mapped:', threadId);
+    } catch (e) {
+      error(' Error getting profile:', e);
     }
-  } catch (e) {
-    error(' Error getting profile:', e);
   }
 
   return null;
@@ -1497,13 +1529,53 @@ function startObserver() {
     schedule();
   };
   
-  // Для messaging страницы также периодически проверяем URL
+  // Для messaging страницы также периодически проверяем URL и сохраняем маппинг
   if (IS_MESSAGING_PAGE) {
+    // Функция для сохранения маппинга thread_id -> profile_url
+    const saveThreadMappingIfFound = async () => {
+      try {
+        const currentUrl = location.href;
+        const threadMatch = currentUrl.match(/thread\/([^/?]+)/);
+        if (!threadMatch) return;
+        
+        const threadId = threadMatch[1];
+        
+        // Ищем профиль в DOM
+        const profileLinks = Array.from(document.querySelectorAll('a[href*="/in/"]'));
+        for (const link of profileLinks) {
+          if (link.href.includes('/me/') || link.href.includes('/jobs/')) continue;
+          const normalized = normalizeLinkedInProfileUrl(link.href);
+          if (normalized) {
+            // Проверяем, есть ли уже маппинг
+            const mapping = JSON.parse(localStorage.getItem('hrhelper_thread_profile_map') || '{}');
+            if (mapping[threadId] !== normalized) {
+              // Сохраняем новый маппинг
+              mapping[threadId] = normalized;
+              localStorage.setItem('hrhelper_thread_profile_map', JSON.stringify(mapping));
+              log(' Saved thread mapping from messaging page:', threadId.substring(0, 10) + '... -> ' + normalized);
+              
+              // Сохраняем на backend
+              saveThreadMappingToBackend(threadId, normalized);
+            }
+            break;
+          }
+        }
+      } catch (e) {
+        warn(' Error saving thread mapping from messaging page:', e);
+      }
+    };
+    
+    // Вызываем сразу и периодически
+    saveThreadMappingIfFound();
+    setInterval(saveThreadMappingIfFound, 5000); // Каждые 5 секунд
+    
     setInterval(() => {
       if (location.href !== currentUrl) {
         log(' URL changed (interval check)');
         currentUrl = location.href;
+        STATE.messagingProfileCache = null; // Сбрасываем кэш при смене тредса
         schedule();
+        saveThreadMappingIfFound(); // Сохраняем маппинг для нового тредса
       } else {
         // Даже если URL не изменился, проверяем thread ID
         const currentThreadId = extractThreadIdFromMessageButton();
@@ -2106,14 +2178,723 @@ function initGoogleMeet() {
     }
   }
   
-  // Обрабатываем при загрузке с задержкой (Google Meet загружается динамически)
-  setTimeout(() => {
-    log(' Initial processing after delay...');
-    processInterviewerLinks();
-  }, 1000);
+  // Функция для получения уровня кандидата через API
+  async function getCandidateLevel(huntflowUrl) {
+    try {
+      log(' Getting candidate level for URL:', huntflowUrl);
+      const config = await getConfig();
+      const qp = new URLSearchParams({ huntflow_url: huntflowUrl });
+      const apiUrl = `/api/v1/huntflow/linkedin-applicants/candidate-level/?${qp.toString()}`;
+      log(' API URL:', apiUrl);
+      
+      const res = await apiFetch(apiUrl, {
+        method: "GET"
+      });
+      
+      log(' API response status:', res.status, res.ok);
+      
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        error(' Failed to get candidate level:', data?.message || `HTTP ${res.status}`);
+        return { success: false, message: data?.message || `HTTP ${res.status}` };
+      }
+      
+      const data = await res.json().catch(() => null);
+      log(' API response data:', data);
+      return data;
+    } catch (err) {
+      error(' Exception getting candidate level:', err);
+      return { success: false, message: err.message || 'Unknown error' };
+    }
+  }
   
-  // Также обрабатываем сразу
-  processInterviewerLinks();
+  // Функция для поиска кнопок на странице Google Meet и добавления кнопки уровня
+  function addLevelButtonToMeetControls() {
+    try {
+      log(' ===== addLevelButtonToMeetControls START =====');
+      log(' Current URL:', location.href);
+      log(' Available buttons on page:', document.querySelectorAll('button').length);
+      
+      // Проверяем, не добавили ли мы уже кнопку
+      const existingLevelBtn = document.querySelector('.hrhelper-meet-level-btn');
+      if (existingLevelBtn) {
+        log(' Level button already exists');
+        return true; // Успешно - кнопка уже есть
+      }
+      
+      // Ищем панель с кнопками управления (обычно это нижняя панель)
+      // Пробуем разные подходы для поиска контейнера с кнопками
+      let buttonContainer = null;
+      let infoButton = null;
+      
+      // Способ 0: Ищем рядом с уже созданной кнопкой соцсети (если она есть)
+      const socialButton = document.querySelector('[data-hrhelper="social-button"], .hrhelper-communication-btn');
+      if (socialButton) {
+        log(' ✅ Found social button, looking for Meet controls nearby...');
+        log(' Social button:', socialButton);
+        log(' Social button parent:', socialButton.parentElement);
+        
+        // Ищем контейнер с кнопками управления рядом
+        let container = socialButton.parentElement;
+        let foundContainer = false;
+        
+        for (let i = 0; i < 10 && container; i++) {
+          const buttons = Array.from(container.querySelectorAll('button'));
+          log(` Checking container level ${i}, found ${buttons.length} buttons`);
+          
+          if (buttons.length >= 2) {
+            const rect = container.getBoundingClientRect();
+            const isBottom = rect.bottom > window.innerHeight * 0.5;
+            const isVisible = rect.width > 0 && rect.height > 0;
+            
+            log(` Container at level ${i}: bottom=${rect.bottom.toFixed(0)}, visible=${isVisible}, buttons=${buttons.length}`);
+            
+            if (isBottom && isVisible) {
+              log(` ✅ Found container with ${buttons.length} buttons near social button`);
+              buttonContainer = container;
+              
+              // Ищем кнопку инфо
+              infoButton = buttons.find(btn => {
+                const label = (btn.getAttribute('aria-label') || '').toLowerCase();
+                const tooltip = (btn.getAttribute('data-tooltip') || '').toLowerCase();
+                return label.includes('info') || label.includes('инфо') || 
+                       label.includes('details') || label.includes('детали') ||
+                       tooltip.includes('info') || tooltip.includes('инфо');
+              });
+              
+              if (!infoButton && buttons.length > 0) {
+                infoButton = buttons[0];
+                log(' Using first button as info button');
+              }
+              
+              if (buttonContainer && infoButton) {
+                foundContainer = true;
+                break;
+              }
+            }
+          }
+          container = container.parentElement;
+        }
+        
+        if (foundContainer) {
+          log(' ✅ Successfully found Meet controls using social button method');
+        } else {
+          log(' ⚠️ Could not find Meet controls near social button, will try other methods');
+        }
+      } else {
+        log(' Social button not found, will search using other methods');
+      }
+      
+      // Ищем панель с кнопками управления (обычно это нижняя панель)
+      // Пробуем разные подходы для поиска контейнера с кнопками
+      if (!buttonContainer || !infoButton) {
+        // Способ 1: Ищем контейнер с кнопками по общим селекторам
+        log(' Trying method 1: searching by container selectors...');
+      const containerSelectors = [
+        '[role="toolbar"]',
+        'div[data-view-name="meeting-controls"]',
+        '.VfPpkd-Bz112c',
+        '[jsname="BOHaEe"]',
+        'div[aria-label*="meeting"]',
+        'div[aria-label*="встреча"]',
+      ];
+      
+      for (const selector of containerSelectors) {
+        const containers = Array.from(document.querySelectorAll(selector));
+        for (const container of containers) {
+          const buttons = Array.from(container.querySelectorAll('button'));
+          if (buttons.length >= 2) {
+            buttonContainer = container;
+            // Ищем кнопку инфо
+            for (const btn of buttons) {
+              const ariaLabel = (btn.getAttribute('aria-label') || '').toLowerCase();
+              const tooltip = (btn.getAttribute('data-tooltip') || '').toLowerCase();
+              const jsname = (btn.getAttribute('jsname') || '').toLowerCase();
+              if (ariaLabel.includes('info') || ariaLabel.includes('инфо') || 
+                  tooltip.includes('info') || tooltip.includes('инфо') ||
+                  jsname.includes('info')) {
+                infoButton = btn;
+                log(` Found info button in container (${buttons.length} buttons)`);
+                break;
+              }
+            }
+            // Если не нашли кнопку инфо, берем первую кнопку
+            if (!infoButton && buttons.length > 0) {
+              infoButton = buttons[0];
+              log(` Using first button as reference (${buttons.length} buttons)`);
+            }
+            if (buttonContainer && infoButton) break;
+          }
+        }
+        if (buttonContainer && infoButton) break;
+      }
+      
+      // Способ 2: Если не нашли, ищем кнопку инфо напрямую
+      if (!infoButton || !buttonContainer) {
+        log(' Trying method 2: searching for info button directly...');
+        const infoSelectors = [
+          '[data-tooltip*="Info" i]',
+          '[data-tooltip*="инфо" i]',
+          '[aria-label*="Info" i]',
+          '[aria-label*="инфо" i]',
+          'button[jsname*="info" i]',
+          'button[aria-label*="Meeting details" i]',
+          'button[aria-label*="Детали встречи" i]',
+        ];
+        
+        for (const selector of infoSelectors) {
+          try {
+            const buttons = Array.from(document.querySelectorAll(selector));
+            if (buttons.length > 0) {
+              infoButton = buttons[0];
+              buttonContainer = infoButton.parentElement;
+              log(` Found info button directly with selector: ${selector}`);
+              break;
+            }
+          } catch (e) {
+            // Игнорируем ошибки селекторов
+          }
+        }
+      }
+      
+      // Способ 3: Ищем любую панель с кнопками внизу экрана
+      if (!infoButton || !buttonContainer) {
+        log(' Trying method 3: searching for bottom toolbar...');
+        // Ищем все контейнеры с кнопками
+        const allContainers = Array.from(document.querySelectorAll('div, section, nav'));
+        log(` Checking ${allContainers.length} containers for buttons...`);
+        
+        for (const container of allContainers) {
+          const buttons = Array.from(container.querySelectorAll('button'));
+          if (buttons.length >= 2) {
+            // Проверяем, находится ли контейнер внизу экрана
+            const rect = container.getBoundingClientRect();
+            const isBottom = rect.bottom > window.innerHeight * 0.6;
+            const isVisible = rect.width > 0 && rect.height > 0;
+            
+            if (isBottom && isVisible) {
+              buttonContainer = container;
+              // Пробуем найти кнопку инфо среди кнопок
+              for (const btn of buttons) {
+                const ariaLabel = (btn.getAttribute('aria-label') || '').toLowerCase();
+                const tooltip = (btn.getAttribute('data-tooltip') || '').toLowerCase();
+                if (ariaLabel.includes('info') || ariaLabel.includes('инфо') || 
+                    tooltip.includes('info') || tooltip.includes('инфо') ||
+                    ariaLabel.includes('details') || ariaLabel.includes('детали')) {
+                  infoButton = btn;
+                  log(` Found info button in bottom toolbar (${buttons.length} buttons)`);
+                  break;
+                }
+              }
+              // Если не нашли инфо, берем первую кнопку
+              if (!infoButton && buttons.length > 0) {
+                infoButton = buttons[0];
+                log(` Using first button from bottom toolbar (${buttons.length} buttons)`);
+              }
+              if (buttonContainer && infoButton) break;
+            }
+          }
+        }
+      }
+      
+      // Способ 4: Ищем любые кнопки внизу экрана (последняя попытка)
+      if (!infoButton || !buttonContainer) {
+        log(' Trying method 4: finding any buttons at bottom of screen...');
+        const allButtons = Array.from(document.querySelectorAll('button'));
+        const buttonsAtBottom = allButtons.filter(btn => {
+          const rect = btn.getBoundingClientRect();
+          return rect.bottom > window.innerHeight * 0.7 && 
+                 rect.width > 0 && 
+                 rect.height > 0 &&
+                 rect.top < window.innerHeight;
+        });
+        
+        if (buttonsAtBottom.length >= 2) {
+          log(` Found ${buttonsAtBottom.length} buttons at bottom of screen`);
+          buttonContainer = buttonsAtBottom[0].parentElement;
+          // Ищем кнопку инфо
+          for (const btn of buttonsAtBottom) {
+            const ariaLabel = (btn.getAttribute('aria-label') || '').toLowerCase();
+            const tooltip = (btn.getAttribute('data-tooltip') || '').toLowerCase();
+            if (ariaLabel.includes('info') || ariaLabel.includes('инфо') || 
+                tooltip.includes('info') || tooltip.includes('инфо')) {
+              infoButton = btn;
+              log(' Found info button at bottom of screen');
+              break;
+            }
+          }
+          // Если не нашли, берем первую кнопку
+          if (!infoButton && buttonsAtBottom.length > 0) {
+            infoButton = buttonsAtBottom[0];
+            log(' Using first button at bottom of screen');
+          }
+        }
+      }
+      } // Закрываем блок if (!buttonContainer || !infoButton)
+      
+      if (!infoButton || !buttonContainer) {
+        log(' ❌ Info button or container not found after all methods');
+        log(' Available buttons on page:', document.querySelectorAll('button').length);
+        // Логируем все кнопки для отладки
+        const allButtons = Array.from(document.querySelectorAll('button'));
+        log(' Sample button attributes (first 10):', allButtons.slice(0, 10).map(btn => {
+          const rect = btn.getBoundingClientRect();
+          return {
+            ariaLabel: btn.getAttribute('aria-label'),
+            tooltip: btn.getAttribute('data-tooltip'),
+            jsname: btn.getAttribute('jsname'),
+            className: btn.className?.substring(0, 50),
+            position: `bottom: ${rect.bottom.toFixed(0)}, top: ${rect.top.toFixed(0)}`,
+            visible: rect.width > 0 && rect.height > 0
+          };
+        }));
+        
+        // Пробуем найти любую кнопку внизу экрана и использовать её родителя
+        const buttonsAtBottom = allButtons.filter(btn => {
+          const rect = btn.getBoundingClientRect();
+          return rect.bottom > window.innerHeight * 0.8 && 
+                 rect.width > 20 && 
+                 rect.height > 20 &&
+                 rect.top < window.innerHeight;
+        }).sort((a, b) => {
+          const rectA = a.getBoundingClientRect();
+          const rectB = b.getBoundingClientRect();
+          return rectB.bottom - rectA.bottom; // Сортируем по позиции снизу
+        });
+        
+        if (buttonsAtBottom.length > 0) {
+          log(` Found ${buttonsAtBottom.length} buttons at bottom, using first one's container`);
+          infoButton = buttonsAtBottom[0];
+          buttonContainer = infoButton.parentElement;
+          log(' Using fallback: first bottom button container');
+        } else {
+          log(' ===== addLevelButtonToMeetControls FAILED =====');
+          return false; // Не удалось найти кнопки
+        }
+      }
+      
+      log(' ✅ Found button container and info button!');
+      log(' Container:', buttonContainer);
+      log(' Info button:', infoButton);
+    
+      log(' Creating level button...');
+      
+      // Создаем кнопку уровня
+      const levelButton = document.createElement('button');
+      levelButton.className = 'hrhelper-meet-level-btn';
+      levelButton.textContent = 'Загрузка...';
+      levelButton.style.cssText = 'display:inline-flex!important;align-items:center!important;justify-content:center!important;padding:6px 12px!important;background:#6c757d!important;color:#fff!important;border:none!important;border-radius:4px!important;font-size:13px!important;font-weight:500!important;cursor:pointer!important;margin-left:8px!important;min-width:60px!important;z-index:99999!important;position:relative!important;visibility:visible!important;opacity:1!important;';
+      levelButton.title = 'Уровень кандидата';
+      levelButton.setAttribute('data-hrhelper', 'level-button');
+      levelButton.setAttribute('aria-label', 'Уровень кандидата');
+      
+      log(' Level button created:', levelButton);
+      
+      // Ищем название встречи (meeting title)
+      // Обычно это элемент с текстом названия встречи в верхней части экрана
+      let meetingTitleElement = null;
+      
+      // Пробуем разные селекторы для названия встречи
+      const titleSelectors = [
+        '[data-meeting-title]',
+        '[aria-label*="meeting"]',
+        '[aria-label*="встреча"]',
+        'div[role="heading"]',
+        'h1',
+        'h2',
+        '.meeting-title',
+        '[jsname*="title"]',
+      ];
+      
+      for (const selector of titleSelectors) {
+        try {
+          const elements = Array.from(document.querySelectorAll(selector));
+          for (const el of elements) {
+            const text = (el.textContent || '').trim();
+            // Название встречи обычно не пустое и не слишком длинное
+            if (text && text.length > 0 && text.length < 200 && 
+                !text.includes('Google Meet') && !text.includes('meet.google.com')) {
+              const rect = el.getBoundingClientRect();
+              // Название обычно в верхней части экрана
+              if (rect.top < window.innerHeight * 0.3 && rect.width > 0 && rect.height > 0) {
+                meetingTitleElement = el;
+                log(` ✅ Found meeting title with selector: ${selector}`, text);
+                break;
+              }
+            }
+          }
+          if (meetingTitleElement) break;
+        } catch (e) {
+          // Игнорируем ошибки селекторов
+        }
+      }
+      
+      // Если не нашли по селекторам, ищем текстовые элементы в верхней части
+      if (!meetingTitleElement) {
+        const allElements = Array.from(document.querySelectorAll('div, span, p, h1, h2, h3'));
+        for (const el of allElements) {
+          const text = (el.textContent || '').trim();
+          if (text && text.length > 0 && text.length < 200) {
+            const rect = el.getBoundingClientRect();
+            // Ищем в верхней части экрана
+            if (rect.top < window.innerHeight * 0.2 && 
+                rect.width > 50 && rect.height > 10 &&
+                rect.left < window.innerWidth * 0.5) {
+              meetingTitleElement = el;
+              log(' ✅ Found meeting title by position:', text);
+              break;
+            }
+          }
+        }
+      }
+      
+      // Вставляем кнопку после названия встречи
+      let inserted = false;
+      if (meetingTitleElement) {
+        try {
+          // Ищем родительский контейнер названия
+          let container = meetingTitleElement.parentElement;
+          if (container) {
+            // Вставляем после элемента с названием
+            if (meetingTitleElement.nextSibling) {
+              container.insertBefore(levelButton, meetingTitleElement.nextSibling);
+            } else {
+              container.appendChild(levelButton);
+            }
+            log(' ✅ Level button inserted after meeting title');
+            inserted = true;
+          }
+        } catch (e) {
+          log(' ⚠️ Failed to insert after meeting title:', e);
+        }
+      }
+      
+      // Если не удалось вставить после названия, пробуем вставить в контейнер кнопок управления
+      // ВАЖНО: вставляем сразу ПОСЛЕ кнопки информации
+      if (!inserted) {
+        try {
+          if (buttonContainer && infoButton && infoButton.parentNode === buttonContainer) {
+            // Вставляем сразу после кнопки информации
+            if (infoButton.nextSibling) {
+              buttonContainer.insertBefore(levelButton, infoButton.nextSibling);
+            } else {
+              buttonContainer.appendChild(levelButton);
+            }
+            log(' ✅ Level button inserted after info button');
+            inserted = true;
+          } else if (buttonContainer) {
+            buttonContainer.appendChild(levelButton);
+            log(' ✅ Level button appended to container (fallback)');
+            inserted = true;
+          }
+        } catch (e) {
+          log(' ⚠️ Failed to insert in button container:', e);
+        }
+      }
+      
+      // Если все еще не удалось, пробуем вставить в body
+      if (!inserted) {
+        try {
+          document.body.appendChild(levelButton);
+          levelButton.style.position = 'fixed';
+          levelButton.style.top = '20px';
+          levelButton.style.right = '20px';
+          levelButton.style.zIndex = '99999';
+          log(' ✅ Level button inserted in body as fallback (fixed position)');
+          inserted = true;
+        } catch (e2) {
+          error(' ❌ Failed to insert level button even in body:', e2);
+          return false;
+        }
+      }
+      
+      if (!inserted) {
+        error(' ❌ Could not insert level button anywhere!');
+        return false;
+      }
+      
+      // Проверяем, что кнопка действительно в DOM
+      if (!document.contains(levelButton)) {
+        error(' ❌ Level button was not inserted into DOM!');
+        return false;
+      }
+      
+      log(' ✅ Level button successfully inserted into DOM');
+      log(' Level button parent:', levelButton.parentElement);
+      log(' Level button computed style display:', window.getComputedStyle(levelButton).display);
+      log(' Level button offsetParent:', levelButton.offsetParent);
+      const rect = levelButton.getBoundingClientRect();
+      log(' Level button getBoundingClientRect:', { 
+        top: rect.top, 
+        left: rect.left, 
+        bottom: rect.bottom, 
+        right: rect.right, 
+        width: rect.width, 
+        height: rect.height,
+        visible: rect.width > 0 && rect.height > 0
+      });
+      
+      // Проверяем видимость кнопки
+      const isVisible = rect.width > 0 && rect.height > 0 && 
+                        rect.top >= 0 && rect.left >= 0 &&
+                        rect.top < window.innerHeight && rect.left < window.innerWidth;
+      
+      if (!isVisible) {
+        log(' ⚠️ Level button is not visible! Moving it to a visible location...');
+        
+        // Пробуем найти кнопку соцсети и вставить рядом с ней
+        const socialButton = document.querySelector('[data-hrhelper="social-button"], .hrhelper-communication-btn');
+        if (socialButton && socialButton.parentElement) {
+          try {
+            // Удаляем кнопку из текущего места
+            if (levelButton.parentElement) {
+              levelButton.parentElement.removeChild(levelButton);
+            }
+            
+            // Вставляем после кнопки соцсети
+            if (socialButton.nextSibling) {
+              socialButton.parentElement.insertBefore(levelButton, socialButton.nextSibling);
+            } else {
+              socialButton.parentElement.appendChild(levelButton);
+            }
+            
+            log(' ✅ Level button moved next to social button');
+          } catch (e) {
+            log(' ⚠️ Failed to move button:', e);
+          }
+        } else {
+          // Если кнопки соцсети нет, вставляем в body с фиксированной позицией
+          try {
+            if (levelButton.parentElement) {
+              levelButton.parentElement.removeChild(levelButton);
+            }
+            document.body.appendChild(levelButton);
+            levelButton.style.position = 'fixed';
+            levelButton.style.bottom = '80px';
+            levelButton.style.right = '20px';
+            levelButton.style.zIndex = '99999';
+            log(' ✅ Level button moved to fixed position in body');
+          } catch (e) {
+            log(' ⚠️ Failed to move button to body:', e);
+          }
+        }
+      }
+      
+      // Принудительно показываем кнопку
+      levelButton.style.display = 'inline-flex';
+      levelButton.style.visibility = 'visible';
+      levelButton.style.opacity = '1';
+      
+      // Проверяем видимость еще раз после перемещения
+      const newRect = levelButton.getBoundingClientRect();
+      const nowVisible = newRect.width > 0 && newRect.height > 0;
+      log(' Level button visibility after fix:', nowVisible);
+      if (nowVisible) {
+        log(' ✅ Level button should be visible now!');
+      } else {
+        log(' ❌ Level button is still not visible');
+      }
+      
+      log(' Level button inserted, will fetch level when Huntflow link appears...');
+      
+      // Функция для поиска ссылки на Huntflow и обновления кнопки
+      const updateLevelFromHuntflowLink = () => {
+        // Ищем ссылку на Huntflow
+        let huntflowLink = null;
+        
+        // Сначала ищем в тексте "Для интервьюеров:"
+        const walker = document.createTreeWalker(
+          document.body,
+          NodeFilter.SHOW_TEXT,
+          null
+        );
+        
+        let textNode;
+        while (textNode = walker.nextNode()) {
+          if (textNode.textContent && textNode.textContent.includes('Для интервьюеров:')) {
+            // Ищем ссылку на Huntflow рядом с этим текстом
+            let container = textNode.parentElement;
+            for (let i = 0; i < 10 && container; i++) {
+              const links = Array.from(container.querySelectorAll('a'));
+              huntflowLink = links.find(link => {
+                const href = link.href || link.textContent || '';
+                return href.includes('huntflow.ru') || href.includes('huntflow.dev');
+              });
+              if (huntflowLink) break;
+              container = container.parentElement;
+            }
+            if (huntflowLink) break;
+          }
+        }
+        
+        // Если не нашли, ищем во всем документе
+        if (!huntflowLink) {
+          huntflowLink = Array.from(document.querySelectorAll('a[href*="huntflow"]')).find(link => {
+            const href = link.href || link.textContent || '';
+            return href.includes('huntflow.ru') || href.includes('huntflow.dev');
+          });
+        }
+        
+        if (!huntflowLink) {
+          log(' No Huntflow link found yet, will retry...');
+          return false; // Ссылка еще не появилась
+        }
+        
+        log(' ✅ Found Huntflow link:', huntflowLink.href);
+      
+        // Извлекаем URL Huntflow
+        let huntflowUrl = huntflowLink.href;
+        if (huntflowUrl.includes('google.com/url')) {
+          // Если это Google redirect URL
+          try {
+            const urlObj = new URL(huntflowUrl);
+            const realUrl = urlObj.searchParams.get('q');
+            if (realUrl) {
+              huntflowUrl = decodeURIComponent(realUrl);
+            }
+          } catch (e) {
+            log(' Error extracting real URL from Google redirect:', e);
+          }
+        }
+        
+        // Если не нашли в href, пробуем из текста
+        if (!huntflowUrl || !huntflowUrl.includes('huntflow')) {
+          const linkText = huntflowLink.textContent || '';
+          const urlMatch = linkText.match(/https?:\/\/[^\s]+huntflow[^\s]*/);
+          if (urlMatch) {
+            huntflowUrl = urlMatch[0];
+          }
+        }
+        
+        if (!huntflowUrl || !huntflowUrl.includes('huntflow')) {
+          log(' Could not extract Huntflow URL');
+          return false;
+        }
+        
+        log(' Extracted Huntflow URL:', huntflowUrl);
+        
+        // Проверяем, что функция getCandidateLevel доступна
+        if (typeof getCandidateLevel !== 'function') {
+          error(' getCandidateLevel is not a function!');
+          return false;
+        }
+        
+        log(' Calling getCandidateLevel with URL:', huntflowUrl);
+        
+        // Получаем уровень через API
+        getCandidateLevel(huntflowUrl).then(levelData => {
+        log(' Candidate level response:', levelData);
+        if (levelData && levelData.success && levelData.level) {
+          levelButton.textContent = levelData.level;
+          levelButton.title = `Уровень кандидата: ${levelData.level}`;
+          levelButton.style.opacity = '1';
+          levelButton.style.cursor = 'pointer';
+          log(' ✅ Level button updated successfully with level:', levelData.level);
+          
+          // Проверяем видимость еще раз после обновления
+          const rect = levelButton.getBoundingClientRect();
+          if (rect.width === 0 || rect.height === 0) {
+            log(' ⚠️ Button is still not visible after update, trying to move it...');
+            // Пробуем переместить кнопку рядом с кнопкой соцсети
+            const socialButton = document.querySelector('[data-hrhelper="social-button"], .hrhelper-communication-btn');
+            if (socialButton && socialButton.parentElement) {
+              try {
+                if (levelButton.parentElement) {
+                  levelButton.parentElement.removeChild(levelButton);
+                }
+                if (socialButton.nextSibling) {
+                  socialButton.parentElement.insertBefore(levelButton, socialButton.nextSibling);
+                } else {
+                  socialButton.parentElement.appendChild(levelButton);
+                }
+                log(' ✅ Level button moved next to social button after update');
+              } catch (e) {
+                log(' ⚠️ Failed to move button after update:', e);
+              }
+            }
+          }
+        } else {
+          levelButton.textContent = 'Нет данных';
+          levelButton.style.cursor = 'not-allowed';
+          levelButton.style.opacity = '0.6';
+          log(' Level not found or empty. Response:', levelData);
+        }
+      }).catch(err => {
+          error(' Error getting candidate level:', err);
+          levelButton.textContent = 'Ошибка';
+          levelButton.style.cursor = 'not-allowed';
+          levelButton.style.opacity = '0.6';
+        });
+        
+        return true; // Успешно обновлено
+      };
+      
+      // Пробуем сразу найти ссылку
+      if (!updateLevelFromHuntflowLink()) {
+        // Если ссылка не найдена, устанавливаем "Загрузка..." и будем проверять периодически
+        levelButton.textContent = 'Загрузка...';
+        
+        // Проверяем каждые 2 секунды, пока не найдем ссылку
+        const checkInterval = setInterval(() => {
+          if (updateLevelFromHuntflowLink()) {
+            clearInterval(checkInterval);
+          }
+        }, 2000);
+        
+        // Останавливаем проверку через 30 секунд
+        setTimeout(() => {
+          clearInterval(checkInterval);
+          if (levelButton.textContent === 'Загрузка...') {
+            levelButton.textContent = 'Нет данных';
+            levelButton.style.cursor = 'not-allowed';
+            levelButton.style.opacity = '0.6';
+          }
+        }, 30000);
+      }
+      
+      return true; // Успешно создана и вставлена кнопка
+    } catch (err) {
+      error(' Error in addLevelButtonToMeetControls:', err);
+      return false; // Ошибка при выполнении
+    }
+  }
+  
+  // Функция для обработки с повторными попытками
+  function processWithRetries() {
+    log(' ========== Starting Google Meet processing ==========');
+    log(' getCandidateLevel available:', typeof getCandidateLevel === 'function');
+    log(' processInterviewerLinks available:', typeof processInterviewerLinks === 'function');
+    log(' addLevelButtonToMeetControls available:', typeof addLevelButtonToMeetControls === 'function');
+    log(' Current URL:', location.href);
+    log(' Document ready state:', document.readyState);
+    log(' Body exists:', !!document.body);
+    log(' Total buttons on page:', document.querySelectorAll('button').length);
+    
+    // Пробуем сразу
+    log(' === Attempt 1: Immediate ===');
+    processInterviewerLinks();
+    const result1 = addLevelButtonToMeetControls();
+    log(' addLevelButtonToMeetControls result (immediate):', result1);
+    
+    // Пробуем с разными задержками (Google Meet загружается очень долго)
+    const delays = [500, 1000, 2000, 3000, 5000, 8000, 12000, 15000, 20000];
+    delays.forEach((delay, index) => {
+      setTimeout(() => {
+        log(` === Attempt ${index + 2}: After ${delay}ms delay ===`);
+        log(' Buttons on page:', document.querySelectorAll('button').length);
+        log(' Level button exists:', !!document.querySelector('.hrhelper-meet-level-btn'));
+        processInterviewerLinks();
+        const result = addLevelButtonToMeetControls();
+        log(' addLevelButtonToMeetControls result:', result);
+        if (result) {
+          log(' ✅ SUCCESS! Level button should be visible now');
+        }
+      }, delay);
+    });
+  }
+  
+  // Обрабатываем с повторными попытками
+  processWithRetries();
   
   // Наблюдаем за изменениями DOM с debounce
   let processTimeout = null;
@@ -2121,7 +2902,8 @@ function initGoogleMeet() {
     if (processTimeout) clearTimeout(processTimeout);
     processTimeout = setTimeout(() => {
       processInterviewerLinks();
-    }, 500);
+      addLevelButtonToMeetControls();
+    }, 1000);
   });
   
   if (document.body) {

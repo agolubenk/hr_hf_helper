@@ -1777,7 +1777,7 @@ class Invite(models.Model):
             # Добавляем ссылку на Huntflow кандидата
             huntflow_link = self._generate_huntflow_candidate_link()
             if huntflow_link:
-                description += f"\n\n<strong>Для интервьюеров:</strong>\n{huntflow_link}"
+                description += f"\n\n<strong>Для интервьюеров:</strong>\n<a href=\"{huntflow_link}\" target=\"_blank\" rel=\"noopener noreferrer\">{huntflow_link}</a>"
             
             # Подготавливаем участников
             attendees = []
