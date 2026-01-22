@@ -3163,49 +3163,49 @@ function initGoogleMeet() {
         
         log(' Calling getCandidateLevel with URL:', huntflowUrl);
         
-        // Получаем уровень через API
+        // Получаем уровень и вакансию через API
         getCandidateLevel(huntflowUrl).then(levelData => {
         log(' Candidate level response:', levelData);
         if (levelData && levelData.success && levelData.level) {
           const level = levelData.level;
+          const vacancyName = (levelData.vacancy_name || '').trim();
           levelButton.textContent = level;
-          levelButton.title = `Уровень кандидата: ${level} (нажмите для копирования текста)`;
-          levelButton.setAttribute('data-level', level); // Сохраняем уровень для использования при клике
+          levelButton.title = vacancyName
+            ? `${vacancyName}: ${level} (нажмите для копирования текста)`
+            : `Уровень кандидата: ${level} (нажмите для копирования текста)`;
+          levelButton.setAttribute('data-level', level);
+          levelButton.setAttribute('data-vacancy', vacancyName);
           levelButton.style.opacity = '1';
           levelButton.style.cursor = 'pointer';
-          log(' ✅ Level button updated successfully with level:', level);
+          log(' ✅ Level button updated with level:', level, 'vacancy:', vacancyName);
           
-          // Добавляем обработчик клика для копирования текста
+          // Обработчик клика: копируем текст для (вакансия, грейд) из LevelText
           levelButton.addEventListener('click', async function(e) {
             e.preventDefault();
             e.stopPropagation();
             
             const buttonLevel = this.getAttribute('data-level');
+            const buttonVacancy = this.getAttribute('data-vacancy') || '';
             if (!buttonLevel) {
-              log(' ⚠️ No level data found on button');
+              log(' ⚠️ No level data on button');
               return;
             }
             
-            log(' Level button clicked, fetching text for level:', buttonLevel);
+            log(' Level button clicked, fetching text for vacancy:', buttonVacancy, 'level:', buttonLevel);
             
             try {
-              // Получаем текст для уровня из API
-              const apiUrl = `/api/v1/huntflow/linkedin-applicants/level-text/?level=${encodeURIComponent(buttonLevel)}`;
+              const q = new URLSearchParams({ level: buttonLevel });
+              if (buttonVacancy) q.set('vacancy_name', buttonVacancy);
+              const apiUrl = `/api/v1/huntflow/linkedin-applicants/level-text/?${q.toString()}`;
               log(' Fetching level text from:', apiUrl);
               
-              const res = await apiFetch(apiUrl, {
-                method: 'GET'
-              });
-              
+              const res = await apiFetch(apiUrl, { method: 'GET' });
               const data = await res.json();
               log(' Level text response:', data);
               
               if (data && data.success && data.text) {
-                // Копируем текст в буфер обмена
                 await navigator.clipboard.writeText(data.text);
                 log(' ✅ Text copied to clipboard');
-                
-                // Показываем уведомление
                 const originalText = this.textContent;
                 this.textContent = 'Скопировано!';
                 this.style.background = '#28a745';
@@ -3214,7 +3214,7 @@ function initGoogleMeet() {
                   this.style.background = '#6c757d';
                 }, 2000);
               } else {
-                log(' ⚠️ No text found for level:', buttonLevel);
+                log(' ⚠️ No text for vacancy:', buttonVacancy, 'level:', buttonLevel);
                 const originalText = this.textContent;
                 this.textContent = 'Нет текста';
                 this.style.background = '#dc3545';

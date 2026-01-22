@@ -42,5 +42,5 @@ urlpatterns = [
     path('chrome-extension/link/<int:link_id>/', views.chrome_extension_link_ajax, name='chrome_extension_link_ajax'),
     path('chrome-extension/thread/<int:thread_id>/', views.chrome_extension_thread_ajax, name='chrome_extension_thread_ajax'),
     path('chrome-extension/clear-cache/', views.chrome_extension_clear_cache_ajax, name='chrome_extension_clear_cache_ajax'),
-    path('chrome-extension/level/<str:level>/text/', views.chrome_extension_level_text_ajax, name='chrome_extension_level_text_ajax'),
+    path('chrome-extension/level/<str:vacancy_name>/<str:level>/text/', views.chrome_extension_level_text_ajax, name='chrome_extension_level_text_ajax'),
 ]

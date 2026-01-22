@@ -77,6 +77,24 @@ export default function StatusBar({
       {/* Горизонтальный скролл со статусами */}
       <Box className={styles.statusesScroll}>
         <Flex align="center" gap="2" className={styles.statusesContainer}>
+          {/* Статус "Все" */}
+          <Box
+            className={styles.statusItem}
+            style={{
+              borderColor: '#6B7280',
+            }}
+          >
+            <Badge
+              size="2"
+              style={{
+                backgroundColor: '#6B7280',
+                color: 'white',
+                cursor: 'pointer',
+              }}
+            >
+              Все
+            </Badge>
+          </Box>
           {statuses.map((status) => (
             <Box
               key={status.id}

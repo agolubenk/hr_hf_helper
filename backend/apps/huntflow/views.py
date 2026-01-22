@@ -2227,45 +2227,6 @@ def chrome_extension_management(request):
     # Получаем все маппинги Thread → Profile
     thread_mappings = LinkedInThreadProfile.objects.filter(user=request.user).order_by('-last_accessed_at')
     
-    # Получаем уровни из Huntflow
-    levels = []
-    try:
-        api = HuntflowService(user=request.user)
-        account_id = get_correct_account_id(request.user)
-        if account_id:
-            questionary_schema = api.get_applicant_questionary_schema(account_id)
-            if questionary_schema:
-                # Ищем поле "Уровень" в схеме
-                fields_dict = {}
-                if isinstance(questionary_schema, dict):
-                    if 'fields' in questionary_schema:
-                        fields_list = questionary_schema.get('fields', [])
-                        for field in fields_list:
-                            if isinstance(field, dict):
-                                field_id = field.get('id') or field.get('key')
-                                if field_id:
-                                    fields_dict[field_id] = field
-                    else:
-                        fields_dict = questionary_schema
-                
-                # Ищем поле "Уровень"
-                for field_id, field_info in fields_dict.items():
-                    if isinstance(field_info, dict):
-                        field_title = field_info.get('title', '').lower()
-                        if 'уровень' in field_title or 'level' in field_title or 'grade' in field_title or 'грейд' in field_title:
-                            # Если это select поле, получаем варианты
-                            if field_info.get('type') == 'select' and 'values' in field_info:
-                                for value in field_info.get('values', []):
-                                    if isinstance(value, dict):
-                                        level_name = value.get('name') or value.get('value') or value.get('id')
-                                        if level_name:
-                                            levels.append(str(level_name))
-                                    elif value:
-                                        levels.append(str(value))
-                            break
-    except Exception as e:
-        logger.warning(f"Failed to get levels from Huntflow: {e}")
-    
     # Статистика
     stats = {
         'total_links': links.count(),
@@ -2274,62 +2235,66 @@ def chrome_extension_management(request):
         'recent_links': links.filter(created_at__gte=timezone.now() - timedelta(days=7)).count(),
     }
     
-    # Получаем уровни из Huntflow
-    levels = []
-    try:
-        api = HuntflowService(user=request.user)
-        account_id = get_correct_account_id(request.user)
-        if account_id:
-            questionary_schema = api.get_applicant_questionary_schema(account_id)
-            if questionary_schema:
-                # Ищем поле "Уровень" в схеме
-                fields_dict = {}
-                if isinstance(questionary_schema, dict):
-                    if 'fields' in questionary_schema:
-                        fields_list = questionary_schema.get('fields', [])
-                        for field in fields_list:
-                            if isinstance(field, dict):
-                                field_id = field.get('id') or field.get('key')
-                                if field_id:
-                                    fields_dict[field_id] = field
-                    else:
-                        fields_dict = questionary_schema
-                
-                # Ищем поле "Уровень"
-                for field_id, field_info in fields_dict.items():
-                    if isinstance(field_info, dict):
-                        field_title = field_info.get('title', '').lower()
-                        if 'уровень' in field_title or 'level' in field_title or 'grade' in field_title or 'грейд' in field_title:
-                            # Если это select поле, получаем варианты
-                            if field_info.get('type') == 'select' and 'values' in field_info:
-                                for value in field_info.get('values', []):
-                                    if isinstance(value, dict):
-                                        level_name = value.get('name') or value.get('value') or value.get('id')
-                                        if level_name:
-                                            levels.append(str(level_name))
-                                    elif value:
-                                        levels.append(str(value))
-                            break
-    except Exception as e:
-        logger.warning(f"Failed to get levels from Huntflow: {e}")
-    
-    # Получаем сохраненные тексты для уровней
+    # Вакансии — из apps.vacancies (БД). Грейды — из Huntflow (схема анкеты, поле «Уровень»).
     from .models import LevelText
+    from apps.vacancies.models import Vacancy
+
     level_texts = {}
     try:
-        for level_text in LevelText.objects.filter(user=request.user):
-            level_texts[level_text.level] = level_text.text
+        for lt in LevelText.objects.filter(user=request.user).order_by('vacancy_name', 'level'):
+            level_texts[(lt.vacancy_name, lt.level)] = lt.text
     except Exception as e:
-        # Если таблица еще не создана (миграция не выполнена), просто пропускаем
-        logger.warning(f"LevelText table not found, skipping level texts: {e}")
-        level_texts = {}
+        logger.warning(f"LevelText lookup failed: {e}")
+
+    # Грейды из Huntflow: схема анкеты, поле «Уровень» / level / grade
+    levels_from_huntflow = []
+    account_id = get_correct_account_id(request.user)
+    try:
+        api = HuntflowService(user=request.user)
+        if account_id:
+            schema = api.get_applicant_questionary_schema(account_id)
+            if isinstance(schema, dict):
+                fields_dict = {}
+                if 'fields' in schema:
+                    for f in schema.get('fields', []) or []:
+                        if isinstance(f, dict):
+                            fid = f.get('id') or f.get('key')
+                            if fid:
+                                fields_dict[fid] = f
+                else:
+                    fields_dict = schema
+                for _fid, finfo in fields_dict.items():
+                    if not isinstance(finfo, dict):
+                        continue
+                    title = (finfo.get('title') or '').lower()
+                    if 'уровень' in title or 'level' in title or 'grade' in title or 'грейд' in title:
+                        if finfo.get('type') == 'select' and finfo.get('values'):
+                            for v in finfo.get('values', []) or []:
+                                n = v.get('name') or v.get('value') or v.get('id') if isinstance(v, dict) else v
+                                if n:
+                                    levels_from_huntflow.append(str(n))
+                        break
+            levels_from_huntflow = sorted(set(levels_from_huntflow))
+    except Exception as e:
+        logger.warning(f"Huntflow levels: {e}")
+
+    # Все вакансии из БД (apps.vacancies). У каждой — одни и те же грейды из Huntflow.
+    vacancy_list = []
+    for v in Vacancy.objects.all().order_by('name'):
+        vacancy_list.append({
+            'id': v.external_id,
+            'name': v.name,
+            'levels': levels_from_huntflow,
+        })
+
+    vacancies_with_levels = vacancy_list
     
     context = {
         'links': links,
         'thread_mappings': thread_mappings,
         'stats': stats,
-        'levels': sorted(set(levels)),  # Уникальные уровни, отсортированные
-        'level_texts': level_texts,  # Сохраненные тексты для каждого уровня
+        'vacancies_with_levels': vacancies_with_levels,
+        'level_texts': level_texts,
     }
     
     return render(request, 'huntflow/chrome_extension_management.html', context)
@@ -2337,53 +2302,42 @@ def chrome_extension_management(request):
 
 @login_required
 @require_http_methods(["GET", "POST"])
-def chrome_extension_level_text_ajax(request, level):
+def chrome_extension_level_text_ajax(request, vacancy_name, level):
     """
-    AJAX endpoint для получения или сохранения текста для уровня
+    AJAX endpoint для получения или сохранения текста для уровня по вакансии.
     """
     from .models import LevelText
+    from urllib.parse import unquote
+    
+    vacancy_name = unquote(vacancy_name)
     
     if request.method == 'GET':
-        # Получаем текст для уровня
         try:
-            level_text = LevelText.objects.get(user=request.user, level=level)
-            return JsonResponse({
-                'success': True,
-                'text': level_text.text,
-            })
+            level_text = LevelText.objects.get(
+                user=request.user, vacancy_name=vacancy_name, level=level
+            )
+            return JsonResponse({'success': True, 'text': level_text.text})
         except LevelText.DoesNotExist:
-            return JsonResponse({
-                'success': True,
-                'text': '',
-            })
+            return JsonResponse({'success': True, 'text': ''})
     
     elif request.method == 'POST':
-        # Сохраняем текст для уровня
         try:
             import json
             data = json.loads(request.body)
             text = data.get('text', '').strip()
-            
             level_text, created = LevelText.objects.get_or_create(
                 user=request.user,
+                vacancy_name=vacancy_name,
                 level=level,
-                defaults={'text': text}
+                defaults={'text': text},
             )
-            
             if not created:
                 level_text.text = text
                 level_text.save()
-            
-            return JsonResponse({
-                'success': True,
-                'message': 'Текст сохранен',
-            })
+            return JsonResponse({'success': True, 'message': 'Текст сохранен'})
         except Exception as e:
             logger.error(f"Error saving level text: {e}")
-            return JsonResponse({
-                'success': False,
-                'message': str(e),
-            }, status=400)
+            return JsonResponse({'success': False, 'message': str(e)}, status=400)
 
 
 @login_required

@@ -1683,6 +1683,7 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
             
             account_name = ids["account_name"]
             applicant_id = ids["applicant_id"]
+            vacancy_id = ids.get("vacancy_id")
             
             # Получаем account_id по account_name
             from apps.huntflow.services import HuntflowService
@@ -1693,37 +1694,57 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
             if accounts and 'items' in accounts:
                 account_name_lower = account_name.lower()
                 for account in accounts['items']:
-                    # Проверяем name, nick и id (без учета регистра)
                     account_name_field = (account.get('name') or '').lower()
                     account_nick_field = (account.get('nick') or '').lower()
                     account_id_str = str(account.get('id') or '')
-                    
-                    if (account_name_field == account_name_lower or 
+                    if (account_name_field == account_name_lower or
                         account_nick_field == account_name_lower or
                         account_id_str == account_name):
                         account_id = account.get('id')
                         break
             
             if not account_id:
-                logger.warning(f"Account '{account_name}' not found. Available accounts: {[a.get('name') for a in (accounts.get('items', []) if accounts else [])]}")
+                logger.warning(f"Account '{account_name}' not found.")
                 return Response(
                     {"success": False, "message": f"Организация '{account_name}' не найдена"},
                     status=status.HTTP_404_NOT_FOUND,
                 )
             
-            # Получаем значение поля "Уровень"
-            level_value = _get_candidate_level(api, account_id, applicant_id)
+            if not vacancy_id:
+                try:
+                    _aid, vacancy_id = self._get_latest_vacancy_for_applicant(
+                        account_name, applicant_id, user=request.user
+                    )
+                    if _aid is not None:
+                        account_id = _aid
+                except Exception as e:
+                    logger.warning(f"Could not get vacancy for applicant {applicant_id}: {e}")
             
+            # Получаем уровень кандидата
+            level_value = _get_candidate_level(api, account_id, applicant_id)
             if not level_value:
                 return Response(
                     {"success": False, "message": "Поле 'Уровень' не заполнено"},
                     status=status.HTTP_404_NOT_FOUND,
                 )
             
+            # Вакансия: название из apps.vacancies (external_id) или Huntflow
+            vacancy_name = None
+            if vacancy_id:
+                from apps.vacancies.models import Vacancy
+                v = Vacancy.objects.filter(external_id=str(vacancy_id)).first()
+                if v:
+                    vacancy_name = v.name
+                else:
+                    vh = api.get_vacancy(account_id, vacancy_id)
+                    if vh:
+                        vacancy_name = (vh.get("position") or "").strip() or f"Вакансия {vacancy_id}"
+            
             return Response(
                 {
                     "success": True,
                     "level": level_value,
+                    "vacancy_name": vacancy_name or "",
                 },
                 status=status.HTTP_200_OK,
             )
@@ -1832,22 +1853,23 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
     @action(detail=False, methods=["get"], url_path="level-text")
     def get_level_text(self, request):
         """
-        GET /api/v1/huntflow/linkedin-applicants/level-text/?level=...
+        GET /api/v1/huntflow/linkedin-applicants/level-text/?vacancy_name=...&level=...
         
-        Получает сохраненный текст для уровня из базы данных.
+        Получает сохраненный текст для пары (вакансия, уровень) из LevelText.
+        Используется расширением на Google Meet для кнопки грейда.
         
         Параметры:
-        - level: Название уровня (например: "Junior", "Middle", "Senior")
+        - vacancy_name: Название вакансии (из apps.vacancies или Huntflow)
+        - level: Грейд/уровень (например: "Junior", "Middle", "Senior")
         
-        Возвращает:
-        {
-            "success": true,
-            "text": "Текст для уровня..."
-        }
+        Возвращает: { "success": true, "text": "..." }
         """
         try:
             from .models import LevelText
+            from urllib.parse import unquote
             
+            vacancy_name = request.query_params.get("vacancy_name", "").strip()
+            vacancy_name = unquote(vacancy_name) if vacancy_name else ""
             level = request.query_params.get("level", "").strip()
             if not level:
                 return Response(
@@ -1855,24 +1877,27 @@ class LinkedInApplicantsViewSet(viewsets.ViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             
-            try:
-                level_text = LevelText.objects.get(user=request.user, level=level)
+            if not vacancy_name:
                 return Response(
-                    {
-                        "success": True,
-                        "text": level_text.text or "",
-                    },
+                    {"success": True, "text": ""},
+                    status=status.HTTP_200_OK,
+                )
+            
+            try:
+                lt = LevelText.objects.get(
+                    user=request.user,
+                    vacancy_name=vacancy_name,
+                    level=level,
+                )
+                return Response(
+                    {"success": True, "text": lt.text or ""},
                     status=status.HTTP_200_OK,
                 )
             except LevelText.DoesNotExist:
                 return Response(
-                    {
-                        "success": True,
-                        "text": "",
-                    },
+                    {"success": True, "text": ""},
                     status=status.HTTP_200_OK,
                 )
-        
         except Exception as e:
             logger.error(f"Error getting level text: {e}", exc_info=True)
             return Response(

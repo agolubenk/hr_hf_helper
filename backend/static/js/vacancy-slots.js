@@ -24,7 +24,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (vacancyDataElement) {
         try {
             vacancyData = JSON.parse(vacancyDataElement.textContent);
-            console.log('🔍 DEBUG: Данные вакансии загружены:', vacancyData);
+            window.vacancyData = vacancyData;
+            console.log('🔍 DEBUG: Данные вакансии загружены, window.vacancyData установлен:', vacancyData);
         } catch (e) {
             console.error('❌ Ошибка парсинга данных вакансии:', e);
         }
@@ -480,41 +481,29 @@ function formatTime(date, timezone = null) {
     return `${hours}.${minutes.toString().padStart(2, '0')}`;
 }
 
-// Функция для получения продолжительности встречи
+// Функция для получения продолжительности встречи (для копирования слотов и отображения)
 function getMeetingDuration() {
     console.log('🔍 [DURATION] Получаем длительность встречи...');
     
-    // Сначала проверяем новую глобальную переменную
-    if (typeof window !== 'undefined' && window.currentMeetingDuration) {
+    if (typeof window !== 'undefined' && window.currentMeetingDuration != null) {
         console.log(`✅ [DURATION] Используем window.currentMeetingDuration: ${window.currentMeetingDuration}`);
         return window.currentMeetingDuration;
     }
     
-    // Затем проверяем глобальную переменную window.vacancyData
-    if (typeof window !== 'undefined' && window.vacancyData && window.vacancyData.duration) {
-        console.log(`✅ [DURATION] Используем window.vacancyData.duration: ${window.vacancyData.duration}`);
-        return window.vacancyData.duration;
+    var source = typeof window !== 'undefined' && window.vacancyData ? window.vacancyData : (typeof vacancyData !== 'undefined' ? vacancyData : null);
+    if (source) {
+        var isInterview = document.querySelector('.btn-meeting-type.active')?.id === 'btnInterview';
+        var mins = isInterview
+            ? (source.tech_interview_duration != null ? source.tech_interview_duration : 90)
+            : (source.screening_duration != null ? source.screening_duration : 45);
+        console.log(`✅ [DURATION] По активному типу (${isInterview ? 'интервью' : 'скрининг'}): ${mins} мин`);
+        return mins;
     }
     
-    // Затем проверяем локальную переменную vacancyData
-    if (typeof vacancyData !== 'undefined' && vacancyData) {
-        console.log('🔍 [DURATION] vacancyData найден:', vacancyData);
-        
-        // Пытаемся получить продолжительность из данных вакансии
-        // Это может быть поле duration, meeting_duration или аналогичное
-        if (vacancyData.duration) {
-            console.log(`✅ [DURATION] Используем vacancyData.duration: ${vacancyData.duration}`);
-            return vacancyData.duration;
-        }
-        if (vacancyData.meeting_duration) {
-            console.log(`✅ [DURATION] Используем vacancyData.meeting_duration: ${vacancyData.meeting_duration}`);
-            return vacancyData.meeting_duration;
-        }
-    }
-    
-    // Если нет данных о продолжительности, используем значение по умолчанию
-    console.log('⚠️ [DURATION] Данные не найдены, используем значение по умолчанию: 60 мин');
-    return 60; // 60 минут по умолчанию
+    var isInterviewFallback = document.querySelector('.btn-meeting-type.active')?.id === 'btnInterview';
+    var defaultMins = isInterviewFallback ? 90 : 45;
+    console.log(`⚠️ [DURATION] Нет данных вакансии, по умолчанию: ${defaultMins} мин`);
+    return defaultMins;
 }
 
 function generateWeekSlots(weekOffset) {

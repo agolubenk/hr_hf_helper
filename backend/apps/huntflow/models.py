@@ -166,8 +166,8 @@ class LevelText(models.Model):
     """
     Тексты для уровней кандидатов из Huntflow
     
-    Позволяет сохранять многострочный текст для каждого уровня,
-    который можно использовать для заметок, шаблонов и т.д.
+    Позволяет сохранять многострочный текст для каждого уровня по вакансии.
+    Уровни привязаны к вакансии: вакансия → уровни.
     """
     
     user = models.ForeignKey(
@@ -175,6 +175,12 @@ class LevelText(models.Model):
         on_delete=models.CASCADE,
         related_name='level_texts',
         verbose_name=_("Пользователь"),
+    )
+    
+    vacancy_name = models.CharField(
+        _("Вакансия"),
+        max_length=255,
+        help_text="Название вакансии из Huntflow (например: Frontend, Backend)",
     )
     
     level = models.CharField(
@@ -195,13 +201,13 @@ class LevelText(models.Model):
     class Meta:
         verbose_name = _("Текст для уровня")
         verbose_name_plural = _("Тексты для уровней")
-        unique_together = (('user', 'level'),)
+        unique_together = (('user', 'vacancy_name', 'level'),)
         indexes = [
-            models.Index(fields=['user', 'level']),
+            models.Index(fields=['user', 'vacancy_name', 'level']),
         ]
     
     def __str__(self):
-        return f"{self.level} - {self.user.username}"
+        return f"{self.vacancy_name}: {self.level} - {self.user.username}"
 
 
 # ==================== МОДЕЛИ ДЛЯ HH.RU ИНТЕГРАЦИИ ====================

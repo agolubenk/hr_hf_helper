@@ -40,28 +40,46 @@
     </div>
 </div>
 
-<!-- Действия -->
+<!-- Кнопки копирования по грейдам для Google Meet (свёрнуто по умолчанию) -->
 <div class="row mb-4">
     <div class="col-12">
         <div class="card">
-            <div class="card-body">
-                {% if levels %}
-                <div class="mb-3">
-                    <h6 class="mb-2">Уровни из Huntflow:</h6>
-                    <div class="d-flex flex-wrap gap-2">
-                        {% for level in levels %}
-                        <button type="button" class="btn btn-outline-secondary level-btn" data-level="{{ level }}" data-bs-toggle="modal" data-bs-target="#levelModal{{ forloop.counter0 }}">
-                            {{ level }}
-                        </button>
+            <div class="card-header d-flex justify-content-between align-items-center py-2" style="cursor: pointer;"
+                 data-bs-toggle="collapse" data-bs-target="#levelButtonsCollapse" aria-expanded="false" aria-controls="levelButtonsCollapse">
+                <h6 class="mb-0">Кнопки копирования по грейдам для Google Meet</h6>
+                <i class="fas fa-chevron-down" id="levelButtonsCollapseIcon"></i>
+            </div>
+            <div class="collapse" id="levelButtonsCollapse">
+                <div class="card-body">
+                    {% if vacancies_with_levels %}
+                    <div class="mb-3">
+                        {% for vacancy in vacancies_with_levels %}
+                        <div class="mb-3">
+                            <strong class="text-secondary">{{ vacancy.name }}:</strong>
+                            <div class="d-flex flex-wrap gap-2 mt-1">
+                                {% for level in vacancy.levels %}
+                                <button type="button" class="btn btn-outline-secondary level-btn"
+                                    data-vacancy="{{ vacancy.name }}"
+                                    data-level="{{ level }}"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#levelModal-{{ forloop.parentloop.counter0 }}-{{ forloop.counter0 }}">
+                                    {{ level }}
+                                </button>
+                                {% endfor %}
+                            </div>
+                        </div>
                         {% endfor %}
                     </div>
+                    <hr>
+                    {% else %}
+                    <p class="text-muted mb-3">Нет вакансий с уровнями. Проверьте подключение Huntflow и наличие сохранённых текстов в БД.</p>
+                    <hr>
+                    {% endif %}
+                    <button type="button" class="btn btn-warning" id="clearCacheBtn">
+                        <i class="fas fa-trash-alt me-2"></i>
+                        Очистить кэш
+                    </button>
                 </div>
-                <hr>
-                {% endif %}
-                <button type="button" class="btn btn-warning" id="clearCacheBtn">
-                    <i class="fas fa-trash-alt me-2"></i>
-                    Очистить кэш
-                </button>
             </div>
         </div>
     </div>
@@ -223,30 +241,32 @@
     </div>
 </div>
 
-<!-- Модальные окна для уровней -->
-{% for level in levels %}
-<div class="modal fade" id="levelModal{{ forloop.counter0 }}" tabindex="-1" aria-labelledby="levelModalLabel{{ forloop.counter0 }}" aria-hidden="true">
+<!-- Модальные окна для уровней (вакансия + уровень) -->
+{% for vacancy in vacancies_with_levels %}
+{% for level in vacancy.levels %}
+<div class="modal fade" id="levelModal-{{ forloop.parentloop.counter0 }}-{{ forloop.counter0 }}" tabindex="-1" aria-labelledby="levelModalLabel-{{ forloop.parentloop.counter0 }}-{{ forloop.counter0 }}" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="levelModalLabel{{ forloop.counter0 }}">Текст для уровня: {{ level }}</h5>
+                <h5 class="modal-title" id="levelModalLabel-{{ forloop.parentloop.counter0 }}-{{ forloop.counter0 }}">{{ vacancy.name }}: {{ level }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="levelForm{{ forloop.counter0 }}" data-level="{{ level }}">
+                <form class="level-form" data-vacancy="{{ vacancy.name }}" data-level="{{ level }}">
                     <div class="mb-3">
-                        <label for="levelTextarea{{ forloop.counter0 }}" class="form-label">Текст (многострочный):</label>
-                        <textarea class="form-control" id="levelTextarea{{ forloop.counter0 }}" rows="10" placeholder="Введите текст для уровня {{ level }}..."></textarea>
+                        <label class="form-label">Текст (многострочный):</label>
+                        <textarea class="form-control level-textarea" rows="10" placeholder="Введите текст для {{ vacancy.name }} — {{ level }}..."></textarea>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-primary save-level-text-btn" data-level="{{ level }}" data-modal-id="levelModal{{ forloop.counter0 }}">Сохранить</button>
+                <button type="button" class="btn btn-primary save-level-text-btn" data-vacancy="{{ vacancy.name }}" data-level="{{ level }}" data-modal-id="levelModal-{{ forloop.parentloop.counter0 }}-{{ forloop.counter0 }}">Сохранить</button>
             </div>
         </div>
     </div>
 </div>
+{% endfor %}
 {% endfor %}
 
 {% endblock %}
@@ -272,6 +292,20 @@
         return cookieValue;
     }
     const csrftoken = getCookie('csrftoken');
+    
+    // Иконка свёрнутого блока «Кнопки копирования по грейдам»
+    const levelCollapse = document.getElementById('levelButtonsCollapse');
+    const levelCollapseIcon = document.getElementById('levelButtonsCollapseIcon');
+    if (levelCollapse && levelCollapseIcon) {
+        levelCollapse.addEventListener('show.bs.collapse', function() {
+            levelCollapseIcon.classList.remove('fa-chevron-down');
+            levelCollapseIcon.classList.add('fa-chevron-up');
+        });
+        levelCollapse.addEventListener('hide.bs.collapse', function() {
+            levelCollapseIcon.classList.remove('fa-chevron-up');
+            levelCollapseIcon.classList.add('fa-chevron-down');
+        });
+    }
     
     // Инлайн редактирование для связей
     document.querySelectorAll('.editable[data-link-id]').forEach(function(element) {
@@ -583,16 +617,22 @@
         }
     });
     
-    // Сохранение текста для уровня
+    function levelTextUrl(vacancy, level) {
+        return '/huntflow/chrome-extension/level/' + encodeURIComponent(vacancy) + '/' + encodeURIComponent(level) + '/text/';
+    }
+    
+    // Сохранение текста для уровня (вакансия + уровень)
     document.querySelectorAll('.save-level-text-btn').forEach(function(btn) {
         btn.addEventListener('click', function() {
-            const level = this.dataset.level;
+            const vacancy = this.dataset.vacancy || '';
+            const level = this.dataset.level || '';
             const modalId = this.dataset.modalId;
             const modal = document.getElementById(modalId);
+            if (!modal) return;
             const textarea = modal.querySelector('textarea');
-            const text = textarea.value.trim();
+            const text = (textarea && textarea.value) ? textarea.value.trim() : '';
             
-            fetch(`/huntflow/chrome-extension/level/${encodeURIComponent(level)}/text/`, {
+            fetch(levelTextUrl(vacancy, level), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -604,11 +644,8 @@
             .then(data => {
                 if (data.success) {
                     showMessage('Текст сохранен', 'success');
-                    // Закрываем модальное окно
                     const bsModal = bootstrap.Modal.getInstance(modal);
-                    if (bsModal) {
-                        bsModal.hide();
-                    }
+                    if (bsModal) bsModal.hide();
                 } else {
                     showMessage('Ошибка: ' + (data.message || 'Неизвестная ошибка'), 'danger');
                 }
@@ -620,62 +657,47 @@
         });
     });
     
-    // Загрузка текста при открытии модального окна
+    // Загрузка текста при открытии модального окна (вакансия + уровень)
     document.querySelectorAll('.level-btn').forEach(function(btn) {
         btn.addEventListener('click', function() {
-            const level = this.dataset.level;
-            const modalId = this.dataset.bsTarget.replace('#', '');
+            const vacancy = this.dataset.vacancy || '';
+            const level = this.dataset.level || '';
+            const modalId = (this.dataset.bsTarget || '').replace('#', '');
             const modal = document.getElementById(modalId);
             if (!modal) return;
-            
             const textarea = modal.querySelector('textarea');
             if (!textarea) return;
             
-            // Загружаем сохраненный текст
-            fetch(`/huntflow/chrome-extension/level/${encodeURIComponent(level)}/text/`, {
+            fetch(levelTextUrl(vacancy, level), {
                 method: 'GET',
-                headers: {
-                    'X-CSRFToken': csrftoken
-                }
+                headers: { 'X-CSRFToken': csrftoken }
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    textarea.value = data.text || '';
-                }
+                if (data.success) textarea.value = data.text || '';
             })
-            .catch(error => {
-                console.error('Error loading level text:', error);
-            });
+            .catch(error => console.error('Error loading level text:', error));
         });
     });
     
-    // Также загружаем текст при показе модального окна (на случай, если событие click не сработало)
     document.querySelectorAll('[id^="levelModal"]').forEach(function(modal) {
         modal.addEventListener('show.bs.modal', function() {
-            const levelBtn = document.querySelector(`[data-bs-target="#${this.id}"]`);
+            const levelBtn = document.querySelector('[data-bs-target="#' + this.id + '"]');
             if (!levelBtn) return;
-            
-            const level = levelBtn.dataset.level;
+            const vacancy = levelBtn.dataset.vacancy || '';
+            const level = levelBtn.dataset.level || '';
             const textarea = this.querySelector('textarea');
             if (!textarea) return;
             
-            // Загружаем сохраненный текст
-            fetch(`/huntflow/chrome-extension/level/${encodeURIComponent(level)}/text/`, {
+            fetch(levelTextUrl(vacancy, level), {
                 method: 'GET',
-                headers: {
-                    'X-CSRFToken': csrftoken
-                }
+                headers: { 'X-CSRFToken': csrftoken }
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    textarea.value = data.text || '';
-                }
+                if (data.success) textarea.value = data.text || '';
             })
-            .catch(error => {
-                console.error('Error loading level text:', error);
-            });
+            .catch(error => console.error('Error loading level text:', error));
         });
     });
     

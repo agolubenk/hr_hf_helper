@@ -23,7 +23,10 @@ import {
   DownloadIcon,
   EyeOpenIcon,
   Cross2Icon,
-  ExternalLinkIcon
+  ExternalLinkIcon,
+  GlobeIcon,
+  ChevronDownIcon,
+  ChevronUpIcon
 } from "@radix-ui/react-icons"
 import { 
   BiLogoWhatsapp,
@@ -73,7 +76,12 @@ const mockCandidates = [
     rating: 4,
     vacancy: 'Frontend Senior',
     applied: 'Jan 15, 2026',
-    source: 'LinkedIn'
+    source: 'LinkedIn',
+    tags: ['React', 'TypeScript', 'Senior'],
+    level: 'Senior',
+    age: 32,
+    gender: 'Мужской',
+    salaryExpectations: '150,000 - 200,000 USD'
   },
   {
     id: '2',
@@ -259,6 +267,150 @@ export default function RecrChatPage() {
   // Состояние редактирования социальных сетей
   const [editingSocial, setEditingSocial] = useState<string | null>(null)
   const [socialValues, setSocialValues] = useState<Record<string, string>>({})
+  
+  // Состояние редактирования локации
+  const [isEditingLocation, setIsEditingLocation] = useState(false)
+  const [locationValue, setLocationValue] = useState(selectedCandidate.location)
+  
+  // Состояние редактирования контактов
+  const [isEditingEmail, setIsEditingEmail] = useState(false)
+  const [emailValue, setEmailValue] = useState(selectedCandidate.email)
+  const [isEditingPhone, setIsEditingPhone] = useState(false)
+  const [phoneValue, setPhoneValue] = useState(selectedCandidate.phone)
+  
+  // Состояние редактирования меток и уровня
+  const [isEditingTags, setIsEditingTags] = useState(false)
+  const [tagsValue, setTagsValue] = useState((selectedCandidate.tags || []).join(', '))
+  const [isEditingLevel, setIsEditingLevel] = useState(false)
+  const [levelValue, setLevelValue] = useState(selectedCandidate.level || '')
+  
+  // Состояние редактирования дополнительных полей
+  const [isEditingAge, setIsEditingAge] = useState(false)
+  const [ageValue, setAgeValue] = useState(selectedCandidate.age?.toString() || '')
+  const [isEditingGender, setIsEditingGender] = useState(false)
+  const [genderValue, setGenderValue] = useState(selectedCandidate.gender || '')
+  const [isEditingSalary, setIsEditingSalary] = useState(false)
+  const [salaryValue, setSalaryValue] = useState(selectedCandidate.salaryExpectations || '')
+  
+  // Состояние редактирования Position
+  const [isEditingPosition, setIsEditingPosition] = useState(false)
+  const [positionValue, setPositionValue] = useState(selectedCandidate.position || '')
+  
+  // Состояние редактирования Source (Applied не редактируется)
+  const [isEditingSource, setIsEditingSource] = useState(false)
+  const [sourceValue, setSourceValue] = useState(selectedCandidate.source || '')
+  
+  // Варианты для поля "Пол"
+  const genderOptions = ['Мужской', 'Женский', 'Не указано']
+  
+  // Состояние статуса и причин отказа
+  const [showOtherFields, setShowOtherFields] = useState(false)
+  
+  // Порядок статусов для перехода
+  const statusOrder = ['New', 'Under Review', 'Interview', 'Offer', 'Accepted', 'Rejected', 'Declined', 'Archived']
+  const rejectionReasons = [
+    'Не подходит по опыту',
+    'Не подходит по навыкам',
+    'Зарплатные ожидания слишком высокие',
+    'Не подходит по локации',
+    'Другая причина'
+  ]
+  
+  const getNextStatus = (currentStatus: string) => {
+    const currentIndex = statusOrder.findIndex(s => s === currentStatus)
+    if (currentIndex >= 0 && currentIndex < statusOrder.length - 1) {
+      return statusOrder[currentIndex + 1]
+    }
+    return currentStatus
+  }
+  
+  const handleStatusChange = (newStatus: string) => {
+    setSelectedCandidate(prev => ({
+      ...prev,
+      status: newStatus,
+      statusColor: getStatusColor(newStatus)
+    }))
+  }
+  
+  const handleNextStatus = () => {
+    const nextStatus = getNextStatus(selectedCandidate.status)
+    if (nextStatus !== selectedCandidate.status) {
+      handleStatusChange(nextStatus)
+    }
+  }
+  
+  const getStatusColor = (status: string) => {
+    const statusColors: Record<string, string> = {
+      'New': '#2180A0',
+      'Under Review': '#3B82F6',
+      'Interview': '#8B5CF6',
+      'Offer': '#22C55E',
+      'Accepted': '#10B981',
+      'Rejected': '#EF4444',
+      'Declined': '#F59E0B',
+      'Archived': '#6B7280'
+    }
+    return statusColors[status] || '#6B7280'
+  }
+  
+  useEffect(() => {
+    setLocationValue(selectedCandidate.location)
+    setEmailValue(selectedCandidate.email)
+    setPhoneValue(selectedCandidate.phone)
+    setTagsValue((selectedCandidate.tags || []).join(', '))
+    setLevelValue(selectedCandidate.level || '')
+    setAgeValue(selectedCandidate.age?.toString() || '')
+    setGenderValue(selectedCandidate.gender || '')
+    setSalaryValue(selectedCandidate.salaryExpectations || '')
+    setPositionValue(selectedCandidate.position || '')
+    setSourceValue(selectedCandidate.source || '')
+  }, [selectedCandidate.location, selectedCandidate.email, selectedCandidate.phone, selectedCandidate.tags, selectedCandidate.level, selectedCandidate.age, selectedCandidate.gender, selectedCandidate.salaryExpectations, selectedCandidate.position, selectedCandidate.source])
+  
+  const handleEmailSave = () => {
+    setSelectedCandidate(prev => ({ ...prev, email: emailValue }))
+    setIsEditingEmail(false)
+  }
+  
+  const handlePhoneSave = () => {
+    setSelectedCandidate(prev => ({ ...prev, phone: phoneValue }))
+    setIsEditingPhone(false)
+  }
+  
+  const handleTagsSave = () => {
+    const tags = tagsValue.split(',').map(t => t.trim()).filter(t => t.length > 0)
+    setSelectedCandidate(prev => ({ ...prev, tags }))
+    setIsEditingTags(false)
+  }
+  
+  const handleLevelSave = () => {
+    setSelectedCandidate(prev => ({ ...prev, level: levelValue }))
+    setIsEditingLevel(false)
+  }
+  
+  const handleAgeSave = () => {
+    setSelectedCandidate(prev => ({ ...prev, age: ageValue ? parseInt(ageValue) : undefined }))
+    setIsEditingAge(false)
+  }
+  
+  const handleGenderSave = () => {
+    setSelectedCandidate(prev => ({ ...prev, gender: genderValue }))
+    setIsEditingGender(false)
+  }
+  
+  const handleSalarySave = () => {
+    setSelectedCandidate(prev => ({ ...prev, salaryExpectations: salaryValue }))
+    setIsEditingSalary(false)
+  }
+  
+  const handlePositionSave = () => {
+    setSelectedCandidate(prev => ({ ...prev, position: positionValue }))
+    setIsEditingPosition(false)
+  }
+  
+  const handleSourceSave = () => {
+    setSelectedCandidate(prev => ({ ...prev, source: sourceValue }))
+    setIsEditingSource(false)
+  }
   
   // Получить все социальные сети (включая те, у которых нет контакта)
   const getAllSocialNetworks = () => {
@@ -564,17 +716,54 @@ export default function RecrChatPage() {
               </Flex>
             </Flex>
 
-            <Flex align="center" gap="2">
-              <Text size="2" weight="medium">Status:</Text>
-              <Badge
-                size="2"
-                style={{
-                  backgroundColor: selectedCandidate.statusColor,
-                  color: 'white'
-                }}
+            <Flex align="center" gap="2" style={{ flexWrap: 'wrap' }}>
+              <Text size="2" weight="medium" style={{ flexShrink: 0 }}>Status:</Text>
+              <Select.Root
+                value={selectedCandidate.status}
+                onValueChange={handleStatusChange}
               >
-                {selectedCandidate.status}
-              </Badge>
+                <Select.Trigger 
+                  style={{ 
+                    backgroundColor: selectedCandidate.statusColor,
+                    color: 'white',
+                    borderColor: selectedCandidate.statusColor,
+                    minWidth: '120px'
+                  }} 
+                />
+                <Select.Content>
+                  {statusOrder.filter(s => s !== 'Все').map((status) => (
+                    <Select.Item key={status} value={status}>
+                      {status}
+                    </Select.Item>
+                  ))}
+                </Select.Content>
+              </Select.Root>
+              {selectedCandidate.status === 'Rejected' && (
+                <Select.Root defaultValue={rejectionReasons[0]}>
+                  <Select.Trigger 
+                    style={{ 
+                      minWidth: '180px'
+                    }} 
+                    placeholder="Причина отказа"
+                  />
+                  <Select.Content>
+                    {rejectionReasons.map((reason) => (
+                      <Select.Item key={reason} value={reason}>
+                        {reason}
+                      </Select.Item>
+                    ))}
+                  </Select.Content>
+                </Select.Root>
+              )}
+              <Button
+                size="2"
+                variant="soft"
+                onClick={handleNextStatus}
+                disabled={getNextStatus(selectedCandidate.status) === selectedCandidate.status}
+                style={{ flexShrink: 0 }}
+              >
+                <Text size="3">→</Text>
+              </Button>
             </Flex>
 
             <Badge size="2" color="blue">
@@ -593,7 +782,7 @@ export default function RecrChatPage() {
               <Tabs.Trigger value="documents">Documents</Tabs.Trigger>
             </Tabs.List>
 
-            <Box mt="4" style={{ maxHeight: '500px', overflowY: 'auto' }}>
+            <Box mt="4" style={{ overflowY: 'auto', flex: 1, minHeight: 0 }}>
               <Tabs.Content value="info">
                 <Flex direction="column" gap="4">
                   <Box>
@@ -603,76 +792,247 @@ export default function RecrChatPage() {
                     
                     {/* Email */}
                     <Box mb="3">
-                      <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
-                        <EnvelopeClosedIcon width={16} height={16} style={{ flexShrink: 0 }} />
-                        <Text size="2" weight="medium" style={{ flexShrink: 0 }}>Email:</Text>
-                        <Text size="2" style={{ flex: 1, minWidth: 0 }}>{selectedCandidate.email}</Text>
-                        <Button 
-                          size="1" 
-                          variant="soft"
-                          onClick={() => {
-                            navigator.clipboard.writeText(selectedCandidate.email)
-                          }}
-                          style={{ flexShrink: 0 }}
-                        >
-                          Copy
-                        </Button>
-                        <Button 
-                          size="1" 
-                          variant="soft"
-                          asChild
-                          style={{ flexShrink: 0 }}
-                        >
-                          <a href={`mailto:${selectedCandidate.email}`} style={{ textDecoration: 'none' }}>
-                            <EnvelopeClosedIcon width={14} height={14} />
-                          </a>
-                        </Button>
-                      </Flex>
+                      {isEditingEmail ? (
+                        <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                          <EnvelopeClosedIcon width={16} height={16} style={{ flexShrink: 0 }} />
+                          <Text size="2" weight="medium" style={{ flexShrink: 0 }}>Email:</Text>
+                          <TextField.Root
+                            value={emailValue}
+                            onChange={(e) => setEmailValue(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                handleEmailSave()
+                              } else if (e.key === 'Escape') {
+                                setEmailValue(selectedCandidate.email)
+                                setIsEditingEmail(false)
+                              }
+                            }}
+                            style={{ flex: 1, minWidth: 0 }}
+                            size="1"
+                            autoFocus
+                          />
+                          <Button 
+                            size="1" 
+                            variant="soft"
+                            onClick={handleEmailSave}
+                            style={{ flexShrink: 0 }}
+                          >
+                            <CheckCircledIcon width={14} height={14} />
+                          </Button>
+                          <Button 
+                            size="1" 
+                            variant="soft"
+                            onClick={() => {
+                              setEmailValue(selectedCandidate.email)
+                              setIsEditingEmail(false)
+                            }}
+                            style={{ flexShrink: 0 }}
+                          >
+                            <Cross2Icon width={14} height={14} />
+                          </Button>
+                        </Flex>
+                      ) : (
+                        <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                          <EnvelopeClosedIcon width={16} height={16} style={{ flexShrink: 0 }} />
+                          <Text size="2" weight="medium" style={{ flexShrink: 0 }}>Email:</Text>
+                          <Text size="2">{selectedCandidate.email}</Text>
+                          <Button 
+                            size="1" 
+                            variant="soft"
+                            onClick={() => {
+                              navigator.clipboard.writeText(selectedCandidate.email)
+                            }}
+                            style={{ flexShrink: 0 }}
+                          >
+                            Copy
+                          </Button>
+                          <Button 
+                            size="1" 
+                            variant="soft"
+                            onClick={() => setIsEditingEmail(true)}
+                            style={{ flexShrink: 0 }}
+                          >
+                            <Pencil1Icon width={14} height={14} />
+                          </Button>
+                          <Button 
+                            size="1" 
+                            variant="soft"
+                            asChild
+                            style={{ flexShrink: 0 }}
+                          >
+                            <a href={`mailto:${selectedCandidate.email}`} style={{ textDecoration: 'none' }}>
+                              <EnvelopeClosedIcon width={14} height={14} />
+                            </a>
+                          </Button>
+                        </Flex>
+                      )}
                     </Box>
                     
                     {/* Phone */}
                     <Box mb="3">
-                      <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
-                        <Text size="2" weight="medium" style={{ flexShrink: 0 }}>📞 Телефон:</Text>
-                        <Text size="2" style={{ flex: 1, minWidth: 0 }}>{selectedCandidate.phone}</Text>
-                        <Button 
-                          size="1" 
-                          variant="soft"
-                          onClick={() => {
-                            navigator.clipboard.writeText(selectedCandidate.phone)
-                          }}
-                          style={{ flexShrink: 0 }}
-                        >
-                          Copy
-                        </Button>
-                        <Button 
-                          size="1" 
-                          variant="soft"
-                          asChild
-                          style={{ flexShrink: 0 }}
-                        >
-                          <a href={`tel:${selectedCandidate.phone.replace(/[^\d+]/g, '')}`} style={{ textDecoration: 'none' }}>
-                            Call
-                          </a>
-                        </Button>
-                      </Flex>
+                      {isEditingPhone ? (
+                        <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                          <Text size="2" weight="medium" style={{ flexShrink: 0 }}>📞 Телефон:</Text>
+                          <TextField.Root
+                            value={phoneValue}
+                            onChange={(e) => setPhoneValue(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                handlePhoneSave()
+                              } else if (e.key === 'Escape') {
+                                setPhoneValue(selectedCandidate.phone)
+                                setIsEditingPhone(false)
+                              }
+                            }}
+                            style={{ flex: 1, minWidth: 0 }}
+                            size="1"
+                            autoFocus
+                          />
+                          <Button 
+                            size="1" 
+                            variant="soft"
+                            onClick={handlePhoneSave}
+                            style={{ flexShrink: 0 }}
+                          >
+                            <CheckCircledIcon width={14} height={14} />
+                          </Button>
+                          <Button 
+                            size="1" 
+                            variant="soft"
+                            onClick={() => {
+                              setPhoneValue(selectedCandidate.phone)
+                              setIsEditingPhone(false)
+                            }}
+                            style={{ flexShrink: 0 }}
+                          >
+                            <Cross2Icon width={14} height={14} />
+                          </Button>
+                        </Flex>
+                      ) : (
+                        <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                          <Text size="2" weight="medium" style={{ flexShrink: 0 }}>📞 Телефон:</Text>
+                          <Text size="2">{selectedCandidate.phone}</Text>
+                          <Button 
+                            size="1" 
+                            variant="soft"
+                            onClick={() => {
+                              navigator.clipboard.writeText(selectedCandidate.phone)
+                            }}
+                            style={{ flexShrink: 0 }}
+                          >
+                            Copy
+                          </Button>
+                          <Button 
+                            size="1" 
+                            variant="soft"
+                            onClick={() => setIsEditingPhone(true)}
+                            style={{ flexShrink: 0 }}
+                          >
+                            <Pencil1Icon width={14} height={14} />
+                          </Button>
+                          <Button 
+                            size="1" 
+                            variant="soft"
+                            asChild
+                            style={{ flexShrink: 0 }}
+                          >
+                            <a href={`tel:${selectedCandidate.phone.replace(/[^\d+]/g, '')}`} style={{ textDecoration: 'none' }}>
+                              Call
+                            </a>
+                          </Button>
+                        </Flex>
+                      )}
                     </Box>
                     
                     {/* Location */}
                     <Box mb="4">
-                      <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
-                        <Text size="2" weight="medium" style={{ flexShrink: 0 }}>📍 Локация:</Text>
-                        <Text size="2" style={{ flex: 1, minWidth: 0 }}>{selectedCandidate.location}</Text>
-                      </Flex>
+                      {isEditingLocation ? (
+                        <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                          <Text size="2" weight="medium" style={{ flexShrink: 0 }}>📍 Локация:</Text>
+                          <TextField.Root
+                            value={locationValue}
+                            onChange={(e) => setLocationValue(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                setSelectedCandidate(prev => ({ ...prev, location: locationValue }))
+                                setIsEditingLocation(false)
+                              } else if (e.key === 'Escape') {
+                                setLocationValue(selectedCandidate.location)
+                                setIsEditingLocation(false)
+                              }
+                            }}
+                            style={{ flex: 1, minWidth: 0 }}
+                            size="1"
+                            autoFocus
+                          />
+                          <Button 
+                            size="1" 
+                            variant="soft"
+                            onClick={() => {
+                              setSelectedCandidate(prev => ({ ...prev, location: locationValue }))
+                              setIsEditingLocation(false)
+                            }}
+                            style={{ flexShrink: 0 }}
+                          >
+                            <CheckCircledIcon width={14} height={14} />
+                          </Button>
+                          <Button 
+                            size="1" 
+                            variant="soft"
+                            onClick={() => {
+                              setLocationValue(selectedCandidate.location)
+                              setIsEditingLocation(false)
+                            }}
+                            style={{ flexShrink: 0 }}
+                          >
+                            <Cross2Icon width={14} height={14} />
+                          </Button>
+                        </Flex>
+                      ) : (
+                        <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                          <Text size="2" weight="medium" style={{ flexShrink: 0 }}>📍 Локация:</Text>
+                          <Text size="2">{selectedCandidate.location}</Text>
+                          <Button 
+                            size="1" 
+                            variant="soft"
+                            onClick={() => {
+                              navigator.clipboard.writeText(selectedCandidate.location)
+                            }}
+                            style={{ flexShrink: 0 }}
+                          >
+                            Copy
+                          </Button>
+                          <Button 
+                            size="1" 
+                            variant="soft"
+                            onClick={() => setIsEditingLocation(true)}
+                            style={{ flexShrink: 0 }}
+                          >
+                            <Pencil1Icon width={14} height={14} />
+                          </Button>
+                          <Button 
+                            size="1" 
+                            variant="soft"
+                            asChild
+                            style={{ flexShrink: 0 }}
+                          >
+                            <a 
+                              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedCandidate.location)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ textDecoration: 'none' }}
+                            >
+                              <GlobeIcon width={14} height={14} />
+                            </a>
+                          </Button>
+                        </Flex>
+                      )}
                     </Box>
                     
                     <Separator size="4" mb="3" />
                     
                     {/* Социальные сети и мессенджеры */}
                     <Box>
-                      <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>
-                        Социальные сети и мессенджеры
-                      </Text>
                       <Flex gap="2" wrap="wrap" style={{ alignItems: 'flex-start' }}>
                         {getAllSocialNetworks().map((social) => {
                           const isEditing = editingSocial === social.platform
@@ -840,27 +1200,444 @@ export default function RecrChatPage() {
                             <Text size="2" weight="medium">Position:</Text>
                           </Table.Cell>
                           <Table.Cell>
-                            <Text size="2">{selectedCandidate.position}</Text>
+                            {isEditingPosition ? (
+                              <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                                <TextField.Root
+                                  value={positionValue}
+                                  onChange={(e) => setPositionValue(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      handlePositionSave()
+                                    } else if (e.key === 'Escape') {
+                                      setPositionValue(selectedCandidate.position || '')
+                                      setIsEditingPosition(false)
+                                    }
+                                  }}
+                                  style={{ flex: 1, minWidth: 0 }}
+                                  size="1"
+                                  autoFocus
+                                />
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={handlePositionSave}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <CheckCircledIcon width={14} height={14} />
+                                </Button>
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={() => {
+                                    setPositionValue(selectedCandidate.position || '')
+                                    setIsEditingPosition(false)
+                                  }}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <Cross2Icon width={14} height={14} />
+                                </Button>
+                              </Flex>
+                            ) : (
+                              <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                                <Text size="2">{selectedCandidate.position}</Text>
+                                <Button 
+                                  size="1" 
+                                  variant="ghost"
+                                  onClick={() => setIsEditingPosition(true)}
+                                  style={{ flexShrink: 0, marginLeft: '4px' }}
+                                >
+                                  <Pencil1Icon width={12} height={12} />
+                                </Button>
+                              </Flex>
+                            )}
                           </Table.Cell>
                         </Table.Row>
                         <Table.Row>
                           <Table.Cell>
-                            <Text size="2" weight="medium">Applied:</Text>
+                            <Text size="2" weight="medium">Applied / Source:</Text>
                           </Table.Cell>
                           <Table.Cell>
-                            <Text size="2">{selectedCandidate.applied}</Text>
+                            {isEditingSource ? (
+                              <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                                <Text size="1" weight="medium" style={{ flexShrink: 0 }}>Applied:</Text>
+                                <Text size="2">{selectedCandidate.applied}</Text>
+                                <Text size="2" color="gray" style={{ flexShrink: 0, margin: '0 8px' }}>|</Text>
+                                <Text size="1" weight="medium" style={{ flexShrink: 0 }}>Source:</Text>
+                                <TextField.Root
+                                  value={sourceValue}
+                                  onChange={(e) => setSourceValue(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      handleSourceSave()
+                                    } else if (e.key === 'Escape') {
+                                      setSourceValue(selectedCandidate.source || '')
+                                      setIsEditingSource(false)
+                                    }
+                                  }}
+                                  style={{ width: '120px' }}
+                                  size="1"
+                                  autoFocus
+                                />
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={handleSourceSave}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <CheckCircledIcon width={14} height={14} />
+                                </Button>
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={() => {
+                                    setSourceValue(selectedCandidate.source || '')
+                                    setIsEditingSource(false)
+                                  }}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <Cross2Icon width={14} height={14} />
+                                </Button>
+                              </Flex>
+                            ) : (
+                              <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                                <Text size="1" weight="medium" style={{ flexShrink: 0 }}>Applied:</Text>
+                                <Text size="2">{selectedCandidate.applied}</Text>
+                                <Text size="2" color="gray" style={{ flexShrink: 0, margin: '0 8px' }}>|</Text>
+                                <Text size="1" weight="medium" style={{ flexShrink: 0 }}>Source:</Text>
+                                <Text size="2">{selectedCandidate.source}</Text>
+                                <Button 
+                                  size="1" 
+                                  variant="ghost"
+                                  onClick={() => setIsEditingSource(true)}
+                                  style={{ flexShrink: 0, marginLeft: '4px' }}
+                                >
+                                  <Pencil1Icon width={12} height={12} />
+                                </Button>
+                              </Flex>
+                            )}
                           </Table.Cell>
                         </Table.Row>
                         <Table.Row>
                           <Table.Cell>
-                            <Text size="2" weight="medium">Source:</Text>
+                            <Text size="2" weight="medium">Метки (теги):</Text>
                           </Table.Cell>
                           <Table.Cell>
-                            <Text size="2">{selectedCandidate.source}</Text>
+                            {isEditingTags ? (
+                              <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                                <TextField.Root
+                                  value={tagsValue}
+                                  onChange={(e) => setTagsValue(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      handleTagsSave()
+                                    } else if (e.key === 'Escape') {
+                                      setTagsValue((selectedCandidate.tags || []).join(', '))
+                                      setIsEditingTags(false)
+                                    }
+                                  }}
+                                  placeholder="Введите теги через запятую"
+                                  style={{ flex: 1, minWidth: 0 }}
+                                  size="1"
+                                  autoFocus
+                                />
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={handleTagsSave}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <CheckCircledIcon width={14} height={14} />
+                                </Button>
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={() => {
+                                    setTagsValue((selectedCandidate.tags || []).join(', '))
+                                    setIsEditingTags(false)
+                                  }}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <Cross2Icon width={14} height={14} />
+                                </Button>
+                              </Flex>
+                            ) : (
+                              <Flex align="center" gap="2" wrap="wrap">
+                                {(selectedCandidate.tags || []).map((tag, index) => (
+                                  <Badge key={index} size="1" color="blue">
+                                    {tag}
+                                  </Badge>
+                                ))}
+                                {(!selectedCandidate.tags || selectedCandidate.tags.length === 0) && (
+                                  <Text size="2" color="gray">Не указано</Text>
+                                )}
+                                <Button 
+                                  size="1" 
+                                  variant="ghost"
+                                  onClick={() => setIsEditingTags(true)}
+                                  style={{ flexShrink: 0, marginLeft: '4px' }}
+                                >
+                                  <Pencil1Icon width={12} height={12} />
+                                </Button>
+                              </Flex>
+                            )}
+                          </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                          <Table.Cell>
+                            <Text size="2" weight="medium">Уровень:</Text>
+                          </Table.Cell>
+                          <Table.Cell>
+                            {isEditingLevel ? (
+                              <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                                <TextField.Root
+                                  value={levelValue}
+                                  onChange={(e) => setLevelValue(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      handleLevelSave()
+                                    } else if (e.key === 'Escape') {
+                                      setLevelValue(selectedCandidate.level || '')
+                                      setIsEditingLevel(false)
+                                    }
+                                  }}
+                                  placeholder="Введите уровень"
+                                  style={{ flex: 1, minWidth: 0 }}
+                                  size="1"
+                                  autoFocus
+                                />
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={handleLevelSave}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <CheckCircledIcon width={14} height={14} />
+                                </Button>
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={() => {
+                                    setLevelValue(selectedCandidate.level || '')
+                                    setIsEditingLevel(false)
+                                  }}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <Cross2Icon width={14} height={14} />
+                                </Button>
+                              </Flex>
+                            ) : (
+                              <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                                <Text size="2">{selectedCandidate.level || 'Не указано'}</Text>
+                                <Button 
+                                  size="1" 
+                                  variant="ghost"
+                                  onClick={() => setIsEditingLevel(true)}
+                                  style={{ flexShrink: 0, marginLeft: '4px' }}
+                                >
+                                  <Pencil1Icon width={12} height={12} />
+                                </Button>
+                              </Flex>
+                            )}
                           </Table.Cell>
                         </Table.Row>
                       </Table.Body>
                     </Table.Root>
+                    
+                    {/* Прочие поля (коллапсом) */}
+                    <Box mt="3">
+                      <Button
+                        variant="ghost"
+                        size="2"
+                        onClick={() => setShowOtherFields(!showOtherFields)}
+                        style={{ width: '100%', justifyContent: 'space-between' }}
+                      >
+                        <Text size="2" weight="medium">Прочие поля</Text>
+                        {showOtherFields ? (
+                          <ChevronUpIcon width={16} height={16} />
+                        ) : (
+                          <ChevronDownIcon width={16} height={16} />
+                        )}
+                      </Button>
+                      {showOtherFields && (
+                        <Box mt="2">
+                          <Table.Root>
+                            <Table.Body>
+                              <Table.Row>
+                                <Table.Cell>
+                                  <Text size="2" weight="medium">Возраст:</Text>
+                                </Table.Cell>
+                                <Table.Cell>
+                                  {isEditingAge ? (
+                                    <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                                      <TextField.Root
+                                        value={ageValue}
+                                        onChange={(e) => setAgeValue(e.target.value)}
+                                        onKeyDown={(e) => {
+                                          if (e.key === 'Enter') {
+                                            handleAgeSave()
+                                          } else if (e.key === 'Escape') {
+                                            setAgeValue(selectedCandidate.age?.toString() || '')
+                                            setIsEditingAge(false)
+                                          }
+                                        }}
+                                        placeholder="Введите возраст"
+                                        style={{ flex: 1, minWidth: 0 }}
+                                        size="1"
+                                        autoFocus
+                                      />
+                                      <Button 
+                                        size="1" 
+                                        variant="soft"
+                                        onClick={handleAgeSave}
+                                        style={{ flexShrink: 0 }}
+                                      >
+                                        <CheckCircledIcon width={14} height={14} />
+                                      </Button>
+                                      <Button 
+                                        size="1" 
+                                        variant="soft"
+                                        onClick={() => {
+                                          setAgeValue(selectedCandidate.age?.toString() || '')
+                                          setIsEditingAge(false)
+                                        }}
+                                        style={{ flexShrink: 0 }}
+                                      >
+                                        <Cross2Icon width={14} height={14} />
+                                      </Button>
+                                    </Flex>
+                                  ) : (
+                                    <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                                      <Text size="2">{selectedCandidate.age ? `${selectedCandidate.age} лет` : 'Не указано'}</Text>
+                                      <Button 
+                                        size="1" 
+                                        variant="ghost"
+                                        onClick={() => setIsEditingAge(true)}
+                                        style={{ flexShrink: 0, marginLeft: '4px' }}
+                                      >
+                                        <Pencil1Icon width={12} height={12} />
+                                      </Button>
+                                    </Flex>
+                                  )}
+                                </Table.Cell>
+                              </Table.Row>
+                              <Table.Row>
+                                <Table.Cell>
+                                  <Text size="2" weight="medium">Пол:</Text>
+                                </Table.Cell>
+                                <Table.Cell>
+                                  {isEditingGender ? (
+                                    <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                                      <Select.Root
+                                        value={genderValue || 'Не указано'}
+                                        onValueChange={setGenderValue}
+                                      >
+                                        <Select.Trigger style={{ flex: 1, minWidth: 0 }} />
+                                        <Select.Content>
+                                          {genderOptions.map((option) => (
+                                            <Select.Item key={option} value={option}>
+                                              {option}
+                                            </Select.Item>
+                                          ))}
+                                        </Select.Content>
+                                      </Select.Root>
+                                      <Button 
+                                        size="1" 
+                                        variant="soft"
+                                        onClick={handleGenderSave}
+                                        style={{ flexShrink: 0 }}
+                                      >
+                                        <CheckCircledIcon width={14} height={14} />
+                                      </Button>
+                                      <Button 
+                                        size="1" 
+                                        variant="soft"
+                                        onClick={() => {
+                                          setGenderValue(selectedCandidate.gender || '')
+                                          setIsEditingGender(false)
+                                        }}
+                                        style={{ flexShrink: 0 }}
+                                      >
+                                        <Cross2Icon width={14} height={14} />
+                                      </Button>
+                                    </Flex>
+                                  ) : (
+                                    <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                                      <Text size="2">{selectedCandidate.gender || 'Не указано'}</Text>
+                                      <Button 
+                                        size="1" 
+                                        variant="ghost"
+                                        onClick={() => setIsEditingGender(true)}
+                                        style={{ flexShrink: 0, marginLeft: '4px' }}
+                                      >
+                                        <Pencil1Icon width={12} height={12} />
+                                      </Button>
+                                    </Flex>
+                                  )}
+                                </Table.Cell>
+                              </Table.Row>
+                              <Table.Row>
+                                <Table.Cell>
+                                  <Text size="2" weight="medium">Зарплатные ожидания:</Text>
+                                </Table.Cell>
+                                <Table.Cell>
+                                  {isEditingSalary ? (
+                                    <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                                      <TextField.Root
+                                        value={salaryValue}
+                                        onChange={(e) => setSalaryValue(e.target.value)}
+                                        onKeyDown={(e) => {
+                                          if (e.key === 'Enter') {
+                                            handleSalarySave()
+                                          } else if (e.key === 'Escape') {
+                                            setSalaryValue(selectedCandidate.salaryExpectations || '')
+                                            setIsEditingSalary(false)
+                                          }
+                                        }}
+                                        placeholder="Введите зарплатные ожидания"
+                                        style={{ flex: 1, minWidth: 0 }}
+                                        size="1"
+                                        autoFocus
+                                      />
+                                      <Button 
+                                        size="1" 
+                                        variant="soft"
+                                        onClick={handleSalarySave}
+                                        style={{ flexShrink: 0 }}
+                                      >
+                                        <CheckCircledIcon width={14} height={14} />
+                                      </Button>
+                                      <Button 
+                                        size="1" 
+                                        variant="soft"
+                                        onClick={() => {
+                                          setSalaryValue(selectedCandidate.salaryExpectations || '')
+                                          setIsEditingSalary(false)
+                                        }}
+                                        style={{ flexShrink: 0 }}
+                                      >
+                                        <Cross2Icon width={14} height={14} />
+                                      </Button>
+                                    </Flex>
+                                  ) : (
+                                    <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                                      <Text size="2">{selectedCandidate.salaryExpectations || 'Не указано'}</Text>
+                                      <Button 
+                                        size="1" 
+                                        variant="ghost"
+                                        onClick={() => setIsEditingSalary(true)}
+                                        style={{ flexShrink: 0, marginLeft: '4px' }}
+                                      >
+                                        <Pencil1Icon width={12} height={12} />
+                                      </Button>
+                                    </Flex>
+                                  )}
+                                </Table.Cell>
+                              </Table.Row>
+                            </Table.Body>
+                          </Table.Root>
+                        </Box>
+                      )}
+                    </Box>
                   </Box>
                 </Flex>
               </Tabs.Content>
@@ -886,6 +1663,17 @@ export default function RecrChatPage() {
                 <Flex direction="column" gap="4">
                   <Box>
                     <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>
+                      Add Note
+                    </Text>
+                    <TextField.Root placeholder="Add note..." />
+                    <Flex gap="2" mt="2">
+                      <Button size="2">Save</Button>
+                      <Button size="2" variant="soft">Cancel</Button>
+                    </Flex>
+                  </Box>
+
+                  <Box>
+                    <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>
                       Notes & Comments
                     </Text>
                     <Card>
@@ -906,17 +1694,6 @@ export default function RecrChatPage() {
                         </Button>
                       </Flex>
                     </Card>
-                  </Box>
-
-                  <Box>
-                    <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>
-                      Add Note
-                    </Text>
-                    <TextField.Root placeholder="Add note..." />
-                    <Flex gap="2" mt="2">
-                      <Button size="2">Save</Button>
-                      <Button size="2" variant="soft">Cancel</Button>
-                    </Flex>
                   </Box>
                 </Flex>
               </Tabs.Content>

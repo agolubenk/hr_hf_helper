@@ -143,6 +143,29 @@
   background-color: var(--color-surface);
   border: 1px solid var(--gray-a6);
   border-radius: 8px;
+  min-height: 993px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Выравнивание колонок в таблицах Application Details */
+.candidateCard :global(.rt-TableRoot) {
+  width: 100%;
+}
+
+.candidateCard :global(.rt-TableRoot table) {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.candidateCard :global(.rt-TableRoot table) :global(tbody tr td:first-child) {
+  width: 35%;
+  min-width: 140px;
+  max-width: 200px;
+}
+
+.candidateCard :global(.rt-TableRoot table) :global(tbody tr td:last-child) {
+  width: 65%;
 }
 
 .subTabs {
