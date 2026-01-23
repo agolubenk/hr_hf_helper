@@ -22,7 +22,8 @@ import {
   StarIcon,
   ReloadIcon,
   MixerHorizontalIcon,
-  ChatBubbleIcon
+  ChatBubbleIcon,
+  Cross2Icon
 } from "@radix-ui/react-icons"
 import { useState, ReactNode, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
@@ -551,36 +552,9 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           href: '/company-settings/grades',
         },
         {
-          id: 'company-settings-sla',
-          label: 'SLA',
-          icon: <ClockIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-          href: '/company-settings/sla',
-        },
-        {
           id: 'company-settings-benchmark',
           label: 'Бенчмарк',
           icon: <BarChartIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-        },
-        {
-          id: 'company-settings-scorecard',
-          label: 'Scorecard',
-          icon: <Box style={{ width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Box style={{ width: '2px', height: '12px', backgroundColor: 'var(--gray-12)', marginRight: '2px' }} />
-            <Box style={{ width: '2px', height: '12px', backgroundColor: 'var(--gray-12)' }} />
-          </Box>,
-          href: '/company-settings/scorecard',
-        },
-        {
-          id: 'company-settings-vacancy-prompt',
-          label: 'Единый промпт для вакансий',
-          icon: <FileTextIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-          href: '/company-settings/vacancy-prompt',
-        },
-        {
-          id: 'candidate-responses',
-          label: 'Ответы кандидатам',
-          icon: <ChatBubbleIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-          href: '/candidate-responses',
         },
         {
           id: 'company-settings-integrations',
@@ -603,9 +577,54 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           icon: <GearIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
         },
         {
-          id: 'company-settings-responses',
-          label: 'Ответы кандидатам',
-          icon: <FileTextIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+          id: 'recruiting-settings',
+          label: 'Настройки рекрутинга',
+          icon: <ChatBubbleIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+          href: '/company-settings/recruiting',
+          children: [
+            {
+              id: 'recruiting-settings-stages',
+              label: 'Этапы найма и причины отказа',
+              icon: <Box style={{ width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Box style={{ width: '2px', height: '12px', backgroundColor: 'var(--gray-12)', marginRight: '2px' }} />
+                <Box style={{ width: '2px', height: '12px', backgroundColor: 'var(--gray-12)' }} />
+              </Box>,
+              href: '/company-settings/recruiting/stages',
+            },
+            {
+              id: 'recruiting-settings-candidate-fields',
+              label: 'Дополнительные поля кандидатов',
+              icon: <FileTextIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+              href: '/company-settings/candidate-fields',
+            },
+            {
+              id: 'recruiting-settings-scorecard',
+              label: 'Scorecard',
+              icon: <Box style={{ width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Box style={{ width: '2px', height: '12px', backgroundColor: 'var(--gray-12)', marginRight: '2px' }} />
+                <Box style={{ width: '2px', height: '12px', backgroundColor: 'var(--gray-12)' }} />
+              </Box>,
+              href: '/company-settings/scorecard',
+            },
+            {
+              id: 'recruiting-settings-sla',
+              label: 'SLA',
+              icon: <ClockIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+              href: '/company-settings/sla',
+            },
+            {
+              id: 'recruiting-settings-vacancy-prompt',
+              label: 'Единый промпт для вакансий',
+              icon: <FileTextIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+              href: '/company-settings/vacancy-prompt',
+            },
+            {
+              id: 'recruiting-settings-candidate-responses',
+              label: 'Ответы кандидатам',
+              icon: <ChatBubbleIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+              href: '/candidate-responses',
+            },
+          ],
         },
       ],
     },

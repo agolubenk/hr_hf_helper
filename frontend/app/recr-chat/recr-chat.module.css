@@ -4,6 +4,8 @@
   gap: 16px;
   padding: 16px;
   background-color: var(--gray-2);
+  margin-left: 16px;
+  margin-right: 16px;
 }
 
 /* Левая колонка */
@@ -289,6 +291,155 @@
   .modalOverlay {
     display: none;
   }
+}
+
+/* Кнопки workflow */
+.workflowButtonsContainer {
+  padding: 0;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  backdrop-filter: none !important;
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 32px);
+  max-width: 100%;
+  margin-left: 16px;
+  margin-right: 16px;
+  box-sizing: border-box;
+}
+
+.workflowButtonsContainer > :global(.rt-Flex) {
+  margin-left: 0;
+  margin-right: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.quickButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+}
+
+.quickButton:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.flagBadge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  font-size: 20px;
+  line-height: 1;
+  overflow: visible;
+}
+
+.workflowButton {
+  position: relative;
+  padding: 0 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: #1e40af;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 108px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.workflowButton[data-selected="true"] {
+  background-color: #10b981;
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  height: 46px;
+  box-sizing: border-box;
+}
+
+.workflowButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.workflowIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.selectedBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #10b981;
+  border: 2px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.interviewOptionsPanel {
+  background: color-mix(in srgb, var(--gray-2) 50%, transparent);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-top: 4px;
+  margin-right: 16px;
+  border: 1px solid var(--gray-6);
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(10px);
+}
+
+.formatButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: var(--gray-3);
+  border: 1px solid var(--gray-6);
+}
+
+.formatButton[data-selected="true"] {
+  background-color: var(--accent-9);
+  border-color: var(--accent-9);
+  color: #ffffff;
+}
+
+.formatButton:hover {
+  background-color: var(--gray-4);
+}
+
+.formatButton[data-selected="true"]:hover {
+  background-color: var(--accent-10);
 }
 
 @media (max-width: 799px) {

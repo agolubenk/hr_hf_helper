@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react'
 import AppLayout from "@/components/AppLayout"
 import WorkflowChat from "@/components/workflow/WorkflowChat"
-import { Box, Flex, Text, TextField, Button, Tabs, Badge, Avatar, Separator, Card, Table, Select } from "@radix-ui/themes"
+import SlotsPanel from "@/components/workflow/SlotsPanel"
+import { Box, Flex, Text, TextField, Button, Tabs, Badge, Avatar, Separator, Card, Table, Select, Dialog, Checkbox } from "@radix-ui/themes"
 import { 
   MagnifyingGlassIcon, 
   PersonIcon, 
@@ -26,7 +27,14 @@ import {
   ExternalLinkIcon,
   GlobeIcon,
   ChevronDownIcon,
-  ChevronUpIcon
+  ChevronUpIcon,
+  Link2Icon,
+  CheckIcon,
+  ClipboardIcon,
+  VideoIcon,
+  BoxIcon,
+  ReloadIcon,
+  OpenInNewWindowIcon
 } from "@radix-ui/react-icons"
 import { 
   BiLogoWhatsapp,
@@ -253,6 +261,14 @@ const getPlatformInfo = (platform: string): { name: string; color: string; icon:
   return platforms[platform] || { name: platform, color: '#6B7280', icon: <ExternalLinkIcon width={iconSize} height={iconSize} /> }
 }
 
+type WorkflowType = 'screening' | 'interview'
+type InterviewFormat = 'online' | 'office'
+
+interface Interviewer {
+  id: string
+  name: string
+}
+
 export default function RecrChatPage() {
   const [leftTab, setLeftTab] = useState<'candidates' | 'chat' | 'vacancy-settings'>('candidates')
   const [rightTab, setRightTab] = useState<'info' | 'history' | 'activity' | 'documents'>('info')
@@ -260,6 +276,27 @@ export default function RecrChatPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isRightColumnOpen, setIsRightColumnOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  
+  // Состояние для кнопок workflow
+  const [selectedWorkflow, setSelectedWorkflow] = useState<WorkflowType>('screening')
+  const [interviewFormat, setInterviewFormat] = useState<InterviewFormat>('online')
+  const [selectedInterviewers, setSelectedInterviewers] = useState<string[]>([])
+  const [slotsOpen, setSlotsOpen] = useState(false)
+  
+  // Моковые данные интервьюеров
+  const interviewers: Interviewer[] = [
+    { id: '1', name: 'Иван Петров' },
+    { id: '2', name: 'Мария Сидорова' },
+    { id: '3', name: 'Алексей Иванов' },
+  ]
+  
+  const handleInterviewerToggle = (interviewerId: string) => {
+    setSelectedInterviewers(prev =>
+      prev.includes(interviewerId)
+        ? prev.filter(id => id !== interviewerId)
+        : [...prev, interviewerId]
+    )
+  }
   
   // Настройки вакансии
   const [selectedSettingTab, setSelectedSettingTab] = useState<'text' | 'recruiters' | 'customers' | 'questions' | 'integrations' | 'statuses' | 'salary'>('text')
@@ -511,6 +548,162 @@ export default function RecrChatPage() {
 
   return (
     <AppLayout pageTitle="RECR&CHAT" onLogout={handleLogout}>
+      {/* Кнопки workflow сразу после StatusBar */}
+      <Box className={styles.workflowButtonsContainer} mb="3">
+        <Flex gap="3" align="center" justify="between" wrap="wrap">
+          {/* Быстрые кнопки слева */}
+          <Flex gap="2" align="center" style={{ flexShrink: 0 }}>
+            <Box className={styles.quickButton} style={{ backgroundColor: '#ef4444', position: 'relative' }}>
+              <Link2Icon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
+              <Box className={styles.flagBadge} title="Беларусь">
+                <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇧🇾</Text>
+              </Box>
+            </Box>
+            <Box className={styles.quickButton} style={{ backgroundColor: '#f97316', position: 'relative' }}>
+              <Text size="4" weight="bold" style={{ color: '#ffffff' }}>?</Text>
+              <Box className={styles.flagBadge} title="Беларусь">
+                <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇧🇾</Text>
+              </Box>
+            </Box>
+            <Box className={styles.quickButton} style={{ backgroundColor: '#eab308', position: 'relative' }}>
+              <Link2Icon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
+              <Box className={styles.flagBadge} title="Польша">
+                <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇵🇱</Text>
+              </Box>
+            </Box>
+            <Box className={styles.quickButton} style={{ backgroundColor: '#3b82f6', position: 'relative' }}>
+              <Text size="4" weight="bold" style={{ color: '#ffffff' }}>?</Text>
+              <Box className={styles.flagBadge} title="Польша">
+                <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇵🇱</Text>
+              </Box>
+            </Box>
+            <Box className={styles.quickButton} style={{ backgroundColor: '#06b6d4' }}>
+              <CalendarIcon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
+            </Box>
+            <Box className={styles.quickButton} style={{ backgroundColor: '#6b7280' }}>
+              <Text size="3" weight="bold" style={{ color: '#ffffff' }}>📄</Text>
+            </Box>
+            <Box className={styles.quickButton} style={{ backgroundColor: '#10b981' }}>
+              <Text size="5" weight="bold" style={{ color: '#ffffff' }}>+</Text>
+            </Box>
+          </Flex>
+
+          {/* Тогглеры и кнопка справа */}
+          <Flex gap="3" align="center" style={{ flexShrink: 0 }}>
+            {/* Тогглер этапов процесса */}
+            <Flex gap="3" align="center">
+              <Box
+                className={styles.workflowButton}
+                data-selected={selectedWorkflow === 'screening'}
+                onClick={() => setSelectedWorkflow('screening')}
+              >
+                <Flex align="center" gap="2">
+                  <Box className={styles.workflowIcon}>
+                    <ClipboardIcon width={18} height={18} />
+                  </Box>
+                  <Box>
+                    <Text size="2" weight="bold" style={{ display: 'block', color: '#ffffff' }}>
+                      Скрининг
+                    </Text>
+                    <Text size="1" style={{ opacity: 0.9, color: '#ffffff' }}>
+                      30 мин
+                    </Text>
+                  </Box>
+                </Flex>
+                {selectedWorkflow === 'screening' && (
+                  <Box className={styles.selectedBadge}>
+                    <CheckIcon width={12} height={12} style={{ color: '#ffffff' }} />
+                  </Box>
+                )}
+              </Box>
+              
+              <Box
+                className={styles.workflowButton}
+                data-selected={selectedWorkflow === 'interview'}
+                onClick={() => setSelectedWorkflow('interview')}
+              >
+                <Flex align="center" gap="2">
+                  <Box className={styles.workflowIcon}>
+                    <PersonIcon width={18} height={18} />
+                  </Box>
+                  <Box>
+                    <Text size="2" weight="bold" style={{ display: 'block', color: '#ffffff' }}>
+                      Интервью
+                    </Text>
+                    <Text size="1" style={{ opacity: 0.9, color: '#ffffff' }}>
+                      90 мин
+                    </Text>
+                  </Box>
+                </Flex>
+                {selectedWorkflow === 'interview' && (
+                  <Box className={styles.selectedBadge}>
+                    <CheckIcon width={12} height={12} style={{ color: '#ffffff' }} />
+                  </Box>
+                )}
+              </Box>
+            </Flex>
+            
+            {/* Кнопка со слотами */}
+            <Button
+              variant="soft"
+              size="2"
+              onClick={() => setSlotsOpen(true)}
+              style={{
+                backgroundColor: 'var(--accent-3)',
+                color: 'var(--accent-11)',
+                flexShrink: 0
+              }}
+            >
+              <ClockIcon width={16} height={16} />
+              <Text size="2">слоты</Text>
+            </Button>
+          </Flex>
+        </Flex>
+
+        {/* Блок настроек интервью (показывается только при выборе "Интервью") */}
+        {selectedWorkflow === 'interview' && (
+          <Box className={styles.interviewOptionsPanel} mt="2">
+            <Flex gap="4" align="center" wrap="wrap">
+              {/* Тогглер формата интервью */}
+              <Flex gap="2" align="center">
+                <Box
+                  className={styles.formatButton}
+                  data-selected={interviewFormat === 'online'}
+                  onClick={() => setInterviewFormat('online')}
+                >
+                  <VideoIcon width={16} height={16} />
+                  <Text size="2" weight="medium">Онлайн</Text>
+                </Box>
+                <Box
+                  className={styles.formatButton}
+                  data-selected={interviewFormat === 'office'}
+                  onClick={() => setInterviewFormat('office')}
+                >
+                  <BoxIcon width={16} height={16} />
+                  <Text size="2" weight="medium">Офис</Text>
+                </Box>
+              </Flex>
+
+              {/* Вертикальная линия-разделитель */}
+              <Separator orientation="vertical" style={{ height: '24px' }} />
+
+              {/* Чекбоксы интервьюеров */}
+              <Flex gap="3" align="center" wrap="wrap">
+                {interviewers.map(interviewer => (
+                  <Flex key={interviewer.id} align="center" gap="2">
+                    <Checkbox
+                      checked={selectedInterviewers.includes(interviewer.id)}
+                      onCheckedChange={() => handleInterviewerToggle(interviewer.id)}
+                    />
+                    <Text size="2">{interviewer.name}</Text>
+                  </Flex>
+                ))}
+              </Flex>
+            </Flex>
+          </Box>
+        )}
+      </Box>
+      
       <Box className={styles.container}>
       {/* Левая колонка */}
       <Box className={styles.leftColumn}>
@@ -1733,7 +1926,22 @@ export default function RecrChatPage() {
           </Tabs.Root>
         </Card>
       </Box>
-    </Box>
+      </Box>
+    
+    {/* Модальное окно со слотами */}
+    <Dialog.Root open={slotsOpen} onOpenChange={setSlotsOpen}>
+      <Dialog.Content style={{ maxWidth: '800px', maxHeight: '80vh', overflowY: 'auto' }}>
+        <Dialog.Title>Свободные слоты</Dialog.Title>
+        <Box mt="4">
+          <SlotsPanel />
+        </Box>
+        <Flex gap="3" justify="end" mt="4">
+          <Button variant="soft" onClick={() => setSlotsOpen(false)}>
+            Закрыть
+          </Button>
+        </Flex>
+      </Dialog.Content>
+    </Dialog.Root>
     </AppLayout>
   )
 }
