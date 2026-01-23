@@ -278,6 +278,50 @@ export default function RecrChatPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isRightColumnOpen, setIsRightColumnOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1920)
+  
+  // Моковые данные вакансий для кандидата (разные примеры в зависимости от кандидата)
+  const getCandidateVacancies = (): Array<{
+    id: string
+    name: string
+    status: string
+    isActive: boolean
+    isArchived: boolean
+    isCurrent: boolean
+    rejectionReason?: string
+  }> => {
+    const currentVacancy = selectedCandidate.vacancy
+    
+    // Пример 1: Для первого кандидата - 2 активных вакансии
+    if (selectedCandidate.id === '1') {
+      return [
+        { id: '1', name: 'Frontend Senior', status: 'Interview', isActive: true, isArchived: false, isCurrent: true },
+        { id: '2', name: 'Backend Developer', status: 'Offer', isActive: true, isArchived: false, isCurrent: false },
+      ]
+    }
+    
+    // Пример 2: Для второго кандидата - 1 активная + 1 в архиве
+    if (selectedCandidate.id === '2') {
+      return [
+        { id: '3', name: 'Product Manager', status: 'Archived', isActive: false, isArchived: true, isCurrent: false },
+        { id: '1', name: currentVacancy, status: selectedCandidate.status, isActive: true, isArchived: false, isCurrent: true },
+      ]
+    }
+    
+    // Пример 3: Для третьего кандидата - предыдущая активность (отказ)
+    if (selectedCandidate.id === '3') {
+      return [
+        { id: '4', name: 'Fullstack Engineer', status: 'Rejected', rejectionReason: 'Не подходит по опыту', isActive: false, isArchived: false, isCurrent: false },
+      ]
+    }
+    
+    // По умолчанию
+    return [
+      { id: '1', name: currentVacancy, status: selectedCandidate.status, isActive: true, isArchived: false, isCurrent: true },
+    ]
+  }
+  
+  const candidateVacancies = getCandidateVacancies()
   
   // Состояние для кнопок workflow
   const [selectedWorkflow, setSelectedWorkflow] = useState<WorkflowType>('screening')
@@ -285,12 +329,16 @@ export default function RecrChatPage() {
   const [selectedInterviewers, setSelectedInterviewers] = useState<string[]>([])
   const [slotsOpen, setSlotsOpen] = useState(false)
   
-  // Моковые данные интервьюеров
+  // Моковые данные интервьюеров (автор добавляется в начало списка)
+  const currentUser = { id: 'author', name: 'Я (Андрей Голубенко)' }
   const interviewers: Interviewer[] = [
     { id: '1', name: 'Иван Петров' },
     { id: '2', name: 'Мария Сидорова' },
     { id: '3', name: 'Алексей Иванов' },
   ]
+  
+  // Объединяем автора и интервьюеров
+  const allParticipants = [currentUser, ...interviewers]
   
   const handleInterviewerToggle = (interviewerId: string) => {
     setSelectedInterviewers(prev =>
@@ -869,6 +917,7 @@ export default function RecrChatPage() {
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 800)
+      setWindowWidth(window.innerWidth)
     }
     
     checkMobile()
@@ -1068,16 +1117,17 @@ export default function RecrChatPage() {
                 variant="soft"
                 size="2"
                 onClick={() => setSlotsOpen(true)}
+                className={styles.slotsButton}
                 style={{
                   backgroundColor: 'var(--accent-3)',
                   color: 'var(--accent-11)',
                   flexShrink: 0,
-                  height: '44px',
+                  height: '42px',
                   boxSizing: 'border-box'
                 }}
               >
                 <ClockIcon width={16} height={16} />
-                <Text size="2">слоты</Text>
+                <Text size="2" className={styles.slotsButtonText}>слоты</Text>
               </Button>
             </Flex>
 
@@ -1254,45 +1304,57 @@ export default function RecrChatPage() {
         {/* Кнопки workflow - показываются только на вкладке Chat и только на десктопе */}
         {leftTab === 'chat' && !isMobile && (
           <Box className={styles.workflowButtonsContainer} mb="3">
-            <Flex gap="3" align="center" justify="between" wrap="wrap">
-              {/* Быстрые кнопки слева */}
-              <Flex gap="2" align="center" style={{ flexShrink: 0 }}>
-                <Box className={styles.quickButton} style={{ backgroundColor: '#ef4444', position: 'relative' }}>
-                  <Link2Icon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
-                  <Box className={styles.flagBadge} title="Беларусь">
-                    <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇧🇾</Text>
+            <Flex align="center" gap="3" wrap="nowrap" style={{ width: '100%' }}>
+              {/* Скроллируемый контейнер для быстрых кнопок */}
+              <Box 
+                className={styles.workflowScrollContainer}
+                style={{ 
+                  flex: '1 1 auto',
+                  minWidth: 0,
+                  overflowX: 'auto',
+                  overflowY: 'hidden',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <Flex gap="2" align="center" style={{ flexShrink: 0, minWidth: 'max-content' }}>
+                  <Box className={styles.quickButton} style={{ backgroundColor: '#ef4444', position: 'relative' }}>
+                    <Link2Icon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
+                    <Box className={styles.flagBadge} title="Беларусь">
+                      <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇧🇾</Text>
+                    </Box>
                   </Box>
-                </Box>
-                <Box className={styles.quickButton} style={{ backgroundColor: '#f97316', position: 'relative' }}>
-                  <Text size="4" weight="bold" style={{ color: '#ffffff' }}>?</Text>
-                  <Box className={styles.flagBadge} title="Беларусь">
-                    <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇧🇾</Text>
+                  <Box className={styles.quickButton} style={{ backgroundColor: '#f97316', position: 'relative' }}>
+                    <Text size="4" weight="bold" style={{ color: '#ffffff' }}>?</Text>
+                    <Box className={styles.flagBadge} title="Беларусь">
+                      <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇧🇾</Text>
+                    </Box>
                   </Box>
-                </Box>
-                <Box className={styles.quickButton} style={{ backgroundColor: '#eab308', position: 'relative' }}>
-                  <Link2Icon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
-                  <Box className={styles.flagBadge} title="Польша">
-                    <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇵🇱</Text>
+                  <Box className={styles.quickButton} style={{ backgroundColor: '#eab308', position: 'relative' }}>
+                    <Link2Icon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
+                    <Box className={styles.flagBadge} title="Польша">
+                      <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇵🇱</Text>
+                    </Box>
                   </Box>
-                </Box>
-                <Box className={styles.quickButton} style={{ backgroundColor: '#3b82f6', position: 'relative' }}>
-                  <Text size="4" weight="bold" style={{ color: '#ffffff' }}>?</Text>
-                  <Box className={styles.flagBadge} title="Польша">
-                    <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇵🇱</Text>
+                  <Box className={styles.quickButton} style={{ backgroundColor: '#3b82f6', position: 'relative' }}>
+                    <Text size="4" weight="bold" style={{ color: '#ffffff' }}>?</Text>
+                    <Box className={styles.flagBadge} title="Польша">
+                      <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇵🇱</Text>
+                    </Box>
                   </Box>
-                </Box>
-                <Box className={styles.quickButton} style={{ backgroundColor: '#06b6d4' }}>
-                  <CalendarIcon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
-                </Box>
-                <Box className={styles.quickButton} style={{ backgroundColor: '#6b7280' }}>
-                  <Text size="3" weight="bold" style={{ color: '#ffffff' }}>📄</Text>
-                </Box>
-                <Box className={styles.quickButton} style={{ backgroundColor: '#10b981' }}>
-                  <Text size="5" weight="bold" style={{ color: '#ffffff' }}>+</Text>
-                </Box>
-              </Flex>
+                  <Box className={styles.quickButton} style={{ backgroundColor: '#06b6d4' }}>
+                    <CalendarIcon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
+                  </Box>
+                  <Box className={styles.quickButton} style={{ backgroundColor: '#6b7280' }}>
+                    <Text size="3" weight="bold" style={{ color: '#ffffff' }}>📄</Text>
+                  </Box>
+                  <Box className={styles.quickButton} style={{ backgroundColor: '#10b981' }}>
+                    <Text size="5" weight="bold" style={{ color: '#ffffff' }}>+</Text>
+                  </Box>
+                </Flex>
+              </Box>
 
-              {/* Тогглеры и кнопка справа */}
+              {/* Тогглеры и кнопка справа - всегда видимы */}
               <Flex gap="3" align="center" style={{ flexShrink: 0 }}>
                 {/* Тогглер этапов процесса */}
                 <Flex gap="3" align="center">
@@ -1352,16 +1414,17 @@ export default function RecrChatPage() {
                   variant="soft"
                   size="2"
                   onClick={() => setSlotsOpen(true)}
+                  className={styles.slotsButton}
                   style={{
                     backgroundColor: 'var(--accent-3)',
                     color: 'var(--accent-11)',
                     flexShrink: 0,
-                    height: '44px',
+                    height: '42px',
                     boxSizing: 'border-box'
                   }}
                 >
                   <ClockIcon width={16} height={16} />
-                  <Text size="2">слоты</Text>
+                  <Text size="2" className={styles.slotsButtonText}>слоты</Text>
                 </Button>
               </Flex>
             </Flex>
@@ -1369,43 +1432,97 @@ export default function RecrChatPage() {
             {/* Блок настроек интервью (показывается только при выборе "Интервью") */}
             {selectedWorkflow === 'interview' && (
               <Box className={styles.interviewOptionsPanel} mt="2">
-                <Flex gap="4" align="center" wrap="wrap">
-                  {/* Тогглер формата интервью */}
-                  <Flex gap="2" align="center">
-                    <Box
-                      className={styles.formatButton}
-                      data-selected={interviewFormat === 'online'}
-                      onClick={() => setInterviewFormat('online')}
-                    >
-                      <VideoIcon width={16} height={16} />
-                      <Text size="2" weight="medium">Онлайн</Text>
-                    </Box>
-                    <Box
-                      className={styles.formatButton}
-                      data-selected={interviewFormat === 'office'}
-                      onClick={() => setInterviewFormat('office')}
-                    >
-                      <BoxIcon width={16} height={16} />
-                      <Text size="2" weight="medium">Офис</Text>
-                    </Box>
-                  </Flex>
+                <Box 
+                  className={styles.participantsScrollContainer}
+                  style={{ 
+                    width: '100%',
+                    overflowX: 'auto',
+                    overflowY: 'hidden',
+                    WebkitOverflowScrolling: 'touch',
+                    scrollbarWidth: 'thin',
+                  }}
+                >
+                  <Flex gap="4" align="center" wrap="nowrap" style={{ minWidth: 'max-content' }}>
+                    {/* Тогглер формата интервью */}
+                    <Flex gap="2" align="center" style={{ flexShrink: 0 }}>
+                      <Box
+                        className={styles.formatButton}
+                        data-selected={interviewFormat === 'online'}
+                        onClick={() => setInterviewFormat('online')}
+                      >
+                        <VideoIcon width={14} height={14} />
+                        <Text size="2" weight="medium">Онлайн</Text>
+                      </Box>
+                      <Box
+                        className={styles.formatButton}
+                        data-selected={interviewFormat === 'office'}
+                        onClick={() => setInterviewFormat('office')}
+                      >
+                        <BoxIcon width={14} height={14} />
+                        <Text size="2" weight="medium">Офис</Text>
+                      </Box>
+                    </Flex>
 
-                  {/* Вертикальная линия-разделитель */}
-                  <Separator orientation="vertical" style={{ height: '24px' }} />
+                    {/* Вертикальная линия-разделитель */}
+                    <Separator orientation="vertical" style={{ height: '20px', flexShrink: 0 }} />
 
-                  {/* Чекбоксы интервьюеров */}
-                  <Flex gap="3" align="center" wrap="wrap">
-                    {interviewers.map(interviewer => (
-                      <Flex key={interviewer.id} align="center" gap="2">
-                        <Checkbox
-                          checked={selectedInterviewers.includes(interviewer.id)}
-                          onCheckedChange={() => handleInterviewerToggle(interviewer.id)}
-                        />
-                        <Text size="2">{interviewer.name}</Text>
-                      </Flex>
-                    ))}
+                    {/* Список участников */}
+                    <Flex gap="3" align="center" wrap="nowrap" style={{ minWidth: 'max-content', flexShrink: 0 }}>
+                      {allParticipants.map(participant => {
+                        const isSelected = selectedInterviewers.includes(participant.id)
+                        return (
+                          <Box
+                            key={participant.id}
+                            onClick={() => handleInterviewerToggle(participant.id)}
+                            style={{
+                              position: 'relative',
+                              padding: '2px 12px',
+                              borderRadius: '6px',
+                              border: isSelected ? '2px solid var(--accent-9)' : '2px solid transparent',
+                              backgroundColor: isSelected ? 'var(--accent-3)' : 'transparent',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease',
+                              whiteSpace: 'nowrap',
+                              flexShrink: 0,
+                            }}
+                            onMouseEnter={(e) => {
+                              if (!isSelected) {
+                                e.currentTarget.style.backgroundColor = 'var(--gray-3)'
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (!isSelected) {
+                                e.currentTarget.style.backgroundColor = 'transparent'
+                              }
+                            }}
+                          >
+                            <Text size="2">{participant.name}</Text>
+                            {isSelected && (
+                              <Box
+                                style={{
+                                  position: 'absolute',
+                                  top: '-6px',
+                                  right: '-6px',
+                                  width: '18px',
+                                  height: '18px',
+                                  borderRadius: '50%',
+                                  backgroundColor: 'var(--accent-9)',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  border: '2px solid white',
+                                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+                                }}
+                              >
+                                <CheckIcon width={10} height={10} style={{ color: 'white' }} />
+                              </Box>
+                            )}
+                          </Box>
+                        )
+                      })}
+                    </Flex>
                   </Flex>
-                </Flex>
+                </Box>
               </Box>
             )}
           </Box>
@@ -1510,10 +1627,16 @@ export default function RecrChatPage() {
                 fallback={selectedCandidate.avatar}
                 style={{ backgroundColor: selectedCandidate.statusColor }}
               />
-              <Flex direction="column" gap="2" style={{ flex: 1 }}>
-                <Flex align="center" gap="2" style={{ flexWrap: 'wrap' }}>
+              <Flex direction="column" gap="2" style={{ flex: 1, minWidth: 0, maxWidth: '100%', overflow: 'hidden' }}>
+                <Flex 
+                  align="center" 
+                  gap="2" 
+                  wrap={isMobile ? "wrap" : "nowrap"}
+                  style={{ width: '100%', minWidth: 0, maxWidth: '100%', overflow: 'hidden' }}
+                >
+                  {/* ФИО и кнопка редактирования - вне скролла */}
                   {isEditingName ? (
-                    <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                    <Flex align="center" gap="2" style={{ flexWrap: 'nowrap', flexShrink: 0 }}>
                       <TextField.Root
                         value={nameValue}
                         onChange={(e) => setNameValue(e.target.value)}
@@ -1551,7 +1674,7 @@ export default function RecrChatPage() {
                       </Button>
                     </Flex>
                   ) : (
-                    <Flex align="center" gap="2">
+                    <Flex align="center" gap="2" style={{ flexShrink: 0 }}>
                       <Text size="5" weight="bold">{selectedCandidate.name}</Text>
                       <Button 
                         size="1" 
@@ -1563,21 +1686,136 @@ export default function RecrChatPage() {
                       </Button>
                     </Flex>
                   )}
-                  <Badge size="2" color="blue">
-                    🎯 {selectedCandidate.vacancy} · {selectedCandidate.status}
-                  </Badge>
+                  
+                  {/* Бейджи вакансий - в скроллируемом контейнере */}
+                  <Box 
+                    style={{ 
+                      flex: '1 1 auto',
+                      minWidth: 0,
+                      overflowX: 'auto',
+                      overflowY: 'hidden',
+                      scrollbarWidth: 'none',
+                      msOverflowStyle: 'none'
+                    }}
+                    className={styles.workflowScrollContainer}
+                  >
+                    <Flex gap="2" align="center" wrap="nowrap" style={{ width: 'max-content' }}>
+                      {/* Архивные вакансии - только иконка, самые первые */}
+                      {candidateVacancies
+                        .filter(v => v.isArchived)
+                        .map((vacancy) => (
+                          <Badge 
+                            key={vacancy.id}
+                            size="2" 
+                            style={{ 
+                              backgroundColor: '#9CA3AF', 
+                              color: 'white',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              padding: '4px 8px',
+                              flexShrink: 0
+                            }}
+                          >
+                            <BoxIcon width={12} height={12} />
+                          </Badge>
+                        ))}
+                      
+                      {/* Активные вакансии - текущая на первом месте */}
+                      {(() => {
+                        const activeVacancies = candidateVacancies.filter(v => v.isActive)
+                        // Сортируем: текущая вакансия первая
+                        const sortedActive = [...activeVacancies].sort((a, b) => {
+                          if (a.isCurrent) return -1
+                          if (b.isCurrent) return 1
+                          return 0
+                        })
+                        
+                        return sortedActive.map((vacancy) => {
+                          const statusColor = getStatusColor(vacancy.status)
+                          const fullText = `🎯 ${vacancy.name} · ${vacancy.status}`
+                          return (
+                            <Badge 
+                              key={vacancy.id}
+                              size="2" 
+                              style={{ 
+                                backgroundColor: statusColor,
+                                color: 'white',
+                                flexShrink: 0,
+                                maxWidth: isMobile ? '100%' : 'none',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                              }}
+                              title={fullText}
+                            >
+                              {fullText}
+                            </Badge>
+                          )
+                        })
+                      })()}
+                      
+                      {/* Предыдущие активности (отказы) - после активных */}
+                      {candidateVacancies
+                        .filter(v => !v.isActive && !v.isArchived)
+                        .map((vacancy) => {
+                          const fullText = `${vacancy.name} · ${vacancy.status}${vacancy.rejectionReason ? `, ${vacancy.rejectionReason}` : ''}`
+                          return (
+                            <Badge 
+                              key={vacancy.id}
+                              size="2" 
+                              style={{ 
+                                backgroundColor: '#9CA3AF', 
+                                color: 'white',
+                                flexShrink: 0,
+                                maxWidth: isMobile ? '100%' : 'none',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                              }}
+                              title={fullText}
+                            >
+                              {fullText}
+                            </Badge>
+                          )
+                        })}
+                    </Flex>
+                  </Box>
+                  
+                  {/* Кнопка "Взять на другую вакансию" - вне скролла, может сокращаться до "+" */}
                   <DropdownMenu.Root>
                     <DropdownMenu.Trigger>
                       <Button 
                         size="2"
                         variant="soft"
                         style={{ 
-                          flexShrink: 0,
-                          marginLeft: 'auto'
+                          flexShrink: 1,
+                          minWidth: '30px',
+                          maxWidth: 'none',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          paddingLeft: '8px',
+                          paddingRight: '8px'
                         }}
+                        title="Взять на другую вакансию"
                       >
-                        <PlusIcon width={14} height={14} />
-                        Взять на другую вакансию
+                        <PlusIcon width={14} height={14} style={{ flexShrink: 0 }} />
+                        {!isMobile && (
+                          <span style={{ 
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            minWidth: 0,
+                            flexShrink: 1,
+                            maxWidth: '100%'
+                          }}>
+                            Взять на другую вакансию
+                          </span>
+                        )}
                       </Button>
                     </DropdownMenu.Trigger>
                     <DropdownMenu.Content align="end">
@@ -1592,71 +1830,103 @@ export default function RecrChatPage() {
                     </DropdownMenu.Content>
                   </DropdownMenu.Root>
                 </Flex>
-                <Flex align="center" gap="2" style={{ flexWrap: 'wrap' }}>
-                  <Text size="2" weight="medium" style={{ flexShrink: 0 }}>Status:</Text>
-                  <TextField.Root
-                    size="2"
-                    value={statusComment}
-                    onChange={(e) => setStatusComment(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && statusComment.trim()) {
-                        handleStatusCommentSubmit()
-                      }
+                <Flex 
+                  align="center" 
+                  gap="2" 
+                  wrap={isMobile ? "wrap" : "nowrap"}
+                  style={{ width: '100%', minWidth: 0 }}
+                >
+                  {/* Скроллируемый контейнер для элементов статуса */}
+                  <Box 
+                    style={{ 
+                      flex: '1 1 auto',
+                      minWidth: 0,
+                      overflowX: 'auto',
+                      overflowY: 'hidden',
+                      scrollbarWidth: 'none',
+                      msOverflowStyle: 'none'
                     }}
-                    placeholder="Введите комментарий..."
-                    style={{ flex: 1, minWidth: '150px' }}
+                    className={styles.workflowScrollContainer}
                   >
-                    {statusComment.trim() && (
-                      <TextField.Slot side="right">
-                        <Button 
-                          size="1" 
-                          variant="ghost"
-                          onClick={handleStatusCommentSubmit}
-                          style={{ cursor: 'pointer' }}
-                        >
-                          <CheckIcon width={14} height={14} />
-                        </Button>
-                      </TextField.Slot>
-                    )}
-                  </TextField.Root>
-                  <Select.Root
-                    value={selectedCandidate.status}
-                    onValueChange={handleStatusChange}
-                  >
-                    <Select.Trigger 
-                      style={{ 
-                        backgroundColor: selectedCandidate.statusColor,
-                        color: 'white',
-                        borderColor: selectedCandidate.statusColor,
-                        minWidth: '120px'
-                      }} 
-                    />
-                    <Select.Content>
-                      {statusOrder.filter(s => s !== 'Все').map((status) => (
-                        <Select.Item key={status} value={status}>
-                          {status}
-                        </Select.Item>
-                      ))}
-                    </Select.Content>
-                  </Select.Root>
-                  {selectedCandidate.status === 'Rejected' && (
-                    <Select.Root value={rejectionReason} onValueChange={handleRejectionReasonChange}>
-                      <Select.Trigger 
+                    <Flex 
+                      align="center" 
+                      gap="2" 
+                      wrap="wrap"
+                      style={{ width: '100%', minWidth: 0 }}
+                    >
+                      <Text size="2" weight="medium" style={{ flexShrink: 0 }}>Status:</Text>
+                      <TextField.Root
+                        size="2"
+                        value={statusComment}
+                        onChange={(e) => setStatusComment(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && statusComment.trim()) {
+                            handleStatusCommentSubmit()
+                          }
+                        }}
+                        placeholder="Введите комментарий..."
                         style={{ 
-                          minWidth: '180px'
-                        }} 
-                        placeholder="Причина отказа"
-                      />
-                      <Select.Content>
-                        <Select.Item value="Без указания причин">Без указания причин</Select.Item>
-                        {rejectionReasons.map((reason) => (
-                          <Select.Item key={reason} value={reason}>
-                            {reason}
-                          </Select.Item>
-                        ))}
-                      </Select.Content>
-                    </Select.Root>
-                  )}
+                          flex: '1 1 auto',
+                          minWidth: '150px',
+                          maxWidth: 'none'
+                        }}
+                      >
+                        {statusComment.trim() && (
+                          <TextField.Slot side="right">
+                            <Button 
+                              size="1" 
+                              variant="ghost"
+                              onClick={handleStatusCommentSubmit}
+                              style={{ cursor: 'pointer' }}
+                            >
+                              <CheckIcon width={14} height={14} />
+                            </Button>
+                          </TextField.Slot>
+                        )}
+                      </TextField.Root>
+                      <Select.Root
+                        value={selectedCandidate.status}
+                        onValueChange={handleStatusChange}
+                      >
+                        <Select.Trigger 
+                          style={{ 
+                            backgroundColor: selectedCandidate.statusColor,
+                            color: 'white',
+                            borderColor: selectedCandidate.statusColor,
+                            minWidth: '120px',
+                            flexShrink: 0
+                          }} 
+                        />
+                        <Select.Content>
+                          {statusOrder.filter(s => s !== 'Все').map((status) => (
+                            <Select.Item key={status} value={status}>
+                              {status}
+                            </Select.Item>
+                          ))}
+                        </Select.Content>
+                      </Select.Root>
+                      {selectedCandidate.status === 'Rejected' && (
+                        <Select.Root value={rejectionReason} onValueChange={handleRejectionReasonChange}>
+                          <Select.Trigger 
+                            style={{ 
+                              minWidth: '180px',
+                              flexShrink: 0
+                            }} 
+                            placeholder="Причина отказа"
+                          />
+                          <Select.Content>
+                            <Select.Item value="Без указания причин">Без указания причин</Select.Item>
+                            {rejectionReasons.map((reason) => (
+                              <Select.Item key={reason} value={reason}>
+                                {reason}
+                              </Select.Item>
+                            ))}
+                          </Select.Content>
+                        </Select.Root>
+                      )}
+                    </Flex>
+                  </Box>
+                  {/* Кнопка "→" всегда видна вне скролла */}
                   <Button
                     size="2"
                     variant="soft"

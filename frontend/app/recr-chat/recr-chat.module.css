@@ -317,9 +317,28 @@
   box-sizing: border-box;
 }
 
+.workflowScrollContainer {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.workflowScrollContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.slotsButtonText {
+  display: inline;
+}
+
+@media (max-width: 980px) {
+  .slotsButtonText {
+    display: none;
+  }
+}
+
 .quickButton {
   width: 44px;
-  height: 44px;
+  height: 42px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -363,7 +382,7 @@
   border: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: 108px;
-  height: 44px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -375,7 +394,7 @@
   background-color: #10b981;
   border: 2px solid #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  height: 44px;
+  height: 42px;
   box-sizing: border-box;
 }
 
@@ -408,7 +427,7 @@
 .interviewOptionsPanel {
   background: color-mix(in srgb, var(--gray-2) 50%, transparent);
   border-radius: 8px;
-  padding: 8px 12px;
+  padding: 4px 12px;
   margin-top: 4px;
   margin-right: 16px;
   border: 1px solid var(--gray-6);
@@ -417,11 +436,33 @@
   backdrop-filter: blur(10px);
 }
 
+.participantsScrollContainer {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-a6) transparent;
+}
+
+.participantsScrollContainer::-webkit-scrollbar {
+  height: 4px;
+}
+
+.participantsScrollContainer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.participantsScrollContainer::-webkit-scrollbar-thumb {
+  background: var(--gray-a6);
+  border-radius: 2px;
+}
+
+.participantsScrollContainer::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-a8);
+}
+
 .formatButton {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
+  gap: 4px;
+  padding: 4px 16px;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
