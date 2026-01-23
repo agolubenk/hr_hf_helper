@@ -185,6 +185,7 @@
   width: 35px;
   height: 35px;
   flex-shrink: 0;
+  overflow: visible;
 }
 
 .socialButton {
@@ -193,7 +194,7 @@
   height: 35px;
   border-radius: 8px;
   aspect-ratio: 1 / 1;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .socialButton:hover {

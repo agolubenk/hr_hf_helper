@@ -35,7 +35,11 @@ import {
   VideoIcon,
   BoxIcon,
   ReloadIcon,
-  OpenInNewWindowIcon
+  OpenInNewWindowIcon,
+  UploadIcon,
+  ImageIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon
 } from "@radix-ui/react-icons"
 import { 
   BiLogoWhatsapp,
@@ -51,7 +55,7 @@ import {
   BiLogoTwitter,
   BiCodeAlt
 } from "react-icons/bi"
-import { SiViber } from "react-icons/si"
+import { SiViber, SiKaggle } from "react-icons/si"
 import styles from './recr-chat.module.css'
 
 // Моковые данные
@@ -64,7 +68,10 @@ const mockCandidates = [
     statusColor: '#8B5CF6',
     avatar: 'JD',
     timeAgo: '2 days ago',
-    unread: 2,
+    unread: 3,
+    unreadSources: { telegram: 2, whatsapp: 1 }, // Непрочитанные сообщения из нескольких источников
+    isViewed: true, // Информация просмотрена
+    hasUnviewedChanges: false, // Нет непросмотренных изменений
     email: 'john@example.com',
     phone: '+1 (555) 123-4567',
     location: 'New York, USA',
@@ -102,6 +109,9 @@ const mockCandidates = [
     avatar: 'JS',
     timeAgo: '5 hours ago',
     unread: 0,
+    unreadSources: {},
+    isViewed: true,
+    hasUnviewedChanges: false,
     email: 'jane@example.com',
     phone: '+1 (555) 234-5678',
     location: 'San Francisco, USA',
@@ -125,6 +135,9 @@ const mockCandidates = [
     avatar: 'MC',
     timeAgo: '1 day ago',
     unread: 0,
+    unreadSources: {},
+    isViewed: false, // Информация не просмотрена
+    hasUnviewedChanges: true, // Есть непросмотренные изменения (статус, комментарий, файл, данные) - пример без сообщений
     email: 'mike@example.com',
     phone: '+1 (555) 345-6789',
     location: 'Los Angeles, USA',
@@ -138,6 +151,64 @@ const mockCandidates = [
     vacancy: 'UI Designer',
     applied: 'Jan 18, 2026',
     source: 'Job Board'
+  },
+  {
+    id: '4',
+    name: 'Иванов Петр Сергеевич',
+    position: 'Backend Developer',
+    status: 'Interview',
+    statusColor: '#8B5CF6',
+    avatar: 'ИП',
+    timeAgo: '3 hours ago',
+    unread: 1,
+    unreadSources: { whatsapp: 1 }, // Непрочитанные сообщения из WhatsApp
+    isViewed: true, // Информация просмотрена
+    hasUnviewedChanges: false, // Нет непросмотренных изменений
+    email: 'ivanov@example.com',
+    phone: '+7 (999) 123-4567',
+    location: 'Москва, Россия',
+    whatsapp: '+79991234567',
+    telegram: '@ivanov',
+    linkedin: '/in/ivanov',
+    github: 'ivanov',
+    rating: 4,
+    vacancy: 'Backend Developer',
+    applied: 'Jan 22, 2026',
+    source: 'HH.ru',
+    tags: ['Java', 'Spring', 'PostgreSQL'],
+    level: 'Middle',
+    age: 28,
+    gender: 'Мужской',
+    salaryExpectations: '200,000 - 300,000 RUB',
+    offer: '250,000 RUB'
+  },
+  {
+    id: '5',
+    name: 'Смирнова Анна Владимировна',
+    position: 'Frontend Developer',
+    status: 'New',
+    statusColor: '#2180A0',
+    avatar: 'СА',
+    timeAgo: '1 hour ago',
+    unread: 0,
+    unreadSources: {},
+    isViewed: true,
+    hasUnviewedChanges: false,
+    email: 'smirnova@example.com',
+    phone: '+7 (999) 234-5678',
+    location: 'Санкт-Петербург, Россия',
+    telegram: '@smirnova',
+    linkedin: '/in/smirnova',
+    github: 'smirnova',
+    rating: 5,
+    vacancy: 'Frontend Senior',
+    applied: 'Jan 23, 2026',
+    source: 'LinkedIn',
+    tags: ['React', 'TypeScript', 'Vue'],
+    level: 'Senior',
+    age: 30,
+    gender: 'Женский',
+    salaryExpectations: '250,000 - 350,000 RUB'
   }
 ]
 
@@ -235,6 +306,7 @@ const getSocialUrl = (platform: string, value: string): string => {
     instagram: (val) => `https://instagram.com/${cleanValue}`,
     facebook: (val) => `https://facebook.com/${cleanValue}`,
     twitter: (val) => `https://twitter.com/${cleanValue}`,
+    kaggle: (val) => `https://kaggle.com/${cleanValue}`,
   }
   
   return urls[platform]?.(value) || ''
@@ -258,9 +330,79 @@ const getPlatformInfo = (platform: string): { name: string; color: string; icon:
     instagram: { name: 'Instagram', color: '#E4405F', icon: <BiLogoInstagram size={iconSize} /> },
     facebook: { name: 'Facebook', color: '#1877F2', icon: <BiLogoFacebook size={iconSize} /> },
     twitter: { name: 'Twitter', color: '#1DA1F2', icon: <BiLogoTwitter size={iconSize} /> },
+    kaggle: { name: 'Kaggle', color: '#20BEFF', icon: <SiKaggle size={iconSize} /> },
   }
   
   return platforms[platform] || { name: platform, color: '#6B7280', icon: <ExternalLinkIcon width={iconSize} height={iconSize} /> }
+}
+
+// Функция для получения информации о непрочитанных сообщениях
+const getUnreadInfo = (candidate: any) => {
+  const unreadSources = (candidate.unreadSources as Record<string, number>) || {}
+  const sourceKeys = Object.keys(unreadSources)
+  const totalUnread = candidate.unread || 0
+  
+  if (totalUnread === 0 || sourceKeys.length === 0) {
+    return null
+  }
+  
+  // Если один источник - возвращаем его иконку
+  if (sourceKeys.length === 1) {
+    const source = sourceKeys[0]
+    // Получаем информацию о платформе с размером иконки для бейджа
+    const iconSize = 12
+    const platformInfo = getPlatformInfo(source)
+    // Клонируем иконку с новым размером
+    const iconElement = React.isValidElement(platformInfo.icon) 
+      ? React.cloneElement(platformInfo.icon as React.ReactElement<any>, { size: iconSize })
+      : platformInfo.icon
+    return {
+      icon: iconElement,
+      count: unreadSources[source],
+      multiple: false
+    }
+  }
+  
+  // Если несколько источников - возвращаем многоточие и сумму
+  const totalCount = Object.values(unreadSources).reduce((sum, count) => sum + count, 0)
+  return {
+    icon: <Text size="1" weight="bold" style={{ fontSize: '10px' }}>...</Text>,
+    count: totalCount,
+    multiple: true
+  }
+}
+
+// Функция для получения информации о точке сообщений слева сверху аватара
+const getMessageDotInfo = (candidate: any) => {
+  const unreadSources = (candidate.unreadSources as Record<string, number>) || {}
+  const sourceKeys = Object.keys(unreadSources)
+  const totalUnread = candidate.unread || 0
+  
+  if (totalUnread === 0 || sourceKeys.length === 0) {
+    return null
+  }
+  
+  // Если один источник - возвращаем цвет платформы и количество (если < 10)
+  if (sourceKeys.length === 1) {
+    const source = sourceKeys[0]
+    const platformInfo = getPlatformInfo(source)
+    const count = unreadSources[source]
+    return {
+      color: platformInfo.color,
+      count: count < 10 ? count : undefined,
+      source: source
+    }
+  }
+  
+  // Если несколько источников - используем цвет первого источника
+  const firstSource = sourceKeys[0]
+  const platformInfo = getPlatformInfo(firstSource)
+  const totalCount = Object.values(unreadSources).reduce((sum, count) => sum + count, 0)
+  return {
+    color: platformInfo.color,
+    count: totalCount < 10 ? totalCount : undefined,
+    source: 'multiple'
+  }
 }
 
 type WorkflowType = 'screening' | 'interview'
@@ -279,6 +421,286 @@ export default function RecrChatPage() {
   const [isRightColumnOpen, setIsRightColumnOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1920)
+  
+  // Состояние для управления аватаром
+  const [avatarModalOpen, setAvatarModalOpen] = useState(false)
+  const [isEditingPhoto, setIsEditingPhoto] = useState(false)
+  const [uploadedPhotoForEdit, setUploadedPhotoForEdit] = useState<string | null>(null)
+  const [cropArea, setCropArea] = useState({ x: 0, y: 0, size: 200 })
+  const [isDragging, setIsDragging] = useState(false)
+  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0, displayWidth: 0, displayHeight: 0 })
+  const uploadedPhotoRef = React.useRef<HTMLImageElement | null>(null)
+  // Инициализируем с примерами фото для демонстрации
+  const [candidatePhotos, setCandidatePhotos] = useState<Record<string, string[]>>({
+    // Кандидат 4 (Иванов Петр Сергеевич) - несколько фото для карусели
+    '4': [
+      '/avatars/photo1.png',
+      '/avatars/photo2.png',
+      '/avatars/photo3.png',
+      '/avatars/photo4.png'
+    ],
+    // Кандидат 5 (Смирнова Анна Владимировна) - без фото (только форма загрузки)
+    // '5': [] - оставляем пустым для демонстрации формы загрузки
+  })
+  
+  // Функция для получения инициалов (первые 2 буквы)
+  const getInitials = (name: string): string => {
+    const words = name.trim().split(/\s+/)
+    if (words.length === 0) return ''
+    
+    // Берем первые 2 буквы из первых двух слов (или из первого слова, если оно одно)
+    if (words.length === 1) {
+      return words[0].substring(0, 2).toUpperCase()
+    }
+    
+    const firstLetter = words[0].charAt(0)
+    const secondLetter = words[1].charAt(0)
+    return (firstLetter + secondLetter).toUpperCase()
+  }
+  
+  // Обработчик клика на аватар
+  const handleAvatarClick = () => {
+    setAvatarModalOpen(true)
+  }
+  
+  // Обработчик загрузки фото (открывает форму редактирования)
+  const handlePhotoUpload = (file: File) => {
+    if (!file.type.startsWith('image/')) return
+    
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      const photoUrl = reader.result as string
+      setUploadedPhotoForEdit(photoUrl)
+      setIsEditingPhoto(true)
+      
+      // Инициализируем область обрезки по центру изображения
+      const img = new Image()
+      img.onload = () => {
+        const minSize = Math.min(img.width, img.height)
+        setImageDimensions({
+          width: img.width,
+          height: img.height,
+          displayWidth: 0,
+          displayHeight: 0
+        })
+        setCropArea({
+          x: (img.width - minSize) / 2,
+          y: (img.height - minSize) / 2,
+          size: minSize
+        })
+      }
+      img.src = photoUrl
+    }
+    reader.readAsDataURL(file)
+  }
+  
+  // Обновление размеров изображения при загрузке
+  const handleImageLoad = () => {
+    const img = uploadedPhotoRef.current
+    if (img) {
+      setImageDimensions(prev => ({
+        ...prev,
+        displayWidth: img.offsetWidth,
+        displayHeight: img.offsetHeight
+      }))
+    }
+  }
+  
+  // Обработчик изменения файла через input
+  const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      handlePhotoUpload(file)
+    }
+  }
+  
+  // Обработчики drag-and-drop
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(true)
+  }
+  
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+  }
+  
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+    
+    const file = e.dataTransfer.files?.[0]
+    if (file && file.type.startsWith('image/')) {
+      handlePhotoUpload(file)
+    }
+  }
+  
+  // Обработчики для drag-and-drop документов
+  const handleDocumentDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDraggingDocument(true)
+  }
+  
+  const handleDocumentDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDraggingDocument(false)
+  }
+  
+  const handleDocumentDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDraggingDocument(false)
+    
+    const file = e.dataTransfer.files?.[0]
+    if (file && !file.type.startsWith('image/')) {
+      // Это документ, а не изображение
+      handleDocumentFileSelect(file)
+    }
+  }
+  
+  // Обработчик выбора файла документа (через drag-and-drop или кнопку)
+  const handleDocumentFileSelect = (file: File) => {
+    setPendingDocumentFile(file)
+    setDocumentUploadModalOpen(true)
+    // Автоматически переключаемся на вкладку Documents
+    setRightTab('documents')
+  }
+  
+  // Обработчик загрузки документа через кнопку
+  const handleDocumentUploadClick = () => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = '.pdf,.doc,.docx,.txt,.rtf'
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0]
+      if (file) {
+        handleDocumentFileSelect(file)
+      }
+    }
+    input.click()
+  }
+  
+  // Обработчик подтверждения загрузки документа
+  const handleDocumentUploadConfirm = () => {
+    if (pendingDocumentFile) {
+      // Форматируем размер файла
+      const formatFileSize = (bytes: number): string => {
+        if (bytes < 1024) return bytes + ' B'
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB'
+        return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
+      }
+      
+      // Получаем название группы, если выбрана
+      const groupName = documentVisibilityGroup === 'group' && selectedGroup
+        ? mockGroups.find(g => g.id === selectedGroup)?.name
+        : undefined
+      
+      // Создаем новый документ
+      const now = new Date()
+      const uploadedDate = now.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: '2-digit', 
+        year: 'numeric' 
+      })
+      
+      const newDocument = {
+        id: `doc-${Date.now()}`,
+        name: pendingDocumentFile.name,
+        size: pendingDocumentFile.size,
+        uploadedDate: uploadedDate,
+        visibility: documentVisibilityGroup,
+        groupId: documentVisibilityGroup === 'group' ? selectedGroup : undefined,
+        groupName: groupName
+      }
+      
+      // Добавляем документ в список
+      setUploadedDocuments(prev => [newDocument, ...prev])
+      
+      // Закрываем модальное окно и сбрасываем состояние
+      setDocumentUploadModalOpen(false)
+      setPendingDocumentFile(null)
+      setDocumentVisibilityGroup('only-me')
+      setSelectedGroup('')
+    }
+  }
+  
+  // Обработчик отмены загрузки документа
+  const handleDocumentUploadCancel = () => {
+    setDocumentUploadModalOpen(false)
+    setPendingDocumentFile(null)
+    setDocumentVisibilityGroup('only-me')
+    setSelectedGroup('')
+  }
+  
+  // Функция обрезки изображения в квадрат
+  const cropImageToSquare = (imageUrl: string, cropX: number, cropY: number, cropSize: number): Promise<string> => {
+    return new Promise((resolve) => {
+      const img = new Image()
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        canvas.width = cropSize
+        canvas.height = cropSize
+        const ctx = canvas.getContext('2d')
+        
+        if (ctx) {
+          ctx.drawImage(
+            img,
+            cropX, cropY, cropSize, cropSize,
+            0, 0, cropSize, cropSize
+          )
+          resolve(canvas.toDataURL('image/png'))
+        }
+      }
+      img.src = imageUrl
+    })
+  }
+  
+  // Обработчик сохранения обрезанного фото
+  const handleSaveCroppedPhoto = async () => {
+    if (!uploadedPhotoForEdit) return
+    
+    const croppedPhoto = await cropImageToSquare(
+      uploadedPhotoForEdit,
+      cropArea.x,
+      cropArea.y,
+      cropArea.size
+    )
+    
+    setCandidatePhotos(prev => ({
+      ...prev,
+      [selectedCandidate.id]: [croppedPhoto, ...(prev[selectedCandidate.id] || [])]
+    }))
+    
+    setIsEditingPhoto(false)
+    setUploadedPhotoForEdit(null)
+  }
+  
+  // Обработчик отмены редактирования
+  const handleCancelEdit = () => {
+    setIsEditingPhoto(false)
+    setUploadedPhotoForEdit(null)
+  }
+  
+  // Обработчик выбора главного фото (клик на изображение в карусели)
+  const handleSelectMainPhoto = (photoIndex: number) => {
+    const photos = candidatePhotos[selectedCandidate.id]
+    if (!photos || photoIndex === 0) return // Уже главное или нет фото
+    
+    // Перемещаем выбранное фото в начало массива
+    const newPhotos = [...photos]
+    const [selectedPhoto] = newPhotos.splice(photoIndex, 1)
+    newPhotos.unshift(selectedPhoto)
+    
+    setCandidatePhotos(prev => ({
+      ...prev,
+      [selectedCandidate.id]: newPhotos
+    }))
+  }
   
   // Моковые данные вакансий для кандидата (разные примеры в зависимости от кандидата)
   const getCandidateVacancies = (): Array<{
@@ -426,6 +848,52 @@ export default function RecrChatPage() {
   // Состояние видимости зарплатной информации (по умолчанию скрыты)
   const [isSalaryVisible, setIsSalaryVisible] = useState(false)
   const [isOfferVisible, setIsOfferVisible] = useState(false)
+  
+  // Состояние для загрузки документов
+  const [isDraggingDocument, setIsDraggingDocument] = useState(false)
+  const [documentUploadModalOpen, setDocumentUploadModalOpen] = useState(false)
+  const [pendingDocumentFile, setPendingDocumentFile] = useState<File | null>(null)
+  const [documentVisibilityGroup, setDocumentVisibilityGroup] = useState<'only-me' | 'group'>('only-me')
+  const [selectedGroup, setSelectedGroup] = useState<string>('')
+  
+  // Состояние для хранения загруженных документов
+  const [uploadedDocuments, setUploadedDocuments] = useState<Array<{
+    id: string
+    name: string
+    size: number
+    uploadedDate: string
+    visibility: 'only-me' | 'group'
+    groupId?: string
+    groupName?: string
+  }>>([
+    // Пример существующего документа
+    {
+      id: '1',
+      name: 'john_doe_cv.pdf',
+      size: 450 * 1024, // 450 KB в байтах
+      uploadedDate: 'Jan 15, 2026',
+      visibility: 'only-me'
+    },
+    // Пример документа с группой
+    {
+      id: '2',
+      name: 'test_document.pdf',
+      size: 200 * 1024, // 200 KB в байтах
+      uploadedDate: 'Jan 20, 2026',
+      visibility: 'group',
+      groupId: '1',
+      groupName: 'Рекрутеры'
+    }
+  ])
+  
+  // Моковые группы для выбора видимости документа
+  const mockGroups = [
+    { id: '1', name: 'Рекрутеры' },
+    { id: '2', name: 'Интервьюеры' },
+    { id: '3', name: 'Заказчики' },
+    { id: '4', name: 'HR отдел' },
+    { id: '5', name: 'Менеджмент' }
+  ]
   
   // Причины отказа (объявляем до использования в useState)
   const rejectionReasons = [
@@ -856,7 +1324,7 @@ export default function RecrChatPage() {
   
   // Получить все социальные сети (включая те, у которых нет контакта)
   const getAllSocialNetworks = () => {
-    const socialPlatforms = ['whatsapp', 'viber', 'telegram', 'vk', 'linkedin', 'dribbble', 'behance', 'pinterest', 'habrCareer', 'github', 'instagram', 'facebook', 'twitter'] as const
+    const socialPlatforms = ['whatsapp', 'viber', 'telegram', 'vk', 'linkedin', 'dribbble', 'behance', 'pinterest', 'habrCareer', 'github', 'instagram', 'facebook', 'twitter', 'kaggle'] as const
     return socialPlatforms.map(platform => {
       const value = socialValues[platform] || selectedCandidate[platform as keyof typeof selectedCandidate]
       const hasContact = value && typeof value === 'string' && value.trim() !== ''
@@ -870,9 +1338,32 @@ export default function RecrChatPage() {
   }
   
   // Инициализация значений социальных сетей
+  // Обработка клавиш Enter и Esc в модальном окне загрузки документа
+  useEffect(() => {
+    if (!documentUploadModalOpen) return
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        if (documentVisibilityGroup === 'only-me' || (documentVisibilityGroup === 'group' && selectedGroup)) {
+          handleDocumentUploadConfirm()
+        }
+      } else if (e.key === 'Escape') {
+        e.preventDefault()
+        handleDocumentUploadCancel()
+      }
+    }
+    
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [documentUploadModalOpen, documentVisibilityGroup, selectedGroup])
+  
   useEffect(() => {
     const values: Record<string, string> = {}
-    const socialPlatforms = ['whatsapp', 'viber', 'telegram', 'vk', 'linkedin', 'dribbble', 'behance', 'pinterest', 'habrCareer', 'github', 'instagram', 'facebook', 'twitter'] as const
+    const socialPlatforms = ['whatsapp', 'viber', 'telegram', 'vk', 'linkedin', 'dribbble', 'behance', 'pinterest', 'habrCareer', 'github', 'instagram', 'facebook', 'twitter', 'kaggle'] as const
     socialPlatforms.forEach(platform => {
       const value = selectedCandidate[platform as keyof typeof selectedCandidate]
       values[platform] = (value && typeof value === 'string') ? value : ''
@@ -1181,19 +1672,54 @@ export default function RecrChatPage() {
                 key={candidate.id}
                 className={`${styles.candidateItem} ${selectedCandidate.id === candidate.id ? styles.selected : ''}`}
                 onClick={() => handleCandidateSelect(candidate)}
+                style={{ position: 'relative' }}
               >
+                {/* Точка в правом верхнем углу (только для непросмотренных изменений, не для сообщений) */}
+                {((candidate as any).hasUnviewedChanges === true) && (
+                  <Box
+                    style={{
+                      position: 'absolute',
+                      top: '8px',
+                      right: '8px',
+                      width: '12px',
+                      height: '12px',
+                      borderRadius: '50%',
+                      backgroundColor: candidate.statusColor,
+                      border: '2px solid white',
+                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                      zIndex: 10,
+                      cursor: 'pointer'
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      // Здесь можно добавить логику для пометки изменений как просмотренных
+                      console.log('Mark changes as viewed:', candidate.id)
+                    }}
+                  />
+                )}
                 <Flex align="center" gap="3">
                   <Avatar
                     size="3"
-                    fallback={candidate.avatar}
+                    fallback={getInitials(candidate.name)}
+                    src={candidatePhotos[candidate.id]?.[0]}
                     style={{ backgroundColor: candidate.statusColor }}
                   />
-                  <Flex direction="column" style={{ flex: 1, minWidth: 0 }}>
+                  <Flex direction="column" style={{ flex: 1, minWidth: 0, position: 'relative' }}>
                     <Flex align="center" gap="2">
                       <Text size="3" weight="bold">{candidate.name}</Text>
-                      {candidate.unread > 0 && (
-                        <Badge size="1" color="red">{candidate.unread}</Badge>
-                      )}
+                      {/* Бейдж с иконкой/многоточием и количеством сообщений */}
+                      {candidate.unread > 0 && (() => {
+                        const unreadInfo = getUnreadInfo(candidate)
+                        if (!unreadInfo) return null
+                        return (
+                          <Flex align="center" gap="1">
+                            <Badge size="1" color="red" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              {unreadInfo.icon}
+                              {unreadInfo.count}
+                            </Badge>
+                          </Flex>
+                        )
+                      })()}
                     </Flex>
                     <Text size="2" color="gray">{candidate.position}</Text>
                     <Flex align="center" gap="2" mt="1">
@@ -1528,7 +2054,16 @@ export default function RecrChatPage() {
           </Box>
         )}
         
-        <Card className={styles.candidateCard}>
+        <Card 
+          className={styles.candidateCard}
+          onDragOver={handleDocumentDragOver}
+          onDragLeave={handleDocumentDragLeave}
+          onDrop={handleDocumentDrop}
+          style={{
+            border: isDraggingDocument ? '2px dashed var(--accent-9)' : undefined,
+            transition: 'border 0.2s'
+          }}
+        >
           {/* Кнопка закрытия для мобильных */}
           {isMobile && (
             <Button
@@ -1622,11 +2157,29 @@ export default function RecrChatPage() {
           {/* Header */}
           <Flex direction="column" gap="3" mb="4">
             <Flex align="center" gap="3">
-              <Avatar
-                size="5"
-                fallback={selectedCandidate.avatar}
-                style={{ backgroundColor: selectedCandidate.statusColor }}
-              />
+              <Box
+                onClick={handleAvatarClick}
+                style={{ 
+                  cursor: 'pointer',
+                  borderRadius: '50%',
+                  transition: 'transform 0.2s'
+                }}
+                onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
+                  e.currentTarget.style.transform = 'scale(1.05)'
+                }}
+                onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
+                  e.currentTarget.style.transform = 'scale(1)'
+                }}
+              >
+                <Avatar
+                  size="5"
+                  fallback={getInitials(selectedCandidate.name)}
+                  style={{ 
+                    backgroundColor: selectedCandidate.statusColor
+                  }}
+                  src={candidatePhotos[selectedCandidate.id]?.[0]}
+                />
+              </Box>
               <Flex direction="column" gap="2" style={{ flex: 1, minWidth: 0, maxWidth: '100%', overflow: 'hidden' }}>
                 <Flex 
                   align="center" 
@@ -1866,18 +2419,38 @@ export default function RecrChatPage() {
                           maxWidth: 'none'
                         }}
                       >
-                        {statusComment.trim() && (
-                          <TextField.Slot side="right">
-                            <Button 
-                              size="1" 
-                              variant="ghost"
-                              onClick={handleStatusCommentSubmit}
-                              style={{ cursor: 'pointer' }}
-                            >
-                              <CheckIcon width={14} height={14} />
-                            </Button>
-                          </TextField.Slot>
-                        )}
+                        <TextField.Slot side="right" style={{ display: statusComment.trim() ? 'flex' : 'none' }}>
+                          <span
+                            onClick={handleStatusCommentSubmit}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault()
+                                handleStatusCommentSubmit()
+                              }
+                            }}
+                            style={{ 
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              background: 'transparent',
+                              border: 'none',
+                              padding: '4px',
+                              borderRadius: '4px',
+                              color: 'var(--gray-11)'
+                            }}
+                            onMouseEnter={(e: React.MouseEvent<HTMLSpanElement>) => {
+                              e.currentTarget.style.backgroundColor = 'var(--gray-4)'
+                            }}
+                            onMouseLeave={(e: React.MouseEvent<HTMLSpanElement>) => {
+                              e.currentTarget.style.backgroundColor = 'transparent'
+                            }}
+                          >
+                            <CheckIcon width={14} height={14} />
+                          </span>
+                        </TextField.Slot>
                       </TextField.Root>
                       <Select.Root
                         value={selectedCandidate.status}
@@ -2026,12 +2599,10 @@ export default function RecrChatPage() {
                           <Button 
                             size="1" 
                             variant="soft"
-                            asChild
                             style={{ flexShrink: 0 }}
+                            onClick={() => window.location.href = `mailto:${selectedCandidate.email}`}
                           >
-                            <a href={`mailto:${selectedCandidate.email}`} style={{ textDecoration: 'none' }}>
-                              <EnvelopeClosedIcon width={14} height={14} />
-                            </a>
+                            <EnvelopeClosedIcon width={14} height={14} />
                           </Button>
                         </Flex>
                       )}
@@ -2102,12 +2673,10 @@ export default function RecrChatPage() {
                           <Button 
                             size="1" 
                             variant="soft"
-                            asChild
                             style={{ flexShrink: 0 }}
+                            onClick={() => window.location.href = `tel:${selectedCandidate.phone.replace(/[^\d+]/g, '')}`}
                           >
-                            <a href={`tel:${selectedCandidate.phone.replace(/[^\d+]/g, '')}`} style={{ textDecoration: 'none' }}>
-                              Call
-                            </a>
+                            Call
                           </Button>
                         </Flex>
                       )}
@@ -2182,17 +2751,10 @@ export default function RecrChatPage() {
                           <Button 
                             size="1" 
                             variant="soft"
-                            asChild
                             style={{ flexShrink: 0 }}
+                            onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedCandidate.location)}`, '_blank', 'noopener,noreferrer')}
                           >
-                            <a 
-                              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedCandidate.location)}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{ textDecoration: 'none' }}
-                            >
-                              <GlobeIcon width={14} height={14} />
-                            </a>
+                            <GlobeIcon width={14} height={14} />
                           </Button>
                         </Flex>
                       )}
@@ -2202,7 +2764,7 @@ export default function RecrChatPage() {
                     
                     {/* Социальные сети и мессенджеры */}
                     <Box>
-                      <Flex gap="2" wrap="wrap" style={{ alignItems: 'flex-start' }}>
+                      <Flex gap="2" wrap="wrap" style={{ alignItems: 'flex-start', overflow: 'visible' }}>
                         {getAllSocialNetworks().map((social) => {
                           const isEditing = editingSocial === social.platform
                           const currentValue = socialValues[social.platform] || ''
@@ -2257,33 +2819,24 @@ export default function RecrChatPage() {
                             )
                           }
                           
+                          // Получаем количество непрочитанных сообщений для этой платформы
+                          const unreadSources = (selectedCandidate.unreadSources as Record<string, number>) || {}
+                          const unreadCount = unreadSources[social.platform] || 0
+                          const showBadge = unreadCount > 0 && unreadCount < 10
+                          
                           return (
                             <Box
                               key={social.platform}
                               className={styles.socialButtonWrapper}
-                              style={{ position: 'relative' }}
+                              style={{ position: 'relative', overflow: 'visible' }}
                             >
                               {social.hasContact ? (
-                                <Box
-                                  asChild
-                                  className={styles.socialButton}
-                                  style={{
-                                    borderRadius: '8px',
-                                    width: '35px',
-                                    height: '35px',
-                                    backgroundColor: social.color,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s ease-in-out',
-                                    flexShrink: 0,
-                                  }}
-                                >
+                                <>
                                   <a 
                                     href={url} 
-                                    target="_blank" 
+                                    target="_blank"
                                     rel="noopener noreferrer"
+                                    className={styles.socialButton}
                                     style={{ 
                                       textDecoration: 'none',
                                       display: 'flex',
@@ -2293,11 +2846,54 @@ export default function RecrChatPage() {
                                       height: '35px',
                                       color: 'white',
                                       borderRadius: '8px',
+                                      backgroundColor: social.color,
+                                      cursor: 'pointer',
+                                      transition: 'all 0.2s ease-in-out',
+                                      flexShrink: 0,
                                     }}
                                   >
-                                    {social.icon}
+                                    <Box style={{ 
+                                      display: 'flex', 
+                                      alignItems: 'center', 
+                                      justifyContent: 'center',
+                                      width: '100%',
+                                      height: '100%',
+                                      filter: 'brightness(1.1) contrast(1.1)'
+                                    }}>
+                                      {social.icon}
+                                    </Box>
                                   </a>
-                                </Box>
+                                  {/* Бейдж с количеством сообщений (слева сверху) */}
+                                  {showBadge && (
+                                    <Badge
+                                      size="1"
+                                      color="red"
+                                      style={{
+                                        position: 'absolute',
+                                        top: '-8px',
+                                        left: '-8px',
+                                        minWidth: '22px',
+                                        height: '22px',
+                                        padding: '0 6px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '12px',
+                                        fontWeight: 'bold',
+                                        zIndex: 100,
+                                        borderRadius: '50%',
+                                        backgroundColor: '#EF4444',
+                                        color: 'white',
+                                        border: '2.5px solid white',
+                                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
+                                        lineHeight: '1',
+                                        pointerEvents: 'none'
+                                      }}
+                                    >
+                                      {unreadCount}
+                                    </Badge>
+                                  )}
+                                </>
                               ) : (
                                 <Box
                                   className={styles.socialButton}
@@ -3103,30 +3699,103 @@ export default function RecrChatPage() {
 
               <Tabs.Content value="documents">
                 <Flex direction="column" gap="3">
-                  <Card>
-                    <Flex align="center" justify="between">
-                      <Flex align="center" gap="3">
-                        <FileTextIcon width={24} height={24} />
-                        <Flex direction="column">
-                          <Text size="3" weight="medium">john_doe_cv.pdf</Text>
-                          <Text size="1" color="gray">Uploaded: Jan 15, 2026 · Size: 450 KB</Text>
+                  {/* Список загруженных документов */}
+                  {uploadedDocuments.map((doc) => {
+                    const formatFileSize = (bytes: number): string => {
+                      if (bytes < 1024) return bytes + ' B'
+                      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB'
+                      return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
+                    }
+                    
+                    return (
+                      <Card key={doc.id}>
+                        <Flex align="center" justify="between">
+                          <Flex align="center" gap="3">
+                            <FileTextIcon width={24} height={24} />
+                            <Flex direction="column">
+                              <Text size="3" weight="medium">{doc.name}</Text>
+                              <Text size="1" color="gray">
+                                Uploaded: {doc.uploadedDate} · Size: {formatFileSize(doc.size)}
+                                {doc.visibility === 'group' && doc.groupName && ` · ${doc.groupName}`}
+                              </Text>
+                            </Flex>
+                          </Flex>
+                          <Flex gap="2">
+                            {/* Выпадающий список для выбора видимости документа */}
+                            <DropdownMenu.Root>
+                              <DropdownMenu.Trigger>
+                                <Button
+                                  size="1"
+                                  variant="soft"
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                    padding: '4px 8px',
+                                    fontSize: '12px',
+                                    fontWeight: '500',
+                                    backgroundColor: 'var(--gray-4)',
+                                    color: 'var(--gray-12)'
+                                  }}
+                                  title={doc.visibility === 'only-me' ? 'Только я' : doc.groupName || 'Выбрать группу'}
+                                >
+                                  <PersonIcon width={14} height={14} />
+                                  {doc.visibility === 'only-me' ? 'Только я' : doc.groupName || 'Выбрать группу'}
+                                </Button>
+                              </DropdownMenu.Trigger>
+                              <DropdownMenu.Content>
+                                <DropdownMenu.Item
+                                  onClick={() => {
+                                    setUploadedDocuments(prev => prev.map(d => 
+                                      d.id === doc.id 
+                                        ? { ...d, visibility: 'only-me' as const, groupId: undefined, groupName: undefined }
+                                        : d
+                                    ))
+                                  }}
+                                >
+                                  Только я
+                                </DropdownMenu.Item>
+                                <DropdownMenu.Separator />
+                                {mockGroups.map((group) => (
+                                  <DropdownMenu.Item
+                                    key={group.id}
+                                    onClick={() => {
+                                      setUploadedDocuments(prev => prev.map(d => 
+                                        d.id === doc.id 
+                                          ? { ...d, visibility: 'group' as const, groupId: group.id, groupName: group.name }
+                                          : d
+                                      ))
+                                    }}
+                                  >
+                                    {group.name}
+                                  </DropdownMenu.Item>
+                                ))}
+                              </DropdownMenu.Content>
+                            </DropdownMenu.Root>
+                            <Button size="1" variant="soft">
+                              <DownloadIcon width={14} height={14} />
+                            </Button>
+                            <Button size="1" variant="soft">
+                              <EyeOpenIcon width={14} height={14} />
+                            </Button>
+                            <Button 
+                              size="1" 
+                              variant="soft" 
+                              color="red"
+                              onClick={() => {
+                                setUploadedDocuments(prev => prev.filter(d => d.id !== doc.id))
+                              }}
+                            >
+                              <TrashIcon width={14} height={14} />
+                            </Button>
+                          </Flex>
                         </Flex>
-                      </Flex>
-                      <Flex gap="2">
-                        <Button size="1" variant="soft">
-                          <DownloadIcon width={14} height={14} />
-                        </Button>
-                        <Button size="1" variant="soft">
-                          <EyeOpenIcon width={14} height={14} />
-                        </Button>
-                        <Button size="1" variant="soft" color="red">
-                          <TrashIcon width={14} height={14} />
-                        </Button>
-                      </Flex>
-                    </Flex>
-                  </Card>
+                      </Card>
+                    )
+                  })}
 
-                  <Button variant="soft">
+                  {/* Кнопка загрузки нового документа */}
+                  <Button variant="soft" onClick={handleDocumentUploadClick}>
                     <PlusIcon width={16} height={16} />
                     Upload document
                   </Button>
@@ -3173,6 +3842,415 @@ export default function RecrChatPage() {
         <Flex gap="3" justify="end" mt="4">
           <Button variant="soft" onClick={() => setSlotsOpen(false)}>
             Закрыть
+          </Button>
+        </Flex>
+      </Dialog.Content>
+    </Dialog.Root>
+    
+    {/* Модальное окно для загрузки/просмотра фото аватара */}
+    <Dialog.Root open={avatarModalOpen} onOpenChange={setAvatarModalOpen}>
+      <Dialog.Content style={{ maxWidth: '600px', maxHeight: '80vh' }}>
+        <Dialog.Title>Фото кандидата</Dialog.Title>
+        <Dialog.Description size="2" color="gray" mb="4">
+          {candidatePhotos[selectedCandidate.id]?.length 
+            ? 'Загрузите новое фото или просмотрите существующие'
+            : 'Загрузите фото кандидата'}
+        </Dialog.Description>
+        
+        <Flex direction="column" gap="4">
+          {isEditingPhoto && uploadedPhotoForEdit ? (
+            /* Форма редактирования с обрезкой */
+            <Card>
+              <Flex direction="column" gap="3">
+                <Text size="3" weight="bold">Обрезка фото</Text>
+                <Box style={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center' }}>
+                  <Box
+                    style={{
+                      position: 'relative',
+                      maxWidth: '400px',
+                      maxHeight: '400px',
+                      overflow: 'hidden',
+                      borderRadius: '8px',
+                      border: '2px solid var(--gray-6)'
+                    }}
+                  >
+                    <img
+                      ref={uploadedPhotoRef}
+                      src={uploadedPhotoForEdit}
+                      alt="Загруженное фото"
+                      onLoad={handleImageLoad}
+                      style={{
+                        maxWidth: '100%',
+                        height: 'auto',
+                        display: 'block'
+                      }}
+                    />
+                    {/* Область обрезки */}
+                    {imageDimensions.width > 0 && (
+                      <>
+                        <Box
+                          style={{
+                            position: 'absolute',
+                            left: `${(cropArea.x / imageDimensions.width) * 100}%`,
+                            top: `${(cropArea.y / imageDimensions.height) * 100}%`,
+                            width: `${(cropArea.size / imageDimensions.width) * 100}%`,
+                            height: `${(cropArea.size / imageDimensions.height) * 100}%`,
+                            border: '2px solid var(--accent-9)',
+                            boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5)',
+                            cursor: 'move',
+                            boxSizing: 'border-box'
+                          }}
+                          onMouseDown={(e: React.MouseEvent<HTMLDivElement>) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            const img = uploadedPhotoRef.current
+                            if (!img) return
+                            
+                            const startX = e.clientX
+                            const startY = e.clientY
+                            const startCropX = cropArea.x
+                            const startCropY = cropArea.y
+                            
+                            const handleMouseMove = (moveEvent: MouseEvent) => {
+                              const imgRect = img.getBoundingClientRect()
+                              const scaleX = imageDimensions.width / imgRect.width
+                              const scaleY = imageDimensions.height / imgRect.height
+                              
+                              const deltaX = (moveEvent.clientX - startX) * scaleX
+                              const deltaY = (moveEvent.clientY - startY) * scaleY
+                              
+                              const newX = Math.max(0, Math.min(startCropX + deltaX, imageDimensions.width - cropArea.size))
+                              const newY = Math.max(0, Math.min(startCropY + deltaY, imageDimensions.height - cropArea.size))
+                              
+                              setCropArea(prev => ({ ...prev, x: newX, y: newY }))
+                            }
+                            
+                            const handleMouseUp = () => {
+                              document.removeEventListener('mousemove', handleMouseMove)
+                              document.removeEventListener('mouseup', handleMouseUp)
+                            }
+                            
+                            document.addEventListener('mousemove', handleMouseMove)
+                            document.addEventListener('mouseup', handleMouseUp)
+                          }}
+                        />
+                        {/* Углы для изменения размера */}
+                        {['top-left', 'top-right', 'bottom-left', 'bottom-right'].map((corner) => {
+                          const isTop = corner.includes('top')
+                          const isLeft = corner.includes('left')
+                          return (
+                            <Box
+                              key={corner}
+                              style={{
+                                position: 'absolute',
+                                left: `${isLeft ? (cropArea.x / imageDimensions.width) * 100 : ((cropArea.x + cropArea.size) / imageDimensions.width) * 100}%`,
+                                top: `${isTop ? (cropArea.y / imageDimensions.height) * 100 : ((cropArea.y + cropArea.size) / imageDimensions.height) * 100}%`,
+                                width: '12px',
+                                height: '12px',
+                                backgroundColor: 'var(--accent-9)',
+                                border: '2px solid white',
+                                borderRadius: '50%',
+                                cursor: `${isTop ? (isLeft ? 'nw' : 'ne') : (isLeft ? 'sw' : 'se')}-resize`,
+                                transform: 'translate(-50%, -50%)',
+                                zIndex: 10
+                              }}
+                              onMouseDown={(e: React.MouseEvent<HTMLDivElement>) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                const img = uploadedPhotoRef.current
+                                if (!img) return
+                                
+                                const startX = e.clientX
+                                const startY = e.clientY
+                                const startCropX = cropArea.x
+                                const startCropY = cropArea.y
+                                const startSize = cropArea.size
+                                
+                                const handleMouseMove = (moveEvent: MouseEvent) => {
+                                  const imgRect = img.getBoundingClientRect()
+                                  const scaleX = imageDimensions.width / imgRect.width
+                                  const scaleY = imageDimensions.height / imgRect.height
+                                  
+                                  const deltaX = (moveEvent.clientX - startX) * scaleX
+                                  const deltaY = (moveEvent.clientY - startY) * scaleY
+                                  
+                                  let newSize = startSize
+                                  let newX = startCropX
+                                  let newY = startCropY
+                                  
+                                  if (isLeft && isTop) {
+                                    newSize = Math.max(50, Math.min(startSize - deltaX, startSize - deltaY, imageDimensions.width - startCropX, imageDimensions.height - startCropY))
+                                    newX = startCropX + (startSize - newSize)
+                                    newY = startCropY + (startSize - newSize)
+                                  } else if (isLeft && !isTop) {
+                                    newSize = Math.max(50, Math.min(startSize - deltaX, startSize + deltaY, imageDimensions.width - startCropX, startCropY + startSize))
+                                    newX = startCropX + (startSize - newSize)
+                                    newY = startCropY
+                                  } else if (!isLeft && isTop) {
+                                    newSize = Math.max(50, Math.min(startSize + deltaX, startSize - deltaY, imageDimensions.width - startCropX, imageDimensions.height - startCropY))
+                                    newX = startCropX
+                                    newY = startCropY + (startSize - newSize)
+                                  } else {
+                                    newSize = Math.max(50, Math.min(startSize + deltaX, startSize + deltaY, imageDimensions.width - startCropX, imageDimensions.height - startCropY))
+                                    newX = startCropX
+                                    newY = startCropY
+                                  }
+                                  
+                                  setCropArea({ x: newX, y: newY, size: newSize })
+                                }
+                                
+                                const handleMouseUp = () => {
+                                  document.removeEventListener('mousemove', handleMouseMove)
+                                  document.removeEventListener('mouseup', handleMouseUp)
+                                }
+                                
+                                document.addEventListener('mousemove', handleMouseMove)
+                                document.addEventListener('mouseup', handleMouseUp)
+                              }}
+                            />
+                          )
+                        })}
+                      </>
+                    )}
+                  </Box>
+                </Box>
+                <Flex gap="2" justify="end">
+                  <Button variant="soft" onClick={handleCancelEdit}>
+                    Отмена
+                  </Button>
+                  <Button variant="solid" onClick={handleSaveCroppedPhoto}>
+                    Сохранить
+                  </Button>
+                </Flex>
+              </Flex>
+            </Card>
+          ) : (
+            /* Форма загрузки с drag-and-drop */
+            <Card>
+              <Flex direction="column" gap="3">
+                <Text size="3" weight="bold">Загрузить новое фото</Text>
+                <Box
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '24px',
+                    border: `2px dashed ${isDragging ? 'var(--accent-9)' : 'var(--gray-6)'}`,
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    backgroundColor: isDragging ? 'var(--accent-3)' : 'var(--gray-2)'
+                  }}
+                  onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
+                    if (!isDragging) {
+                      e.currentTarget.style.borderColor = 'var(--accent-9)'
+                      e.currentTarget.style.backgroundColor = 'var(--gray-3)'
+                    }
+                  }}
+                  onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
+                    if (!isDragging) {
+                      e.currentTarget.style.borderColor = 'var(--gray-6)'
+                      e.currentTarget.style.backgroundColor = 'var(--gray-2)'
+                    }
+                  }}
+                  onClick={() => {
+                    document.getElementById('avatar-upload')?.click()
+                  }}
+                >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileInputChange}
+                    style={{ display: 'none' }}
+                    id="avatar-upload"
+                  />
+                  <UploadIcon width={32} height={32} style={{ color: 'var(--gray-9)', marginBottom: '8px' }} />
+                  <Text size="2" color="gray" align="center">
+                    {isDragging ? 'Отпустите файл для загрузки' : 'Нажмите или перетащите файл сюда'}
+                  </Text>
+                  <Text size="1" color="gray" align="center" mt="1">
+                    PNG, JPG, GIF до 10MB
+                  </Text>
+                </Box>
+              </Flex>
+            </Card>
+          )}
+          
+          {/* Карусель фото (если есть загруженные) */}
+          {candidatePhotos[selectedCandidate.id]?.length > 0 && (
+            <Card>
+              <Flex direction="column" gap="3">
+                <Text size="3" weight="bold">Загруженные фото</Text>
+                <Box style={{ position: 'relative', width: '100%' }}>
+                  <Flex align="center" gap="2" style={{ overflowX: 'auto', scrollbarWidth: 'none' }}>
+                    {candidatePhotos[selectedCandidate.id].map((photo, index) => (
+                      <Box
+                        key={index}
+                        onClick={() => handleSelectMainPhoto(index)}
+                        style={{
+                          flexShrink: 0,
+                          width: '150px',
+                          height: '150px',
+                          borderRadius: '8px',
+                          overflow: 'hidden',
+                          border: index === 0 ? '3px solid var(--accent-9)' : '2px solid var(--gray-6)',
+                          position: 'relative',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
+                          if (index !== 0) {
+                            e.currentTarget.style.borderColor = 'var(--accent-9)'
+                            e.currentTarget.style.transform = 'scale(1.05)'
+                          }
+                        }}
+                        onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
+                          if (index !== 0) {
+                            e.currentTarget.style.borderColor = 'var(--gray-6)'
+                            e.currentTarget.style.transform = 'scale(1)'
+                          }
+                        }}
+                      >
+                        <img
+                          src={photo}
+                          alt={`Фото ${index + 1}`}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover'
+                          }}
+                        />
+                        {index === 0 && (
+                          <Box
+                            style={{
+                              position: 'absolute',
+                              top: '4px',
+                              left: '4px',
+                              backgroundColor: 'var(--accent-9)',
+                              color: 'white',
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              fontSize: '10px',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            Текущее
+                          </Box>
+                        )}
+                      </Box>
+                    ))}
+                  </Flex>
+                </Box>
+              </Flex>
+            </Card>
+          )}
+        </Flex>
+        
+        <Flex gap="3" justify="end" mt="4">
+          <Button variant="soft" onClick={() => setAvatarModalOpen(false)}>
+            Закрыть
+          </Button>
+        </Flex>
+      </Dialog.Content>
+    </Dialog.Root>
+    
+    {/* Модальное окно "Кому показывать" для загрузки документа */}
+    <Dialog.Root open={documentUploadModalOpen} onOpenChange={(open) => {
+      if (!open) {
+        handleDocumentUploadCancel()
+      }
+    }}>
+      <Dialog.Content 
+        style={{ maxWidth: '500px' }}
+      >
+        <Dialog.Title>Кому показывать</Dialog.Title>
+        <Dialog.Description size="2" color="gray" mb="4">
+          {pendingDocumentFile && `Файл: ${pendingDocumentFile.name}`}
+        </Dialog.Description>
+        
+        <Flex direction="column" gap="4">
+          <Flex direction="column" gap="2">
+            <Text size="3" weight="medium">Видимость документа</Text>
+            <Flex direction="column" gap="2">
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  padding: '8px',
+                  borderRadius: '6px',
+                  border: documentVisibilityGroup === 'only-me' ? '2px solid var(--accent-9)' : '2px solid transparent',
+                  backgroundColor: documentVisibilityGroup === 'only-me' ? 'var(--accent-2)' : 'transparent'
+                }}
+                onClick={() => setDocumentVisibilityGroup('only-me')}
+              >
+                <input
+                  type="radio"
+                  checked={documentVisibilityGroup === 'only-me'}
+                  onChange={() => setDocumentVisibilityGroup('only-me')}
+                  style={{ cursor: 'pointer' }}
+                />
+                <Text size="2">Только я</Text>
+              </label>
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  padding: '8px',
+                  borderRadius: '6px',
+                  border: documentVisibilityGroup === 'group' ? '2px solid var(--accent-9)' : '2px solid transparent',
+                  backgroundColor: documentVisibilityGroup === 'group' ? 'var(--accent-2)' : 'transparent'
+                }}
+                onClick={() => setDocumentVisibilityGroup('group')}
+              >
+                <input
+                  type="radio"
+                  checked={documentVisibilityGroup === 'group'}
+                  onChange={() => setDocumentVisibilityGroup('group')}
+                  style={{ cursor: 'pointer' }}
+                />
+                <Text size="2">Группа</Text>
+              </label>
+            </Flex>
+          </Flex>
+          
+          {documentVisibilityGroup === 'group' && (
+            <Flex direction="column" gap="2">
+              <Text size="3" weight="medium">Выберите группу</Text>
+              <Select.Root
+                value={selectedGroup}
+                onValueChange={setSelectedGroup}
+              >
+                <Select.Trigger placeholder="Выберите группу" />
+                <Select.Content>
+                  {mockGroups.map((group) => (
+                    <Select.Item key={group.id} value={group.id}>
+                      {group.name}
+                    </Select.Item>
+                  ))}
+                </Select.Content>
+              </Select.Root>
+            </Flex>
+          )}
+        </Flex>
+        
+        <Flex gap="3" justify="end" mt="4">
+          <Button variant="soft" onClick={handleDocumentUploadCancel}>
+            Отмена
+          </Button>
+          <Button 
+            variant="solid" 
+            onClick={handleDocumentUploadConfirm}
+            disabled={documentVisibilityGroup === 'group' && !selectedGroup}
+          >
+            Загрузить
           </Button>
         </Flex>
       </Dialog.Content>
