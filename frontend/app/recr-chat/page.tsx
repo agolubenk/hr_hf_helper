@@ -55,7 +55,7 @@ import {
   BiLogoTwitter,
   BiCodeAlt
 } from "react-icons/bi"
-import { SiViber, SiKaggle } from "react-icons/si"
+import { SiViber, SiKaggle, SiDiscord } from "react-icons/si"
 import styles from './recr-chat.module.css'
 
 // Моковые данные
@@ -74,11 +74,31 @@ const mockCandidates = [
     hasUnviewedChanges: false, // Нет непросмотренных изменений
     email: 'john@example.com',
     phone: '+1 (555) 123-4567',
+    emails: ['john@example.com'],
+    phones: ['+1 (555) 123-4567'],
     location: 'New York, USA',
-    // Социальные сети и мессенджеры
+    hasDuplicateSuspicion: true, // Подозрение на дубликат
+    // Социальные сети и мессенджеры (старые поля для обратной совместимости)
     whatsapp: '+15551234567',
     viber: '+15551234567',
     telegram: '@johndoe',
+    // Массивы контактов для каждой платформы
+    whatsapps: ['+15551234567'],
+    vibers: ['+15551234567'],
+    telegrams: ['@johndoe'],
+    vks: ['johndoe'],
+    linkedins: ['/in/johndoe'],
+    dribbbles: ['johndoe'],
+    behances: ['johndoe'],
+    pinterests: ['johndoe'],
+    habrCareers: ['johndoe'],
+    githubs: ['johndoe'],
+    instagrams: ['@johndoe'],
+    facebooks: ['johndoe'],
+    twitters: ['@johndoe'],
+    kaggles: [],
+    discords: [],
+    // Старые поля для обратной совместимости
     vk: 'johndoe',
     linkedin: '/in/johndoe',
     dribbble: 'johndoe',
@@ -114,6 +134,8 @@ const mockCandidates = [
     hasUnviewedChanges: false,
     email: 'jane@example.com',
     phone: '+1 (555) 234-5678',
+    emails: ['jane@example.com'],
+    phones: ['+1 (555) 234-5678'],
     location: 'San Francisco, USA',
     // Социальные сети и мессенджеры
     whatsapp: '+15552345678',
@@ -140,6 +162,8 @@ const mockCandidates = [
     hasUnviewedChanges: true, // Есть непросмотренные изменения (статус, комментарий, файл, данные) - пример без сообщений
     email: 'mike@example.com',
     phone: '+1 (555) 345-6789',
+    emails: ['mike@example.com'],
+    phones: ['+1 (555) 345-6789'],
     location: 'Los Angeles, USA',
     // Социальные сети и мессенджеры
     linkedin: '/in/mikechen',
@@ -166,6 +190,8 @@ const mockCandidates = [
     hasUnviewedChanges: false, // Нет непросмотренных изменений
     email: 'ivanov@example.com',
     phone: '+7 (999) 123-4567',
+    emails: ['ivanov@example.com'],
+    phones: ['+7 (999) 123-4567'],
     location: 'Москва, Россия',
     whatsapp: '+79991234567',
     telegram: '@ivanov',
@@ -196,6 +222,8 @@ const mockCandidates = [
     hasUnviewedChanges: false,
     email: 'smirnova@example.com',
     phone: '+7 (999) 234-5678',
+    emails: ['smirnova@example.com'],
+    phones: ['+7 (999) 234-5678'],
     location: 'Санкт-Петербург, Россия',
     telegram: '@smirnova',
     linkedin: '/in/smirnova',
@@ -307,6 +335,7 @@ const getSocialUrl = (platform: string, value: string): string => {
     facebook: (val) => `https://facebook.com/${cleanValue}`,
     twitter: (val) => `https://twitter.com/${cleanValue}`,
     kaggle: (val) => `https://kaggle.com/${cleanValue}`,
+    discord: (val) => val.startsWith('http') ? val : `https://discord.com/users/${cleanValue}`,
   }
   
   return urls[platform]?.(value) || ''
@@ -331,6 +360,7 @@ const getPlatformInfo = (platform: string): { name: string; color: string; icon:
     facebook: { name: 'Facebook', color: '#1877F2', icon: <BiLogoFacebook size={iconSize} /> },
     twitter: { name: 'Twitter', color: '#1DA1F2', icon: <BiLogoTwitter size={iconSize} /> },
     kaggle: { name: 'Kaggle', color: '#20BEFF', icon: <SiKaggle size={iconSize} /> },
+    discord: { name: 'Discord', color: '#5865F2', icon: <SiDiscord size={iconSize} /> },
   }
   
   return platforms[platform] || { name: platform, color: '#6B7280', icon: <ExternalLinkIcon width={iconSize} height={iconSize} /> }
@@ -813,7 +843,9 @@ export default function RecrChatPage() {
   
   // Состояние редактирования социальных сетей
   const [editingSocial, setEditingSocial] = useState<string | null>(null)
+  const [editingSocialIndex, setEditingSocialIndex] = useState<number | null>(null)
   const [socialValues, setSocialValues] = useState<Record<string, string>>({})
+  const [socialValue, setSocialValue] = useState('')
   
   // Состояние редактирования локации
   const [isEditingLocation, setIsEditingLocation] = useState(false)
@@ -821,9 +853,24 @@ export default function RecrChatPage() {
   
   // Состояние редактирования контактов
   const [isEditingEmail, setIsEditingEmail] = useState(false)
-  const [emailValue, setEmailValue] = useState(selectedCandidate.email)
+  const [editingEmailIndex, setEditingEmailIndex] = useState<number | null>(null)
+  const [emailValue, setEmailValue] = useState('')
   const [isEditingPhone, setIsEditingPhone] = useState(false)
-  const [phoneValue, setPhoneValue] = useState(selectedCandidate.phone)
+  const [editingPhoneIndex, setEditingPhoneIndex] = useState<number | null>(null)
+  const [phoneValue, setPhoneValue] = useState('')
+  
+  // Состояние для модального окна добавления контакта
+  const [addContactModalOpen, setAddContactModalOpen] = useState(false)
+  const [newContactType, setNewContactType] = useState<'email' | 'phone'>('email')
+  const [newContactValue, setNewContactValue] = useState('')
+  
+  // Состояние для модального окна добавления социальной сети
+  const [addSocialModalOpen, setAddSocialModalOpen] = useState(false)
+  const [newSocialPlatform, setNewSocialPlatform] = useState<string>('')
+  const [newSocialValue, setNewSocialValue] = useState('')
+  
+  // Состояние для модального окна дубликатов
+  const [duplicateModalOpen, setDuplicateModalOpen] = useState(false)
   
   // Состояние редактирования имени
   const [isEditingName, setIsEditingName] = useState(false)
@@ -1255,8 +1302,6 @@ export default function RecrChatPage() {
   
   useEffect(() => {
     setLocationValue(selectedCandidate.location)
-    setEmailValue(selectedCandidate.email)
-    setPhoneValue(selectedCandidate.phone)
     setTagsValue((selectedCandidate.tags || []).join(', '))
     setLevelValue(selectedCandidate.level || '')
     setAgeValue(selectedCandidate.age?.toString() || '')
@@ -1264,16 +1309,107 @@ export default function RecrChatPage() {
     setSalaryValue(selectedCandidate.salaryExpectations || '')
     setPositionValue(selectedCandidate.position || '')
     setSourceValue(selectedCandidate.source || '')
-  }, [selectedCandidate.location, selectedCandidate.email, selectedCandidate.phone, selectedCandidate.tags, selectedCandidate.level, selectedCandidate.age, selectedCandidate.gender, selectedCandidate.salaryExpectations, selectedCandidate.position, selectedCandidate.source])
+  }, [selectedCandidate.location, selectedCandidate.tags, selectedCandidate.level, selectedCandidate.age, selectedCandidate.gender, selectedCandidate.salaryExpectations, selectedCandidate.position, selectedCandidate.source])
   
-  const handleEmailSave = () => {
-    setSelectedCandidate(prev => ({ ...prev, email: emailValue }))
+  // Получаем массивы контактов с fallback на старые поля
+  const getEmails = () => (selectedCandidate as any).emails || (selectedCandidate.email ? [selectedCandidate.email] : [])
+  const getPhones = () => (selectedCandidate as any).phones || (selectedCandidate.phone ? [selectedCandidate.phone] : [])
+  
+  const handleEmailSave = (index: number) => {
+    const emails = getEmails()
+    const newEmails = [...emails]
+    newEmails[index] = emailValue.trim()
+    setSelectedCandidate(prev => ({ 
+      ...prev, 
+      email: newEmails[0] || '',
+      emails: newEmails
+    }))
     setIsEditingEmail(false)
+    setEditingEmailIndex(null)
+    setEmailValue('')
   }
   
-  const handlePhoneSave = () => {
-    setSelectedCandidate(prev => ({ ...prev, phone: phoneValue }))
+  const handlePhoneSave = (index: number) => {
+    const phones = getPhones()
+    const newPhones = [...phones]
+    newPhones[index] = phoneValue.trim()
+    setSelectedCandidate(prev => ({ 
+      ...prev, 
+      phone: newPhones[0] || '',
+      phones: newPhones
+    }))
     setIsEditingPhone(false)
+    setEditingPhoneIndex(null)
+    setPhoneValue('')
+  }
+  
+  const handleDeleteEmail = (index: number) => {
+    const emails = getEmails()
+    const newEmails = emails.filter((_, i) => i !== index)
+    setSelectedCandidate(prev => ({ 
+      ...prev, 
+      email: newEmails[0] || '',
+      emails: newEmails
+    }))
+  }
+  
+  const handleDeletePhone = (index: number) => {
+    const phones = getPhones()
+    const newPhones = phones.filter((_, i) => i !== index)
+    setSelectedCandidate(prev => ({ 
+      ...prev, 
+      phone: newPhones[0] || '',
+      phones: newPhones
+    }))
+  }
+  
+  const handleAddContact = () => {
+    if (!newContactValue.trim()) return
+    
+    const emails = getEmails()
+    const phones = getPhones()
+    
+    // Проверка на дубликаты
+    if (newContactType === 'email') {
+      if (emails.includes(newContactValue.trim())) {
+        alert('Такой email уже существует')
+        return
+      }
+      const newEmails = [...emails, newContactValue.trim()]
+      setSelectedCandidate(prev => ({ 
+        ...prev, 
+        email: newEmails[0] || '',
+        emails: newEmails
+      }))
+    } else {
+      if (phones.includes(newContactValue.trim())) {
+        alert('Такой телефон уже существует')
+        return
+      }
+      const newPhones = [...phones, newContactValue.trim()]
+      setSelectedCandidate(prev => ({ 
+        ...prev, 
+        phone: newPhones[0] || '',
+        phones: newPhones
+      }))
+    }
+    
+    setNewContactValue('')
+    setAddContactModalOpen(false)
+  }
+  
+  const startEditingEmail = (index: number) => {
+    const emails = getEmails()
+    setEmailValue(emails[index] || '')
+    setEditingEmailIndex(index)
+    setIsEditingEmail(true)
+  }
+  
+  const startEditingPhone = (index: number) => {
+    const phones = getPhones()
+    setPhoneValue(phones[index] || '')
+    setEditingPhoneIndex(index)
+    setIsEditingPhone(true)
   }
   
   const handleNameSave = () => {
@@ -1322,15 +1458,30 @@ export default function RecrChatPage() {
     setIsEditingSource(false)
   }
   
+  // Получить контакты для конкретной платформы (массив)
+  const getSocialContacts = (platform: string): string[] => {
+    const pluralKey = `${platform}s` as keyof typeof selectedCandidate
+    const contacts = (selectedCandidate as any)[pluralKey]
+    if (Array.isArray(contacts)) {
+      return contacts
+    }
+    // Fallback на старое поле для обратной совместимости
+    const singleValue = selectedCandidate[platform as keyof typeof selectedCandidate]
+    if (singleValue && typeof singleValue === 'string' && singleValue.trim() !== '') {
+      return [singleValue]
+    }
+    return []
+  }
+  
   // Получить все социальные сети (включая те, у которых нет контакта)
   const getAllSocialNetworks = () => {
-    const socialPlatforms = ['whatsapp', 'viber', 'telegram', 'vk', 'linkedin', 'dribbble', 'behance', 'pinterest', 'habrCareer', 'github', 'instagram', 'facebook', 'twitter', 'kaggle'] as const
+    const socialPlatforms = ['whatsapp', 'viber', 'telegram', 'vk', 'linkedin', 'dribbble', 'behance', 'pinterest', 'habrCareer', 'github', 'instagram', 'facebook', 'twitter', 'kaggle', 'discord'] as const
     return socialPlatforms.map(platform => {
-      const value = socialValues[platform] || selectedCandidate[platform as keyof typeof selectedCandidate]
-      const hasContact = value && typeof value === 'string' && value.trim() !== ''
+      const contacts = getSocialContacts(platform)
+      const hasContact = contacts.length > 0
       return {
         platform,
-        value: hasContact ? (value as string) : '',
+        contacts,
         hasContact,
         ...getPlatformInfo(platform)
       }
@@ -1363,7 +1514,7 @@ export default function RecrChatPage() {
   
   useEffect(() => {
     const values: Record<string, string> = {}
-    const socialPlatforms = ['whatsapp', 'viber', 'telegram', 'vk', 'linkedin', 'dribbble', 'behance', 'pinterest', 'habrCareer', 'github', 'instagram', 'facebook', 'twitter', 'kaggle'] as const
+    const socialPlatforms = ['whatsapp', 'viber', 'telegram', 'vk', 'linkedin', 'dribbble', 'behance', 'pinterest', 'habrCareer', 'github', 'instagram', 'facebook', 'twitter', 'kaggle', 'discord'] as const
     socialPlatforms.forEach(platform => {
       const value = selectedCandidate[platform as keyof typeof selectedCandidate]
       values[platform] = (value && typeof value === 'string') ? value : ''
@@ -1371,39 +1522,83 @@ export default function RecrChatPage() {
     setSocialValues(values)
   }, [selectedCandidate])
   
-  const handleSocialEdit = (platform: string) => {
+  const handleSocialEdit = (platform: string, index: number) => {
+    const contacts = getSocialContacts(platform)
+    setSocialValue(contacts[index] || '')
     setEditingSocial(platform)
+    setEditingSocialIndex(index)
   }
   
-  const handleSocialSave = (platform: string) => {
-    // TODO: Сохранить значение в базу данных
-    // Пока просто обновляем локальное состояние
-    const newValue = socialValues[platform] || ''
+  const handleSocialSave = (platform: string, index: number) => {
+    if (!socialValue.trim()) return
+    
+    const contacts = getSocialContacts(platform)
+    const newContacts = [...contacts]
+    
+    // Если индекс равен длине массива, это новый контакт
+    if (index === contacts.length) {
+      newContacts.push(socialValue.trim())
+    } else {
+      newContacts[index] = socialValue.trim()
+    }
+    
+    const pluralKey = `${platform}s` as keyof typeof selectedCandidate
     setSelectedCandidate(prev => ({
       ...prev,
-      [platform]: newValue
+      [platform]: newContacts[0] || '', // Для обратной совместимости
+      [pluralKey]: newContacts
     }))
     setEditingSocial(null)
+    setEditingSocialIndex(null)
+    setSocialValue('')
   }
   
   const handleSocialCancel = () => {
-    // Восстанавливаем исходное значение
-    const originalValue = selectedCandidate[editingSocial as keyof typeof selectedCandidate] as string || ''
-    setSocialValues(prev => ({ ...prev, [editingSocial!]: originalValue }))
     setEditingSocial(null)
+    setEditingSocialIndex(null)
+    setSocialValue('')
   }
   
-  const handleSocialValueChange = (platform: string, value: string) => {
-    setSocialValues(prev => ({ ...prev, [platform]: value }))
+  const handleSocialValueChange = (value: string) => {
+    setSocialValue(value)
   }
   
-  const handleSocialInputKeyDown = (e: React.KeyboardEvent, platform: string) => {
-    if (e.key === 'Enter') {
-      handleSocialSave(platform)
-    } else if (e.key === 'Escape') {
-      handleSocialCancel()
+  const handleAddSocialContact = (platform: string) => {
+    const contacts = getSocialContacts(platform)
+    
+    // Ограничение до 5 контактов
+    if (contacts.length >= 5) {
+      alert('Можно добавить максимум 5 контактов для одной платформы')
+      return
     }
+    
+    // Начинаем редактирование нового контакта
+    setSocialValue('')
+    setEditingSocial(platform)
+    setEditingSocialIndex(contacts.length) // Новый индекс
   }
+  
+  const handleDeleteSocialContact = (platform: string, index: number) => {
+    const contacts = getSocialContacts(platform)
+    const newContacts = contacts.filter((_, i) => i !== index)
+    
+    const pluralKey = `${platform}s` as keyof typeof selectedCandidate
+    setSelectedCandidate(prev => ({
+      ...prev,
+      [platform]: newContacts[0] || '', // Для обратной совместимости
+      [pluralKey]: newContacts
+    }))
+  }
+  
+  // Получить доступные платформы (те, которые еще не добавлены)
+  const getAvailableSocialPlatforms = () => {
+    const allPlatforms = ['whatsapp', 'viber', 'telegram', 'vk', 'linkedin', 'dribbble', 'behance', 'pinterest', 'habrCareer', 'github', 'instagram', 'facebook', 'twitter', 'kaggle', 'discord'] as const
+    return allPlatforms.filter(platform => {
+      const value = socialValues[platform] || selectedCandidate[platform as keyof typeof selectedCandidate]
+      return !value || (typeof value === 'string' && value.trim() === '')
+    })
+  }
+  
   
   useEffect(() => {
     const checkMobile = () => {
@@ -2054,6 +2249,25 @@ export default function RecrChatPage() {
           </Box>
         )}
         
+        {/* Кнопка "Подозрение на дубликат" - показывается только если есть подозрение */}
+        {(selectedCandidate as any).hasDuplicateSuspicion && (
+          <Button
+            variant="soft"
+            color="orange"
+            onClick={() => setDuplicateModalOpen(true)}
+            style={{ 
+              alignSelf: 'flex-start', 
+              marginBottom: '16px',
+              position: 'sticky',
+              top: '16px',
+              zIndex: 100,
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+            }}
+          >
+            <Text size="2" weight="bold">⚠️ Подозрение на дубликат</Text>
+          </Button>
+        )}
+        
         <Card 
           className={styles.candidateCard}
           onDragOver={handleDocumentDragOver}
@@ -2532,154 +2746,211 @@ export default function RecrChatPage() {
                       Контакты
                     </Text>
                     
-                    {/* Email */}
+                    {/* Emails */}
                     <Box mb="3">
-                      {isEditingEmail ? (
-                        <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
-                          <EnvelopeClosedIcon width={16} height={16} style={{ flexShrink: 0 }} />
-                          <Text size="2" weight="medium" style={{ flexShrink: 0 }}>Email:</Text>
-                          <TextField.Root
-                            value={emailValue}
-                            onChange={(e) => setEmailValue(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                handleEmailSave()
-                              } else if (e.key === 'Escape') {
-                                setEmailValue(selectedCandidate.email)
-                                setIsEditingEmail(false)
-                              }
-                            }}
-                            style={{ flex: 1, minWidth: 0 }}
-                            size="1"
-                            autoFocus
-                          />
-                          <Button 
-                            size="1" 
-                            variant="soft"
-                            onClick={handleEmailSave}
-                            style={{ flexShrink: 0 }}
-                          >
-                            <CheckCircledIcon width={14} height={14} />
-                          </Button>
-                          <Button 
-                            size="1" 
-                            variant="soft"
-                            onClick={() => {
-                              setEmailValue(selectedCandidate.email)
-                              setIsEditingEmail(false)
-                            }}
-                            style={{ flexShrink: 0 }}
-                          >
-                            <Cross2Icon width={14} height={14} />
-                          </Button>
-                        </Flex>
-                      ) : (
-                        <Flex align="center" gap="2" style={{ flexWrap: 'nowrap', minWidth: 0 }}>
-                          <EnvelopeClosedIcon width={16} height={16} style={{ flexShrink: 0 }} />
-                          <Text size="2" weight="medium" style={{ flexShrink: 0 }}>Email:</Text>
-                          <Text size="2" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{selectedCandidate.email}</Text>
-                          <Button 
-                            size="1" 
-                            variant="soft"
-                            onClick={() => {
-                              navigator.clipboard.writeText(selectedCandidate.email)
-                            }}
-                            style={{ flexShrink: 0 }}
-                          >
-                            Copy
-                          </Button>
-                          <Button 
-                            size="1" 
-                            variant="soft"
-                            onClick={() => setIsEditingEmail(true)}
-                            style={{ flexShrink: 0 }}
-                          >
-                            <Pencil1Icon width={14} height={14} />
-                          </Button>
-                          <Button 
-                            size="1" 
-                            variant="soft"
-                            style={{ flexShrink: 0 }}
-                            onClick={() => window.location.href = `mailto:${selectedCandidate.email}`}
-                          >
-                            <EnvelopeClosedIcon width={14} height={14} />
-                          </Button>
-                        </Flex>
-                      )}
+                      <Flex align="center" gap="2" mb="2" wrap="wrap">
+                        {getEmails().map((email, index) => (
+                          <Flex key={index} align="center" gap="2" style={{ flexWrap: 'nowrap', minWidth: 0 }}>
+                            {isEditingEmail && editingEmailIndex === index ? (
+                              <>
+                                <EnvelopeClosedIcon width={16} height={16} style={{ flexShrink: 0 }} />
+                                <TextField.Root
+                                  value={emailValue}
+                                  onChange={(e) => setEmailValue(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      handleEmailSave(index)
+                                    } else if (e.key === 'Escape') {
+                                      setIsEditingEmail(false)
+                                      setEditingEmailIndex(null)
+                                      setEmailValue('')
+                                    }
+                                  }}
+                                  style={{ flex: 1, minWidth: '150px' }}
+                                  size="1"
+                                  autoFocus
+                                />
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={() => handleEmailSave(index)}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <CheckCircledIcon width={14} height={14} />
+                                </Button>
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={() => {
+                                    setIsEditingEmail(false)
+                                    setEditingEmailIndex(null)
+                                    setEmailValue('')
+                                  }}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <Cross2Icon width={14} height={14} />
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                <EnvelopeClosedIcon width={16} height={16} style={{ flexShrink: 0 }} />
+                                <Text size="2" weight="medium" style={{ flexShrink: 0 }}>Email:</Text>
+                                <Text size="2" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{email}</Text>
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={() => navigator.clipboard.writeText(email)}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  Copy
+                                </Button>
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={() => startEditingEmail(index)}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <Pencil1Icon width={14} height={14} />
+                                </Button>
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  style={{ flexShrink: 0 }}
+                                  onClick={() => window.location.href = `mailto:${email}`}
+                                >
+                                  <EnvelopeClosedIcon width={14} height={14} />
+                                </Button>
+                                {getEmails().length > 1 && (
+                                  <Button 
+                                    size="1" 
+                                    variant="soft"
+                                    color="red"
+                                    onClick={() => handleDeleteEmail(index)}
+                                    style={{ flexShrink: 0 }}
+                                  >
+                                    <TrashIcon width={14} height={14} />
+                                  </Button>
+                                )}
+                              </>
+                            )}
+                          </Flex>
+                        ))}
+                        <Button 
+                          size="1" 
+                          variant="soft"
+                          onClick={() => {
+                            setNewContactType('email')
+                            setNewContactValue('')
+                            setAddContactModalOpen(true)
+                          }}
+                          style={{ flexShrink: 0 }}
+                        >
+                          <PlusIcon width={14} height={14} />
+                        </Button>
+                      </Flex>
                     </Box>
                     
-                    {/* Phone */}
+                    {/* Phones */}
                     <Box mb="3">
-                      {isEditingPhone ? (
-                        <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
-                          <Text size="2" weight="medium" style={{ flexShrink: 0 }}>📞 Телефон:</Text>
-                          <TextField.Root
-                            value={phoneValue}
-                            onChange={(e) => setPhoneValue(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                handlePhoneSave()
-                              } else if (e.key === 'Escape') {
-                                setPhoneValue(selectedCandidate.phone)
-                                setIsEditingPhone(false)
-                              }
-                            }}
-                            style={{ flex: 1, minWidth: 0 }}
-                            size="1"
-                            autoFocus
-                          />
-                          <Button 
-                            size="1" 
-                            variant="soft"
-                            onClick={handlePhoneSave}
-                            style={{ flexShrink: 0 }}
-                          >
-                            <CheckCircledIcon width={14} height={14} />
-                          </Button>
-                          <Button 
-                            size="1" 
-                            variant="soft"
-                            onClick={() => {
-                              setPhoneValue(selectedCandidate.phone)
-                              setIsEditingPhone(false)
-                            }}
-                            style={{ flexShrink: 0 }}
-                          >
-                            <Cross2Icon width={14} height={14} />
-                          </Button>
-                        </Flex>
-                      ) : (
-                        <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
-                          <Text size="2" weight="medium" style={{ flexShrink: 0 }}>📞 Телефон:</Text>
-                          <Text size="2">{selectedCandidate.phone}</Text>
-                          <Button 
-                            size="1" 
-                            variant="soft"
-                            onClick={() => {
-                              navigator.clipboard.writeText(selectedCandidate.phone)
-                            }}
-                            style={{ flexShrink: 0 }}
-                          >
-                            Copy
-                          </Button>
-                          <Button 
-                            size="1" 
-                            variant="soft"
-                            onClick={() => setIsEditingPhone(true)}
-                            style={{ flexShrink: 0 }}
-                          >
-                            <Pencil1Icon width={14} height={14} />
-                          </Button>
-                          <Button 
-                            size="1" 
-                            variant="soft"
-                            style={{ flexShrink: 0 }}
-                            onClick={() => window.location.href = `tel:${selectedCandidate.phone.replace(/[^\d+]/g, '')}`}
-                          >
-                            Call
-                          </Button>
-                        </Flex>
-                      )}
+                      <Flex align="center" gap="2" mb="2" wrap="wrap">
+                        {getPhones().map((phone, index) => (
+                          <Flex key={index} align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                            {isEditingPhone && editingPhoneIndex === index ? (
+                              <>
+                                <Text size="2" weight="medium" style={{ flexShrink: 0 }}>📞 Телефон:</Text>
+                                <TextField.Root
+                                  value={phoneValue}
+                                  onChange={(e) => setPhoneValue(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      handlePhoneSave(index)
+                                    } else if (e.key === 'Escape') {
+                                      setIsEditingPhone(false)
+                                      setEditingPhoneIndex(null)
+                                      setPhoneValue('')
+                                    }
+                                  }}
+                                  style={{ flex: 1, minWidth: '150px' }}
+                                  size="1"
+                                  autoFocus
+                                />
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={() => handlePhoneSave(index)}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <CheckCircledIcon width={14} height={14} />
+                                </Button>
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={() => {
+                                    setIsEditingPhone(false)
+                                    setEditingPhoneIndex(null)
+                                    setPhoneValue('')
+                                  }}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <Cross2Icon width={14} height={14} />
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                <Text size="2" weight="medium" style={{ flexShrink: 0 }}>📞 Телефон:</Text>
+                                <Text size="2">{phone}</Text>
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={() => navigator.clipboard.writeText(phone)}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  Copy
+                                </Button>
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={() => startEditingPhone(index)}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <Pencil1Icon width={14} height={14} />
+                                </Button>
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  style={{ flexShrink: 0 }}
+                                  onClick={() => window.location.href = `tel:${phone.replace(/[^\d+]/g, '')}`}
+                                >
+                                  Call
+                                </Button>
+                                {getPhones().length > 1 && (
+                                  <Button 
+                                    size="1" 
+                                    variant="soft"
+                                    color="red"
+                                    onClick={() => handleDeletePhone(index)}
+                                    style={{ flexShrink: 0 }}
+                                  >
+                                    <TrashIcon width={14} height={14} />
+                                  </Button>
+                                )}
+                              </>
+                            )}
+                          </Flex>
+                        ))}
+                        <Button 
+                          size="1" 
+                          variant="soft"
+                          onClick={() => {
+                            setNewContactType('phone')
+                            setNewContactValue('')
+                            setAddContactModalOpen(true)
+                          }}
+                          style={{ flexShrink: 0 }}
+                        >
+                          <PlusIcon width={14} height={14} />
+                        </Button>
+                      </Flex>
                     </Box>
                     
                     {/* Location */}
@@ -2765,16 +3036,26 @@ export default function RecrChatPage() {
                     {/* Социальные сети и мессенджеры */}
                     <Box>
                       <Flex gap="2" wrap="wrap" style={{ alignItems: 'flex-start', overflow: 'visible' }}>
-                        {getAllSocialNetworks().map((social) => {
-                          const isEditing = editingSocial === social.platform
-                          const currentValue = socialValues[social.platform] || ''
-                          const url = social.hasContact && !isEditing ? getSocialUrl(social.platform, currentValue) : '#'
+                        {getAllSocialNetworks().flatMap((social) => {
+                          const contacts = social.contacts
+                          const isEditing = editingSocial === social.platform && editingSocialIndex !== null
+                          const editingIndex = editingSocialIndex
                           
-                          if (isEditing) {
-                            return (
-                              <Box
-                                key={social.platform}
-                                className={styles.socialEditContainer}
+                          // Отображаем все контакты для этой платформы
+                          const contactElements = contacts.map((contact, index) => {
+                            const isEditingThis = isEditing && editingIndex === index
+                            const url = getSocialUrl(social.platform, contact)
+                            
+                            // Получаем количество непрочитанных сообщений для этой платформы
+                            const unreadSources = (selectedCandidate.unreadSources as Record<string, number>) || {}
+                            const unreadCount = unreadSources[social.platform] || 0
+                            const showBadge = unreadCount > 0 && unreadCount < 10 && index === 0 // Показываем бейдж только на первом контакте
+                            
+                            if (isEditingThis) {
+                              return (
+                                <Box
+                                  key={`${social.platform}-${index}`}
+                                  className={styles.socialEditContainer}
                                   style={{
                                     backgroundColor: social.color,
                                     borderRadius: '8px',
@@ -2785,15 +3066,231 @@ export default function RecrChatPage() {
                                     minWidth: '200px',
                                     height: '35px',
                                     transition: 'all 0.3s ease-in-out',
+                                  }}
+                                >
+                                  <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', width: '16px', height: '16px' }}>
+                                    {social.icon}
+                                  </Box>
+                                  <TextField.Root
+                                    value={socialValue}
+                                    onChange={(e) => handleSocialValueChange(e.target.value)}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') {
+                                        handleSocialSave(social.platform, index)
+                                      } else if (e.key === 'Escape') {
+                                        handleSocialCancel()
+                                      }
+                                    }}
+                                    placeholder={`Введите ${social.name}`}
+                                    style={{ flex: 1, minWidth: '150px', margin: 0 }}
+                                    size="1"
+                                    className={styles.socialEditInput}
+                                    autoFocus
+                                  />
+                                  <Button
+                                    size="1"
+                                    variant="solid"
+                                    onClick={() => handleSocialSave(social.platform, index)}
+                                    style={{
+                                      borderRadius: '4px',
+                                      width: '24px',
+                                      height: '24px',
+                                      padding: 0,
+                                      minWidth: '24px',
+                                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                      color: 'white',
+                                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                                      cursor: 'pointer',
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.3)'
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'
+                                    }}
+                                  >
+                                    <CheckIcon width={14} height={14} />
+                                  </Button>
+                                  <Button
+                                    size="1"
+                                    variant="solid"
+                                    onClick={handleSocialCancel}
+                                    style={{
+                                      borderRadius: '4px',
+                                      width: '24px',
+                                      height: '24px',
+                                      padding: 0,
+                                      minWidth: '24px',
+                                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                      color: 'white',
+                                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                                      cursor: 'pointer',
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.3)'
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'
+                                    }}
+                                  >
+                                    <Cross2Icon width={14} height={14} />
+                                  </Button>
+                                </Box>
+                              )
+                            }
+                            
+                            return (
+                              <Box
+                                key={`${social.platform}-${index}`}
+                                className={styles.socialButtonWrapper}
+                                style={{ position: 'relative', overflow: 'visible' }}
+                              >
+                                <a 
+                                  href={url} 
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className={styles.socialButton}
+                                  style={{ 
+                                    textDecoration: 'none',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    width: '35px',
+                                    height: '35px',
+                                    color: 'white',
+                                    borderRadius: '8px',
+                                    backgroundColor: social.color,
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease-in-out',
+                                    flexShrink: 0,
+                                  }}
+                                >
+                                  <Box style={{ 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center',
+                                    width: '100%',
+                                    height: '100%',
+                                    filter: 'brightness(1.1) contrast(1.1)'
+                                  }}>
+                                    {social.icon}
+                                  </Box>
+                                </a>
+                                {/* Бейдж с количеством сообщений (слева сверху) */}
+                                {showBadge && (
+                                  <Badge
+                                    size="1"
+                                    color="red"
+                                    style={{
+                                      position: 'absolute',
+                                      top: '-8px',
+                                      left: '-8px',
+                                      minWidth: '22px',
+                                      height: '22px',
+                                      padding: '0 6px',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      fontSize: '12px',
+                                      fontWeight: 'bold',
+                                      zIndex: 100,
+                                      borderRadius: '50%',
+                                      backgroundColor: '#EF4444',
+                                      color: 'white',
+                                      border: '2.5px solid white',
+                                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
+                                      lineHeight: '1',
+                                      pointerEvents: 'none'
+                                    }}
+                                  >
+                                    {unreadCount}
+                                  </Badge>
+                                )}
+                                <Button
+                                  size="1"
+                                  variant="solid"
+                                  className={styles.socialEditButton}
+                                  onClick={() => handleSocialEdit(social.platform, index)}
+                                  style={{
+                                    position: 'absolute',
+                                    top: '-4px',
+                                    right: '-4px',
+                                    borderRadius: '2px',
+                                    width: '16px',
+                                    height: '16px',
+                                    padding: 0,
+                                    minWidth: '16px',
+                                    backgroundColor: 'var(--accent-9)',
+                                    color: 'white',
+                                    border: '2px solid var(--color-surface)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    zIndex: 10,
+                                  }}
+                                >
+                                  <Pencil1Icon width={8} height={8} />
+                                </Button>
+                                {contacts.length > 1 && (
+                                  <Button
+                                    size="1"
+                                    variant="solid"
+                                    color="red"
+                                    onClick={() => handleDeleteSocialContact(social.platform, index)}
+                                    style={{
+                                      position: 'absolute',
+                                      bottom: '-4px',
+                                      right: '-4px',
+                                      borderRadius: '2px',
+                                      width: '16px',
+                                      height: '16px',
+                                      padding: 0,
+                                      minWidth: '16px',
+                                      border: '2px solid var(--color-surface)',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      zIndex: 10,
+                                    }}
+                                  >
+                                    <TrashIcon width={8} height={8} />
+                                  </Button>
+                                )}
+                              </Box>
+                            )
+                          })
+                          
+                          // Поле редактирования для нового контакта этой платформы
+                          if (isEditing && editingIndex === contacts.length) {
+                            contactElements.push(
+                              <Box
+                                key={`${social.platform}-new`}
+                                className={styles.socialEditContainer}
+                                style={{
+                                  backgroundColor: social.color,
+                                  borderRadius: '8px',
+                                  padding: '0 12px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                  minWidth: '200px',
+                                  height: '35px',
+                                  transition: 'all 0.3s ease-in-out',
                                 }}
                               >
                                 <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', width: '16px', height: '16px' }}>
                                   {social.icon}
                                 </Box>
                                 <TextField.Root
-                                  value={currentValue}
-                                  onChange={(e) => handleSocialValueChange(social.platform, e.target.value)}
-                                  onKeyDown={(e) => handleSocialInputKeyDown(e, social.platform)}
+                                  value={socialValue}
+                                  onChange={(e) => handleSocialValueChange(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      handleSocialSave(social.platform, contacts.length)
+                                    } else if (e.key === 'Escape') {
+                                      handleSocialCancel()
+                                    }
+                                  }}
                                   placeholder={`Введите ${social.name}`}
                                   style={{ flex: 1, minWidth: '150px', margin: 0 }}
                                   size="1"
@@ -2802,154 +3299,117 @@ export default function RecrChatPage() {
                                 />
                                 <Button
                                   size="1"
-                                  variant="ghost"
-                                  onClick={handleSocialCancel}
+                                  variant="solid"
+                                  onClick={() => handleSocialSave(social.platform, contacts.length)}
                                   style={{
-                                    borderRadius: '2px',
-                                    width: '16px',
-                                    height: '16px',
+                                    borderRadius: '4px',
+                                    width: '24px',
+                                    height: '24px',
                                     padding: 0,
-                                    minWidth: '16px',
+                                    minWidth: '24px',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
                                     color: 'white',
+                                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                                    cursor: 'pointer',
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.3)'
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'
                                   }}
                                 >
-                                  <Cross2Icon width={10} height={10} />
+                                  <CheckIcon width={14} height={14} />
+                                </Button>
+                                <Button
+                                  size="1"
+                                  variant="solid"
+                                  onClick={handleSocialCancel}
+                                  style={{
+                                    borderRadius: '4px',
+                                    width: '24px',
+                                    height: '24px',
+                                    padding: 0,
+                                    minWidth: '24px',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                    color: 'white',
+                                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                                    cursor: 'pointer',
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.3)'
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'
+                                  }}
+                                >
+                                  <Cross2Icon width={14} height={14} />
                                 </Button>
                               </Box>
                             )
                           }
                           
-                          // Получаем количество непрочитанных сообщений для этой платформы
-                          const unreadSources = (selectedCandidate.unreadSources as Record<string, number>) || {}
-                          const unreadCount = unreadSources[social.platform] || 0
-                          const showBadge = unreadCount > 0 && unreadCount < 10
-                          
-                          return (
-                            <Box
-                              key={social.platform}
-                              className={styles.socialButtonWrapper}
-                              style={{ position: 'relative', overflow: 'visible' }}
-                            >
-                              {social.hasContact ? (
-                                <>
-                                  <a 
-                                    href={url} 
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={styles.socialButton}
-                                    style={{ 
-                                      textDecoration: 'none',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      justifyContent: 'center',
-                                      width: '35px',
-                                      height: '35px',
-                                      color: 'white',
-                                      borderRadius: '8px',
-                                      backgroundColor: social.color,
-                                      cursor: 'pointer',
-                                      transition: 'all 0.2s ease-in-out',
-                                      flexShrink: 0,
-                                    }}
-                                  >
-                                    <Box style={{ 
-                                      display: 'flex', 
-                                      alignItems: 'center', 
-                                      justifyContent: 'center',
-                                      width: '100%',
-                                      height: '100%',
-                                      filter: 'brightness(1.1) contrast(1.1)'
-                                    }}>
-                                      {social.icon}
-                                    </Box>
-                                  </a>
-                                  {/* Бейдж с количеством сообщений (слева сверху) */}
-                                  {showBadge && (
-                                    <Badge
-                                      size="1"
-                                      color="red"
-                                      style={{
-                                        position: 'absolute',
-                                        top: '-8px',
-                                        left: '-8px',
-                                        minWidth: '22px',
-                                        height: '22px',
-                                        padding: '0 6px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        fontSize: '12px',
-                                        fontWeight: 'bold',
-                                        zIndex: 100,
-                                        borderRadius: '50%',
-                                        backgroundColor: '#EF4444',
-                                        color: 'white',
-                                        border: '2.5px solid white',
-                                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
-                                        lineHeight: '1',
-                                        pointerEvents: 'none'
-                                      }}
-                                    >
-                                      {unreadCount}
-                                    </Badge>
-                                  )}
-                                </>
-                              ) : (
-                                <Box
-                                  className={styles.socialButton}
-                                  style={{
-                                    borderRadius: '8px',
-                                    width: '35px',
-                                    height: '35px',
-                                    backgroundColor: 'var(--gray-4)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    opacity: 0.5,
-                                    flexShrink: 0,
-                                    cursor: 'not-allowed',
-                                  }}
-                                >
-                                  <Box style={{ 
-                                    display: 'flex', 
-                                    alignItems: 'center', 
-                                    justifyContent: 'center', 
-                                    width: '35px',
-                                    height: '35px',
-                                    color: 'var(--gray-9)' 
-                                  }}>
-                                    {social.icon}
-                                  </Box>
-                                </Box>
-                              )}
-                              <Button
-                                size="1"
-                                variant="solid"
-                                className={styles.socialEditButton}
-                                onClick={() => handleSocialEdit(social.platform)}
-                                style={{
-                                  position: 'absolute',
-                                  top: '-4px',
-                                  right: '-4px',
-                                  borderRadius: '2px',
-                                  width: '16px',
-                                  height: '16px',
-                                  padding: 0,
-                                  minWidth: '16px',
-                                  backgroundColor: 'var(--accent-9)',
-                                  color: 'white',
-                                  border: '2px solid var(--color-surface)',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  zIndex: 10,
-                                }}
-                              >
-                                <Pencil1Icon width={8} height={8} />
-                              </Button>
-                            </Box>
-                          )
+                          return contactElements
                         })}
+                        
+                        {/* Кнопка добавления новой платформы */}
+                        {/* Кнопка добавления новой социальной сети */}
+                        <DropdownMenu.Root>
+                          <DropdownMenu.Trigger>
+                            <Button
+                              size="1"
+                              variant="soft"
+                              style={{
+                                borderRadius: '8px',
+                                width: '35px',
+                                height: '35px',
+                                backgroundColor: 'var(--gray-4)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0,
+                                border: '2px dashed var(--gray-6)'
+                              }}
+                            >
+                              <PlusIcon width={16} height={16} />
+                            </Button>
+                          </DropdownMenu.Trigger>
+                          <DropdownMenu.Content>
+                            {(['whatsapp', 'viber', 'telegram', 'vk', 'linkedin', 'dribbble', 'behance', 'pinterest', 'habrCareer', 'github', 'instagram', 'facebook', 'twitter', 'kaggle', 'discord'] as const).map((platform) => {
+                              const platformInfo = getPlatformInfo(platform)
+                              const contacts = getSocialContacts(platform)
+                              const hasContact = contacts.length > 0
+                              const canAddMore = contacts.length < 5
+                              return (
+                                <DropdownMenu.Item
+                                  key={platform}
+                                  onClick={() => {
+                                    if (canAddMore) {
+                                      handleAddSocialContact(platform)
+                                    } else {
+                                      alert('Можно добавить максимум 5 контактов для одной платформы')
+                                    }
+                                  }}
+                                  disabled={!canAddMore}
+                                >
+                                  <Flex align="center" gap="2" justify="between" style={{ width: '100%' }}>
+                                    <Flex align="center" gap="2">
+                                      <Box style={{ color: platformInfo.color }}>
+                                        {platformInfo.icon}
+                                      </Box>
+                                      {platformInfo.name}
+                                    </Flex>
+                                    {hasContact && (
+                                      <Text size="1" color="gray">
+                                        ({contacts.length}/5)
+                                      </Text>
+                                    )}
+                                  </Flex>
+                                </DropdownMenu.Item>
+                              )
+                            })}
+                          </DropdownMenu.Content>
+                        </DropdownMenu.Root>
                       </Flex>
                     </Box>
                   </Box>
@@ -2960,6 +3420,68 @@ export default function RecrChatPage() {
                     </Text>
                     <Table.Root style={{ width: '100%', tableLayout: 'fixed' }}>
                       <Table.Body>
+                        <Table.Row>
+                          <Table.Cell>
+                            <Flex align="center" gap="2" wrap="wrap">
+                              <Text size="1" weight="medium" style={{ flexShrink: 0 }}>Applied:</Text>
+                              <Text size="2" style={{ wordBreak: 'break-word' }}>{selectedCandidate.applied}</Text>
+                            </Flex>
+                          </Table.Cell>
+                          <Table.Cell>
+                            {isEditingSource ? (
+                              <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                                <Text size="1" weight="medium" style={{ flexShrink: 0 }}>Source:</Text>
+                                <TextField.Root
+                                  value={sourceValue}
+                                  onChange={(e) => setSourceValue(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      handleSourceSave()
+                                    } else if (e.key === 'Escape') {
+                                      setSourceValue(selectedCandidate.source || '')
+                                      setIsEditingSource(false)
+                                    }
+                                  }}
+                                  style={{ flex: 1, minWidth: 0 }}
+                                  size="1"
+                                  autoFocus
+                                />
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={handleSourceSave}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <CheckCircledIcon width={14} height={14} />
+                                </Button>
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={() => {
+                                    setSourceValue(selectedCandidate.source || '')
+                                    setIsEditingSource(false)
+                                  }}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <Cross2Icon width={14} height={14} />
+                                </Button>
+                              </Flex>
+                            ) : (
+                              <Flex align="center" gap="2" style={{ flexWrap: 'nowrap', minWidth: 0 }}>
+                                <Text size="1" weight="medium" style={{ flexShrink: 0 }}>Source:</Text>
+                                <Text size="2" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{selectedCandidate.source}</Text>
+                                <Button 
+                                  size="1" 
+                                  variant="ghost"
+                                  onClick={() => setIsEditingSource(true)}
+                                  style={{ flexShrink: 0, marginLeft: '4px' }}
+                                >
+                                  <Pencil1Icon width={12} height={12} />
+                                </Button>
+                              </Flex>
+                            )}
+                          </Table.Cell>
+                        </Table.Row>
                         <Table.Row>
                           <Table.Cell>
                             <Text size="2" weight="medium">Position:</Text>
@@ -3009,71 +3531,6 @@ export default function RecrChatPage() {
                                   size="1" 
                                   variant="ghost"
                                   onClick={() => setIsEditingPosition(true)}
-                                  style={{ flexShrink: 0, marginLeft: '4px' }}
-                                >
-                                  <Pencil1Icon width={12} height={12} />
-                                </Button>
-                              </Flex>
-                            )}
-                          </Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                          <Table.Cell>
-                            <Text size="2" weight="medium">Applied / Source:</Text>
-                          </Table.Cell>
-                          <Table.Cell>
-                            {isEditingSource ? (
-                              <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
-                                <Text size="1" weight="medium" style={{ flexShrink: 0 }}>Applied:</Text>
-                                <Text size="2">{selectedCandidate.applied}</Text>
-                                <Text size="2" color="gray" style={{ flexShrink: 0, margin: '0 8px' }}>|</Text>
-                                <Text size="1" weight="medium" style={{ flexShrink: 0 }}>Source:</Text>
-                                <TextField.Root
-                                  value={sourceValue}
-                                  onChange={(e) => setSourceValue(e.target.value)}
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                      handleSourceSave()
-                                    } else if (e.key === 'Escape') {
-                                      setSourceValue(selectedCandidate.source || '')
-                                      setIsEditingSource(false)
-                                    }
-                                  }}
-                                  style={{ width: '120px' }}
-                                  size="1"
-                                  autoFocus
-                                />
-                                <Button 
-                                  size="1" 
-                                  variant="soft"
-                                  onClick={handleSourceSave}
-                                  style={{ flexShrink: 0 }}
-                                >
-                                  <CheckCircledIcon width={14} height={14} />
-                                </Button>
-                                <Button 
-                                  size="1" 
-                                  variant="soft"
-                                  onClick={() => {
-                                    setSourceValue(selectedCandidate.source || '')
-                                    setIsEditingSource(false)
-                                  }}
-                                  style={{ flexShrink: 0 }}
-                                >
-                                  <Cross2Icon width={14} height={14} />
-                                </Button>
-                              </Flex>
-                            ) : (
-                              <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
-                                <Text size="1" weight="medium" style={{ flexShrink: 0 }}>Applied:</Text>
-                                <Text size="2">{selectedCandidate.applied}</Text>
-                                <Text size="2" color="gray" style={{ flexShrink: 0, margin: '0 8px' }}>|</Text>
-                                <Text size="1" weight="medium" style={{ flexShrink: 0 }}>Source:</Text>
-                                <Text size="2">{selectedCandidate.source}</Text>
-                                <Button 
-                                  size="1" 
-                                  variant="ghost"
-                                  onClick={() => setIsEditingSource(true)}
                                   style={{ flexShrink: 0, marginLeft: '4px' }}
                                 >
                                   <Pencil1Icon width={12} height={12} />
@@ -3716,7 +4173,6 @@ export default function RecrChatPage() {
                               <Text size="3" weight="medium">{doc.name}</Text>
                               <Text size="1" color="gray">
                                 Uploaded: {doc.uploadedDate} · Size: {formatFileSize(doc.size)}
-                                {doc.visibility === 'group' && doc.groupName && ` · ${doc.groupName}`}
                               </Text>
                             </Flex>
                           </Flex>
@@ -4252,6 +4708,134 @@ export default function RecrChatPage() {
           >
             Загрузить
           </Button>
+        </Flex>
+      </Dialog.Content>
+    </Dialog.Root>
+    
+    {/* Модальное окно для добавления контакта */}
+    <Dialog.Root open={addContactModalOpen} onOpenChange={setAddContactModalOpen}>
+      <Dialog.Content style={{ maxWidth: '400px' }}>
+        <Dialog.Title>
+          Добавить {newContactType === 'email' ? 'email' : 'телефон'}
+        </Dialog.Title>
+        <Dialog.Description size="2" color="gray" mb="4">
+          Введите {newContactType === 'email' ? 'email адрес' : 'номер телефона'}
+        </Dialog.Description>
+        
+        <Flex direction="column" gap="3">
+          <TextField.Root
+            value={newContactValue}
+            onChange={(e) => setNewContactValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && newContactValue.trim()) {
+                handleAddContact()
+              } else if (e.key === 'Escape') {
+                setAddContactModalOpen(false)
+                setNewContactValue('')
+              }
+            }}
+            placeholder={newContactType === 'email' ? 'example@email.com' : '+1 (555) 123-4567'}
+            type={newContactType === 'email' ? 'email' : 'tel'}
+            autoFocus
+          />
+        </Flex>
+        
+        <Flex gap="3" justify="end" mt="4">
+          <Button 
+            variant="soft" 
+            onClick={() => {
+              setAddContactModalOpen(false)
+              setNewContactValue('')
+            }}
+          >
+            Отмена
+          </Button>
+          <Button 
+            variant="solid" 
+            onClick={handleAddContact}
+            disabled={!newContactValue.trim()}
+          >
+            Добавить
+          </Button>
+        </Flex>
+      </Dialog.Content>
+    </Dialog.Root>
+    
+    {/* Модальное окно "Подозрение на дубликат" */}
+    <Dialog.Root open={duplicateModalOpen} onOpenChange={setDuplicateModalOpen}>
+      <Dialog.Content style={{ maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto' }}>
+        <Dialog.Title>Подозрение на дубликат</Dialog.Title>
+        <Dialog.Description size="2" color="gray" mb="4">
+          Сравните карточки похожих кандидатов
+        </Dialog.Description>
+        
+        <Flex direction="column" gap="4">
+          {/* Карточка текущего кандидата */}
+          <Card>
+            <Flex direction="column" gap="3">
+              <Flex align="center" gap="3">
+                <Avatar
+                  size="4"
+                  src={selectedCandidate.avatar}
+                  fallback={selectedCandidate.avatar}
+                />
+                <Flex direction="column">
+                  <Text size="4" weight="bold">{selectedCandidate.name}</Text>
+                  <Text size="2" color="gray">{selectedCandidate.position}</Text>
+                </Flex>
+              </Flex>
+              <Separator />
+              <Flex direction="column" gap="2">
+                <Text size="2"><strong>Email:</strong> {getEmails().join(', ')}</Text>
+                <Text size="2"><strong>Телефон:</strong> {getPhones().join(', ')}</Text>
+                <Text size="2"><strong>Вакансия:</strong> {selectedCandidate.vacancy}</Text>
+                <Text size="2"><strong>Статус:</strong> {selectedCandidate.status}</Text>
+                <Text size="2"><strong>Источник:</strong> {selectedCandidate.source}</Text>
+                {selectedCandidate.location && (
+                  <Text size="2"><strong>Локация:</strong> {selectedCandidate.location}</Text>
+                )}
+              </Flex>
+            </Flex>
+          </Card>
+          
+          {/* Карточка похожего кандидата (моковые данные) */}
+          <Card>
+            <Flex direction="column" gap="3">
+              <Flex align="center" gap="3">
+                <Avatar
+                  size="4"
+                  src="JD"
+                  fallback="JD"
+                />
+                <Flex direction="column">
+                  <Text size="4" weight="bold">John Doe (дубликат?)</Text>
+                  <Text size="2" color="gray">Senior Developer</Text>
+                </Flex>
+              </Flex>
+              <Separator />
+              <Flex direction="column" gap="2">
+                <Text size="2"><strong>Email:</strong> john.doe@example.com</Text>
+                <Text size="2"><strong>Телефон:</strong> +1 (555) 123-4567</Text>
+                <Text size="2"><strong>Вакансия:</strong> Frontend Senior</Text>
+                <Text size="2"><strong>Статус:</strong> New</Text>
+                <Text size="2"><strong>Источник:</strong> LinkedIn</Text>
+                <Text size="2"><strong>Локация:</strong> New York, USA</Text>
+              </Flex>
+            </Flex>
+          </Card>
+          
+          <Flex gap="3" justify="end" mt="2">
+            <Button variant="soft" onClick={() => setDuplicateModalOpen(false)}>
+              Это разные кандидаты
+            </Button>
+            <Button variant="solid" color="red" onClick={() => {
+              // TODO: Объединить кандидатов или удалить дубликат
+              alert('Функция объединения кандидатов будет реализована')
+              setDuplicateModalOpen(false)
+            }}>
+              Объединить кандидатов
+            </Button>
+          </Flex>
         </Flex>
       </Dialog.Content>
     </Dialog.Root>
