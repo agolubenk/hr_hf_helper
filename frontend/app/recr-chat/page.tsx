@@ -180,14 +180,14 @@ const mockCandidates = [
     id: '4',
     name: 'Иванов Петр Сергеевич',
     position: 'Backend Developer',
-    status: 'Interview',
-    statusColor: '#8B5CF6',
+    status: 'Offer',
+    statusColor: '#10B981',
     avatar: 'ИП',
     timeAgo: '3 hours ago',
     unread: 1,
     unreadSources: { whatsapp: 1 }, // Непрочитанные сообщения из WhatsApp
     isViewed: true, // Информация просмотрена
-    hasUnviewedChanges: false, // Нет непросмотренных изменений
+    hasUnviewedChanges: true, // Есть непросмотренные изменения (принят оффер)
     email: 'ivanov@example.com',
     phone: '+7 (999) 123-4567',
     emails: ['ivanov@example.com'],
@@ -216,8 +216,8 @@ const mockCandidates = [
     statusColor: '#2180A0',
     avatar: 'СА',
     timeAgo: '1 hour ago',
-    unread: 0,
-    unreadSources: {},
+    unread: 12,
+    unreadSources: { kaggle: 12 }, // Непрочитанные сообщения из Kaggle
     isViewed: true,
     hasUnviewedChanges: false,
     email: 'smirnova@example.com',
@@ -228,6 +228,7 @@ const mockCandidates = [
     telegram: '@smirnova',
     linkedin: '/in/smirnova',
     github: 'smirnova',
+    kaggles: ['smirnova'], // Массив контактов
     rating: 5,
     vacancy: 'Frontend Senior',
     applied: 'Jan 23, 2026',
@@ -460,6 +461,7 @@ export default function RecrChatPage() {
   const [isDragging, setIsDragging] = useState(false)
   const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0, displayWidth: 0, displayHeight: 0 })
   const uploadedPhotoRef = React.useRef<HTMLImageElement | null>(null)
+  const rightColumnRef = React.useRef<HTMLDivElement | null>(null)
   // Инициализируем с примерами фото для демонстрации
   const [candidatePhotos, setCandidatePhotos] = useState<Record<string, string[]>>({
     // Кандидат 4 (Иванов Петр Сергеевич) - несколько фото для карусели
@@ -1488,6 +1490,141 @@ export default function RecrChatPage() {
     })
   }
   
+  // Функция для получения контактов кандидата (для сравнения)
+  const getCandidateEmails = (candidate: any): string[] => {
+    return candidate.emails || (candidate.email ? [candidate.email] : [])
+  }
+  
+  const getCandidatePhones = (candidate: any): string[] => {
+    return candidate.phones || (candidate.phone ? [candidate.phone] : [])
+  }
+  
+  const getCandidateSocialContacts = (candidate: any, platform: string): string[] => {
+    const pluralKey = `${platform}s` as keyof typeof candidate
+    const contacts = candidate[pluralKey]
+    if (Array.isArray(contacts)) {
+      return contacts
+    }
+    const singleValue = candidate[platform]
+    if (singleValue && typeof singleValue === 'string' && singleValue.trim() !== '') {
+      return [singleValue]
+    }
+    return []
+  }
+  
+  // Моковые данные для дубликата (в реальном приложении это будет приходить с бэкенда)
+  const duplicateCandidate = {
+    id: '1-duplicate',
+    name: 'John Doe',
+    position: 'Senior Developer',
+    avatar: 'JD',
+    email: 'john@example.com',
+    emails: ['john@example.com'],
+    phone: '+1 (555) 123-4567',
+    phones: ['+1 (555) 123-4567'],
+    location: 'New York, USA',
+    vacancy: 'Frontend Senior',
+    status: 'New',
+    source: 'LinkedIn',
+    applied: 'Jan 15, 2026',
+    level: 'Senior',
+    tags: ['React', 'TypeScript', 'Senior'],
+    age: 32,
+    gender: 'Мужской',
+    salaryExpectations: '150,000 - 200,000 USD',
+    telegrams: ['@johndoe', '@johndoe_new'],
+    whatsapps: ['+15551234567'],
+    facebooks: ['johndoe'],
+    linkedins: ['/in/johndoe']
+  }
+  
+  // Функция для проверки совпадения значений
+  const isMatch = (value1: any, value2: any): boolean => {
+    if (value1 === value2) return true
+    if (typeof value1 === 'string' && typeof value2 === 'string') {
+      return value1.toLowerCase().trim() === value2.toLowerCase().trim()
+    }
+    if (Array.isArray(value1) && Array.isArray(value2)) {
+      return value1.some(v1 => value2.some(v2 => isMatch(v1, v2)))
+    }
+    return false
+  }
+  
+  // Функция для проверки совпадения контакта в массивах
+  const hasMatchingContact = (contacts1: string[], contacts2: string[]): boolean => {
+    return contacts1.some(c1 => contacts2.some(c2 => isMatch(c1, c2)))
+  }
+  
+  // Функция для проверки, совпадает ли конкретный контакт
+  const isContactMatch = (contact: string, otherContacts: string[]): boolean => {
+    return otherContacts.some(c => isMatch(contact, c))
+  }
+  
+  // Функция для расчета вероятности дубликата в процентах
+  const calculateDuplicateProbability = (candidate1: any, candidate2: any): number => {
+    let matches = 0
+    let totalChecks = 0
+    
+    // Проверка имени (важный фактор)
+    totalChecks += 2
+    if (isMatch(candidate1.name, candidate2.name)) matches += 2
+    
+    // Проверка должности
+    totalChecks += 1
+    if (isMatch(candidate1.position, candidate2.position)) matches += 1
+    
+    // Проверка email
+    const emails1 = getCandidateEmails(candidate1)
+    const emails2 = getCandidateEmails(candidate2)
+    if (emails1.length > 0 && emails2.length > 0) {
+      totalChecks += 2
+      if (hasMatchingContact(emails1, emails2)) matches += 2
+    }
+    
+    // Проверка телефона
+    const phones1 = getCandidatePhones(candidate1)
+    const phones2 = getCandidatePhones(candidate2)
+    if (phones1.length > 0 && phones2.length > 0) {
+      totalChecks += 2
+      if (hasMatchingContact(phones1, phones2)) matches += 2
+    }
+    
+    // Проверка соцсетей
+    const socialPlatforms = ['whatsapp', 'viber', 'telegram', 'vk', 'linkedin', 'dribbble', 'behance', 'pinterest', 'habrCareer', 'github', 'instagram', 'facebook', 'twitter', 'kaggle', 'discord']
+    socialPlatforms.forEach(platform => {
+      const contacts1 = getCandidateSocialContacts(candidate1, platform)
+      const contacts2 = getCandidateSocialContacts(candidate2, platform)
+      if (contacts1.length > 0 && contacts2.length > 0) {
+        totalChecks += 1
+        if (hasMatchingContact(contacts1, contacts2)) matches += 1
+      }
+    })
+    
+    // Проверка локации
+    if (candidate1.location && candidate2.location) {
+      totalChecks += 1
+      if (isMatch(candidate1.location, candidate2.location)) matches += 1
+    }
+    
+    // Проверка возраста
+    if (candidate1.age && candidate2.age) {
+      totalChecks += 1
+      if (candidate1.age === candidate2.age) matches += 1
+    }
+    
+    // Проверка тегов
+    if (candidate1.tags && candidate2.tags && candidate1.tags.length > 0 && candidate2.tags.length > 0) {
+      totalChecks += 1
+      if (isMatch(candidate1.tags, candidate2.tags)) matches += 1
+    }
+    
+    if (totalChecks === 0) return 0
+    
+    // Рассчитываем процент (минимум 0, максимум 100)
+    const probability = Math.round((matches / totalChecks) * 100)
+    return Math.min(100, Math.max(0, probability))
+  }
+  
   // Инициализация значений социальных сетей
   // Обработка клавиш Enter и Esc в модальном окне загрузки документа
   useEffect(() => {
@@ -1612,7 +1749,8 @@ export default function RecrChatPage() {
   }, [])
   
   const handleCandidateSelect = (candidate: typeof mockCandidates[0]) => {
-    setSelectedCandidate(candidate)
+    // Копируем все данные кандидата, включая все поля социальных сетей
+    setSelectedCandidate({ ...candidate })
     // На мобильных открываем правую колонку как модальное окно
     if (isMobile) {
       setIsRightColumnOpen(true)
@@ -1621,6 +1759,13 @@ export default function RecrChatPage() {
       setIsRightColumnOpen(false)
     }
   }
+  
+  // Сброс прокрутки при изменении кандидата, вкладки или настроек
+  useEffect(() => {
+    if (rightColumnRef.current) {
+      rightColumnRef.current.scrollTop = 0
+    }
+  }, [selectedCandidate.id, leftTab, rightTab])
   
   // На десктопе правая колонка всегда видна
   useEffect(() => {
@@ -1874,10 +2019,10 @@ export default function RecrChatPage() {
                   <Box
                     style={{
                       position: 'absolute',
-                      top: '8px',
-                      right: '8px',
-                      width: '12px',
-                      height: '12px',
+                      top: '2px',
+                      right: '2px',
+                      width: '14px',
+                      height: '14px',
                       borderRadius: '50%',
                       backgroundColor: candidate.statusColor,
                       border: '2px solid white',
@@ -1900,19 +2045,17 @@ export default function RecrChatPage() {
                     style={{ backgroundColor: candidate.statusColor }}
                   />
                   <Flex direction="column" style={{ flex: 1, minWidth: 0, position: 'relative' }}>
-                    <Flex align="center" gap="2">
-                      <Text size="3" weight="bold">{candidate.name}</Text>
-                      {/* Бейдж с иконкой/многоточием и количеством сообщений */}
+                    <Flex align="center" gap="2" justify="between" style={{ width: '100%' }}>
+                      <Text size="3" weight="bold" style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{candidate.name}</Text>
+                      {/* Бейдж с иконкой/многоточием и количеством сообщений - справа в конце ряда */}
                       {candidate.unread > 0 && (() => {
                         const unreadInfo = getUnreadInfo(candidate)
                         if (!unreadInfo) return null
                         return (
-                          <Flex align="center" gap="1">
-                            <Badge size="1" color="red" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                              {unreadInfo.icon}
-                              {unreadInfo.count}
-                            </Badge>
-                          </Flex>
+                          <Badge size="1" color="red" style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+                            {unreadInfo.icon}
+                            {unreadInfo.count}
+                          </Badge>
                         )
                       })()}
                     </Flex>
@@ -2021,7 +2164,25 @@ export default function RecrChatPage() {
       )}
       
       {/* Правая колонка */}
-      <Box className={`${styles.rightColumn} ${isRightColumnOpen ? styles.open : ''}`}>
+      <Box 
+        ref={rightColumnRef}
+        className={`${styles.rightColumn} ${isRightColumnOpen ? styles.open : ''}`}
+        onClick={(e) => {
+          // Открываем модальное окно при клике на любую часть rightColumn, если есть подозрение на дубликат
+          // И не открыты настройки вакансии
+          if ((selectedCandidate as any).hasDuplicateSuspicion && leftTab !== 'vacancy-settings') {
+            // Проверяем, что клик не был на интерактивных элементах
+            const target = e.target as HTMLElement
+            const isInteractive = target.closest('button') || target.closest('a') || target.closest('input') || target.closest('select') || target.closest('[role="button"]')
+            if (!isInteractive) {
+              setDuplicateModalOpen(true)
+            }
+          }
+        }}
+        style={{
+          cursor: (selectedCandidate as any).hasDuplicateSuspicion && leftTab !== 'vacancy-settings' ? 'pointer' : 'default'
+        }}
+      >
         {/* Кнопки workflow - показываются только на вкладке Chat и только на десктопе */}
         {leftTab === 'chat' && !isMobile && (
           <Box className={styles.workflowButtonsContainer} mb="3">
@@ -2249,22 +2410,41 @@ export default function RecrChatPage() {
           </Box>
         )}
         
-        {/* Кнопка "Подозрение на дубликат" - показывается только если есть подозрение */}
-        {(selectedCandidate as any).hasDuplicateSuspicion && (
+        {/* Кнопка "Подозрение на дубликат" - показывается только если есть подозрение и не открыты настройки вакансии */}
+        {(selectedCandidate as any).hasDuplicateSuspicion && leftTab !== 'vacancy-settings' && (
           <Button
-            variant="soft"
+            variant="solid"
             color="orange"
-            onClick={() => setDuplicateModalOpen(true)}
+            onClick={(e) => {
+              e.stopPropagation()
+              setDuplicateModalOpen(true)
+            }}
             style={{ 
-              alignSelf: 'flex-start', 
+              width: '100%',
+              height: '56px',
               marginBottom: '16px',
               position: 'sticky',
               top: '16px',
               zIndex: 100,
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+              boxShadow: '0 4px 12px rgba(251, 146, 60, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2)',
+              backgroundColor: '#fb923c',
+              color: 'white',
+              fontSize: '16px',
+              fontWeight: 'bold',
+              animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              border: '2px solid #ea580c',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'scale(1.02)'
+              e.currentTarget.style.boxShadow = '0 6px 16px rgba(251, 146, 60, 0.5), 0 2px 4px rgba(0, 0, 0, 0.2)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'scale(1)'
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(251, 146, 60, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2)'
             }}
           >
-            <Text size="2" weight="bold">⚠️ Подозрение на дубликат</Text>
+            <Text size="4" weight="bold" style={{ fontSize: '16px' }}>⚠️ Подозрение на дубликат</Text>
           </Button>
         )}
         
@@ -2273,9 +2453,24 @@ export default function RecrChatPage() {
           onDragOver={handleDocumentDragOver}
           onDragLeave={handleDocumentDragLeave}
           onDrop={handleDocumentDrop}
+          onClick={(e) => {
+            // Предотвращаем всплытие клика, если клик на интерактивных элементах
+            // И не открыты настройки вакансии
+            if (leftTab === 'vacancy-settings') return
+            const target = e.target as HTMLElement
+            const isInteractive = target.closest('button') || target.closest('a') || target.closest('input') || target.closest('select') || target.closest('[role="button"]') || target.closest('[role="tab"]')
+            if (!isInteractive && (selectedCandidate as any).hasDuplicateSuspicion) {
+              e.stopPropagation()
+              setDuplicateModalOpen(true)
+            }
+          }}
           style={{
             border: isDraggingDocument ? '2px dashed var(--accent-9)' : undefined,
-            transition: 'border 0.2s'
+            transition: 'all 0.3s ease',
+            opacity: (selectedCandidate as any).hasDuplicateSuspicion && leftTab !== 'vacancy-settings' ? 0.5 : 1,
+            filter: (selectedCandidate as any).hasDuplicateSuspicion && leftTab !== 'vacancy-settings' ? 'blur(3px)' : 'none',
+            pointerEvents: (selectedCandidate as any).hasDuplicateSuspicion && leftTab !== 'vacancy-settings' ? 'auto' : 'auto',
+            cursor: (selectedCandidate as any).hasDuplicateSuspicion && leftTab !== 'vacancy-settings' ? 'pointer' : 'default'
           }}
         >
           {/* Кнопка закрытия для мобильных */}
@@ -3049,7 +3244,7 @@ export default function RecrChatPage() {
                             // Получаем количество непрочитанных сообщений для этой платформы
                             const unreadSources = (selectedCandidate.unreadSources as Record<string, number>) || {}
                             const unreadCount = unreadSources[social.platform] || 0
-                            const showBadge = unreadCount > 0 && unreadCount < 10 && index === 0 // Показываем бейдж только на первом контакте
+                            const showBadge = unreadCount > 0 && index === 0 // Показываем бейдж только на первом контакте для любого количества сообщений
                             
                             if (isEditingThis) {
                               return (
@@ -3185,9 +3380,11 @@ export default function RecrChatPage() {
                                       position: 'absolute',
                                       top: '-8px',
                                       left: '-8px',
-                                      minWidth: '22px',
+                                      width: '22px',
                                       height: '22px',
-                                      padding: '0 6px',
+                                      minWidth: '22px',
+                                      maxWidth: '22px',
+                                      padding: 0,
                                       display: 'flex',
                                       alignItems: 'center',
                                       justifyContent: 'center',
@@ -3203,7 +3400,7 @@ export default function RecrChatPage() {
                                       pointerEvents: 'none'
                                     }}
                                   >
-                                    {unreadCount}
+                                    {unreadCount > 9 ? '+' : unreadCount}
                                   </Badge>
                                 )}
                                 <Button
@@ -4763,80 +4960,455 @@ export default function RecrChatPage() {
     
     {/* Модальное окно "Подозрение на дубликат" */}
     <Dialog.Root open={duplicateModalOpen} onOpenChange={setDuplicateModalOpen}>
-      <Dialog.Content style={{ maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto' }}>
-        <Dialog.Title>Подозрение на дубликат</Dialog.Title>
-        <Dialog.Description size="2" color="gray" mb="4">
-          Сравните карточки похожих кандидатов
-        </Dialog.Description>
+      <Dialog.Content style={{ maxWidth: '1200px', maxHeight: '90vh', display: 'flex', flexDirection: 'column', padding: 0 }}>
+        {/* Заголовок и вероятность - фиксированные вверху */}
+        <Box style={{ padding: '20px 24px', borderBottom: '1px solid var(--gray-a6)', flexShrink: 0 }}>
+          <Flex align="center" justify="between" style={{ position: 'relative' }}>
+            <Box style={{ flex: 1 }}>
+              <Dialog.Title>Подозрение на дубликат</Dialog.Title>
+              <Dialog.Description size="2" color="gray" mt="1">
+                Сравните карточки похожих кандидатов. Совпадающие элементы выделены красными метками.
+              </Dialog.Description>
+            </Box>
+            <Box
+              style={{
+                padding: '8px 16px',
+                borderRadius: '8px',
+                backgroundColor: calculateDuplicateProbability(selectedCandidate, duplicateCandidate) >= 70 ? 'rgba(239, 68, 68, 0.15)' : calculateDuplicateProbability(selectedCandidate, duplicateCandidate) >= 50 ? 'rgba(251, 146, 60, 0.15)' : 'rgba(59, 130, 246, 0.15)',
+                border: `2px solid ${calculateDuplicateProbability(selectedCandidate, duplicateCandidate) >= 70 ? '#ef4444' : calculateDuplicateProbability(selectedCandidate, duplicateCandidate) >= 50 ? '#fb923c' : '#3b82f6'}`,
+              }}
+            >
+              <Text size="3" weight="bold" style={{ 
+                color: calculateDuplicateProbability(selectedCandidate, duplicateCandidate) >= 70 ? '#ef4444' : calculateDuplicateProbability(selectedCandidate, duplicateCandidate) >= 50 ? '#fb923c' : '#3b82f6'
+              }}>
+                Вероятность: {calculateDuplicateProbability(selectedCandidate, duplicateCandidate)}%
+              </Text>
+            </Box>
+          </Flex>
+        </Box>
         
-        <Flex direction="column" gap="4">
-          {/* Карточка текущего кандидата */}
-          <Card>
-            <Flex direction="column" gap="3">
-              <Flex align="center" gap="3">
+        {/* Скроллируемый контент */}
+        <Box style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
+          <Flex direction="row" gap="4" style={{ alignItems: 'flex-start' }}>
+          {/* Карточка нового кандидата (слева) */}
+          <Card style={{ flex: 1, minWidth: 0 }}>
+            <Flex direction="column" gap="4">
+              {/* Аватар и основная информация */}
+              <Flex align="center" gap="3" style={{ position: 'relative' }}>
                 <Avatar
-                  size="4"
+                  size="5"
                   src={selectedCandidate.avatar}
                   fallback={selectedCandidate.avatar}
                 />
-                <Flex direction="column">
-                  <Text size="4" weight="bold">{selectedCandidate.name}</Text>
-                  <Text size="2" color="gray">{selectedCandidate.position}</Text>
+                <Flex direction="column" style={{ flex: 1, minWidth: 0, position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(selectedCandidate.name, duplicateCandidate.name) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                  <Text size="4" weight="bold" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {selectedCandidate.name}
+                  </Text>
+                  <Flex align="center" gap="2" style={{ position: 'relative', padding: '2px 4px', borderRadius: '4px', backgroundColor: isMatch(selectedCandidate.position, duplicateCandidate.position) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                    <Text size="2" color="gray">{selectedCandidate.position}</Text>
+                  </Flex>
                 </Flex>
               </Flex>
+              
               <Separator />
-              <Flex direction="column" gap="2">
-                <Text size="2"><strong>Email:</strong> {getEmails().join(', ')}</Text>
-                <Text size="2"><strong>Телефон:</strong> {getPhones().join(', ')}</Text>
-                <Text size="2"><strong>Вакансия:</strong> {selectedCandidate.vacancy}</Text>
-                <Text size="2"><strong>Статус:</strong> {selectedCandidate.status}</Text>
-                <Text size="2"><strong>Источник:</strong> {selectedCandidate.source}</Text>
-                {selectedCandidate.location && (
-                  <Text size="2"><strong>Локация:</strong> {selectedCandidate.location}</Text>
+              
+              {/* Контакты */}
+              <Box>
+                <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>
+                  Контакты
+                </Text>
+                
+                {/* Emails */}
+                {getEmails().length > 0 && (
+                  <Box mb="3">
+                    <Flex direction="column" gap="1">
+                      {getEmails().map((email, index) => {
+                        const duplicateEmails = getCandidateEmails(duplicateCandidate)
+                        const isEmailMatch = isContactMatch(email, duplicateEmails)
+                        return (
+                          <Flex key={index} align="center" gap="2" style={{ flexWrap: 'nowrap', minWidth: 0, position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isEmailMatch ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                            <EnvelopeClosedIcon width={16} height={16} style={{ flexShrink: 0 }} />
+                            <Text size="2" weight="medium" style={{ flexShrink: 0 }}>Email:</Text>
+                            <Text size="2" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{email}</Text>
+                          </Flex>
+                        )
+                      })}
+                    </Flex>
+                  </Box>
                 )}
-              </Flex>
+                
+                {/* Phones */}
+                {getPhones().length > 0 && (
+                  <Box mb="3">
+                    <Flex direction="column" gap="1">
+                      {getPhones().map((phone, index) => {
+                        const duplicatePhones = getCandidatePhones(duplicateCandidate)
+                        const isPhoneMatch = isContactMatch(phone, duplicatePhones)
+                        return (
+                          <Flex key={index} align="center" gap="2" style={{ flexWrap: 'nowrap', position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isPhoneMatch ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                            <Text size="2" weight="medium" style={{ flexShrink: 0 }}>📞 Телефон:</Text>
+                            <Text size="2">{phone}</Text>
+                          </Flex>
+                        )
+                      })}
+                    </Flex>
+                  </Box>
+                )}
+              </Box>
+              
+              <Separator />
+              
+              {/* Социальные сети - списки контактов */}
+              <Box>
+                <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>
+                  Социальные сети
+                </Text>
+                <Flex direction="column" gap="3">
+                  {getAllSocialNetworks().filter(social => social.contacts.length > 0).map((social) => {
+                    const duplicateContacts = getCandidateSocialContacts(duplicateCandidate, social.platform)
+                    const hasPlatformMatch = hasMatchingContact(social.contacts, duplicateContacts)
+                    return (
+                      <Box key={social.platform} style={{ position: 'relative', padding: '8px', borderRadius: '4px', backgroundColor: hasPlatformMatch ? 'rgba(239, 68, 68, 0.05)' : 'transparent' }}>
+                        <Flex align="center" gap="2" mb="2">
+                          <Box style={{ color: social.color, display: 'flex', alignItems: 'center' }}>
+                            {social.icon}
+                          </Box>
+                          <Text size="2" weight="medium">{social.name}:</Text>
+                        </Flex>
+                        <Flex direction="column" gap="1" style={{ marginLeft: '24px' }}>
+                          {social.contacts.map((contact, index) => {
+                            const contactMatches = isContactMatch(contact, duplicateContacts)
+                            const url = getSocialUrl(social.platform, contact)
+                            return (
+                              <Flex
+                                key={`${social.platform}-${index}`}
+                                align="center"
+                                gap="2"
+                                style={{
+                                  position: 'relative',
+                                  padding: '4px 8px',
+                                  borderRadius: '4px',
+                                  backgroundColor: contactMatches ? 'rgba(239, 68, 68, 0.15)' : 'transparent'
+                                }}
+                              >
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    textDecoration: 'none',
+                                    color: 'var(--accent-11)',
+                                    fontSize: '14px',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                    flex: 1,
+                                    minWidth: 0
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.currentTarget.style.textDecoration = 'underline'
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.currentTarget.style.textDecoration = 'none'
+                                  }}
+                                >
+                                  {contact}
+                                </a>
+                              </Flex>
+                            )
+                          })}
+                        </Flex>
+                      </Box>
+                    )
+                  })}
+                </Flex>
+              </Box>
+              
+              <Separator />
+              
+              {/* Дополнительная информация */}
+              <Box>
+                <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>
+                  Дополнительно
+                </Text>
+                <Flex direction="column" gap="2">
+                  <Flex align="center" gap="2" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(selectedCandidate.vacancy, duplicateCandidate.vacancy) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                    <Text size="2"><strong>Вакансия:</strong> {selectedCandidate.vacancy}</Text>
+                  </Flex>
+                  <Flex align="center" gap="2" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(selectedCandidate.status, duplicateCandidate.status) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                    <Text size="2"><strong>Статус:</strong> {selectedCandidate.status}</Text>
+                  </Flex>
+                  <Flex align="center" gap="2" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(selectedCandidate.source, duplicateCandidate.source) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                    <Text size="2"><strong>Источник:</strong> {selectedCandidate.source}</Text>
+                  </Flex>
+                  {selectedCandidate.location && (
+                    <Flex align="center" gap="2" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(selectedCandidate.location, duplicateCandidate.location) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                      <Text size="2"><strong>Локация:</strong> {selectedCandidate.location}</Text>
+                    </Flex>
+                  )}
+                  {selectedCandidate.applied && (
+                    <Flex align="center" gap="2" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(selectedCandidate.applied, duplicateCandidate.applied) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                      <Text size="2"><strong>Дата подачи:</strong> {selectedCandidate.applied}</Text>
+                    </Flex>
+                  )}
+                  {selectedCandidate.level && (
+                    <Flex align="center" gap="2" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(selectedCandidate.level, duplicateCandidate.level) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                      <Text size="2"><strong>Уровень:</strong> {selectedCandidate.level}</Text>
+                    </Flex>
+                  )}
+                  {selectedCandidate.tags && selectedCandidate.tags.length > 0 && (
+                    <Flex align="center" gap="2" wrap="wrap" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(selectedCandidate.tags, duplicateCandidate.tags) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                      <Text size="2" weight="medium">Теги:</Text>
+                      {selectedCandidate.tags.map((tag, index) => (
+                        <Badge key={index} size="1" color="blue">{tag}</Badge>
+                      ))}
+                    </Flex>
+                  )}
+                  {selectedCandidate.age && (
+                    <Flex align="center" gap="2" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(selectedCandidate.age, duplicateCandidate.age) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                      <Text size="2"><strong>Возраст:</strong> {selectedCandidate.age}</Text>
+                    </Flex>
+                  )}
+                  {selectedCandidate.gender && (
+                    <Flex align="center" gap="2" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(selectedCandidate.gender, duplicateCandidate.gender) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                      <Text size="2"><strong>Пол:</strong> {selectedCandidate.gender}</Text>
+                    </Flex>
+                  )}
+                  {selectedCandidate.salaryExpectations && (
+                    <Flex align="center" gap="2" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(selectedCandidate.salaryExpectations, duplicateCandidate.salaryExpectations) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                      <Text size="2"><strong>Ожидания по зарплате:</strong> {selectedCandidate.salaryExpectations}</Text>
+                    </Flex>
+                  )}
+                </Flex>
+              </Box>
             </Flex>
           </Card>
           
-          {/* Карточка похожего кандидата (моковые данные) */}
-          <Card>
-            <Flex direction="column" gap="3">
-              <Flex align="center" gap="3">
+          {/* Карточка похожего кандидата (справа) */}
+          <Card style={{ flex: 1, minWidth: 0 }}>
+            <Flex direction="column" gap="4">
+              {/* Аватар и основная информация */}
+              <Flex align="center" gap="3" style={{ position: 'relative' }}>
                 <Avatar
-                  size="4"
-                  src="JD"
-                  fallback="JD"
+                  size="5"
+                  src={duplicateCandidate.avatar}
+                  fallback={duplicateCandidate.avatar}
                 />
-                <Flex direction="column">
-                  <Text size="4" weight="bold">John Doe (дубликат?)</Text>
-                  <Text size="2" color="gray">Senior Developer</Text>
+                <Flex direction="column" style={{ flex: 1, minWidth: 0, position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(duplicateCandidate.name, selectedCandidate.name) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                  <Text size="4" weight="bold" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {duplicateCandidate.name} (дубликат?)
+                  </Text>
+                  <Flex align="center" gap="2" style={{ position: 'relative', padding: '2px 4px', borderRadius: '4px', backgroundColor: isMatch(duplicateCandidate.position, selectedCandidate.position) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                    <Text size="2" color="gray">{duplicateCandidate.position}</Text>
+                  </Flex>
                 </Flex>
               </Flex>
+              
               <Separator />
-              <Flex direction="column" gap="2">
-                <Text size="2"><strong>Email:</strong> john.doe@example.com</Text>
-                <Text size="2"><strong>Телефон:</strong> +1 (555) 123-4567</Text>
-                <Text size="2"><strong>Вакансия:</strong> Frontend Senior</Text>
-                <Text size="2"><strong>Статус:</strong> New</Text>
-                <Text size="2"><strong>Источник:</strong> LinkedIn</Text>
-                <Text size="2"><strong>Локация:</strong> New York, USA</Text>
-              </Flex>
+              
+              {/* Контакты */}
+              <Box>
+                <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>
+                  Контакты
+                </Text>
+                
+                {/* Emails */}
+                {getCandidateEmails(duplicateCandidate).length > 0 && (
+                  <Box mb="3">
+                    <Flex direction="column" gap="1">
+                      {getCandidateEmails(duplicateCandidate).map((email, index) => {
+                        const currentEmails = getEmails()
+                        const isEmailMatch = isContactMatch(email, currentEmails)
+                        return (
+                          <Flex key={index} align="center" gap="2" style={{ flexWrap: 'nowrap', minWidth: 0, position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isEmailMatch ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                            <EnvelopeClosedIcon width={16} height={16} style={{ flexShrink: 0 }} />
+                            <Text size="2" weight="medium" style={{ flexShrink: 0 }}>Email:</Text>
+                            <Text size="2" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{email}</Text>
+                          </Flex>
+                        )
+                      })}
+                    </Flex>
+                  </Box>
+                )}
+                
+                {/* Phones */}
+                {getCandidatePhones(duplicateCandidate).length > 0 && (
+                  <Box mb="3">
+                    <Flex direction="column" gap="1">
+                      {getCandidatePhones(duplicateCandidate).map((phone, index) => {
+                        const currentPhones = getPhones()
+                        const isPhoneMatch = isContactMatch(phone, currentPhones)
+                        return (
+                          <Flex key={index} align="center" gap="2" style={{ flexWrap: 'nowrap', position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isPhoneMatch ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                            <Text size="2" weight="medium" style={{ flexShrink: 0 }}>📞 Телефон:</Text>
+                            <Text size="2">{phone}</Text>
+                          </Flex>
+                        )
+                      })}
+                    </Flex>
+                  </Box>
+                )}
+              </Box>
+              
+              <Separator />
+              
+              {/* Социальные сети - списки контактов */}
+              <Box>
+                <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>
+                  Социальные сети
+                </Text>
+                <Flex direction="column" gap="3">
+                  {['whatsapp', 'viber', 'telegram', 'vk', 'linkedin', 'dribbble', 'behance', 'pinterest', 'habrCareer', 'github', 'instagram', 'facebook', 'twitter', 'kaggle', 'discord'].map((platform) => {
+                    const contacts = getCandidateSocialContacts(duplicateCandidate, platform)
+                    if (contacts.length === 0) return null
+                    
+                    const platformInfo = getPlatformInfo(platform)
+                    const currentContacts = getSocialContacts(platform)
+                    const hasPlatformMatch = hasMatchingContact(contacts, currentContacts)
+                    
+                    return (
+                      <Box key={platform} style={{ position: 'relative', padding: '8px', borderRadius: '4px', backgroundColor: hasPlatformMatch ? 'rgba(239, 68, 68, 0.05)' : 'transparent' }}>
+                        <Flex align="center" gap="2" mb="2">
+                          <Box style={{ color: platformInfo.color, display: 'flex', alignItems: 'center' }}>
+                            {platformInfo.icon}
+                          </Box>
+                          <Text size="2" weight="medium">{platformInfo.name}:</Text>
+                        </Flex>
+                        <Flex direction="column" gap="1" style={{ marginLeft: '24px' }}>
+                          {contacts.map((contact, index) => {
+                            const contactMatches = isContactMatch(contact, currentContacts)
+                            const url = getSocialUrl(platform, contact)
+                            return (
+                              <Flex
+                                key={`${platform}-${index}`}
+                                align="center"
+                                gap="2"
+                                style={{
+                                  position: 'relative',
+                                  padding: '4px 8px',
+                                  borderRadius: '4px',
+                                  backgroundColor: contactMatches ? 'rgba(239, 68, 68, 0.15)' : 'transparent'
+                                }}
+                              >
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    textDecoration: 'none',
+                                    color: 'var(--accent-11)',
+                                    fontSize: '14px',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                    flex: 1,
+                                    minWidth: 0
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.currentTarget.style.textDecoration = 'underline'
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.currentTarget.style.textDecoration = 'none'
+                                  }}
+                                >
+                                  {contact}
+                                </a>
+                              </Flex>
+                            )
+                          })}
+                        </Flex>
+                      </Box>
+                    )
+                  })}
+                </Flex>
+              </Box>
+              
+              <Separator />
+              
+              {/* Дополнительная информация */}
+              <Box>
+                <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>
+                  Дополнительно
+                </Text>
+                <Flex direction="column" gap="2">
+                  <Flex align="center" gap="2" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(duplicateCandidate.vacancy, selectedCandidate.vacancy) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                    <Text size="2"><strong>Вакансия:</strong> {duplicateCandidate.vacancy}</Text>
+                  </Flex>
+                  <Flex align="center" gap="2" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(duplicateCandidate.status, selectedCandidate.status) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                    <Text size="2"><strong>Статус:</strong> {duplicateCandidate.status}</Text>
+                  </Flex>
+                  <Flex align="center" gap="2" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(duplicateCandidate.source, selectedCandidate.source) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                    <Text size="2"><strong>Источник:</strong> {duplicateCandidate.source}</Text>
+                  </Flex>
+                  {duplicateCandidate.location && (
+                    <Flex align="center" gap="2" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(duplicateCandidate.location, selectedCandidate.location) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                      <Text size="2"><strong>Локация:</strong> {duplicateCandidate.location}</Text>
+                    </Flex>
+                  )}
+                  {duplicateCandidate.applied && (
+                    <Flex align="center" gap="2" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(duplicateCandidate.applied, selectedCandidate.applied) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                      <Text size="2"><strong>Дата подачи:</strong> {duplicateCandidate.applied}</Text>
+                    </Flex>
+                  )}
+                  {duplicateCandidate.level && (
+                    <Flex align="center" gap="2" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(duplicateCandidate.level, selectedCandidate.level) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                      <Text size="2"><strong>Уровень:</strong> {duplicateCandidate.level}</Text>
+                    </Flex>
+                  )}
+                  {duplicateCandidate.tags && duplicateCandidate.tags.length > 0 && (
+                    <Flex align="center" gap="2" wrap="wrap" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(duplicateCandidate.tags, selectedCandidate.tags) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                      <Text size="2" weight="medium">Теги:</Text>
+                      {duplicateCandidate.tags.map((tag, index) => (
+                        <Badge key={index} size="1" color="blue">{tag}</Badge>
+                      ))}
+                    </Flex>
+                  )}
+                  {duplicateCandidate.age && (
+                    <Flex align="center" gap="2" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(duplicateCandidate.age, selectedCandidate.age) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                      <Text size="2"><strong>Возраст:</strong> {duplicateCandidate.age}</Text>
+                    </Flex>
+                  )}
+                  {duplicateCandidate.gender && (
+                    <Flex align="center" gap="2" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(duplicateCandidate.gender, selectedCandidate.gender) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                      <Text size="2"><strong>Пол:</strong> {duplicateCandidate.gender}</Text>
+                    </Flex>
+                  )}
+                  {duplicateCandidate.salaryExpectations && (
+                    <Flex align="center" gap="2" style={{ position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isMatch(duplicateCandidate.salaryExpectations, selectedCandidate.salaryExpectations) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                      <Text size="2"><strong>Ожидания по зарплате:</strong> {duplicateCandidate.salaryExpectations}</Text>
+                    </Flex>
+                  )}
+                </Flex>
+              </Box>
             </Flex>
           </Card>
-          
-          <Flex gap="3" justify="end" mt="2">
-            <Button variant="soft" onClick={() => setDuplicateModalOpen(false)}>
+          </Flex>
+        </Box>
+        
+        {/* Кнопки - фиксированные внизу */}
+        <Box style={{ padding: '16px 24px', borderTop: '1px solid var(--gray-a6)', flexShrink: 0, backgroundColor: 'var(--color-surface)' }}>
+          <Flex gap="3" style={{ width: '100%' }}>
+            <Button 
+              variant="soft" 
+              onClick={() => setDuplicateModalOpen(false)}
+              style={{ flex: 1, width: '100%' }}
+            >
               Это разные кандидаты
             </Button>
-            <Button variant="solid" color="red" onClick={() => {
-              // TODO: Объединить кандидатов или удалить дубликат
-              alert('Функция объединения кандидатов будет реализована')
-              setDuplicateModalOpen(false)
-            }}>
+            <Button 
+              variant="solid" 
+              color="red" 
+              onClick={() => {
+                // TODO: Объединить кандидатов или удалить дубликат
+                alert('Функция объединения кандидатов будет реализована')
+                setDuplicateModalOpen(false)
+              }}
+              style={{ flex: 1, width: '100%' }}
+            >
               Объединить кандидатов
             </Button>
           </Flex>
-        </Flex>
+        </Box>
       </Dialog.Content>
     </Dialog.Root>
     </AppLayout>
