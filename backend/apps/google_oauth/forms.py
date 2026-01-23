@@ -656,8 +656,19 @@ class HRScreeningForm(forms.ModelForm):
         if not input_data:
             raise forms.ValidationError(_('Поле не может быть пустым'))
         
-        # Проверяем, что в тексте есть ссылка на Huntflow
-        if 'huntflow' not in input_data.lower() and '/vacancy/' not in input_data:
+        # Пропускаем валидацию ссылки на Huntflow, если это ссылка на резюме (hh.ru или rabota.by)
+        # Эти ссылки обрабатываются через команду /add
+        is_resume_link = False
+        if 'hh.ru' in input_data.lower() or 'headhunter.ru' in input_data.lower():
+            # Проверяем, что это ссылка на резюме, а не на вакансию
+            if '/resume/' in input_data.lower() or '/applicants/resume' in input_data.lower():
+                is_resume_link = True
+        elif 'rabota.by' in input_data.lower():
+            if '/resume/' in input_data.lower():
+                is_resume_link = True
+        
+        # Проверяем, что в тексте есть ссылка на Huntflow (только если это не ссылка на резюме)
+        if not is_resume_link and 'huntflow' not in input_data.lower() and '/vacancy/' not in input_data:
             raise forms.ValidationError(
                 _('В тексте должна быть ссылка на кандидата в Huntflow (содержащая /vacancy/)')
             )

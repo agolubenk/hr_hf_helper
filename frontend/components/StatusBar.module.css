@@ -84,6 +84,7 @@
 .statusesContainer {
   padding: 8px 0;
   min-width: max-content;
+  gap: 4px;
 }
 
 .statusItem {
@@ -93,11 +94,18 @@
   border: 1px solid transparent;
   transition: all 0.2s ease-in-out;
   cursor: pointer;
+  margin: 0;
 }
 
 .statusItem:hover {
   background-color: var(--gray-3);
   transform: translateY(-1px);
+}
+
+.statusItemDisabled:hover {
+  background-color: transparent !important;
+  transform: none !important;
+  cursor: not-allowed !important;
 }
 
 /* Темная тема */

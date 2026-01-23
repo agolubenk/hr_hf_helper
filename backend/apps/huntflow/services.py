@@ -2735,3 +2735,185 @@ class HuntflowService:
             print(f"❌ Ошибка при обновлении поля кандидата: {e}")
             return False
     
+    def _get_account_source_id(self, account_id: int, source_type: str) -> Optional[int]:
+        """
+        Получает ID источника (account_source) для указанного типа
+        
+        Args:
+            account_id: ID организации в Huntflow
+            source_type: 'HH' для hh.ru, 'RABOTABY' для rabota.by
+            
+        Returns:
+            ID источника или None
+        """
+        try:
+            sources_data = self._make_request('GET', f"/accounts/{account_id}/applicants/sources")
+            if sources_data and 'items' in sources_data:
+                for source in sources_data['items']:
+                    source_name = source.get('name', '').lower()
+                    if source_type == 'HH':
+                        if 'hh' in source_name or 'headhunter' in source_name or 'хедхантер' in source_name:
+                            return source.get('id')
+                    elif source_type == 'RABOTABY':
+                        if 'rabota' in source_name or 'работа' in source_name or 'rabota.by' in source_name:
+                            return source.get('id')
+            
+            # Fallback значения
+            if source_type == 'HH':
+                return 2  # Стандартный ID для HH.ru
+            return None
+        except Exception as e:
+            print(f"❌ Ошибка получения account_source для {source_type}: {e}")
+            return None
+    
+    def _extract_resume_url(self, text: str) -> Optional[Dict[str, str]]:
+        """
+        Извлекает ссылку на резюме из текста (hh.ru или rabota.by)
+        
+        Args:
+            text: Текст сообщения
+            
+        Returns:
+            Словарь с ключами: 'url', 'source_type' ('HH' или 'RABOTABY'), 'resume_id'
+            или None если ссылка не найдена
+        """
+        import re
+        
+        # Паттерны для hh.ru
+        hh_patterns = [
+            r'https?://(?:www\.)?(?:hh\.ru|headhunter\.ru)/resume/([a-f0-9]+)',
+            r'https?://(?:www\.)?(?:hh\.ru|headhunter\.ru)/applicants/resume\?id=([a-f0-9]+)',
+        ]
+        
+        # Паттерны для rabota.by (ID резюме может содержать буквы и цифры)
+        rabota_patterns = [
+            r'https?://(?:www\.)?rabota\.by/resume/([a-f0-9]+)',
+            r'https?://(?:www\.)?rabota\.by/applicants/resume\?id=([a-f0-9]+)',
+        ]
+        
+        # Проверяем hh.ru
+        for pattern in hh_patterns:
+            match = re.search(pattern, text, re.IGNORECASE)
+            if match:
+                resume_id = match.group(1)
+                url = match.group(0)
+                return {
+                    'url': url,
+                    'source_type': 'HH',
+                    'resume_id': resume_id
+                }
+        
+        # Проверяем rabota.by
+        for pattern in rabota_patterns:
+            match = re.search(pattern, text, re.IGNORECASE)
+            if match:
+                resume_id = match.group(1)
+                url = match.group(0)
+                return {
+                    'url': url,
+                    'source_type': 'RABOTABY',
+                    'resume_id': resume_id
+                }
+        
+        return None
+    
+    def create_applicant_from_url(self, account_id: int, resume_url: str, vacancy_id: int = None, 
+                                   source_type: str = None, resume_id: str = None) -> Optional[Dict[str, Any]]:
+        """
+        Создает кандидата в Huntflow только по ссылке на резюме (hh.ru или rabota.by)
+        
+        Args:
+            account_id: ID организации
+            resume_url: Ссылка на резюме
+            vacancy_id: ID вакансии для привязки (опционально)
+            source_type: 'HH' или 'RABOTABY' (опционально, определяется автоматически)
+            resume_id: ID резюме в источнике (опционально, извлекается из URL)
+            
+        Returns:
+            Созданный кандидат или None
+        """
+        try:
+            # Определяем тип источника, если не указан
+            if not source_type:
+                if 'hh.ru' in resume_url or 'headhunter.ru' in resume_url:
+                    source_type = 'HH'
+                elif 'rabota.by' in resume_url:
+                    source_type = 'RABOTABY'
+                else:
+                    print(f"❌ Неизвестный тип источника для URL: {resume_url}")
+                    return None
+            
+            # Извлекаем ID резюме, если не указан
+            if not resume_id:
+                url_info = self._extract_resume_url(resume_url)
+                if url_info:
+                    resume_id = url_info.get('resume_id')
+                else:
+                    print(f"⚠️ Не удалось извлечь ID резюме из URL: {resume_url}")
+            
+            # Получаем account_source
+            account_source = self._get_account_source_id(account_id, source_type)
+            if not account_source:
+                print(f"⚠️ Не удалось получить account_source для {source_type}, создаем без него")
+            
+            # Определяем auth_type
+            auth_type = 'HH' if source_type == 'HH' else 'RABOTABY'
+            
+            # Формируем данные для создания кандидата
+            # API Huntflow требует минимум first_name или last_name даже при создании по ссылке
+            applicant_data = {
+                'first_name': 'Кандидат',  # Временное имя, будет заменено после парсинга резюме
+                'last_name': 'из внешнего источника',  # Временная фамилия
+                'externals': [
+                    {
+                        'auth_type': auth_type,
+                        'source_url': resume_url,
+                    }
+                ]
+            }
+            
+            # Добавляем account_source, если найден
+            if account_source:
+                applicant_data['externals'][0]['account_source'] = account_source
+            
+            # Добавляем ID резюме в data, если есть
+            if resume_id:
+                if 'data' not in applicant_data['externals'][0]:
+                    applicant_data['externals'][0]['data'] = {}
+                if source_type == 'HH':
+                    applicant_data['externals'][0]['data']['hh_id'] = resume_id
+                    applicant_data['externals'][0]['data']['hh_url'] = resume_url
+                elif source_type == 'RABOTABY':
+                    applicant_data['externals'][0]['data']['rabota_id'] = resume_id
+                    applicant_data['externals'][0]['data']['rabota_url'] = resume_url
+            
+            print(f"📤 Создаем кандидата по ссылке: {resume_url}")
+            print(f"📤 Данные: {applicant_data}")
+            
+            # Создаем кандидата
+            result = self._make_request('POST', f'/accounts/{account_id}/applicants', json=applicant_data)
+            
+            if result and result.get('id'):
+                applicant_id = result['id']
+                print(f"✅ Кандидат создан по ссылке: {applicant_id}")
+                
+                # Привязываем к вакансии, если указана
+                if vacancy_id:
+                    print(f"🔗 Привязываем к вакансии {vacancy_id}")
+                    vacancy_result = self._bind_applicant_to_vacancy(account_id, applicant_id, vacancy_id)
+                    if vacancy_result:
+                        print("✅ Кандидат привязан к вакансии")
+                    else:
+                        print("❌ Не удалось привязать к вакансии")
+                
+                return result
+            
+            print(f"❌ Кандидат не создан: {result}")
+            return None
+                
+        except Exception as e:
+            print(f"❌ Ошибка создания кандидата по ссылке: {e}")
+            import traceback
+            traceback.print_exc()
+            return None
+    

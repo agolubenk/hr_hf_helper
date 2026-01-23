@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import AppLayout from "@/components/AppLayout"
 import WorkflowChat from "@/components/workflow/WorkflowChat"
 import SlotsPanel from "@/components/workflow/SlotsPanel"
-import { Box, Flex, Text, TextField, Button, Tabs, Badge, Avatar, Separator, Card, Table, Select, Dialog, Checkbox } from "@radix-ui/themes"
+import { Box, Flex, Text, TextField, Button, Tabs, Badge, Avatar, Separator, Card, Table, Select, Dialog, Checkbox, DropdownMenu } from "@radix-ui/themes"
 import { 
   MagnifyingGlassIcon, 
   PersonIcon, 
@@ -23,6 +23,7 @@ import {
   PlusIcon,
   DownloadIcon,
   EyeOpenIcon,
+  EyeClosedIcon,
   Cross2Icon,
   ExternalLinkIcon,
   GlobeIcon,
@@ -89,7 +90,8 @@ const mockCandidates = [
     level: 'Senior',
     age: 32,
     gender: 'Мужской',
-    salaryExpectations: '150,000 - 200,000 USD'
+    salaryExpectations: '150,000 - 200,000 USD',
+    offer: '180,000 USD'
   },
   {
     id: '2',
@@ -298,8 +300,46 @@ export default function RecrChatPage() {
     )
   }
   
+  // Список вакансий
+  const availableVacancies = [
+    { id: '1', name: 'Frontend Senior', color: 'blue' },
+    { id: '2', name: 'Backend Developer', color: 'green' },
+    { id: '3', name: 'Fullstack Engineer', color: 'purple' },
+    { id: '4', name: 'DevOps Engineer', color: 'orange' },
+    { id: '5', name: 'Product Manager', color: 'red' },
+  ]
+  
   // Настройки вакансии
   const [selectedSettingTab, setSelectedSettingTab] = useState<'text' | 'recruiters' | 'customers' | 'questions' | 'integrations' | 'statuses' | 'salary'>('text')
+  
+  // Состояние для активности (комментарии и изменения статуса)
+  interface ActivityItem {
+    id: string
+    type: 'comment' | 'status_change' | 'status_change_with_comment'
+    text: string
+    date: string
+    dateTimestamp?: number // Timestamp для проверки возраста
+    status?: string
+    oldStatus?: string
+    comment?: string // Комментарий, если есть
+    rejectionReason?: string // Причина отказа, если статус Rejected
+  }
+  const [activityItems, setActivityItems] = useState<ActivityItem[]>([])
+  
+  // Состояние для редактирования активности (теперь редактируем все сразу)
+  const [editingActivityId, setEditingActivityId] = useState<string | null>(null)
+  const [editingActivityStatus, setEditingActivityStatus] = useState<string>('')
+  const [editingActivityOldStatus, setEditingActivityOldStatus] = useState<string>('')
+  const [editingActivityComment, setEditingActivityComment] = useState<string>('')
+  const [editingActivityRejectionReason, setEditingActivityRejectionReason] = useState<string>('')
+  
+  // Функция проверки, не старше ли запись 3 дней
+  const isActivityEditable = (item: ActivityItem): boolean => {
+    if (!item.dateTimestamp) return false
+    const now = Date.now()
+    const threeDaysInMs = 3 * 24 * 60 * 60 * 1000
+    return (now - item.dateTimestamp) <= threeDaysInMs
+  }
   
   // Состояние редактирования социальных сетей
   const [editingSocial, setEditingSocial] = useState<string | null>(null)
@@ -315,6 +355,10 @@ export default function RecrChatPage() {
   const [isEditingPhone, setIsEditingPhone] = useState(false)
   const [phoneValue, setPhoneValue] = useState(selectedCandidate.phone)
   
+  // Состояние редактирования имени
+  const [isEditingName, setIsEditingName] = useState(false)
+  const [nameValue, setNameValue] = useState(selectedCandidate.name)
+  
   // Состояние редактирования меток и уровня
   const [isEditingTags, setIsEditingTags] = useState(false)
   const [tagsValue, setTagsValue] = useState((selectedCandidate.tags || []).join(', '))
@@ -328,6 +372,33 @@ export default function RecrChatPage() {
   const [genderValue, setGenderValue] = useState(selectedCandidate.gender || '')
   const [isEditingSalary, setIsEditingSalary] = useState(false)
   const [salaryValue, setSalaryValue] = useState(selectedCandidate.salaryExpectations || '')
+  const [isEditingOffer, setIsEditingOffer] = useState(false)
+  const [offerValue, setOfferValue] = useState((selectedCandidate as any).offer || '')
+  
+  // Состояние видимости зарплатной информации (по умолчанию скрыты)
+  const [isSalaryVisible, setIsSalaryVisible] = useState(false)
+  const [isOfferVisible, setIsOfferVisible] = useState(false)
+  
+  // Причины отказа (объявляем до использования в useState)
+  const rejectionReasons = [
+    'Не подходит по опыту',
+    'Не подходит по навыкам',
+    'Зарплатные ожидания слишком высокие',
+    'Не подходит по локации',
+    'Другая причина'
+  ]
+  
+  // Состояние для комментария к статусу
+  const [statusComment, setStatusComment] = useState('')
+  const [rejectionReason, setRejectionReason] = useState('Без указания причин')
+  
+  // Состояние для отслеживания изменения статуса на Rejected (для отложенного добавления в активность)
+  const [pendingRejectedStatus, setPendingRejectedStatus] = useState<{
+    oldStatus: string
+    comment: string
+    date: string
+    dateTimestamp: number
+  } | null>(null)
   
   // Состояние редактирования Position
   const [isEditingPosition, setIsEditingPosition] = useState(false)
@@ -339,19 +410,13 @@ export default function RecrChatPage() {
   
   // Варианты для поля "Пол"
   const genderOptions = ['Мужской', 'Женский', 'Не указано']
+  const levelOptions = ['Junior', 'Middle', 'Senior', 'Lead', 'Principal']
   
   // Состояние статуса и причин отказа
   const [showOtherFields, setShowOtherFields] = useState(false)
   
   // Порядок статусов для перехода
   const statusOrder = ['New', 'Under Review', 'Interview', 'Offer', 'Accepted', 'Rejected', 'Declined', 'Archived']
-  const rejectionReasons = [
-    'Не подходит по опыту',
-    'Не подходит по навыкам',
-    'Зарплатные ожидания слишком высокие',
-    'Не подходит по локации',
-    'Другая причина'
-  ]
   
   const getNextStatus = (currentStatus: string) => {
     const currentIndex = statusOrder.findIndex(s => s === currentStatus)
@@ -362,17 +427,176 @@ export default function RecrChatPage() {
   }
   
   const handleStatusChange = (newStatus: string) => {
+    const oldStatus = selectedCandidate.status
+    const hasComment = statusComment.trim()
+    const hasStatusChange = oldStatus !== newStatus
+    const currentDate = new Date().toLocaleString('ru-RU', { 
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric', 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    })
+    
+    // Если меняем статус с "Rejected" на другой - очищаем отложенную запись
+    if (oldStatus === 'Rejected' && newStatus !== 'Rejected' && pendingRejectedStatus) {
+      setPendingRejectedStatus(null)
+    }
+    
+    // Если новый статус "Rejected" - не добавляем в активность сразу, сохраняем для отложенного добавления
+    if (newStatus === 'Rejected' && hasStatusChange) {
+      // Сохраняем информацию для отложенного добавления в активность
+      const now = Date.now()
+      setPendingRejectedStatus({
+        oldStatus,
+        comment: statusComment,
+        date: currentDate,
+        dateTimestamp: now
+      })
+      // Если нет причины, устанавливаем "Без указания причин"
+      if (!rejectionReason) {
+        setRejectionReason('Без указания причин')
+      }
+    } else {
+      // Для всех остальных статусов добавляем в активность сразу
+      // Если есть и комментарий, и изменение статуса - создаем одну объединенную запись
+      if (hasComment && hasStatusChange) {
+        console.log(`Статус изменен на "${newStatus}" с комментарием: "${statusComment}"`)
+        const now = Date.now()
+        const combinedItem: ActivityItem = {
+          id: `combined-${now}`,
+          type: 'status_change_with_comment',
+          text: `Статус изменен с "${oldStatus}" на "${newStatus}"`,
+          date: currentDate,
+          dateTimestamp: now,
+          oldStatus,
+          status: newStatus,
+          comment: statusComment
+        }
+        setActivityItems(prev => [combinedItem, ...prev])
+      } 
+      // Если есть только комментарий (без изменения статуса)
+      else if (hasComment) {
+        console.log(`Комментарий добавлен: "${statusComment}"`)
+        const now = Date.now()
+        const commentItem: ActivityItem = {
+          id: `comment-${now}`,
+          type: 'comment',
+          text: statusComment,
+          date: currentDate,
+          dateTimestamp: now,
+          status: selectedCandidate.status, // Сохраняем текущий статус для простого комментария
+          comment: statusComment
+        }
+        setActivityItems(prev => [commentItem, ...prev])
+      }
+      // Если есть только изменение статуса (без комментария)
+      else if (hasStatusChange) {
+        const now = Date.now()
+        const statusItem: ActivityItem = {
+          id: `status-${now}`,
+          type: 'status_change',
+          text: `Статус изменен с "${oldStatus}" на "${newStatus}"`,
+          date: currentDate,
+          dateTimestamp: now,
+          oldStatus,
+          status: newStatus
+        }
+        setActivityItems(prev => [statusItem, ...prev])
+      }
+      
+      // Переключаемся на вкладку Activity (только если не Rejected)
+      setRightTab('activity')
+    }
+    
     setSelectedCandidate(prev => ({
       ...prev,
       status: newStatus,
       statusColor: getStatusColor(newStatus)
     }))
+    
+    // Очищаем комментарий после отправки
+    setStatusComment('')
+  }
+  
+  // Обработка изменения причины отказа - добавляем запись в активность после выбора причины
+  const handleRejectionReasonChange = (reason: string) => {
+    setRejectionReason(reason)
+    
+    // Если есть отложенная запись о статусе Rejected, добавляем её в активность
+    if (pendingRejectedStatus) {
+      const { oldStatus, comment, date, dateTimestamp } = pendingRejectedStatus
+      const hasComment = comment.trim()
+      
+      if (hasComment) {
+        // Объединенная запись с комментарием
+        const combinedItem: ActivityItem = {
+          id: `combined-${dateTimestamp}`,
+          type: 'status_change_with_comment',
+          text: `Статус изменен с "${oldStatus}" на "Rejected" (${reason})`,
+          date: date,
+          dateTimestamp: dateTimestamp,
+          oldStatus,
+          status: 'Rejected',
+          comment: comment,
+          rejectionReason: reason
+        }
+        setActivityItems(prev => [combinedItem, ...prev])
+      } else {
+        // Только изменение статуса
+        const statusItem: ActivityItem = {
+          id: `status-${dateTimestamp}`,
+          type: 'status_change',
+          text: `Статус изменен с "${oldStatus}" на "Rejected" (${reason})`,
+          date: date,
+          dateTimestamp: dateTimestamp,
+          oldStatus,
+          status: 'Rejected',
+          rejectionReason: reason
+        }
+        setActivityItems(prev => [statusItem, ...prev])
+      }
+      
+      // Очищаем отложенную запись
+      setPendingRejectedStatus(null)
+      
+      // Переключаемся на вкладку Activity
+      setRightTab('activity')
+    }
   }
   
   const handleNextStatus = () => {
     const nextStatus = getNextStatus(selectedCandidate.status)
     if (nextStatus !== selectedCandidate.status) {
       handleStatusChange(nextStatus)
+    }
+  }
+  
+  const handleStatusCommentSubmit = () => {
+    if (statusComment.trim()) {
+      console.log(`Комментарий отправлен: "${statusComment}"`)
+      // Добавляем комментарий в активность
+      const now = Date.now()
+      const commentItem: ActivityItem = {
+        id: `comment-${now}`,
+        type: 'comment',
+        text: statusComment,
+        date: new Date().toLocaleString('ru-RU', { 
+          day: '2-digit', 
+          month: '2-digit', 
+          year: 'numeric', 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        }),
+        dateTimestamp: now,
+        status: selectedCandidate.status, // Сохраняем текущий статус для простого комментария
+        comment: statusComment
+      }
+      setActivityItems(prev => [commentItem, ...prev])
+      // Комментарий отправляется без изменения статуса
+      setStatusComment('')
+      // Переключаемся на вкладку Activity
+      setRightTab('activity')
     }
   }
   
@@ -388,6 +612,129 @@ export default function RecrChatPage() {
       'Archived': '#6B7280'
     }
     return statusColors[status] || '#6B7280'
+  }
+  
+  // Функции редактирования активности (теперь редактируем все сразу)
+  const handleEditActivity = (item: ActivityItem) => {
+    setEditingActivityId(item.id)
+    // Устанавливаем все значения для редактирования
+    if (item.oldStatus && item.status) {
+      setEditingActivityOldStatus(item.oldStatus)
+      setEditingActivityStatus(item.status)
+    } else if (item.status) {
+      // Для простого комментария используем текущий статус как oldStatus и status
+      setEditingActivityOldStatus(item.status)
+      setEditingActivityStatus(item.status)
+    } else {
+      // Если нет статуса, используем текущий статус кандидата
+      setEditingActivityOldStatus(selectedCandidate.status)
+      setEditingActivityStatus(selectedCandidate.status)
+    }
+    setEditingActivityComment(item.comment || item.text || '')
+    setEditingActivityRejectionReason(item.rejectionReason || '')
+  }
+  
+  const handleSaveActivityEdit = () => {
+    if (!editingActivityId) return
+    
+    setActivityItems(prev => {
+      const updatedItems = [...prev]
+      const currentIndex = updatedItems.findIndex(item => item.id === editingActivityId)
+      
+      if (currentIndex === -1) return prev
+      
+      const currentItem = updatedItems[currentIndex]
+      const hasStatusChange = editingActivityOldStatus !== editingActivityStatus
+      const hasComment = editingActivityComment.trim().length > 0
+      const newStatus = editingActivityStatus
+      const isRejected = newStatus === 'Rejected'
+      
+      // Определяем тип записи
+      let newType: 'comment' | 'status_change' | 'status_change_with_comment'
+      if (hasStatusChange && hasComment) {
+        newType = 'status_change_with_comment'
+      } else if (hasStatusChange) {
+        newType = 'status_change'
+      } else {
+        newType = 'comment'
+      }
+      
+      // Формируем текст для статуса (с причиной отказа, если Rejected)
+      let statusText = ''
+      if (hasStatusChange) {
+        if (isRejected && editingActivityRejectionReason) {
+          statusText = `Статус изменен с "${editingActivityOldStatus}" на "Rejected" (${editingActivityRejectionReason})`
+        } else {
+          statusText = `Статус изменен с "${editingActivityOldStatus}" на "${newStatus}"`
+        }
+      }
+      
+      // Обновляем текущий элемент
+      const updatedItem: ActivityItem = {
+        ...currentItem,
+        type: newType,
+        // Для простого комментария (без изменения статуса) сохраняем текущий статус
+        oldStatus: hasStatusChange ? editingActivityOldStatus : undefined,
+        status: newStatus, // Всегда сохраняем текущий статус
+        comment: hasComment ? editingActivityComment : undefined,
+        text: hasComment ? editingActivityComment : statusText,
+        rejectionReason: isRejected ? editingActivityRejectionReason : undefined
+      }
+      
+      updatedItems[currentIndex] = updatedItem
+      
+      // Если изменился статус, обновляем oldStatus следующего элемента (если он есть)
+      if (hasStatusChange && currentIndex < updatedItems.length - 1) {
+        const nextItem = updatedItems[currentIndex + 1]
+        // Старый статус текущего элемента (до редактирования) - это status, который был до изменения
+        const oldStatusOfCurrent = currentItem.status
+        
+        // Обновляем oldStatus следующего элемента, если он совпадает со старым status текущего элемента
+        // Логика: если следующий элемент начинался со старого status текущего элемента,
+        // то после изменения текущего элемента на новый статус, следующий элемент должен начинаться с нового статуса
+        if (oldStatusOfCurrent && nextItem.oldStatus === oldStatusOfCurrent) {
+          // Если oldStatus следующего элемента совпадает со старым status редактируемого элемента
+          updatedItems[currentIndex + 1] = {
+            ...nextItem,
+            oldStatus: newStatus // Обновляем oldStatus следующего элемента на новый статус
+          }
+        } else if (oldStatusOfCurrent && nextItem.type === 'comment' && nextItem.status === oldStatusOfCurrent) {
+          // Если следующий элемент - простой комментарий и его status совпадает со старым status
+          updatedItems[currentIndex + 1] = {
+            ...nextItem,
+            status: newStatus, // Обновляем status на новый статус
+            oldStatus: newStatus // Также устанавливаем oldStatus для консистентности
+          }
+        }
+      }
+      
+      return updatedItems
+    })
+    
+    // Сбрасываем состояние редактирования
+    setEditingActivityId(null)
+    setEditingActivityStatus('')
+    setEditingActivityOldStatus('')
+    setEditingActivityComment('')
+    setEditingActivityRejectionReason('')
+  }
+  
+  const handleCancelActivityEdit = () => {
+    setEditingActivityId(null)
+    setEditingActivityStatus('')
+    setEditingActivityOldStatus('')
+    setEditingActivityComment('')
+    setEditingActivityRejectionReason('')
+  }
+  
+  const handleDeleteActivity = (itemId: string) => {
+    setActivityItems(prev => {
+      // Можно удалять только последний элемент (первый в массиве, так как они отсортированы от новых к старым)
+      if (prev.length > 0 && prev[0].id === itemId) {
+        return prev.filter(item => item.id !== itemId)
+      }
+      return prev
+    })
   }
   
   useEffect(() => {
@@ -411,6 +758,11 @@ export default function RecrChatPage() {
   const handlePhoneSave = () => {
     setSelectedCandidate(prev => ({ ...prev, phone: phoneValue }))
     setIsEditingPhone(false)
+  }
+  
+  const handleNameSave = () => {
+    setSelectedCandidate(prev => ({ ...prev, name: nameValue }))
+    setIsEditingName(false)
   }
   
   const handleTagsSave = () => {
@@ -437,6 +789,11 @@ export default function RecrChatPage() {
   const handleSalarySave = () => {
     setSelectedCandidate(prev => ({ ...prev, salaryExpectations: salaryValue }))
     setIsEditingSalary(false)
+  }
+  
+  const handleOfferSave = () => {
+    setSelectedCandidate(prev => ({ ...prev, offer: offerValue } as any))
+    setIsEditingOffer(false)
   }
   
   const handlePositionSave = () => {
@@ -540,6 +897,14 @@ export default function RecrChatPage() {
   const handleCloseRightColumn = () => {
     setIsRightColumnOpen(false)
   }
+  
+  const handleSettingTabClick = (tab: 'text' | 'recruiters' | 'customers' | 'questions' | 'integrations' | 'statuses' | 'salary') => {
+    setSelectedSettingTab(tab)
+    // На мобильных открываем правую колонку как модальное окно
+    if (isMobile) {
+      setIsRightColumnOpen(true)
+    }
+  }
 
   const handleLogout = () => {
     // TODO: Implement logout
@@ -548,162 +913,6 @@ export default function RecrChatPage() {
 
   return (
     <AppLayout pageTitle="RECR&CHAT" onLogout={handleLogout}>
-      {/* Кнопки workflow сразу после StatusBar */}
-      <Box className={styles.workflowButtonsContainer} mb="3">
-        <Flex gap="3" align="center" justify="between" wrap="wrap">
-          {/* Быстрые кнопки слева */}
-          <Flex gap="2" align="center" style={{ flexShrink: 0 }}>
-            <Box className={styles.quickButton} style={{ backgroundColor: '#ef4444', position: 'relative' }}>
-              <Link2Icon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
-              <Box className={styles.flagBadge} title="Беларусь">
-                <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇧🇾</Text>
-              </Box>
-            </Box>
-            <Box className={styles.quickButton} style={{ backgroundColor: '#f97316', position: 'relative' }}>
-              <Text size="4" weight="bold" style={{ color: '#ffffff' }}>?</Text>
-              <Box className={styles.flagBadge} title="Беларусь">
-                <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇧🇾</Text>
-              </Box>
-            </Box>
-            <Box className={styles.quickButton} style={{ backgroundColor: '#eab308', position: 'relative' }}>
-              <Link2Icon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
-              <Box className={styles.flagBadge} title="Польша">
-                <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇵🇱</Text>
-              </Box>
-            </Box>
-            <Box className={styles.quickButton} style={{ backgroundColor: '#3b82f6', position: 'relative' }}>
-              <Text size="4" weight="bold" style={{ color: '#ffffff' }}>?</Text>
-              <Box className={styles.flagBadge} title="Польша">
-                <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇵🇱</Text>
-              </Box>
-            </Box>
-            <Box className={styles.quickButton} style={{ backgroundColor: '#06b6d4' }}>
-              <CalendarIcon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
-            </Box>
-            <Box className={styles.quickButton} style={{ backgroundColor: '#6b7280' }}>
-              <Text size="3" weight="bold" style={{ color: '#ffffff' }}>📄</Text>
-            </Box>
-            <Box className={styles.quickButton} style={{ backgroundColor: '#10b981' }}>
-              <Text size="5" weight="bold" style={{ color: '#ffffff' }}>+</Text>
-            </Box>
-          </Flex>
-
-          {/* Тогглеры и кнопка справа */}
-          <Flex gap="3" align="center" style={{ flexShrink: 0 }}>
-            {/* Тогглер этапов процесса */}
-            <Flex gap="3" align="center">
-              <Box
-                className={styles.workflowButton}
-                data-selected={selectedWorkflow === 'screening'}
-                onClick={() => setSelectedWorkflow('screening')}
-              >
-                <Flex align="center" gap="2">
-                  <Box className={styles.workflowIcon}>
-                    <ClipboardIcon width={18} height={18} />
-                  </Box>
-                  <Box>
-                    <Text size="2" weight="bold" style={{ display: 'block', color: '#ffffff' }}>
-                      Скрининг
-                    </Text>
-                    <Text size="1" style={{ opacity: 0.9, color: '#ffffff' }}>
-                      30 мин
-                    </Text>
-                  </Box>
-                </Flex>
-                {selectedWorkflow === 'screening' && (
-                  <Box className={styles.selectedBadge}>
-                    <CheckIcon width={12} height={12} style={{ color: '#ffffff' }} />
-                  </Box>
-                )}
-              </Box>
-              
-              <Box
-                className={styles.workflowButton}
-                data-selected={selectedWorkflow === 'interview'}
-                onClick={() => setSelectedWorkflow('interview')}
-              >
-                <Flex align="center" gap="2">
-                  <Box className={styles.workflowIcon}>
-                    <PersonIcon width={18} height={18} />
-                  </Box>
-                  <Box>
-                    <Text size="2" weight="bold" style={{ display: 'block', color: '#ffffff' }}>
-                      Интервью
-                    </Text>
-                    <Text size="1" style={{ opacity: 0.9, color: '#ffffff' }}>
-                      90 мин
-                    </Text>
-                  </Box>
-                </Flex>
-                {selectedWorkflow === 'interview' && (
-                  <Box className={styles.selectedBadge}>
-                    <CheckIcon width={12} height={12} style={{ color: '#ffffff' }} />
-                  </Box>
-                )}
-              </Box>
-            </Flex>
-            
-            {/* Кнопка со слотами */}
-            <Button
-              variant="soft"
-              size="2"
-              onClick={() => setSlotsOpen(true)}
-              style={{
-                backgroundColor: 'var(--accent-3)',
-                color: 'var(--accent-11)',
-                flexShrink: 0
-              }}
-            >
-              <ClockIcon width={16} height={16} />
-              <Text size="2">слоты</Text>
-            </Button>
-          </Flex>
-        </Flex>
-
-        {/* Блок настроек интервью (показывается только при выборе "Интервью") */}
-        {selectedWorkflow === 'interview' && (
-          <Box className={styles.interviewOptionsPanel} mt="2">
-            <Flex gap="4" align="center" wrap="wrap">
-              {/* Тогглер формата интервью */}
-              <Flex gap="2" align="center">
-                <Box
-                  className={styles.formatButton}
-                  data-selected={interviewFormat === 'online'}
-                  onClick={() => setInterviewFormat('online')}
-                >
-                  <VideoIcon width={16} height={16} />
-                  <Text size="2" weight="medium">Онлайн</Text>
-                </Box>
-                <Box
-                  className={styles.formatButton}
-                  data-selected={interviewFormat === 'office'}
-                  onClick={() => setInterviewFormat('office')}
-                >
-                  <BoxIcon width={16} height={16} />
-                  <Text size="2" weight="medium">Офис</Text>
-                </Box>
-              </Flex>
-
-              {/* Вертикальная линия-разделитель */}
-              <Separator orientation="vertical" style={{ height: '24px' }} />
-
-              {/* Чекбоксы интервьюеров */}
-              <Flex gap="3" align="center" wrap="wrap">
-                {interviewers.map(interviewer => (
-                  <Flex key={interviewer.id} align="center" gap="2">
-                    <Checkbox
-                      checked={selectedInterviewers.includes(interviewer.id)}
-                      onCheckedChange={() => handleInterviewerToggle(interviewer.id)}
-                    />
-                    <Text size="2">{interviewer.name}</Text>
-                  </Flex>
-                ))}
-              </Flex>
-            </Flex>
-          </Box>
-        )}
-      </Box>
-      
       <Box className={styles.container}>
       {/* Левая колонка */}
       <Box className={styles.leftColumn}>
@@ -738,16 +947,181 @@ export default function RecrChatPage() {
         </Flex>
 
         {/* Поиск */}
-        <TextField.Root
-          placeholder={`Search ${leftTab}...`}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          mb="3"
-        >
-          <TextField.Slot>
-            <MagnifyingGlassIcon width={16} height={16} />
-          </TextField.Slot>
-        </TextField.Root>
+        <Flex align="center" gap="2" mb="3">
+          <TextField.Root
+            placeholder={`Search ${leftTab}...`}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ flex: 1 }}
+          >
+            <TextField.Slot>
+              <MagnifyingGlassIcon width={16} height={16} />
+            </TextField.Slot>
+          </TextField.Root>
+          {/* Кнопка-глаз для открытия карточки кандидата на мобильных (только на вкладке Chat) */}
+          {isMobile && leftTab === 'chat' && (
+            <Button
+              variant="soft"
+              size="2"
+              onClick={() => setIsRightColumnOpen(true)}
+              style={{ flexShrink: 0 }}
+            >
+              <EyeOpenIcon width={16} height={16} />
+            </Button>
+          )}
+        </Flex>
+
+        {/* Workflow buttons для мобильных (только на вкладке Chat) */}
+        {isMobile && leftTab === 'chat' && (
+          <Box className={styles.workflowButtonsContainer} mb="3" style={{ overflowX: 'auto', overflowY: 'hidden', WebkitOverflowScrolling: 'touch' }}>
+            <Flex gap="2" align="center" style={{ flexShrink: 0, minWidth: 'max-content' }}>
+              {/* Быстрые кнопки */}
+              <Box className={styles.quickButton} style={{ backgroundColor: '#ef4444', position: 'relative', flexShrink: 0 }}>
+                <Link2Icon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
+                <Box className={styles.flagBadge} title="Беларусь">
+                  <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇧🇾</Text>
+                </Box>
+              </Box>
+              <Box className={styles.quickButton} style={{ backgroundColor: '#f97316', position: 'relative', flexShrink: 0 }}>
+                <Text size="4" weight="bold" style={{ color: '#ffffff' }}>?</Text>
+                <Box className={styles.flagBadge} title="Беларусь">
+                  <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇧🇾</Text>
+                </Box>
+              </Box>
+              <Box className={styles.quickButton} style={{ backgroundColor: '#eab308', position: 'relative', flexShrink: 0 }}>
+                <Link2Icon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
+                <Box className={styles.flagBadge} title="Польша">
+                  <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇵🇱</Text>
+                </Box>
+              </Box>
+              <Box className={styles.quickButton} style={{ backgroundColor: '#3b82f6', position: 'relative', flexShrink: 0 }}>
+                <Text size="4" weight="bold" style={{ color: '#ffffff' }}>?</Text>
+                <Box className={styles.flagBadge} title="Польша">
+                  <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇵🇱</Text>
+                </Box>
+              </Box>
+              <Box className={styles.quickButton} style={{ backgroundColor: '#06b6d4', flexShrink: 0 }}>
+                <CalendarIcon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
+              </Box>
+              <Box className={styles.quickButton} style={{ backgroundColor: '#6b7280', flexShrink: 0 }}>
+                <Text size="3" weight="bold" style={{ color: '#ffffff' }}>📄</Text>
+              </Box>
+              <Box className={styles.quickButton} style={{ backgroundColor: '#10b981', flexShrink: 0 }}>
+                <Text size="5" weight="bold" style={{ color: '#ffffff' }}>+</Text>
+              </Box>
+
+              {/* Тогглеры этапов процесса */}
+              <Box
+                className={styles.workflowButton}
+                data-selected={selectedWorkflow === 'screening'}
+                onClick={() => setSelectedWorkflow('screening')}
+                style={{ flexShrink: 0 }}
+              >
+                <Flex align="center" gap="2">
+                  <Box className={styles.workflowIcon}>
+                    <ClipboardIcon width={18} height={18} />
+                  </Box>
+                  <Box>
+                    <Text size="2" weight="bold" style={{ display: 'block', color: '#ffffff' }}>
+                      Скрининг
+                    </Text>
+                    <Text size="1" style={{ opacity: 0.9, color: '#ffffff' }}>
+                      30 мин
+                    </Text>
+                  </Box>
+                </Flex>
+                {selectedWorkflow === 'screening' && (
+                  <Box className={styles.selectedBadge}>
+                    <CheckIcon width={12} height={12} style={{ color: '#ffffff' }} />
+                  </Box>
+                )}
+              </Box>
+              
+              <Box
+                className={styles.workflowButton}
+                data-selected={selectedWorkflow === 'interview'}
+                onClick={() => setSelectedWorkflow('interview')}
+                style={{ flexShrink: 0 }}
+              >
+                <Flex align="center" gap="2">
+                  <Box className={styles.workflowIcon}>
+                    <PersonIcon width={18} height={18} />
+                  </Box>
+                  <Box>
+                    <Text size="2" weight="bold" style={{ display: 'block', color: '#ffffff' }}>
+                      Интервью
+                    </Text>
+                    <Text size="1" style={{ opacity: 0.9, color: '#ffffff' }}>
+                      90 мин
+                    </Text>
+                  </Box>
+                </Flex>
+                {selectedWorkflow === 'interview' && (
+                  <Box className={styles.selectedBadge}>
+                    <CheckIcon width={12} height={12} style={{ color: '#ffffff' }} />
+                  </Box>
+                )}
+              </Box>
+              
+              {/* Кнопка со слотами */}
+              <Button
+                variant="soft"
+                size="2"
+                onClick={() => setSlotsOpen(true)}
+                style={{
+                  backgroundColor: 'var(--accent-3)',
+                  color: 'var(--accent-11)',
+                  flexShrink: 0,
+                  height: '44px',
+                  boxSizing: 'border-box'
+                }}
+              >
+                <ClockIcon width={16} height={16} />
+                <Text size="2">слоты</Text>
+              </Button>
+            </Flex>
+
+            {/* Блок настроек интервью (показывается только при выборе "Интервью") */}
+            {selectedWorkflow === 'interview' && (
+              <Box mt="3" p="3" style={{ backgroundColor: 'var(--accent-2)', borderRadius: '8px' }}>
+                <Flex direction="column" gap="3">
+                  <Text size="2" weight="bold">Формат интервью</Text>
+                  <Flex gap="2">
+                    <Button
+                      variant={interviewFormat === 'online' ? 'solid' : 'soft'}
+                      size="2"
+                      onClick={() => setInterviewFormat('online')}
+                    >
+                      <VideoIcon width={16} height={16} />
+                      <Text size="2">Онлайн</Text>
+                    </Button>
+                    <Button
+                      variant={interviewFormat === 'offline' ? 'solid' : 'soft'}
+                      size="2"
+                      onClick={() => setInterviewFormat('offline')}
+                    >
+                      <PersonIcon width={16} height={16} />
+                      <Text size="2">Офлайн</Text>
+                    </Button>
+                  </Flex>
+                  
+                  <Text size="2" weight="bold">Интервьюеры</Text>
+                  <Flex direction="column" gap="2">
+                    {interviewers.map((interviewer) => (
+                      <Flex key={interviewer.id} align="center" gap="2">
+                        <Checkbox
+                          checked={selectedInterviewers.includes(interviewer.id)}
+                          onCheckedChange={() => handleInterviewerToggle(interviewer.id)}
+                        />
+                        <Text size="2">{interviewer.name}</Text>
+                      </Flex>
+                    ))}
+                  </Flex>
+                </Flex>
+              </Box>
+            )}
+          </Box>
+        )}
 
         {/* Контент табов */}
         {leftTab === 'candidates' && (
@@ -812,49 +1186,49 @@ export default function RecrChatPage() {
                     <Flex direction="column" gap="1">
                       <Button
                         variant={selectedSettingTab === 'text' ? 'solid' : 'soft'}
-                        onClick={() => setSelectedSettingTab('text')}
+                        onClick={() => handleSettingTabClick('text')}
                         style={{ justifyContent: 'flex-start', width: '100%' }}
                       >
                         <Text size="2">Текст вакансии</Text>
                       </Button>
                       <Button
                         variant={selectedSettingTab === 'recruiters' ? 'solid' : 'soft'}
-                        onClick={() => setSelectedSettingTab('recruiters')}
+                        onClick={() => handleSettingTabClick('recruiters')}
                         style={{ justifyContent: 'flex-start', width: '100%' }}
                       >
                         <Text size="2">Рекрутеры</Text>
                       </Button>
                       <Button
                         variant={selectedSettingTab === 'customers' ? 'solid' : 'soft'}
-                        onClick={() => setSelectedSettingTab('customers')}
+                        onClick={() => handleSettingTabClick('customers')}
                         style={{ justifyContent: 'flex-start', width: '100%' }}
                       >
                         <Text size="2">Заказчики и интервьюеры</Text>
                       </Button>
                       <Button
                         variant={selectedSettingTab === 'questions' ? 'solid' : 'soft'}
-                        onClick={() => setSelectedSettingTab('questions')}
+                        onClick={() => handleSettingTabClick('questions')}
                         style={{ justifyContent: 'flex-start', width: '100%' }}
                       >
                         <Text size="2">Вопросы и ссылки</Text>
                       </Button>
                       <Button
                         variant={selectedSettingTab === 'integrations' ? 'solid' : 'soft'}
-                        onClick={() => setSelectedSettingTab('integrations')}
+                        onClick={() => handleSettingTabClick('integrations')}
                         style={{ justifyContent: 'flex-start', width: '100%' }}
                       >
                         <Text size="2">Связи и интеграции</Text>
                       </Button>
                       <Button
                         variant={selectedSettingTab === 'statuses' ? 'solid' : 'soft'}
-                        onClick={() => setSelectedSettingTab('statuses')}
+                        onClick={() => handleSettingTabClick('statuses')}
                         style={{ justifyContent: 'flex-start', width: '100%' }}
                       >
                         <Text size="2">Статусы</Text>
                       </Button>
                       <Button
                         variant={selectedSettingTab === 'salary' ? 'solid' : 'soft'}
-                        onClick={() => setSelectedSettingTab('salary')}
+                        onClick={() => handleSettingTabClick('salary')}
                         style={{ justifyContent: 'flex-start', width: '100%' }}
                       >
                         <Text size="2">Зарплатные вилки</Text>
@@ -877,6 +1251,166 @@ export default function RecrChatPage() {
       
       {/* Правая колонка */}
       <Box className={`${styles.rightColumn} ${isRightColumnOpen ? styles.open : ''}`}>
+        {/* Кнопки workflow - показываются только на вкладке Chat и только на десктопе */}
+        {leftTab === 'chat' && !isMobile && (
+          <Box className={styles.workflowButtonsContainer} mb="3">
+            <Flex gap="3" align="center" justify="between" wrap="wrap">
+              {/* Быстрые кнопки слева */}
+              <Flex gap="2" align="center" style={{ flexShrink: 0 }}>
+                <Box className={styles.quickButton} style={{ backgroundColor: '#ef4444', position: 'relative' }}>
+                  <Link2Icon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
+                  <Box className={styles.flagBadge} title="Беларусь">
+                    <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇧🇾</Text>
+                  </Box>
+                </Box>
+                <Box className={styles.quickButton} style={{ backgroundColor: '#f97316', position: 'relative' }}>
+                  <Text size="4" weight="bold" style={{ color: '#ffffff' }}>?</Text>
+                  <Box className={styles.flagBadge} title="Беларусь">
+                    <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇧🇾</Text>
+                  </Box>
+                </Box>
+                <Box className={styles.quickButton} style={{ backgroundColor: '#eab308', position: 'relative' }}>
+                  <Link2Icon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
+                  <Box className={styles.flagBadge} title="Польша">
+                    <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇵🇱</Text>
+                  </Box>
+                </Box>
+                <Box className={styles.quickButton} style={{ backgroundColor: '#3b82f6', position: 'relative' }}>
+                  <Text size="4" weight="bold" style={{ color: '#ffffff' }}>?</Text>
+                  <Box className={styles.flagBadge} title="Польша">
+                    <Text style={{ fontSize: '20px', lineHeight: 1 }}>🇵🇱</Text>
+                  </Box>
+                </Box>
+                <Box className={styles.quickButton} style={{ backgroundColor: '#06b6d4' }}>
+                  <CalendarIcon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
+                </Box>
+                <Box className={styles.quickButton} style={{ backgroundColor: '#6b7280' }}>
+                  <Text size="3" weight="bold" style={{ color: '#ffffff' }}>📄</Text>
+                </Box>
+                <Box className={styles.quickButton} style={{ backgroundColor: '#10b981' }}>
+                  <Text size="5" weight="bold" style={{ color: '#ffffff' }}>+</Text>
+                </Box>
+              </Flex>
+
+              {/* Тогглеры и кнопка справа */}
+              <Flex gap="3" align="center" style={{ flexShrink: 0 }}>
+                {/* Тогглер этапов процесса */}
+                <Flex gap="3" align="center">
+                  <Box
+                    className={styles.workflowButton}
+                    data-selected={selectedWorkflow === 'screening'}
+                    onClick={() => setSelectedWorkflow('screening')}
+                  >
+                    <Flex align="center" gap="2">
+                      <Box className={styles.workflowIcon}>
+                        <ClipboardIcon width={18} height={18} />
+                      </Box>
+                      <Box>
+                        <Text size="2" weight="bold" style={{ display: 'block', color: '#ffffff' }}>
+                          Скрининг
+                        </Text>
+                        <Text size="1" style={{ opacity: 0.9, color: '#ffffff' }}>
+                          30 мин
+                        </Text>
+                      </Box>
+                    </Flex>
+                    {selectedWorkflow === 'screening' && (
+                      <Box className={styles.selectedBadge}>
+                        <CheckIcon width={12} height={12} style={{ color: '#ffffff' }} />
+                      </Box>
+                    )}
+                  </Box>
+                  
+                  <Box
+                    className={styles.workflowButton}
+                    data-selected={selectedWorkflow === 'interview'}
+                    onClick={() => setSelectedWorkflow('interview')}
+                  >
+                    <Flex align="center" gap="2">
+                      <Box className={styles.workflowIcon}>
+                        <PersonIcon width={18} height={18} />
+                      </Box>
+                      <Box>
+                        <Text size="2" weight="bold" style={{ display: 'block', color: '#ffffff' }}>
+                          Интервью
+                        </Text>
+                        <Text size="1" style={{ opacity: 0.9, color: '#ffffff' }}>
+                          90 мин
+                        </Text>
+                      </Box>
+                    </Flex>
+                    {selectedWorkflow === 'interview' && (
+                      <Box className={styles.selectedBadge}>
+                        <CheckIcon width={12} height={12} style={{ color: '#ffffff' }} />
+                      </Box>
+                    )}
+                  </Box>
+                </Flex>
+                
+                {/* Кнопка со слотами */}
+                <Button
+                  variant="soft"
+                  size="2"
+                  onClick={() => setSlotsOpen(true)}
+                  style={{
+                    backgroundColor: 'var(--accent-3)',
+                    color: 'var(--accent-11)',
+                    flexShrink: 0,
+                    height: '44px',
+                    boxSizing: 'border-box'
+                  }}
+                >
+                  <ClockIcon width={16} height={16} />
+                  <Text size="2">слоты</Text>
+                </Button>
+              </Flex>
+            </Flex>
+
+            {/* Блок настроек интервью (показывается только при выборе "Интервью") */}
+            {selectedWorkflow === 'interview' && (
+              <Box className={styles.interviewOptionsPanel} mt="2">
+                <Flex gap="4" align="center" wrap="wrap">
+                  {/* Тогглер формата интервью */}
+                  <Flex gap="2" align="center">
+                    <Box
+                      className={styles.formatButton}
+                      data-selected={interviewFormat === 'online'}
+                      onClick={() => setInterviewFormat('online')}
+                    >
+                      <VideoIcon width={16} height={16} />
+                      <Text size="2" weight="medium">Онлайн</Text>
+                    </Box>
+                    <Box
+                      className={styles.formatButton}
+                      data-selected={interviewFormat === 'office'}
+                      onClick={() => setInterviewFormat('office')}
+                    >
+                      <BoxIcon width={16} height={16} />
+                      <Text size="2" weight="medium">Офис</Text>
+                    </Box>
+                  </Flex>
+
+                  {/* Вертикальная линия-разделитель */}
+                  <Separator orientation="vertical" style={{ height: '24px' }} />
+
+                  {/* Чекбоксы интервьюеров */}
+                  <Flex gap="3" align="center" wrap="wrap">
+                    {interviewers.map(interviewer => (
+                      <Flex key={interviewer.id} align="center" gap="2">
+                        <Checkbox
+                          checked={selectedInterviewers.includes(interviewer.id)}
+                          onCheckedChange={() => handleInterviewerToggle(interviewer.id)}
+                        />
+                        <Text size="2">{interviewer.name}</Text>
+                      </Flex>
+                    ))}
+                  </Flex>
+                </Flex>
+              </Box>
+            )}
+          </Box>
+        )}
+        
         <Card className={styles.candidateCard}>
           {/* Кнопка закрытия для мобильных */}
           {isMobile && (
@@ -894,6 +1428,80 @@ export default function RecrChatPage() {
               <Cross2Icon width={20} height={20} />
             </Button>
           )}
+          
+          {/* Содержимое для настроек вакансии */}
+          {leftTab === 'vacancy-settings' ? (
+            <Flex direction="column" gap="4">
+              <Text size="5" weight="bold">Настройки вакансии</Text>
+              <Separator size="4" />
+              
+              {selectedSettingTab === 'text' && (
+                <Box>
+                  <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Текст вакансии</Text>
+                  <Text size="2" color="gray" mb="3" style={{ display: 'block' }}>
+                    Здесь будет редактор текста вакансии
+                  </Text>
+                  <TextField.Root placeholder="Название вакансии" mb="3" />
+                  <TextField.Root placeholder="Описание" />
+                </Box>
+              )}
+              
+              {selectedSettingTab === 'recruiters' && (
+                <Box>
+                  <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Рекрутеры</Text>
+                  <Text size="2" color="gray">
+                    Список рекрутеров, работающих над этой вакансией
+                  </Text>
+                </Box>
+              )}
+              
+              {selectedSettingTab === 'customers' && (
+                <Box>
+                  <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Заказчики и интервьюеры</Text>
+                  <Text size="2" color="gray">
+                    Управление заказчиками и интервьюерами
+                  </Text>
+                </Box>
+              )}
+              
+              {selectedSettingTab === 'questions' && (
+                <Box>
+                  <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Вопросы и ссылки</Text>
+                  <Text size="2" color="gray">
+                    Вопросы для кандидатов и полезные ссылки
+                  </Text>
+                </Box>
+              )}
+              
+              {selectedSettingTab === 'integrations' && (
+                <Box>
+                  <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Связи и интеграции</Text>
+                  <Text size="2" color="gray">
+                    Настройка интеграций с внешними сервисами
+                  </Text>
+                </Box>
+              )}
+              
+              {selectedSettingTab === 'statuses' && (
+                <Box>
+                  <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Статусы</Text>
+                  <Text size="2" color="gray">
+                    Управление статусами кандидатов
+                  </Text>
+                </Box>
+              )}
+              
+              {selectedSettingTab === 'salary' && (
+                <Box>
+                  <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Зарплатные вилки</Text>
+                  <Text size="2" color="gray">
+                    Настройка зарплатных диапазонов для вакансии
+                  </Text>
+                </Box>
+              )}
+            </Flex>
+          ) : (
+            <>
           {/* Header */}
           <Flex direction="column" gap="3" mb="4">
             <Flex align="center" gap="3">
@@ -902,66 +1510,169 @@ export default function RecrChatPage() {
                 fallback={selectedCandidate.avatar}
                 style={{ backgroundColor: selectedCandidate.statusColor }}
               />
-              <Flex direction="column" style={{ flex: 1 }}>
-                <Text size="5" weight="bold">{selectedCandidate.name}</Text>
-                <Text size="3" color="gray">{selectedCandidate.position}</Text>
-                <Text size="2" color="gray">{selectedCandidate.email}</Text>
+              <Flex direction="column" gap="2" style={{ flex: 1 }}>
+                <Flex align="center" gap="2" style={{ flexWrap: 'wrap' }}>
+                  {isEditingName ? (
+                    <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                      <TextField.Root
+                        value={nameValue}
+                        onChange={(e) => setNameValue(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleNameSave()
+                          } else if (e.key === 'Escape') {
+                            setNameValue(selectedCandidate.name)
+                            setIsEditingName(false)
+                          }
+                        }}
+                        placeholder="Введите имя"
+                        size="3"
+                        style={{ minWidth: '200px' }}
+                        autoFocus
+                      />
+                      <Button 
+                        size="2" 
+                        variant="soft"
+                        onClick={handleNameSave}
+                        style={{ flexShrink: 0 }}
+                      >
+                        <CheckCircledIcon width={14} height={14} />
+                      </Button>
+                      <Button 
+                        size="2" 
+                        variant="soft"
+                        onClick={() => {
+                          setNameValue(selectedCandidate.name)
+                          setIsEditingName(false)
+                        }}
+                        style={{ flexShrink: 0 }}
+                      >
+                        <Cross2Icon width={14} height={14} />
+                      </Button>
+                    </Flex>
+                  ) : (
+                    <Flex align="center" gap="2">
+                      <Text size="5" weight="bold">{selectedCandidate.name}</Text>
+                      <Button 
+                        size="1" 
+                        variant="ghost"
+                        onClick={() => setIsEditingName(true)}
+                        style={{ flexShrink: 0 }}
+                      >
+                        <Pencil1Icon width={12} height={12} />
+                      </Button>
+                    </Flex>
+                  )}
+                  <Badge size="2" color="blue">
+                    🎯 {selectedCandidate.vacancy} · {selectedCandidate.status}
+                  </Badge>
+                  <DropdownMenu.Root>
+                    <DropdownMenu.Trigger>
+                      <Button 
+                        size="2"
+                        variant="soft"
+                        style={{ 
+                          flexShrink: 0,
+                          marginLeft: 'auto'
+                        }}
+                      >
+                        <PlusIcon width={14} height={14} />
+                        Взять на другую вакансию
+                      </Button>
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Content align="end">
+                      {availableVacancies
+                        .filter(v => v.name !== selectedCandidate.vacancy)
+                        .map((vacancy) => (
+                          <DropdownMenu.Item key={vacancy.id}>
+                            {vacancy.name}
+                          </DropdownMenu.Item>
+                        ))
+                      }
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Root>
+                </Flex>
+                <Flex align="center" gap="2" style={{ flexWrap: 'wrap' }}>
+                  <Text size="2" weight="medium" style={{ flexShrink: 0 }}>Status:</Text>
+                  <TextField.Root
+                    size="2"
+                    value={statusComment}
+                    onChange={(e) => setStatusComment(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && statusComment.trim()) {
+                        handleStatusCommentSubmit()
+                      }
+                    }}
+                    placeholder="Введите комментарий..."
+                    style={{ flex: 1, minWidth: '150px' }}
+                  >
+                    {statusComment.trim() && (
+                      <TextField.Slot side="right">
+                        <Button 
+                          size="1" 
+                          variant="ghost"
+                          onClick={handleStatusCommentSubmit}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <CheckIcon width={14} height={14} />
+                        </Button>
+                      </TextField.Slot>
+                    )}
+                  </TextField.Root>
+                  <Select.Root
+                    value={selectedCandidate.status}
+                    onValueChange={handleStatusChange}
+                  >
+                    <Select.Trigger 
+                      style={{ 
+                        backgroundColor: selectedCandidate.statusColor,
+                        color: 'white',
+                        borderColor: selectedCandidate.statusColor,
+                        minWidth: '120px'
+                      }} 
+                    />
+                    <Select.Content>
+                      {statusOrder.filter(s => s !== 'Все').map((status) => (
+                        <Select.Item key={status} value={status}>
+                          {status}
+                        </Select.Item>
+                      ))}
+                    </Select.Content>
+                  </Select.Root>
+                  {selectedCandidate.status === 'Rejected' && (
+                    <Select.Root value={rejectionReason} onValueChange={handleRejectionReasonChange}>
+                      <Select.Trigger 
+                        style={{ 
+                          minWidth: '180px'
+                        }} 
+                        placeholder="Причина отказа"
+                      />
+                      <Select.Content>
+                        <Select.Item value="Без указания причин">Без указания причин</Select.Item>
+                        {rejectionReasons.map((reason) => (
+                          <Select.Item key={reason} value={reason}>
+                            {reason}
+                          </Select.Item>
+                        ))}
+                      </Select.Content>
+                    </Select.Root>
+                  )}
+                  <Button
+                    size="2"
+                    variant="soft"
+                    onClick={handleNextStatus}
+                    disabled={getNextStatus(selectedCandidate.status) === selectedCandidate.status}
+                    style={{ 
+                      flexShrink: 0,
+                      backgroundColor: getStatusColor(getNextStatus(selectedCandidate.status)),
+                      color: 'white'
+                    }}
+                  >
+                    <Text size="3">→</Text>
+                  </Button>
+                </Flex>
               </Flex>
             </Flex>
-
-            <Flex align="center" gap="2" style={{ flexWrap: 'wrap' }}>
-              <Text size="2" weight="medium" style={{ flexShrink: 0 }}>Status:</Text>
-              <Select.Root
-                value={selectedCandidate.status}
-                onValueChange={handleStatusChange}
-              >
-                <Select.Trigger 
-                  style={{ 
-                    backgroundColor: selectedCandidate.statusColor,
-                    color: 'white',
-                    borderColor: selectedCandidate.statusColor,
-                    minWidth: '120px'
-                  }} 
-                />
-                <Select.Content>
-                  {statusOrder.filter(s => s !== 'Все').map((status) => (
-                    <Select.Item key={status} value={status}>
-                      {status}
-                    </Select.Item>
-                  ))}
-                </Select.Content>
-              </Select.Root>
-              {selectedCandidate.status === 'Rejected' && (
-                <Select.Root defaultValue={rejectionReasons[0]}>
-                  <Select.Trigger 
-                    style={{ 
-                      minWidth: '180px'
-                    }} 
-                    placeholder="Причина отказа"
-                  />
-                  <Select.Content>
-                    {rejectionReasons.map((reason) => (
-                      <Select.Item key={reason} value={reason}>
-                        {reason}
-                      </Select.Item>
-                    ))}
-                  </Select.Content>
-                </Select.Root>
-              )}
-              <Button
-                size="2"
-                variant="soft"
-                onClick={handleNextStatus}
-                disabled={getNextStatus(selectedCandidate.status) === selectedCandidate.status}
-                style={{ flexShrink: 0 }}
-              >
-                <Text size="3">→</Text>
-              </Button>
-            </Flex>
-
-            <Badge size="2" color="blue">
-              🎯 {selectedCandidate.vacancy} · {selectedCandidate.status}
-            </Badge>
           </Flex>
 
           <Separator size="4" mb="4" />
@@ -970,14 +1681,14 @@ export default function RecrChatPage() {
           <Tabs.Root value={rightTab} onValueChange={(value) => setRightTab(value as any)}>
             <Tabs.List className={styles.subTabs}>
               <Tabs.Trigger value="info">Info</Tabs.Trigger>
-              <Tabs.Trigger value="history">History</Tabs.Trigger>
               <Tabs.Trigger value="activity">Activity</Tabs.Trigger>
               <Tabs.Trigger value="documents">Documents</Tabs.Trigger>
+              <Tabs.Trigger value="history">History</Tabs.Trigger>
             </Tabs.List>
 
-            <Box mt="4" style={{ overflowY: 'auto', flex: 1, minHeight: 0 }}>
+            <Box mt="4" style={{ overflowY: 'auto', overflowX: 'hidden', flex: 1, minHeight: 0 }}>
               <Tabs.Content value="info">
-                <Flex direction="column" gap="4">
+                <Flex direction="column" gap="4" style={{ width: '100%', maxWidth: '100%' }}>
                   <Box>
                     <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>
                       Контакты
@@ -1025,10 +1736,10 @@ export default function RecrChatPage() {
                           </Button>
                         </Flex>
                       ) : (
-                        <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                        <Flex align="center" gap="2" style={{ flexWrap: 'nowrap', minWidth: 0 }}>
                           <EnvelopeClosedIcon width={16} height={16} style={{ flexShrink: 0 }} />
                           <Text size="2" weight="medium" style={{ flexShrink: 0 }}>Email:</Text>
-                          <Text size="2">{selectedCandidate.email}</Text>
+                          <Text size="2" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{selectedCandidate.email}</Text>
                           <Button 
                             size="1" 
                             variant="soft"
@@ -1386,7 +2097,7 @@ export default function RecrChatPage() {
                     <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>
                       Application Details
                     </Text>
-                    <Table.Root>
+                    <Table.Root style={{ width: '100%', tableLayout: 'fixed' }}>
                       <Table.Body>
                         <Table.Row>
                           <Table.Cell>
@@ -1582,22 +2293,20 @@ export default function RecrChatPage() {
                           <Table.Cell>
                             {isEditingLevel ? (
                               <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
-                                <TextField.Root
-                                  value={levelValue}
-                                  onChange={(e) => setLevelValue(e.target.value)}
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                      handleLevelSave()
-                                    } else if (e.key === 'Escape') {
-                                      setLevelValue(selectedCandidate.level || '')
-                                      setIsEditingLevel(false)
-                                    }
-                                  }}
-                                  placeholder="Введите уровень"
-                                  style={{ flex: 1, minWidth: 0 }}
-                                  size="1"
-                                  autoFocus
-                                />
+                                <Select.Root
+                                  value={levelValue || 'Не указано'}
+                                  onValueChange={setLevelValue}
+                                >
+                                  <Select.Trigger style={{ flex: 1, minWidth: 0 }} />
+                                  <Select.Content>
+                                    {levelOptions.map((option) => (
+                                      <Select.Item key={option} value={option}>
+                                        {option}
+                                      </Select.Item>
+                                    ))}
+                                    <Select.Item value="Не указано">Не указано</Select.Item>
+                                  </Select.Content>
+                                </Select.Root>
                                 <Button 
                                   size="1" 
                                   variant="soft"
@@ -1626,6 +2335,158 @@ export default function RecrChatPage() {
                                   variant="ghost"
                                   onClick={() => setIsEditingLevel(true)}
                                   style={{ flexShrink: 0, marginLeft: '4px' }}
+                                >
+                                  <Pencil1Icon width={12} height={12} />
+                                </Button>
+                              </Flex>
+                            )}
+                          </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                          <Table.Cell>
+                            <Text size="2" weight="medium">Зарплатные ожидания:</Text>
+                          </Table.Cell>
+                          <Table.Cell>
+                            {isEditingSalary ? (
+                              <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                                <TextField.Root
+                                  value={salaryValue}
+                                  onChange={(e) => setSalaryValue(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      handleSalarySave()
+                                    } else if (e.key === 'Escape') {
+                                      setSalaryValue(selectedCandidate.salaryExpectations || '')
+                                      setIsEditingSalary(false)
+                                    }
+                                  }}
+                                  placeholder="Введите зарплатные ожидания"
+                                  style={{ flex: 1, minWidth: 0 }}
+                                  size="1"
+                                  autoFocus
+                                />
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={handleSalarySave}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <CheckCircledIcon width={14} height={14} />
+                                </Button>
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={() => {
+                                    setSalaryValue(selectedCandidate.salaryExpectations || '')
+                                    setIsEditingSalary(false)
+                                  }}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <Cross2Icon width={14} height={14} />
+                                </Button>
+                              </Flex>
+                            ) : (
+                              <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                                <Text size="2">
+                                  {isSalaryVisible 
+                                    ? (selectedCandidate.salaryExpectations || 'Не указано')
+                                    : '••••••••'
+                                  }
+                                </Text>
+                                <Button 
+                                  size="1" 
+                                  variant="ghost"
+                                  onClick={() => setIsSalaryVisible(!isSalaryVisible)}
+                                  style={{ flexShrink: 0 }}
+                                  title={isSalaryVisible ? 'Скрыть зарплатные ожидания' : 'Показать зарплатные ожидания'}
+                                >
+                                  {isSalaryVisible ? (
+                                    <EyeOpenIcon width={12} height={12} />
+                                  ) : (
+                                    <EyeClosedIcon width={12} height={12} />
+                                  )}
+                                </Button>
+                                <Button 
+                                  size="1" 
+                                  variant="ghost"
+                                  onClick={() => setIsEditingSalary(true)}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <Pencil1Icon width={12} height={12} />
+                                </Button>
+                              </Flex>
+                            )}
+                          </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                          <Table.Cell>
+                            <Text size="2" weight="medium">Оффер:</Text>
+                          </Table.Cell>
+                          <Table.Cell>
+                            {isEditingOffer ? (
+                              <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                                <TextField.Root
+                                  value={offerValue}
+                                  onChange={(e) => setOfferValue(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      handleOfferSave()
+                                    } else if (e.key === 'Escape') {
+                                      setOfferValue((selectedCandidate as any).offer || '')
+                                      setIsEditingOffer(false)
+                                    }
+                                  }}
+                                  placeholder="Введите сумму оффера"
+                                  style={{ flex: 1, minWidth: 0 }}
+                                  size="1"
+                                  autoFocus
+                                />
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={handleOfferSave}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <CheckCircledIcon width={14} height={14} />
+                                </Button>
+                                <Button 
+                                  size="1" 
+                                  variant="soft"
+                                  onClick={() => {
+                                    setOfferValue((selectedCandidate as any).offer || '')
+                                    setIsEditingOffer(false)
+                                  }}
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <Cross2Icon width={14} height={14} />
+                                </Button>
+                              </Flex>
+                            ) : (
+                              <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
+                                <Text size="2">
+                                  {isOfferVisible 
+                                    ? ((selectedCandidate as any).offer || 'Не указано')
+                                    : '••••••••'
+                                  }
+                                </Text>
+                                <Button 
+                                  size="1" 
+                                  variant="ghost"
+                                  onClick={() => setIsOfferVisible(!isOfferVisible)}
+                                  style={{ flexShrink: 0 }}
+                                  title={isOfferVisible ? 'Скрыть оффер' : 'Показать оффер'}
+                                >
+                                  {isOfferVisible ? (
+                                    <EyeOpenIcon width={12} height={12} />
+                                  ) : (
+                                    <EyeClosedIcon width={12} height={12} />
+                                  )}
+                                </Button>
+                                <Button 
+                                  size="1" 
+                                  variant="ghost"
+                                  onClick={() => setIsEditingOffer(true)}
+                                  style={{ flexShrink: 0 }}
                                 >
                                   <Pencil1Icon width={12} height={12} />
                                 </Button>
@@ -1768,64 +2629,6 @@ export default function RecrChatPage() {
                                   )}
                                 </Table.Cell>
                               </Table.Row>
-                              <Table.Row>
-                                <Table.Cell>
-                                  <Text size="2" weight="medium">Зарплатные ожидания:</Text>
-                                </Table.Cell>
-                                <Table.Cell>
-                                  {isEditingSalary ? (
-                                    <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
-                                      <TextField.Root
-                                        value={salaryValue}
-                                        onChange={(e) => setSalaryValue(e.target.value)}
-                                        onKeyDown={(e) => {
-                                          if (e.key === 'Enter') {
-                                            handleSalarySave()
-                                          } else if (e.key === 'Escape') {
-                                            setSalaryValue(selectedCandidate.salaryExpectations || '')
-                                            setIsEditingSalary(false)
-                                          }
-                                        }}
-                                        placeholder="Введите зарплатные ожидания"
-                                        style={{ flex: 1, minWidth: 0 }}
-                                        size="1"
-                                        autoFocus
-                                      />
-                                      <Button 
-                                        size="1" 
-                                        variant="soft"
-                                        onClick={handleSalarySave}
-                                        style={{ flexShrink: 0 }}
-                                      >
-                                        <CheckCircledIcon width={14} height={14} />
-                                      </Button>
-                                      <Button 
-                                        size="1" 
-                                        variant="soft"
-                                        onClick={() => {
-                                          setSalaryValue(selectedCandidate.salaryExpectations || '')
-                                          setIsEditingSalary(false)
-                                        }}
-                                        style={{ flexShrink: 0 }}
-                                      >
-                                        <Cross2Icon width={14} height={14} />
-                                      </Button>
-                                    </Flex>
-                                  ) : (
-                                    <Flex align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
-                                      <Text size="2">{selectedCandidate.salaryExpectations || 'Не указано'}</Text>
-                                      <Button 
-                                        size="1" 
-                                        variant="ghost"
-                                        onClick={() => setIsEditingSalary(true)}
-                                        style={{ flexShrink: 0, marginLeft: '4px' }}
-                                      >
-                                        <Pencil1Icon width={12} height={12} />
-                                      </Button>
-                                    </Flex>
-                                  )}
-                                </Table.Cell>
-                              </Table.Row>
                             </Table.Body>
                           </Table.Root>
                         </Box>
@@ -1835,58 +2638,200 @@ export default function RecrChatPage() {
                 </Flex>
               </Tabs.Content>
 
-              <Tabs.Content value="history">
-                <Flex direction="column" gap="3">
-                  {mockHistory.map((item) => (
-                    <Box key={item.id} className={styles.historyItem}>
-                      <Flex align="start" gap="2">
-                        <Text size="4">{item.icon}</Text>
-                        <Flex direction="column" style={{ flex: 1 }}>
-                          <Text size="1" color="gray" mb="1">{item.date}</Text>
-                          <Text size="2">{item.text}</Text>
-                        </Flex>
-                      </Flex>
-                      <Separator size="4" mt="3" />
-                    </Box>
-                  ))}
-                </Flex>
-              </Tabs.Content>
-
               <Tabs.Content value="activity">
                 <Flex direction="column" gap="4">
                   <Box>
                     <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>
-                      Add Note
+                      Активность
                     </Text>
-                    <TextField.Root placeholder="Add note..." />
-                    <Flex gap="2" mt="2">
-                      <Button size="2">Save</Button>
-                      <Button size="2" variant="soft">Cancel</Button>
-                    </Flex>
-                  </Box>
-
-                  <Box>
-                    <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>
-                      Notes & Comments
-                    </Text>
-                    <Card>
-                      <Text size="2" color="gray" mb="2" style={{ display: 'block' }}>
-                        Your note (Jan 20, 8:30 PM)
+                    {activityItems.length === 0 ? (
+                      <Text size="2" color="gray">
+                        Пока нет активности. Комментарии и изменения статуса будут отображаться здесь.
                       </Text>
-                      <Text size="2">
-                        "Good communication skills, thorough understanding of React. Schedule technical interview."
-                      </Text>
-                      <Flex gap="2" mt="3">
-                        <Button size="1" variant="soft">
-                          <Pencil1Icon width={14} height={14} />
-                          Edit
-                        </Button>
-                        <Button size="1" variant="soft" color="red">
-                          <TrashIcon width={14} height={14} />
-                          Delete
-                        </Button>
+                    ) : (
+                      <Flex direction="column" gap="3">
+                        {activityItems.map((item, index) => {
+                          const isEditable = isActivityEditable(item)
+                          const isEditing = editingActivityId === item.id
+                          // Можно удалять только последний элемент (первый в массиве, так как они отсортированы от новых к старым)
+                          const canDelete = index === 0
+                          
+                          // Определяем текущий статус для отображения
+                          const currentStatus = item.status || selectedCandidate.status
+                          // Показываем переход только если статусы действительно разные
+                          const hasStatusChange = item.oldStatus && item.status && item.oldStatus !== item.status
+                          
+                          return (
+                            <Card key={item.id}>
+                              <Flex direction="column" gap="2">
+                                {/* Заголовок с датой, статусами и кнопками */}
+                                <Flex align="center" justify="between">
+                                  <Flex align="center" gap="2" wrap="wrap">
+                                    <ClockIcon width={16} height={16} />
+                                    <Text size="1" color="gray">{item.date}</Text>
+                                    {/* Статусы в одну строку с датой */}
+                                    {hasStatusChange && item.oldStatus && item.status ? (
+                                      // Показываем переход между статусами только если они разные
+                                      <Flex align="center" gap="2">
+                                        <Badge 
+                                          size="1" 
+                                          style={{ 
+                                            backgroundColor: getStatusColor(item.oldStatus),
+                                            color: 'white'
+                                          }}
+                                        >
+                                          {item.oldStatus}
+                                        </Badge>
+                                        <Text size="1">→</Text>
+                                        <Badge 
+                                          size="1" 
+                                          style={{ 
+                                            backgroundColor: getStatusColor(item.status),
+                                            color: 'white'
+                                          }}
+                                        >
+                                          {item.status}
+                                          {item.status === 'Rejected' && item.rejectionReason && ` (${item.rejectionReason})`}
+                                        </Badge>
+                                      </Flex>
+                                    ) : (
+                                      // Если статусы совпадают или это простой комментарий, показываем только один статус
+                                      <Badge 
+                                        size="1" 
+                                        style={{ 
+                                          backgroundColor: getStatusColor(currentStatus),
+                                          color: 'white'
+                                        }}
+                                      >
+                                        {currentStatus}
+                                        {currentStatus === 'Rejected' && item.rejectionReason && ` (${item.rejectionReason})`}
+                                      </Badge>
+                                    )}
+                                  </Flex>
+                                  {/* Одна кнопка редактирования и удаления (только для записей не старше 3 дней) */}
+                                  {isEditable && !isEditing && (
+                                    <Flex gap="1">
+                                      <Button
+                                        size="1"
+                                        variant="ghost"
+                                        onClick={() => handleEditActivity(item)}
+                                      >
+                                        <Pencil1Icon width={12} height={12} />
+                                      </Button>
+                                      {/* Кнопка удаления показывается только для последнего элемента (первого в массиве) */}
+                                      {canDelete && (
+                                        <Button
+                                          size="1"
+                                          variant="ghost"
+                                          color="red"
+                                          onClick={() => handleDeleteActivity(item.id)}
+                                        >
+                                          <TrashIcon width={12} height={12} />
+                                        </Button>
+                                      )}
+                                    </Flex>
+                                  )}
+                                </Flex>
+                                
+                                {/* Режим редактирования (все поля сразу) */}
+                                {isEditing && (
+                                  <Flex direction="column" gap="3">
+                                    {/* Редактирование статусов */}
+                                    <Flex align="center" gap="2" wrap="wrap">
+                                      <Select.Root
+                                        value={editingActivityOldStatus}
+                                        onValueChange={setEditingActivityOldStatus}
+                                      >
+                                        <Select.Trigger style={{ minWidth: '120px' }} />
+                                        <Select.Content>
+                                          {statusOrder.filter(s => s !== 'Все').map((status) => (
+                                            <Select.Item key={status} value={status}>
+                                              {status}
+                                            </Select.Item>
+                                          ))}
+                                        </Select.Content>
+                                      </Select.Root>
+                                      <Text size="1">→</Text>
+                                      <Select.Root
+                                        value={editingActivityStatus}
+                                        onValueChange={setEditingActivityStatus}
+                                      >
+                                        <Select.Trigger style={{ minWidth: '120px' }} />
+                                        <Select.Content>
+                                          {statusOrder.filter(s => s !== 'Все').map((status) => (
+                                            <Select.Item key={status} value={status}>
+                                              {status}
+                                            </Select.Item>
+                                          ))}
+                                        </Select.Content>
+                                      </Select.Root>
+                                    </Flex>
+                                    
+                                    {/* Редактирование причины отказа (если статус Rejected) */}
+                                    {editingActivityStatus === 'Rejected' && (
+                                      <Select.Root
+                                        value={editingActivityRejectionReason || 'Без указания причин'}
+                                        onValueChange={setEditingActivityRejectionReason}
+                                      >
+                                        <Select.Trigger style={{ minWidth: '180px' }} placeholder="Причина отказа" />
+                                        <Select.Content>
+                                          <Select.Item value="Без указания причин">Без указания причин</Select.Item>
+                                          {rejectionReasons.map((reason) => (
+                                            <Select.Item key={reason} value={reason}>
+                                              {reason}
+                                            </Select.Item>
+                                          ))}
+                                        </Select.Content>
+                                      </Select.Root>
+                                    )}
+                                    
+                                    {/* Редактирование комментария */}
+                                    <TextField.Root
+                                      size="2"
+                                      value={editingActivityComment}
+                                      onChange={(e) => setEditingActivityComment(e.target.value)}
+                                      placeholder="Введите комментарий..."
+                                    />
+                                    
+                                    {/* Кнопки сохранения/отмены */}
+                                    <Flex gap="2">
+                                      <Button size="1" variant="soft" onClick={handleSaveActivityEdit}>
+                                        <CheckCircledIcon width={14} height={14} />
+                                        Сохранить
+                                      </Button>
+                                      <Button size="1" variant="soft" onClick={handleCancelActivityEdit}>
+                                        <Cross2Icon width={14} height={14} />
+                                        Отмена
+                                      </Button>
+                                    </Flex>
+                                  </Flex>
+                                )}
+                                
+                                {/* Обычный режим отображения */}
+                                {!isEditing && (
+                                  <>
+                                    {/* Комментарий показываем после статусов */}
+                                    {item.comment && (
+                                      <Box>
+                                        <Flex align="center" gap="2" mb="1">
+                                          <ChatBubbleIcon width={14} height={14} />
+                                          <Text size="1" color="gray" weight="medium">Комментарий:</Text>
+                                        </Flex>
+                                        <Text size="2">{item.comment}</Text>
+                                      </Box>
+                                    )}
+                                    {/* Для простого комментария без изменения статуса */}
+                                    {item.type === 'comment' && !item.comment && (
+                                      <Text size="2">{item.text}</Text>
+                                    )}
+                                  </>
+                                )}
+                              </Flex>
+                            </Card>
+                          )
+                        })}
                       </Flex>
-                    </Card>
+                    )}
                   </Box>
                 </Flex>
               </Tabs.Content>
@@ -1922,8 +2867,33 @@ export default function RecrChatPage() {
                   </Button>
                 </Flex>
               </Tabs.Content>
+
+              <Tabs.Content value="history">
+                <Flex direction="column" gap="3">
+                  <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>
+                    История активности
+                  </Text>
+                  <Text size="2" color="gray" mb="3">
+                    История изменений статусов и комментариев из предыдущих циклов и других вакансий
+                  </Text>
+                  {mockHistory.map((item) => (
+                    <Box key={item.id} className={styles.historyItem}>
+                      <Flex align="start" gap="2">
+                        <Text size="4">{item.icon}</Text>
+                        <Flex direction="column" style={{ flex: 1 }}>
+                          <Text size="1" color="gray" mb="1">{item.date}</Text>
+                          <Text size="2">{item.text}</Text>
+                        </Flex>
+                      </Flex>
+                      <Separator size="4" mt="3" />
+                    </Box>
+                  ))}
+                </Flex>
+              </Tabs.Content>
             </Box>
           </Tabs.Root>
+          </>
+          )}
         </Card>
       </Box>
       </Box>

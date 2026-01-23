@@ -236,36 +236,36 @@ export default function BenchmarksPage() {
                     </TextField.Slot>
                   </TextField.Root>
                 </Box>
-                <Select.Root value={typeFilter} onValueChange={setTypeFilter}>
+                <Select.Root value={typeFilter || 'all'} onValueChange={(value) => setTypeFilter(value === 'all' ? '' : value)}>
                   <Select.Trigger placeholder="Тип" style={{ minWidth: '120px' }} />
                   <Select.Content>
-                    <Select.Item value="">Все типы</Select.Item>
+                    <Select.Item value="all">Все типы</Select.Item>
                     <Select.Item value="candidate">Кандидат</Select.Item>
                     <Select.Item value="vacancy">Вакансия</Select.Item>
                   </Select.Content>
                 </Select.Root>
-                <Select.Root value={vacancyFilter} onValueChange={setVacancyFilter}>
+                <Select.Root value={vacancyFilter || 'all'} onValueChange={(value) => setVacancyFilter(value === 'all' ? '' : value)}>
                   <Select.Trigger placeholder="Вакансия" style={{ minWidth: '150px' }} />
                   <Select.Content>
-                    <Select.Item value="">Все вакансии</Select.Item>
+                    <Select.Item value="all">Все вакансии</Select.Item>
                     {vacancies.map(v => (
                       <Select.Item key={v.id} value={v.id.toString()}>{v.name}</Select.Item>
                     ))}
                   </Select.Content>
                 </Select.Root>
-                <Select.Root value={gradeFilter} onValueChange={setGradeFilter}>
+                <Select.Root value={gradeFilter || 'all'} onValueChange={(value) => setGradeFilter(value === 'all' ? '' : value)}>
                   <Select.Trigger placeholder="Грейд" style={{ minWidth: '120px' }} />
                   <Select.Content>
-                    <Select.Item value="">Все грейды</Select.Item>
+                    <Select.Item value="all">Все грейды</Select.Item>
                     {grades.map(g => (
                       <Select.Item key={g.id} value={g.id.toString()}>{g.name}</Select.Item>
                     ))}
                   </Select.Content>
                 </Select.Root>
-                <Select.Root value={statusFilter} onValueChange={setStatusFilter}>
+                <Select.Root value={statusFilter || 'all'} onValueChange={(value) => setStatusFilter(value === 'all' ? '' : value)}>
                   <Select.Trigger placeholder="Статус" style={{ minWidth: '120px' }} />
                   <Select.Content>
-                    <Select.Item value="">Все</Select.Item>
+                    <Select.Item value="all">Все</Select.Item>
                     <Select.Item value="true">Активные</Select.Item>
                     <Select.Item value="false">Неактивные</Select.Item>
                   </Select.Content>

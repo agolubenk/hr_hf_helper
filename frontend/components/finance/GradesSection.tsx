@@ -135,7 +135,7 @@ export default function GradesSection() {
                     </Select.Item>
                   ))
                 ) : (
-                  <Select.Item value="" disabled>
+                  <Select.Item value="none" disabled>
                     Все грейды уже добавлены
                   </Select.Item>
                 )}

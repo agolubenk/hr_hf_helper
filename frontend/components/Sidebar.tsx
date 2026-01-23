@@ -160,7 +160,13 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
       e.preventDefault()
     }
     
-    // Если есть href, всегда выполняем навигацию (даже если есть children)
+    // ПРИОРИТЕТ: Если есть дочерние элементы, сначала обрабатываем раскрытие/сворачивание
+    if (hasChildren) {
+      setIsExpanded(!isExpanded)
+      return // Выходим, не выполняя навигацию
+    }
+    
+    // Если дочерних элементов нет, но есть href, выполняем навигацию
     if (item.href) {
       // Если это ссылка, выполняем навигацию
       if (item.external) {
@@ -199,12 +205,6 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
           onNavigate()
         }
       }
-      return // Важно: выходим, чтобы не обрабатывать раскрытие/сворачивание
-    }
-    
-    // Если у элемента есть дочерние элементы, но нет href, просто раскрываем/сворачиваем
-    if (hasChildren) {
-      setIsExpanded(!isExpanded)
     }
   }
 
@@ -572,9 +572,16 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           </Box>,
         },
         {
-          id: 'company-settings-rules',
-          label: 'Правила привлечения',
-          icon: <GearIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+          id: 'company-settings-user-groups',
+          label: 'Группы пользователей',
+          icon: <PersonIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+          href: '/company-settings/user-groups',
+        },
+        {
+          id: 'company-settings-users',
+          label: 'Пользователи',
+          icon: <PersonIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+          href: '/company-settings/users',
         },
         {
           id: 'recruiting-settings',
@@ -582,6 +589,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           icon: <ChatBubbleIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
           href: '/company-settings/recruiting',
           children: [
+            {
+              id: 'recruiting-settings-rules',
+              label: 'Правила привлечения',
+              icon: <GearIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+              href: '/company-settings/recruiting/rules',
+            },
             {
               id: 'recruiting-settings-stages',
               label: 'Этапы найма и причины отказа',

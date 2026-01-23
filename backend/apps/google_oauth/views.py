@@ -4759,6 +4759,11 @@ def chat_ajax_handler(request, session_id):
                             content=f"❌ У выбранной вакансии '{vacancy.name}' не указан ID для связи с Huntflow"
                         )
                     else:
+                        # Проверяем наличие ссылок на резюме (hh.ru или rabota.by) в сообщении
+                        resume_url_info = None
+                        if message_text:
+                            resume_url_info = huntflow_service._extract_resume_url(message_text)
+                        
                         # Проверяем, есть ли файл в запросе
                         resume_file = None
                         parsed_data = None
@@ -4790,90 +4795,35 @@ def chat_ajax_handler(request, session_id):
                                 import traceback
                                 traceback.print_exc()
                         
-                        # Парсим текст сообщения для извлечения данных кандидата
-                        # Формат: Имя Фамилия Отчество, email, телефон, должность, компания, зарплата
-                        # Или просто текст резюме
-                        candidate_data = {
-                            'first_name': '',
-                            'last_name': '',
-                            'middle_name': '',
-                            'email': '',
-                            'phone': '',
-                            'position': '',
-                            'company': '',
-                            'salary': '',
-                            'resume_text': message_text if message_text else ''
-                        }
-                        
-                        # Если есть распарсенные данные из файла, используем их
-                        if parsed_data:
-                            fields = parsed_data.get('fields', {})
-                            name_data = fields.get('name', {})
-                            
-                            candidate_data['first_name'] = name_data.get('first', '') or candidate_data['first_name']
-                            candidate_data['last_name'] = name_data.get('last', '') or candidate_data['last_name']
-                            candidate_data['middle_name'] = name_data.get('middle', '') or candidate_data['middle_name']
-                            candidate_data['email'] = fields.get('email', '') or candidate_data['email']
-                            
-                            if fields.get('phones'):
-                                phones = fields.get('phones', [])
-                                if phones and len(phones) > 0:
-                                    candidate_data['phone'] = phones[0] or candidate_data['phone']
-                            
-                            candidate_data['position'] = fields.get('position', '') or candidate_data['position']
-                            candidate_data['salary'] = str(fields.get('salary', '')) or candidate_data['salary']
-                            
-                            if parsed_data.get('text'):
-                                candidate_data['resume_text'] = parsed_data.get('text') or candidate_data['resume_text']
-                        
-                        # Если имя и фамилия не заполнены, пытаемся извлечь из текста
-                        if not candidate_data['first_name'] and not candidate_data['last_name'] and message_text:
-                            # Простая попытка извлечь имя из первой строки
-                            lines = message_text.split('\n')
-                            if lines:
-                                first_line = lines[0].strip()
-                                name_parts = first_line.split()
-                                if len(name_parts) >= 2:
-                                    candidate_data['first_name'] = name_parts[0]
-                                    candidate_data['last_name'] = name_parts[1]
-                                    if len(name_parts) >= 3:
-                                        candidate_data['middle_name'] = name_parts[2]
-                        
-                        # Проверяем обязательные поля
-                        if not candidate_data['first_name'] or not candidate_data['last_name']:
-                            ChatMessage.objects.create(
-                                session=chat_session,
-                                message_type='system',
-                                content="❌ Не указаны имя и фамилия кандидата. Укажите их в сообщении или прикрепите файл резюме."
+                        # Если найдена ссылка на резюме и нет файла, создаем кандидата по ссылке
+                        if resume_url_info and not parsed_data and not resume_file:
+                            print(f"🔍 CHAT AJAX: Найдена ссылка на резюме: {resume_url_info}")
+                            created_applicant = huntflow_service.create_applicant_from_url(
+                                account_id=correct_account_id,
+                                resume_url=resume_url_info['url'],
+                                vacancy_id=vacancy_id,
+                                source_type=resume_url_info['source_type'],
+                                resume_id=resume_url_info.get('resume_id')
                             )
-                        else:
-                            # Создаем кандидата в Huntflow
-                            if parsed_data:
-                                # Используем create_applicant_from_parsed_data для полной поддержки парсера
-                                created_applicant = huntflow_service.create_applicant_from_parsed_data(
-                                    account_id=correct_account_id,
-                                    parsed_data=parsed_data,
-                                    vacancy_id=vacancy_id
-                                )
-                            else:
-                                # Создаем кандидата вручную
-                                created_applicant = huntflow_service.create_applicant_manual(
-                                    account_id=correct_account_id,
-                                    candidate_data=candidate_data,
-                                    vacancy_id=vacancy_id
-                                )
                             
                             if created_applicant:
                                 applicant_id = created_applicant.get('id')
-                                candidate_name = f"{candidate_data.get('last_name', '')} {candidate_data.get('first_name', '')} {candidate_data.get('middle_name', '')}".strip()
+                                candidate_name = f"{created_applicant.get('last_name', '')} {created_applicant.get('first_name', '')} {created_applicant.get('middle_name', '')}".strip()
+                                if not candidate_name:
+                                    candidate_name = "Кандидат"
                                 
                                 # Формируем ссылку на кандидата
                                 candidate_url = f"https://huntflow.ru/my/org{correct_account_id}#/applicants/{applicant_id}"
+                                
+                                # Формируем источник для отображения
+                                source_display = f"{resume_url_info['source_type'].lower()}.ru" if resume_url_info['source_type'] == 'HH' else "rabota.by"
+                                resume_id_display = resume_url_info.get('resume_id', 'N/A')
                                 
                                 response_content = f"✅ **Кандидат успешно создан и привязан к вакансии**\n\n"
                                 response_content += f"**Кандидат:** {candidate_name}\n"
                                 response_content += f"**Вакансия:** {vacancy.name}\n"
                                 response_content += f"**ID кандидата:** {applicant_id}\n\n"
+                                response_content += f"**{source_display}:** {resume_id_display}\n\n"
                                 response_content += f"[Открыть кандидата в Huntflow]({candidate_url})"
                                 
                                 ChatMessage.objects.create(
@@ -4885,17 +4835,126 @@ def chat_ajax_handler(request, session_id):
                                         'applicant_id': applicant_id,
                                         'candidate_name': candidate_name,
                                         'vacancy_name': vacancy.name,
-                                        'candidate_url': candidate_url
+                                        'candidate_url': candidate_url,
+                                        'resume_source': source_display,
+                                        'resume_id': resume_id_display
                                     }
                                 )
                                 
-                                print(f"✅ CHAT AJAX: Кандидат успешно создан: {applicant_id}")
+                                print(f"✅ CHAT AJAX: Кандидат успешно создан по ссылке: {applicant_id}")
                             else:
                                 ChatMessage.objects.create(
                                     session=chat_session,
                                     message_type='system',
-                                    content="❌ Не удалось создать кандидата в Huntflow. Проверьте данные и попробуйте снова."
+                                    content="❌ Не удалось создать кандидата по ссылке. Проверьте ссылку и попробуйте снова."
                                 )
+                        else:
+                            # Парсим текст сообщения для извлечения данных кандидата
+                            # Формат: Имя Фамилия Отчество, email, телефон, должность, компания, зарплата
+                            # Или просто текст резюме
+                            candidate_data = {
+                                'first_name': '',
+                                'last_name': '',
+                                'middle_name': '',
+                                'email': '',
+                                'phone': '',
+                                'position': '',
+                                'company': '',
+                                'salary': '',
+                                'resume_text': message_text if message_text else ''
+                            }
+                            
+                            # Если есть распарсенные данные из файла, используем их
+                            if parsed_data:
+                                fields = parsed_data.get('fields', {})
+                                name_data = fields.get('name', {})
+                                
+                                candidate_data['first_name'] = name_data.get('first', '') or candidate_data['first_name']
+                                candidate_data['last_name'] = name_data.get('last', '') or candidate_data['last_name']
+                                candidate_data['middle_name'] = name_data.get('middle', '') or candidate_data['middle_name']
+                                candidate_data['email'] = fields.get('email', '') or candidate_data['email']
+                                
+                                if fields.get('phones'):
+                                    phones = fields.get('phones', [])
+                                    if phones and len(phones) > 0:
+                                        candidate_data['phone'] = phones[0] or candidate_data['phone']
+                                
+                                candidate_data['position'] = fields.get('position', '') or candidate_data['position']
+                                candidate_data['salary'] = str(fields.get('salary', '')) or candidate_data['salary']
+                                
+                                if parsed_data.get('text'):
+                                    candidate_data['resume_text'] = parsed_data.get('text') or candidate_data['resume_text']
+                            
+                            # Если имя и фамилия не заполнены, пытаемся извлечь из текста
+                            if not candidate_data['first_name'] and not candidate_data['last_name'] and message_text:
+                                # Простая попытка извлечь имя из первой строки
+                                lines = message_text.split('\n')
+                                if lines:
+                                    first_line = lines[0].strip()
+                                    name_parts = first_line.split()
+                                    if len(name_parts) >= 2:
+                                        candidate_data['first_name'] = name_parts[0]
+                                        candidate_data['last_name'] = name_parts[1]
+                                        if len(name_parts) >= 3:
+                                            candidate_data['middle_name'] = name_parts[2]
+                            
+                            # Проверяем обязательные поля
+                            if not candidate_data['first_name'] or not candidate_data['last_name']:
+                                ChatMessage.objects.create(
+                                    session=chat_session,
+                                    message_type='system',
+                                    content="❌ Не указаны имя и фамилия кандидата. Укажите их в сообщении или прикрепите файл резюме."
+                                )
+                            else:
+                                # Создаем кандидата в Huntflow
+                                if parsed_data:
+                                    # Используем create_applicant_from_parsed_data для полной поддержки парсера
+                                    created_applicant = huntflow_service.create_applicant_from_parsed_data(
+                                        account_id=correct_account_id,
+                                        parsed_data=parsed_data,
+                                        vacancy_id=vacancy_id
+                                    )
+                                else:
+                                    # Создаем кандидата вручную
+                                    created_applicant = huntflow_service.create_applicant_manual(
+                                        account_id=correct_account_id,
+                                        candidate_data=candidate_data,
+                                        vacancy_id=vacancy_id
+                                    )
+                                
+                                if created_applicant:
+                                    applicant_id = created_applicant.get('id')
+                                    candidate_name = f"{candidate_data.get('last_name', '')} {candidate_data.get('first_name', '')} {candidate_data.get('middle_name', '')}".strip()
+                                    
+                                    # Формируем ссылку на кандидата
+                                    candidate_url = f"https://huntflow.ru/my/org{correct_account_id}#/applicants/{applicant_id}"
+                                    
+                                    response_content = f"✅ **Кандидат успешно создан и привязан к вакансии**\n\n"
+                                    response_content += f"**Кандидат:** {candidate_name}\n"
+                                    response_content += f"**Вакансия:** {vacancy.name}\n"
+                                    response_content += f"**ID кандидата:** {applicant_id}\n\n"
+                                    response_content += f"[Открыть кандидата в Huntflow]({candidate_url})"
+                                    
+                                    ChatMessage.objects.create(
+                                        session=chat_session,
+                                        message_type='system',
+                                        content=response_content,
+                                        metadata={
+                                            'action_type': 'add_candidate',
+                                            'applicant_id': applicant_id,
+                                            'candidate_name': candidate_name,
+                                            'vacancy_name': vacancy.name,
+                                            'candidate_url': candidate_url
+                                        }
+                                    )
+                                    
+                                    print(f"✅ CHAT AJAX: Кандидат успешно создан: {applicant_id}")
+                                else:
+                                    ChatMessage.objects.create(
+                                        session=chat_session,
+                                        message_type='system',
+                                        content="❌ Не удалось создать кандидата в Huntflow. Проверьте данные и попробуйте снова."
+                                    )
                                 
             except Exception as e:
                 print(f"❌ CHAT AJAX: Ошибка создания кандидата: {e}")
@@ -5538,59 +5597,65 @@ def send_chat_message(request):
         except ChatSession.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Сессия чата не найдена'})
         
-        # Определяем вакансию из сообщения
+        # Определяем тип действия ПЕРЕД определением вакансии, чтобы пропустить обработку ссылок на резюме
+        action_type = None
+        parsed_file_data = data.get('parsed_file_data')
+        is_add_command = parsed_file_data or message_text.strip() == '/add' or message_text.startswith('/add ')
+        
+        # Определяем вакансию из сообщения (только если это не команда /add)
         determined_vacancy = None
         
-        # 1. Проверяем, есть ли в сообщении ссылка на кандидата
-        import re
-        url_pattern = r'https?://[^\s]+'
-        urls = re.findall(url_pattern, message_text)
-        
-        candidate_url_found = None
-        for url in urls:
-            if 'huntflow' in url.lower():
-                candidate_url_found = url
-                break
-        
-        # Если найдена ссылка на кандидата, определяем вакансию
-        if candidate_url_found:
-            print(f"🔍 SEND_CHAT_MESSAGE: Найдена ссылка на кандидата: {candidate_url_found}")
+        # 1. Проверяем, есть ли в сообщении ссылка на кандидата (только если не команда /add)
+        if not is_add_command:
+            import re
+            url_pattern = r'https?://[^\s]+'
+            urls = re.findall(url_pattern, message_text)
             
-            # Проверяем, есть ли в ссылке вакансия
-            if '/vacancy/' in candidate_url_found:
-                # Извлекаем vacancy_id из ссылки
-                vacancy_match = re.search(r'/vacancy/(\d+)/', candidate_url_found)
-                if vacancy_match:
-                    vacancy_id = vacancy_match.group(1)
-                    from apps.vacancies.models import Vacancy
-                    try:
-                        determined_vacancy = Vacancy.objects.get(external_id=str(vacancy_id))
-                        print(f"✅ SEND_CHAT_MESSAGE: Вакансия определена из ссылки: {determined_vacancy.name}")
-                    except Vacancy.DoesNotExist:
-                        print(f"⚠️ SEND_CHAT_MESSAGE: Вакансия {vacancy_id} не найдена в локальной БД")
-            elif '/applicants/filter/' in candidate_url_found:
-                # Ссылка без вакансии - определяем через API
-                vacancy_id, candidate_id, error = _determine_vacancy_from_candidate_link(
-                    candidate_url_found, 
-                    request.user
-                )
+            candidate_url_found = None
+            for url in urls:
+                if 'huntflow' in url.lower():
+                    candidate_url_found = url
+                    break
+            
+            # Если найдена ссылка на кандидата, определяем вакансию
+            if candidate_url_found:
+                print(f"🔍 SEND_CHAT_MESSAGE: Найдена ссылка на кандидата: {candidate_url_found}")
                 
-                if error:
-                    return JsonResponse({
-                        'success': False, 
-                        'error': f'Ошибка определения вакансии: {error}'
-                    })
-                
-                if vacancy_id:
-                    from apps.vacancies.models import Vacancy
-                    try:
-                        determined_vacancy = Vacancy.objects.get(external_id=str(vacancy_id))
-                        print(f"✅ SEND_CHAT_MESSAGE: Вакансия определена через API: {determined_vacancy.name}")
-                    except Vacancy.DoesNotExist:
-                        print(f"⚠️ SEND_CHAT_MESSAGE: Вакансия {vacancy_id} не найдена в локальной БД")
+                # Проверяем, есть ли в ссылке вакансия
+                if '/vacancy/' in candidate_url_found:
+                    # Извлекаем vacancy_id из ссылки
+                    vacancy_match = re.search(r'/vacancy/(\d+)/', candidate_url_found)
+                    if vacancy_match:
+                        vacancy_id = vacancy_match.group(1)
+                        from apps.vacancies.models import Vacancy
+                        try:
+                            determined_vacancy = Vacancy.objects.get(external_id=str(vacancy_id))
+                            print(f"✅ SEND_CHAT_MESSAGE: Вакансия определена из ссылки: {determined_vacancy.name}")
+                        except Vacancy.DoesNotExist:
+                            print(f"⚠️ SEND_CHAT_MESSAGE: Вакансия {vacancy_id} не найдена в локальной БД")
+                elif '/applicants/filter/' in candidate_url_found:
+                    # Ссылка без вакансии - определяем через API
+                    vacancy_id, candidate_id, error = _determine_vacancy_from_candidate_link(
+                        candidate_url_found, 
+                        request.user
+                    )
+                    
+                    if error:
+                        return JsonResponse({
+                            'success': False, 
+                            'error': f'Ошибка определения вакансии: {error}'
+                        })
+                    
+                    if vacancy_id:
+                        from apps.vacancies.models import Vacancy
+                        try:
+                            determined_vacancy = Vacancy.objects.get(external_id=str(vacancy_id))
+                            print(f"✅ SEND_CHAT_MESSAGE: Вакансия определена через API: {determined_vacancy.name}")
+                        except Vacancy.DoesNotExist:
+                            print(f"⚠️ SEND_CHAT_MESSAGE: Вакансия {vacancy_id} не найдена в локальной БД")
         
-        # 2. Если вакансия не определена из ссылки, пытаемся определить из текста сообщения
-        if not determined_vacancy:
+        # 2. Если вакансия не определена из ссылки, пытаемся определить из текста сообщения (только если не команда /add)
+        if not determined_vacancy and not is_add_command:
             print(f"🔍 SEND_CHAT_MESSAGE: Вакансия не найдена в ссылке, пытаемся определить из текста")
             determined_vacancy = _determine_vacancy_from_text(message_text, request.user)
             if determined_vacancy:
@@ -5612,11 +5677,11 @@ def send_chat_message(request):
                     chat_session.save()
                     print(f"✅ SEND_CHAT_MESSAGE: Обновлена текущая сессия с вакансией: {determined_vacancy.name}")
         
-        # Определяем тип действия
-        action_type = None
-        # Проверяем, есть ли распарсенные данные файла - если да, это команда /add
-        parsed_file_data = data.get('parsed_file_data')
-        if parsed_file_data or message_text.strip() == '/add' or message_text.startswith('/add '):
+        # Сохраняем исходный текст сообщения для проверки ссылок на резюме
+        original_message_text = message_text
+        
+        # Определяем тип действия (action_type уже определен выше, если это команда /add)
+        if is_add_command:
             action_type = 'add_candidate'
             # Убираем префикс '/add ' из сообщения для обработки, если он есть
             if message_text.startswith('/add '):
@@ -5632,7 +5697,21 @@ def send_chat_message(request):
             # Убираем префикс '/s ' из сообщения для обработки
             message_text = message_text[3:].strip()
         else:
-            action_type = 'hrscreening'  # По умолчанию HR-скрининг
+            # Проверяем, есть ли ссылка на резюме (hh.ru или rabota.by) - это тоже команда /add
+            # Проверяем в исходном тексте (до удаления префиксов)
+            if original_message_text:
+                from apps.huntflow.services import HuntflowService
+                temp_service = HuntflowService(request.user)
+                resume_url_info = temp_service._extract_resume_url(original_message_text)
+                if resume_url_info:
+                    action_type = 'add_candidate'
+                    is_add_command = True
+                    # Если в исходном тексте был префикс /add, он уже удален выше
+                    # Если нет, но есть ссылка на резюме, используем текст как есть
+                else:
+                    action_type = 'hrscreening'  # По умолчанию HR-скрининг
+            else:
+                action_type = 'hrscreening'  # По умолчанию HR-скрининг
         
         # Получаем информацию о файле из запроса (если есть)
         attached_file_name = data.get('attached_file_name', '')
@@ -5700,6 +5779,14 @@ def send_chat_message(request):
                     )
                     return JsonResponse({'success': False, 'error': f'У вакансии "{vacancy.name}" не указан ID для связи с Huntflow'})
                 
+                # Проверяем наличие ссылок на резюме (hh.ru или rabota.by) в сообщении
+                # Используем исходный текст (до удаления префикса /add)
+                resume_url_info = None
+                # Проверяем в обрезанном message_text (после удаления /add) и в исходном original_message_text
+                check_text = message_text if message_text else original_message_text
+                if check_text:
+                    resume_url_info = huntflow_service._extract_resume_url(check_text)
+                
                 # Используем распарсенные данные из файла (передаются через JSON)
                 parsed_data = parsed_file_data
                 
@@ -5709,6 +5796,100 @@ def send_chat_message(request):
                     if not isinstance(parsed_data, dict):
                         print(f"⚠️ SEND_CHAT_MESSAGE: parsed_data не является словарем: {type(parsed_data)}")
                         parsed_data = None
+                
+                # Если найдена ссылка на резюме, создаем кандидата по ссылке
+                if resume_url_info and not parsed_data:
+                    print(f"🔍 SEND_CHAT_MESSAGE: Найдена ссылка на резюме: {resume_url_info}")
+                    created_applicant = huntflow_service.create_applicant_from_url(
+                        account_id=correct_account_id,
+                        resume_url=resume_url_info['url'],
+                        vacancy_id=vacancy_id,
+                        source_type=resume_url_info['source_type'],
+                        resume_id=resume_url_info.get('resume_id')
+                    )
+                    
+                    if created_applicant:
+                        applicant_id = created_applicant.get('id')
+                        candidate_name = f"{created_applicant.get('last_name', '')} {created_applicant.get('first_name', '')} {created_applicant.get('middle_name', '')}".strip()
+                        if not candidate_name:
+                            candidate_name = "Кандидат"
+                        
+                        # Формируем ссылку на кандидата
+                        candidate_url = _generate_full_huntflow_link(
+                            vacancy_id,
+                            applicant_id,
+                            request.user
+                        )
+                        if not candidate_url:
+                            accounts = huntflow_service.get_accounts()
+                            account_nick = ''
+                            if accounts and 'items' in accounts and accounts['items']:
+                                account_data = accounts['items'][0]
+                                account_nick = account_data.get('nick', '')
+                            
+                            if account_nick:
+                                if hasattr(request.user, 'active_system') and request.user.active_system == 'prod':
+                                    candidate_url = f"https://huntflow.ru/my/{account_nick}#/vacancy/{vacancy_id}/filter/workon/id/{applicant_id}"
+                                else:
+                                    candidate_url = f"https://sandbox.huntflow.dev/my/org{correct_account_id}#/vacancy/{vacancy_id}/filter/workon/id/{applicant_id}"
+                            else:
+                                candidate_url = f"https://huntflow.ru/my/org{correct_account_id}#/applicants/{applicant_id}"
+                        
+                        # Получаем контактную информацию
+                        candidate_contact_info = _get_candidate_contact_info(request.user, applicant_id)
+                        
+                        # Формируем источник для отображения
+                        source_display = f"{resume_url_info['source_type'].lower()}.ru" if resume_url_info['source_type'] == 'HH' else "rabota.by"
+                        resume_id_display = resume_url_info.get('resume_id', 'N/A')
+                        
+                        # Формируем ответ
+                        response_content = f"✅ **Кандидат успешно создан и привязан к вакансии**\n\n"
+                        response_content += f"👤 **Кандидат:** {candidate_name}\n"
+                        response_content += f"💼 **Вакансия:** {vacancy.name}\n"
+                        response_content += f"🆔 **ID кандидата:** {applicant_id}\n\n"
+                        response_content += f"📎 **{source_display}:** {resume_id_display}\n\n"
+                        response_content += f"🔗 [Открыть кандидата в Huntflow]({candidate_url})"
+                        
+                        metadata = {
+                            'action_type': 'add_candidate',
+                            'applicant_id': applicant_id,
+                            'candidate_name': candidate_name,
+                            'vacancy_name': vacancy.name,
+                            'candidate_url': candidate_url,
+                            'candidate_contact_info': candidate_contact_info,
+                            'resume_source': source_display,
+                            'resume_id': resume_id_display
+                        }
+                        
+                        response_message = ChatMessage.objects.create(
+                            session=chat_session,
+                            message_type='system',
+                            content=response_content,
+                            metadata=metadata
+                        )
+                        
+                        from django.template.loader import render_to_string
+                        try:
+                            message_html = render_to_string('google_oauth/partials/chat_message.html', {
+                                'message': response_message,
+                                'user': request.user
+                            })
+                        except Exception as e:
+                            print(f"⚠️ SEND_CHAT_MESSAGE: Ошибка генерации HTML: {e}")
+                            message_html = f"<div class='chat-message system'>{response_content}</div>"
+                        
+                        return JsonResponse({
+                            'success': True,
+                            'message_html': message_html,
+                            'message_id': response_message.id
+                        })
+                    else:
+                        ChatMessage.objects.create(
+                            session=chat_session,
+                            message_type='system',
+                            content="❌ Не удалось создать кандидата по ссылке. Проверьте ссылку и попробуйте снова."
+                        )
+                        return JsonResponse({'success': False, 'error': 'Не удалось создать кандидата по ссылке'})
                 
                 # Парсим текст сообщения для извлечения данных кандидата
                 candidate_data = {
@@ -5899,6 +6080,14 @@ def send_chat_message(request):
                 return JsonResponse({'success': False, 'error': f'Ошибка при создании кандидата: {str(e)}'})
         
         elif action_type == 'hrscreening':
+            # Пропускаем обработку hrscreening, если это была команда /add (даже если ссылка на резюме не найдена)
+            if is_add_command:
+                ChatMessage.objects.create(
+                    session=chat_session,
+                    message_type='system',
+                    content="❌ Не удалось создать кандидата. Проверьте ссылку на резюме (hh.ru или rabota.by) или прикрепите файл."
+                )
+                return JsonResponse({'success': False, 'error': 'Не удалось создать кандидата по ссылке'})
             # Создаем HR-скрининг
             print(f"🔍 SEND_CHAT_MESSAGE: Создаем HRScreeningForm с user: {request.user} (тип: {type(request.user)})")
             screening_form_data = {'input_data': message_text}

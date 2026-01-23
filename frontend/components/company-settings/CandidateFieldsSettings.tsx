@@ -8,7 +8,7 @@ import styles from './CandidateFieldsSettings.module.css'
 interface CandidateField {
   id: string
   name: string
-  type: 'text' | 'number' | 'select' | 'date' | 'textarea'
+  type: 'text' | 'number' | 'select' | 'date' | 'textarea' | 'url'
   required: boolean
   order: number
   options?: string[] // Для типа select
@@ -49,6 +49,14 @@ const mockFields: CandidateField[] = [
     order: 4,
     placeholder: 'Введите опыт работы в годах'
   },
+  {
+    id: '5',
+    name: 'LinkedIn профиль',
+    type: 'url',
+    required: false,
+    order: 5,
+    placeholder: 'https://linkedin.com/in/username'
+  },
 ]
 
 const fieldTypes = [
@@ -57,6 +65,7 @@ const fieldTypes = [
   { value: 'select', label: 'Выпадающий список' },
   { value: 'date', label: 'Дата' },
   { value: 'textarea', label: 'Многострочный текст' },
+  { value: 'url', label: 'Ссылка' },
 ]
 
 export default function CandidateFieldsSettings() {
@@ -346,7 +355,7 @@ export default function CandidateFieldsSettings() {
               </Box>
             )}
 
-            {(formData.type === 'text' || formData.type === 'number' || formData.type === 'textarea') && (
+            {(formData.type === 'text' || formData.type === 'number' || formData.type === 'textarea' || formData.type === 'url') && (
               <Box>
                 <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>
                   Placeholder
@@ -354,7 +363,7 @@ export default function CandidateFieldsSettings() {
                 <TextField.Root
                   value={formData.placeholder || ''}
                   onChange={(e) => setFormData({ ...formData, placeholder: e.target.value })}
-                  placeholder="Подсказка для поля"
+                  placeholder={formData.type === 'url' ? 'Например: https://example.com' : 'Подсказка для поля'}
                 />
               </Box>
             )}

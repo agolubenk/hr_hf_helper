@@ -3,6 +3,7 @@
 import { Flex, Text, Button, Box, Separator } from "@radix-ui/themes"
 import { SunIcon, MoonIcon, PersonIcon, LockClosedIcon } from "@radix-ui/react-icons"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { useTheme } from "@/components/ThemeProvider"
 import FloatingLabelInput from "@/components/FloatingLabelInput"
 import styles from './login.module.css'
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const { theme, toggleTheme } = useTheme()
+  const router = useRouter()
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -225,6 +227,7 @@ export default function LoginPage() {
               variant="ghost"
               size="2"
               style={{ cursor: 'pointer' }}
+              onClick={() => router.push('/forgot-password')}
             >
               <Text size="2" color="gray">
                 Забыли пароль?
