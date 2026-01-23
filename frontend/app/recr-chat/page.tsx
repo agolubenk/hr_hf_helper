@@ -1836,17 +1836,12 @@ export default function RecrChatPage() {
                   wrap={isMobile ? "wrap" : "nowrap"}
                   style={{ width: '100%', minWidth: 0 }}
                 >
-                  {/* Скроллируемый контейнер для элементов статуса */}
+                  {/* Контейнер для элементов статуса - разрешен перенос на новую строку */}
                   <Box 
                     style={{ 
                       flex: '1 1 auto',
-                      minWidth: 0,
-                      overflowX: 'auto',
-                      overflowY: 'hidden',
-                      scrollbarWidth: 'none',
-                      msOverflowStyle: 'none'
+                      minWidth: 0
                     }}
-                    className={styles.workflowScrollContainer}
                   >
                     <Flex 
                       align="center" 
