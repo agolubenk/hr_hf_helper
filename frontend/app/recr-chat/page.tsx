@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react'
 import AppLayout from "@/components/AppLayout"
 import WorkflowChat from "@/components/workflow/WorkflowChat"
 import SlotsPanel from "@/components/workflow/SlotsPanel"
-import { Box, Flex, Text, TextField, Button, Tabs, Badge, Avatar, Separator, Card, Table, Select, Dialog, Checkbox, DropdownMenu } from "@radix-ui/themes"
+import { Box, Flex, Text, TextField, TextArea, Button, Tabs, Badge, Avatar, Separator, Card, Table, Select, Dialog, Checkbox, DropdownMenu, Switch } from "@radix-ui/themes"
+import { useToast } from "@/components/Toast/ToastContext"
 import { 
   MagnifyingGlassIcon, 
   PersonIcon, 
@@ -812,7 +813,897 @@ export default function RecrChatPage() {
   ]
   
   // Настройки вакансии
-  const [selectedSettingTab, setSelectedSettingTab] = useState<'text' | 'recruiters' | 'customers' | 'questions' | 'integrations' | 'statuses' | 'salary'>('text')
+  const [selectedSettingTab, setSelectedSettingTab] = useState<'text' | 'recruiters' | 'customers' | 'questions' | 'integrations' | 'statuses' | 'salary' | 'interviews' | 'scorecard' | 'dataProcessing' | 'history'>('text')
+  const [isPublished, setIsPublished] = useState(false)
+  const [publicationUrl, setPublicationUrl] = useState<string | null>(null)
+  interface HistoryItem {
+    id: string
+    date: string
+    user: string
+    changes: string
+    version: number
+    fullText?: string
+    // Состояние полей для восстановления
+    fieldsState?: {
+      title: string
+      department: string
+      header: string
+      responsibilities: string
+      requirements: string
+      niceToHave: string
+      conditions: string
+      closing: string
+      link: string
+      fieldSettings: Record<string, { active: boolean; visible: boolean }>
+    }
+  }
+  
+  const [editHistory, setEditHistory] = useState<HistoryItem[]>([
+    { 
+      id: '1', 
+      date: '2026-01-24 10:30', 
+      user: 'Иван Иванов', 
+      changes: 'Изменен текст вакансии', 
+      version: 1,
+      fullText: 'Название вакансии: Senior Frontend Developer\n\nОтдел: Разработка\n\nЗаголовок: Приглашаем опытного разработчика\n\nОбязанности:\n- Разработка пользовательских интерфейсов\n- Оптимизация производительности\n- Работа с командой\n\nТребования:\n- Опыт работы от 3 лет\n- Знание React, TypeScript\n- Опыт работы с Redux',
+      fieldsState: {
+        title: 'Senior Frontend Developer',
+        department: 'Разработка',
+        header: 'Приглашаем опытного разработчика',
+        responsibilities: '- Разработка пользовательских интерфейсов\n- Оптимизация производительности\n- Работа с командой',
+        requirements: '- Опыт работы от 3 лет\n- Знание React, TypeScript\n- Опыт работы с Redux',
+        niceToHave: '',
+        conditions: '',
+        closing: '',
+        link: '',
+        fieldSettings: {
+          title: { active: true, visible: true },
+          department: { active: true, visible: true },
+          header: { active: true, visible: true },
+          responsibilities: { active: true, visible: true },
+          requirements: { active: true, visible: true },
+          niceToHave: { active: true, visible: true },
+          conditions: { active: true, visible: true },
+          closing: { active: true, visible: true },
+          link: { active: true, visible: true },
+          attachment: { active: true, visible: true }
+        }
+      }
+    },
+    { 
+      id: '2', 
+      date: '2026-01-23 15:45', 
+      user: 'Петр Петров', 
+      changes: 'Обновлены условия работы', 
+      version: 2,
+      fullText: 'Название вакансии: Senior Frontend Developer\n\nОтдел: Разработка\n\nЗаголовок: Приглашаем опытного разработчика\n\nОбязанности:\n- Разработка пользовательских интерфейсов\n- Оптимизация производительности\n\nТребования:\n- Опыт работы от 3 лет\n- Знание React, TypeScript',
+      fieldsState: {
+        title: 'Senior Frontend Developer',
+        department: 'Разработка',
+        header: 'Приглашаем опытного разработчика',
+        responsibilities: '- Разработка пользовательских интерфейсов\n- Оптимизация производительности',
+        requirements: '- Опыт работы от 3 лет\n- Знание React, TypeScript',
+        niceToHave: '',
+        conditions: '',
+        closing: '',
+        link: '',
+        fieldSettings: {
+          title: { active: true, visible: true },
+          department: { active: true, visible: true },
+          header: { active: true, visible: true },
+          responsibilities: { active: true, visible: true },
+          requirements: { active: true, visible: true },
+          niceToHave: { active: false, visible: false },
+          conditions: { active: true, visible: true },
+          closing: { active: true, visible: true },
+          link: { active: true, visible: true },
+          attachment: { active: true, visible: true }
+        }
+      }
+    },
+    { 
+      id: '3', 
+      date: '2026-01-22 09:15', 
+      user: 'Иван Иванов', 
+      changes: 'Создана вакансия', 
+      version: 3,
+      fullText: 'Название вакансии: Frontend Developer\n\nОтдел: Разработка\n\nЗаголовок: Ищем разработчика\n\nОбязанности:\n- Разработка интерфейсов\n\nТребования:\n- Опыт работы от 2 лет\n- Знание React',
+      fieldsState: {
+        title: 'Frontend Developer',
+        department: 'Разработка',
+        header: 'Ищем разработчика',
+        responsibilities: '- Разработка интерфейсов',
+        requirements: '- Опыт работы от 2 лет\n- Знание React',
+        niceToHave: '',
+        conditions: '',
+        closing: '',
+        link: '',
+        fieldSettings: {
+          title: { active: true, visible: true },
+          department: { active: true, visible: true },
+          header: { active: true, visible: true },
+          responsibilities: { active: true, visible: true },
+          requirements: { active: true, visible: true },
+          niceToHave: { active: false, visible: false },
+          conditions: { active: false, visible: false },
+          closing: { active: false, visible: false },
+          link: { active: false, visible: false },
+          attachment: { active: false, visible: false }
+        }
+      }
+    },
+  ])
+  
+  // Состояние для модального окна истории правок
+  const [selectedHistoryItem, setSelectedHistoryItem] = useState<HistoryItem | null>(null)
+  
+  // Состояние для модального окна подтверждения восстановления
+  const [restoreConfirmationOpen, setRestoreConfirmationOpen] = useState(false)
+  const [versionToRestore, setVersionToRestore] = useState<HistoryItem | null>(null)
+  
+  // Функция для восстановления версии
+  const handleRestoreVersion = () => {
+    if (!versionToRestore || !versionToRestore.fieldsState) {
+      showToast('Не удалось восстановить версию: отсутствуют данные', 'error')
+      return
+    }
+    
+    const fieldsState = versionToRestore.fieldsState
+    
+    // Восстанавливаем все поля
+    setVacancyTitle(fieldsState.title)
+    setVacancyDepartment(fieldsState.department)
+    setVacancyHeader(fieldsState.header)
+    setVacancyResponsibilities(fieldsState.responsibilities)
+    setVacancyRequirements(fieldsState.requirements)
+    setVacancyNiceToHave(fieldsState.niceToHave)
+    setVacancyConditions(fieldsState.conditions)
+    setVacancyClosing(fieldsState.closing)
+    setVacancyLink(fieldsState.link)
+    
+    // Восстанавливаем статусы полей
+    setFieldSettings(fieldsState.fieldSettings)
+    
+    // Создаем новую запись в истории правок
+    const newVersion = Math.max(...editHistory.map(h => h.version)) + 1
+    const currentUser = 'Текущий пользователь' // В реальном приложении брать из контекста
+    const now = new Date().toLocaleString('ru-RU', { 
+      year: 'numeric', 
+      month: '2-digit', 
+      day: '2-digit', 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    })
+    
+    const restoredHistoryItem: HistoryItem = {
+      id: Date.now().toString(),
+      date: now,
+      user: currentUser,
+      changes: `Восстановлена версия ${versionToRestore.version} от ${versionToRestore.date}`,
+      version: newVersion,
+      fullText: versionToRestore.fullText,
+      fieldsState: {
+        title: fieldsState.title,
+        department: fieldsState.department,
+        header: fieldsState.header,
+        responsibilities: fieldsState.responsibilities,
+        requirements: fieldsState.requirements,
+        niceToHave: fieldsState.niceToHave,
+        conditions: fieldsState.conditions,
+        closing: fieldsState.closing,
+        link: fieldsState.link,
+        fieldSettings: JSON.parse(JSON.stringify(fieldsState.fieldSettings)) // Глубокая копия
+      }
+    }
+    
+    setEditHistory(prev => [restoredHistoryItem, ...prev])
+    
+    // Закрываем модальные окна
+    setRestoreConfirmationOpen(false)
+    setSelectedHistoryItem(null)
+    setVersionToRestore(null)
+    
+    showToast(`Версия ${versionToRestore.version} успешно восстановлена`, 'success')
+  }
+  
+  // Функция для получения названия поля
+  const getFieldName = (fieldKey: string): string => {
+    const fieldNames: Record<string, string> = {
+      title: 'Название вакансии',
+      department: 'Отдел',
+      header: 'Заголовок',
+      responsibilities: 'Обязанности',
+      requirements: 'Требования',
+      niceToHave: 'Будет плюсом',
+      conditions: 'Условия работы',
+      closing: 'Заключение',
+      link: 'Ссылка',
+      attachment: 'Вложение'
+    }
+    return fieldNames[fieldKey] || fieldKey
+  }
+  
+  // Функция для вычисления различий между версиями
+  const calculateDiff = (currentText: string, nextText: string): string => {
+    if (!nextText) return currentText
+    
+    const currentLines = currentText.split('\n')
+    const nextLines = nextText.split('\n')
+    const maxLines = Math.max(currentLines.length, nextLines.length)
+    const diffLines: string[] = []
+    
+    for (let i = 0; i < maxLines; i++) {
+      const currentLine = currentLines[i] || ''
+      const nextLine = nextLines[i] || ''
+      
+      if (currentLine === nextLine) {
+        diffLines.push(currentLine)
+      } else {
+        // Простое сравнение по словам
+        const currentWords = currentLine.split(/(\s+)/)
+        const nextWords = nextLine.split(/(\s+)/)
+        
+        // Если строки полностью разные
+        if (currentLine && !nextLine) {
+          diffLines.push(`<span style="text-decoration: line-through; background-color: #fef3c7;">${currentLine}</span>`)
+        } else if (!currentLine && nextLine) {
+          diffLines.push(`<span style="text-decoration: underline; background-color: #fef3c7;">${nextLine}</span>`)
+        } else {
+          // Сравниваем по словам
+          const diffLine = compareLines(currentLine, nextLine)
+          diffLines.push(diffLine)
+        }
+      }
+    }
+    
+    return diffLines.join('\n')
+  }
+  
+  // Функция для сравнения строк по словам
+  const compareLines = (current: string, next: string): string => {
+    const currentWords = current.split(/(\s+)/)
+    const nextWords = next.split(/(\s+)/)
+    const result: string[] = []
+    
+    let currentIdx = 0
+    let nextIdx = 0
+    
+    while (currentIdx < currentWords.length || nextIdx < nextWords.length) {
+      if (currentIdx >= currentWords.length) {
+        // Остались только слова из следующей версии
+        result.push(`<span style="text-decoration: underline; background-color: #fef3c7;">${nextWords.slice(nextIdx).join('')}</span>`)
+        break
+      } else if (nextIdx >= nextWords.length) {
+        // Остались только слова из текущей версии
+        result.push(`<span style="text-decoration: line-through; background-color: #fef3c7;">${currentWords.slice(currentIdx).join('')}</span>`)
+        break
+      } else if (currentWords[currentIdx] === nextWords[nextIdx]) {
+        result.push(currentWords[currentIdx])
+        currentIdx++
+        nextIdx++
+      } else {
+        // Слова различаются - ищем совпадения дальше
+        let found = false
+        for (let j = nextIdx + 1; j < nextWords.length; j++) {
+          if (currentWords[currentIdx] === nextWords[j]) {
+            // Добавляем удаленные слова
+            result.push(`<span style="text-decoration: line-through; background-color: #fef3c7;">${nextWords.slice(nextIdx, j).join('')}</span>`)
+            nextIdx = j
+            found = true
+            break
+          }
+        }
+        if (!found) {
+          for (let j = currentIdx + 1; j < currentWords.length; j++) {
+            if (currentWords[j] === nextWords[nextIdx]) {
+              // Добавляем добавленные слова
+              result.push(`<span style="text-decoration: underline; background-color: #fef3c7;">${currentWords.slice(currentIdx, j).join('')}</span>`)
+              currentIdx = j
+              found = true
+              break
+            }
+          }
+        }
+        if (!found) {
+          // Просто помечаем как измененные
+          result.push(`<span style="text-decoration: line-through; background-color: #fef3c7;">${currentWords[currentIdx]}</span>`)
+          result.push(`<span style="text-decoration: underline; background-color: #fef3c7;">${nextWords[nextIdx]}</span>`)
+          currentIdx++
+          nextIdx++
+        }
+      }
+    }
+    
+    return result.join('')
+  }
+  
+  // Моковые данные рекрутеров компании
+  const [allRecruiters] = useState([
+    { id: '1', name: 'Иван Иванов', email: 'ivan@company.com', phone: '+7 (999) 111-22-33', position: 'Senior Recruiter' },
+    { id: '2', name: 'Петр Петров', email: 'petr@company.com', phone: '+7 (999) 222-33-44', position: 'Recruiter' },
+    { id: '3', name: 'Мария Сидорова', email: 'maria@company.com', phone: '+7 (999) 333-44-55', position: 'Lead Recruiter' },
+    { id: '4', name: 'Анна Смирнова', email: 'anna@company.com', phone: '+7 (999) 444-55-66', position: 'Recruiter' },
+    { id: '5', name: 'Дмитрий Козлов', email: 'dmitry@company.com', phone: '+7 (999) 555-66-77', position: 'Junior Recruiter' },
+  ])
+  
+  // Состояние для выбранных рекрутеров (кто может видеть вакансию)
+  const [selectedRecruiters, setSelectedRecruiters] = useState<Set<string>>(new Set(['1', '2']))
+  
+  // Главный рекрутер (может быть только один)
+  const [mainRecruiter, setMainRecruiter] = useState<string | null>('1')
+  
+  // Используем хук для toast-уведомлений
+  const toast = useToast()
+  
+  // Вспомогательная функция для показа toast-уведомлений (для обратной совместимости)
+  const showToast = (message: string, type: 'success' | 'warning' | 'error' | 'info' = 'info') => {
+    const titles = {
+      info: 'Информация',
+      warning: 'Внимание',
+      error: 'Ошибка',
+      success: 'Успешно'
+    }
+    
+    switch (type) {
+      case 'info':
+        toast.showInfo(titles.info, message)
+        break
+      case 'warning':
+        toast.showWarning(titles.warning, message)
+        break
+      case 'error':
+        toast.showError(titles.error, message)
+        break
+      case 'success':
+        toast.showSuccess(titles.success, message)
+        break
+    }
+  }
+  
+  const handleRecruiterToggle = (recruiterId: string) => {
+    // Если пытаются снять главного рекрутера, показываем предупреждение
+    if (mainRecruiter === recruiterId && selectedRecruiters.has(recruiterId)) {
+      showToast('Сначала назначьте нового главного рекрутера, затем снимите текущего с вакансии', 'warning')
+      return
+    }
+    
+    setSelectedRecruiters(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(recruiterId)) {
+        newSet.delete(recruiterId)
+        // Если это был главный рекрутер, снимаем его с главного
+        if (mainRecruiter === recruiterId) {
+          setMainRecruiter(null)
+        }
+      } else {
+        newSet.add(recruiterId)
+      }
+      return newSet
+    })
+  }
+  
+  const handleMainRecruiterToggle = (recruiterId: string) => {
+    // Главный рекрутер может быть только среди выбранных
+    if (!selectedRecruiters.has(recruiterId)) {
+      alert('Главный рекрутер должен быть среди тех, кто может видеть вакансию')
+      return
+    }
+    
+    // Если уже был главный рекрутер, снимаем его
+    if (mainRecruiter === recruiterId) {
+      setMainRecruiter(null)
+    } else {
+      // Устанавливаем нового главного рекрутера (автоматически снимая предыдущего)
+      setMainRecruiter(recruiterId)
+    }
+  }
+  
+  // Эффект для автоматического снятия главного рекрутера, если он был исключен из выбранных
+  useEffect(() => {
+    if (mainRecruiter && !selectedRecruiters.has(mainRecruiter)) {
+      setMainRecruiter(null)
+    }
+  }, [selectedRecruiters, mainRecruiter])
+  
+  // Моковые данные интервьюеров (включая заказчиков - людей в рамках компании)
+  const [allInterviewers] = useState([
+    { id: '1', name: 'Алексей Козлов', email: 'alexey@company.com', phone: '+7 (999) 111-22-33', position: 'Tech Lead', department: 'Разработка', isCustomer: false },
+    { id: '2', name: 'Елена Волкова', email: 'elena@company.com', phone: '+7 (999) 222-33-44', position: 'HR Manager', department: 'HR', isCustomer: false },
+    { id: '3', name: 'Дмитрий Новиков', email: 'dmitry@company.com', phone: '+7 (999) 333-44-55', position: 'CTO', department: 'Управление', isCustomer: false },
+    { id: '4', name: 'Ольга Морозова', email: 'olga@company.com', phone: '+7 (999) 444-55-66', position: 'Senior Developer', department: 'Разработка', isCustomer: false },
+    { id: '5', name: 'Иван Петров', email: 'ivan.petrov@techsoft.ru', phone: '+7 (495) 123-45-67', position: 'Менеджер проекта', department: 'ООО "ТехноСофт"', isCustomer: true },
+    { id: '6', name: 'Мария Соколова', email: 'maria@innovations.ru', phone: '+7 (495) 234-56-78', position: 'Руководитель отдела', department: 'АО "Инновации"', isCustomer: true },
+    { id: '7', name: 'Петр Сидоров', email: 'petr@sidorov.ru', phone: '+7 (495) 345-67-89', position: 'Владелец', department: 'ИП Сидоров', isCustomer: true },
+  ])
+  
+  // Состояние для выбранных интервьюеров вакансии (кто может видеть вакансию)
+  const [selectedVacancyInterviewers, setSelectedVacancyInterviewers] = useState<Set<string>>(new Set(['1', '2']))
+  
+  // Состояние для интервьюеров, которых можно приглашать на финальное интервью
+  const [finalInterviewInterviewers, setFinalInterviewInterviewers] = useState<Set<string>>(new Set(['1']))
+  
+  const handleVacancyInterviewerToggle = (interviewerId: string) => {
+    setSelectedVacancyInterviewers(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(interviewerId)) {
+        newSet.delete(interviewerId)
+        // Если это был интервьюер для финального интервью, снимаем его
+        if (finalInterviewInterviewers.has(interviewerId)) {
+          setFinalInterviewInterviewers(prevFinal => {
+            const newFinalSet = new Set(prevFinal)
+            newFinalSet.delete(interviewerId)
+            return newFinalSet
+          })
+        }
+      } else {
+        newSet.add(interviewerId)
+      }
+      return newSet
+    })
+  }
+  
+  const handleFinalInterviewToggle = (interviewerId: string) => {
+    // Интервьюер для финального интервью должен быть среди выбранных
+    if (!selectedVacancyInterviewers.has(interviewerId)) {
+      showToast('Интервьюер должен быть среди тех, кто может видеть вакансию', 'warning')
+      return
+    }
+    
+    setFinalInterviewInterviewers(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(interviewerId)) {
+        newSet.delete(interviewerId)
+      } else {
+        newSet.add(interviewerId)
+      }
+      return newSet
+    })
+  }
+  
+  // Все доступные этапы рекрутинга
+  const recruitmentStages = [
+    { id: 'new', name: 'New', description: 'Новый кандидат', color: '#2180A0' },
+    { id: 'under-review', name: 'Under Review', description: 'На рассмотрении', color: '#3B82F6' },
+    { id: 'message', name: 'Message', description: 'Сообщение', color: '#6366F1' },
+    { id: 'contact', name: 'Contact', description: 'Контакт', color: '#8B5CF6' },
+    { id: 'hr-screening', name: 'HR Screening', description: 'HR скрининг', color: '#A855F7' },
+    { id: 'test-task', name: 'Test Task', description: 'Тестовое задание', color: '#C084FC' },
+    { id: 'final-interview', name: 'Final Interview', description: 'Финальное интервью', color: '#D946EF' },
+    { id: 'decision', name: 'Decision', description: 'Решение', color: '#EC4899' },
+    { id: 'interview', name: 'Interview', description: 'Интервью', color: '#8B5CF6' },
+    { id: 'offer', name: 'Offer', description: 'Предложение', color: '#22C55E' },
+    { id: 'accepted', name: 'Accepted', description: 'Принят', color: '#10B981' },
+    { id: 'rejected', name: 'Rejected', description: 'Отказ', color: '#EF4444' },
+    { id: 'declined', name: 'Declined', description: 'Отклонено кандидатом', color: '#F59E0B' },
+    { id: 'archived', name: 'Archived', description: 'Архив', color: '#6B7280' },
+  ]
+  
+  // Состояние для активных этапов вакансии
+  const [activeStages, setActiveStages] = useState<Set<string>>(new Set([
+    'new',
+    'under-review',
+    'interview',
+    'offer',
+    'accepted',
+    'rejected',
+    'declined',
+    'archived'
+  ]))
+  
+  const handleStageToggle = (stageId: string) => {
+    setActiveStages(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(stageId)) {
+        newSet.delete(stageId)
+      } else {
+        newSet.add(stageId)
+      }
+      return newSet
+    })
+  }
+  
+  // Все доступные грейды компании
+  const allGrades = [
+    { id: '1', name: 'Trainee', order: 1 },
+    { id: '2', name: 'Junior-', order: 2 },
+    { id: '3', name: 'Junior', order: 3 },
+    { id: '4', name: 'Junior+', order: 4 },
+    { id: '5', name: 'Middle-', order: 5 },
+    { id: '6', name: 'Middle', order: 6 },
+    { id: '7', name: 'Middle+', order: 7 },
+    { id: '8', name: 'Senior-', order: 8 },
+    { id: '9', name: 'Senior', order: 9 },
+    { id: '10', name: 'Senior+', order: 10 },
+    { id: '11', name: 'Lead', order: 11 },
+    { id: '12', name: 'Lead+', order: 12 },
+    { id: '13', name: 'Head', order: 13 },
+    { id: '14', name: 'C-Level', order: 14 },
+  ]
+  
+  // Валюты компании (в порядке настроек)
+  const companyCurrencies = [
+    { id: '1', code: 'BYN', name: 'Белорусский рубль', isMain: true, order: 1 },
+    { id: '2', code: 'USD', name: 'Доллар США', isMain: false, order: 2 },
+    { id: '3', code: 'EUR', name: 'Евро', isMain: false, order: 3 },
+    { id: '4', code: 'PLN', name: 'Польский злотый', isMain: false, order: 4 },
+  ]
+  
+  // Состояние для активных грейдов вакансии
+  const [activeGrades, setActiveGrades] = useState<Set<string>>(new Set(['3', '6', '9', '11']))
+  
+  // Состояние для зарплатных вилок: gradeId -> currencyCode -> { from: number | null, to: number | null }
+  const [salaryRanges, setSalaryRanges] = useState<Record<string, Record<string, { from: number | null; to: number | null }>>>({
+    '3': { BYN: { from: 1000, to: 2000 }, USD: { from: null, to: null }, EUR: { from: null, to: null }, PLN: { from: null, to: null } },
+    '6': { BYN: { from: 2000, to: 3500 }, USD: { from: null, to: null }, EUR: { from: null, to: null }, PLN: { from: null, to: null } },
+    '9': { BYN: { from: 3500, to: 5000 }, USD: { from: null, to: null }, EUR: { from: null, to: null }, PLN: { from: null, to: null } },
+    '11': { BYN: { from: 5000, to: 7000 }, USD: { from: null, to: null }, EUR: { from: null, to: null }, PLN: { from: null, to: null } },
+  })
+  
+  // Курсы валют (для пересчета)
+  const currencyRates: Record<string, number> = {
+    BYN: 1,
+    USD: 3.25,
+    EUR: 3.46,
+    PLN: 0.85
+  }
+  
+  const handleGradeToggle = (gradeId: string) => {
+    setActiveGrades(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(gradeId)) {
+        newSet.delete(gradeId)
+        // Удаляем зарплатные вилки для неактивного грейда
+        setSalaryRanges(prev => {
+          const newRanges = { ...prev }
+          delete newRanges[gradeId]
+          return newRanges
+        })
+      } else {
+        newSet.add(gradeId)
+        // Инициализируем зарплатные вилки для нового грейда
+        const mainCurrency = companyCurrencies.find(c => c.isMain)?.code || 'BYN'
+        setSalaryRanges(prev => ({
+          ...prev,
+          [gradeId]: {
+            [mainCurrency]: { from: null, to: null },
+            ...companyCurrencies.filter(c => !c.isMain).reduce((acc, curr) => {
+              acc[curr.code] = { from: null, to: null }
+              return acc
+            }, {} as Record<string, { from: number | null; to: number | null }>)
+          }
+        }))
+      }
+      return newSet
+    })
+  }
+  
+  const handleSalaryChange = (gradeId: string, currencyCode: string, field: 'from' | 'to', value: string) => {
+    const mainCurrency = companyCurrencies.find(c => c.isMain)?.code || 'BYN'
+    const numValue = value === '' ? null : parseFloat(value)
+    
+    setSalaryRanges(prev => {
+      const newRanges = { ...prev }
+      if (!newRanges[gradeId]) {
+        newRanges[gradeId] = {}
+      }
+      if (!newRanges[gradeId][currencyCode]) {
+        newRanges[gradeId][currencyCode] = { from: null, to: null }
+      }
+      
+      newRanges[gradeId][currencyCode][field] = numValue
+      
+      // Если изменили главную валюту, пересчитываем остальные
+      if (currencyCode === mainCurrency && numValue !== null) {
+        companyCurrencies.filter(c => !c.isMain).forEach(currency => {
+          if (!newRanges[gradeId][currency.code]) {
+            newRanges[gradeId][currency.code] = { from: null, to: null }
+          }
+          
+          const rate = currencyRates[currency.code] || 1
+          const mainRate = currencyRates[mainCurrency] || 1
+          const convertedValue = (numValue * mainRate) / rate
+          
+          if (field === 'from') {
+            newRanges[gradeId][currency.code].from = Math.round(convertedValue * 100) / 100
+          } else {
+            newRanges[gradeId][currency.code].to = Math.round(convertedValue * 100) / 100
+          }
+        })
+      }
+      
+      return newRanges
+    })
+  }
+  
+  const getSalaryValue = (gradeId: string, currencyCode: string, field: 'from' | 'to'): number | null => {
+    // Если "от" нет, берем "до" предыдущего грейда или 0
+    if (field === 'from' && (!salaryRanges[gradeId]?.[currencyCode]?.from)) {
+      const currentGrade = allGrades.find(g => g.id === gradeId)
+      if (currentGrade) {
+        const prevGrade = allGrades
+          .filter(g => g.order < currentGrade.order && activeGrades.has(g.id))
+          .sort((a, b) => b.order - a.order)[0]
+        
+        if (prevGrade && salaryRanges[prevGrade.id]?.[currencyCode]?.to) {
+          return salaryRanges[prevGrade.id][currencyCode].to
+        }
+      }
+      return 0
+    }
+    
+    return salaryRanges[gradeId]?.[currencyCode]?.[field] || null
+  }
+  
+  // Состояние для формы расчета (Gross/Net) - используется в таблице зарплатных вилок
+  const [isGrossFormat, setIsGrossFormat] = useState(true)
+  
+  // Состояние для вкладки "Встречи и интервью"
+  type InterviewMeeting = {
+    id: string
+    stage: string
+    duration: number
+    title: string
+    description: string
+    format: 'office' | 'online' | ''
+  }
+  
+  // Вычисляем количество встреч: активные этапы до оффера - 2
+  const getStagesBeforeOffer = () => {
+    return recruitmentStages.filter(s => {
+      const stageIndex = recruitmentStages.findIndex(st => st.id === s.id)
+      const offerIndex = recruitmentStages.findIndex(st => st.id === 'offer')
+      return stageIndex < offerIndex && activeStages.has(s.id)
+    })
+  }
+  
+  const stagesBeforeOffer = getStagesBeforeOffer()
+  const maxMeetingsCount = Math.max(0, stagesBeforeOffer.length - 2)
+  
+  const [interviewMeetings, setInterviewMeetings] = useState<InterviewMeeting[]>(() => {
+    const stages = getStagesBeforeOffer()
+    const count = Math.max(0, stages.length - 2)
+    // Инициализируем пустые встречи
+    return Array.from({ length: count }, (_, i) => ({
+      id: `meeting-${i}`,
+      stage: '',
+      duration: 60,
+      title: '',
+      description: '',
+      format: '' as 'office' | 'online' | '',
+    }))
+  })
+  
+  // Обновляем количество встреч при изменении активных этапов
+  useEffect(() => {
+    const stages = recruitmentStages.filter(s => {
+      const stageIndex = recruitmentStages.findIndex(st => st.id === s.id)
+      const offerIndex = recruitmentStages.findIndex(st => st.id === 'offer')
+      return stageIndex < offerIndex && activeStages.has(s.id)
+    })
+    const newCount = Math.max(0, stages.length - 2)
+    setInterviewMeetings(prev => {
+      // Если нужно добавить встречи
+      if (prev.length < newCount) {
+        const toAdd = newCount - prev.length
+        const newMeetings = Array.from({ length: toAdd }, (_, i) => ({
+          id: `meeting-${Date.now()}-${i}`,
+          stage: '',
+          duration: 60,
+          title: '',
+          description: '',
+          format: '' as 'office' | 'online' | '',
+        }))
+        return [...prev, ...newMeetings]
+      }
+      // Если нужно удалить встречи (но не меньше 0)
+      if (prev.length > newCount && newCount >= 0) {
+        return prev.slice(0, newCount)
+      }
+      return prev
+    })
+  }, [activeStages])
+  
+  const updateInterviewMeeting = (id: string, updates: Partial<InterviewMeeting>) => {
+    setInterviewMeetings(prev =>
+      prev.map(m => m.id === id ? { ...m, ...updates } : m)
+    )
+  }
+  
+  const addInterviewMeeting = () => {
+    const stages = getStagesBeforeOffer()
+    const currentMax = Math.max(0, stages.length - 2)
+    setInterviewMeetings(prev => {
+      // Разрешаем добавлять встречи, но показываем предупреждение если больше рекомендуемого
+      return [
+        ...prev,
+        {
+          id: `meeting-${Date.now()}`,
+          stage: '',
+          duration: 60,
+          title: '',
+          description: '',
+          format: '' as 'office' | 'online' | '',
+        },
+      ]
+    })
+  }
+  
+  const removeInterviewMeeting = (id: string) => {
+    setInterviewMeetings(prev => prev.filter(m => m.id !== id))
+  }
+  
+  // Состояние для вкладки "Scorecard"
+  const [scorecardLinkUrl, setScorecardLinkUrl] = useState<string>('')
+  const [scorecardLinkTitle, setScorecardLinkTitle] = useState<string>('')
+  const [scorecardLinkPosition, setScorecardLinkPosition] = useState<'start' | 'end'>('start')
+  const [scorecardLocalActive, setScorecardLocalActive] = useState<boolean>(false)
+  const [scorecardLocalSettingsOpen, setScorecardLocalSettingsOpen] = useState<boolean>(false)
+
+  // Состояние для вкладки «Обработка данных»
+  const [useUnifiedPrompt, setUseUnifiedPrompt] = useState<boolean>(true)
+  const [analysisPrompt, setAnalysisPrompt] = useState<string>('')
+  
+  // Офисы компании (для вкладки «Вопросы и ссылки» и др.)
+  const questionLinkOffices = [
+    { id: 'by', name: 'Беларусь' },
+    { id: 'pl', name: 'Польша' },
+  ]
+  
+  // Цвета для выбора (ссылки и вопросы)
+  const questionLinkColors = [
+    { id: 'blue', hex: '#3B82F6', label: 'Синий' },
+    { id: 'green', hex: '#10B981', label: 'Зелёный' },
+    { id: 'amber', hex: '#F59E0B', label: 'Янтарный' },
+    { id: 'red', hex: '#EF4444', label: 'Красный' },
+    { id: 'violet', hex: '#8B5CF6', label: 'Фиолетовый' },
+    { id: 'cyan', hex: '#06B6D4', label: 'Бирюзовый' },
+    { id: 'gray', hex: '#6B7280', label: 'Серый' },
+  ]
+
+  // Подсказки для контактов рекрутера (расширяемый список: при добавлении типа — добавить сюда)
+  const recruiterContactHints = [
+    { label: 'Телефон', variable: 'recruiter_phone' },
+    { label: 'Email', variable: 'recruiter_email' },
+    { label: 'LinkedIn', variable: 'recruiter_linkedin' },
+    { label: 'Telegram', variable: 'recruiter_telegram' },
+  ] as const
+
+  // Состояние для вкладки «Вопросы и ссылки» (по офисам). Один вопрос на офис.
+  type OfficeLink = { url: string; useOnSite: boolean; color: string }
+  type OfficeQuestionsState = { link: OfficeLink; question: { text: string; color: string } }
+  
+  const getDefaultOfficeState = (): OfficeQuestionsState => ({
+    link: { url: '', useOnSite: false, color: questionLinkColors[0].hex },
+    question: { text: '', color: questionLinkColors[0].hex },
+  })
+  
+  const [questionsLinksByOffice, setQuestionsLinksByOffice] = useState<Record<string, OfficeQuestionsState>>(() => {
+    const init: Record<string, OfficeQuestionsState> = {}
+    questionLinkOffices.forEach((o) => { init[o.id] = getDefaultOfficeState() })
+    return init
+  })
+  
+  const updateOfficeLink = (officeId: string, upd: Partial<OfficeLink>) => {
+    setQuestionsLinksByOffice((prev) => ({
+      ...prev,
+      [officeId]: {
+        ...prev[officeId],
+        link: { ...(prev[officeId]?.link ?? getDefaultOfficeState().link), ...upd },
+      },
+    }))
+  }
+  
+  const updateOfficeQuestion = (officeId: string, upd: Partial<{ text: string; color: string }>) => {
+    setQuestionsLinksByOffice((prev) => {
+      const curr = prev[officeId] ?? getDefaultOfficeState()
+      const base = curr.question ?? { text: '', color: questionLinkColors[0].hex }
+      return {
+        ...prev,
+        [officeId]: { ...curr, question: { ...base, ...upd } },
+      }
+    })
+  }
+
+  // Состояние для формы текста вакансии
+  const [vacancyTitle, setVacancyTitle] = useState('')
+  const [vacancyDepartment, setVacancyDepartment] = useState<string>('')
+  const [vacancyHeader, setVacancyHeader] = useState('')
+  const [vacancyResponsibilities, setVacancyResponsibilities] = useState('')
+  const [vacancyRequirements, setVacancyRequirements] = useState('')
+  const [vacancyNiceToHave, setVacancyNiceToHave] = useState('')
+  const [vacancyConditions, setVacancyConditions] = useState('')
+  const [vacancyClosing, setVacancyClosing] = useState('')
+  const [vacancyLink, setVacancyLink] = useState('')
+  const [vacancyAttachment, setVacancyAttachment] = useState<File | null>(null)
+  
+  // Состояние для активности и видимости полей
+  const [fieldSettings, setFieldSettings] = useState<Record<string, { active: boolean; visible: boolean }>>({
+    title: { active: true, visible: true },
+    department: { active: true, visible: true },
+    header: { active: true, visible: true },
+    responsibilities: { active: true, visible: true },
+    requirements: { active: true, visible: true },
+    niceToHave: { active: true, visible: true },
+    conditions: { active: true, visible: true },
+    closing: { active: true, visible: true },
+    link: { active: true, visible: true },
+    attachment: { active: true, visible: true }
+  })
+  
+  // Моковые данные для оргструктуры
+  interface Department {
+    id: string
+    name: string
+    parent: string | null
+    children?: Department[]
+  }
+  
+  const mockDepartments: Department[] = [
+    {
+      id: '1',
+      name: 'IT Департамент',
+      parent: null,
+      children: [
+        {
+          id: '2',
+          name: 'Отдел разработки',
+          parent: '1',
+          children: [
+            {
+              id: '5',
+              name: 'Frontend команда',
+              parent: '2',
+              children: []
+            },
+            {
+              id: '6',
+              name: 'Backend команда',
+              parent: '2',
+              children: []
+            }
+          ]
+        },
+        {
+          id: '3',
+          name: 'Отдел тестирования',
+          parent: '1',
+          children: []
+        }
+      ]
+    },
+    {
+      id: '4',
+      name: 'HR Департамент',
+      parent: null,
+      children: []
+    }
+  ]
+  
+  // Функция для получения плоского списка отделов с иерархией
+  const getAllDepartmentsFlat = (departments: Department[], level: number = 0): Array<{ id: string; name: string; level: number }> => {
+    const result: Array<{ id: string; name: string; level: number }> = []
+    departments.forEach(dept => {
+      result.push({ id: dept.id, name: dept.name, level })
+      if (dept.children && dept.children.length > 0) {
+        result.push(...getAllDepartmentsFlat(dept.children, level + 1))
+      }
+    })
+    return result
+  }
+  
+  // Функция для получения полного пути отдела
+  const getDepartmentPath = (deptId: string, departments: Department[], path: string[] = []): string => {
+    for (const dept of departments) {
+      if (dept.id === deptId) {
+        return [...path, dept.name].join(' → ')
+      }
+      if (dept.children) {
+        const found = getDepartmentPath(deptId, dept.children, [...path, dept.name])
+        if (found) return found
+      }
+    }
+    return ''
+  }
   
   // Состояние для активности (комментарии и изменения статуса)
   interface ActivityItem {
@@ -1778,7 +2669,7 @@ export default function RecrChatPage() {
     setIsRightColumnOpen(false)
   }
   
-  const handleSettingTabClick = (tab: 'text' | 'recruiters' | 'customers' | 'questions' | 'integrations' | 'statuses' | 'salary') => {
+  const handleSettingTabClick = (tab: 'text' | 'recruiters' | 'customers' | 'questions' | 'integrations' | 'statuses' | 'salary' | 'interviews' | 'scorecard' | 'dataProcessing' | 'history') => {
     setSelectedSettingTab(tab)
     // На мобильных открываем правую колонку как модальное окно
     if (isMobile) {
@@ -2147,6 +3038,34 @@ export default function RecrChatPage() {
                       >
                         <Text size="2">Зарплатные вилки</Text>
                       </Button>
+                      <Button
+                        variant={selectedSettingTab === 'interviews' ? 'solid' : 'soft'}
+                        onClick={() => handleSettingTabClick('interviews')}
+                        style={{ justifyContent: 'flex-start', width: '100%' }}
+                      >
+                        <Text size="2">Встречи и интервью</Text>
+                      </Button>
+                      <Button
+                        variant={selectedSettingTab === 'scorecard' ? 'solid' : 'soft'}
+                        onClick={() => handleSettingTabClick('scorecard')}
+                        style={{ justifyContent: 'flex-start', width: '100%' }}
+                      >
+                        <Text size="2">Scorecard</Text>
+                      </Button>
+                      <Button
+                        variant={selectedSettingTab === 'dataProcessing' ? 'solid' : 'soft'}
+                        onClick={() => handleSettingTabClick('dataProcessing')}
+                        style={{ justifyContent: 'flex-start', width: '100%' }}
+                      >
+                        <Text size="2">Обработка данных</Text>
+                      </Button>
+                      <Button
+                        variant={selectedSettingTab === 'history' ? 'solid' : 'soft'}
+                        onClick={() => handleSettingTabClick('history')}
+                        style={{ justifyContent: 'flex-start', width: '100%' }}
+                      >
+                        <Text size="2">История правок</Text>
+                      </Button>
                     </Flex>
                 </Box>
               </Flex>
@@ -2498,39 +3417,675 @@ export default function RecrChatPage() {
               
               {selectedSettingTab === 'text' && (
                 <Box>
-                  <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Текст вакансии</Text>
-                  <Text size="2" color="gray" mb="3" style={{ display: 'block' }}>
-                    Здесь будет редактор текста вакансии
-                  </Text>
-                  <TextField.Root placeholder="Название вакансии" mb="3" />
-                  <TextField.Root placeholder="Описание" />
+                  <Flex align="center" justify="between" mb="4">
+                    <Text size="3" weight="bold">Текст вакансии</Text>
+                    <Flex align="center" gap="2">
+                      {isPublished && publicationUrl && (
+                        <Button
+                          variant="soft"
+                          size="2"
+                          onClick={() => window.open(publicationUrl, '_blank')}
+                        >
+                          <GlobeIcon width={16} height={16} />
+                          Открыть на сайте
+                        </Button>
+                      )}
+                      <Button
+                        variant={isPublished ? 'solid' : 'soft'}
+                        color={isPublished ? 'green' : 'gray'}
+                        size="2"
+                        onClick={(e) => {
+                          const button = e.currentTarget
+                          // Сбрасываем все инлайн-стили перед изменением состояния
+                          button.style.backgroundColor = ''
+                          button.style.color = ''
+                          button.style.borderColor = ''
+                          const textSpan = button.querySelector('.button-text') as HTMLElement
+                          if (textSpan) {
+                            textSpan.textContent = isPublished ? 'Опубликовано' : 'Опубликовать на сайте'
+                          }
+                          
+                          if (!isPublished) {
+                            // Генерируем URL для публикации
+                            const url = `https://company.com/vacancies/${vacancyTitle.toLowerCase().replace(/\s+/g, '-')}`
+                            setPublicationUrl(url)
+                            setIsPublished(true)
+                            // Добавляем запись в историю
+                            setEditHistory(prev => [{
+                              id: Date.now().toString(),
+                              date: new Date().toLocaleString('ru-RU'),
+                              user: 'Текущий пользователь',
+                              changes: 'Вакансия опубликована на сайте',
+                              version: prev[0]?.version ? prev[0].version + 1 : 1
+                            }, ...prev])
+                            alert(`Вакансия опубликована на сайте!\nURL: ${url}`)
+                          } else {
+                            setIsPublished(false)
+                            setPublicationUrl(null)
+                            // Добавляем запись в историю
+                            setEditHistory(prev => [{
+                              id: Date.now().toString(),
+                              date: new Date().toLocaleString('ru-RU'),
+                              user: 'Текущий пользователь',
+                              changes: 'Публикация вакансии снята с сайта',
+                              version: prev[0]?.version ? prev[0].version + 1 : 1
+                            }, ...prev])
+                            alert('Вакансия снята с публикации')
+                          }
+                        }}
+                        onMouseEnter={(e) => {
+                          if (isPublished) {
+                            const button = e.currentTarget
+                            // Определяем цвет в зависимости от темы (красный для светлой, фиолетовый для темной/красной темы)
+                            const theme = document.documentElement.getAttribute('data-theme')
+                            const accentColor = localStorage.getItem(theme === 'dark' ? 'darkThemeAccentColor' : 'lightThemeAccentColor') || 'crimson'
+                            // Если акцентный цвет красный (red, tomato, ruby, crimson), используем фиолетовый для hover
+                            const isRedTheme = ['red', 'tomato', 'ruby', 'crimson'].includes(accentColor)
+                            const hoverColor = isRedTheme ? 'var(--purple-9)' : 'var(--red-9)'
+                            button.style.backgroundColor = hoverColor
+                            button.style.color = 'white'
+                            button.style.borderColor = hoverColor
+                            const textSpan = button.querySelector('.button-text') as HTMLElement
+                            if (textSpan) {
+                              textSpan.textContent = 'Снять публикацию'
+                            }
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          const button = e.currentTarget
+                          // Всегда сбрасываем стили при уходе мыши
+                          if (isPublished) {
+                            // Возвращаем зеленый цвет для опубликованной кнопки
+                            button.style.backgroundColor = ''
+                            button.style.color = ''
+                            button.style.borderColor = ''
+                            const textSpan = button.querySelector('.button-text') as HTMLElement
+                            if (textSpan) {
+                              textSpan.textContent = 'Опубликовано'
+                            }
+                          } else {
+                            // Убеждаемся, что для неопубликованной кнопки стили сброшены
+                            button.style.backgroundColor = ''
+                            button.style.color = ''
+                            button.style.borderColor = ''
+                          }
+                        }}
+                        style={{
+                          transition: 'background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease'
+                        }}
+                      >
+                        {isPublished ? (
+                          <>
+                            <CheckCircledIcon width={16} height={16} />
+                            <span className="button-text">Опубликовано</span>
+                          </>
+                        ) : (
+                          <>
+                            <GlobeIcon width={16} height={16} />
+                            Опубликовать на сайте
+                          </>
+                        )}
+                      </Button>
+                    </Flex>
+                  </Flex>
+                  
+                  <Flex direction="column" gap="4">
+                    {/* Название вакансии */}
+                    <Box>
+                      <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Название</Text>
+                      <TextField.Root
+                        value={vacancyTitle}
+                        onChange={(e) => setVacancyTitle(e.target.value)}
+                        placeholder="Введите название вакансии"
+                      />
+                    </Box>
+                    
+                    {/* Отдел */}
+                    <Box>
+                      <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Отдел</Text>
+                      <Select.Root
+                        value={vacancyDepartment}
+                        onValueChange={setVacancyDepartment}
+                      >
+                        <Select.Trigger placeholder="Выберите отдел" />
+                        <Select.Content>
+                          {getAllDepartmentsFlat(mockDepartments).map((dept) => (
+                            <Select.Item key={dept.id} value={dept.id}>
+                              {'  '.repeat(dept.level)}{dept.name}
+                            </Select.Item>
+                          ))}
+                        </Select.Content>
+                      </Select.Root>
+                    </Box>
+                    
+                    {/* Шапка */}
+                    <Box>
+                      <Flex align="center" justify="between" mb="2">
+                        <Text size="2" weight="medium">Шапка</Text>
+                        <Flex align="center" gap="3">
+                          <Flex align="center" gap="2">
+                            <Text size="1" color="gray">Активность:</Text>
+                            <Switch
+                              checked={fieldSettings.header.active}
+                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, header: { ...prev.header, active: checked } }))}
+                            />
+                          </Flex>
+                          <Flex align="center" gap="2">
+                            <Text size="1" color="gray">Видимость:</Text>
+                            <Switch
+                              checked={fieldSettings.header.visible}
+                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, header: { ...prev.header, visible: checked } }))}
+                            />
+                          </Flex>
+                        </Flex>
+                      </Flex>
+                      <TextArea
+                        value={vacancyHeader}
+                        onChange={(e) => setVacancyHeader(e.target.value)}
+                        placeholder="Введите текст шапки"
+                        disabled={!fieldSettings.header.active}
+                        style={{ minHeight: '100px' }}
+                      />
+                    </Box>
+                    
+                    {/* Обязанности */}
+                    <Box>
+                      <Flex align="center" justify="between" mb="2">
+                        <Text size="2" weight="medium">Обязанности</Text>
+                        <Flex align="center" gap="3">
+                          <Flex align="center" gap="2">
+                            <Text size="1" color="gray">Активность:</Text>
+                            <Switch
+                              checked={fieldSettings.responsibilities.active}
+                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, responsibilities: { ...prev.responsibilities, active: checked } }))}
+                            />
+                          </Flex>
+                          <Flex align="center" gap="2">
+                            <Text size="1" color="gray">Видимость:</Text>
+                            <Switch
+                              checked={fieldSettings.responsibilities.visible}
+                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, responsibilities: { ...prev.responsibilities, visible: checked } }))}
+                            />
+                          </Flex>
+                        </Flex>
+                      </Flex>
+                      <TextArea
+                        value={vacancyResponsibilities}
+                        onChange={(e) => setVacancyResponsibilities(e.target.value)}
+                        placeholder="Введите обязанности"
+                        disabled={!fieldSettings.responsibilities.active}
+                        style={{ minHeight: '100px' }}
+                      />
+                    </Box>
+                    
+                    {/* Пожелания */}
+                    <Box>
+                      <Flex align="center" justify="between" mb="2">
+                        <Text size="2" weight="medium">Пожелания</Text>
+                        <Flex align="center" gap="3">
+                          <Flex align="center" gap="2">
+                            <Text size="1" color="gray">Активность:</Text>
+                            <Switch
+                              checked={fieldSettings.requirements.active}
+                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, requirements: { ...prev.requirements, active: checked } }))}
+                            />
+                          </Flex>
+                          <Flex align="center" gap="2">
+                            <Text size="1" color="gray">Видимость:</Text>
+                            <Switch
+                              checked={fieldSettings.requirements.visible}
+                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, requirements: { ...prev.requirements, visible: checked } }))}
+                            />
+                          </Flex>
+                        </Flex>
+                      </Flex>
+                      <TextArea
+                        value={vacancyRequirements}
+                        onChange={(e) => setVacancyRequirements(e.target.value)}
+                        placeholder="Введите пожелания"
+                        disabled={!fieldSettings.requirements.active}
+                        style={{ minHeight: '100px' }}
+                      />
+                    </Box>
+                    
+                    {/* Будет плюсом */}
+                    <Box>
+                      <Flex align="center" justify="between" mb="2">
+                        <Text size="2" weight="medium">Будет плюсом</Text>
+                        <Flex align="center" gap="3">
+                          <Flex align="center" gap="2">
+                            <Text size="1" color="gray">Активность:</Text>
+                            <Switch
+                              checked={fieldSettings.niceToHave.active}
+                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, niceToHave: { ...prev.niceToHave, active: checked } }))}
+                            />
+                          </Flex>
+                          <Flex align="center" gap="2">
+                            <Text size="1" color="gray">Видимость:</Text>
+                            <Switch
+                              checked={fieldSettings.niceToHave.visible}
+                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, niceToHave: { ...prev.niceToHave, visible: checked } }))}
+                            />
+                          </Flex>
+                        </Flex>
+                      </Flex>
+                      <TextArea
+                        value={vacancyNiceToHave}
+                        onChange={(e) => setVacancyNiceToHave(e.target.value)}
+                        placeholder="Введите что будет плюсом"
+                        disabled={!fieldSettings.niceToHave.active}
+                        style={{ minHeight: '100px' }}
+                      />
+                    </Box>
+                    
+                    {/* Условия работы */}
+                    <Box>
+                      <Flex align="center" justify="between" mb="2">
+                        <Text size="2" weight="medium">Условия работы</Text>
+                        <Flex align="center" gap="3">
+                          <Flex align="center" gap="2">
+                            <Text size="1" color="gray">Активность:</Text>
+                            <Switch
+                              checked={fieldSettings.conditions.active}
+                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, conditions: { ...prev.conditions, active: checked } }))}
+                            />
+                          </Flex>
+                          <Flex align="center" gap="2">
+                            <Text size="1" color="gray">Видимость:</Text>
+                            <Switch
+                              checked={fieldSettings.conditions.visible}
+                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, conditions: { ...prev.conditions, visible: checked } }))}
+                            />
+                          </Flex>
+                        </Flex>
+                      </Flex>
+                      <TextArea
+                        value={vacancyConditions}
+                        onChange={(e) => setVacancyConditions(e.target.value)}
+                        placeholder="Введите условия работы"
+                        disabled={!fieldSettings.conditions.active}
+                        style={{ minHeight: '100px' }}
+                      />
+                    </Box>
+                    
+                    {/* Завершение */}
+                    <Box>
+                      <Flex align="center" justify="between" mb="2">
+                        <Text size="2" weight="medium">Завершение</Text>
+                        <Flex align="center" gap="3">
+                          <Flex align="center" gap="2">
+                            <Text size="1" color="gray">Активность:</Text>
+                            <Switch
+                              checked={fieldSettings.closing.active}
+                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, closing: { ...prev.closing, active: checked } }))}
+                            />
+                          </Flex>
+                          <Flex align="center" gap="2">
+                            <Text size="1" color="gray">Видимость:</Text>
+                            <Switch
+                              checked={fieldSettings.closing.visible}
+                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, closing: { ...prev.closing, visible: checked } }))}
+                            />
+                          </Flex>
+                        </Flex>
+                      </Flex>
+                      <TextArea
+                        value={vacancyClosing}
+                        onChange={(e) => setVacancyClosing(e.target.value)}
+                        placeholder="Введите завершающий текст"
+                        disabled={!fieldSettings.closing.active}
+                        style={{ minHeight: '100px' }}
+                      />
+                    </Box>
+                    
+                    {/* Дополнительная ссылка */}
+                    <Box>
+                      <Flex align="center" justify="between" mb="2">
+                        <Text size="2" weight="medium">Дополнительная ссылка</Text>
+                        <Flex align="center" gap="3">
+                          <Flex align="center" gap="2">
+                            <Text size="1" color="gray">Активность:</Text>
+                            <Switch
+                              checked={fieldSettings.link.active}
+                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, link: { ...prev.link, active: checked } }))}
+                            />
+                          </Flex>
+                          <Flex align="center" gap="2">
+                            <Text size="1" color="gray">Видимость:</Text>
+                            <Switch
+                              checked={fieldSettings.link.visible}
+                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, link: { ...prev.link, visible: checked } }))}
+                            />
+                          </Flex>
+                        </Flex>
+                      </Flex>
+                      <TextField.Root
+                        value={vacancyLink}
+                        onChange={(e) => setVacancyLink(e.target.value)}
+                        placeholder="https://example.com/vacancy"
+                        disabled={!fieldSettings.link.active}
+                      />
+                    </Box>
+                    
+                    {/* Вложения */}
+                    <Box>
+                      <Flex align="center" justify="between" mb="2">
+                        <Text size="2" weight="medium">Вложения</Text>
+                        <Flex align="center" gap="3">
+                          <Flex align="center" gap="2">
+                            <Text size="1" color="gray">Активность:</Text>
+                            <Switch
+                              checked={fieldSettings.attachment.active}
+                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, attachment: { ...prev.attachment, active: checked } }))}
+                            />
+                          </Flex>
+                          <Flex align="center" gap="2">
+                            <Text size="1" color="gray">Видимость:</Text>
+                            <Switch
+                              checked={fieldSettings.attachment.visible}
+                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, attachment: { ...prev.attachment, visible: checked } }))}
+                            />
+                          </Flex>
+                        </Flex>
+                      </Flex>
+                      <Flex direction="column" gap="2">
+                        <Box
+                          style={{
+                            position: 'relative',
+                            display: 'inline-block',
+                            width: '100%'
+                          }}
+                        >
+                          <input
+                            type="file"
+                            accept=".docx,.pptx,.figma"
+                            onChange={(e) => setVacancyAttachment(e.target.files?.[0] || null)}
+                            disabled={!fieldSettings.attachment.active}
+                            id="vacancy-attachment-input"
+                            style={{
+                              position: 'absolute',
+                              opacity: 0,
+                              width: 0,
+                              height: 0,
+                              overflow: 'hidden'
+                            }}
+                          />
+                          <Button
+                            asChild
+                            variant="soft"
+                            disabled={!fieldSettings.attachment.active}
+                            style={{ width: '100%', justifyContent: 'flex-start' }}
+                          >
+                            <label
+                              htmlFor="vacancy-attachment-input"
+                              style={{
+                                cursor: fieldSettings.attachment.active ? 'pointer' : 'not-allowed',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                width: '100%',
+                                padding: '0'
+                              }}
+                            >
+                              <Box style={{ marginLeft: '8px', display: 'flex', alignItems: 'center' }}>
+                                <UploadIcon width={16} height={16} />
+                              </Box>
+                              <Text size="2">
+                                {vacancyAttachment ? vacancyAttachment.name : 'Выберите файл (docx, pptx, figma)'}
+                              </Text>
+                            </label>
+                          </Button>
+                        </Box>
+                        {vacancyAttachment && (
+                          <Flex align="center" gap="2" style={{ padding: '8px 12px', backgroundColor: 'var(--gray-2)', borderRadius: '6px' }}>
+                            <FileTextIcon width={16} height={16} style={{ color: 'var(--gray-9)' }} />
+                            <Text size="2" style={{ flex: 1 }}>
+                              {vacancyAttachment.name}
+                            </Text>
+                            <Text size="1" color="gray">
+                              {(vacancyAttachment.size / 1024).toFixed(2)} KB
+                            </Text>
+                            <Button
+                              size="1"
+                              variant="ghost"
+                              color="red"
+                              onClick={() => setVacancyAttachment(null)}
+                            >
+                              <Cross2Icon width={14} height={14} />
+                            </Button>
+                          </Flex>
+                        )}
+                      </Flex>
+                    </Box>
+                  </Flex>
                 </Box>
               )}
               
               {selectedSettingTab === 'recruiters' && (
                 <Box>
-                  <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Рекрутеры</Text>
-                  <Text size="2" color="gray">
-                    Список рекрутеров, работающих над этой вакансией
-                  </Text>
+                  <Text size="3" weight="bold" mb="4" style={{ display: 'block' }}>Рекрутеры</Text>
+                  
+                  <Flex direction="column" gap="3">
+                    {allRecruiters.map((recruiter) => {
+                      const isSelected = selectedRecruiters.has(recruiter.id)
+                      const isMain = mainRecruiter === recruiter.id
+                      
+                      return (
+                        <Card key={recruiter.id} style={{ padding: '16px' }}>
+                          <Flex align="center" gap="3">
+                            {/* Чекбокс для выбора рекрутера */}
+                            <Checkbox
+                              checked={isSelected}
+                              onCheckedChange={() => handleRecruiterToggle(recruiter.id)}
+                            />
+                            
+                            {/* Информация о рекрутере */}
+                            <Flex direction="column" gap="1" style={{ flex: 1 }}>
+                              <Flex align="center" gap="2">
+                                <Text size="3" weight="medium">{recruiter.name}</Text>
+                                {isMain && (
+                                  <Badge color="blue" variant="soft" size="1">
+                                    Главный
+                                  </Badge>
+                                )}
+                              </Flex>
+                              <Text size="2" color="gray">{recruiter.position}</Text>
+                              <Text size="1" color="gray">{recruiter.email}</Text>
+                              <Text size="1" color="gray">{recruiter.phone}</Text>
+                            </Flex>
+                            
+                            {/* Тогглер для главного рекрутера */}
+                            <Box>
+                              <Text size="1" color="gray" mb="1" style={{ display: 'block', textAlign: 'right' }}>
+                                Главный
+                              </Text>
+                              <Switch
+                                checked={isMain}
+                                disabled={!isSelected}
+                                onCheckedChange={() => handleMainRecruiterToggle(recruiter.id)}
+                              />
+                            </Box>
+                          </Flex>
+                        </Card>
+                      )
+                    })}
+                  </Flex>
+                  
+                  {allRecruiters.length === 0 && (
+                    <Text size="2" color="gray" style={{ textAlign: 'center', padding: '40px' }}>
+                      Нет доступных рекрутеров
+                    </Text>
+                  )}
                 </Box>
               )}
               
               {selectedSettingTab === 'customers' && (
                 <Box>
-                  <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Заказчики и интервьюеры</Text>
-                  <Text size="2" color="gray">
-                    Управление заказчиками и интервьюерами
-                  </Text>
+                  <Text size="3" weight="bold" mb="4" style={{ display: 'block' }}>Интервьюеры</Text>
+                  
+                  <Flex direction="column" gap="3">
+                    {allInterviewers.map((interviewer) => {
+                      const isSelected = selectedVacancyInterviewers.has(interviewer.id)
+                      const isFinalInterview = finalInterviewInterviewers.has(interviewer.id)
+                      
+                      return (
+                        <Card key={interviewer.id} style={{ padding: '16px' }}>
+                          <Flex align="center" gap="3">
+                            {/* Чекбокс для выбора интервьюера */}
+                            <Checkbox
+                              checked={isSelected}
+                              onCheckedChange={() => handleVacancyInterviewerToggle(interviewer.id)}
+                            />
+                            
+                            {/* Информация об интервьюере */}
+                            <Flex direction="column" gap="1" style={{ flex: 1 }}>
+                              <Flex align="center" gap="2">
+                                <Text size="3" weight="medium">{interviewer.name}</Text>
+                                {interviewer.isCustomer && (
+                                  <Badge color="blue" variant="soft" size="1">
+                                    Заказчик
+                                  </Badge>
+                                )}
+                                {isFinalInterview && (
+                                  <Badge color="purple" variant="soft" size="1">
+                                    Финальное интервью
+                                  </Badge>
+                                )}
+                              </Flex>
+                              <Text size="2" color="gray">{interviewer.position}</Text>
+                              <Text size="1" color="gray">{interviewer.department}</Text>
+                              <Text size="1" color="gray">{interviewer.email}</Text>
+                              <Text size="1" color="gray">{interviewer.phone}</Text>
+                            </Flex>
+                            
+                            {/* Тогглер для финального интервью */}
+                            <Box>
+                              <Text size="1" color="gray" mb="1" style={{ display: 'block', textAlign: 'right' }}>
+                                Финальное интервью
+                              </Text>
+                              <Switch
+                                checked={isFinalInterview}
+                                disabled={!isSelected}
+                                onCheckedChange={() => handleFinalInterviewToggle(interviewer.id)}
+                              />
+                            </Box>
+                          </Flex>
+                        </Card>
+                      )
+                    })}
+                  </Flex>
+                  
+                  {allInterviewers.length === 0 && (
+                    <Text size="2" color="gray" style={{ textAlign: 'center', padding: '40px' }}>
+                      Нет доступных интервьюеров
+                    </Text>
+                  )}
                 </Box>
               )}
               
               {selectedSettingTab === 'questions' && (
                 <Box>
                   <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Вопросы и ссылки</Text>
-                  <Text size="2" color="gray">
-                    Вопросы для кандидатов и полезные ссылки
+                  <Text size="2" color="gray" mb="4" style={{ display: 'block' }}>
+                    Ссылка на вакансию, тогглер использования на сайте и один вопрос по вакансии на офис. Настройки задаются отдельно для каждого офиса. У ссылки и вопроса можно выбрать цвет.
                   </Text>
+                  
+                  <Flex direction="column" gap="4">
+                    {questionLinkOffices.map((office) => {
+                      const state = questionsLinksByOffice[office.id] ?? getDefaultOfficeState()
+                      const { link, question } = state
+                      const q = question ?? { text: '', color: questionLinkColors[0].hex }
+                      
+                      return (
+                        <Card key={office.id} style={{ padding: '16px' }}>
+                          <Flex direction="column" gap="4">
+                            <Text size="4" weight="bold">{office.name}</Text>
+                            
+                            {/* Ссылка на вакансию */}
+                            <Box>
+                              <Text size="3" weight="medium" mb="2" style={{ display: 'block' }}>Ссылка на вакансию</Text>
+                              <Flex direction="column" gap="3">
+                                <Flex align="center" gap="3" wrap="wrap">
+                                  <TextField.Root
+                                    value={link.url}
+                                    onChange={(e) => updateOfficeLink(office.id, { url: e.target.value })}
+                                    placeholder="https://example.com/vacancy"
+                                    style={{ flex: 1, minWidth: '200px' }}
+                                  />
+                                  <Flex align="center" gap="2" style={{ flexShrink: 0 }}>
+                                    <Text size="2" color="gray">Использовать с сайта:</Text>
+                                    <Switch
+                                      checked={link.useOnSite}
+                                      onCheckedChange={(checked) => updateOfficeLink(office.id, { useOnSite: checked })}
+                                    />
+                                  </Flex>
+                                </Flex>
+                                <Flex align="center" gap="2">
+                                  <Text size="2" weight="medium">Цвет ссылки:</Text>
+                                  <Flex gap="2" wrap="wrap">
+                                    {questionLinkColors.map((c) => (
+                                      <button
+                                        key={c.id}
+                                        type="button"
+                                        onClick={() => updateOfficeLink(office.id, { color: c.hex })}
+                                        title={c.label}
+                                        style={{
+                                          width: 28,
+                                          height: 28,
+                                          borderRadius: 6,
+                                          backgroundColor: c.hex,
+                                          border: link.color === c.hex ? '2px solid var(--gray-12)' : '2px solid transparent',
+                                          cursor: 'pointer',
+                                          padding: 0,
+                                        }}
+                                        aria-pressed={link.color === c.hex}
+                                      />
+                                    ))}
+                                  </Flex>
+                                </Flex>
+                              </Flex>
+                            </Box>
+                            
+                            <Separator size="4" />
+                            
+                            {/* Вопрос по вакансии (один на офис) */}
+                            <Box>
+                              <Text size="3" weight="medium" mb="2" style={{ display: 'block' }}>Вопрос по вакансии</Text>
+                              <Flex direction="column" gap="2">
+                                <TextArea
+                                  value={q.text}
+                                  onChange={(e) => updateOfficeQuestion(office.id, { text: e.target.value })}
+                                  placeholder="Текст вопроса..."
+                                  style={{ minWidth: '100%', minHeight: 60 }}
+                                />
+                                <Flex gap="2" align="center">
+                                  <Text size="2" color="gray">Цвет:</Text>
+                                  {questionLinkColors.map((c) => (
+                                    <button
+                                      key={c.id}
+                                      type="button"
+                                      onClick={() => updateOfficeQuestion(office.id, { color: c.hex })}
+                                      title={c.label}
+                                      style={{
+                                        width: 22,
+                                        height: 22,
+                                        borderRadius: 4,
+                                        backgroundColor: c.hex,
+                                        border: q.color === c.hex ? '2px solid var(--gray-12)' : '2px solid transparent',
+                                        cursor: 'pointer',
+                                        padding: 0,
+                                      }}
+                                      aria-pressed={q.color === c.hex}
+                                    />
+                                  ))}
+                                </Flex>
+                              </Flex>
+                            </Box>
+                          </Flex>
+                        </Card>
+                      )
+                    })}
+                  </Flex>
                 </Box>
               )}
               
@@ -2545,19 +4100,792 @@ export default function RecrChatPage() {
               
               {selectedSettingTab === 'statuses' && (
                 <Box>
-                  <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Статусы</Text>
-                  <Text size="2" color="gray">
-                    Управление статусами кандидатов
+                  <Text size="3" weight="bold" mb="4" style={{ display: 'block' }}>Статусы</Text>
+                  <Text size="2" color="gray" mb="4" style={{ display: 'block' }}>
+                    Выберите этапы рекрутинга, которые будут доступны для данной вакансии
                   </Text>
+                  
+                  <Flex direction="column" gap="3">
+                    {recruitmentStages.map((stage) => {
+                      const isActive = activeStages.has(stage.id)
+                      
+                      return (
+                        <Card key={stage.id} style={{ padding: '16px' }}>
+                          <Flex align="center" gap="3">
+                            {/* Чекбокс для выбора этапа */}
+                            <Checkbox
+                              checked={isActive}
+                              onCheckedChange={() => handleStageToggle(stage.id)}
+                            />
+                            
+                            {/* Информация об этапе */}
+                            <Flex align="center" gap="3" style={{ flex: 1 }}>
+                              <Box
+                                style={{
+                                  width: '12px',
+                                  height: '12px',
+                                  borderRadius: '50%',
+                                  backgroundColor: stage.color,
+                                  flexShrink: 0
+                                }}
+                              />
+                              <Flex direction="column" gap="1" style={{ flex: 1 }}>
+                                <Text size="3" weight="medium">{stage.name}</Text>
+                                {stage.description && (
+                                  <Text size="2" color="gray">{stage.description}</Text>
+                                )}
+                              </Flex>
+                            </Flex>
+                          </Flex>
+                        </Card>
+                      )
+                    })}
+                  </Flex>
+                  
+                  {recruitmentStages.length === 0 && (
+                    <Text size="2" color="gray" style={{ textAlign: 'center', padding: '40px' }}>
+                      Нет доступных этапов
+                    </Text>
+                  )}
                 </Box>
               )}
               
               {selectedSettingTab === 'salary' && (
                 <Box>
-                  <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Зарплатные вилки</Text>
-                  <Text size="2" color="gray">
-                    Настройка зарплатных диапазонов для вакансии
+                  <Text size="3" weight="bold" mb="4" style={{ display: 'block' }}>Зарплатные вилки</Text>
+                  <Text size="2" color="gray" mb="4" style={{ display: 'block' }}>
+                    Выберите активные грейды и укажите зарплатные диапазоны. Редактирование доступно только для главной валюты ({companyCurrencies.find(c => c.isMain)?.code || 'BYN'}), остальные пересчитываются автоматически.
                   </Text>
+                  
+                  <Box className={styles.salaryForksTableWrapper} style={{ overflowX: 'auto', width: '100%' }}>
+                    <Table.Root style={{ 
+                      tableLayout: 'fixed',
+                      width: 'max-content',
+                      maxWidth: '100%',
+                      borderCollapse: 'separate',
+                      borderSpacing: 0
+                    }}>
+                      <Table.Header>
+                        <Table.Row>
+                          <Table.ColumnHeaderCell style={{ position: 'sticky', left: 0, backgroundColor: 'var(--gray-2)', zIndex: 10, width: '180px', minWidth: '180px', maxWidth: '180px' }}>
+                            Грейд
+                          </Table.ColumnHeaderCell>
+                          {companyCurrencies.map(currency => (
+                            <Table.ColumnHeaderCell 
+                              key={currency.id}
+                              style={{ 
+                                width: currency.isMain ? '260px' : '180px',
+                                minWidth: currency.isMain ? '260px' : '180px',
+                                maxWidth: currency.isMain ? '260px' : '180px',
+                                whiteSpace: 'nowrap',
+                                padding: '12px'
+                              }}
+                            >
+                              <Flex direction="column" gap="1" align="center">
+                                <Text weight="bold">{currency.code}</Text>
+                                {currency.isMain && (
+                                  <Badge size="1" color="green">Главная</Badge>
+                                )}
+                                <Text size="1" color="gray">
+                                  {isGrossFormat ? 'Gross' : 'Net'}
+                                </Text>
+                              </Flex>
+                            </Table.ColumnHeaderCell>
+                          ))}
+                        </Table.Row>
+                      </Table.Header>
+                      <Table.Body>
+                        {allGrades.map((grade) => {
+                          const isActive = activeGrades.has(grade.id)
+                          const mainCurrency = companyCurrencies.find(c => c.isMain)?.code || 'BYN'
+                          
+                          return (
+                            <Table.Row key={grade.id}>
+                              <Table.Cell style={{ position: 'sticky', left: 0, backgroundColor: 'var(--gray-2)', zIndex: 10, width: '180px', minWidth: '180px', maxWidth: '180px' }}>
+                                <Flex align="center" gap="2">
+                                  <Checkbox
+                                    checked={isActive}
+                                    onCheckedChange={() => handleGradeToggle(grade.id)}
+                                  />
+                                  <Text weight={isActive ? 'medium' : 'regular'} style={{ opacity: isActive ? 1 : 0.5 }}>
+                                    {grade.name}
+                                  </Text>
+                                </Flex>
+                              </Table.Cell>
+                              {companyCurrencies.map(currency => {
+                                const isMain = currency.isMain
+                                const fromValue = getSalaryValue(grade.id, currency.code, 'from')
+                                const toValue = salaryRanges[grade.id]?.[currency.code]?.to || null
+                                
+                                return (
+                                  <Table.Cell
+                                    key={currency.id}
+                                    style={{ 
+                                      whiteSpace: 'nowrap',
+                                      width: isMain ? '260px' : '180px',
+                                      minWidth: isMain ? '260px' : '180px',
+                                      maxWidth: isMain ? '260px' : '180px',
+                                      padding: '12px',
+                                      verticalAlign: 'middle'
+                                    }}
+                                  >
+                                    {isActive ? (
+                                      isMain ? (
+                                        <Flex gap="2" align="center" style={{ flexWrap: 'nowrap' }}>
+                                          <input
+                                              type="number"
+                                              placeholder="От"
+                                              value={fromValue !== null ? fromValue.toString() : ''}
+                                              onChange={(e) => {
+                                                handleSalaryChange(grade.id, currency.code, 'from', e.target.value)
+                                                // Адаптируем ширину под содержимое
+                                                const input = e.target as HTMLInputElement
+                                                const value = e.target.value
+                                                const charWidth = 8 // примерная ширина одного символа
+                                                const padding = 24 // padding left + right
+                                                const minWidth = 100
+                                                const calculatedWidth = value ? Math.max(minWidth, value.length * charWidth + padding) : minWidth
+                                                input.style.width = `${calculatedWidth}px`
+                                              }}
+                                              style={{
+                                                minWidth: '100px',
+                                                padding: '8px 12px',
+                                                fontSize: '13px',
+                                                lineHeight: '20px',
+                                                borderRadius: '6px',
+                                                border: '1px solid var(--gray-a6)',
+                                                backgroundColor: 'var(--color-panel)',
+                                                color: 'var(--gray-12)',
+                                                outline: 'none',
+                                                boxSizing: 'border-box',
+                                                width: fromValue !== null 
+                                                  ? `${Math.max(100, fromValue.toString().length * 8 + 24)}px` 
+                                                  : '100px',
+                                              }}
+                                              onFocus={(e) => {
+                                                e.currentTarget.style.borderColor = 'var(--accent-9)'
+                                                e.currentTarget.style.boxShadow = '0 0 0 1px var(--accent-9)'
+                                              }}
+                                              onBlur={(e) => {
+                                                e.currentTarget.style.borderColor = 'var(--gray-a6)'
+                                                e.currentTarget.style.boxShadow = 'none'
+                                              }}
+                                            />
+                                            <Text>—</Text>
+                                            <input
+                                              type="number"
+                                              placeholder="До"
+                                              value={toValue !== null ? toValue.toString() : ''}
+                                              onChange={(e) => {
+                                                handleSalaryChange(grade.id, currency.code, 'to', e.target.value)
+                                                // Адаптируем ширину под содержимое
+                                                const input = e.target as HTMLInputElement
+                                                const value = e.target.value
+                                                const charWidth = 8 // примерная ширина одного символа
+                                                const padding = 24 // padding left + right
+                                                const minWidth = 100
+                                                const calculatedWidth = value ? Math.max(minWidth, value.length * charWidth + padding) : minWidth
+                                                input.style.width = `${calculatedWidth}px`
+                                              }}
+                                              style={{
+                                                minWidth: '100px',
+                                                padding: '8px 12px',
+                                                fontSize: '13px',
+                                                lineHeight: '20px',
+                                                borderRadius: '6px',
+                                                border: '1px solid var(--gray-a6)',
+                                                backgroundColor: 'var(--color-panel)',
+                                                color: 'var(--gray-12)',
+                                                outline: 'none',
+                                                boxSizing: 'border-box',
+                                                width: toValue !== null 
+                                                  ? `${Math.max(100, toValue.toString().length * 8 + 24)}px` 
+                                                  : '100px',
+                                              }}
+                                              onFocus={(e) => {
+                                                e.currentTarget.style.borderColor = 'var(--accent-9)'
+                                                e.currentTarget.style.boxShadow = '0 0 0 1px var(--accent-9)'
+                                              }}
+                                              onBlur={(e) => {
+                                                e.currentTarget.style.borderColor = 'var(--gray-a6)'
+                                                e.currentTarget.style.boxShadow = 'none'
+                                              }}
+                                            />
+                                        </Flex>
+                                      ) : (
+                                        <Text size="2" style={{ whiteSpace: 'nowrap', display: 'block' }}>
+                                          {fromValue !== null ? fromValue.toFixed(2) : '—'}
+                                          {' – '}
+                                          {toValue !== null ? toValue.toFixed(2) : '—'}
+                                        </Text>
+                                      )
+                                    ) : (
+                                      <Text size="2" color="gray">—</Text>
+                                    )}
+                                  </Table.Cell>
+                                )
+                              })}
+                            </Table.Row>
+                          )
+                        })}
+                      </Table.Body>
+                    </Table.Root>
+                  </Box>
+                </Box>
+              )}
+              
+              {selectedSettingTab === 'interviews' && (
+                <Box>
+                  <Flex align="center" justify="between" mb="4">
+                    <Text size="3" weight="bold">Встречи и интервью</Text>
+                    <Button size="2" variant="soft" onClick={addInterviewMeeting}>
+                      <PlusIcon width={14} height={14} />
+                      <Text size="2">Добавить встречу</Text>
+                    </Button>
+                  </Flex>
+                  
+                  <Text size="2" color="gray" mb="4" style={{ display: 'block' }}>
+                    Рекомендуемое количество встреч: {maxMeetingsCount} (активные этапы до оффера - 2). Для каждой встречи укажите этап, длительность, заголовок, сопровождающий текст и формат (офис или онлайн).
+                  </Text>
+                  
+                  {interviewMeetings.length === 0 ? (
+                    <Card style={{ padding: '24px', textAlign: 'center' }}>
+                      <Text size="2" color="gray">
+                        Нет встреч. Добавьте первую встречу.
+                      </Text>
+                    </Card>
+                  ) : (
+                    <Flex direction="column" gap="4">
+                      {interviewMeetings.map((meeting, index) => (
+                        <Card key={meeting.id} style={{ padding: '16px' }}>
+                          <Flex direction="column" gap="4">
+                            <Flex align="center" justify="between">
+                              <Text size="3" weight="medium">Встреча {index + 1}</Text>
+                              {interviewMeetings.length > 1 && (
+                                <Button
+                                  size="1"
+                                  variant="ghost"
+                                  color="red"
+                                  onClick={() => removeInterviewMeeting(meeting.id)}
+                                >
+                                  <TrashIcon width={14} height={14} />
+                                </Button>
+                              )}
+                            </Flex>
+                            
+                            {/* Этап */}
+                            <Box>
+                              <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Этап</Text>
+                              <Select.Root
+                                value={meeting.stage}
+                                onValueChange={(value) => updateInterviewMeeting(meeting.id, { stage: value })}
+                              >
+                                <Select.Trigger placeholder="Выберите этап" style={{ width: '100%' }} />
+                                <Select.Content>
+                                  {stagesBeforeOffer.map((stage) => (
+                                    <Select.Item key={stage.id} value={stage.id}>
+                                      {stage.description || stage.name}
+                                    </Select.Item>
+                                  ))}
+                                </Select.Content>
+                              </Select.Root>
+                            </Box>
+                            
+                            {/* Длительность встречи */}
+                            <Box>
+                              <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Длительность встречи (минут)</Text>
+                              <TextField.Root
+                                type="number"
+                                value={meeting.duration.toString()}
+                                onChange={(e) => updateInterviewMeeting(meeting.id, { duration: parseInt(e.target.value) || 60 })}
+                                placeholder="60"
+                                style={{ width: '200px' }}
+                              />
+                            </Box>
+                            
+                            {/* Заголовок названия встречи */}
+                            <Box>
+                              <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Заголовок названия встречи</Text>
+                              <TextField.Root
+                                value={meeting.title}
+                                onChange={(e) => updateInterviewMeeting(meeting.id, { title: e.target.value })}
+                                placeholder="Например: Техническое интервью - Frontend Developer"
+                                style={{ width: '100%' }}
+                              />
+                            </Box>
+                            
+                            {/* Формат (офис или онлайн) */}
+                            <Box>
+                              <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Формат встречи</Text>
+                              <Text size="1" color="gray" mb="2" style={{ display: 'block' }}>
+                                Выберите офис или онлайн
+                              </Text>
+                              <Select.Root
+                                value={meeting.format || undefined}
+                                onValueChange={(v) => updateInterviewMeeting(meeting.id, { format: (v || '') as 'office' | 'online' | '' })}
+                              >
+                                <Select.Trigger placeholder="Офис или онлайн" style={{ width: '100%' }} />
+                                <Select.Content>
+                                  <Select.Item value="office">Офис</Select.Item>
+                                  <Select.Item value="online">Онлайн</Select.Item>
+                                </Select.Content>
+                              </Select.Root>
+                            </Box>
+                            
+                            {/* Сопровождающий текст */}
+                            <Box>
+                              <Flex align="center" justify="between" mb="2">
+                                <Text size="2" weight="medium">Сопровождающий текст</Text>
+                                <DropdownMenu.Root>
+                                  <DropdownMenu.Trigger>
+                                    <Button size="1" variant="ghost">
+                                      <Text size="1">Подсказки</Text>
+                                      <ChevronDownIcon width={12} height={12} />
+                                    </Button>
+                                  </DropdownMenu.Trigger>
+                                  <DropdownMenu.Content style={{ minWidth: 260 }}>
+                                    <DropdownMenu.Item
+                                      onSelect={() => {
+                                        const hint = '{{candidate_link}}'
+                                        updateInterviewMeeting(meeting.id, {
+                                          description: meeting.description + (meeting.description ? '\n' : '') + hint,
+                                        })
+                                      }}
+                                    >
+                                      <Text size="2">Ссылка на кандидата в системе</Text>
+                                    </DropdownMenu.Item>
+                                    <DropdownMenu.Item
+                                      onSelect={() => {
+                                        const hint = '{{external_integration_link}}'
+                                        updateInterviewMeeting(meeting.id, {
+                                          description: meeting.description + (meeting.description ? '\n' : '') + hint,
+                                        })
+                                      }}
+                                    >
+                                      <Text size="2">Ссылка во внешней интеграции</Text>
+                                    </DropdownMenu.Item>
+                                    {recruiterContactHints.map(({ label, variable }) => {
+                                      const hint = `{{${variable}}}`
+                                      return (
+                                        <DropdownMenu.Item
+                                          key={variable}
+                                          onSelect={() => {
+                                            updateInterviewMeeting(meeting.id, {
+                                              description: meeting.description + (meeting.description ? '\n' : '') + hint,
+                                            })
+                                          }}
+                                        >
+                                          <Text size="2">{label}</Text>
+                                        </DropdownMenu.Item>
+                                      )
+                                    })}
+                                    <DropdownMenu.Item
+                                      onSelect={() => {
+                                        const hint = '{{office_instructions}}'
+                                        updateInterviewMeeting(meeting.id, {
+                                          description: meeting.description + (meeting.description ? '\n' : '') + hint,
+                                        })
+                                      }}
+                                    >
+                                      <Text size="2">Инструкции офиса</Text>
+                                    </DropdownMenu.Item>
+                                  </DropdownMenu.Content>
+                                </DropdownMenu.Root>
+                              </Flex>
+                              <Text size="1" color="gray" mb="2" style={{ display: 'block' }}>
+                                Введите текст, который будет отправлен вместе с приглашением на встречу. Используйте подсказки для вставки шаблонов.
+                              </Text>
+                              <TextArea
+                                value={meeting.description}
+                                onChange={(e) => updateInterviewMeeting(meeting.id, { description: e.target.value })}
+                                placeholder="Введите текст приглашения на встречу..."
+                                style={{ minHeight: '120px', width: '100%' }}
+                              />
+                            </Box>
+                          </Flex>
+                        </Card>
+                      ))}
+                    </Flex>
+                  )}
+                </Box>
+              )}
+              
+              {selectedSettingTab === 'scorecard' && (
+                <Box>
+                  <Text size="3" weight="bold" mb="4" style={{ display: 'block' }}>Scorecard</Text>
+                  
+                  <Flex direction="column" gap="4">
+                    {/* Ссылка */}
+                    <Card style={{ padding: '16px' }}>
+                      <Flex direction="column" gap="3">
+                        <Text size="3" weight="medium" mb="2">Ссылка</Text>
+                        <Flex direction="column" gap="3">
+                          <Flex direction="column" gap="2">
+                            <Text size="2" weight="medium">Ссылка на Google документ</Text>
+                            <TextField.Root
+                              value={scorecardLinkUrl}
+                              onChange={(e) => setScorecardLinkUrl(e.target.value)}
+                              placeholder="https://docs.google.com/document/..."
+                              style={{ width: '100%' }}
+                            />
+                          </Flex>
+                          
+                          <Flex direction="column" gap="2">
+                            <Text size="2" weight="medium">Название-заголовок</Text>
+                            <TextField.Root
+                              value={scorecardLinkTitle}
+                              onChange={(e) => setScorecardLinkTitle(e.target.value)}
+                              placeholder="Введите название"
+                              style={{ width: '100%' }}
+                            />
+                          </Flex>
+                          
+                          <Flex direction="column" gap="2">
+                            <Text size="2" weight="medium">Место добавления</Text>
+                            <Select.Root value={scorecardLinkPosition} onValueChange={(value: 'start' | 'end') => setScorecardLinkPosition(value)}>
+                              <Select.Trigger style={{ width: '100%' }} />
+                              <Select.Content>
+                                <Select.Item value="start">В начале</Select.Item>
+                                <Select.Item value="end">В конце</Select.Item>
+                              </Select.Content>
+                            </Select.Root>
+                          </Flex>
+                        </Flex>
+                      </Flex>
+                    </Card>
+                    
+                    {/* Локальный */}
+                    <Card style={{ padding: '16px' }}>
+                      <Flex direction="column" gap="3">
+                        <Text size="3" weight="medium" mb="2">Локальный</Text>
+                        <Flex direction="column" gap="3">
+                          <Flex align="center" gap="2">
+                            <Switch
+                              checked={scorecardLocalActive}
+                              onCheckedChange={setScorecardLocalActive}
+                            />
+                            <Text size="2">
+                              {scorecardLocalActive ? 'Активный' : 'Не активный'}
+                            </Text>
+                          </Flex>
+                          
+                          <Button
+                            variant="soft"
+                            onClick={() => setScorecardLocalSettingsOpen(true)}
+                            disabled={!scorecardLocalActive}
+                            style={{ width: 'fit-content' }}
+                          >
+                            <GearIcon width={16} height={16} />
+                            <Text size="2">Настройки</Text>
+                          </Button>
+                          
+                          {!scorecardLocalActive && (
+                            <Text size="1" color="gray" style={{ fontStyle: 'italic' }}>
+                              В разработке
+                            </Text>
+                          )}
+                        </Flex>
+                      </Flex>
+                    </Card>
+                  </Flex>
+                  
+                  {/* Модальное окно настроек локального Scorecard */}
+                  <Dialog.Root open={scorecardLocalSettingsOpen} onOpenChange={setScorecardLocalSettingsOpen}>
+                    <Dialog.Content style={{ maxWidth: '600px' }}>
+                      <Dialog.Title>Настройки локального Scorecard</Dialog.Title>
+                      <Dialog.Description size="2" color="gray" mb="4">
+                        Настройки локального Scorecard находятся в разработке
+                      </Dialog.Description>
+                      <Flex gap="3" justify="end" mt="4">
+                        <Dialog.Close>
+                          <Button variant="soft">Закрыть</Button>
+                        </Dialog.Close>
+                      </Flex>
+                    </Dialog.Content>
+                  </Dialog.Root>
+                </Box>
+              )}
+
+              {selectedSettingTab === 'dataProcessing' && (
+                <Box>
+                  <Text size="3" weight="bold" mb="4" style={{ display: 'block' }}>Обработка данных</Text>
+                  <Flex direction="column" gap="4">
+                    <Card style={{ padding: '16px' }}>
+                      <Flex direction="column" gap="3">
+                        <Flex align="center" gap="2">
+                          <Switch
+                            checked={useUnifiedPrompt}
+                            onCheckedChange={setUseUnifiedPrompt}
+                          />
+                          <Text size="2">Использовать единый промпт</Text>
+                        </Flex>
+                        <Flex direction="column" gap="2">
+                          <Text size="2" weight="medium">Промпт для анализа</Text>
+                          <TextArea
+                            value={analysisPrompt}
+                            onChange={(e) => setAnalysisPrompt(e.target.value)}
+                            placeholder="Введите промпт для анализа..."
+                            disabled={useUnifiedPrompt}
+                            style={{ minHeight: '140px', width: '100%' }}
+                          />
+                        </Flex>
+                      </Flex>
+                    </Card>
+                  </Flex>
+                </Box>
+              )}
+              
+              {selectedSettingTab === 'history' && (
+                <Box>
+                  <Text size="3" weight="bold" mb="4" style={{ display: 'block' }}>История правок</Text>
+                  
+                  <Flex direction="column" gap="3">
+                    {editHistory.length === 0 ? (
+                      <Text size="2" color="gray" style={{ textAlign: 'center', padding: '40px' }}>
+                        История правок пуста
+                      </Text>
+                    ) : (
+                      editHistory.map((item) => {
+                        // Находим следующую версию по хронологии (более старую)
+                        const nextVersion = editHistory
+                          .filter(h => h.version < item.version)
+                          .sort((a, b) => b.version - a.version)[0]
+                        
+                        return (
+                          <Card 
+                            key={item.id} 
+                            style={{ padding: '16px', cursor: 'pointer' }}
+                            onClick={() => setSelectedHistoryItem(item)}
+                          >
+                            <Flex direction="column" gap="2">
+                              <Flex align="center" justify="between">
+                                <Flex align="center" gap="2">
+                                  <Badge color="gray" variant="soft">
+                                    Версия {item.version}
+                                  </Badge>
+                                  <Text size="2" weight="medium">{item.changes}</Text>
+                                </Flex>
+                                <Text size="1" color="gray">{item.date}</Text>
+                              </Flex>
+                              <Flex align="center" gap="2">
+                                <PersonIcon width={14} height={14} style={{ color: 'var(--gray-9)' }} />
+                                <Text size="1" color="gray">{item.user}</Text>
+                              </Flex>
+                            </Flex>
+                          </Card>
+                        )
+                      })
+                    )}
+                  </Flex>
+                  
+                  {/* Модальное окно для просмотра правки */}
+                  <Dialog.Root open={selectedHistoryItem !== null} onOpenChange={(open) => !open && setSelectedHistoryItem(null)}>
+                    <Dialog.Content style={{ maxWidth: '800px', maxHeight: '90vh', overflow: 'auto' }}>
+                      {selectedHistoryItem && (() => {
+                        // Находим следующую версию по хронологии (более старую)
+                        const nextVersion = editHistory
+                          .filter(h => h.version < selectedHistoryItem.version)
+                          .sort((a, b) => b.version - a.version)[0]
+                        
+                        const currentText = selectedHistoryItem.fullText || selectedHistoryItem.changes
+                        const nextText = nextVersion?.fullText || nextVersion?.changes || ''
+                        const diffText = nextText ? calculateDiff(currentText, nextText) : currentText
+                        
+                        return (
+                          <>
+                            <Dialog.Title>
+                              <Flex direction="column" gap="2">
+                                <Text size="4" weight="bold">Версия {selectedHistoryItem.version}</Text>
+                                <Text size="2" color="gray">{selectedHistoryItem.changes}</Text>
+                              </Flex>
+                            </Dialog.Title>
+                            
+                            <Dialog.Description>
+                              <Flex direction="column" gap="3" mt="4">
+                                <Flex align="center" gap="2">
+                                  <PersonIcon width={16} height={16} />
+                                  <Text size="2">{selectedHistoryItem.user}</Text>
+                                  <Text size="1" color="gray">•</Text>
+                                  <Text size="1" color="gray">{selectedHistoryItem.date}</Text>
+                                </Flex>
+                                
+                                {nextVersion && (
+                                  <Box style={{ 
+                                    padding: '12px', 
+                                    backgroundColor: 'var(--yellow-2)', 
+                                    borderRadius: '6px',
+                                    border: '1px solid var(--yellow-6)'
+                                  }}>
+                                    <Text size="1" color="gray" mb="2" style={{ display: 'block' }}>
+                                      Сравнение с версией {nextVersion.version} от {nextVersion.date}
+                                    </Text>
+                                    <Text size="1" style={{ display: 'block' }}>
+                                      <span style={{ textDecoration: 'line-through', backgroundColor: '#fef3c7' }}>Удалено</span>
+                                      {' '}
+                                      <span style={{ textDecoration: 'underline', backgroundColor: '#fef3c7' }}>Добавлено</span>
+                                    </Text>
+                                  </Box>
+                                )}
+                                
+                                <Box style={{
+                                  padding: '16px',
+                                  backgroundColor: 'var(--gray-2)',
+                                  borderRadius: '6px',
+                                  border: '1px solid var(--gray-6)',
+                                  whiteSpace: 'pre-wrap',
+                                  fontFamily: 'monospace',
+                                  fontSize: '13px',
+                                  lineHeight: '1.6',
+                                  maxHeight: '500px',
+                                  overflow: 'auto'
+                                }}>
+                                  <div dangerouslySetInnerHTML={{ __html: diffText.replace(/\n/g, '<br/>') }} />
+                                </Box>
+                              </Flex>
+                            </Dialog.Description>
+                            
+                            <Flex gap="3" mt="4" justify="end">
+                              <Button 
+                                variant="solid" 
+                                color="blue"
+                                onClick={() => {
+                                  setVersionToRestore(selectedHistoryItem)
+                                  setRestoreConfirmationOpen(true)
+                                }}
+                              >
+                                Восстановить версию
+                              </Button>
+                              <Dialog.Close>
+                                <Button variant="soft" color="gray">Закрыть</Button>
+                              </Dialog.Close>
+                            </Flex>
+                          </>
+                        )
+                      })()}
+                    </Dialog.Content>
+                  </Dialog.Root>
+                  
+                  {/* Модальное окно подтверждения восстановления */}
+                  <Dialog.Root open={restoreConfirmationOpen} onOpenChange={setRestoreConfirmationOpen}>
+                    <Dialog.Content style={{ maxWidth: '600px' }}>
+                      <Dialog.Title>
+                        <Text size="4" weight="bold">Подтверждение восстановления</Text>
+                      </Dialog.Title>
+                      
+                      <Dialog.Description>
+                        <Flex direction="column" gap="4" mt="4">
+                          <Text size="2">
+                            Вы собираетесь восстановить версию {versionToRestore?.version} от {versionToRestore?.date}.
+                            Все текущие изменения будут заменены на значения из этой версии.
+                          </Text>
+                          
+                          {versionToRestore?.fieldsState && (
+                            <>
+                              <Separator />
+                              
+                              <Text size="2" weight="bold" mb="2">Будут восстановлены следующие поля:</Text>
+                              
+                              <Box style={{
+                                maxHeight: '300px',
+                                overflowY: 'auto',
+                                padding: '12px',
+                                backgroundColor: 'var(--gray-2)',
+                                borderRadius: '6px',
+                                border: '1px solid var(--gray-6)'
+                              }}>
+                                <Flex direction="column" gap="2">
+                                  {Object.entries(versionToRestore.fieldsState.fieldSettings).map(([fieldKey, settings]) => {
+                                    const fieldName = getFieldName(fieldKey)
+                                    // Получаем значение поля из fieldsState
+                                    let fieldValue = ''
+                                    if (fieldKey === 'title') fieldValue = versionToRestore.fieldsState.title || ''
+                                    else if (fieldKey === 'department') fieldValue = versionToRestore.fieldsState.department || ''
+                                    else if (fieldKey === 'header') fieldValue = versionToRestore.fieldsState.header || ''
+                                    else if (fieldKey === 'responsibilities') fieldValue = versionToRestore.fieldsState.responsibilities || ''
+                                    else if (fieldKey === 'requirements') fieldValue = versionToRestore.fieldsState.requirements || ''
+                                    else if (fieldKey === 'niceToHave') fieldValue = versionToRestore.fieldsState.niceToHave || ''
+                                    else if (fieldKey === 'conditions') fieldValue = versionToRestore.fieldsState.conditions || ''
+                                    else if (fieldKey === 'closing') fieldValue = versionToRestore.fieldsState.closing || ''
+                                    else if (fieldKey === 'link') fieldValue = versionToRestore.fieldsState.link || ''
+                                    // attachment не имеет текстового значения
+                                    
+                                    return (
+                                      <Card key={fieldKey} style={{ padding: '12px' }}>
+                                        <Flex direction="column" gap="2">
+                                          <Flex align="center" gap="2">
+                                            <Text size="2" weight="medium">{fieldName}</Text>
+                                            <Badge 
+                                              color={settings.active ? 'green' : 'gray'} 
+                                              variant="soft" 
+                                              size="1"
+                                            >
+                                              {settings.active ? 'Активно' : 'Неактивно'}
+                                            </Badge>
+                                            <Badge 
+                                              color={settings.visible ? 'blue' : 'gray'} 
+                                              variant="soft" 
+                                              size="1"
+                                            >
+                                              {settings.visible ? 'Видимо' : 'Скрыто'}
+                                            </Badge>
+                                          </Flex>
+                                          {fieldValue && fieldKey !== 'attachment' && (
+                                            <Text 
+                                              size="1" 
+                                              color="gray" 
+                                              style={{ 
+                                                maxHeight: '60px', 
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                whiteSpace: 'nowrap'
+                                              }}
+                                            >
+                                              {fieldValue.length > 100 ? `${fieldValue.substring(0, 100)}...` : fieldValue}
+                                            </Text>
+                                          )}
+                                        </Flex>
+                                      </Card>
+                                    )
+                                  })}
+                                </Flex>
+                              </Box>
+                              
+                              <Box style={{
+                                padding: '12px',
+                                backgroundColor: 'var(--yellow-2)',
+                                borderRadius: '6px',
+                                border: '1px solid var(--yellow-6)'
+                              }}>
+                                <Text size="1" color="gray">
+                                  ⚠️ Восстановление создаст новую версию в истории правок. Текущие несохраненные изменения будут потеряны.
+                                </Text>
+                              </Box>
+                            </>
+                          )}
+                        </Flex>
+                      </Dialog.Description>
+                      
+                      <Flex gap="3" mt="4" justify="end">
+                        <Button 
+                          variant="soft" 
+                          color="gray"
+                          onClick={() => {
+                            setRestoreConfirmationOpen(false)
+                            setVersionToRestore(null)
+                          }}
+                        >
+                          Отмена
+                        </Button>
+                        <Button 
+                          variant="solid" 
+                          color="blue"
+                          onClick={handleRestoreVersion}
+                        >
+                          Восстановить
+                        </Button>
+                      </Flex>
+                    </Dialog.Content>
+                  </Dialog.Root>
                 </Box>
               )}
             </Flex>
@@ -3611,7 +5939,7 @@ export default function RecrChatPage() {
                     </Box>
                   </Box>
 
-                  <Box>
+                  <Box className={styles.applicationDetailsTable}>
                     <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>
                       Application Details
                     </Text>

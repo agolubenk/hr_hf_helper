@@ -78,6 +78,9 @@ function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefi
   if (item.id === 'company-settings' && pathname.startsWith('/company-settings')) {
     return true
   }
+  if (item.id === 'company-settings-finance' && pathname.startsWith('/company-settings/finance')) {
+    return true
+  }
   if (item.id === 'vacancies-requests' && pathname.startsWith('/hiring-requests')) {
     return true
   }
@@ -552,6 +555,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           href: '/company-settings/grades',
         },
         {
+          id: 'company-settings-finance',
+          label: 'Финансы',
+          icon: <ReloadIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+          href: '/company-settings/finance',
+        },
+        {
           id: 'company-settings-benchmark',
           label: 'Бенчмарк',
           icon: <BarChartIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
@@ -630,6 +639,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               label: 'Единый промпт для вакансий',
               icon: <FileTextIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
               href: '/company-settings/vacancy-prompt',
+            },
+            {
+              id: 'recruiting-settings-offer-template',
+              label: 'Шаблон оффера',
+              icon: <FileTextIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+              href: '/company-settings/recruiting/offer-template',
             },
             {
               id: 'recruiting-settings-candidate-responses',

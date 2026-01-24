@@ -150,24 +150,47 @@
   flex-direction: column;
 }
 
-/* Выравнивание колонок в таблицах Application Details */
-.candidateCard :global(.rt-TableRoot) {
+/* Выравнивание колонок только в таблице Application Details (label | value) */
+.applicationDetailsTable :global(.rt-TableRoot) {
   width: 100%;
 }
 
-.candidateCard :global(.rt-TableRoot table) {
+.applicationDetailsTable :global(.rt-TableRoot table) {
   width: 100%;
   table-layout: fixed;
 }
 
-.candidateCard :global(.rt-TableRoot table) :global(tbody tr td:first-child) {
+.applicationDetailsTable :global(.rt-TableRoot table) :global(tbody tr td:first-child) {
   width: 35%;
   min-width: 140px;
   max-width: 200px;
 }
 
-.candidateCard :global(.rt-TableRoot table) :global(tbody tr td:last-child) {
+.applicationDetailsTable :global(.rt-TableRoot table) :global(tbody tr td:last-child) {
   width: 65%;
+}
+
+/* Таблица зарплатных вилок: фиксированные адекватные ширины колонок */
+.salaryForksTableWrapper {
+  overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
+}
+
+.salaryForksTableWrapper :global(.rt-TableRoot) {
+  width: max-content;
+  max-width: 100%;
+}
+
+.salaryForksTableWrapper :global(.rt-TableRoot table) {
+  table-layout: fixed;
+  width: max-content;
+  max-width: 100%;
+}
+
+.salaryForksTableWrapper :global(.rt-ScrollAreaRoot),
+.salaryForksTableWrapper :global(.rt-ScrollAreaViewport) {
+  max-width: 100%;
 }
 
 .subTabs {

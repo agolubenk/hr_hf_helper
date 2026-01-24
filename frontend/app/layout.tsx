@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import '@radix-ui/themes/styles.css'
 import './globals.css'
 import { ThemeProvider } from '@/components/ThemeProvider'
+import { ToastProvider } from '@/components/Toast/ToastContext'
 
 export const metadata: Metadata = {
   title: 'HR Helper',
@@ -17,7 +18,9 @@ export default function RootLayout({
     <html lang="ru">
       <body>
         <ThemeProvider>
-          {children}
+          <ToastProvider>
+            {children}
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>
