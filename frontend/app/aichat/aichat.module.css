@@ -44,6 +44,13 @@
   overflow: hidden;
 }
 
+.messagesWrapper {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
 
 .messagesContainer {
   flex: 1;
@@ -52,6 +59,14 @@
   display: flex;
   flex-direction: column;
   background: var(--gray-2);
+}
+
+.scrollToBottomBtn {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .inputContainer {

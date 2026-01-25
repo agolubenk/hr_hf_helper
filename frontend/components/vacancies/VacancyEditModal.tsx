@@ -77,6 +77,43 @@ const mockDepartments: Department[] = [
   { id: '4', name: 'HR Департамент', parent: null, children: [] },
 ]
 
+// Фиктивные данные для карточек просмотра (когда нет реальных)
+const VIEW_DUMMY = {
+  integration: 'Huntflow (ID: 894521)',
+  officeLink: 'https://company.com/vacancies/example',
+  officeUseOnSite: true,
+  officeQuestion: 'Расскажите о вашем опыте и ключевых достижениях в данной роли.',
+  department: 'Отдел разработки',
+  header: 'Мы — продуктовая IT-компания с офисами в Минске и Варшаве. Приглашаем в команду мотивированного специалиста.',
+  responsibilities: '- Разработка и поддержка пользовательских интерфейсов\n- Участие в проектировании и код-ревью\n- Взаимодействие с дизайном и бэкенд-командой',
+  requirements: '- Опыт коммерческой разработки от 2 лет\n- Уверенное знание React и TypeScript\n- Понимание принципов вёрстки (HTML, CSS)',
+  niceToHave: '- Опыт с тестированием (Jest, React Testing Library)\n- Знание CI/CD и контейнеризации',
+  conditions: '- Офис/гибрид/удалёнка на выбор\n- ДМС, стоматология\n- Обучение за счёт компании',
+  closing: 'Если вам интересна вакансия — присылайте резюме. Мы свяжемся в течение 3 рабочих дней.',
+  link: 'https://company.com/careers',
+  attachment: 'Описание_вакансии.docx',
+  scorecardTitle: 'Scorecard: Frontend Developer',
+  scorecardPosition: 'В начале',
+  scorecardLocal: false,
+  analysisPrompt: 'Проанализируй резюме кандидата на соответствие вакансии. Оцени опыт, ключевые навыки и релевантность.',
+  meetingStage: 'HR Screening',
+  meetingDuration: 60,
+  meetingTitle: 'HR-собес',
+  meetingDescription: 'Знакомство с компанией, обсуждение опыта и мотивации.',
+  meetingFormat: 'online',
+  recruiterName: 'Иван Иванов',
+  recruiterPosition: 'Senior Recruiter',
+  interviewerName: 'Алексей Козлов',
+  interviewerPosition: 'Tech Lead',
+  stagesChain: 'New → Under Review → HR Screening → Interview → Offer → Accepted',
+  locations: 'Минск, Удалённо',
+  date: '25.01.2026',
+  vacancyTitle: 'Frontend Developer (пример)',
+  historyChange: 'Изменен текст вакансии',
+  historyDate: '2026-01-24 10:30',
+  historyUser: 'Иван Иванов',
+}
+
 export type VacancyViewItem = {
   id: number
   title: string
@@ -364,7 +401,12 @@ export default function VacancyEditModal({ open, onOpenChange, vacancyId, vacanc
     showToast(`Версия ${versionToRestore.version} успешно восстановлена`, 'success')
   }
 
-  useEffect(() => { if (open) { setVacancyTitleS(vacancyTitle ?? ''); setSelectedSettingTab('text') } }, [open, vacancyTitle])
+  useEffect(() => {
+    if (open) {
+      setVacancyTitleS(vacancyTitle ?? '')
+      setSelectedSettingTab('text')
+    }
+  }, [open, vacancyTitle])
 
   const stagesBeforeOffer = getStagesBeforeOffer()
   const maxMeetingsCount = Math.max(0, stagesBeforeOffer.length - 2)
@@ -404,17 +446,17 @@ export default function VacancyEditModal({ open, onOpenChange, vacancyId, vacanc
           <Card style={{ padding: 16 }}>
             <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Основная информация</Text>
             <Flex direction="column" gap="3">
-              <Box><Text size="1" color="gray" mb="1" style={{ display: 'block' }}>Название</Text><Text size="3" weight="bold">{vacancy?.title ?? vacancyTitleS ?? vacancyTitle ?? '—'}</Text></Box>
-              <Box><Text size="1" color="gray" mb="1" style={{ display: 'block' }}>Рекрутер</Text><Text size="2">{vacancy?.recruiter ?? allRecruiters.find(r => r.id === mainRecruiter)?.name ?? '—'}</Text></Box>
-              <Box><Text size="1" color="gray" mb="1" style={{ display: 'block' }}>Локации</Text><Text size="2">{vacancy?.locations?.length ? vacancy.locations.join(', ') : '—'}</Text></Box>
+              <Box><Text size="1" color="gray" mb="1" style={{ display: 'block' }}>Название</Text><Text size="3" weight="bold">{vacancy?.title ?? vacancyTitleS ?? vacancyTitle ?? VIEW_DUMMY.vacancyTitle}</Text></Box>
+              <Box><Text size="1" color="gray" mb="1" style={{ display: 'block' }}>Рекрутер</Text><Text size="2">{vacancy?.recruiter ?? allRecruiters.find(r => r.id === mainRecruiter)?.name ?? VIEW_DUMMY.recruiterName}</Text></Box>
+              <Box><Text size="1" color="gray" mb="1" style={{ display: 'block' }}>Локации</Text><Text size="2">{vacancy?.locations?.length ? vacancy.locations.join(', ') : VIEW_DUMMY.locations}</Text></Box>
               <Box><Text size="1" color="gray" mb="1" style={{ display: 'block' }}>Интервьюеры</Text><Text size="2">{vacancy != null ? vacancy.interviewers : selectedVacancyInterviewers.size}</Text></Box>
-              <Box><Text size="1" color="gray" mb="1" style={{ display: 'block' }}>Дата</Text><Text size="2">{vacancy?.date ?? '—'}</Text></Box>
+              <Box><Text size="1" color="gray" mb="1" style={{ display: 'block' }}>Дата</Text><Text size="2">{vacancy?.date ?? VIEW_DUMMY.date}</Text></Box>
               {vacancy?.hasWarning && vacancy?.warningText && (
                 <Box style={{ padding: 10, backgroundColor: 'var(--yellow-2)', borderRadius: 6, border: '1px solid var(--yellow-6)' }}><Text size="2" color="amber">⚠ {vacancy.warningText}</Text></Box>
               )}
-              <Box><Text size="1" color="gray" mb="1" style={{ display: 'block' }}>Связи с интеграциями</Text><Text size="2">{integrationPartner === 'huntflow' ? `Huntflow${huntflowVacancyId ? ` (ID: ${huntflowVacancyId})` : ''}` : '—'}</Text></Box>
-              <Box><Text size="1" color="gray" mb="2" style={{ display: 'block' }}>Доступные офисы</Text>{questionLinkOffices.map(office => { const s = questionsLinksByOffice[office.id] ?? getDefaultOfficeState(); const l = s.link, q = s.question ?? { text: '', color: '' }; return <Box key={office.id} mb="2"><Text size="2" weight="medium">{office.name}</Text><Text size="1" color="gray" style={{ display: 'block' }}>Ссылка: {l?.url || '—'}; с сайта: {l?.useOnSite ? 'да' : 'нет'}</Text><Text size="1" color="gray" style={{ display: 'block' }}>Вопрос: {q?.text || '—'}</Text></Box> })}</Box>
-              <Box><Text size="1" color="gray" mb="1" style={{ display: 'block' }}>Активность</Text><Badge color={isPublished ? 'green' : 'gray'} variant="soft">{isPublished ? 'Опубликовано' : 'Не опубликовано'}</Badge></Box>
+              <Box><Text size="1" color="gray" mb="1" style={{ display: 'block' }}>Связи с интеграциями</Text><Text size="2">{integrationPartner === 'huntflow' ? `Huntflow${huntflowVacancyId ? ` (ID: ${huntflowVacancyId})` : ''}` : VIEW_DUMMY.integration}</Text></Box>
+              <Box><Text size="1" color="gray" mb="2" style={{ display: 'block' }}>Доступные офисы</Text>{questionLinkOffices.map(office => { const s = questionsLinksByOffice[office.id] ?? getDefaultOfficeState(); const l = s.link, q = s.question ?? { text: '', color: '' }; return <Box key={office.id} mb="2"><Text size="2" weight="medium">{office.name}</Text><Text size="1" color="gray" style={{ display: 'block' }}>Ссылка: {l?.url || VIEW_DUMMY.officeLink}; с сайта: {(l?.url ? l.useOnSite : VIEW_DUMMY.officeUseOnSite) ? 'да' : 'нет'}</Text><Text size="1" color="gray" style={{ display: 'block' }}>Вопрос: {q?.text || VIEW_DUMMY.officeQuestion}</Text></Box> })}</Box>
+              <Box><Text size="1" color="gray" mb="1" style={{ display: 'block' }}>Активность</Text><Badge color={(isPublished || !vacancyHeader) ? 'green' : 'gray'} variant="soft">{(isPublished || !vacancyHeader) ? 'Опубликовано' : 'Не опубликовано'}</Badge></Box>
             </Flex>
           </Card>
 
@@ -423,7 +465,7 @@ export default function VacancyEditModal({ open, onOpenChange, vacancyId, vacanc
             <Flex direction="column" gap="2">{allRecruiters.filter(r => selectedRecruiters.has(r.id)).map(r => (
               <Flex key={r.id} align="center" gap="2"><Text size="2">{r.name}</Text>{mainRecruiter === r.id && <Badge color="blue" variant="soft" size="1">Главный</Badge>}<Text size="1" color="gray">{r.position}</Text></Flex>
             ))}</Flex>
-            {allRecruiters.filter(r => selectedRecruiters.has(r.id)).length === 0 && (vacancy?.recruiter ? <Text size="2">{vacancy.recruiter}</Text> : <Text size="2" color="gray">—</Text>)}
+            {allRecruiters.filter(r => selectedRecruiters.has(r.id)).length === 0 && (vacancy?.recruiter ? <Text size="2">{vacancy.recruiter}</Text> : <Flex align="center" gap="2"><Text size="2">{VIEW_DUMMY.recruiterName}</Text><Text size="1" color="gray">— {VIEW_DUMMY.recruiterPosition}</Text></Flex>)}
           </Card>
 
           <Separator size="4" />
@@ -432,47 +474,57 @@ export default function VacancyEditModal({ open, onOpenChange, vacancyId, vacanc
             <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Полное описание</Text>
             {isPublished && publicationUrl && <Button size="2" variant="soft" mb="3" onClick={() => window.open(publicationUrl!, '_blank')}><GlobeIcon width={16} height={16} /> Открыть на сайте</Button>}
             <Flex direction="column" gap="3">
-              <Box><Text size="1" color="gray" style={{ display: 'block' }}>Отдел</Text><Text size="2">{getAllDepartmentsFlat(mockDepartments).find(d => d.id === vacancyDepartment)?.name || '—'}</Text></Box>
-              <Box><Text size="1" color="gray" style={{ display: 'block' }}>Шапка</Text><Text size="2" style={{ whiteSpace: 'pre-wrap' }}>{vacancyHeader || '—'}</Text></Box>
-              <Box><Text size="1" color="gray" style={{ display: 'block' }}>Обязанности</Text><Text size="2" style={{ whiteSpace: 'pre-wrap' }}>{vacancyResponsibilities || '—'}</Text></Box>
-              <Box><Text size="1" color="gray" style={{ display: 'block' }}>Требования</Text><Text size="2" style={{ whiteSpace: 'pre-wrap' }}>{vacancyRequirements || '—'}</Text></Box>
-              <Box><Text size="1" color="gray" style={{ display: 'block' }}>Будет плюсом</Text><Text size="2" style={{ whiteSpace: 'pre-wrap' }}>{vacancyNiceToHave || '—'}</Text></Box>
-              <Box><Text size="1" color="gray" style={{ display: 'block' }}>Условия работы</Text><Text size="2" style={{ whiteSpace: 'pre-wrap' }}>{vacancyConditions || '—'}</Text></Box>
-              <Box><Text size="1" color="gray" style={{ display: 'block' }}>Завершение</Text><Text size="2" style={{ whiteSpace: 'pre-wrap' }}>{vacancyClosing || '—'}</Text></Box>
-              <Box><Text size="1" color="gray" style={{ display: 'block' }}>Доп. ссылка</Text><Text size="2">{vacancyLink || '—'}</Text></Box>
-              <Box><Text size="1" color="gray" style={{ display: 'block' }}>Вложение</Text><Text size="2">{vacancyAttachment?.name || '—'}</Text></Box>
+              <Box><Text size="1" color="gray" style={{ display: 'block' }}>Отдел</Text><Text size="2">{getAllDepartmentsFlat(mockDepartments).find(d => d.id === vacancyDepartment)?.name || VIEW_DUMMY.department}</Text></Box>
+              <Box><Text size="1" color="gray" style={{ display: 'block' }}>Шапка</Text><Text size="2" style={{ whiteSpace: 'pre-wrap' }}>{vacancyHeader || VIEW_DUMMY.header}</Text></Box>
+              <Box><Text size="1" color="gray" style={{ display: 'block' }}>Обязанности</Text><Text size="2" style={{ whiteSpace: 'pre-wrap' }}>{vacancyResponsibilities || VIEW_DUMMY.responsibilities}</Text></Box>
+              <Box><Text size="1" color="gray" style={{ display: 'block' }}>Требования</Text><Text size="2" style={{ whiteSpace: 'pre-wrap' }}>{vacancyRequirements || VIEW_DUMMY.requirements}</Text></Box>
+              <Box><Text size="1" color="gray" style={{ display: 'block' }}>Будет плюсом</Text><Text size="2" style={{ whiteSpace: 'pre-wrap' }}>{vacancyNiceToHave || VIEW_DUMMY.niceToHave}</Text></Box>
+              <Box><Text size="1" color="gray" style={{ display: 'block' }}>Условия работы</Text><Text size="2" style={{ whiteSpace: 'pre-wrap' }}>{vacancyConditions || VIEW_DUMMY.conditions}</Text></Box>
+              <Box><Text size="1" color="gray" style={{ display: 'block' }}>Завершение</Text><Text size="2" style={{ whiteSpace: 'pre-wrap' }}>{vacancyClosing || VIEW_DUMMY.closing}</Text></Box>
+              <Box><Text size="1" color="gray" style={{ display: 'block' }}>Доп. ссылка</Text><Text size="2">{vacancyLink || VIEW_DUMMY.link}</Text></Box>
+              <Box><Text size="1" color="gray" style={{ display: 'block' }}>Вложение</Text><Text size="2">{vacancyAttachment?.name || VIEW_DUMMY.attachment}</Text></Box>
             </Flex>
           </Card>
 
           <Card style={{ padding: 16 }}>
             <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Ссылки</Text>
             <Flex direction="column" gap="1">{vacancyLink && <a href={vacancyLink} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-11)' }}><Text size="2">{vacancyLink}</Text></a>}{questionLinkOffices.map(o => { const l = questionsLinksByOffice[o.id]?.link; if (!l?.url) return null; return <a key={o.id} href={l.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-11)' }}><Text size="2">{o.name}: {l.url}</Text></a> })}</Flex>
-            {!vacancyLink && !questionLinkOffices.some(o => questionsLinksByOffice[o.id]?.link?.url) && <Text size="2" color="gray">—</Text>}
+            {!vacancyLink && !questionLinkOffices.some(o => questionsLinksByOffice[o.id]?.link?.url) && <a href={VIEW_DUMMY.link} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-11)' }}><Text size="2">{VIEW_DUMMY.link}</Text></a>}
           </Card>
 
           <Card style={{ padding: 16 }}>
             <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Вопросы</Text>
-            {questionLinkOffices.map(o => { const q = questionsLinksByOffice[o.id]?.question?.text; if (!q) return null; return <Box key={o.id} mb="2"><Text size="1" color="gray">{o.name}</Text><Text size="2">{q}</Text></Box> })}
-            {!questionLinkOffices.some(o => questionsLinksByOffice[o.id]?.question?.text) && <Text size="2" color="gray">—</Text>}
+            {questionLinkOffices.map(o => { const q = questionsLinksByOffice[o.id]?.question?.text; return <Box key={o.id} mb="2"><Text size="1" color="gray">{o.name}</Text><Text size="2">{q || VIEW_DUMMY.officeQuestion}</Text></Box> })}
           </Card>
 
           <Card style={{ padding: 16 }}>
             <Text size="3" weight="bold" mb="2" style={{ display: 'block' }}>Переходы по этапам</Text>
-            <Text size="2" style={{ whiteSpace: 'nowrap', overflowX: 'auto', display: 'block' }}>{recruitmentStages.filter(s => activeStages.has(s.id)).map(s => s.name).join(' → ') || '—'}</Text>
+            <Text size="2" style={{ whiteSpace: 'nowrap', overflowX: 'auto', display: 'block' }}>{recruitmentStages.filter(s => activeStages.has(s.id)).map(s => s.name).join(' → ') || VIEW_DUMMY.stagesChain}</Text>
           </Card>
 
           <Card style={{ padding: 16 }}>
             <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Встречи и интервью</Text>
-            {interviewMeetings.length === 0 ? <Text size="2" color="gray">—</Text> : (
+            {interviewMeetings.length === 0 ? (
+              <Box style={{ padding: 12, backgroundColor: 'var(--gray-2)', borderRadius: 8, border: '1px solid var(--gray-6)' }}>
+                <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Встреча 1</Text>
+                <Flex direction="column" gap="2">
+                  <Box><Text size="1" color="gray" style={{ display: 'block' }}>Этап</Text><Text size="2">{VIEW_DUMMY.meetingStage}</Text></Box>
+                  <Box><Text size="1" color="gray" style={{ display: 'block' }}>Длительность</Text><Text size="2">{VIEW_DUMMY.meetingDuration} мин</Text></Box>
+                  <Box><Text size="1" color="gray" style={{ display: 'block' }}>Заголовок</Text><Text size="2">{VIEW_DUMMY.meetingTitle}</Text></Box>
+                  <Box><Text size="1" color="gray" style={{ display: 'block' }}>Сопровождающий текст</Text><Text size="2" style={{ whiteSpace: 'pre-wrap' }}>{VIEW_DUMMY.meetingDescription}</Text></Box>
+                  <Box><Text size="1" color="gray" style={{ display: 'block' }}>Формат</Text><Text size="2">Онлайн</Text></Box>
+                </Flex>
+              </Box>
+            ) : (
               <Flex direction="column" gap="4">{interviewMeetings.map((m, i) => (
                 <Box key={m.id} style={{ padding: 12, backgroundColor: 'var(--gray-2)', borderRadius: 8, border: '1px solid var(--gray-6)' }}>
                   <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Встреча {i + 1}</Text>
                   <Flex direction="column" gap="2">
-                    <Box><Text size="1" color="gray" style={{ display: 'block' }}>Этап</Text><Text size="2">{m.stage ? (recruitmentStages.find(s => s.id === m.stage)?.name || m.stage) : '—'}</Text></Box>
+                    <Box><Text size="1" color="gray" style={{ display: 'block' }}>Этап</Text><Text size="2">{m.stage ? (recruitmentStages.find(s => s.id === m.stage)?.name || m.stage) : VIEW_DUMMY.meetingStage}</Text></Box>
                     <Box><Text size="1" color="gray" style={{ display: 'block' }}>Длительность</Text><Text size="2">{m.duration} мин</Text></Box>
-                    <Box><Text size="1" color="gray" style={{ display: 'block' }}>Заголовок</Text><Text size="2">{m.title || '—'}</Text></Box>
-                    <Box><Text size="1" color="gray" style={{ display: 'block' }}>Сопровождающий текст</Text><Text size="2" style={{ whiteSpace: 'pre-wrap' }}>{m.description || '—'}</Text></Box>
-                    <Box><Text size="1" color="gray" style={{ display: 'block' }}>Формат</Text><Text size="2">{m.format === 'office' ? 'Офис' : m.format === 'online' ? 'Онлайн' : '—'}</Text></Box>
+                    <Box><Text size="1" color="gray" style={{ display: 'block' }}>Заголовок</Text><Text size="2">{m.title || VIEW_DUMMY.meetingTitle}</Text></Box>
+                    <Box><Text size="1" color="gray" style={{ display: 'block' }}>Сопровождающий текст</Text><Text size="2" style={{ whiteSpace: 'pre-wrap' }}>{m.description || VIEW_DUMMY.meetingDescription}</Text></Box>
+                    <Box><Text size="1" color="gray" style={{ display: 'block' }}>Формат</Text><Text size="2">{m.format === 'office' ? 'Офис' : m.format === 'online' ? 'Онлайн' : 'Онлайн'}</Text></Box>
                   </Flex>
                 </Box>
               ))}</Flex>
@@ -483,15 +535,14 @@ export default function VacancyEditModal({ open, onOpenChange, vacancyId, vacanc
             <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Scorecard</Text>
             <Flex direction="column" gap="2">
               {scorecardLinkUrl && <a href={scorecardLinkUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-11)' }}><Text size="2">{scorecardLinkTitle || scorecardLinkUrl}</Text></a>}
-              <Text size="2">Название: {scorecardLinkTitle || '—'}; место: {scorecardLinkPosition === 'start' ? 'В начале' : 'В конце'}; локальный: {scorecardLocalActive ? 'Активный' : 'Не активный'}</Text>
+              <Text size="2">Название: {scorecardLinkTitle || scorecardLinkUrl || VIEW_DUMMY.scorecardTitle}; место: {scorecardLinkPosition === 'start' ? 'В начале' : 'В конце'}; локальный: {(scorecardLinkUrl || scorecardLinkTitle) ? (scorecardLocalActive ? 'Активный' : 'Не активный') : (VIEW_DUMMY.scorecardLocal ? 'Активный' : 'Не активный')}</Text>
             </Flex>
-            {!scorecardLinkUrl && !scorecardLinkTitle && <Text size="2" color="gray">—</Text>}
           </Card>
 
           <Card style={{ padding: 16 }}>
             <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Промпт для анализа</Text>
             <Text size="2">Единый промпт: {useUnifiedPrompt ? 'да' : 'нет'}</Text>
-            {!useUnifiedPrompt && <Box mt="2"><Text size="2" style={{ whiteSpace: 'pre-wrap' }}>{analysisPrompt || '—'}</Text></Box>}
+            {(!useUnifiedPrompt || !analysisPrompt) && <Box mt="2"><Text size="2" style={{ whiteSpace: 'pre-wrap' }}>{analysisPrompt || VIEW_DUMMY.analysisPrompt}</Text></Box>}
           </Card>
 
           <Card style={{ padding: 16 }}>
@@ -504,12 +555,17 @@ export default function VacancyEditModal({ open, onOpenChange, vacancyId, vacanc
             <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Заказчики и интервьюеры</Text>
             <Box mb="3"><Text size="1" color="gray" style={{ display: 'block' }}>Только из отдела</Text><Text size="2">{customersOnlyFromDepartment ? 'Да' : 'Нет (все)'}</Text></Box>
             <Flex direction="column" gap="2">{Array.from(selectedVacancyInterviewers).map(id => { const inv = allInterviewers.find(i => i.id === id); if (!inv) return null; const fin = finalInterviewInterviewers.has(id); return <Flex key={id} align="center" gap="2" wrap="wrap"><Text size="2">{inv.name}</Text>{inv.isCustomer && <Badge color="blue" variant="soft" size="1">Заказчик</Badge>}{fin && <Badge color="purple" variant="soft" size="1">Финальное интервью</Badge>}</Flex>})}</Flex>
-            {selectedVacancyInterviewers.size === 0 && <Text size="2" color="gray">—</Text>}
+            {selectedVacancyInterviewers.size === 0 && <Flex align="center" gap="2"><Text size="2">{VIEW_DUMMY.interviewerName}</Text><Text size="1" color="gray">— {VIEW_DUMMY.interviewerPosition}</Text></Flex>}
           </Card>
 
           <Card style={{ padding: 16 }}>
             <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>История правок</Text>
-            {editHistory.length === 0 ? <Text size="2" color="gray">—</Text> : (
+            {editHistory.length === 0 ? (
+              <Box style={{ padding: 10, backgroundColor: 'var(--gray-2)', borderRadius: 6, border: '1px solid var(--gray-6)' }}>
+                <Flex justify="between" align="start" gap="2"><Text size="2" weight="medium">{VIEW_DUMMY.historyChange}</Text><Text size="1" color="gray">{VIEW_DUMMY.historyDate}</Text></Flex>
+                <Flex align="center" gap="2"><PersonIcon width={12} height={12} style={{ color: 'var(--gray-9)' }} /><Text size="1" color="gray">{VIEW_DUMMY.historyUser}</Text></Flex>
+              </Box>
+            ) : (
               <Flex direction="column" gap="2">{editHistory.slice(0, 5).map(item => (
                 <Box key={item.id} style={{ padding: 10, backgroundColor: 'var(--gray-2)', borderRadius: 6, border: '1px solid var(--gray-6)' }}>
                   <Flex justify="between" align="start" gap="2"><Text size="2" weight="medium">{item.changes}</Text><Text size="1" color="gray">{item.date}</Text></Flex>

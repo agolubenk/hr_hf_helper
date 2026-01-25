@@ -2,7 +2,7 @@
 
 import { Box, Text, Flex, TextArea, Button, Table } from "@radix-ui/themes"
 import { ChevronDownIcon, ChevronUpIcon, PaperPlaneIcon, OpenInNewWindowIcon, EyeOpenIcon, CalendarIcon, CheckIcon, PersonIcon, Cross2Icon, ClipboardIcon } from "@radix-ui/react-icons"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import styles from './WorkflowChat.module.css'
 
 // Компонент для отображения списка участников
@@ -278,6 +278,7 @@ export default function WorkflowChat() {
   ]
 
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages)
+  const [isAtBottom, setIsAtBottom] = useState(true)
 
   const handleSend = () => {
     if (message.trim() || attachedFiles.length > 0 || currentCommand === '#delete') {
@@ -545,19 +546,35 @@ export default function WorkflowChat() {
     }
   }, [message])
 
-  // Автоматическая прокрутка чата вниз
-  useEffect(() => {
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
-    }
-  }, [messages])
-
-  // Прокрутка при монтировании компонента
-  useEffect(() => {
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
+  const scrollToBottom = useCallback(() => {
+    const el = messagesContainerRef.current
+    if (el) {
+      el.scrollTop = el.scrollHeight
+      setIsAtBottom(true)
     }
   }, [])
+
+  const handleMessagesScroll = useCallback(() => {
+    const el = messagesContainerRef.current
+    if (!el) return
+    const threshold = 80
+    const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < threshold
+    setIsAtBottom(atBottom)
+  }, [])
+
+  // Прокрутка вниз при смене сообщений или при монтировании
+  useEffect(() => {
+    const el = messagesContainerRef.current
+    if (!el) return
+    el.scrollTop = el.scrollHeight
+    setIsAtBottom(true)
+    requestAnimationFrame(() => {
+      if (el) el.scrollTop = el.scrollHeight
+    })
+  }, [messages])
+
+  const visibleMessages = messages.filter(m => !hiddenMessages.has(m.id))
+  const showScrollToBottom = !isAtBottom && visibleMessages.length > 0
 
   return (
     <Box className={styles.chatContainer}>
@@ -573,8 +590,9 @@ export default function WorkflowChat() {
       </Flex>
 
       {/* Сообщения */}
-      <Box ref={messagesContainerRef} className={styles.messagesContainer}>
-            {messages.filter(msg => !hiddenMessages.has(msg.id)).map((msg) => (
+      <Box className={styles.messagesWrapper}>
+        <Box ref={messagesContainerRef} className={styles.messagesContainer} onScroll={handleMessagesScroll}>
+            {visibleMessages.map((msg) => (
               <Flex
                 key={msg.id}
                 className={`${styles.messageWrapper} ${msg.type === 'user' ? styles.messageUser : styles.messageAssistant}`}
@@ -949,6 +967,20 @@ export default function WorkflowChat() {
                 )}
               </Flex>
             ))}
+        </Box>
+        {showScrollToBottom && (
+          <Button
+            size="2"
+            variant="soft"
+            color="gray"
+            radius="full"
+            title="К последнему сообщению"
+            className={styles.scrollToBottomBtn}
+            onClick={scrollToBottom}
+          >
+            <ChevronDownIcon width={16} height={16} />
+          </Button>
+        )}
       </Box>
 
       {/* Поле ввода сообщения */}

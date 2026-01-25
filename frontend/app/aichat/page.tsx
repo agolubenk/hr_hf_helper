@@ -5,8 +5,10 @@ import ChatHistory from "@/components/aichat/ChatHistory"
 import ChatMessages from "@/components/aichat/ChatMessages"
 import ChatInput from "@/components/aichat/ChatInput"
 import ChatHeader from "@/components/aichat/ChatHeader"
-import { Box, Flex } from "@radix-ui/themes"
-import { useState } from "react"
+import { useToast } from "@/components/Toast/ToastContext"
+import { Box, Flex, Button } from "@radix-ui/themes"
+import { ChevronDownIcon } from "@radix-ui/react-icons"
+import { useState, useEffect, useRef, useCallback } from "react"
 import styles from './aichat.module.css'
 
 export interface Chat {
@@ -25,6 +27,8 @@ export interface Message {
 }
 
 export default function AIChatPage() {
+  const toast = useToast()
+
   const [chats, setChats] = useState<Chat[]>([
     {
       id: '1',
@@ -85,6 +89,35 @@ export default function AIChatPage() {
 
   const selectedChat = chats.find(chat => chat.id === selectedChatId)
   const currentMessages = messages[selectedChatId] || []
+  const messagesScrollRef = useRef<HTMLDivElement>(null)
+  const [isAtBottom, setIsAtBottom] = useState(true)
+
+  const scrollToBottom = useCallback(() => {
+    const el = messagesScrollRef.current
+    if (el) {
+      el.scrollTop = el.scrollHeight
+      setIsAtBottom(true)
+    }
+  }, [])
+
+  const handleMessagesScroll = useCallback(() => {
+    const el = messagesScrollRef.current
+    if (!el) return
+    const threshold = 80
+    const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < threshold
+    setIsAtBottom(atBottom)
+  }, [])
+
+  // Прокрутка чата до конца при смене сообщений, чата или при монтировании
+  useEffect(() => {
+    const el = messagesScrollRef.current
+    if (!el) return
+    el.scrollTop = el.scrollHeight
+    setIsAtBottom(true)
+    requestAnimationFrame(() => { el.scrollTop = el.scrollHeight })
+  }, [currentMessages, selectedChatId])
+
+  const showScrollToBottom = !isAtBottom && currentMessages.length > 0
 
   const handleNewChat = () => {
     const newChat: Chat = {
@@ -143,45 +176,44 @@ export default function AIChatPage() {
     ))
   }
 
-  const handleDeleteChat = () => {
-    if (window.confirm('Вы уверены, что хотите удалить этот чат?')) {
-      const newChats = chats.filter(chat => chat.id !== selectedChatId)
-      setChats(newChats)
-      
-      // Удаляем сообщения чата
-      const newMessages = { ...messages }
-      delete newMessages[selectedChatId]
-      setMessages(newMessages)
-      
-      // Выбираем другой чат или создаем новый
-      if (newChats.length > 0) {
-        setSelectedChatId(newChats[0].id)
-      } else {
-        handleNewChat()
+  const performDeleteChat = (chatId: string) => {
+    const willCreateNewRef = { current: false }
+    setChats(prev => {
+      const filtered = prev.filter(c => c.id !== chatId)
+      if (filtered.length === 0) {
+        willCreateNewRef.current = true
+        const newChat: Chat = {
+          id: Date.now().toString(),
+          title: `Чат ${new Date().toLocaleDateString('ru-RU')} ${new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`,
+          createdAt: new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        }
+        setSelectedChatId(newChat.id)
+        setMessages(prevM => { const n = { ...prevM }; delete n[chatId]; n[newChat.id] = []; return n })
+        return [newChat]
       }
+      if (chatId === selectedChatId) {
+        setSelectedChatId(filtered[0].id)
+      }
+      return filtered
+    })
+    if (!willCreateNewRef.current) {
+      setMessages(prev => { const n = { ...prev }; delete n[chatId]; return n })
     }
   }
 
-  const handleDeleteChatFromHistory = (chatId: string) => {
-    if (window.confirm('Вы уверены, что хотите удалить этот чат?')) {
-      const newChats = chats.filter(chat => chat.id !== chatId)
-      setChats(newChats)
-      
-      // Удаляем сообщения чата
-      const newMessages = { ...messages }
-      delete newMessages[chatId]
-      setMessages(newMessages)
-      
-      // Если удаляемый чат был выбран, выбираем другой чат или создаем новый
-      if (chatId === selectedChatId) {
-        if (newChats.length > 0) {
-          setSelectedChatId(newChats[0].id)
-        } else {
-          handleNewChat()
-        }
-      }
-    }
+  const showDeleteConfirm = (chatId: string) => {
+    toast.showWarning('Удалить чат?', 'Вы уверены, что хотите удалить этот чат?', {
+      duration: 12000,
+      actions: [
+        { label: 'Удалить', onClick: () => performDeleteChat(chatId), variant: 'solid', color: 'red' },
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+      ],
+    })
   }
+
+  const handleDeleteChat = () => showDeleteConfirm(selectedChatId)
+
+  const handleDeleteChatFromHistory = (chatId: string) => showDeleteConfirm(chatId)
 
   return (
     <AppLayout pageTitle="AI Chat">
@@ -209,8 +241,27 @@ export default function AIChatPage() {
                   onDelete={handleDeleteChat}
                 />
 
-                <Box className={styles.messagesContainer}>
-                  <ChatMessages messages={currentMessages} />
+                <Box className={styles.messagesWrapper}>
+                  <Box
+                    ref={messagesScrollRef}
+                    className={styles.messagesContainer}
+                    onScroll={handleMessagesScroll}
+                  >
+                    <ChatMessages messages={currentMessages} />
+                  </Box>
+                  {showScrollToBottom && (
+                    <Button
+                      size="2"
+                      variant="soft"
+                      color="gray"
+                      className={styles.scrollToBottomBtn}
+                      onClick={scrollToBottom}
+                      title="К последнему сообщению"
+                      radius="full"
+                    >
+                      <ChevronDownIcon width={18} height={18} />
+                    </Button>
+                  )}
                 </Box>
 
                 <Box className={styles.inputContainer}>

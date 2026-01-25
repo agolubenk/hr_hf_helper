@@ -4,7 +4,7 @@ import { Box, Flex, Text } from "@radix-ui/themes"
 import * as Tooltip from '@radix-ui/react-tooltip'
 import { PersonIcon, PaperPlaneIcon } from "@radix-ui/react-icons"
 import { Message } from "@/app/aichat/page"
-import { useState, useEffect, useRef } from "react"
+import { useState } from "react"
 import styles from './ChatMessages.module.css'
 
 interface ChatMessagesProps {
@@ -64,22 +64,6 @@ function FileListTooltip({ files }: { files: File[] }) {
 }
 
 export default function ChatMessages({ messages }: ChatMessagesProps) {
-  const messagesContainerRef = useRef<HTMLDivElement>(null)
-
-  // Автоматическая прокрутка чата вниз
-  useEffect(() => {
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
-    }
-  }, [messages])
-
-  // Прокрутка при монтировании компонента
-  useEffect(() => {
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
-    }
-  }, [])
-
   if (messages.length === 0) {
     return (
       <Box className={styles.emptyState}>
@@ -91,7 +75,7 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
   }
 
   return (
-    <Box ref={messagesContainerRef} className={styles.messagesContainer}>
+    <Box className={styles.messagesContainer}>
       {messages.map((message) => (
         <Flex
           key={message.id}
