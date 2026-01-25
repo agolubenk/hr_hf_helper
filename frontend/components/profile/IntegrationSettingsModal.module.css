@@ -1,5 +1,6 @@
 /* Стили для модального окна настроек интеграций */
 
+/* z-index: модалки < тостов (3001); здесь 2000 */
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -27,7 +28,7 @@
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   overflow: hidden;
   position: relative;
-  z-index: 2001;
+  z-index: 2000;
 }
 
 /* Для темной темы */

@@ -35,16 +35,16 @@ body[data-theme="light"] .radix-themes,
 .radix-themes[data-appearance="light"] {
   background-color: #ffffff;
 }
-/* Исправляем z-index для Select.Content внутри модальных окон */
-body [data-radix-popper-content-wrapper] {
-  z-index: 3000 !important;
+/* === Z-index: меню 3000, тосты 3001 (меню+1), модалки < тостов (≤2000) === */
+:root {
+  --z-menu: 3000;
+  --z-toasts: 3001;
+  --z-modals: 2000;
 }
 
-body [data-radix-select-content] {
-  z-index: 3000 !important;
-}
-
-/* Стили для Select.Content из Radix UI Themes */
+/* Меню: Select, dropdown, Popover — слой 3000 */
+body [data-radix-popper-content-wrapper],
+body [data-radix-select-content],
 body .rt-SelectContent {
   z-index: 3000 !important;
 }
@@ -52,5 +52,13 @@ body .rt-SelectContent {
 body [data-radix-select-viewport] {
   max-height: 300px;
   overflow-y: auto;
+}
+
+/* Модалки: Radix Dialog — строго ниже тостов (2000 < 3001) */
+[data-radix-dialog-overlay],
+[data-radix-dialog-content],
+.rt-DialogOverlay,
+.rt-DialogContent {
+  z-index: 2000 !important;
 }
 

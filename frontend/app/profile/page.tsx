@@ -16,9 +16,11 @@ import styles from './profile.module.css'
 type TabType = 'profile' | 'edit' | 'integrations' | 'quick-buttons'
 
 export default function ProfilePage() {
-  // Загружаем активную вкладку из localStorage или используем 'profile' по умолчанию
+  // Загружаем активную вкладку: сначала ?tab= в URL, потом localStorage
   const getInitialTab = (): TabType => {
     if (typeof window !== 'undefined') {
+      const tab = new URLSearchParams(window.location.search).get('tab')
+      if (tab === 'integrations') return 'integrations'
       const saved = localStorage.getItem('profileActiveTab')
       if (saved === 'profile' || saved === 'edit' || saved === 'integrations' || saved === 'quick-buttons') {
         return saved as TabType

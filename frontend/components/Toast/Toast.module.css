@@ -1,8 +1,9 @@
+/* z-index: тосты = меню+1 (3000+1=3001); модалки строго < тостов */
 .toastContainer {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  z-index: 99999;
+  z-index: 3001;
   display: flex;
   flex-direction: column;
   gap: 12px;

@@ -4,6 +4,8 @@ import { Box, Text, Flex, Button, Select } from "@radix-ui/themes"
 import { CheckIcon, Cross2Icon, EyeOpenIcon, EyeClosedIcon, LightningBoltIcon, ReloadIcon, ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons"
 import { useState, useEffect, useMemo } from "react"
 import { useTheme } from "@/components/ThemeProvider"
+import { useToast } from "@/components/Toast/ToastContext"
+import { getHuntflowUserSettings, saveHuntflowUserSettings, type HuntflowCredentialSource } from "@/lib/huntflowUserSettings"
 import styles from './IntegrationSettingsModal.module.css'
 
 interface IntegrationSettingsModalProps {
@@ -19,7 +21,8 @@ interface SettingsData {
   apiKey?: string
   integrationToken?: string
   
-  // Huntflow специфичные
+  // Huntflow: источник ключей (мои / компании / выключено), остальное — локально на пользователя
+  credentialSource?: HuntflowCredentialSource
   sandboxUrl?: string
   sandboxApiKey?: string
   prodUrl?: string
@@ -42,16 +45,14 @@ export default function IntegrationSettingsModal({
   onSave,
   initialActiveSystem
 }: IntegrationSettingsModalProps) {
-  // Загружаем сохраненную систему из localStorage или используем переданную или по умолчанию
+  // Загружаем: сначала huntflow_user_settings, иначе старый huntflowActiveSystem, иначе initialActiveSystem
   const getInitialActiveSystem = (): 'prod' | 'sandbox' => {
-    if (initialActiveSystem) {
-      return initialActiveSystem
-    }
+    if (initialActiveSystem) return initialActiveSystem
+    const stored = getHuntflowUserSettings()
+    if (stored?.activeSystem === 'sandbox' || stored?.activeSystem === 'prod') return stored.activeSystem
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('huntflowActiveSystem')
-      if (saved === 'sandbox' || saved === 'prod') {
-        return saved
-      }
+      const old = localStorage.getItem('huntflowActiveSystem')
+      if (old === 'sandbox' || old === 'prod') return old
     }
     return 'prod'
   }
@@ -59,6 +60,7 @@ export default function IntegrationSettingsModal({
   const [settings, setSettings] = useState<SettingsData>({
     apiKey: '••••••••••••••••••••••••••••••••••••••••',
     integrationToken: '••••••••••••••••••••••••••••••••••••••••',
+    credentialSource: 'mine',
     sandboxUrl: 'https://sandbox-api.huntflow.dev/v2',
     sandboxApiKey: '••••••••••••••••••••••••••••••••••••••••',
     prodUrl: 'https://api.huntflow.ru',
@@ -70,12 +72,33 @@ export default function IntegrationSettingsModal({
     tokenValid: true,
   })
 
+  const toast = useToast()
+
   // Обновляем состояние при изменении initialActiveSystem
   useEffect(() => {
     if (initialActiveSystem && settings.activeSystem !== initialActiveSystem) {
       setSettings(prev => ({ ...prev, activeSystem: initialActiveSystem }))
     }
   }, [initialActiveSystem, settings.activeSystem])
+
+  // Huntflow: загрузка локальных настроек пользователя при открытии
+  useEffect(() => {
+    if (isOpen && integrationName === 'Huntflow') {
+      const loaded = getHuntflowUserSettings()
+      if (loaded) {
+        setSettings(prev => ({
+          ...prev,
+          credentialSource: loaded.credentialSource ?? prev.credentialSource ?? 'mine',
+          activeSystem: loaded.activeSystem ?? prev.activeSystem ?? 'prod',
+          sandboxUrl: loaded.sandboxUrl ?? prev.sandboxUrl,
+          sandboxApiKey: loaded.sandboxApiKey ?? prev.sandboxApiKey,
+          prodUrl: loaded.prodUrl ?? prev.prodUrl,
+          accessToken: loaded.accessToken ?? prev.accessToken,
+          refreshToken: loaded.refreshToken ?? prev.refreshToken,
+        }))
+      }
+    }
+  }, [isOpen, integrationName])
 
   const [showApiKey, setShowApiKey] = useState(false)
   const [showIntegrationToken, setShowIntegrationToken] = useState(false)
@@ -104,9 +127,17 @@ export default function IntegrationSettingsModal({
   }
 
   const handleSaveClick = () => {
-    // Сохраняем выбранную систему в localStorage для Huntflow
-    if (integrationName === 'Huntflow' && settings.activeSystem) {
-      localStorage.setItem('huntflowActiveSystem', settings.activeSystem)
+    // Huntflow: сохраняем все настройки локально на пользователя
+    if (integrationName === 'Huntflow') {
+      saveHuntflowUserSettings({
+        credentialSource: settings.credentialSource,
+        activeSystem: settings.activeSystem,
+        sandboxUrl: settings.sandboxUrl,
+        sandboxApiKey: settings.sandboxApiKey,
+        prodUrl: settings.prodUrl,
+        accessToken: settings.accessToken,
+        refreshToken: settings.refreshToken,
+      })
     }
     onSave(settings)
     onClose()
@@ -314,6 +345,21 @@ export default function IntegrationSettingsModal({
                 API ключ ClickUp позволяет интегрироваться с системой управления задачами для автоматизации процессов.
               </Text>
             </Box>
+          </Box>
+        )
+
+      case 'hh.ru / rabota.by':
+      case 'OpenAI':
+      case 'Cloud AI':
+      case 'n8n':
+        return (
+          <Box>
+            <Text size="2" weight="medium" style={{ marginBottom: '12px', display: 'block' }}>
+              В разработке
+            </Text>
+            <Text size="2" color="gray">
+              Инструкция по настройке появится в ближайших обновлениях.
+            </Text>
           </Box>
         )
 
@@ -655,7 +701,47 @@ export default function IntegrationSettingsModal({
       case 'Huntflow':
         return (
           <Flex direction="column" gap="4">
-            {/* Активная система - ПЕРВЫМ */}
+            {/* Источник ключей: мои / компании / выключено. При выключено — подтверждение через тост. */}
+            <Box>
+              <Text size="2" weight="medium" color="gray" style={{ marginBottom: '8px', display: 'block' }}>
+                Источник ключей
+              </Text>
+              <Select.Root
+                value={settings.credentialSource || 'mine'}
+                onValueChange={(value) => {
+                  if (value === 'disabled') {
+                    toast.showToast({
+                      type: 'warning',
+                      title: 'Отключить интеграцию Huntflow?',
+                      message: 'Подтвердите отключение. Ключи и токены использоваться не будут.',
+                      duration: 5 * 60 * 1000,
+                      actions: [
+                        { label: 'Подтвердить', onClick: () => {
+                          saveHuntflowUserSettings({ credentialSource: 'disabled' })
+                          onSave({ ...settings, credentialSource: 'disabled' })
+                          onClose()
+                        }, variant: 'soft', color: 'gray' },
+                        { label: 'Отклонить', onClick: () => {}, variant: 'solid', color: 'blue' },
+                      ],
+                    })
+                    return
+                  }
+                  setSettings(prev => ({ ...prev, credentialSource: value as HuntflowCredentialSource }))
+                }}
+              >
+                <Select.Trigger style={{ width: '100%', boxSizing: 'border-box' }} />
+                <Select.Content>
+                  <Select.Item value="mine">Мои ключи</Select.Item>
+                  <Select.Item value="company">Ключи компании</Select.Item>
+                  <Select.Item value="disabled">Выключено</Select.Item>
+                </Select.Content>
+              </Select.Root>
+              <Text size="1" color="gray" style={{ marginTop: '4px', display: 'block' }}>
+                От этого зависит, чьи ключи и токены используются; при «Выключено» — после подтверждения в тосте не используются.
+              </Text>
+            </Box>
+
+            {/* Активная система */}
             <Box>
               <Text size="2" weight="medium" color="gray" style={{ marginBottom: '8px', display: 'block' }}>
                 Активная система
@@ -1005,6 +1091,18 @@ export default function IntegrationSettingsModal({
             >
               Переподключить Google
             </Button>
+          </Box>
+        )
+
+      case 'hh.ru / rabota.by':
+      case 'OpenAI':
+      case 'Cloud AI':
+      case 'n8n':
+        return (
+          <Box>
+            <Text size="2" color="gray" style={{ marginBottom: '16px', display: 'block' }}>
+              Настройка в разработке. Скоро здесь можно будет указать API ключи и параметры подключения.
+            </Text>
           </Box>
         )
 

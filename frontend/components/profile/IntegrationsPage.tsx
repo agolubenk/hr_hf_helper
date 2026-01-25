@@ -2,8 +2,9 @@
 
 import { Box, Text, Flex, Grid } from "@radix-ui/themes"
 import { LightningBoltIcon, GearIcon, CheckIcon } from "@radix-ui/react-icons"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import IntegrationSettingsModal from "./IntegrationSettingsModal"
+import { getHuntflowUserSettings, type HuntflowUserSettings } from "@/lib/huntflowUserSettings"
 import styles from './IntegrationsPage.module.css'
 
 interface IntegrationCardProps {
@@ -96,23 +97,47 @@ const GoogleLogo = () => (
   </Box>
 )
 
+const HHLogo = () => (
+  <Box className={styles.logoContainer}>
+    <Text size="2" weight="bold" style={{ color: 'white' }}>
+      HH
+    </Text>
+  </Box>
+)
+
+const OpenAILogo = () => (
+  <Box className={styles.logoContainer}>
+    <Text size="2" weight="bold" style={{ color: 'white' }}>
+      O
+    </Text>
+  </Box>
+)
+
+const CloudAILogo = () => (
+  <Box className={styles.logoContainer}>
+    <Text size="2" weight="bold" style={{ color: 'white' }}>
+      AI
+    </Text>
+  </Box>
+)
+
+const N8nLogo = () => (
+  <Box className={styles.logoContainer}>
+    <Text size="2" weight="bold" style={{ color: 'white' }}>
+      n8n
+    </Text>
+  </Box>
+)
+
 export default function IntegrationsPage() {
   const [selectedIntegration, setSelectedIntegration] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  
-  // Состояние выбранной системы для Huntflow (prod или sandbox)
-  // Загружаем из localStorage или используем по умолчанию
-  const getInitialHuntflowSystem = (): 'prod' | 'sandbox' => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('huntflowActiveSystem')
-      if (saved === 'sandbox' || saved === 'prod') {
-        return saved
-      }
-    }
-    return 'prod'
-  }
-  
-  const [huntflowActiveSystem, setHuntflowActiveSystem] = useState<'prod' | 'sandbox'>(getInitialHuntflowSystem)
+  // Huntflow: локальные настройки пользователя (пер-юзер); после сохранения в модалке — перечитываем
+  const [huntflowUserSettings, setHuntflowUserSettings] = useState<HuntflowUserSettings | null>(null)
+
+  useEffect(() => {
+    setHuntflowUserSettings(getHuntflowUserSettings())
+  }, [])
 
   const handleConfigure = (integrationName: string) => {
     setSelectedIntegration(integrationName)
@@ -125,12 +150,9 @@ export default function IntegrationsPage() {
   }
 
   const handleSave = (data: any) => {
-    console.log(`Сохранение настроек для ${selectedIntegration}:`, data)
-    // Обновляем выбранную систему для Huntflow, если она была изменена
-    if (selectedIntegration === 'Huntflow' && data.activeSystem) {
-      setHuntflowActiveSystem(data.activeSystem)
+    if (selectedIntegration === 'Huntflow') {
+      setHuntflowUserSettings(getHuntflowUserSettings())
     }
-    // Здесь будет логика сохранения через API
     handleCloseModal()
   }
 
@@ -166,29 +188,52 @@ export default function IntegrationsPage() {
             name="Huntflow"
             logo={<HuntflowLogo />}
             status={
-              <Flex direction="column" gap="2">
-                <Flex align="center" gap="2">
-                  <Text size="2" color="gray">Текущая система:</Text>
-                  <Text size="2">{huntflowActiveSystem === 'prod' ? 'prod' : 'sandbox'}</Text>
-                </Flex>
-                <Flex align="center" gap="2">
-                  <Text size="2" color="gray">Access Token:</Text>
-                  <CheckIcon width="14" height="14" style={{ color: 'var(--green-9)' }} />
-                  <Text size="2">Валидный</Text>
-                </Flex>
-                <Flex align="center" gap="2">
-                  <Text size="2" color="gray">Refresh Token:</Text>
-                  <CheckIcon width="14" height="14" style={{ color: 'var(--green-9)' }} />
-                  <Text size="2">Валидный</Text>
-                </Flex>
-                {huntflowActiveSystem === 'sandbox' && (
-                  <Flex align="center" gap="2">
-                    <Text size="2" color="gray">API Песочницы:</Text>
-                    <CheckIcon width="14" height="14" style={{ color: 'var(--green-9)' }} />
-                    <Text size="2">Настроен</Text>
+              (() => {
+                const src = huntflowUserSettings?.credentialSource ?? 'mine'
+                if (src === 'disabled') {
+                  return (
+                    <Flex align="center" gap="2">
+                      <Text size="2" color="gray">Интеграция:</Text>
+                      <Text size="2">Выключено (подтверждено)</Text>
+                    </Flex>
+                  )
+                }
+                if (src === 'company') {
+                  return (
+                    <Flex align="center" gap="2">
+                      <Text size="2" color="gray">Ключи:</Text>
+                      <CheckIcon width="14" height="14" style={{ color: 'var(--green-9)' }} />
+                      <Text size="2">Ключи компании</Text>
+                    </Flex>
+                  )
+                }
+                const sys = huntflowUserSettings?.activeSystem ?? 'prod'
+                return (
+                  <Flex direction="column" gap="2">
+                    <Flex align="center" gap="2">
+                      <Text size="2" color="gray">Текущая система:</Text>
+                      <Text size="2">{sys === 'prod' ? 'prod' : 'sandbox'}</Text>
+                    </Flex>
+                    <Flex align="center" gap="2">
+                      <Text size="2" color="gray">Access Token:</Text>
+                      <CheckIcon width="14" height="14" style={{ color: 'var(--green-9)' }} />
+                      <Text size="2">Валидный</Text>
+                    </Flex>
+                    <Flex align="center" gap="2">
+                      <Text size="2" color="gray">Refresh Token:</Text>
+                      <CheckIcon width="14" height="14" style={{ color: 'var(--green-9)' }} />
+                      <Text size="2">Валидный</Text>
+                    </Flex>
+                    {sys === 'sandbox' && (
+                      <Flex align="center" gap="2">
+                        <Text size="2" color="gray">API Песочницы:</Text>
+                        <CheckIcon width="14" height="14" style={{ color: 'var(--green-9)' }} />
+                        <Text size="2">Настроен</Text>
+                      </Flex>
+                    )}
                   </Flex>
-                )}
-              </Flex>
+                )
+              })()
             }
             onConfigure={() => handleConfigure('Huntflow')}
           />
@@ -251,7 +296,66 @@ export default function IntegrationsPage() {
             }
             onConfigure={() => handleConfigure('Google')}
           />
+
+          <IntegrationCard
+            name="hh.ru / rabota.by"
+            logo={<HHLogo />}
+            status={
+              <Flex align="center" gap="2">
+                <Text size="2" color="gray">OAuth/API:</Text>
+                <CheckIcon width={14} height={14} style={{ color: 'var(--green-9)' }} />
+                <Text size="2">Настроен</Text>
+              </Flex>
+            }
+            onConfigure={() => handleConfigure('hh.ru / rabota.by')}
+          />
+
+          <IntegrationCard
+            name="OpenAI"
+            logo={<OpenAILogo />}
+            status={
+              <Flex align="center" gap="2">
+                <Text size="2" color="gray">API ключ:</Text>
+                <CheckIcon width={14} height={14} style={{ color: 'var(--green-9)' }} />
+                <Text size="2">Настроен</Text>
+              </Flex>
+            }
+            onConfigure={() => handleConfigure('OpenAI')}
+          />
+
+          <IntegrationCard
+            name="Cloud AI"
+            logo={<CloudAILogo />}
+            status={
+              <Flex align="center" gap="2">
+                <Text size="2" color="gray">API ключ:</Text>
+                <CheckIcon width={14} height={14} style={{ color: 'var(--green-9)' }} />
+                <Text size="2">Настроен</Text>
+              </Flex>
+            }
+            onConfigure={() => handleConfigure('Cloud AI')}
+          />
+
+          <IntegrationCard
+            name="n8n"
+            logo={<N8nLogo />}
+            status={
+              <Flex align="center" gap="2">
+                <Text size="2" color="gray">Webhook/API:</Text>
+                <CheckIcon width={14} height={14} style={{ color: 'var(--green-9)' }} />
+                <Text size="2">Настроен</Text>
+              </Flex>
+            }
+            onConfigure={() => handleConfigure('n8n')}
+          />
         </Grid>
+      </Box>
+
+      {/* Скоро появятся */}
+      <Box style={{ marginTop: '16px' }}>
+        <Text size="2" color="gray">
+          Скоро появятся другие интеграции.
+        </Text>
       </Box>
 
       {/* Общая инструкция */}
@@ -271,7 +375,7 @@ export default function IntegrationsPage() {
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           onSave={handleSave}
-          initialActiveSystem={selectedIntegration === 'Huntflow' ? huntflowActiveSystem : undefined}
+          initialActiveSystem={selectedIntegration === 'Huntflow' ? (huntflowUserSettings?.activeSystem ?? 'prod') : undefined}
         />
       )}
     </Box>

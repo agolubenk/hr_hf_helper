@@ -35,7 +35,7 @@ import { useToast } from "@/components/Toast/ToastContext"
 const IN_DEVELOPMENT_IDS = new Set([
   'calendar', 'invites-list', 'invites-create',
   'benchmarks-dashboard', 'benchmarks-all',
-  'integrations-clickup', 'integrations-notion', 'integrations-hh', 'integrations-telegram', 'integrations-n8n',
+  'integrations-clickup', 'integrations-notion', 'integrations-hh', 'integrations-n8n',
   'reporting-recruiter', 'reporting-vacancy', 'reporting-interviewer', 'reporting-funnel',
   'company-settings-benchmark',
   'admin',
@@ -98,6 +98,9 @@ function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefi
     return true
   }
   if (item.id === 'integrations-aichat' && pathname.startsWith('/aichat')) {
+    return true
+  }
+  if (item.id === 'integrations-telegram' && pathname.startsWith('/telegram')) {
     return true
   }
   if (item.id === 'reporting' && pathname.startsWith('/reporting')) {
@@ -430,7 +433,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           id: 'integrations-telegram',
           label: 'Telegram',
           icon: <Text size="1" weight="bold" style={{ color: 'var(--gray-12)', width: '16px', textAlign: 'center' }}>T</Text>,
-          children: [],
+          children: [
+            { id: 'integrations-telegram-login', label: 'Вход', icon: <Box style={{ width: 16, height: 16, border: '1px solid var(--gray-12)', borderRadius: 4 }} />, href: '/telegram' },
+            { id: 'integrations-telegram-2fa', label: '2FA', icon: <GearIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />, href: '/telegram/2fa' },
+            { id: 'integrations-telegram-chats', label: 'Чаты', icon: <ChatBubbleIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />, href: '/telegram/chats' },
+          ],
         },
         {
           id: 'integrations-n8n',
@@ -690,7 +697,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             )) ||
             (item.id === 'integrations' && (
               pathname?.startsWith('/huntflow') ||
-              pathname?.startsWith('/aichat')
+              pathname?.startsWith('/aichat') ||
+              pathname?.startsWith('/telegram')
             ))
           
           return (
