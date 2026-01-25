@@ -32,7 +32,7 @@ export default function WorkflowPage() {
 
   return (
     <AppLayout pageTitle="Workflow">
-      <Box className={styles.workflowContainer}>
+      <Box data-tour="workflow-page" className={styles.workflowContainer}>
         <WorkflowHeader 
           onSlotsClick={() => setSlotsOpen(!slotsOpen)}
           slotsOpen={slotsOpen}
@@ -45,11 +45,11 @@ export default function WorkflowPage() {
         )}
 
         <Flex gap="4" className={styles.mainContent}>
-          <Box className={styles.chatColumn}>
+          <Box data-tour="workflow-chat" className={styles.chatColumn}>
             <WorkflowChat />
           </Box>
           
-          <Box className={styles.sidebarColumn}>
+          <Box data-tour="workflow-sidebar" className={styles.sidebarColumn}>
             <WorkflowSidebar />
           </Box>
         </Flex>

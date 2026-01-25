@@ -137,7 +137,7 @@ function VacanciesPageContent() {
 
   return (
     <AppLayout pageTitle="Вакансии">
-      <Box className={styles.vacanciesContainer}>
+      <Box data-tour="vacancies-page" className={styles.vacanciesContainer}>
         {/* Поиск и фильтры */}
         <VacanciesSearchFilters
           searchQuery={searchQuery}

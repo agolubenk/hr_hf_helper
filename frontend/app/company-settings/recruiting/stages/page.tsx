@@ -8,7 +8,7 @@ import styles from '../../company-settings.module.css'
 export default function RecruitingStagesSettingsPage() {
   return (
     <AppLayout pageTitle="Этапы найма и причины отказа">
-      <Box className={styles.container}>
+      <Box data-tour="recruiting-settings-page" className={styles.container}>
         <Box mb="4">
           <Text size="6" weight="bold" style={{ display: 'block' }}>
             Этапы найма и причины отказа

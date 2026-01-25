@@ -128,6 +128,7 @@ export default function Header({
       <Flex align="center" gap="3" style={{ flexShrink: 0 }}>
         {/* Кнопка меню с молнией */}
         <Box
+          data-tour="header-menu"
           onClick={onMenuToggle}
           style={{
             cursor: 'pointer',
@@ -168,6 +169,7 @@ export default function Header({
 
         {/* Кнопка выбора темы */}
         <Box
+          data-tour="header-theme"
           onClick={onThemeToggle}
           style={{
             cursor: 'pointer',
@@ -203,6 +205,7 @@ export default function Header({
         >
           {/* Левая часть: пользователь с email */}
           <Flex
+            data-tour="header-profile"
             align="center"
             gap="2"
             px="3"
@@ -232,6 +235,7 @@ export default function Header({
 
           {/* Правая часть: выход */}
           <Flex
+            data-tour="header-logout"
             align="center"
             gap="2"
             px="3"

@@ -8,7 +8,7 @@ import styles from './company-settings.module.css'
 export default function CompanySettingsPage() {
   return (
     <AppLayout pageTitle="Общие настройки компании">
-      <Box className={styles.container}>
+      <Box data-tour="company-settings-page" className={styles.container}>
         <Text size="6" weight="bold" mb="4" style={{ display: 'block' }}>
           Общие настройки
         </Text>

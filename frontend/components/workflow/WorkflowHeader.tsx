@@ -68,7 +68,7 @@ export default function WorkflowHeader({ onSlotsClick, slotsOpen }: WorkflowHead
           className={styles.leftSection}
           wrap="wrap"
         >
-          {/* Быстрые кнопки */}
+          {/* Быстрые кнопки — переход по ссылке для коммуникации */}
           <Flex gap="2" align="center" className={styles.quickButtonsGroup}>
             <Box className={styles.quickButton} style={{ backgroundColor: '#ef4444', position: 'relative' }}>
               <Link2Icon width={20} height={20} style={{ color: '#ffffff', fontWeight: 'bold' }} />
@@ -105,8 +105,8 @@ export default function WorkflowHeader({ onSlotsClick, slotsOpen }: WorkflowHead
             </Box>
           </Flex>
 
-          {/* Тогглер этапов процесса */}
-          <Flex gap="3" align="center" className={styles.workflowToggle}>
+          {/* Тогглер этапов процесса: Скрининг / Интервью */}
+          <Flex data-tour="workflow-toggle" gap="3" align="center" className={styles.workflowToggle}>
             <Box
               className={styles.workflowButton}
               data-selected={selectedWorkflow === 'screening'}
@@ -133,6 +133,7 @@ export default function WorkflowHeader({ onSlotsClick, slotsOpen }: WorkflowHead
             </Box>
             
             <Box
+              data-tour="workflow-interview"
               className={styles.workflowButton}
               data-selected={selectedWorkflow === 'interview'}
               onClick={() => setSelectedWorkflow('interview')}
@@ -159,8 +160,8 @@ export default function WorkflowHeader({ onSlotsClick, slotsOpen }: WorkflowHead
           </Flex>
         </Flex>
 
-        {/* Правая часть: выпадающий список вакансии и кнопки управления */}
-        <Box className={styles.rightSection}>
+        {/* Правая часть: выбор вакансии, кнопки Календарь, Вакансия (вопросы и ссылка), слоты, Обновить */}
+        <Box data-tour="workflow-vacancy-buttons" className={styles.rightSection}>
           <Select.Root value={selectedVacancy} onValueChange={setSelectedVacancy}>
             <Select.Trigger className={styles.vacancySelect} />
             <Select.Content className={styles.selectContent}>

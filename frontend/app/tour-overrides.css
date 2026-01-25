@@ -1,0 +1,82 @@
+/* Переопределения driver.js для заметного приветственного тура */
+
+/* Затемнение фона — сильнее по умолчанию (overlayOpacity задаётся в JS) */
+
+/* Попап: крупнее, контрастнее, лучше читается */
+.driver-popover.hrhelper-tour-popover {
+  padding: 24px 28px !important;
+  min-width: 300px !important;
+  max-width: 420px !important;
+  box-shadow:
+    0 12px 48px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(0, 0, 0, 0.08) !important;
+  border-radius: 14px !important;
+  background-color: #fff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-title {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+  color: #111 !important;
+  margin-bottom: 6px !important;
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-description {
+  font-size: 16px !important;
+  line-height: 1.55 !important;
+  color: #333 !important;
+  font-weight: 400 !important;
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-progress-text {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #555 !important;
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-footer {
+  margin-top: 22px !important;
+  gap: 10px !important;
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-footer button {
+  padding: 12px 22px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  border-radius: 10px !important;
+  min-height: 44px !important;
+  transition: opacity 0.15s, transform 0.1s !important;
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-footer button:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-next-btn,
+.driver-popover.hrhelper-tour-popover .driver-popover-prev-btn {
+  background: var(--accent-9, #3b82f6) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-prev-btn {
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-close-btn {
+  width: 40px !important;
+  height: 40px !important;
+  font-size: 24px !important;
+  top: 12px !important;
+  right: 12px !important;
+  color: #94a3b8 !important;
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-close-btn:hover {
+  color: #1e293b !important;
+}

@@ -200,6 +200,7 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
   return (
     <Box>
       <Flex
+        data-tour={`sidebar-${item.id}`}
         align="center"
         gap="2"
         px="3"
