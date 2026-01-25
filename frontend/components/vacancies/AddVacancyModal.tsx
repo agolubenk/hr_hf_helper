@@ -11,8 +11,9 @@ import {
   Card,
   Checkbox,
   Switch,
+  Separator,
 } from '@radix-ui/themes'
-import { PlusIcon, InfoCircledIcon } from '@radix-ui/react-icons'
+import { PlusIcon, InfoCircledIcon, ChevronLeftIcon } from '@radix-ui/react-icons'
 import { useState, useEffect } from 'react'
 import BasicInfoEditSection from './edit/BasicInfoEditSection'
 import styles from './AddVacancyModal.module.css'
@@ -36,7 +37,19 @@ export interface AddVacancyFormData {
   }
 }
 
-type AddVacancyTab = 'basic' | 'text' | 'recruiters'
+type AddVacancyTab =
+  | 'basic'
+  | 'text'
+  | 'recruiters'
+  | 'customers'
+  | 'questions'
+  | 'integrations'
+  | 'statuses'
+  | 'salary'
+  | 'interviews'
+  | 'scorecard'
+  | 'dataProcessing'
+  | 'history'
 
 // Моковые отделы (упрощённая иерархия)
 interface Department {
@@ -116,16 +129,34 @@ interface AddVacancyModalProps {
   onSave: (data: AddVacancyFormData) => void
 }
 
+function useMatchMedia(query: string): boolean {
+  const [matches, setMatches] = useState(false)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const m = window.matchMedia(query)
+    setMatches(m.matches)
+    const listener = () => setMatches(m.matches)
+    m.addEventListener('change', listener)
+    return () => m.removeEventListener('change', listener)
+  }, [query])
+  return matches
+}
+
 export default function AddVacancyModal({ isOpen, onClose, onSave }: AddVacancyModalProps) {
   const [activeTab, setActiveTab] = useState<AddVacancyTab>('basic')
   const [formData, setFormData] = useState<AddVacancyFormData>(initialFormData)
+  const [isContentOverlayOpen, setContentOverlayOpen] = useState(false)
+  const isOverlayMode = useMatchMedia('(max-width: 799px)')
 
   useEffect(() => {
     if (!isOpen) {
       setFormData(initialFormData)
       setActiveTab('basic')
+      setContentOverlayOpen(false)
+    } else if (isOverlayMode) {
+      setContentOverlayOpen(true)
     }
-  }, [isOpen])
+  }, [isOpen, isOverlayMode])
 
   const handleBasicInfoChange = (data: Partial<AddVacancyFormData['basicInfo']>) => {
     setFormData((prev) => ({
@@ -172,6 +203,15 @@ export default function AddVacancyModal({ isOpen, onClose, onSave }: AddVacancyM
     { id: 'basic', label: 'Основная информация' },
     { id: 'text', label: 'Текст вакансии' },
     { id: 'recruiters', label: 'Рекрутеры' },
+    { id: 'customers', label: 'Заказчики и интервьюеры' },
+    { id: 'questions', label: 'Вопросы и ссылки' },
+    { id: 'integrations', label: 'Связи и интеграции' },
+    { id: 'statuses', label: 'Статусы' },
+    { id: 'salary', label: 'Зарплатные вилки' },
+    { id: 'interviews', label: 'Встречи и интервью' },
+    { id: 'scorecard', label: 'Scorecard' },
+    { id: 'dataProcessing', label: 'Обработка данных' },
+    { id: 'history', label: 'История правок' },
   ]
 
   return (
@@ -185,26 +225,55 @@ export default function AddVacancyModal({ isOpen, onClose, onSave }: AddVacancyM
         </Dialog.Title>
 
         <Flex className={styles.layout}>
-          <Box className={styles.tabsColumn}>
-            <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>
-              Разделы
-            </Text>
-            <Flex direction="column" gap="1">
-              {tabs.map((tab) => (
-                <Button
-                  key={tab.id}
-                  variant={activeTab === tab.id ? 'solid' : 'soft'}
-                  size="2"
-                  className={styles.tabButton}
-                  onClick={() => setActiveTab(tab.id)}
-                >
-                  {tab.label}
-                </Button>
-              ))}
+          <Card className={styles.tabsCard}>
+            <Flex direction="column" gap="4">
+              <Text size="4" weight="bold">Настройки вакансии</Text>
+              <Separator size="4" />
+              <Box>
+                <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>
+                  Разделы настроек
+                </Text>
+                <Flex direction="column" gap="1" className={styles.tabsButtons}>
+                  {tabs.map((tab) => (
+                    <Button
+                      key={tab.id}
+                      variant={activeTab === tab.id ? 'solid' : 'soft'}
+                      size="2"
+                      className={styles.tabButton}
+                      onClick={() => {
+                      setActiveTab(tab.id)
+                      if (isOverlayMode) setContentOverlayOpen(true)
+                    }}
+                    >
+                      <Text size="2">{tab.label}</Text>
+                    </Button>
+                  ))}
+                </Flex>
+              </Box>
             </Flex>
-          </Box>
+          </Card>
 
-          <Box className={styles.contentColumn}>
+          {isOverlayMode && isContentOverlayOpen && (
+            <Box
+              className={styles.contentOverlay}
+              onClick={() => setContentOverlayOpen(false)}
+              onKeyDown={(e) => e.key === 'Enter' && setContentOverlayOpen(false)}
+              role="button"
+              tabIndex={0}
+              aria-label="Закрыть"
+            />
+          )}
+
+          <Card className={`${styles.contentCard} ${isOverlayMode && isContentOverlayOpen ? styles.contentCardOpen : ''}`}>
+            <Box className={styles.contentColumn}>
+            {isOverlayMode && (
+              <Flex mb="3">
+                <Button variant="ghost" size="2" onClick={() => setContentOverlayOpen(false)}>
+                  <ChevronLeftIcon width={16} height={16} />
+                  Назад
+                </Button>
+              </Flex>
+            )}
             {activeTab === 'basic' && (
               <BasicInfoEditSection
                 data={formData.basicInfo}
@@ -322,7 +391,19 @@ export default function AddVacancyModal({ isOpen, onClose, onSave }: AddVacancyM
                 </Flex>
               </Box>
             )}
-          </Box>
+
+            {['customers', 'questions', 'integrations', 'statuses', 'salary', 'interviews', 'scorecard', 'dataProcessing', 'history'].includes(activeTab) && (
+              <Box className={styles.sectionCard}>
+                <Text size="5" weight="bold" mb="2" style={{ display: 'block' }}>
+                  {tabs.find((t) => t.id === activeTab)?.label}
+                </Text>
+                <Text size="2" color="gray">
+                  Содержимое раздела будет доступно после создания вакансии.
+                </Text>
+              </Box>
+            )}
+            </Box>
+          </Card>
         </Flex>
 
         <Flex justify="end" gap="3" className={styles.footer}>

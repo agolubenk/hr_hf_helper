@@ -113,42 +113,34 @@ export default function CompanyReportPage() {
         {/* График */}
         <Card mb="4" className={styles.graphCard}>
           <Flex direction="column" gap="4">
-            {/* Заголовок и фильтры графика */}
-            <Flex align="center" style={{ justifyContent: 'space-between' }} wrap="wrap">
+            {/* Заголовок и фильтры графика: слева «График», справа — Месяцы, Часы, По вакансиям в одну строку */}
+            <Flex align="center" className={styles.graphHeader}>
               <Text size="4" weight="bold">График</Text>
-              <Flex gap="2" wrap="wrap">
-                <Box>
-                  <Select.Root value={graphPeriod} onValueChange={setGraphPeriod}>
-                    <Select.Trigger style={{ minWidth: '120px' }} placeholder="Месяцы" />
-                    <Select.Content>
-                      <Select.Item value="months">Месяцы</Select.Item>
-                      <Select.Item value="weeks">Недели</Select.Item>
-                      <Select.Item value="days">Дни</Select.Item>
-                    </Select.Content>
-                  </Select.Root>
-                </Box>
-                <Box>
-                  <Select.Root value={graphUnit} onValueChange={setGraphUnit}>
-                    <Select.Trigger style={{ minWidth: '120px' }} placeholder="Часы" />
-                    <Select.Content>
-                      <Select.Item value="hours">Часы</Select.Item>
-                      <Select.Item value="count">Количество</Select.Item>
-                    </Select.Content>
-                  </Select.Root>
-                </Box>
+              <Flex gap="2" wrap="nowrap" align="center" className={styles.graphControls}>
+                <Select.Root value={graphPeriod} onValueChange={setGraphPeriod}>
+                  <Select.Trigger style={{ minWidth: '120px' }} placeholder="Месяцы" />
+                  <Select.Content>
+                    <Select.Item value="months">Месяцы</Select.Item>
+                    <Select.Item value="weeks">Недели</Select.Item>
+                    <Select.Item value="days">Дни</Select.Item>
+                  </Select.Content>
+                </Select.Root>
+                <Select.Root value={graphUnit} onValueChange={setGraphUnit}>
+                  <Select.Trigger style={{ minWidth: '120px' }} placeholder="Часы" />
+                  <Select.Content>
+                    <Select.Item value="hours">Часы</Select.Item>
+                    <Select.Item value="count">Количество</Select.Item>
+                  </Select.Content>
+                </Select.Root>
+                <Select.Root value={graphFilter} onValueChange={setGraphFilter}>
+                  <Select.Trigger style={{ minWidth: '150px' }} placeholder="По вакансиям" />
+                  <Select.Content>
+                    <Select.Item value="recruiters">По рекрутерам</Select.Item>
+                    <Select.Item value="vacancies">По вакансиям</Select.Item>
+                  </Select.Content>
+                </Select.Root>
               </Flex>
             </Flex>
-
-            {/* Фильтр по рекрутерам/вакансиям */}
-            <Box>
-              <Select.Root value={graphFilter} onValueChange={setGraphFilter}>
-                <Select.Trigger style={{ minWidth: '150px' }} placeholder="По вакансиям" />
-                <Select.Content>
-                  <Select.Item value="recruiters">По рекрутерам</Select.Item>
-                  <Select.Item value="vacancies">По вакансиям</Select.Item>
-                </Select.Content>
-              </Select.Root>
-            </Box>
 
             {/* Чекбоксы и легенда */}
             <Box>
