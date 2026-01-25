@@ -2,7 +2,7 @@
 
 import AppLayout from '@/components/AppLayout'
 import { Box, Flex, Text, Card, Button, TextField, Select } from '@radix-ui/themes'
-import { ListBulletIcon, CalendarIcon } from '@radix-ui/react-icons'
+import { ListBulletIcon, CalendarIcon, Cross2Icon } from '@radix-ui/react-icons'
 import { useState } from 'react'
 import Link from 'next/link'
 import styles from './hiring-plan.module.css'
@@ -11,16 +11,16 @@ import styles from './hiring-plan.module.css'
 const LIMIT_OPTIONS = [5, 10, 15, 25, 50, 100] as const
 
 const MOCK_REQUESTS = [
-  { id: 1, vacancy: 'Frontend Engineer (React)', grade: 'Middle', grade_short: 'M', project: 'PUI Skins', priority: 2, status: 'in_progress', opening_date: '2025-12-17', deadline: '2026-01-21', closed_date: null, days_in_progress: 26, sla_to_offer: 35, sla_status_display: 'Нормально', time2hire: null, recruiter: 'Голубенко А.', recruiter_work_days: 22, candidate_name: null, candidate_id: null, is_overdue: false },
-  { id: 2, vacancy: 'DevOps Engineer', grade: 'Middle+', grade_short: 'M+', project: null, priority: 2, status: 'closed', opening_date: '2025-12-11', deadline: '2026-01-20', closed_date: '2026-01-06', days_in_progress: 26, sla_to_offer: 40, sla_status_display: 'В срок', time2hire: 67, recruiter: 'Голубенко А.', recruiter_work_days: 26, candidate_name: 'Aleksander Volvachev', candidate_id: '76779160', is_overdue: false },
-  { id: 3, vacancy: 'Backend Engineer', grade: 'Middle', grade_short: 'M', project: null, priority: 3, status: 'planned', opening_date: '2025-12-01', deadline: '2026-01-15', closed_date: null, days_in_progress: 0, sla_to_offer: 35, sla_status_display: 'Нет SLA', time2hire: null, recruiter: 'Голубенко А.', recruiter_work_days: 0, candidate_name: null, candidate_id: null, is_overdue: false },
-  { id: 4, vacancy: 'Support Engineer', grade: 'Junior+', grade_short: 'J+', project: null, priority: 3, status: 'in_progress', opening_date: '2025-12-15', deadline: '2026-01-14', closed_date: null, days_in_progress: 28, sla_to_offer: 30, sla_status_display: 'Риск просрочки', time2hire: null, recruiter: 'Черномордин А.', recruiter_work_days: 21, candidate_name: null, candidate_id: null, is_overdue: false },
-  { id: 5, vacancy: 'QA Engineer', grade: 'Middle', grade_short: 'M', project: 'PUI Skins', priority: 3, status: 'cancelled', opening_date: '2025-12-05', deadline: '2026-01-18', closed_date: '2026-01-10', days_in_progress: 22, sla_to_offer: 35, sla_status_display: 'Просрочено', time2hire: null, recruiter: 'Голубенко А.', recruiter_work_days: 18, candidate_name: null, candidate_id: null, is_overdue: false },
-  { id: 6, vacancy: 'Data Engineer', grade: 'Senior', grade_short: 'S', project: 'Analytics', priority: 1, status: 'closed', opening_date: '2025-11-20', deadline: '2025-12-20', closed_date: '2025-12-15', days_in_progress: 25, sla_to_offer: 30, sla_status_display: 'В срок', time2hire: 25, recruiter: 'Черномордин А.', recruiter_work_days: 25, candidate_name: 'Иванов И.', candidate_id: '80001', is_overdue: false },
-  { id: 7, vacancy: 'ML Engineer', grade: 'Middle+', grade_short: 'M+', project: 'Analytics', priority: 2, status: 'in_progress', opening_date: '2025-12-20', deadline: '2026-02-01', closed_date: null, days_in_progress: 36, sla_to_offer: 45, sla_status_display: 'Нормально', time2hire: null, recruiter: 'Петрова М.', recruiter_work_days: 28, candidate_name: null, candidate_id: null, is_overdue: false },
-  { id: 8, vacancy: 'Product Manager', grade: 'Middle', grade_short: 'M', project: 'PUI Skins', priority: 2, status: 'closed', opening_date: '2025-11-10', deadline: '2025-12-15', closed_date: '2025-12-01', days_in_progress: 21, sla_to_offer: 35, sla_status_display: 'В срок', time2hire: 21, recruiter: 'Петрова М.', recruiter_work_days: 21, candidate_name: 'Сидорова О.', candidate_id: '80002', is_overdue: false },
-  { id: 9, vacancy: 'Designer', grade: 'Junior', grade_short: 'J', project: null, priority: 3, status: 'cancelled', opening_date: '2025-12-01', deadline: '2026-01-10', closed_date: '2025-12-28', days_in_progress: 20, sla_to_offer: 40, sla_status_display: 'В срок', time2hire: null, recruiter: 'Черномордин А.', recruiter_work_days: 20, candidate_name: null, candidate_id: null, is_overdue: false },
-  { id: 10, vacancy: 'Security Engineer', grade: 'Senior', grade_short: 'S', project: 'Analytics', priority: 1, status: 'in_progress', opening_date: '2025-12-22', deadline: '2026-02-15', closed_date: null, days_in_progress: 34, sla_to_offer: 50, sla_status_display: 'Нормально', time2hire: null, recruiter: 'Голубенко А.', recruiter_work_days: 24, candidate_name: null, candidate_id: null, is_overdue: false },
+  { id: 1, vacancy: 'Frontend Engineer (React)', grade: 'Middle', grade_short: 'M', project: 'PUI Skins', priority: 2, status: 'in_progress', opening_date: '2025-12-17', deadline: '2026-01-21', closed_date: null, days_in_progress: 26, sla_to_offer: 35, sla_status_display: 'Нормально', time2hire: null, recruiters: [{ name: 'Голубенко А.', days: 22 }], candidate_name: null, candidate_id: null, is_overdue: false },
+  { id: 2, vacancy: 'DevOps Engineer', grade: 'Middle+', grade_short: 'M+', project: null, priority: 2, status: 'closed', opening_date: '2025-12-11', deadline: '2026-01-20', closed_date: '2026-01-06', days_in_progress: 26, sla_to_offer: 40, sla_status_display: 'В срок', time2hire: 67, recruiters: [{ name: 'Голубенко А.', days: 15 }, { name: 'Черномордин А.', days: 6 }, { name: 'Петрова М.', days: 5 }], candidate_name: 'Aleksander Volvachev', candidate_id: '76779160', is_overdue: false },
+  { id: 3, vacancy: 'Backend Engineer', grade: 'Middle', grade_short: 'M', project: null, priority: 3, status: 'planned', opening_date: '2025-12-01', deadline: '2026-01-15', closed_date: null, days_in_progress: 0, sla_to_offer: 35, sla_status_display: 'Нет SLA', time2hire: null, recruiters: [{ name: 'Голубенко А.', days: 0 }], candidate_name: null, candidate_id: null, is_overdue: false },
+  { id: 4, vacancy: 'Support Engineer', grade: 'Junior+', grade_short: 'J+', project: null, priority: 3, status: 'in_progress', opening_date: '2025-12-15', deadline: '2026-01-14', closed_date: null, days_in_progress: 28, sla_to_offer: 30, sla_status_display: 'Риск просрочки', time2hire: null, recruiters: [{ name: 'Черномордин А.', days: 21 }], candidate_name: null, candidate_id: null, is_overdue: false },
+  { id: 5, vacancy: 'QA Engineer', grade: 'Middle', grade_short: 'M', project: 'PUI Skins', priority: 3, status: 'cancelled', opening_date: '2025-12-05', deadline: '2026-01-18', closed_date: '2026-01-10', days_in_progress: 22, sla_to_offer: 35, sla_status_display: 'Просрочено', time2hire: null, recruiters: [{ name: 'Голубенко А.', days: 18 }], candidate_name: null, candidate_id: null, is_overdue: false },
+  { id: 6, vacancy: 'Data Engineer', grade: 'Senior', grade_short: 'S', project: 'Analytics', priority: 1, status: 'closed', opening_date: '2025-11-20', deadline: '2025-12-20', closed_date: '2025-12-15', days_in_progress: 25, sla_to_offer: 30, sla_status_display: 'В срок', time2hire: 25, recruiters: [{ name: 'Черномордин А.', days: 25 }], candidate_name: 'Иванов И.', candidate_id: '80001', is_overdue: false },
+  { id: 7, vacancy: 'ML Engineer', grade: 'Middle+', grade_short: 'M+', project: 'Analytics', priority: 2, status: 'in_progress', opening_date: '2025-12-20', deadline: '2026-02-01', closed_date: null, days_in_progress: 36, sla_to_offer: 45, sla_status_display: 'Нормально', time2hire: null, recruiters: [{ name: 'Петрова М.', days: 28 }], candidate_name: null, candidate_id: null, is_overdue: false },
+  { id: 8, vacancy: 'Product Manager', grade: 'Middle', grade_short: 'M', project: 'PUI Skins', priority: 2, status: 'closed', opening_date: '2025-11-10', deadline: '2025-12-15', closed_date: '2025-12-01', days_in_progress: 21, sla_to_offer: 35, sla_status_display: 'В срок', time2hire: 21, recruiters: [{ name: 'Петрова М.', days: 21 }], candidate_name: 'Сидорова О.', candidate_id: '80002', is_overdue: false },
+  { id: 9, vacancy: 'Designer', grade: 'Junior', grade_short: 'J', project: null, priority: 3, status: 'cancelled', opening_date: '2025-12-01', deadline: '2026-01-10', closed_date: '2025-12-28', days_in_progress: 20, sla_to_offer: 40, sla_status_display: 'В срок', time2hire: null, recruiters: [{ name: 'Черномордин А.', days: 20 }], candidate_name: null, candidate_id: null, is_overdue: false },
+  { id: 10, vacancy: 'Security Engineer', grade: 'Senior', grade_short: 'S', project: 'Analytics', priority: 1, status: 'in_progress', opening_date: '2025-12-22', deadline: '2026-02-15', closed_date: null, days_in_progress: 34, sla_to_offer: 50, sla_status_display: 'Нормально', time2hire: null, recruiters: [{ name: 'Голубенко А.', days: 24 }], candidate_name: null, candidate_id: null, is_overdue: false },
 ]
 
 const STATUS_OPTIONS = [
@@ -53,21 +53,21 @@ export default function HiringPlanPage() {
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState('')
   const [period, setPeriod] = useState('')
-  const [project, setProject] = useState('')
-  const [recruiterSearch, setRecruiterSearch] = useState('')
+  const [vacancy, setVacancy] = useState('')
+  const [recruiter, setRecruiter] = useState('')
   const [tableLimit, setTableLimit] = useState<number>(10)
 
   const filtered = MOCK_REQUESTS.filter((r) => {
-    if (search && !(r.vacancy.toLowerCase().includes(search.toLowerCase()) || (r.candidate_name || '').toLowerCase().includes(search.toLowerCase()))) return false
+    const q = search.toLowerCase()
+    if (search && !(r.vacancy.toLowerCase().includes(q) || (r.candidate_name || '').toLowerCase().includes(q) || (r.project || '').toLowerCase().includes(q))) return false
+    if (vacancy && r.vacancy !== vacancy) return false
     if (status && r.status !== status) return false
     if (period) {
       const [y, m] = period.split('-')
       const [ry, rm] = (r.opening_date || '').split('-')
       if (ry !== y || rm !== m) return false
     }
-    if (project === '__none__' && r.project) return false
-    if (project && project !== '__none__' && (r.project || '') !== project) return false
-    if (recruiterSearch && !(r.recruiter || '').toLowerCase().includes(recruiterSearch.toLowerCase())) return false
+    if (recruiter && !(r.recruiters || []).some((re) => re.name === recruiter)) return false
     return true
   })
 
@@ -91,7 +91,8 @@ export default function HiringPlanPage() {
   const closedWithT2H = filtered.filter((r) => r.status === 'closed' && r.time2hire != null)
   const avgT2H = closedWithT2H.length > 0 ? Math.round(closedWithT2H.reduce((acc, r) => acc + (r.time2hire || 0), 0) / closedWithT2H.length) : null
 
-  const projects = [...new Set(MOCK_REQUESTS.map((r) => r.project).filter(Boolean))] as string[]
+  const vacancies = [...new Set(MOCK_REQUESTS.map((r) => r.vacancy).filter(Boolean))] as string[]
+  const recruiters = [...new Set(MOCK_REQUESTS.flatMap((r) => (r.recruiters || []).map((re) => re.name)).filter(Boolean))] as string[]
 
   return (
     <AppLayout pageTitle="План найма">
@@ -151,40 +152,48 @@ export default function HiringPlanPage() {
         {/* Фильтры */}
         <Card mb="4" style={{ padding: 16 }}>
           <Text size="2" weight="medium" mb="3" style={{ display: 'block' }}>Фильтры</Text>
-          <Flex className={styles.filterRow} gap="3" wrap="wrap">
+          <Flex className={styles.filterRow} gap="2" wrap="nowrap" align="end">
             <Box className={styles.filterField}>
               <Text size="1" color="gray" mb="1" as="div">Поиск</Text>
-              <TextField.Root size="2" placeholder="Вакансия, кандидат…" value={search} onChange={(e) => setSearch(e.target.value)} />
+              <TextField.Root size="2" placeholder="Вакансия, кандидат, проект…" value={search} onChange={(e) => setSearch(e.target.value)} />
             </Box>
             <Box className={styles.filterField}>
-              <Text size="1" color="gray" mb="1" as="div">Проект</Text>
-              <Select.Root value={project || '__all__'} onValueChange={(v) => setProject(v === '__all__' ? '' : v)}>
-                <Select.Trigger style={{ minWidth: 160 }} />
+              <Text size="1" color="gray" mb="1" as="div">Вакансия</Text>
+              <Select.Root value={vacancy || '__all__'} onValueChange={(v) => setVacancy(v === '__all__' ? '' : v)}>
+                <Select.Trigger style={{ minWidth: 150 }} />
                 <Select.Content>
-                  <Select.Item value="__all__">Все проекты</Select.Item>
-                  <Select.Item value="__none__">Без проекта</Select.Item>
-                  {projects.map((p) => <Select.Item key={p} value={p}>{p}</Select.Item>)}
+                  <Select.Item value="__all__">Все вакансии</Select.Item>
+                  {vacancies.map((v) => <Select.Item key={v} value={v}>{v}</Select.Item>)}
                 </Select.Content>
               </Select.Root>
             </Box>
             <Box className={styles.filterField}>
               <Text size="1" color="gray" mb="1" as="div">Рекрутер</Text>
-              <TextField.Root size="2" placeholder="Поиск по рекрутеру…" value={recruiterSearch} onChange={(e) => setRecruiterSearch(e.target.value)} />
+              <Select.Root value={recruiter || '__all__'} onValueChange={(v) => setRecruiter(v === '__all__' ? '' : v)}>
+                <Select.Trigger style={{ minWidth: 140 }} />
+                <Select.Content>
+                  <Select.Item value="__all__">Все рекрутеры</Select.Item>
+                  {recruiters.map((r) => <Select.Item key={r} value={r}>{r}</Select.Item>)}
+                </Select.Content>
+              </Select.Root>
             </Box>
             <Box className={styles.filterField}>
               <Text size="1" color="gray" mb="1" as="div">Статус</Text>
               <Select.Root value={status || '__all__'} onValueChange={(v) => setStatus(v === '__all__' ? '' : v)}>
-                <Select.Trigger style={{ minWidth: 160 }} />
+                <Select.Trigger style={{ minWidth: 140 }} />
                 <Select.Content>
                   {STATUS_OPTIONS.map((o) => <Select.Item key={o.value || 'all'} value={o.value || '__all__'}>{o.label}</Select.Item>)}
                 </Select.Content>
               </Select.Root>
             </Box>
-            <Box className={styles.filterField}>
+            <Box className={`${styles.filterField} ${styles.filterFieldPeriod}`}>
               <Text size="1" color="gray" mb="1" as="div">Период</Text>
               <TextField.Root size="2" type="month" value={period} onChange={(e) => setPeriod(e.target.value)} />
             </Box>
-            <Button size="2" variant="soft" onClick={() => { setSearch(''); setStatus(''); setPeriod(''); setProject(''); setRecruiterSearch(''); setTableLimit(10); }}>Сбросить</Button>
+            <Button size="2" variant="soft" title="Сбросить" className={styles.resetBtn} onClick={() => { setSearch(''); setStatus(''); setPeriod(''); setVacancy(''); setRecruiter(''); setTableLimit(10); }}>
+              <Cross2Icon width={16} height={16} className={styles.resetBtnIcon} />
+              <span className={styles.resetBtnText}>Сбросить</span>
+            </Button>
           </Flex>
         </Card>
 
@@ -223,13 +232,17 @@ export default function HiringPlanPage() {
                   tableRows.map((r) => (
                     <tr key={r.id}>
                       <td>
-                        <Text weight="medium" className={styles.vacancyName} title={r.vacancy}>{r.vacancy}</Text>
-                        <br />
-                        <span className={`${styles.badge} ${styles.badgeSlaNormal}`}>{r.grade_short}</span>
+                        <span className={styles.vacancyCell}>
+                          <span className={`${styles.badge} ${styles.badgeSlaNormal}`}>{r.grade_short}</span>
+                          {' '}
+                          <a href={`https://app.huntflow.ru/vacancy/${r.id}`} target="_blank" rel="noopener noreferrer" className={styles.vacancyLink} title={r.vacancy}>{r.vacancy}</a>
+                        </span>
                       </td>
                       <td><Text className={styles.projectName} title={r.project || ''}>{r.project || '—'}</Text></td>
-                      <td>{r.recruiter || '—'}{r.recruiter_work_days > 0 ? ` (${r.recruiter_work_days} дн.)` : ''}</td>
-                      <td>
+                      <td className={styles.recruiterCell}>{r.recruiters?.length ? r.recruiters.map((re, i) => (
+                        <span key={i} className={styles.recruiterLine}>{re.name} ({re.days} дн.)</span>
+                      )) : '—'}</td>
+                      <td className={styles.statusCell}>
                         <span className={`${styles.badge} ${statusBadge(r.status)}`}>
                           {r.status === 'planned' && 'Планируется'}
                           {r.status === 'in_progress' && 'В процессе'}
@@ -238,17 +251,19 @@ export default function HiringPlanPage() {
                         </span>
                       </td>
                       <td>{fmt(r.opening_date)} — {r.deadline ? fmt(r.deadline) : 'нет SLA'}</td>
-                      <td>
+                      <td className={styles.factSlaCell}>
                         {r.status === 'planned' ? '—' : `${r.days_in_progress} / ${r.sla_to_offer}д`}
                         <br />
                         <span className={`${styles.badge} ${slaBadge(r.sla_status_display)}`}>{r.sla_status_display}</span>
                       </td>
-                      <td>
+                      <td className={styles.t2hSlaCell}>
                         {r.time2hire != null ? `${r.time2hire} дн.` : (r.status === 'closed' ? '—' : '—')}
                         <br />
                         {r.sla_status_display !== 'Нет SLA' && r.status !== 'planned' && <span className={`${styles.badge} ${slaBadge(r.sla_status_display)}`}>SLA</span>}
                       </td>
-                      <td>{r.candidate_name ? <><Text weight="medium">{r.candidate_name}</Text>{r.candidate_id ? <><br /><Text size="1" color="gray">ID: {r.candidate_id}</Text></> : null}</> : '—'}</td>
+                      <td>{r.candidate_name && r.candidate_id ? (
+                <a href={`https://app.huntflow.ru/candidate/${r.candidate_id}`} target="_blank" rel="noopener noreferrer" className={styles.candidateLink}><Text weight="medium" as="span">{r.candidate_name}</Text></a>
+              ) : r.candidate_name ? <Text weight="medium">{r.candidate_name}</Text> : '—'}</td>
                     </tr>
                   ))
                 )}

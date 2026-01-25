@@ -50,17 +50,49 @@
 .tableWrap td {
   padding: 10px 12px;
   border-bottom: 1px solid var(--gray-a5);
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+/* Столбцы, где разрешено 2+ строк: Рекрутер, Статус, Факт/SLA, T2H|SLA */
+.tableWrap td.recruiterCell,
+.tableWrap td.statusCell,
+.tableWrap td.factSlaCell,
+.tableWrap td.t2hSlaCell {
+  white-space: normal;
 }
 
 .tableWrap tbody tr:hover td {
   background: var(--gray-2);
 }
 
-.vacancyName {
+.vacancyCell {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+  max-width: 100%;
+}
+
+.vacancyLink {
+  color: var(--accent-11);
+  text-decoration: none;
   max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-weight: 500;
+}
+.vacancyLink:hover {
+  text-decoration: underline;
+}
+
+.recruiterCell .recruiterLine {
+  display: block;
+  line-height: 1.4;
+}
+.recruiterCell .recruiterLine + .recruiterLine {
+  margin-top: 2px;
 }
 
 .projectName {
@@ -68,6 +100,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.candidateLink {
+  color: var(--accent-11);
+  text-decoration: none;
+}
+.candidateLink:hover {
+  text-decoration: underline;
 }
 
 .badge {
@@ -89,11 +129,63 @@
 
 .filterRow {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 12px;
   align-items: flex-end;
+  overflow-x: auto;
+  flex-shrink: 0;
 }
 
 .filterField {
-  min-width: 140px;
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.filterFieldPeriod input {
+  min-width: 161px;
+}
+
+/* Кнопка «Сбросить»: по умолчанию текст, иконка скрыта */
+.resetBtn {
+  flex-shrink: 0;
+}
+.resetBtnIcon {
+  display: none;
+}
+.resetBtnText {
+  /* виден по умолчанию */
+}
+
+/* Узкий экран: только иконка, текст скрыт; поля сужаем */
+@media (max-width: 1100px) {
+  .resetBtnIcon {
+    display: inline-block;
+  }
+  .resetBtnText {
+    display: none;
+  }
+  .filterField {
+    min-width: 100px;
+  }
+  .filterFieldPeriod input {
+    min-width: 140px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .filterField {
+    min-width: 90px;
+  }
+  .filterFieldPeriod input {
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 900px) {
+  .filterField {
+    min-width: 80px;
+  }
+  .filterFieldPeriod input {
+    min-width: 100px;
+  }
 }

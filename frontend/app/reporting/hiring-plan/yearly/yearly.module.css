@@ -2,6 +2,13 @@
   padding: 24px;
 }
 
+.topRowRight {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 .legend {
   display: flex;
   flex-wrap: wrap;
@@ -44,6 +51,55 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.cellOneLine {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+}
+
+.cellOneLine > *:first-child {
+  min-width: 0;
+}
+
+.cellOneLine .extLink {
+  flex-shrink: 0;
+  opacity: 0.75;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.cellOneLine .extLink:hover {
+  opacity: 1;
+}
+
+.extLink {
+  color: var(--accent-11);
+}
+
+.candidateLink {
+  color: var(--accent-11);
+  text-decoration: none;
+}
+.candidateLink:hover {
+  text-decoration: underline;
+}
+
+.cellTwoLines {
+  display: block;
+  line-height: 1.3;
+}
+
+.cellTwoLines br + * {
+  margin-top: 2px;
+}
+
+.tableWrap th.candidateCol,
+.tableWrap td.candidateCol {
+  text-align: left;
+  min-width: 140px;
 }
 
 .tableWrap {
