@@ -26,7 +26,7 @@ interface SettingsData {
   sandboxUrl?: string
   sandboxApiKey?: string
   prodUrl?: string
-  activeSystem?: string
+  activeSystem?: 'prod' | 'sandbox'
   accessToken?: string
   refreshToken?: string
   
@@ -748,7 +748,7 @@ export default function IntegrationSettingsModal({
               </Text>
               <Select.Root
                 value={settings.activeSystem || 'prod'}
-                onValueChange={(value) => setSettings(prev => ({ ...prev, activeSystem: value }))}
+                onValueChange={(value) => setSettings(prev => ({ ...prev, activeSystem: (value === 'sandbox' || value === 'prod') ? value : 'prod' }))}
               >
                 <Select.Trigger style={{ width: '100%', boxSizing: 'border-box' }} />
                 <Select.Content>

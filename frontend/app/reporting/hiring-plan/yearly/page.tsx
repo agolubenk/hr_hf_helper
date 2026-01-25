@@ -154,7 +154,7 @@ export default function YearlyHiringPlanPage() {
                     <span className={`${styles.badge} ${row.status === 'planned' ? styles.badgePlanned : row.status === 'in_progress' ? styles.badgeProgress : row.status === 'closed' ? styles.badgeClosed : styles.badgeCancelled}`}>
                       {statusLabel(row.status)}
                     </span>
-                    {row.closed_date && <br /><Text size="1" color="gray">{fmt(row.closed_date)}</Text>}
+                    {row.closed_date ? <><br /><Text size="1" color="gray">{fmt(row.closed_date)}</Text></> : null}
                   </td>
                 </tr>
               ))}

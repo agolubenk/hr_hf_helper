@@ -220,7 +220,7 @@ function VacanciesPageContent() {
           vacancyId={editVacancyId ?? viewVacancyId}
           mode={viewVacancyId ? 'view' : 'edit'}
           vacancy={(() => { const id = editVacancyId ?? viewVacancyId; const v = id != null ? mockVacancies.find(x => x.id === id) : undefined; return v ? { ...v, status: statusOverrides[v.id] ?? v.status } : null })()}
-          vacancyStatus={(() => { const id = editVacancyId ?? viewVacancyId; const v = id != null ? mockVacancies.find(x => x.id === id) : undefined; return v ? (statusOverrides[id] ?? v.status) : undefined })()}
+          vacancyStatus={(() => { const id = editVacancyId ?? viewVacancyId; const v = id != null ? mockVacancies.find(x => x.id === id) : undefined; return v ? (statusOverrides[v.id] ?? v.status) : undefined })()}
           onVacancyStatusChange={(status) => { const id = editVacancyId ?? viewVacancyId; if (id != null) setStatusOverrides(prev => ({ ...prev, [id]: status })) }}
           onSwitchToEdit={viewVacancyId != null ? () => { setEditVacancyId(viewVacancyId); setViewVacancyId(null) } : undefined}
           vacancyTitle={mockVacancies.find(v => v.id === (editVacancyId ?? viewVacancyId))?.title}
