@@ -9,9 +9,11 @@ export default function RecruitingStagesSettingsPage() {
   return (
     <AppLayout pageTitle="Этапы найма и причины отказа">
       <Box className={styles.container}>
-        <Text size="6" weight="bold" mb="4" style={{ display: 'block' }}>
-          Этапы найма и причины отказа
-        </Text>
+        <Box mb="4">
+          <Text size="6" weight="bold" style={{ display: 'block' }}>
+            Этапы найма и причины отказа
+          </Text>
+        </Box>
 
         <RecruitingStagesSettings />
       </Box>

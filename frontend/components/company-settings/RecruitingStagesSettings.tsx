@@ -2,7 +2,8 @@
 
 import { Box, Flex, Text, Button, Card, Table, TextField, Dialog, Tabs } from "@radix-ui/themes"
 import { useState } from "react"
-import { PlusIcon, Pencil2Icon, TrashIcon, CheckIcon, ChevronUpIcon, ChevronDownIcon } from "@radix-ui/react-icons"
+import { PlusIcon, Pencil2Icon, TrashIcon, CheckIcon, MixerHorizontalIcon } from "@radix-ui/react-icons"
+import Link from "next/link"
 import styles from './RecruitingStagesSettings.module.css'
 
 interface RejectionReason {
@@ -142,7 +143,6 @@ export default function RecruitingStagesSettings() {
     name: '',
     color: defaultColors[0],
     description: '',
-    autoTransition: false,
     rejectionReasonIds: []
   })
   
@@ -162,7 +162,6 @@ export default function RecruitingStagesSettings() {
       name: '',
       color: defaultColors[0],
       description: '',
-      autoTransition: false,
       rejectionReasonIds: []
     })
     setIsStageDialogOpen(true)
@@ -174,7 +173,6 @@ export default function RecruitingStagesSettings() {
       name: stage.name,
       color: stage.color,
       description: stage.description,
-      autoTransition: stage.autoTransition,
       rejectionReasonIds: stage.rejectionReasonIds || []
     })
     setIsStageDialogOpen(true)
@@ -186,33 +184,17 @@ export default function RecruitingStagesSettings() {
     }
   }
 
-  const handleMoveStage = (id: string, direction: 'up' | 'down') => {
-    const index = stages.findIndex(s => s.id === id)
-    if (index === -1) return
-
-    const newStages = [...stages]
-    if (direction === 'up' && index > 0) {
-      [newStages[index - 1], newStages[index]] = [newStages[index], newStages[index - 1]]
-      newStages[index - 1].order = index
-      newStages[index].order = index + 1
-    } else if (direction === 'down' && index < newStages.length - 1) {
-      [newStages[index], newStages[index + 1]] = [newStages[index + 1], newStages[index]]
-      newStages[index].order = index + 1
-      newStages[index + 1].order = index + 2
-    }
-    setStages(newStages)
-  }
-
   const handleSaveStage = () => {
-    if (!stageFormData.name) {
+    if (!editingStage && !stageFormData.name) {
       alert('Пожалуйста, введите название этапа')
       return
     }
 
     if (editingStage) {
-      setStages(stages.map(s => 
-        s.id === editingStage.id 
-          ? { ...s, ...stageFormData, rejectionReasonIds: stageFormData.rejectionReasonIds || [] }
+      const { name: _n, ...rest } = stageFormData
+      setStages(stages.map(s =>
+        s.id === editingStage.id
+          ? { ...s, ...rest, rejectionReasonIds: stageFormData.rejectionReasonIds || [] }
           : s
       ))
     } else {
@@ -222,7 +204,7 @@ export default function RecruitingStagesSettings() {
         order: stages.length + 1,
         color: stageFormData.color || defaultColors[0],
         description: stageFormData.description,
-        autoTransition: stageFormData.autoTransition || false,
+        autoTransition: false,
         rejectionReasonIds: stageFormData.rejectionReasonIds || []
       }
       setStages([...stages, newStage])
@@ -296,16 +278,24 @@ export default function RecruitingStagesSettings() {
   return (
     <Box>
       <Tabs.Root value={activeTab} onValueChange={(value) => setActiveTab(value as 'stages' | 'reasons')}>
-        <Tabs.List>
-          <Tabs.Trigger value="stages">Этапы найма</Tabs.Trigger>
-          <Tabs.Trigger value="reasons">Причины отказа</Tabs.Trigger>
-        </Tabs.List>
+        <Flex justify="between" align="center">
+          <Tabs.List>
+            <Tabs.Trigger value="stages">Этапы найма</Tabs.Trigger>
+            <Tabs.Trigger value="reasons">Причины отказа</Tabs.Trigger>
+          </Tabs.List>
+          <Button variant="soft" size="2" asChild>
+            <Link href="/company-settings/employee-lifecycle">
+              <MixerHorizontalIcon width={16} height={16} />
+              Жизненный цикл сотрудников
+            </Link>
+          </Button>
+        </Flex>
 
         <Box mt="4">
           <Tabs.Content value="stages">
             <Flex justify="between" align="center" mb="4">
               <Text size="3" color="gray">
-                Настройте этапы найма и их порядок. Выберите доступные причины отказа для каждого этапа.
+                Настройте этапы найма. Выберите доступные причины отказа для каждого этапа.
               </Text>
               <Button onClick={handleAddStage}>
                 <PlusIcon width={16} height={16} />
@@ -317,11 +307,10 @@ export default function RecruitingStagesSettings() {
               <Table.Root>
                 <Table.Header>
                   <Table.Row>
-                    <Table.ColumnHeaderCell style={{ width: '50px' }}>Порядок</Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell style={{ width: '40px' }}>№</Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell>Название</Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell>Цвет</Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell>Описание</Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell>Автопереход</Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell>Причины отказа</Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell style={{ width: '150px' }}>Действия</Table.ColumnHeaderCell>
                   </Table.Row>
@@ -330,24 +319,7 @@ export default function RecruitingStagesSettings() {
                   {stages.map((stage, index) => (
                     <Table.Row key={stage.id}>
                       <Table.Cell>
-                        <Flex gap="1">
-                          <Button
-                            size="1"
-                            variant="ghost"
-                            onClick={() => handleMoveStage(stage.id, 'up')}
-                            disabled={index === 0}
-                          >
-                            <ChevronUpIcon width={12} height={12} />
-                          </Button>
-                          <Button
-                            size="1"
-                            variant="ghost"
-                            onClick={() => handleMoveStage(stage.id, 'down')}
-                            disabled={index === stages.length - 1}
-                          >
-                            <ChevronDownIcon width={12} height={12} />
-                          </Button>
-                        </Flex>
+                        <Text size="2">{index + 1}</Text>
                       </Table.Cell>
                       <Table.Cell>
                         <Flex align="center" gap="2">
@@ -367,13 +339,6 @@ export default function RecruitingStagesSettings() {
                       </Table.Cell>
                       <Table.Cell>
                         <Text size="2">{stage.description || '-'}</Text>
-                      </Table.Cell>
-                      <Table.Cell>
-                        {stage.autoTransition ? (
-                          <Text color="green">Да</Text>
-                        ) : (
-                          <Text color="gray">Нет</Text>
-                        )}
                       </Table.Cell>
                       <Table.Cell>
                         {stage.rejectionReasonIds && stage.rejectionReasonIds.length > 0 ? (
@@ -477,13 +442,17 @@ export default function RecruitingStagesSettings() {
           <Flex direction="column" gap="3" mt="4">
             <Box>
               <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>
-                Название этапа *
+                Название этапа {editingStage ? '' : '*'}
               </Text>
-              <TextField.Root
-                value={stageFormData.name || ''}
-                onChange={(e) => setStageFormData({ ...stageFormData, name: e.target.value })}
-                placeholder="Например: Interview"
-              />
+              {editingStage ? (
+                <Text size="2" color="gray">{editingStage.name}</Text>
+              ) : (
+                <TextField.Root
+                  value={stageFormData.name || ''}
+                  onChange={(e) => setStageFormData({ ...stageFormData, name: e.target.value })}
+                  placeholder="Например: Interview"
+                />
+              )}
             </Box>
 
             <Box>
@@ -534,18 +503,6 @@ export default function RecruitingStagesSettings() {
                 style={{ marginTop: '8px' }}
               />
             </Box>
-
-            <Flex align="center" gap="2">
-              <input
-                type="checkbox"
-                checked={stageFormData.autoTransition || false}
-                onChange={(e) => setStageFormData({ ...stageFormData, autoTransition: e.target.checked })}
-                id="auto-transition"
-              />
-              <Text size="2" as="label" htmlFor="auto-transition" style={{ cursor: 'pointer' }}>
-                Автоматический переход на следующий этап
-              </Text>
-            </Flex>
 
             <Box>
               <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>

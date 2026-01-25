@@ -356,12 +356,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           href: '/vacancies/salary-ranges',
         },
         {
-          id: 'vacancies-finance',
-          label: 'Грейды, курсы и налоги',
-          icon: <BarChartIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-          href: '/company-settings/finance',
-        },
-        {
           id: 'vacancies-benchmarks',
           label: 'Бенчмарки',
           icon: <ListBulletIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
@@ -555,6 +549,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           href: '/company-settings/grades',
         },
         {
+          id: 'company-settings-lifecycle',
+          label: 'Жизненный цикл сотрудников',
+          icon: <MixerHorizontalIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+          href: '/company-settings/employee-lifecycle',
+        },
+        {
           id: 'company-settings-finance',
           label: 'Финансы',
           icon: <ReloadIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
@@ -686,8 +686,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             )) ||
             (item.id === 'vacancies' && (
               pathname?.startsWith('/vacancies') ||
-              pathname?.startsWith('/hiring-requests') ||
-              pathname?.startsWith('/company-settings/finance')
+              pathname?.startsWith('/hiring-requests')
             )) ||
             (item.id === 'integrations' && (
               pathname?.startsWith('/huntflow') ||

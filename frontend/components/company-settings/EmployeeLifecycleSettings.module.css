@@ -1,0 +1,65 @@
+.blockCard {
+  padding: 20px;
+  border: 1px solid var(--gray-6);
+  border-radius: 12px;
+  background: var(--gray-2);
+}
+
+.stageRow {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--gray-3);
+  border: 1px solid var(--gray-5);
+}
+
+.stageName {
+  cursor: pointer;
+}
+
+.stageName:hover {
+  text-decoration: underline;
+  color: var(--accent-11);
+}
+
+.dragHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin: -4px 0;
+  color: var(--gray-9);
+  cursor: grab;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.dragHandle:hover {
+  color: var(--gray-12);
+  background: var(--gray-4);
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+.dragHandleDisabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.dragHandleDisabled:hover {
+  background: transparent;
+}
+
+.orderBadge {
+  min-width: 20px;
+  color: var(--gray-10);
+  flex-shrink: 0;
+}
+
+.stageRowDragging {
+  opacity: 0.85;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1;
+}
