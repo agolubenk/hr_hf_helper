@@ -2191,12 +2191,21 @@ export default function RecrChatPage() {
   }
   
   const handleDeleteActivity = (itemId: string) => {
-    setActivityItems(prev => {
-      // Можно удалять только последний элемент (первый в массиве, так как они отсортированы от новых к старым)
-      if (prev.length > 0 && prev[0].id === itemId) {
-        return prev.filter(item => item.id !== itemId)
-      }
-      return prev
+    toast.showWarning('Удалить запись?', 'Вы уверены, что хотите удалить эту запись активности?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        {
+          label: 'Удалить',
+          onClick: () => setActivityItems(prev => {
+            if (prev.length > 0 && prev[0].id === itemId) {
+              return prev.filter(item => item.id !== itemId)
+            }
+            return prev
+          }),
+          variant: 'solid',
+          color: 'red',
+        },
+      ],
     })
   }
   
@@ -2244,23 +2253,39 @@ export default function RecrChatPage() {
   }
   
   const handleDeleteEmail = (index: number) => {
-    const emails = getEmails()
-    const newEmails = emails.filter((_: string, i: number) => i !== index)
-    setSelectedCandidate(prev => ({ 
-      ...prev, 
-      email: newEmails[0] || '',
-      emails: newEmails
-    }))
+    toast.showWarning('Удалить email?', 'Вы уверены, что хотите удалить этот email?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        {
+          label: 'Удалить',
+          onClick: () => {
+            const emails = getEmails()
+            const newEmails = emails.filter((_: string, i: number) => i !== index)
+            setSelectedCandidate(prev => ({ ...prev, email: newEmails[0] || '', emails: newEmails }))
+          },
+          variant: 'solid',
+          color: 'red',
+        },
+      ],
+    })
   }
   
   const handleDeletePhone = (index: number) => {
-    const phones = getPhones()
-    const newPhones = phones.filter((_: string, i: number) => i !== index)
-    setSelectedCandidate(prev => ({ 
-      ...prev, 
-      phone: newPhones[0] || '',
-      phones: newPhones
-    }))
+    toast.showWarning('Удалить телефон?', 'Вы уверены, что хотите удалить этот телефон?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        {
+          label: 'Удалить',
+          onClick: () => {
+            const phones = getPhones()
+            const newPhones = phones.filter((_: string, i: number) => i !== index)
+            setSelectedCandidate(prev => ({ ...prev, phone: newPhones[0] || '', phones: newPhones }))
+          },
+          variant: 'solid',
+          color: 'red',
+        },
+      ],
+    })
   }
   
   const handleAddContact = () => {
@@ -2614,15 +2639,26 @@ export default function RecrChatPage() {
   }
   
   const handleDeleteSocialContact = (platform: string, index: number) => {
-    const contacts = getSocialContacts(platform)
-    const newContacts = contacts.filter((_, i) => i !== index)
-    
-    const pluralKey = `${platform}s` as keyof typeof selectedCandidate
-    setSelectedCandidate(prev => ({
-      ...prev,
-      [platform]: newContacts[0] || '', // Для обратной совместимости
-      [pluralKey]: newContacts
-    }))
+    toast.showWarning('Удалить контакт?', 'Вы уверены, что хотите удалить этот контакт?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        {
+          label: 'Удалить',
+          onClick: () => {
+            const contacts = getSocialContacts(platform)
+            const newContacts = contacts.filter((_, i) => i !== index)
+            const pluralKey = `${platform}s` as keyof typeof selectedCandidate
+            setSelectedCandidate(prev => ({
+              ...prev,
+              [platform]: newContacts[0] || '',
+              [pluralKey]: newContacts
+            }))
+          },
+          variant: 'solid',
+          color: 'red',
+        },
+      ],
+    })
   }
   
   // Получить доступные платформы (те, которые еще не добавлены)

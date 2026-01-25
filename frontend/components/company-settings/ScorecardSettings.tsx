@@ -3,6 +3,7 @@
 import { Box, Flex, Text, Button, Card, TextField, Dialog, Callout } from "@radix-ui/themes"
 import { useState, useEffect } from "react"
 import { PlusIcon, TrashIcon, Cross2Icon, InfoCircledIcon, ListBulletIcon, FileTextIcon, GearIcon, ArrowRightIcon, ArrowLeftIcon } from "@radix-ui/react-icons"
+import { useToast } from "@/components/Toast/ToastContext"
 import styles from './ScorecardSettings.module.css'
 
 interface ScorecardCriteria {
@@ -102,6 +103,7 @@ const mockCriteria: ScorecardCriteria[] = [
 ]
 
 export default function ScorecardSettings() {
+  const toast = useToast()
   const [criteria, setCriteria] = useState<ScorecardCriteria[]>(mockCriteria)
   const [selectedCriteriaId, setSelectedCriteriaId] = useState<string | null>(null)
   const [previewText, setPreviewText] = useState('')
@@ -163,34 +165,37 @@ export default function ScorecardSettings() {
         .filter(s => s.length > 0)
       
       if (protectedList.includes(criteriaToDelete.name)) {
-        alert(`Критерий "${criteriaToDelete.name}" защищен от удаления. Удалите его из списка защищенных листов, чтобы иметь возможность удалить.`)
+        toast.showError('Защищённый критерий', `Критерий "${criteriaToDelete.name}" защищен от удаления. Удалите его из списка защищенных листов.`)
         return
       }
     }
 
-    if (!confirm('Вы уверены, что хотите удалить этот критерий?')) {
-      return
-    }
-
-    if (parentId) {
-      // Удаляем дочерний элемент
-      setCriteria(prev => prev.map(item => {
-        if (item.id === parentId) {
-          return {
-            ...item,
-            children: item.children?.filter(c => c.id !== id) || [],
-          }
-        }
-        return item
-      }))
-    } else {
-      // Удаляем корневой элемент
-      setCriteria(prev => prev.filter(item => item.id !== id))
-    }
-
-    if (selectedCriteriaId === id) {
-      setSelectedCriteriaId(null)
-    }
+    toast.showWarning('Удалить критерий?', 'Вы уверены, что хотите удалить этот критерий?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        {
+          label: 'Удалить',
+          onClick: () => {
+            if (parentId) {
+              setCriteria(prev => prev.map(item => {
+                if (item.id === parentId) {
+                  return {
+                    ...item,
+                    children: item.children?.filter(c => c.id !== id) || [],
+                  }
+                }
+                return item
+              }))
+            } else {
+              setCriteria(prev => prev.filter(item => item.id !== id))
+            }
+            setSelectedCriteriaId(prev => prev === id ? null : prev)
+          },
+          variant: 'solid',
+          color: 'red',
+        },
+      ],
+    })
   }
 
   const handleUpdateCriteria = (id: string, field: 'name' | 'description', value: string, parentId?: string) => {

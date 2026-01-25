@@ -3,6 +3,7 @@
 import { Box, Flex, Text, Card, Button, Badge, Callout } from "@radix-ui/themes"
 import { useState } from "react"
 import { PlusIcon, Pencil2Icon, TrashIcon, StarIcon, InfoCircledIcon, ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons"
+import { useToast } from "@/components/Toast/ToastContext"
 import RejectionTemplateForm from "./RejectionTemplateForm"
 import styles from './GradeTemplatesTab.module.css'
 
@@ -41,6 +42,7 @@ const mockTemplates: Record<number, RejectionTemplate[]> = {
 }
 
 export default function GradeTemplatesTab() {
+  const toast = useToast()
   const [grades] = useState<Grade[]>(mockGrades)
   const [templates, setTemplates] = useState<Record<number, RejectionTemplate[]>>(mockTemplates)
   const [expandedSections, setExpandedSections] = useState<Set<number>>(new Set())
@@ -73,16 +75,23 @@ export default function GradeTemplatesTab() {
   }
 
   const handleDelete = (id: number) => {
-    if (!confirm('Вы уверены, что хотите удалить этот шаблон?')) {
-      return
-    }
-
-    // Удаляем из моковых данных
-    const updatedTemplates: Record<number, RejectionTemplate[]> = {}
-    for (const gradeId in templates) {
-      updatedTemplates[parseInt(gradeId)] = templates[parseInt(gradeId)].filter(t => t.id !== id)
-    }
-    setTemplates(updatedTemplates)
+    toast.showWarning('Удалить шаблон?', 'Вы уверены, что хотите удалить этот шаблон?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        {
+          label: 'Удалить',
+          onClick: () => {
+            const updatedTemplates: Record<number, RejectionTemplate[]> = {}
+            for (const gradeId in templates) {
+              updatedTemplates[parseInt(gradeId)] = templates[parseInt(gradeId)].filter(t => t.id !== id)
+            }
+            setTemplates(updatedTemplates)
+          },
+          variant: 'solid',
+          color: 'red',
+        },
+      ],
+    })
   }
 
   const handleFormClose = () => {

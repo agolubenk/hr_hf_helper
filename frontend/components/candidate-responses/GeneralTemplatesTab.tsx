@@ -3,6 +3,7 @@
 import { Box, Flex, Text, Card, Button, Badge, Callout } from "@radix-ui/themes"
 import { useState } from "react"
 import { PlusIcon, Pencil2Icon, TrashIcon, InfoCircledIcon, ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons"
+import { useToast } from "@/components/Toast/ToastContext"
 import RejectionTemplateForm from "./RejectionTemplateForm"
 import styles from './GeneralTemplatesTab.module.css'
 
@@ -42,6 +43,7 @@ const mockTemplates: Record<string, RejectionTemplate[]> = {
 }
 
 export default function GeneralTemplatesTab() {
+  const toast = useToast()
   const [templates, setTemplates] = useState<Record<string, RejectionTemplate[]>>(mockTemplates)
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['office_format']))
   const [showForm, setShowForm] = useState(false)
@@ -72,26 +74,34 @@ export default function GeneralTemplatesTab() {
     setShowForm(true)
   }
 
-  const handleDelete = (id: number) => {
-    if (!confirm('Вы уверены, что хотите удалить этот шаблон?')) {
-      return
-    }
-
-    // Удаляем из моковых данных
-    const type = editingTemplate?.rejection_type || formType
-    if (type) {
-      setTemplates(prev => ({
-        ...prev,
-        [type]: prev[type].filter(t => t.id !== id)
-      }))
-    } else {
-      // Если тип не определен, ищем во всех типах
-      const updatedTemplates: Record<string, RejectionTemplate[]> = {}
-      for (const key in templates) {
-        updatedTemplates[key] = templates[key].filter(t => t.id !== id)
-      }
-      setTemplates(updatedTemplates)
-    }
+  const handleDelete = (id: number, rejectionType?: string) => {
+    const type = rejectionType || editingTemplate?.rejection_type || formType
+    toast.showWarning('Удалить шаблон?', 'Вы уверены, что хотите удалить этот шаблон?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        {
+          label: 'Удалить',
+          onClick: () => {
+            if (type) {
+              setTemplates(prev => ({
+                ...prev,
+                [type]: prev[type].filter(t => t.id !== id)
+              }))
+            } else {
+              setTemplates(prev => {
+                const updated: Record<string, RejectionTemplate[]> = {}
+                for (const key in prev) {
+                  updated[key] = prev[key].filter(t => t.id !== id)
+                }
+                return updated
+              })
+            }
+          },
+          variant: 'solid',
+          color: 'red',
+        },
+      ],
+    })
   }
 
   const handleFormClose = () => {
@@ -181,7 +191,7 @@ export default function GeneralTemplatesTab() {
                                   size="2"
                                   variant="soft"
                                   color="red"
-                                  onClick={() => handleDelete(template.id)}
+                                  onClick={() => handleDelete(template.id, template.rejection_type)}
                                 >
                                   <TrashIcon width={14} height={14} />
                                   Удалить

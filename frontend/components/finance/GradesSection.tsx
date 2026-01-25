@@ -3,6 +3,7 @@
 import { Box, Flex, Text, Button, TextField, Table, Badge, Callout, Select } from "@radix-ui/themes"
 import { StarIcon, PlusIcon, TrashIcon, Pencil2Icon, InfoCircledIcon } from "@radix-ui/react-icons"
 import { useState } from "react"
+import { useToast } from "@/components/Toast/ToastContext"
 import styles from './GradesSection.module.css'
 
 interface Grade {
@@ -38,6 +39,7 @@ const mockGrades: Grade[] = [
 ]
 
 export default function GradesSection() {
+  const toast = useToast()
   const [grades, setGrades] = useState<Grade[]>(mockGrades)
   const [isAdding, setIsAdding] = useState(false)
   const [selectedGradeName, setSelectedGradeName] = useState<string>('')
@@ -83,11 +85,12 @@ export default function GradesSection() {
   }
 
   const handleDelete = (id: number) => {
-    if (!confirm('Вы уверены, что хотите удалить этот грейд?')) {
-      return
-    }
-
-    setGrades(grades.filter(g => g.id !== id))
+    toast.showWarning('Удалить грейд?', 'Вы уверены, что хотите удалить этот грейд?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        { label: 'Удалить', onClick: () => setGrades(prev => prev.filter(g => g.id !== id)), variant: 'solid', color: 'red' },
+      ],
+    })
   }
 
   return (

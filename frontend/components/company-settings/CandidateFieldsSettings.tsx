@@ -3,6 +3,7 @@
 import { Box, Flex, Text, Button, Card, Table, TextField, Select, Dialog } from "@radix-ui/themes"
 import { useState } from "react"
 import { PlusIcon, Pencil2Icon, TrashIcon, Cross2Icon, CheckIcon, ChevronUpIcon, ChevronDownIcon } from "@radix-ui/react-icons"
+import { useToast } from "@/components/Toast/ToastContext"
 import styles from './CandidateFieldsSettings.module.css'
 
 interface CandidateField {
@@ -69,6 +70,7 @@ const fieldTypes = [
 ]
 
 export default function CandidateFieldsSettings() {
+  const toast = useToast()
   const [fields, setFields] = useState<CandidateField[]>(mockFields)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingField, setEditingField] = useState<CandidateField | null>(null)
@@ -108,9 +110,12 @@ export default function CandidateFieldsSettings() {
   }
 
   const handleDeleteField = (id: string) => {
-    if (confirm('Вы уверены, что хотите удалить это поле?')) {
-      setFields(fields.filter(f => f.id !== id))
-    }
+    toast.showWarning('Удалить поле?', 'Вы уверены, что хотите удалить это поле?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        { label: 'Удалить', onClick: () => setFields(prev => prev.filter(f => f.id !== id)), variant: 'solid', color: 'red' },
+      ],
+    })
   }
 
   const handleMoveField = (id: string, direction: 'up' | 'down') => {

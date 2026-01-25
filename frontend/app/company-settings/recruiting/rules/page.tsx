@@ -4,6 +4,7 @@ import AppLayout from "@/components/AppLayout"
 import { Flex, Text, Button, Box, TextField, Select, Badge, Table, TextArea } from "@radix-ui/themes"
 import { PlusIcon, Pencil1Icon, TrashIcon, CheckIcon, Cross2Icon, MagnifyingGlassIcon } from "@radix-ui/react-icons"
 import { useState, useEffect } from "react"
+import { useToast } from "@/components/Toast/ToastContext"
 
 interface AttractionRule {
   id: string
@@ -20,6 +21,7 @@ interface AttractionRule {
 }
 
 export default function AttractionRulesPage() {
+  const toast = useToast()
   const [rules, setRules] = useState<AttractionRule[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -171,22 +173,24 @@ export default function AttractionRulesPage() {
     }
   }
 
-  const handleDeleteRule = async (id: string) => {
-    if (!confirm('Вы уверены, что хотите удалить это правило?')) {
-      return
-    }
+  const handleDeleteRule = (id: string) => {
+    toast.showWarning('Удалить правило?', 'Вы уверены, что хотите удалить это правило?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        { label: 'Удалить', onClick: () => performDeleteRule(id), variant: 'solid', color: 'red' },
+      ],
+    })
+  }
 
+  const performDeleteRule = async (id: string) => {
     try {
       // TODO: Заменить на реальный API вызов
       // await api.deleteAttractionRule(id)
-      
       console.log('Deleting rule:', id)
-      
-      // Симуляция удаления
       setRules(prev => prev.filter(r => r.id !== id))
     } catch (error) {
       console.error('Error deleting rule:', error)
-      alert('Ошибка при удалении правила')
+      toast.showError('Ошибка', 'Ошибка при удалении правила')
     }
   }
 

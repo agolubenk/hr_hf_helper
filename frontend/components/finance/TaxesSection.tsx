@@ -3,6 +3,7 @@
 import { Box, Flex, Text, Button, TextField, Table, Badge, Switch } from "@radix-ui/themes"
 import { MixerHorizontalIcon, PlusIcon, TrashIcon, Pencil2Icon } from "@radix-ui/react-icons"
 import { useState } from "react"
+import { useToast } from "@/components/Toast/ToastContext"
 import styles from './TaxesSection.module.css'
 
 interface PLNTax {
@@ -29,6 +30,7 @@ const mockTaxes: PLNTax[] = [
 ]
 
 export default function TaxesSection() {
+  const toast = useToast()
   const [taxes, setTaxes] = useState<PLNTax[]>(mockTaxes)
   const [isAdding, setIsAdding] = useState(false)
   const [newTax, setNewTax] = useState({ name: '', rate: '' })
@@ -108,11 +110,12 @@ export default function TaxesSection() {
   }
 
   const handleDelete = (id: number) => {
-    if (!confirm('Вы уверены, что хотите удалить этот налог?')) {
-      return
-    }
-
-    setTaxes(taxes.filter(t => t.id !== id))
+    toast.showWarning('Удалить налог?', 'Вы уверены, что хотите удалить этот налог?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        { label: 'Удалить', onClick: () => setTaxes(prev => prev.filter(t => t.id !== id)), variant: 'solid', color: 'red' },
+      ],
+    })
   }
 
   const activeTaxes = taxes.filter(t => t.is_active)

@@ -3,6 +3,7 @@
 import { Box, Flex, Text, TextField, TextArea, Button, Card, Separator } from "@radix-ui/themes"
 import { useState, useRef } from "react"
 import { PlusIcon, TrashIcon, Pencil2Icon, CheckIcon, Cross2Icon } from "@radix-ui/react-icons"
+import { useToast } from "@/components/Toast/ToastContext"
 import styles from './GeneralSettings.module.css'
 
 interface Office {
@@ -41,6 +42,7 @@ const mockOffices: Office[] = [
 ]
 
 export default function GeneralSettings() {
+  const toast = useToast()
   const [companyName, setCompanyName] = useState(mockCompanyData.name)
   const [calendarLink, setCalendarLink] = useState(mockCompanyData.calendarLink)
   const [logo, setLogo] = useState<string | null>(mockCompanyData.logo)
@@ -101,9 +103,12 @@ export default function GeneralSettings() {
   }
 
   const handleDeleteOffice = (id: number) => {
-    if (confirm('Вы уверены, что хотите удалить этот офис?')) {
-      setOffices(prev => prev.filter(office => office.id !== id))
-    }
+    toast.showWarning('Удалить офис?', 'Вы уверены, что хотите удалить этот офис?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        { label: 'Удалить', onClick: () => setOffices(prev => prev.filter(office => office.id !== id)), variant: 'solid', color: 'red' },
+      ],
+    })
   }
 
   const handleCancelAdd = () => {

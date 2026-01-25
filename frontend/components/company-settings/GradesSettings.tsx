@@ -3,6 +3,7 @@
 import { Box, Flex, Text, Button, Card, Table, TextField, Dialog } from "@radix-ui/themes"
 import { useState } from "react"
 import { PlusIcon, ChevronUpIcon, ChevronDownIcon, Pencil2Icon, TrashIcon, Cross2Icon, CheckIcon } from "@radix-ui/react-icons"
+import { useToast } from "@/components/Toast/ToastContext"
 import GradeForm from "./GradeForm"
 import styles from './GradesSettings.module.css'
 
@@ -67,6 +68,7 @@ const mockAdditionalFields: AdditionalField[] = [
 ]
 
 export default function GradesSettings() {
+  const toast = useToast()
   const [grades, setGrades] = useState<Grade[]>(mockGrades)
   const [additionalFields, setAdditionalFields] = useState<AdditionalField[]>(mockAdditionalFields)
   const [editingGradeId, setEditingGradeId] = useState<number | null>(null)
@@ -161,13 +163,20 @@ export default function GradesSettings() {
   }
 
   const handleDelete = (id: number) => {
-    if (confirm('Вы уверены, что хотите удалить этот грейд?')) {
-      setGrades(prev => {
-        const filtered = prev.filter(g => g.id !== id)
-        // Обновляем порядок
-        return filtered.map((g, i) => ({ ...g, order: i + 1 }))
-      })
-    }
+    toast.showWarning('Удалить грейд?', 'Вы уверены, что хотите удалить этот грейд?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        {
+          label: 'Удалить',
+          onClick: () => setGrades(prev => {
+            const filtered = prev.filter(g => g.id !== id)
+            return filtered.map((g, i) => ({ ...g, order: i + 1 }))
+          }),
+          variant: 'solid',
+          color: 'red',
+        },
+      ],
+    })
   }
 
   const handleAddAdditionalField = () => {
@@ -197,18 +206,23 @@ export default function GradesSettings() {
   }
 
   const handleDeleteAdditionalField = (fieldId: string) => {
-    if (confirm('Вы уверены, что хотите удалить это дополнительное поле? Оно будет удалено для всех грейдов.')) {
-      // Удаляем поле у всех грейдов
-      setGrades(prev => prev.map(grade => {
-        const { [fieldId]: removed, ...rest } = grade.additionalFields || {}
-        return {
-          ...grade,
-          additionalFields: rest,
-        }
-      }))
-
-      setAdditionalFields(prev => prev.filter(f => f.id !== fieldId))
-    }
+    toast.showWarning('Удалить поле?', 'Вы уверены, что хотите удалить это дополнительное поле? Оно будет удалено для всех грейдов.', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        {
+          label: 'Удалить',
+          onClick: () => {
+            setGrades(prev => prev.map(grade => {
+              const { [fieldId]: _removed, ...rest } = grade.additionalFields || {}
+              return { ...grade, additionalFields: rest }
+            }))
+            setAdditionalFields(prev => prev.filter(f => f.id !== fieldId))
+          },
+          variant: 'solid',
+          color: 'red',
+        },
+      ],
+    })
   }
 
   const currentGrade = editingGradeId ? grades.find(g => g.id === editingGradeId) : null

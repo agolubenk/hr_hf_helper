@@ -4,6 +4,7 @@ import AppLayout from "@/components/AppLayout"
 import { Flex, Text, Button, Box, TextField, TextArea, Select, Badge } from "@radix-ui/themes"
 import { PlusIcon, ChevronDownIcon, ChevronRightIcon, Pencil1Icon, TrashIcon, CheckIcon, Cross2Icon, MagnifyingGlassIcon } from "@radix-ui/react-icons"
 import { useState, useEffect } from "react"
+import { useToast } from "@/components/Toast/ToastContext"
 import styles from './org-structure.module.css'
 
 interface Department {
@@ -22,6 +23,7 @@ interface Department {
 }
 
 export default function OrgStructurePage() {
+  const toast = useToast()
   const [departments, setDepartments] = useState<Department[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -227,27 +229,34 @@ export default function OrgStructurePage() {
     }
   }
 
-  const handleDeleteDepartment = async (id: string) => {
-    if (!confirm('Вы уверены, что хотите удалить этот департамент?')) {
-      return
-    }
+  const removeDepartmentFromTree = (list: Department[], removeId: string): Department[] =>
+    list.filter(d => d.id !== removeId).map(d => ({
+      ...d,
+      children: d.children ? removeDepartmentFromTree(d.children, removeId) : undefined
+    }))
 
-    setSaving(true)
-    try {
-      // TODO: Заменить на реальный API вызов
-      // await api.deleteDepartment(id)
-      
-      console.log('Deleting department:', id)
-      
-      // Симуляция удаления
-      setTimeout(() => {
-        setSaving(false)
-        loadDepartments()
-      }, 500)
-    } catch (error: any) {
-      console.error('Error deleting department:', error)
-      setSaving(false)
-    }
+  const handleDeleteDepartment = (id: string) => {
+    toast.showWarning('Удалить департамент?', 'Вы уверены, что хотите удалить этот департамент?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        {
+          label: 'Удалить',
+          onClick: () => {
+            setSaving(true)
+            try {
+              console.log('Deleting department:', id)
+              setDepartments(prev => removeDepartmentFromTree(prev, id))
+            } catch (e) {
+              toast.showError('Ошибка', 'Ошибка при удалении департамента')
+            } finally {
+              setSaving(false)
+            }
+          },
+          variant: 'solid',
+          color: 'red',
+        },
+      ],
+    })
   }
 
   const renderDepartment = (dept: Department, level: number = 0): React.ReactNode => {

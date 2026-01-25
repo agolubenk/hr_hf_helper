@@ -4,6 +4,7 @@ import AppLayout from "@/components/AppLayout"
 import { Flex, Text, Button, Box, TextField, Card, Separator, Select, Dialog } from "@radix-ui/themes"
 import { UploadIcon, FileTextIcon, DownloadIcon } from "@radix-ui/react-icons"
 import { useState, useEffect, useRef } from "react"
+import { useToast } from "@/components/Toast/ToastContext"
 import styles from '../../company-settings.module.css'
 
 // Динамический импорт библиотек для предпросмотра
@@ -79,6 +80,7 @@ const AVAILABLE_VARIABLES: VariableOption[] = [
 ]
 
 export default function OfferTemplatePage() {
+  const toast = useToast()
   const [templateFile, setTemplateFile] = useState<File | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [previewContent, setPreviewContent] = useState<string>('')
@@ -774,7 +776,12 @@ export default function OfferTemplatePage() {
   }
 
   const handleDeleteVariable = (index: number) => {
-    setVariables(variables.filter((_, i) => i !== index))
+    toast.showWarning('Удалить переменную?', 'Вы уверены, что хотите удалить эту переменную?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        { label: 'Удалить', onClick: () => setVariables(prev => prev.filter((_, i) => i !== index)), variant: 'solid', color: 'red' },
+      ],
+    })
   }
 
   const handleVariableChange = (index: number, newValue: string) => {
@@ -892,7 +899,12 @@ export default function OfferTemplatePage() {
                         color="red"
                         onClick={(e) => {
                           e.stopPropagation()
-                          setTemplateFile(null)
+                          toast.showWarning('Удалить файл?', 'Вы уверены, что хотите удалить загруженный файл?', {
+                            actions: [
+                              { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+                              { label: 'Удалить', onClick: () => setTemplateFile(null), variant: 'solid', color: 'red' },
+                            ],
+                          })
                         }}
                         mt="2"
                       >

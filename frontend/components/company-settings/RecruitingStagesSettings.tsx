@@ -4,6 +4,7 @@ import { Box, Flex, Text, Button, Card, Table, TextField, Dialog, Tabs } from "@
 import { useState } from "react"
 import { PlusIcon, Pencil2Icon, TrashIcon, CheckIcon, MixerHorizontalIcon } from "@radix-ui/react-icons"
 import Link from "next/link"
+import { useToast } from "@/components/Toast/ToastContext"
 import styles from './RecruitingStagesSettings.module.css'
 
 interface RejectionReason {
@@ -133,6 +134,7 @@ const defaultColors = [
 ]
 
 export default function RecruitingStagesSettings() {
+  const toast = useToast()
   const [activeTab, setActiveTab] = useState<'stages' | 'reasons'>('stages')
   
   // Состояние для этапов
@@ -179,9 +181,12 @@ export default function RecruitingStagesSettings() {
   }
 
   const handleDeleteStage = (id: string) => {
-    if (confirm('Вы уверены, что хотите удалить этот этап?')) {
-      setStages(stages.filter(s => s.id !== id).map((s, index) => ({ ...s, order: index + 1 })))
-    }
+    toast.showWarning('Удалить этап?', 'Вы уверены, что хотите удалить этот этап?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        { label: 'Удалить', onClick: () => setStages(prev => prev.filter(s => s.id !== id).map((s, index) => ({ ...s, order: index + 1 }))), variant: 'solid', color: 'red' },
+      ],
+    })
   }
 
   const handleSaveStage = () => {
@@ -241,14 +246,23 @@ export default function RecruitingStagesSettings() {
   }
 
   const handleDeleteReason = (id: string) => {
-    if (confirm('Вы уверены, что хотите удалить эту причину отказа?')) {
-      setRejectionReasons(rejectionReasons.filter(r => r.id !== id))
-      // Также удаляем из всех этапов
-      setStages(stages.map(s => ({
-        ...s,
-        rejectionReasonIds: s.rejectionReasonIds?.filter(rid => rid !== id) || []
-      })))
-    }
+    toast.showWarning('Удалить причину отказа?', 'Вы уверены, что хотите удалить эту причину отказа?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        {
+          label: 'Удалить',
+          onClick: () => {
+            setRejectionReasons(prev => prev.filter(r => r.id !== id))
+            setStages(prev => prev.map(s => ({
+              ...s,
+              rejectionReasonIds: s.rejectionReasonIds?.filter(rid => rid !== id) || []
+            })))
+          },
+          variant: 'solid',
+          color: 'red',
+        },
+      ],
+    })
   }
 
   const handleSaveReason = () => {

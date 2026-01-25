@@ -4,6 +4,7 @@ import AppLayout from "@/components/AppLayout"
 import { Box, Text, Tabs, Flex, TextField, TextArea, Button, Table, Card, Badge, Callout, Switch, Select } from "@radix-ui/themes"
 import { useState } from "react"
 import { InfoCircledIcon, PlusIcon, TrashIcon, Pencil2Icon, CheckIcon, Cross2Icon, MixerHorizontalIcon } from "@radix-ui/react-icons"
+import { useToast } from "@/components/Toast/ToastContext"
 import styles from '../company-settings.module.css'
 
 interface Currency {
@@ -66,6 +67,7 @@ const mockAPISources: CurrencyAPISource[] = [
 ]
 
 export default function FinanceSettingsPage() {
+  const toast = useToast()
   const [activeTab, setActiveTab] = useState<'currencies' | 'api' | 'taxes'>('currencies')
   
   // Страны офисов компании (моковые данные - в реальном приложении брать из настроек)
@@ -232,14 +234,20 @@ export default function FinanceSettingsPage() {
   }
   
   const handleDeleteTax = (taxId: string, country: string) => {
-    if (!confirm('Вы уверены, что хотите удалить этот налог?')) {
-      return
-    }
-    
-    setTaxesByCountry(prev => ({
-      ...prev,
-      [country]: prev[country].filter(t => t.id !== taxId)
-    }))
+    toast.showWarning('Удалить налог?', 'Вы уверены, что хотите удалить этот налог?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        {
+          label: 'Удалить',
+          onClick: () => setTaxesByCountry(prev => ({
+            ...prev,
+            [country]: prev[country].filter(t => t.id !== taxId)
+          })),
+          variant: 'solid',
+          color: 'red',
+        },
+      ],
+    })
   }
   
   const handleToggleTaxActive = (taxId: string, country: string) => {
@@ -281,14 +289,15 @@ export default function FinanceSettingsPage() {
   const handleDeleteCurrency = (id: string) => {
     const currency = currencies.find(c => c.id === id)
     if (currency?.isOfficeCurrency) {
-      alert('Нельзя удалить валюту, соответствующую офису компании. Вы можете деактивировать её.')
+      toast.showError('Невозможно удалить', 'Нельзя удалить валюту, соответствующую офису компании. Вы можете деактивировать её.')
       return
     }
-    
-    if (!confirm('Вы уверены, что хотите удалить эту валюту?')) {
-      return
-    }
-    setCurrencies(prev => prev.filter(c => c.id !== id))
+    toast.showWarning('Удалить валюту?', 'Вы уверены, что хотите удалить эту валюту?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        { label: 'Удалить', onClick: () => setCurrencies(prev => prev.filter(c => c.id !== id)), variant: 'solid', color: 'red' },
+      ],
+    })
   }
   
   const handleToggleCurrencyActive = (id: string) => {
@@ -318,10 +327,12 @@ export default function FinanceSettingsPage() {
   }
 
   const handleDeleteAPISource = (id: string) => {
-    if (!confirm('Вы уверены, что хотите удалить этот API источник?')) {
-      return
-    }
-    setApiSources(prev => prev.filter(s => s.id !== id))
+    toast.showWarning('Удалить API источник?', 'Вы уверены, что хотите удалить этот API источник?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        { label: 'Удалить', onClick: () => setApiSources(prev => prev.filter(s => s.id !== id)), variant: 'solid', color: 'red' },
+      ],
+    })
   }
 
   const handleEditAPISource = (source: CurrencyAPISource) => {

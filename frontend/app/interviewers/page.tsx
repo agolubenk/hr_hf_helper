@@ -3,6 +3,7 @@
 import AppLayout from "@/components/AppLayout"
 import { Box, Flex, Text, Button, Table, TextField, SegmentedControl, Dialog, Card, Switch } from "@radix-ui/themes"
 import { useState, useEffect } from "react"
+import { useToast } from "@/components/Toast/ToastContext"
 import { MagnifyingGlassIcon, Pencil1Icon, TrashIcon, CalendarIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon, PersonIcon, EnvelopeClosedIcon, CopyIcon, BarChartIcon, GearIcon, PlusIcon, ArrowLeftIcon, CheckCircledIcon } from "@radix-ui/react-icons"
 import styles from './interviewers.module.css'
 
@@ -229,6 +230,7 @@ const mockInterviewers: Interviewer[] = [
 ]
 
 export default function InterviewersPage() {
+  const toast = useToast()
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('active')
   const [currentPage, setCurrentPage] = useState(1)
@@ -278,6 +280,26 @@ export default function InterviewersPage() {
   // Короткое имя
   const getShortName = (interviewer: Interviewer) => {
     return interviewer.firstName
+  }
+
+  const handleDeleteInterviewer = (interviewer: Interviewer, closeModal = false) => {
+    toast.showWarning('Удалить интервьюера?', `Вы уверены, что хотите удалить ${getFullName(interviewer)}?`, {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        {
+          label: 'Удалить',
+          onClick: () => {
+            // TODO: Реализовать удаление через API
+            if (closeModal) {
+              setIsModalOpen(false)
+              setSelectedInterviewer(null)
+            }
+          },
+          variant: 'solid',
+          color: 'red',
+        },
+      ],
+    })
   }
 
   return (
@@ -464,10 +486,7 @@ export default function InterviewersPage() {
                         className={styles.actionButton}
                         onClick={(e) => {
                           e.stopPropagation()
-                          // TODO: Реализовать удаление
-                          if (confirm(`Удалить интервьюера ${getFullName(interviewer)}?`)) {
-                            alert('Интервьюер будет удален')
-                          }
+                          handleDeleteInterviewer(interviewer, false)
                         }}
                       >
                         <TrashIcon width={16} height={16} />
@@ -751,12 +770,7 @@ export default function InterviewersPage() {
                           size="2"
                           variant="soft"
                           color="red"
-                          onClick={() => {
-                            if (confirm(`Удалить интервьюера ${getFullName(selectedInterviewer)}?`)) {
-                              alert('Интервьюер будет удален')
-                              setIsModalOpen(false)
-                            }
-                          }}
+                          onClick={() => handleDeleteInterviewer(selectedInterviewer, true)}
                         >
                           <TrashIcon width={16} height={16} />
                           Удалить

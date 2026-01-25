@@ -205,8 +205,8 @@ export default function AIChatPage() {
     toast.showWarning('Удалить чат?', 'Вы уверены, что хотите удалить этот чат?', {
       duration: 12000,
       actions: [
-        { label: 'Удалить', onClick: () => performDeleteChat(chatId), variant: 'solid', color: 'red' },
         { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        { label: 'Удалить', onClick: () => performDeleteChat(chatId), variant: 'solid', color: 'red' },
       ],
     })
   }

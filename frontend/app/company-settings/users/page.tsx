@@ -4,6 +4,8 @@ import AppLayout from "@/components/AppLayout"
 import { Flex, Text, Button, Box, TextField, Select, Badge, Table, Avatar } from "@radix-ui/themes"
 import { PlusIcon, Pencil1Icon, TrashIcon, CheckIcon, Cross2Icon, MagnifyingGlassIcon } from "@radix-ui/react-icons"
 import { useState, useEffect } from "react"
+import UserAccessModal, { type AccessRights } from "@/components/company-settings/UserAccessModal"
+import { useToast } from "@/components/Toast/ToastContext"
 
 interface User {
   id: string
@@ -15,14 +17,17 @@ interface User {
   is_active: boolean
   last_login: string | null
   created_at: string
+  access?: AccessRights
 }
 
 export default function UsersPage() {
+  const toast = useToast()
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [editingUser, setEditingUser] = useState<User | null>(null)
+  const [accessModalOpen, setAccessModalOpen] = useState(false)
   const [showAddForm, setShowAddForm] = useState(false)
   const [newUser, setNewUser] = useState<Partial<User>>({
     email: '',
@@ -161,22 +166,24 @@ export default function UsersPage() {
     }
   }
 
-  const handleDeleteUser = async (id: string) => {
-    if (!confirm('Вы уверены, что хотите удалить этого пользователя?')) {
-      return
-    }
+  const handleDeleteUser = (id: string) => {
+    toast.showWarning('Удалить пользователя?', 'Вы уверены, что хотите удалить этого пользователя?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        { label: 'Удалить', onClick: () => performDeleteUser(id), variant: 'solid', color: 'red' },
+      ],
+    })
+  }
 
+  const performDeleteUser = async (id: string) => {
     try {
       // TODO: Заменить на реальный API вызов
       // await api.deleteUser(id)
-      
       console.log('Deleting user:', id)
-      
-      // Симуляция удаления
       setUsers(prev => prev.filter(u => u.id !== id))
     } catch (error) {
       console.error('Error deleting user:', error)
-      alert('Ошибка при удалении пользователя')
+      toast.showError('Ошибка', 'Ошибка при удалении пользователя')
     }
   }
 
@@ -360,7 +367,7 @@ export default function UsersPage() {
                   <Table.ColumnHeaderCell>Должность</Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell>Группы</Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell>Статус</Table.ColumnHeaderCell>
-                  <Table.ColumnHeaderCell>Последний вход</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell>{editingUser ? 'Доступы' : 'Последний вход'}</Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell style={{ width: '100px' }}>Действия</Table.ColumnHeaderCell>
                 </Table.Row>
               </Table.Header>
@@ -401,12 +408,7 @@ export default function UsersPage() {
                             </Flex>
                           </Table.Cell>
                           <Table.Cell>
-                            <TextField.Root
-                              size="1"
-                              placeholder="Email"
-                              value={user.email}
-                              onChange={(e) => setEditingUser({ ...user, email: e.target.value })}
-                            />
+                            <Text size="2" color="gray">{user.email}</Text>
                           </Table.Cell>
                           <Table.Cell>
                             <TextField.Root
@@ -445,9 +447,13 @@ export default function UsersPage() {
                             </Select.Root>
                           </Table.Cell>
                           <Table.Cell>
-                            <Text size="1" color="gray">
-                              {formatDate(user.last_login)}
-                            </Text>
+                            <Button
+                              size="1"
+                              variant="soft"
+                              onClick={() => setAccessModalOpen(true)}
+                            >
+                              Доступы
+                            </Button>
                           </Table.Cell>
                           <Table.Cell>
                             <Flex gap="1">
@@ -513,9 +519,13 @@ export default function UsersPage() {
                             </Badge>
                           </Table.Cell>
                           <Table.Cell>
-                            <Text size="1" color="gray">
-                              {formatDate(user.last_login)}
-                            </Text>
+                            {editingUser ? (
+                              <Text size="1" color="gray">—</Text>
+                            ) : (
+                              <Text size="1" color="gray">
+                                {formatDate(user.last_login)}
+                              </Text>
+                            )}
                           </Table.Cell>
                           <Table.Cell>
                             <Flex gap="1">
@@ -545,6 +555,14 @@ export default function UsersPage() {
             </Table.Root>
           </Box>
         )}
+
+        <UserAccessModal
+          open={accessModalOpen}
+          onOpenChange={setAccessModalOpen}
+          userName={editingUser ? `${editingUser.first_name} ${editingUser.last_name}` : ''}
+          initialAccess={editingUser?.access}
+          onApply={(access) => setEditingUser((prev) => (prev ? { ...prev, access } : null))}
+        />
       </Flex>
     </AppLayout>
   )

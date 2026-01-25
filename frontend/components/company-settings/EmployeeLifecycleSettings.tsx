@@ -3,6 +3,7 @@
 import { Box, Flex, Text, Card, Button, TextField, Dialog } from "@radix-ui/themes"
 import { useState } from "react"
 import { PlusIcon, Pencil2Icon, TrashIcon } from "@radix-ui/react-icons"
+import { useToast } from "@/components/Toast/ToastContext"
 import {
   DndContext,
   DragEndEvent,
@@ -184,6 +185,7 @@ function SortableStageRow({
 }
 
 export default function EmployeeLifecycleSettings() {
+  const toast = useToast()
   const [stages, setStages] = useState<LifecycleStage[]>(INITIAL_STAGES)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editingName, setEditingName] = useState('')
@@ -236,9 +238,12 @@ export default function EmployeeLifecycleSettings() {
   const handleDelete = (id: string) => {
     const s = stages.find(x => x.id === id)
     if (s?.isSystem) return
-    if (confirm('Удалить этот этап?')) {
-      setStages(prev => prev.filter(x => x.id !== id))
-    }
+    toast.showWarning('Удалить этап?', 'Вы уверены, что хотите удалить этот этап?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        { label: 'Удалить', onClick: () => setStages(prev => prev.filter(x => x.id !== id)), variant: 'solid', color: 'red' },
+      ],
+    })
   }
 
   const globalOrderMap = getGlobalOrderMap(stages)

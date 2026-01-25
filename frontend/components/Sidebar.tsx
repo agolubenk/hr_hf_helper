@@ -36,7 +36,7 @@ const IN_DEVELOPMENT_IDS = new Set([
   'calendar', 'invites-list', 'invites-create',
   'benchmarks-dashboard', 'benchmarks-all',
   'integrations-clickup', 'integrations-notion', 'integrations-hh', 'integrations-telegram', 'integrations-n8n',
-  'reporting-hiring-plan', 'reporting-recruiter', 'reporting-vacancy', 'reporting-interviewer', 'reporting-funnel',
+  'reporting-recruiter', 'reporting-vacancy', 'reporting-interviewer', 'reporting-funnel',
   'company-settings-benchmark',
   'admin',
 ])

@@ -4,6 +4,7 @@ import AppLayout from "@/components/AppLayout"
 import { Flex, Text, Button, Box, TextField, Select, Badge, Table } from "@radix-ui/themes"
 import { PlusIcon, Pencil1Icon, TrashIcon, CheckIcon, Cross2Icon, MagnifyingGlassIcon } from "@radix-ui/react-icons"
 import { useState, useEffect } from "react"
+import { useToast } from "@/components/Toast/ToastContext"
 
 interface UserGroup {
   id: string
@@ -16,6 +17,7 @@ interface UserGroup {
 }
 
 export default function UserGroupsPage() {
+  const toast = useToast()
   const [groups, setGroups] = useState<UserGroup[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -128,25 +130,26 @@ export default function UserGroupsPage() {
     }
   }
 
-  const handleDeleteGroup = async (id: string) => {
-    if (!confirm('Вы уверены, что хотите удалить эту группу?')) {
-      return
-    }
+  const handleDeleteGroup = (id: string) => {
+    toast.showWarning('Удалить группу?', 'Вы уверены, что хотите удалить эту группу?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        { label: 'Удалить', onClick: () => performDeleteGroup(id), variant: 'solid', color: 'red' },
+      ],
+    })
+  }
 
+  const performDeleteGroup = async (id: string) => {
     setSaving(true)
     try {
       // TODO: Заменить на реальный API вызов
       // await api.deleteUserGroup(id)
-      
       console.log('Deleting group:', id)
-      
-      // Симуляция удаления
-      setTimeout(() => {
-        setSaving(false)
-        loadGroups()
-      }, 500)
+      setGroups(prev => prev.filter(g => g.id !== id))
     } catch (error: any) {
       console.error('Error deleting group:', error)
+      toast.showError('Ошибка', 'Ошибка при удалении группы')
+    } finally {
       setSaving(false)
     }
   }

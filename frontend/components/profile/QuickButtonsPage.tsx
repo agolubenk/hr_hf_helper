@@ -1,6 +1,7 @@
 'use client'
 
 import { Box, Text, Flex, Button, Table, Switch, Separator } from "@radix-ui/themes"
+import { useToast } from "@/components/Toast/ToastContext"
 import {
   PlusIcon,
   Pencil1Icon,
@@ -288,6 +289,7 @@ const initialButtons: QuickButton[] = [
 ]
 
 export default function QuickButtonsPage() {
+  const toast = useToast()
   const [buttons, setButtons] = useState<QuickButton[]>(initialButtons)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingButton, setEditingButton] = useState<QuickButton | null>(null)
@@ -422,9 +424,12 @@ export default function QuickButtonsPage() {
   }
 
   const handleDelete = (id: string) => {
-    if (confirm('Вы уверены, что хотите удалить эту кнопку?')) {
-      setButtons(prev => prev.filter(btn => btn.id !== id))
-    }
+    toast.showWarning('Удалить кнопку?', 'Вы уверены, что хотите удалить эту кнопку?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        { label: 'Удалить', onClick: () => setButtons(prev => prev.filter(btn => btn.id !== id)), variant: 'solid', color: 'red' },
+      ],
+    })
   }
 
   const handleSave = (data: Omit<QuickButton, 'id'> & { id?: string }) => {

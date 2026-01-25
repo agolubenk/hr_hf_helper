@@ -3,6 +3,7 @@
 import { Box, Flex, Text, Button, TextField, Select, Callout, Dialog } from "@radix-ui/themes"
 import { useState, useEffect } from "react"
 import { CheckIcon, Cross2Icon, TrashIcon } from "@radix-ui/react-icons"
+import { useToast } from "@/components/Toast/ToastContext"
 import styles from './SalaryRangeDetailModal.module.css'
 
 // Моковые данные для курсов валют
@@ -90,6 +91,7 @@ export default function SalaryRangeDetailModal({
   onSave,
   onDelete,
 }: SalaryRangeDetailModalProps) {
+  const toast = useToast()
   const [isEditing, setIsEditing] = useState(false)
   const [vacancy, setVacancy] = useState('')
   const [grade, setGrade] = useState('')
@@ -160,10 +162,12 @@ export default function SalaryRangeDetailModal({
 
   const handleDelete = () => {
     if (!salaryRange || !onDelete) return
-    if (confirm('Вы уверены, что хотите удалить эту зарплатную вилку?')) {
-      onDelete(salaryRange.id)
-      onOpenChange(false)
-    }
+    toast.showWarning('Удалить зарплатную вилку?', 'Вы уверены, что хотите удалить эту зарплатную вилку?', {
+      actions: [
+        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
+        { label: 'Удалить', onClick: () => { onDelete!(salaryRange.id); onOpenChange(false) }, variant: 'solid', color: 'red' },
+      ],
+    })
   }
 
   if (!salaryRange) return null
