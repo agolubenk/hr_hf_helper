@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from "react"
 import { Flex, Text, Button, Box } from "@radix-ui/themes"
 import { SunIcon, MoonIcon, LockClosedIcon, CheckIcon } from "@radix-ui/react-icons"
 import { useState, useEffect } from "react"
@@ -8,7 +9,7 @@ import { useTheme } from "@/components/ThemeProvider"
 import FloatingLabelInput from "@/components/FloatingLabelInput"
 import styles from './reset-password.module.css'
 
-export default function ResetPasswordPage() {
+function ResetPasswordPageContent() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -319,5 +320,13 @@ export default function ResetPasswordPage() {
         </Box>
       </Box>
     </Flex>
+  )
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<Flex width="100vw" height="100vh" align="center" justify="center"><Text>Загрузка…</Text></Flex>}>
+      <ResetPasswordPageContent />
+    </Suspense>
   )
 }

@@ -89,7 +89,7 @@ export default function ForbiddenPage() {
         <Box className={styles.background}>
           {Array.from({ length: 35 }).map((_, index) => {
             const Icon = forbiddenIcons[index % forbiddenIcons.length]
-            return <FloatingIcon key={index} Icon={Icon} index={index} />
+            return <FloatingIcon key={index} Icon={Icon as React.ComponentType<{ width?: number; height?: number }>} index={index} />
           })}
         </Box>
 

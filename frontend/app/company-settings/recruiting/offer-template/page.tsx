@@ -236,7 +236,7 @@ export default function OfferTemplatePage() {
         const result = await mammoth.convertToHtml(
           { arrayBuffer },
           {
-            convertImage: mammoth.images.imgElement((image) => {
+            convertImage: mammoth.images.imgElement((image: { read: (format: string) => Promise<unknown>; contentType: string }) => {
               return image.read('base64').then((imageBuffer: any) => {
                 return {
                   src: `data:${image.contentType};base64,${imageBuffer}`

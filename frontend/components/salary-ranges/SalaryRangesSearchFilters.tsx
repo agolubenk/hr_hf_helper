@@ -44,7 +44,7 @@ export default function SalaryRangesSearchFilters({
         </TextField.Root>
 
         <Select.Root value={selectedVacancy} onValueChange={onVacancyChange}>
-          <Select.Trigger className={styles.filterSelect} size="2" placeholder="Вакансия" />
+          <Select.Trigger className={styles.filterSelect} placeholder="Вакансия" />
           <Select.Content>
             <Select.Item value="all">Все вакансии</Select.Item>
             <Select.Item value="DevOps Engineer">DevOps Engineer</Select.Item>
@@ -55,7 +55,7 @@ export default function SalaryRangesSearchFilters({
         </Select.Root>
 
         <Select.Root value={selectedGrade} onValueChange={onGradeChange}>
-          <Select.Trigger className={styles.filterSelect} size="2" placeholder="Грейд" />
+          <Select.Trigger className={styles.filterSelect} placeholder="Грейд" />
           <Select.Content>
             <Select.Item value="all">Все грейды</Select.Item>
             <Select.Item value="Junior">Junior</Select.Item>

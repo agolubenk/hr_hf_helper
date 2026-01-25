@@ -1,13 +1,18 @@
 'use client'
 
-import { Box, Flex, Text, Select, Badge } from "@radix-ui/themes"
+import { Box, Flex, Text, Badge, DropdownMenu, Button } from "@radix-ui/themes"
 import { useState, useMemo } from "react"
 import { PlusIcon, ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons"
+import AddVacancyModal, { type AddVacancyFormData } from "./vacancies/AddVacancyModal"
 import styles from './StatusBar.module.css'
 
 interface StatusBarProps {
   vacancies?: Array<{ id: string; title: string }>
+  /** ID вакансий в блоке «Мои»; если не задано, берутся первые 2 из vacancies */
+  myVacancyIds?: string[]
   statuses?: Array<{ id: string; label: string; color: string; count?: number }>
+  onGeneralSettingsClick?: () => void
+  onAddVacancy?: (data: AddVacancyFormData) => void
 }
 
 interface StatusGroup {
@@ -43,18 +48,35 @@ const defaultVacancies = [
   { id: '2', title: 'Backend Developer' },
   { id: '3', title: 'Product Designer' },
   { id: '4', title: 'DevOps Engineer' },
+  { id: '5', title: 'Data Engineer' },
+  { id: '6', title: 'QA Lead' },
 ]
 
 export default function StatusBar({ 
   vacancies = defaultVacancies,
-  statuses = defaultStatuses 
+  myVacancyIds,
+  statuses = defaultStatuses,
+  onGeneralSettingsClick,
+  onAddVacancy,
 }: StatusBarProps) {
-  const [selectedVacancy, setSelectedVacancy] = useState(vacancies[0]?.id || '')
+  const [selectedVacancy, setSelectedVacancy] = useState(vacancies[0]?.id || '__my__')
+  const [viewMode, setViewMode] = useState<'my' | 'all'>('my')
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set())
+  const [addVacancyOpen, setAddVacancyOpen] = useState(false)
+
+  const myVacancies = myVacancyIds
+    ? vacancies.filter((v) => myVacancyIds.includes(v.id))
+    : vacancies.slice(0, 2)
+
+  const triggerLabel =
+    selectedVacancy === '__all__'
+      ? 'Все'
+      : selectedVacancy === '__my__'
+        ? 'Мои'
+        : vacancies.find((v) => v.id === selectedVacancy)?.title ?? 'Выберите вакансию'
   
   const handleAddVacancy = () => {
-    // TODO: Implement add vacancy functionality
-    console.log('Add new vacancy')
+    setAddVacancyOpen(true)
   }
   
   // Группируем неактивные статусы
@@ -114,35 +136,90 @@ export default function StatusBar({
     <Box className={styles.statusBar}>
       {/* Неподвижный выпадающий список с вакансиями */}
       <Box className={styles.vacancySelector}>
-        <Select.Root
-          value={selectedVacancy}
-          onValueChange={(value) => {
-            if (value === 'add-new') {
-              handleAddVacancy()
-              // Не меняем selectedVacancy, чтобы оставалась выбранной текущая вакансия
-            } else {
-              setSelectedVacancy(value)
-            }
-          }}
-        >
-          <Select.Trigger 
-            className={styles.selectTrigger}
-            placeholder="Выберите вакансию"
-          />
-          <Select.Content>
-            {vacancies.map((vacancy) => (
-              <Select.Item key={vacancy.id} value={vacancy.id}>
-                {vacancy.title}
-              </Select.Item>
-            ))}
-            <Select.Item value="add-new" className={styles.addVacancyItem}>
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>
+            <Button
+              className={styles.selectTrigger}
+              variant="soft"
+              style={{ width: '100%', justifyContent: 'space-between' }}
+            >
+              <Text size="2" truncate style={{ flex: 1, textAlign: 'left' }}>{triggerLabel}</Text>
+              <ChevronDownIcon width={14} height={14} style={{ flexShrink: 0, marginLeft: 4 }} />
+            </Button>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content style={{ minWidth: 200 }}>
+            <DropdownMenu.Item className={styles.addVacancyItemFirst} onSelect={() => handleAddVacancy()}>
               <Flex align="center" gap="2">
                 <PlusIcon width={14} height={14} />
                 <Text size="2">Добавить вакансию</Text>
               </Flex>
-            </Select.Item>
-          </Select.Content>
-        </Select.Root>
+            </DropdownMenu.Item>
+
+            {viewMode === 'my' ? (
+              <>
+                <DropdownMenu.Group>
+                  <DropdownMenu.Label className={styles.sectionLabel}>Мои</DropdownMenu.Label>
+                  {myVacancies.map((vacancy) => (
+                    <DropdownMenu.Item
+                      key={vacancy.id}
+                      onSelect={() => setSelectedVacancy(vacancy.id)}
+                    >
+                      {vacancy.title}
+                    </DropdownMenu.Item>
+                  ))}
+                </DropdownMenu.Group>
+                <DropdownMenu.Item
+                  className={styles.allVacanciesItem}
+                  onSelect={(e) => {
+                    e.preventDefault()
+                    setViewMode('all')
+                    setSelectedVacancy('__all__')
+                  }}
+                >
+                  <Text size="2">Все</Text>
+                </DropdownMenu.Item>
+              </>
+            ) : (
+              <>
+                <DropdownMenu.Item
+                  className={styles.allHeaderInAllMode}
+                  onSelect={(e) => {
+                    e.preventDefault()
+                    setViewMode('all')
+                    setSelectedVacancy('__all__')
+                  }}
+                >
+                  <Text size="2">Все</Text>
+                </DropdownMenu.Item>
+                {vacancies.map((vacancy) => (
+                  <DropdownMenu.Item
+                    key={vacancy.id}
+                    onSelect={() => setSelectedVacancy(vacancy.id)}
+                  >
+                    {vacancy.title}
+                  </DropdownMenu.Item>
+                ))}
+                <DropdownMenu.Item
+                  className={styles.mySwitchItem}
+                  onSelect={(e) => {
+                    e.preventDefault()
+                    setViewMode('my')
+                    setSelectedVacancy('__my__')
+                  }}
+                >
+                  <Text size="2">Мои</Text>
+                </DropdownMenu.Item>
+              </>
+            )}
+
+            <DropdownMenu.Item
+              className={styles.generalSettingsItem}
+              onSelect={() => onGeneralSettingsClick?.()}
+            >
+              <Text size="2">Общие настройки</Text>
+            </DropdownMenu.Item>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
       </Box>
 
       {/* Горизонтальный скролл со статусами */}
@@ -312,6 +389,14 @@ export default function StatusBar({
           })}
         </Flex>
       </Box>
+
+      <AddVacancyModal
+        isOpen={addVacancyOpen}
+        onClose={() => setAddVacancyOpen(false)}
+        onSave={(data) => {
+          onAddVacancy?.(data)
+        }}
+      />
     </Box>
   )
 }

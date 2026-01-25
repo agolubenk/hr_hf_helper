@@ -16,7 +16,7 @@ import styles from './vacancy-detail.module.css'
 const mockVacancy = {
   id: 3936868,
   title: 'Frontend Engineer (React)',
-  status: 'active',
+  status: 'active' as 'active' | 'inactive',
   recruiter: 'Andrei Golubenko',
   technologies: ['JavaScript', 'TypeScript', 'React', 'Redux', 'RxJS', 'WebGL'],
   huntflowId: '3936868',
@@ -153,7 +153,7 @@ export default function VacancyDetailPage() {
         <AnalysisPromptSection 
           prompt={mockVacancy.analysisPrompt} 
           useCommonPrompt={mockVacancy.useCommonPrompt}
-          commonPrompt={mockVacancy.commonPrompt}
+          commonPrompt={mockVacancy.commonPrompt ?? undefined}
         />
 
         <InterviewersSection 

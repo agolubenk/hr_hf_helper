@@ -10,7 +10,7 @@ import styles from './RequestListItem.module.css'
 interface Request {
   id: number
   title: string
-  status: 'pending' | 'approved' | 'rejected' | 'closed' | 'in_process'
+  status: 'pending' | 'approved' | 'rejected' | 'closed' | 'in_process' | 'planned' | 'cancelled'
   department: string
   recruiter: string
   priority: 'high' | 'medium' | 'low'

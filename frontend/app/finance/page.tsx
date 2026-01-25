@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from "react"
 import AppLayout from "@/components/AppLayout"
 import { Box, Flex, Text, Tabs } from "@radix-ui/themes"
 import { StarIcon, ReloadIcon, MixerHorizontalIcon } from "@radix-ui/react-icons"
@@ -10,7 +11,7 @@ import { useSearchParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import styles from './finance.module.css'
 
-export default function FinancePage() {
+function FinancePageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const tabParam = searchParams.get('tab')
@@ -68,5 +69,13 @@ export default function FinancePage() {
         </Flex>
       </Box>
     </AppLayout>
+  )
+}
+
+export default function FinancePage() {
+  return (
+    <Suspense fallback={<AppLayout pageTitle="Финансы и грейды"><Box p="4"><Text>Загрузка…</Text></Box></AppLayout>}>
+      <FinancePageContent />
+    </Suspense>
   )
 }

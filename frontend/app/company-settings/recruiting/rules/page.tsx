@@ -290,7 +290,7 @@ export default function AttractionRulesPage() {
                     value={newRule.source || ''}
                     onValueChange={(value) => setNewRule({ ...newRule, source: value })}
                   >
-                    <Select.Trigger size="2" />
+                    <Select.Trigger />
                     <Select.Content>
                       {availableSources.map((source) => (
                         <Select.Item key={source} value={source}>
@@ -334,7 +334,7 @@ export default function AttractionRulesPage() {
                     value={newRule.bonus_currency || 'RUB'}
                     onValueChange={(value) => setNewRule({ ...newRule, bonus_currency: value })}
                   >
-                    <Select.Trigger size="2" />
+                    <Select.Trigger />
                     <Select.Content>
                       {availableCurrencies.map((currency) => (
                         <Select.Item key={currency} value={currency}>
@@ -458,7 +458,7 @@ export default function AttractionRulesPage() {
                               value={rule.source}
                               onValueChange={(value) => setEditingRule({ ...rule, source: value })}
                             >
-                              <Select.Trigger size="1" />
+                              <Select.Trigger />
                               <Select.Content>
                                 {availableSources.map((source) => (
                                   <Select.Item key={source} value={source}>
@@ -485,7 +485,7 @@ export default function AttractionRulesPage() {
                                 value={rule.bonus_currency}
                                 onValueChange={(value) => setEditingRule({ ...rule, bonus_currency: value })}
                               >
-                                <Select.Trigger size="1" style={{ width: '80px' }} />
+                                <Select.Trigger style={{ width: '80px' }} />
                                 <Select.Content>
                                   {availableCurrencies.map((currency) => (
                                     <Select.Item key={currency} value={currency}>
@@ -514,7 +514,7 @@ export default function AttractionRulesPage() {
                               value={rule.is_active ? 'active' : 'inactive'}
                               onValueChange={(value) => setEditingRule({ ...rule, is_active: value === 'active' })}
                             >
-                              <Select.Trigger size="1" />
+                              <Select.Trigger />
                               <Select.Content>
                                 <Select.Item value="active">Активно</Select.Item>
                                 <Select.Item value="inactive">Неактивно</Select.Item>

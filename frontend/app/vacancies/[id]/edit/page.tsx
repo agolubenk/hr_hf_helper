@@ -132,7 +132,7 @@ const mockVacancy = {
     { id: 3, grade: 'Middle', minSalary: '1500,00', maxSalary: '1900,00', status: 'active' },
     { id: 4, grade: 'Middle+', minSalary: '1900,00', maxSalary: '2500,00', status: 'active' },
     { id: 5, grade: 'Senior', minSalary: '2500,00', maxSalary: '3500,00', status: 'active' }
-  ]
+  ] as { id: number; grade: string; minSalary: string; maxSalary: string; status: 'active' | 'inactive' }[]
 }
 
 export default function VacancyEditPage() {
@@ -172,7 +172,7 @@ export default function VacancyEditPage() {
 
         <TransferStagesEditSection
           stages={formData.stages}
-          onChange={(stages) => setFormData({ ...formData, stages })}
+          onChange={(stages) => setFormData({ ...formData, stages: stages as typeof formData.stages })}
         />
 
         <ScorecardEditSection

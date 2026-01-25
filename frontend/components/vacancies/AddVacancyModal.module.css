@@ -1,0 +1,87 @@
+.modalContent {
+  max-width: 960px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+.tabsColumn {
+  flex-shrink: 0;
+  width: 220px;
+  padding: 8px 0;
+}
+
+.tabButton {
+  justify-content: flex-start;
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.contentColumn {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.sectionCard {
+  background: var(--gray-2);
+  border: 1px solid var(--gray-6);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.header {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--gray-6);
+}
+
+.iconCircle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-9);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--gray-6);
+  flex-shrink: 0;
+}
+
+.recruiterCard {
+  padding: 16px;
+}
+
+@media (max-width: 640px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .tabsColumn {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tabButton {
+    width: auto;
+    flex: 1;
+    min-width: 140px;
+  }
+}

@@ -86,7 +86,7 @@ export default function Error500Page() {
         <Box className={styles.background}>
           {Array.from({ length: 35 }).map((_, index) => {
             const Icon = errorIcons[index % errorIcons.length]
-            return <FloatingIcon key={index} Icon={Icon} index={index} />
+            return <FloatingIcon key={index} Icon={Icon as React.ComponentType<{ width?: number; height?: number }>} index={index} />
           })}
         </Box>
 

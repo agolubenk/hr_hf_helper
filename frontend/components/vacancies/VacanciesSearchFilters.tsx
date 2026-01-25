@@ -42,7 +42,7 @@ export default function VacanciesSearchFilters({
         </TextField.Root>
 
         <Select.Root value={selectedRecruiter} onValueChange={onRecruiterChange}>
-          <Select.Trigger className={styles.filterSelect} size="2" />
+          <Select.Trigger className={styles.filterSelect} />
           <Select.Content>
             <Select.Item value="all">Все рекрутеры</Select.Item>
             <Select.Item value="Andrei Golubenko">Andrei Golubenko</Select.Item>
@@ -50,7 +50,7 @@ export default function VacanciesSearchFilters({
         </Select.Root>
 
         <Select.Root value={selectedStatus} onValueChange={onStatusChange}>
-          <Select.Trigger className={styles.filterSelect} size="2" />
+          <Select.Trigger className={styles.filterSelect} />
           <Select.Content>
             <Select.Item value="all">Все</Select.Item>
             <Select.Item value="active">Активные</Select.Item>

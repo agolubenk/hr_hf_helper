@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  async redirects() {
+    return [
+      { source: '/finance', destination: '/company-settings/finance', permanent: false },
+    ]
+  },
   // Исправление проблем с путями статических файлов
   assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
   // Убеждаемся, что статические файлы правильно обслуживаются

@@ -108,7 +108,7 @@ export default function GeneralTemplatesTab() {
   if (showForm) {
     return (
       <RejectionTemplateForm
-        template={editingTemplate}
+        template={editingTemplate ? { ...editingTemplate, grade_id: null, grade_name: null } : null}
         rejectionType={formType}
         onSave={handleFormSave}
         onCancel={handleFormClose}

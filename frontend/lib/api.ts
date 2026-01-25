@@ -119,11 +119,12 @@ async function apiRequest<T>(
     const url = getApiUrl(endpoint)
     const csrfToken = getCsrfToken()
     
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...(typeof options.headers === 'object' && options.headers != null && !(options.headers instanceof Headers) && !Array.isArray(options.headers)
+        ? (options.headers as Record<string, string>)
+        : {}),
     }
-    
     // Добавляем CSRF токен если он есть
     if (csrfToken) {
       headers['X-CSRFToken'] = csrfToken

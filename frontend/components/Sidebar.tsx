@@ -29,6 +29,17 @@ import { useState, ReactNode, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import styles from './Sidebar.module.css'
 import { useTheme } from "@/components/ThemeProvider"
+import { useToast } from "@/components/Toast/ToastContext"
+
+// Пункты меню «в разработке»: при клике показываем toast вместо перехода
+const IN_DEVELOPMENT_IDS = new Set([
+  'calendar', 'invites-list', 'invites-create',
+  'benchmarks-dashboard', 'benchmarks-all',
+  'integrations-clickup', 'integrations-notion', 'integrations-hh', 'integrations-telegram', 'integrations-n8n',
+  'reporting-hiring-plan', 'reporting-recruiter', 'reporting-vacancy', 'reporting-interviewer', 'reporting-funnel',
+  'company-settings-benchmark',
+  'admin',
+])
 
 interface MenuItem {
   id: string
@@ -50,6 +61,8 @@ interface MenuItemComponentProps {
   level?: number
   onNavigate?: () => void
   pathname?: string | null
+  inDevelopment?: boolean
+  onInDevelopmentClick?: () => void
 }
 
 // Функция для проверки, является ли элемент или его дочерние элементы активными
@@ -61,12 +74,6 @@ function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefi
     return true
   }
   if (item.id === 'wiki' && pathname.startsWith('/wiki')) {
-    return true
-  }
-  if (item.id === 'aichat' && pathname.startsWith('/aichat')) {
-    return true
-  }
-  if (item.id === 'finance' && pathname.startsWith('/finance')) {
     return true
   }
   if (item.id === 'google-related' && (
@@ -90,6 +97,9 @@ function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefi
   if (item.id === 'integrations-huntflow' && pathname.startsWith('/huntflow')) {
     return true
   }
+  if (item.id === 'integrations-aichat' && pathname.startsWith('/aichat')) {
+    return true
+  }
   if (item.id === 'reporting' && pathname.startsWith('/reporting')) {
     return true
   }
@@ -99,39 +109,6 @@ function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefi
   
   // Проверяем сам элемент
   if (item.href) {
-    // Для finance страницы проверяем путь и query параметры
-    if (item.href.includes('/finance')) {
-      const basePath = '/finance'
-      if (pathname === basePath || pathname.startsWith(basePath)) {
-        // Если текущая страница finance, проверяем query параметры
-        if (typeof window !== 'undefined') {
-          const url = new URL(item.href, window.location.origin)
-          const itemTab = url.searchParams.get('tab')
-          const currentParams = new URLSearchParams(window.location.search)
-          const currentTab = currentParams.get('tab')
-          
-          // Если оба имеют одинаковый tab параметр
-          if (itemTab && currentTab && itemTab === currentTab) {
-            return true
-          }
-          // Если в ссылке нет tab, но текущий URL тоже без tab (или наоборот)
-          if (!itemTab && !currentTab) {
-            return true
-          }
-          // Если в ссылке есть tab, но текущий URL без tab - не активен
-          if (itemTab && !currentTab) {
-            return false
-          }
-          // Если в ссылке нет tab, но текущий URL с tab - не активен
-          if (!itemTab && currentTab) {
-            return false
-          }
-        }
-        // Если window недоступен, просто проверяем путь
-        return true
-      }
-    }
-    // Для обычных ссылок проверяем точное совпадение или начало пути
     if (pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))) {
       return true
     }
@@ -145,7 +122,7 @@ function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefi
   return false
 }
 
-function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, pathname }: MenuItemComponentProps) {
+function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, pathname, inDevelopment = false, onInDevelopmentClick }: MenuItemComponentProps) {
   const router = useRouter()
   const hasChildren = item.children && item.children.length > 0
   // Раскрываем только если элемент или его дочерние элементы активны
@@ -161,6 +138,12 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
     if (e) {
       e.stopPropagation()
       e.preventDefault()
+    }
+
+    // Пункт «в разработке»: показываем toast, навигацию не выполняем
+    if (inDevelopment) {
+      onInDevelopmentClick?.()
+      return
     }
     
     // ПРИОРИТЕТ: Если есть дочерние элементы, сначала обрабатываем раскрытие/сворачивание
@@ -275,6 +258,8 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
                 onNavigate={onNavigate}
                 pathname={pathname}
                 isActive={isItemOrChildrenActive(child, pathname)}
+                inDevelopment={IN_DEVELOPMENT_IDS.has(child.id)}
+                onInDevelopmentClick={onInDevelopmentClick}
               />
             ))}
           </Flex>
@@ -287,8 +272,11 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { theme } = useTheme()
   const pathname = usePathname()
+  const toast = useToast()
   const isRecrChatPage = pathname?.startsWith('/recr-chat')
   const topOffset = isRecrChatPage ? '112px' : '64px' // 64px header + 48px status bar (только для recr-chat)
+
+  const handleInDevClick = () => toast.showInfo('В разработке', 'Данная страница или функциональность в разработке.')
   
   // Пример структуры меню - можно вынести в отдельный файл или получать из API
   const menuItems: MenuItem[] = [
@@ -331,14 +319,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       ],
     },
     {
-      id: 'aichat',
-      label: 'AI Chat',
-      icon: <Box style={{ width: '16px', height: '16px', borderRadius: '50%', border: '1px solid var(--gray-12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Box style={{ width: '6px', height: '6px', backgroundColor: 'var(--gray-12)', borderRadius: '50%' }} />
-      </Box>,
-      href: '/aichat',
-    },
-    {
       id: 'recr-chat',
       label: 'Рекрутинг',
       icon: <ChatBubbleIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
@@ -379,7 +359,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           id: 'vacancies-finance',
           label: 'Грейды, курсы и налоги',
           icon: <BarChartIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-          href: '/finance',
+          href: '/company-settings/finance',
         },
         {
           id: 'vacancies-benchmarks',
@@ -423,6 +403,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           href: '/huntflow',
         },
         {
+          id: 'integrations-aichat',
+          label: 'AI Chat',
+          icon: <Box style={{ width: '16px', height: '16px', borderRadius: '50%', border: '1px solid var(--gray-12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Box style={{ width: '6px', height: '6px', backgroundColor: 'var(--gray-12)', borderRadius: '50%' }} />
+          </Box>,
+          href: '/aichat',
+        },
+        {
           id: 'integrations-clickup',
           label: 'ClickUp',
           icon: <DotsHorizontalIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
@@ -442,6 +430,18 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           id: 'integrations-hh',
           label: 'HeadHunter.ru',
           icon: <Text size="1" weight="bold" style={{ color: 'var(--gray-12)', width: '16px', textAlign: 'center' }}>H</Text>,
+          children: [],
+        },
+        {
+          id: 'integrations-telegram',
+          label: 'Telegram',
+          icon: <Text size="1" weight="bold" style={{ color: 'var(--gray-12)', width: '16px', textAlign: 'center' }}>T</Text>,
+          children: [],
+        },
+        {
+          id: 'integrations-n8n',
+          label: 'n8n',
+          icon: <Text size="1" weight="bold" style={{ color: 'var(--gray-12)', width: '16px', textAlign: 'center' }}>n8n</Text>,
           children: [],
         },
       ],
@@ -572,13 +572,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             <Box style={{ width: '8px', height: '8px', border: '1px solid var(--gray-12)', borderRadius: '2px', position: 'absolute', top: '0', left: '0' }} />
             <Box style={{ width: '4px', height: '4px', borderTop: '1px solid var(--gray-12)', borderRight: '1px solid var(--gray-12)', position: 'absolute', bottom: '0', right: '0' }} />
           </Box>,
-        },
-        {
-          id: 'company-settings-ai',
-          label: 'AI & n8n',
-          icon: <Box style={{ width: '16px', height: '16px', borderRadius: '50%', border: '1px solid var(--gray-12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Box style={{ width: '6px', height: '6px', backgroundColor: 'var(--gray-12)', borderRadius: '50%' }} />
-          </Box>,
+          href: '/company-settings/integrations',
         },
         {
           id: 'company-settings-user-groups',
@@ -686,13 +680,19 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           let isActive = pathname === item.href || 
             (item.id === 'home' && pathname === '/workflow') ||
             (item.id === 'wiki' && pathname?.startsWith('/wiki')) ||
-            (item.id === 'aichat' && pathname?.startsWith('/aichat')) ||
             (item.id === 'google-related' && (
-              pathname?.startsWith('/finance') || 
               pathname?.startsWith('/calendar') || 
               pathname?.startsWith('/invites')
             )) ||
-            (item.id === 'vacancies' && pathname?.startsWith('/vacancies'))
+            (item.id === 'vacancies' && (
+              pathname?.startsWith('/vacancies') ||
+              pathname?.startsWith('/hiring-requests') ||
+              pathname?.startsWith('/company-settings/finance')
+            )) ||
+            (item.id === 'integrations' && (
+              pathname?.startsWith('/huntflow') ||
+              pathname?.startsWith('/aichat')
+            ))
           
           return (
             <MenuItemComponent
@@ -701,6 +701,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               isActive={isActive}
               onNavigate={onClose}
               pathname={pathname}
+              inDevelopment={IN_DEVELOPMENT_IDS.has(item.id)}
+              onInDevelopmentClick={handleInDevClick}
             />
           )
         })}
@@ -737,6 +739,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               isActive={isActive}
               onNavigate={onClose}
               pathname={pathname}
+              inDevelopment={IN_DEVELOPMENT_IDS.has(item.id)}
+              onInDevelopmentClick={handleInDevClick}
             />
           )
         })}

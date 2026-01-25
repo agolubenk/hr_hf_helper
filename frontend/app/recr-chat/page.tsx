@@ -1216,6 +1216,9 @@ export default function RecrChatPage() {
     { id: '7', name: 'Петр Сидоров', email: 'petr@sidorov.ru', phone: '+7 (495) 345-67-89', position: 'Владелец', department: 'ИП Сидоров', isCustomer: true },
   ])
   
+  // Заказчики и интервьюеры: тогглер «Только из отдела» (вкл.) / «Все» (выкл.)
+  const [customersOnlyFromDepartment, setCustomersOnlyFromDepartment] = useState<boolean>(true)
+  
   // Состояние для выбранных интервьюеров вакансии (кто может видеть вакансию)
   const [selectedVacancyInterviewers, setSelectedVacancyInterviewers] = useState<Set<string>>(new Set(['1', '2']))
   
@@ -1542,6 +1545,10 @@ export default function RecrChatPage() {
   // Состояние для вкладки «Обработка данных»
   const [useUnifiedPrompt, setUseUnifiedPrompt] = useState<boolean>(true)
   const [analysisPrompt, setAnalysisPrompt] = useState<string>('')
+
+  // Состояние для вкладки «Связи и интеграции»: Huntflow
+  const [integrationPartner, setIntegrationPartner] = useState<'' | 'huntflow'>('')
+  const [huntflowVacancyId, setHuntflowVacancyId] = useState<string>('')
   
   // Офисы компании (для вкладки «Вопросы и ссылки» и др.)
   const questionLinkOffices = [
@@ -2238,7 +2245,7 @@ export default function RecrChatPage() {
   
   const handleDeleteEmail = (index: number) => {
     const emails = getEmails()
-    const newEmails = emails.filter((_, i) => i !== index)
+    const newEmails = emails.filter((_: string, i: number) => i !== index)
     setSelectedCandidate(prev => ({ 
       ...prev, 
       email: newEmails[0] || '',
@@ -2248,7 +2255,7 @@ export default function RecrChatPage() {
   
   const handleDeletePhone = (index: number) => {
     const phones = getPhones()
-    const newPhones = phones.filter((_, i) => i !== index)
+    const newPhones = phones.filter((_: string, i: number) => i !== index)
     setSelectedCandidate(prev => ({ 
       ...prev, 
       phone: newPhones[0] || '',
@@ -2306,33 +2313,33 @@ export default function RecrChatPage() {
   }
   
   const handleNameSave = () => {
-    setSelectedCandidate(prev => ({ ...prev, name: nameValue }))
+    setSelectedCandidate(prev => ({ ...prev, name: nameValue } as typeof prev))
     setIsEditingName(false)
   }
   
   const handleTagsSave = () => {
     const tags = tagsValue.split(',').map(t => t.trim()).filter(t => t.length > 0)
-    setSelectedCandidate(prev => ({ ...prev, tags }))
+    setSelectedCandidate(prev => ({ ...prev, tags } as typeof prev))
     setIsEditingTags(false)
   }
   
   const handleLevelSave = () => {
-    setSelectedCandidate(prev => ({ ...prev, level: levelValue }))
+    setSelectedCandidate(prev => ({ ...prev, level: levelValue } as typeof prev))
     setIsEditingLevel(false)
   }
   
   const handleAgeSave = () => {
-    setSelectedCandidate(prev => ({ ...prev, age: ageValue ? parseInt(ageValue) : undefined }))
+    setSelectedCandidate(prev => ({ ...prev, age: ageValue ? parseInt(ageValue) : undefined } as typeof prev))
     setIsEditingAge(false)
   }
   
   const handleGenderSave = () => {
-    setSelectedCandidate(prev => ({ ...prev, gender: genderValue }))
+    setSelectedCandidate(prev => ({ ...prev, gender: genderValue } as typeof prev))
     setIsEditingGender(false)
   }
   
   const handleSalarySave = () => {
-    setSelectedCandidate(prev => ({ ...prev, salaryExpectations: salaryValue }))
+    setSelectedCandidate(prev => ({ ...prev, salaryExpectations: salaryValue } as typeof prev))
     setIsEditingSalary(false)
   }
   
@@ -2342,12 +2349,12 @@ export default function RecrChatPage() {
   }
   
   const handlePositionSave = () => {
-    setSelectedCandidate(prev => ({ ...prev, position: positionValue }))
+    setSelectedCandidate(prev => ({ ...prev, position: positionValue } as typeof prev))
     setIsEditingPosition(false)
   }
   
   const handleSourceSave = () => {
-    setSelectedCandidate(prev => ({ ...prev, source: sourceValue }))
+    setSelectedCandidate(prev => ({ ...prev, source: sourceValue } as typeof prev))
     setIsEditingSource(false)
   }
   
@@ -2868,9 +2875,9 @@ export default function RecrChatPage() {
                       <Text size="2">Онлайн</Text>
                     </Button>
                     <Button
-                      variant={interviewFormat === 'offline' ? 'solid' : 'soft'}
+                      variant={interviewFormat === 'office' ? 'solid' : 'soft'}
                       size="2"
-                      onClick={() => setInterviewFormat('offline')}
+                      onClick={() => setInterviewFormat('office')}
                     >
                       <PersonIcon width={16} height={16} />
                       <Text size="2">Офлайн</Text>
@@ -3921,10 +3928,27 @@ export default function RecrChatPage() {
               
               {selectedSettingTab === 'customers' && (
                 <Box>
-                  <Text size="3" weight="bold" mb="4" style={{ display: 'block' }}>Интервьюеры</Text>
+                  <Text size="3" weight="bold" mb="4" style={{ display: 'block' }}>Заказчики и интервьюеры</Text>
                   
+                  <Flex align="center" gap="2" mb="4">
+                    <Switch
+                      checked={customersOnlyFromDepartment}
+                      onCheckedChange={setCustomersOnlyFromDepartment}
+                    />
+                    <Text size="2">Только из отдела</Text>
+                    <Text size="1" color="gray">(выкл. — все)</Text>
+                  </Flex>
+                  
+                  {(() => {
+                    const vacancyDeptName = getAllDepartmentsFlat(mockDepartments).find(d => d.id === vacancyDepartment)?.name ?? ''
+                    const isHR = (d: string) => d === 'HR' || d === 'HR Департамент'
+                    const filteredInterviewers = customersOnlyFromDepartment
+                      ? allInterviewers.filter(i => i.department === vacancyDeptName || isHR(i.department))
+                      : allInterviewers
+                    return (
+                  <>
                   <Flex direction="column" gap="3">
-                    {allInterviewers.map((interviewer) => {
+                    {filteredInterviewers.map((interviewer) => {
                       const isSelected = selectedVacancyInterviewers.has(interviewer.id)
                       const isFinalInterview = finalInterviewInterviewers.has(interviewer.id)
                       
@@ -3975,11 +3999,14 @@ export default function RecrChatPage() {
                     })}
                   </Flex>
                   
-                  {allInterviewers.length === 0 && (
+                  {filteredInterviewers.length === 0 && (
                     <Text size="2" color="gray" style={{ textAlign: 'center', padding: '40px' }}>
                       Нет доступных интервьюеров
                     </Text>
                   )}
+                  </>
+                    )
+                  })()}
                 </Box>
               )}
               
@@ -4092,9 +4119,67 @@ export default function RecrChatPage() {
               {selectedSettingTab === 'integrations' && (
                 <Box>
                   <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Связи и интеграции</Text>
-                  <Text size="2" color="gray">
+                  <Text size="2" color="gray" mb="4" style={{ display: 'block' }}>
                     Настройка интеграций с внешними сервисами
                   </Text>
+                  
+                  <Flex direction="column" gap="4">
+                    <Box>
+                      <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Интеграция</Text>
+                      <Select.Root
+                        value={integrationPartner || '__none__'}
+                        onValueChange={(v) => {
+                          if (v === '__none__' && integrationPartner === 'huntflow') {
+                            toast.showToast({
+                              type: 'warning',
+                              title: 'Отключить интеграцию Huntflow?',
+                              message: 'Подтвердите отключение связи с Huntflow.',
+                              duration: 5 * 60 * 1000, // 5 минут
+                              actions: [
+                                {
+                                  label: 'Подтвердить',
+                                  onClick: () => {
+                                    setIntegrationPartner('')
+                                    setHuntflowVacancyId('')
+                                  },
+                                  variant: 'soft',
+                                  color: 'gray',
+                                },
+                                {
+                                  label: 'Отклонить',
+                                  onClick: () => {},
+                                  variant: 'solid',
+                                  color: 'blue',
+                                },
+                              ],
+                            })
+                            return
+                          }
+                          setIntegrationPartner((v === '__none__' ? '' : v) as '' | 'huntflow')
+                        }}
+                      >
+                        <Select.Trigger placeholder="Выберите интеграцию" style={{ width: '100%', maxWidth: 280 }} />
+                        <Select.Content>
+                          <Select.Item value="__none__">—</Select.Item>
+                          <Select.Item value="huntflow">Huntflow</Select.Item>
+                        </Select.Content>
+                      </Select.Root>
+                    </Box>
+                    
+                    {integrationPartner === 'huntflow' && (
+                      <Box>
+                        <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>ID вакансии в Huntflow</Text>
+                        <TextField.Root
+                          type="text"
+                          inputMode="numeric"
+                          value={huntflowVacancyId}
+                          onChange={(e) => setHuntflowVacancyId(e.target.value.replace(/\D/g, ''))}
+                          placeholder="Только цифры"
+                          style={{ width: '100%', maxWidth: 200 }}
+                        />
+                      </Box>
+                    )}
+                  </Flex>
                 </Box>
               )}
               
@@ -4794,19 +4879,20 @@ export default function RecrChatPage() {
                                 border: '1px solid var(--gray-6)'
                               }}>
                                 <Flex direction="column" gap="2">
-                                  {Object.entries(versionToRestore.fieldsState.fieldSettings).map(([fieldKey, settings]) => {
+                                  {Object.entries(versionToRestore.fieldsState?.fieldSettings ?? {}).map(([fieldKey, settings]) => {
                                     const fieldName = getFieldName(fieldKey)
                                     // Получаем значение поля из fieldsState
+                                    const fs = versionToRestore.fieldsState
                                     let fieldValue = ''
-                                    if (fieldKey === 'title') fieldValue = versionToRestore.fieldsState.title || ''
-                                    else if (fieldKey === 'department') fieldValue = versionToRestore.fieldsState.department || ''
-                                    else if (fieldKey === 'header') fieldValue = versionToRestore.fieldsState.header || ''
-                                    else if (fieldKey === 'responsibilities') fieldValue = versionToRestore.fieldsState.responsibilities || ''
-                                    else if (fieldKey === 'requirements') fieldValue = versionToRestore.fieldsState.requirements || ''
-                                    else if (fieldKey === 'niceToHave') fieldValue = versionToRestore.fieldsState.niceToHave || ''
-                                    else if (fieldKey === 'conditions') fieldValue = versionToRestore.fieldsState.conditions || ''
-                                    else if (fieldKey === 'closing') fieldValue = versionToRestore.fieldsState.closing || ''
-                                    else if (fieldKey === 'link') fieldValue = versionToRestore.fieldsState.link || ''
+                                    if (fieldKey === 'title') fieldValue = fs?.title || ''
+                                    else if (fieldKey === 'department') fieldValue = fs?.department || ''
+                                    else if (fieldKey === 'header') fieldValue = fs?.header || ''
+                                    else if (fieldKey === 'responsibilities') fieldValue = fs?.responsibilities || ''
+                                    else if (fieldKey === 'requirements') fieldValue = fs?.requirements || ''
+                                    else if (fieldKey === 'niceToHave') fieldValue = fs?.niceToHave || ''
+                                    else if (fieldKey === 'conditions') fieldValue = fs?.conditions || ''
+                                    else if (fieldKey === 'closing') fieldValue = fs?.closing || ''
+                                    else if (fieldKey === 'link') fieldValue = fs?.link || ''
                                     // attachment не имеет текстового значения
                                     
                                     return (
@@ -5272,7 +5358,7 @@ export default function RecrChatPage() {
                     {/* Emails */}
                     <Box mb="3">
                       <Flex align="center" gap="2" mb="2" wrap="wrap">
-                        {getEmails().map((email, index) => (
+                        {getEmails().map((email: string, index: number) => (
                           <Flex key={index} align="center" gap="2" style={{ flexWrap: 'nowrap', minWidth: 0 }}>
                             {isEditingEmail && editingEmailIndex === index ? (
                               <>
@@ -5376,7 +5462,7 @@ export default function RecrChatPage() {
                     {/* Phones */}
                     <Box mb="3">
                       <Flex align="center" gap="2" mb="2" wrap="wrap">
-                        {getPhones().map((phone, index) => (
+                        {getPhones().map((phone: string, index: number) => (
                           <Flex key={index} align="center" gap="2" style={{ flexWrap: 'nowrap' }}>
                             {isEditingPhone && editingPhoneIndex === index ? (
                               <>
@@ -5486,7 +5572,7 @@ export default function RecrChatPage() {
                             onChange={(e) => setLocationValue(e.target.value)}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') {
-                                setSelectedCandidate(prev => ({ ...prev, location: locationValue }))
+                                setSelectedCandidate(prev => ({ ...prev, location: locationValue } as typeof prev))
                                 setIsEditingLocation(false)
                               } else if (e.key === 'Escape') {
                                 setLocationValue(selectedCandidate.location)
@@ -5501,7 +5587,7 @@ export default function RecrChatPage() {
                             size="1" 
                             variant="soft"
                             onClick={() => {
-                              setSelectedCandidate(prev => ({ ...prev, location: locationValue }))
+                              setSelectedCandidate(prev => ({ ...prev, location: locationValue } as typeof prev))
                               setIsEditingLocation(false)
                             }}
                             style={{ flexShrink: 0 }}
@@ -7350,9 +7436,9 @@ export default function RecrChatPage() {
                 {getEmails().length > 0 && (
                   <Box mb="3">
                     <Flex direction="column" gap="1">
-                      {getEmails().map((email, index) => {
-                        const duplicateEmails = getCandidateEmails(duplicateCandidate)
-                        const isEmailMatch = isContactMatch(email, duplicateEmails)
+{getEmails().map((email: string, index: number) => {
+                         const duplicateEmails = getCandidateEmails(duplicateCandidate)
+                         const isEmailMatch = isContactMatch(email, duplicateEmails)
                         return (
                           <Flex key={index} align="center" gap="2" style={{ flexWrap: 'nowrap', minWidth: 0, position: 'relative', padding: '4px 8px', borderRadius: '4px', backgroundColor: isEmailMatch ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
                             <EnvelopeClosedIcon width={16} height={16} style={{ flexShrink: 0 }} />
@@ -7369,7 +7455,7 @@ export default function RecrChatPage() {
                 {getPhones().length > 0 && (
                   <Box mb="3">
                     <Flex direction="column" gap="1">
-                      {getPhones().map((phone, index) => {
+                      {getPhones().map((phone: string, index: number) => {
                         const duplicatePhones = getCandidatePhones(duplicateCandidate)
                         const isPhoneMatch = isContactMatch(phone, duplicatePhones)
                         return (

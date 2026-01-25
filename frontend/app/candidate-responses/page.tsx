@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from "react"
 import AppLayout from "@/components/AppLayout"
 import { Box, Flex, Text, Tabs } from "@radix-ui/themes"
 import { ChatBubbleIcon, StarIcon, CalendarIcon } from "@radix-ui/react-icons"
@@ -10,7 +11,7 @@ import GradeTemplatesTab from "@/components/candidate-responses/GradeTemplatesTa
 import SlotsTab from "@/components/candidate-responses/SlotsTab"
 import styles from './candidate-responses.module.css'
 
-export default function CandidateResponsesPage() {
+function CandidateResponsesPageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const tabParam = searchParams.get('tab')
@@ -72,5 +73,13 @@ export default function CandidateResponsesPage() {
         </Flex>
       </Box>
     </AppLayout>
+  )
+}
+
+export default function CandidateResponsesPage() {
+  return (
+    <Suspense fallback={<AppLayout pageTitle="Ответы кандидатам"><Box p="4"><Text>Загрузка…</Text></Box></AppLayout>}>
+      <CandidateResponsesPageContent />
+    </Suspense>
   )
 }

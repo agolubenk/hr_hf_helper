@@ -46,7 +46,7 @@ export default function RequestsSearchFilters({
         </TextField.Root>
 
         <Select.Root value={selectedRecruiter} onValueChange={onRecruiterChange}>
-          <Select.Trigger className={styles.filterSelect} size="2" />
+          <Select.Trigger className={styles.filterSelect} />
           <Select.Content>
             <Select.Item value="all">Все рекрутеры</Select.Item>
             <Select.Item value="Andrei Golubenko">Andrei Golubenko</Select.Item>
@@ -54,7 +54,7 @@ export default function RequestsSearchFilters({
         </Select.Root>
 
         <Select.Root value={selectedStatus} onValueChange={onStatusChange}>
-          <Select.Trigger className={styles.filterSelect} size="2" />
+          <Select.Trigger className={styles.filterSelect} />
           <Select.Content>
             <Select.Item value="all">Все статусы</Select.Item>
             <Select.Item value="planned">Планируется</Select.Item>
@@ -65,7 +65,7 @@ export default function RequestsSearchFilters({
         </Select.Root>
 
         <Select.Root value={selectedPriority} onValueChange={onPriorityChange}>
-          <Select.Trigger className={styles.filterSelect} size="2" />
+          <Select.Trigger className={styles.filterSelect} />
           <Select.Content>
             <Select.Item value="all">Все приоритеты</Select.Item>
             <Select.Item value="high">Высокий</Select.Item>

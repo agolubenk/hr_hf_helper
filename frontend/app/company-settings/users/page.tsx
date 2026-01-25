@@ -421,7 +421,7 @@ export default function UsersPage() {
                               value={user.groups[0] || 'none'}
                               onValueChange={(value) => setEditingUser({ ...user, groups: value === 'none' ? [] : [value] })}
                             >
-                              <Select.Trigger size="1" />
+                              <Select.Trigger />
                               <Select.Content>
                                 <Select.Item value="none">Без группы</Select.Item>
                                 {availableGroups.map((group) => (
@@ -437,7 +437,7 @@ export default function UsersPage() {
                               value={user.is_active ? 'active' : 'inactive'}
                               onValueChange={(value) => setEditingUser({ ...user, is_active: value === 'active' })}
                             >
-                              <Select.Trigger size="1" />
+                              <Select.Trigger />
                               <Select.Content>
                                 <Select.Item value="active">Активен</Select.Item>
                                 <Select.Item value="inactive">Неактивен</Select.Item>

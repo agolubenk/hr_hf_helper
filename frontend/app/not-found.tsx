@@ -101,7 +101,7 @@ export default function NotFound() {
       <Box className={styles.background}>
         {Array.from({ length: 40 }).map((_, index) => {
           const Icon = menuIcons[index % menuIcons.length]
-          return <FloatingIcon key={index} Icon={Icon} index={index} />
+          return <FloatingIcon key={index} Icon={Icon as React.ComponentType<{ width?: number; height?: number }>} index={index} />
         })}
       </Box>
 

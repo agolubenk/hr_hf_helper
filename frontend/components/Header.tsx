@@ -1,10 +1,16 @@
 'use client'
 
-import { Flex, Button, Text, Box, TextField } from "@radix-ui/themes"
-import { SunIcon, MoonIcon, PersonIcon, ExitIcon, LightningBoltIcon, MagnifyingGlassIcon, BellIcon } from "@radix-ui/react-icons"
+import { Flex, Text, Box } from "@radix-ui/themes"
+import { SunIcon, MoonIcon, PersonIcon, ExitIcon, LightningBoltIcon, BellIcon } from "@radix-ui/react-icons"
 import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import GlobalSearch from "@/components/GlobalSearch/GlobalSearch"
+import { useToast } from "@/components/Toast/ToastContext"
 import styles from './Header.module.css'
+
+const IN_DEV_TITLE = 'В разработке'
+const IN_DEV_MESSAGE = 'Данная страница или функциональность в разработке.'
+const IN_DEV_SEARCH_MESSAGE = 'Функция поиска в разработке.'
 
 interface HeaderProps {
   pageTitle: string
@@ -26,14 +32,18 @@ export default function Header({
   onLogout
 }: HeaderProps) {
   const router = useRouter()
+  const toast = useToast()
   const [userHover, setUserHover] = useState(false)
   const [logoutHover, setLogoutHover] = useState(false)
   const searchContainerRef = useRef<HTMLDivElement>(null)
-  
-  // Определяем, какая ОС используется для отображения правильной комбинации клавиш
-  const isMac = typeof window !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0
-  const shortcutKey = isMac ? '⌘K' : 'Ctrl+K'
-  
+  // Начальное значение = SSR, чтобы избежать hydration mismatch. После монтирования — по ОС.
+  const [shortcutKey, setShortcutKey] = useState<'⌘K' | 'Ctrl+K'>('Ctrl+K')
+
+  useEffect(() => {
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
+    setShortcutKey(isMac ? '⌘K' : 'Ctrl+K')
+  }, [])
+
   // Извлекаем имя из полного имени (второе слово)
   const firstName = userName.split(' ')[1] || userName
 
@@ -102,41 +112,15 @@ export default function Header({
         <Text size="5" weight="bold" className={styles.pageTitle} style={{ flexShrink: 0 }}>
           {pageTitle}
         </Text>
-        {/* Форма поиска - занимает всю доступную ширину */}
+        {/* Глобальный поиск: запросы, сущности, скоуп */}
         <Box ref={searchContainerRef} style={{ position: 'relative', flex: 1, minWidth: 0, marginRight: '12px' }}>
-          <TextField.Root
+          <GlobalSearch
             placeholder="Поиск..."
-            style={{
-              width: '100%',
-              height: '34px',
-            }}
-          >
-            <TextField.Slot>
-              <MagnifyingGlassIcon width={16} height={16} />
-            </TextField.Slot>
-            <TextField.Slot side="right" style={{ paddingRight: '8px' }}>
-              <Box
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '2px 6px',
-                  borderRadius: '4px',
-                  backgroundColor: currentTheme === 'dark' ? 'var(--gray-4)' : 'var(--gray-3)',
-                  border: '1px solid var(--gray-a6)',
-                  fontSize: '11px',
-                  lineHeight: 1,
-                  color: 'var(--gray-11)',
-                  fontFamily: 'system-ui, -apple-system, sans-serif',
-                  fontWeight: 500,
-                  userSelect: 'none',
-                  pointerEvents: 'none',
-                }}
-                title={`Нажмите ${shortcutKey} для поиска`}
-              >
-                {shortcutKey}
-              </Box>
-            </TextField.Slot>
-          </TextField.Root>
+            shortcutHint={shortcutKey}
+            dark={currentTheme === 'dark'}
+            onSearch={() => toast.showInfo(IN_DEV_TITLE, IN_DEV_SEARCH_MESSAGE)}
+            onEntityClick={() => toast.showInfo(IN_DEV_TITLE, IN_DEV_SEARCH_MESSAGE)}
+          />
         </Box>
       </Flex>
 
@@ -164,10 +148,7 @@ export default function Header({
 
         {/* Кнопка уведомлений */}
         <Box
-          onClick={() => {
-            // TODO: Добавить обработчик уведомлений
-            console.log('Notifications clicked')
-          }}
+          onClick={() => toast.showInfo(IN_DEV_TITLE, IN_DEV_MESSAGE)}
           style={{
             cursor: 'pointer',
             backgroundColor: 'transparent',

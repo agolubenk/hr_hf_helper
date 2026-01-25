@@ -2,7 +2,7 @@
 
 import AppLayout from "@/components/AppLayout"
 import { Box, Flex, Text, Button, TextField, Table, Badge, Select, Card } from "@radix-ui/themes"
-import { PlusIcon, MagnifyingGlassIcon, ReloadIcon, EyeOpenIcon, Pencil2Icon, TrashIcon, ExternalLinkIcon, CalendarIcon, PinIcon, BriefcaseIcon } from "@radix-ui/react-icons"
+import { PlusIcon, MagnifyingGlassIcon, ReloadIcon, EyeOpenIcon, Pencil2Icon, TrashIcon, ExternalLinkIcon, CalendarIcon, SewingPinFilledIcon, BackpackIcon } from "@radix-ui/react-icons"
 import { useState, useEffect } from "react"
 import { benchmarksApi, Benchmark, BenchmarkStats, BenchmarkSettings, gradesApi, Grade, vacanciesApi, Vacancy } from "@/lib/api"
 import styles from './benchmarks.module.css'
@@ -156,7 +156,7 @@ export default function BenchmarksPage() {
     return type === 'candidate' ? 'Кандидат' : 'Вакансия'
   }
 
-  const getWorkFormatBadge = (workFormat: string | null) => {
+  const getWorkFormatBadge = (workFormat: string | null | undefined) => {
     if (!workFormat) return <Text size="2" color="gray">—</Text>
     const formatMap: Record<string, { label: string; color: string }> = {
       'офис': { label: 'Офис', color: 'blue' },
@@ -358,7 +358,7 @@ export default function BenchmarksPage() {
                       <Table.Row key={benchmark.id}>
                         <Table.Cell>
                           <Badge color={getTypeBadgeColor(benchmark.type)}>
-                            <BriefcaseIcon width={12} height={12} style={{ marginRight: 4 }} />
+                            <BackpackIcon width={12} height={12} style={{ marginRight: 4 }} />
                             {getTypeLabel(benchmark.type)}
                           </Badge>
                         </Table.Cell>
@@ -373,7 +373,7 @@ export default function BenchmarksPage() {
                         </Table.Cell>
                         <Table.Cell>
                           <Flex align="center" gap="1">
-                            <PinIcon width={12} height={12} />
+                            <SewingPinFilledIcon width={12} height={12} />
                             <Text size="2">{benchmark.location}</Text>
                           </Flex>
                         </Table.Cell>

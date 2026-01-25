@@ -262,7 +262,8 @@ export default function FinanceSettingsPage() {
       code: newCurrency.code.toUpperCase(),
       name: newCurrency.name,
       isMain: currencies.length === 0,
-      order: currencies.length + 1
+      order: currencies.length + 1,
+      isActive: true
     }
 
     setCurrencies([...currencies, currency])

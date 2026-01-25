@@ -98,7 +98,7 @@ const mockVacancies = [
     hasWarning: true,
     warningText: 'Зарплатные вилки не установлены'
   }
-]
+] as { id: number; title: string; status: 'active' | 'inactive'; recruiter: string; technologies: string[]; interviewers: number; date: string | null; hasWarning: boolean; warningText?: string }[]
 
 export default function VacanciesPage() {
   const router = useRouter()

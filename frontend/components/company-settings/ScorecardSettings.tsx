@@ -440,11 +440,11 @@ export default function ScorecardSettings() {
                   <Flex
                     align="center"
                     justify="between"
-                    p={paddingSize}
                     style={{
                       background: 'var(--gray-4)',
                       borderBottom: '1px solid var(--gray-a6)',
                       minHeight: item.level > 0 ? '28px' : '32px',
+                      padding: `${paddingSize * 4}px`,
                     }}
                     onClick={(e) => e.stopPropagation()}
                   >
@@ -500,7 +500,7 @@ export default function ScorecardSettings() {
                   </Flex>
 
                   {/* Поле ввода с паттернами */}
-                  <Box p={paddingSize} style={{ background: 'var(--color-panel)' }}>
+                  <Box style={{ background: 'var(--color-panel)', padding: `${paddingSize * 4}px` }}>
                     <Flex gap="2" align="center" style={{ position: 'relative' }}>
                       <Box style={{ flex: 1, position: 'relative' }}>
                         <TextField.Root
@@ -895,33 +895,33 @@ export default function ScorecardSettings() {
               <Text size="4" weight="bold" mb="3" style={{ display: 'block' }}>
                 Как это работает:
               </Text>
-              <Box as="ul" style={{ paddingLeft: '20px', margin: 0, listStyle: 'disc' }}>
-                <Box as="li" mb="2">
+              <ul style={{ paddingLeft: '20px', margin: 0, listStyle: 'disc' }}>
+                <li style={{ marginBottom: '8px' }}>
                   <Text size="2" color="gray">
                     <Text weight="bold">[candidate_firstname] [candidate_lastname] [vacancy_title]</Text> - редактируемый критерий (вводится вручную), подставляется из кандидата и вакансии (авто)
                   </Text>
-                </Box>
-                <Box as="li" mb="2">
+                </li>
+                <li style={{ marginBottom: '8px' }}>
                   <Text size="2" color="gray">
                     <Text weight="bold">[vacancy_title]</Text> - подставляется из вакансии (авто)
                   </Text>
-                </Box>
-                <Box as="li" mb="2">
+                </li>
+                <li style={{ marginBottom: '8px' }}>
                   <Text size="2" color="gray">
                     <Text weight="bold">[month_num] [month_full_ru]</Text> - номер месяца и название месяца интервью (авто)
                   </Text>
-                </Box>
-                <Box as="li" mb="2">
+                </li>
+                <li style={{ marginBottom: '8px' }}>
                   <Text size="2" color="gray">
                     <Text weight="bold">[month_num] [month_full_ru] [date_day] ([weekday_short_ru])</Text> - номер месяца, название и день месяца, день недели (авто), скобки вручную
                   </Text>
-                </Box>
-                <Box as="li" mb="2">
+                </li>
+                <li style={{ marginBottom: '8px' }}>
                   <Text size="2" color="gray">
                     <Text weight="bold">[candidate_lastname] [candidate_firstname]</Text> - фамилия и имя кандидата (авто)
                   </Text>
-                </Box>
-              </Box>
+                </li>
+              </ul>
             </Box>
 
             <Flex justify="end" gap="2" pt="3" style={{ borderTop: '1px solid var(--gray-a6)' }}>

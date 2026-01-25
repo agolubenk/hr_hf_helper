@@ -29,6 +29,8 @@ export interface ToastProps {
   }>
 }
 
+const MAX_DURATION_FOR_ACTION_TOASTS_MS = 12000 // тосты с кнопками действий скрываются через 12 сек при неактивности
+
 const Toast: React.FC<ToastProps> = ({
   id,
   type,
@@ -40,13 +42,18 @@ const Toast: React.FC<ToastProps> = ({
 }) => {
   const [isExiting, setIsExiting] = useState(false)
 
+  // Тосты, запрашивающие действие (с кнопками), пропадают через 12 сек при неактивности
+  const effectiveDuration = actions && actions.length > 0
+    ? MAX_DURATION_FOR_ACTION_TOASTS_MS
+    : (duration ?? 3000)
+
   useEffect(() => {
     const timer = setTimeout(() => {
       handleClose()
-    }, duration)
+    }, effectiveDuration)
 
     return () => clearTimeout(timer)
-  }, [duration])
+  }, [effectiveDuration])
 
   const handleClose = () => {
     setIsExiting(true)

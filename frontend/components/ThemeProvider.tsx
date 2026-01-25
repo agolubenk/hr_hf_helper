@@ -143,12 +143,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     localStorage.setItem('darkThemeAccentColor', color)
   }
 
-  // Определяем текущий акцентный цвет на основе активной темы
+  // Определяем текущий акцентный цвет на основе активной темы.
+  // До mount используем дефолты, чтобы сервер и первый клиентский рендер совпадали (избегаем "missing bootstrap script").
   const currentAccentColor = theme === 'light' ? lightThemeAccentColor : darkThemeAccentColor
-
-  if (!mounted) {
-    return null
-  }
 
   return (
     <ThemeContext.Provider 
