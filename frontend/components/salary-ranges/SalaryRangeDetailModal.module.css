@@ -1,0 +1,13 @@
+.dialogContent {
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.formContent {
+  padding: 0;
+}
+
+.infoBox {
+  margin-bottom: 8px;
+}

@@ -35,6 +35,10 @@
   gap: 8px;
 }
 
+.tableCard {
+  overflow: hidden;
+}
+
 /* Адаптивность для мобильных */
 .buttonTextDesktop {
   display: inline;

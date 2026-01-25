@@ -1,15 +1,16 @@
 'use client'
 
 import AppLayout from "@/components/AppLayout"
-import { Box, Flex, Text, TextField, Select, Button } from "@radix-ui/themes"
-import { useState } from "react"
+import { Box, Flex, Text, Button } from "@radix-ui/themes"
+import { useState, useEffect, Suspense } from "react"
 import VacanciesSearchFilters from "@/components/vacancies/VacanciesSearchFilters"
 import VacanciesStats from "@/components/vacancies/VacanciesStats"
 import VacancyCard from "@/components/vacancies/VacancyCard"
 import VacancyListItem from "@/components/vacancies/VacancyListItem"
+import VacancyEditModal from "@/components/vacancies/VacancyEditModal"
 import { GridIcon, ListBulletIcon } from "@radix-ui/react-icons"
 import { HamburgerMenuIcon } from "@radix-ui/react-icons"
-import { useRouter } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import styles from './vacancies.module.css'
 
 // Моковые данные вакансий
@@ -19,7 +20,7 @@ const mockVacancies = [
     title: 'AQA Engineer (TS)',
     status: 'inactive',
     recruiter: 'Andrei Golubenko',
-    technologies: ['JavaScript', 'TypeScript', 'Selenium', 'Postman'],
+    locations: ['Минск', 'Удалённо'],
     interviewers: 0,
     date: '25.10.2025',
     hasWarning: true,
@@ -30,7 +31,7 @@ const mockVacancies = [
     title: 'UX/UI Designer',
     status: 'inactive',
     recruiter: 'Andrei Golubenko',
-    technologies: [],
+    locations: [],
     interviewers: 0,
     date: '22.09.2025',
     hasWarning: true,
@@ -41,7 +42,7 @@ const mockVacancies = [
     title: 'System Administrator',
     status: 'inactive',
     recruiter: 'Andrei Golubenko',
-    technologies: [],
+    locations: ['Гомель'],
     interviewers: 0,
     date: '22.09.2025',
     hasWarning: true,
@@ -52,7 +53,7 @@ const mockVacancies = [
     title: 'Manual QA Engineer',
     status: 'inactive',
     recruiter: 'Andrei Golubenko',
-    technologies: [],
+    locations: [],
     interviewers: 0,
     date: null,
     hasWarning: false
@@ -62,7 +63,7 @@ const mockVacancies = [
     title: 'DevOps Engineer',
     status: 'inactive',
     recruiter: 'Andrei Golubenko',
-    technologies: [],
+    locations: ['Минск', 'Удалённо', 'Польша'],
     interviewers: 0,
     date: null,
     hasWarning: false
@@ -72,7 +73,7 @@ const mockVacancies = [
     title: 'Project Manager',
     status: 'active',
     recruiter: 'Andrei Golubenko',
-    technologies: [],
+    locations: ['Минск'],
     interviewers: 2,
     date: null,
     hasWarning: false
@@ -82,7 +83,7 @@ const mockVacancies = [
     title: 'Frontend Engineer',
     status: 'active',
     recruiter: 'Andrei Golubenko',
-    technologies: ['React', 'TypeScript', 'Next.js'],
+    locations: ['Минск', 'Удалённо'],
     interviewers: 1,
     date: '26.10.2025',
     hasWarning: false
@@ -92,32 +93,45 @@ const mockVacancies = [
     title: 'Backend Engineer',
     status: 'inactive',
     recruiter: 'Andrei Golubenko',
-    technologies: ['Python', 'Django', 'PostgreSQL'],
+    locations: ['Варшава', 'Удалённо'],
     interviewers: 0,
     date: '20.10.2025',
     hasWarning: true,
     warningText: 'Зарплатные вилки не установлены'
   }
-] as { id: number; title: string; status: 'active' | 'inactive'; recruiter: string; technologies: string[]; interviewers: number; date: string | null; hasWarning: boolean; warningText?: string }[]
+] as { id: number; title: string; status: 'active' | 'inactive'; recruiter: string; locations: string[]; interviewers: number; date: string | null; hasWarning: boolean; warningText?: string }[]
 
-export default function VacanciesPage() {
-  const router = useRouter()
+function VacanciesPageContent() {
+  const searchParams = useSearchParams()
   const [viewMode, setViewMode] = useState<'cards' | 'list'>('cards')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedRecruiter, setSelectedRecruiter] = useState('all')
   const [selectedStatus, setSelectedStatus] = useState('all')
+  const [viewVacancyId, setViewVacancyId] = useState<number | null>(null)
+  const [editVacancyId, setEditVacancyId] = useState<number | null>(null)
+  const [statusOverrides, setStatusOverrides] = useState<Record<number, 'active' | 'inactive'>>({})
+
+  const getStatus = (v: (typeof mockVacancies)[0]) => statusOverrides[v.id] ?? v.status
+
+  useEffect(() => {
+    const id = searchParams.get('edit')
+    if (!id) return
+    const n = parseInt(id, 10)
+    if (!isNaN(n)) { setEditVacancyId(n); setViewVacancyId(null) }
+  }, [searchParams])
 
   const totalVacancies = mockVacancies.length
-  const activeVacancies = mockVacancies.filter(v => v.status === 'active').length
-  const inactiveVacancies = mockVacancies.filter(v => v.status === 'inactive').length
+  const activeVacancies = mockVacancies.filter(v => getStatus(v) === 'active').length
+  const inactiveVacancies = mockVacancies.filter(v => getStatus(v) === 'inactive').length
 
   // Фильтрация вакансий
   const filteredVacancies = mockVacancies.filter(vacancy => {
+    const status = getStatus(vacancy)
     const matchesSearch = !searchQuery || 
       vacancy.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       vacancy.id.toString().includes(searchQuery)
     const matchesRecruiter = selectedRecruiter === 'all' || vacancy.recruiter === selectedRecruiter
-    const matchesStatus = selectedStatus === 'all' || vacancy.status === selectedStatus
+    const matchesStatus = selectedStatus === 'all' || status === selectedStatus
     return matchesSearch && matchesRecruiter && matchesStatus
   })
 
@@ -179,8 +193,10 @@ export default function VacanciesPage() {
             {filteredVacancies.map(vacancy => (
               <VacancyCard 
                 key={vacancy.id} 
-                vacancy={vacancy}
-                onClick={() => router.push(`/vacancies/${vacancy.id}`)}
+                vacancy={{ ...vacancy, status: getStatus(vacancy) }}
+                onClick={() => { setViewVacancyId(vacancy.id); setEditVacancyId(null) }}
+                onEditClick={() => { setEditVacancyId(vacancy.id); setViewVacancyId(null) }}
+                onStatusClick={() => { const s = getStatus(vacancy); setStatusOverrides(prev => ({ ...prev, [vacancy.id]: s === 'active' ? 'inactive' : 'active' })) }}
               />
             ))}
           </Box>
@@ -189,13 +205,35 @@ export default function VacanciesPage() {
             {filteredVacancies.map(vacancy => (
               <VacancyListItem 
                 key={vacancy.id} 
-                vacancy={vacancy}
-                onClick={() => router.push(`/vacancies/${vacancy.id}`)}
+                vacancy={{ ...vacancy, status: getStatus(vacancy) }}
+                onClick={() => { setViewVacancyId(vacancy.id); setEditVacancyId(null) }}
+                onEditClick={() => { setEditVacancyId(vacancy.id); setViewVacancyId(null) }}
+                onStatusClick={() => { const s = getStatus(vacancy); setStatusOverrides(prev => ({ ...prev, [vacancy.id]: s === 'active' ? 'inactive' : 'active' })) }}
               />
             ))}
           </Box>
         )}
+
+        <VacancyEditModal
+          open={!!(editVacancyId || viewVacancyId)}
+          onOpenChange={(open) => { if (!open) { setEditVacancyId(null); setViewVacancyId(null) } }}
+          vacancyId={editVacancyId ?? viewVacancyId}
+          mode={viewVacancyId ? 'view' : 'edit'}
+          vacancy={(() => { const id = editVacancyId ?? viewVacancyId; const v = id != null ? mockVacancies.find(x => x.id === id) : undefined; return v ? { ...v, status: statusOverrides[v.id] ?? v.status } : null })()}
+          vacancyStatus={(() => { const id = editVacancyId ?? viewVacancyId; const v = id != null ? mockVacancies.find(x => x.id === id) : undefined; return v ? (statusOverrides[id] ?? v.status) : undefined })()}
+          onVacancyStatusChange={(status) => { const id = editVacancyId ?? viewVacancyId; if (id != null) setStatusOverrides(prev => ({ ...prev, [id]: status })) }}
+          onSwitchToEdit={viewVacancyId != null ? () => { setEditVacancyId(viewVacancyId); setViewVacancyId(null) } : undefined}
+          vacancyTitle={mockVacancies.find(v => v.id === (editVacancyId ?? viewVacancyId))?.title}
+        />
       </Box>
     </AppLayout>
+  )
+}
+
+export default function VacanciesPage() {
+  return (
+    <Suspense fallback={<AppLayout pageTitle="Вакансии"><Box p="4"><Text>Загрузка…</Text></Box></AppLayout>}>
+      <VacanciesPageContent />
+    </Suspense>
   )
 }

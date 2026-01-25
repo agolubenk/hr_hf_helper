@@ -4300,7 +4300,7 @@ export default function RecrChatPage() {
                               {companyCurrencies.map(currency => {
                                 const isMain = currency.isMain
                                 const fromValue = getSalaryValue(grade.id, currency.code, 'from')
-                                const toValue = salaryRanges[grade.id]?.[currency.code]?.to || null
+                                const toValue = getSalaryValue(grade.id, currency.code, 'to')
                                 
                                 return (
                                   <Table.Cell
@@ -4334,9 +4334,10 @@ export default function RecrChatPage() {
                                               }}
                                               style={{
                                                 minWidth: '100px',
-                                                padding: '8px 12px',
+                                                padding: '4px 8px',
                                                 fontSize: '13px',
-                                                lineHeight: '20px',
+                                                lineHeight: 1.2,
+                                                height: '28px',
                                                 borderRadius: '6px',
                                                 border: '1px solid var(--gray-a6)',
                                                 backgroundColor: 'var(--color-panel)',
@@ -4374,9 +4375,10 @@ export default function RecrChatPage() {
                                               }}
                                               style={{
                                                 minWidth: '100px',
-                                                padding: '8px 12px',
+                                                padding: '4px 8px',
                                                 fontSize: '13px',
-                                                lineHeight: '20px',
+                                                lineHeight: 1.2,
+                                                height: '28px',
                                                 borderRadius: '6px',
                                                 border: '1px solid var(--gray-a6)',
                                                 backgroundColor: 'var(--color-panel)',
