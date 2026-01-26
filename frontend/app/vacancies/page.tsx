@@ -156,7 +156,7 @@ function VacanciesPageContent() {
         />
 
         {/* Заголовок секции с переключателем вида */}
-        <Flex justify="between" align="center" className={styles.sectionHeader}>
+        <Flex data-tour="vacancies-toolbar" justify="between" align="center" className={styles.sectionHeader}>
           <Flex align="center" gap="2">
             <HamburgerMenuIcon width={20} height={20} />
             <Text size="5" weight="bold">Вакансии</Text>

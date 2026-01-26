@@ -22,7 +22,7 @@ export default function VacanciesSearchFilters({
   onStatusChange
 }: VacanciesSearchFiltersProps) {
   return (
-    <Box className={styles.searchFiltersContainer}>
+    <Box data-tour="vacancies-filters" className={styles.searchFiltersContainer}>
       <Flex align="center" gap="2" mb="3">
         <MagnifyingGlassIcon width={20} height={20} />
         <Text size="5" weight="bold">Поиск и фильтры</Text>

@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Text, Flex, TextArea, Button, Table } from "@radix-ui/themes"
-import { ChevronDownIcon, ChevronUpIcon, PaperPlaneIcon, OpenInNewWindowIcon, EyeOpenIcon, CalendarIcon, CheckIcon, PersonIcon, Cross2Icon, ClipboardIcon } from "@radix-ui/react-icons"
+import { ChevronDownIcon, ChevronUpIcon, PaperPlaneIcon, OpenInNewWindowIcon, EyeOpenIcon, CalendarIcon, CheckIcon, PersonIcon, Cross2Icon, ClipboardIcon, CopyIcon, Link2Icon } from "@radix-ui/react-icons"
 import { useState, useRef, useEffect, useCallback } from "react"
 import styles from './WorkflowChat.module.css'
 
@@ -53,6 +53,7 @@ interface ChatMessage {
   candidate?: {
     name: string
     vacancy: string
+    source?: 'Файл' | 'LinkedIn' | 'Rabota.by' | 'Прочий'
     scorecardUrl?: string
     meetUrl?: string
     interviewDate?: string
@@ -847,6 +848,16 @@ export default function WorkflowChat() {
                                         <Text size="2">{msg.candidate.vacancy}</Text>
                                       </Table.Cell>
                                     </Table.Row>
+                                    {msg.tag === '#add' && (
+                                      <Table.Row>
+                                        <Table.Cell>
+                                          <Text size="2" weight="bold">Источник:</Text>
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                          <Text size="2">{msg.candidate.source || 'Прочий'}</Text>
+                                        </Table.Cell>
+                                      </Table.Row>
+                                    )}
                                   {msg.tag === '#delete' && msg.deleteType === 'Удаление записи' && (
                                     <Table.Row>
                                       <Table.Cell>
@@ -941,6 +952,20 @@ export default function WorkflowChat() {
                                     <Button size="1" variant="soft" style={{ backgroundColor: '#3b82f6', color: '#ffffff', width: '32px', height: '32px', padding: 0, minWidth: '32px' }}>
                                       <OpenInNewWindowIcon width={14} height={14} />
                                     </Button>
+                                    {msg.tag === '#add' && (
+                                      <Button 
+                                        size="1" 
+                                        variant="soft" 
+                                        style={{ backgroundColor: '#6366f1', color: '#ffffff', width: '32px', height: '32px', padding: 0, minWidth: '32px' }}
+                                        onClick={() => {
+                                          const url = window.location.href
+                                          navigator.clipboard.writeText(url).catch(() => {})
+                                        }}
+                                        title="Копировать ссылку"
+                                      >
+                                        <Link2Icon width={14} height={14} />
+                                      </Button>
+                                    )}
                                   </Flex>
                                 ) : null}
                               </Flex>

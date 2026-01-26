@@ -16,7 +16,7 @@ interface VacanciesStatsProps {
 
 export default function VacanciesStats({ total, active, inactive }: VacanciesStatsProps) {
   return (
-    <Flex gap="3" className={styles.statsContainer}>
+    <Flex data-tour="vacancies-stats" gap="3" className={styles.statsContainer}>
       <Box className={styles.statCard}>
         <Flex align="center" justify="between">
           <Text size="3" weight="bold">{total} Всего вакансий</Text>

@@ -50,29 +50,53 @@ export default function Home() {
 
   const handleWelcomeTour = () => {
     const steps = [
-        { element: "[data-tour='header-menu']", popover: { title: "Меню", description: "Иконка ⚡ — боковое меню с разделами приложения." } },
-        { element: "[data-tour='header-theme']", popover: { title: "Смена темы", description: "Переключение светлой и тёмной темы." } },
-        { element: "[data-tour='header-profile']", popover: { title: "Профиль", description: "Ваш профиль и настройки учётной записи." } },
-        { element: "[data-tour='header-logout']", popover: { title: "Выход", description: "Выход из учётной записи." } },
-        { element: "[data-tour='blocks-wrap']", popover: { title: "Разделы приложения", description: "Ниже — карточки разделов. Нажмите на карточку для перехода." } },
-        { element: "[data-tour='block-chat']", popover: { title: "Чат", description: "Чат и workflow по подбору. Нажмите «Далее» — откроем страницу и проведём тур.", onNextClick: (_el: Element | undefined, _step: unknown, { driver: d }: { driver: { moveNext: () => void } }) => { router.push("/workflow"); setTimeout(() => d.moveNext(), NAV_DELAY_MS); } } },
+        { element: "[data-tour='header-menu']", popover: { title: "Меню", description: "Иконка ⚡ открывает боковое меню со всеми разделами: Чат, Вакансии, Заявки, Настройки, Отчётность и др. На мобильных меню разворачивается поверх экрана." } },
+        { element: "[data-tour='header-theme']", popover: { title: "Смена темы", description: "Переключатель светлой и тёмной темы. Подстраивайте интерфейс под освещение и привычки." } },
+        { element: "[data-tour='header-profile']", popover: { title: "Профиль", description: "Профиль пользователя, настройки аккаунта, интеграции и быстрые действия. Здесь же — доступ к смене акцентного цвета." } },
+        { element: "[data-tour='header-logout']", popover: { title: "Выход", description: "Выход из учётной записи. Сессия завершается, для входа потребуется авторизация снова." } },
+        { element: "[data-tour='blocks-wrap']", popover: { title: "Разделы приложения", description: "Карточки быстрого перехода в основные разделы. Нажмите на карточку — откроется нужная страница. Ниже пройдём по Чату, Настройкам и Вакансиям подробнее." } },
+        { element: "[data-tour='block-chat']", popover: { title: "Чат (Workflow)", description: "Основной workflow: подбор, назначение встреч, внесение данных по кандидатам. Нажмите «Далее» — откроем страницу Чат и покажем все элементы по шагам.", onNextClick: (_el: Element | undefined, _step: unknown, { driver: d }: { driver: { moveNext: () => void } }) => { router.push("/workflow"); setTimeout(() => d.moveNext(), NAV_DELAY_MS); } } },
         {
           element: "[data-tour='workflow-page']",
           popover: {
             title: "Страница Чат (Workflow)",
-            description: "Автоматическое назначение встреч и внесение/обработка данных. Кнопки копирования слотов и базовых данных по вакансии: вопросы и ссылка («Вакансия»), слоты («слоты»).",
+            description: "Центр подбора: автоматическое назначение встреч и обработка данных по кандидатам. Слева в шапке — быстрые кнопки для ссылок (Telegram, WhatsApp и др.) и кандидатские данные. Справа — выбор вакансии и кнопки: Календарь, Вакансия, слоты, Обновить. Ниже — тогглер этапа и чат с кандидатами.",
             onPrevClick: (_el: Element | undefined, _step: unknown, { driver: d }: { driver: { movePrevious: () => void } }) => { router.push("/"); setTimeout(() => d.movePrevious(), NAV_DELAY_MS); },
           },
         },
-        { element: "[data-tour='workflow-vacancy-buttons']", popover: { title: "Выбор вакансии и кнопки", description: "Выпадающий список вакансии, Календарь, Вакансия (вопросы и ссылка по вакансии), слоты (копирование слотов), Обновить." } },
-        { element: "[data-tour='workflow-toggle']", popover: { title: "Тогглер: Скрининг / Интервью", description: "Переключение этапа — Скрининг (30 мин) или Интервью (90 мин)." } },
-        { element: "[data-tour='workflow-interview']", popover: { title: "Назначение интервью", description: "Выберите «Интервью» — ниже появятся формат (онлайн/офис) и интервьюеры для назначения встреч." } },
-        { element: "[data-tour='workflow-chat']", popover: { title: "Внесение данных по кандидатам", description: "Данные в чате используются для автоматизации: назначение встреч, заполнение базы кандидатов." } },
+        {
+          element: "[data-tour='workflow-vacancy-buttons']",
+          popover: {
+            title: "Вакансия и кнопки управления",
+            description: "Выпадающий список — выбор вакансии по текущему кандидату. Календарь — шаринг слотов и просмотр. «Вакансия» — вопросы и ссылка на вакансию для копирования. «слоты» — копирование свободных слотов в буфер. Круглая кнопка — обновление данных. Все кнопки помогают быстро переносить данные в переписку с кандидатом.",
+          },
+        },
+        {
+          element: "[data-tour='workflow-toggle']",
+          popover: {
+            title: "Этап: Скрининг / Интервью",
+            description: "Скрининг — короткая встреча 30 минут, первичный отбор. Интервью — полноценная встреча 90 минут. От выбора этапа зависят длительность слотов и блок «Назначение интервью» справа.",
+          },
+        },
+        {
+          element: "[data-tour='workflow-interview']",
+          popover: {
+            title: "Назначение интервью",
+            description: "При выборе «Интервью» здесь появляются: формат (онлайн/офис) и список интервьюеров. Отметьте интервьюеров — их слоты можно копировать и отправлять кандидату. Удобно согласовывать время без переключения в календарь.",
+          },
+        },
+        {
+          element: "[data-tour='workflow-chat']",
+          popover: {
+            title: "Чат с данными по кандидатам",
+            description: "В чате вносятся и хранятся данные по кандидатам: этапы, даты встреч, комментарии. Всё используется для автоматизации: назначение встреч, заполнение ATS, отчёты. Сообщения можно дополнять вручную — система подхватывает структурированные данные.",
+          },
+        },
         {
           element: "[data-tour='workflow-sidebar']",
           popover: {
-            title: "Боковая панель",
-            description: "Отчёты последних недель — по этапам подбора (текущая/предыдущая неделя). Вики — ведёт на подробное описание команд и работы чата. Быстрые действия (в шапке слева) — переход по ссылке для коммуникации с кандидатом (Telegram, WhatsApp и др.). «Далее» — вернёмся на главную.",
+            title: "Боковая панель Workflow",
+            description: "Сверху — отчёты по этапам подбора за текущую и предыдущую неделю. Вики — подробное описание команд и логики чата. В шапке слева — быстрые действия: переход по ссылке для коммуникации (Telegram, WhatsApp и др.) с кандидатом. «Далее» — вернёмся на главную и перейдём к Настройкам.",
             onNextClick: (_el: Element | undefined, _step: unknown, { driver: d }: { driver: { moveNext: () => void } }) => { router.push("/"); setTimeout(() => d.moveNext(), NAV_DELAY_MS); },
           },
         },
@@ -80,30 +104,30 @@ export default function Home() {
           element: "[data-tour='block-settings']",
           popover: {
             title: "Настройки",
-            description: "Настройки компании и рекрутинга. Нажмите «Далее» — перейдём в настройки и пройдём по пунктам меню.",
+            description: "Настройки компании и рекрутинга: от логотипа и офисов до этапов воронки, полей кандидатов, SLA и интеграций. Нажмите «Далее» — перейдём в настройки и пройдём по пунктам левого меню.",
             onNextClick: (_el: Element | undefined, _step: unknown, { driver: d }: { driver: { moveNext: () => void } }) => { router.push("/company-settings"); setTimeout(() => d.moveNext(), NAV_DELAY_MS); },
           },
         },
-        { element: "[data-tour='sidebar-company-settings-general']", popover: { title: "Общие", description: "Логотип, офисы, календарь компании.", onPrevClick: (_el: Element | undefined, _step: unknown, { driver: d }: { driver: { movePrevious: () => void } }) => { router.push("/"); setTimeout(() => d.movePrevious(), NAV_DELAY_MS); } } },
-        { element: "[data-tour='sidebar-company-settings-org-structure']", popover: { title: "Оргструктура", description: "Организационная структура компании." } },
-        { element: "[data-tour='sidebar-company-settings-grades']", popover: { title: "Грейды", description: "Грейды и уровни." } },
-        { element: "[data-tour='sidebar-company-settings-finance']", popover: { title: "Финансы", description: "Финансовые настройки." } },
-        { element: "[data-tour='sidebar-company-settings-lifecycle']", popover: { title: "Жизненный цикл сотрудников", description: "Этапы и статусы в жизненном цикле." } },
-        { element: "[data-tour='sidebar-company-settings-integrations']", popover: { title: "Интеграции", description: "Интеграции с внешними системами." } },
-        { element: "[data-tour='sidebar-company-settings-user-groups']", popover: { title: "Группы пользователей", description: "Группы и права доступа." } },
-        { element: "[data-tour='sidebar-company-settings-users']", popover: { title: "Пользователи", description: "Пользователи и доступ. «Далее» — откроем раздел «Настройки рекрутинга».", onNextClick: (_el: Element | undefined, _step: unknown, { driver: d }: { driver: { moveNext: () => void } }) => { router.push("/company-settings/recruiting/stages"); setTimeout(() => d.moveNext(), NAV_DELAY_MS); } } },
-        { element: "[data-tour='sidebar-recruiting-settings-stages']", popover: { title: "Этапы найма и причины отказа", description: "Этапы воронки и причины отказа.", onPrevClick: (_el: Element | undefined, _step: unknown, { driver: d }: { driver: { movePrevious: () => void } }) => { router.push("/company-settings"); setTimeout(() => d.movePrevious(), NAV_DELAY_MS); } } },
-        { element: "[data-tour='sidebar-recruiting-settings-candidate-fields']", popover: { title: "Дополнительные поля кандидатов", description: "Кастомные поля в карточке кандидата." } },
-        { element: "[data-tour='sidebar-recruiting-settings-scorecard']", popover: { title: "Scorecard", description: "Критерии оценки кандидатов." } },
-        { element: "[data-tour='sidebar-recruiting-settings-sla']", popover: { title: "SLA", description: "Сроки и SLA по этапам подбора." } },
-        { element: "[data-tour='sidebar-recruiting-settings-vacancy-prompt']", popover: { title: "Единый промпт для вакансий", description: "Промпт для генерации описаний вакансий." } },
-        { element: "[data-tour='sidebar-recruiting-settings-offer-template']", popover: { title: "Шаблон оффера", description: "Шаблон оффера. «Далее» — на главную.", onNextClick: (_el: Element | undefined, _step: unknown, { driver: d }: { driver: { moveNext: () => void } }) => { router.push("/"); setTimeout(() => d.moveNext(), NAV_DELAY_MS); } } },
-        { element: "[data-tour='block-recruiting']", popover: { title: "Рекрутинг", description: "Workflow и процессы рекрутинга." } },
+        { element: "[data-tour='sidebar-company-settings-general']", popover: { title: "Общие", description: "Логотип компании, офисы, календарь (рабочие дни, праздники). Базовые параметры, от которых зависят расчёты и отображение в других разделах.", onPrevClick: (_el: Element | undefined, _step: unknown, { driver: d }: { driver: { movePrevious: () => void } }) => { router.push("/"); setTimeout(() => d.movePrevious(), NAV_DELAY_MS); } } },
+        { element: "[data-tour='sidebar-company-settings-org-structure']", popover: { title: "Оргструктура", description: "Организационная структура: подразделения, отделы, должности. Используется в вакансиях, отчётах и при согласовании." } },
+        { element: "[data-tour='sidebar-company-settings-grades']", popover: { title: "Грейды", description: "Грейды и уровни сотрудников. Связь с зарплатными вилками и бенчмарками. Нужны для единой системы грейдирования." } },
+        { element: "[data-tour='sidebar-company-settings-finance']", popover: { title: "Финансы", description: "Финансовые настройки: налоги, курсы валют, коэффициенты. Влияют на расчёт вилок, бенчмарков и отчёты." } },
+        { element: "[data-tour='sidebar-company-settings-lifecycle']", popover: { title: "Жизненный цикл сотрудников", description: "Этапы и статусы в жизненном цикле: от найма до увольнения. Используются в кадровом учёте и отчётности." } },
+        { element: "[data-tour='sidebar-company-settings-integrations']", popover: { title: "Интеграции", description: "Подключение внешних систем: ATS, календари, мессенджеры, почта. Настройка API и маршрутов данных." } },
+        { element: "[data-tour='sidebar-company-settings-user-groups']", popover: { title: "Группы пользователей", description: "Группы и роли: настройка прав доступа по разделам и действиям. Ограничение доступа к финансам, настройкам и т.п." } },
+        { element: "[data-tour='sidebar-company-settings-users']", popover: { title: "Пользователи", description: "Список пользователей, приглашения, роли. «Далее» — откроем раздел «Настройки рекрутинга»: этапы найма, поля кандидатов, scorecard, SLA и др.", onNextClick: (_el: Element | undefined, _step: unknown, { driver: d }: { driver: { moveNext: () => void } }) => { router.push("/company-settings/recruiting/stages"); setTimeout(() => d.moveNext(), NAV_DELAY_MS); } } },
+        { element: "[data-tour='sidebar-recruiting-settings-stages']", popover: { title: "Этапы найма и причины отказа", description: "Этапы воронки подбора и причины отказа на каждом. Задают структуру pipeline в ATS и в отчётах. Важно настроить до начала активного подбора.", onPrevClick: (_el: Element | undefined, _step: unknown, { driver: d }: { driver: { movePrevious: () => void } }) => { router.push("/company-settings"); setTimeout(() => d.movePrevious(), NAV_DELAY_MS); } } },
+        { element: "[data-tour='sidebar-recruiting-settings-candidate-fields']", popover: { title: "Дополнительные поля кандидатов", description: "Кастомные поля в карточке кандидата: даты, чекбоксы, справочники. Расширяют стандартный набор данных под процессы компании." } },
+        { element: "[data-tour='sidebar-recruiting-settings-scorecard']", popover: { title: "Scorecard", description: "Критерии и шкалы оценки кандидатов на интервью. Единые шаблоны для всех вакансий или настраиваемые под роль." } },
+        { element: "[data-tour='sidebar-recruiting-settings-sla']", popover: { title: "SLA", description: "Сроки по этапам подбора: целевое время на переход между этапами. Нужны для контроля скорости закрытия вакансий и отчётов по KPI." } },
+        { element: "[data-tour='sidebar-recruiting-settings-vacancy-prompt']", popover: { title: "Единый промпт для вакансий", description: "Промпт для генерации описаний вакансий. Задаёт тон, структуру и обязательные блоки — все новые вакансии можно собирать по одному шаблону." } },
+        { element: "[data-tour='sidebar-recruiting-settings-offer-template']", popover: { title: "Шаблон оффера", description: "Шаблон оффера: условия, форматы, подписи. «Далее» — вернёмся на главную и перейдём к разделу Вакансии.", onNextClick: (_el: Element | undefined, _step: unknown, { driver: d }: { driver: { moveNext: () => void } }) => { router.push("/"); setTimeout(() => d.moveNext(), NAV_DELAY_MS); } } },
+        { element: "[data-tour='block-recruiting']", popover: { title: "Рекрутинг", description: "Раздел рекрутинга: workflow, воронки, процессы. Связан с Чат и Настройками рекрутинга." } },
         {
           element: "[data-tour='block-vacancies']",
           popover: {
             title: "Вакансии",
-            description: "Список вакансий. Нажмите «Далее» — перейдём на страницу вакансий.",
+            description: "Список вакансий, создание и редактирование. Нажмите «Далее» — перейдём на страницу вакансий и пройдём по фильтрам, статистике и карточкам.",
             onNextClick: (_el: Element | undefined, _step: unknown, { driver: d }: { driver: { moveNext: () => void } }) => {
               router.push("/vacancies");
               setTimeout(() => d.moveNext(), NAV_DELAY_MS);
@@ -113,26 +137,47 @@ export default function Home() {
         {
           element: "[data-tour='vacancies-page']",
           popover: {
-            title: "Страница вакансий",
-            description: "Список вакансий, фильтры, карточки и сетка. «Далее» — на главную.",
+            title: "Страница вакансий — обзор",
+            description: "Контейнер страницы: сверху — блок поиска и фильтров, ниже — статистика (всего / активные / неактивные), затем панель с переключателем вида (сетка/список) и кнопкой «Добавить вакансию». Внизу — карточки или список вакансий. Пройдём по каждому блоку подробнее.",
             onPrevClick: (_el: Element | undefined, _step: unknown, { driver: d }: { driver: { movePrevious: () => void } }) => {
               router.push("/");
               setTimeout(() => d.movePrevious(), NAV_DELAY_MS);
             },
+          },
+        },
+        {
+          element: "[data-tour='vacancies-filters']",
+          popover: {
+            title: "Поиск и фильтры вакансий",
+            description: "Поиск по названию или ID вакансии. Фильтр по рекрутеру — кто ведёт подбор. Фильтр по статусу: все / активные / неактивные. Кнопка «Поиск» применяет условия. Удобно сужать список при большом количестве вакансий.",
+          },
+        },
+        {
+          element: "[data-tour='vacancies-stats']",
+          popover: {
+            title: "Статистика по вакансиям",
+            description: "Три счётчика: всего вакансий, активных (в наборе) и неактивных (на паузе или закрытых). Быстрая оценка загрузки и статуса пула.",
+          },
+        },
+        {
+          element: "[data-tour='vacancies-toolbar']",
+          popover: {
+            title: "Вид и добавление вакансии",
+            description: "Переключатель: сетка карточек или список. Кнопка «+ Добавить вакансию» — создание новой вакансии. «Далее» — вернёмся на главную.",
             onNextClick: (_el: Element | undefined, _step: unknown, { driver: d }: { driver: { moveNext: () => void } }) => {
               router.push("/");
               setTimeout(() => d.moveNext(), NAV_DELAY_MS);
             },
           },
         },
-        { element: "[data-tour='block-hiring-requests']", popover: { title: "Заявки на подбор", description: "Заявки на подбор персонала." } },
-        { element: "[data-tour='block-salary']", popover: { title: "ЗП вилки", description: "Зарплатные вилки по вакансиям." } },
-        { element: "[data-tour='block-benchmarks']", popover: { title: "Бенчмарки", description: "Бенчмарки и финансовая аналитика." } },
-        { element: "[data-tour='block-interviewers']", popover: { title: "Интервьюеры", description: "База интервьюеров." } },
-        { element: "[data-tour='block-aichat']", popover: { title: "ИИ чат", description: "ИИ-ассистент для HR." } },
-        { element: "[data-tour='block-wiki']", popover: { title: "Вики", description: "Внутренняя база знаний." } },
-        { element: "[data-tour='block-reporting']", popover: { title: "Отчетность", description: "Отчёты и аналитика." } },
-        { popover: { title: "Тур завершён", description: "Вы познакомились с разделами HR Helper. Меню, профиль и карточки на главной помогут быстро перейти в нужный раздел." } },
+        { element: "[data-tour='block-hiring-requests']", popover: { title: "Заявки на подбор", description: "Заявки на подбор: заявки от руководителей, приоритеты, связь с вакансиями. Управление воронкой заявок." } },
+        { element: "[data-tour='block-salary']", popover: { title: "ЗП вилки", description: "Зарплатные вилки по вакансиям и грейдам. Настройка вилок, учёт валют и грейдов. Связь с бенчмарками и финансами." } },
+        { element: "[data-tour='block-benchmarks']", popover: { title: "Бенчмарки", description: "Бенчмарки и финансовая аналитика: сравнение с рынком, отчёты по ЗП. Опираются на вилки и настройки финансов." } },
+        { element: "[data-tour='block-interviewers']", popover: { title: "Интервьюеры", description: "База интервьюеров: кто может проводить встречи. Используется при назначении интервью в Workflow и при настройке вакансий." } },
+        { element: "[data-tour='block-aichat']", popover: { title: "ИИ чат", description: "ИИ-ассистент для HR: ответы на вопросы, помощь в формулировках, генерация текстов. Отдельный раздел от основного чата по кандидатам." } },
+        { element: "[data-tour='block-wiki']", popover: { title: "Вики", description: "Внутренняя база знаний: процессы, инструкции, описание команд и сценариев. Доступна и из Workflow для быстрых подсказок." } },
+        { element: "[data-tour='block-reporting']", popover: { title: "Отчетность", description: "Отчёты и аналитика: по вакансиям, рекрутерам, этапам, срокам. Планирование найма и контроль KPI." } },
+        { popover: { title: "Тур завершён", description: "Вы познакомились с разделами HR Helper: шапка, главная, Чат (Workflow), Настройки, Вакансии и остальные блоки. Меню, профиль и карточки на главной помогут быстро перейти в нужный раздел." } },
       ];
 
     const driverObj = driver({
@@ -149,18 +194,31 @@ export default function Home() {
       popoverOffset: 14,
       smoothScroll: true,
       steps,
-      onDestroyed: (_el, _step, opts) => {
-        const idx = opts?.state?.activeIndex;
-        const len = opts?.config?.steps?.length;
-        // Тур завершён — очищаем
-        if (typeof idx === "number" && typeof len === "number" && idx === len - 1) {
-          localStorage.removeItem(TOUR_STORAGE_KEY_STEP);
-          localStorage.removeItem(TOUR_STORAGE_KEY_URL);
-          return;
+      onPopoverRender: (popover, opts) => {
+        const cur = (opts?.driver?.getActiveIndex?.() ?? 0) + 1;
+        const total = opts?.config?.steps?.length ?? 1;
+        const pct = Math.min(100, Math.round((cur / total) * 100));
+        let bar = popover?.wrapper?.querySelector?.(".hrhelper-tour-progress-bar");
+        if (!bar) {
+          bar = document.createElement("div");
+          bar.className = "hrhelper-tour-progress-bar";
+          popover?.wrapper?.insertBefore?.(bar, popover.wrapper.firstChild);
         }
-        // Выход/прерывание — запоминаем последний достигнутый шаг (только если прошли дальше шага 1)
-        if (typeof idx === "number" && idx > 0) {
-          localStorage.setItem(TOUR_STORAGE_KEY_STEP, String(idx));
+        if (bar) (bar as HTMLElement).style.width = `${pct}%`;
+      },
+      onHighlighted: (_el, _step, opts) => {
+        const idx = opts?.driver?.getActiveIndex?.() ?? opts?.state?.activeIndex;
+        if (typeof idx !== "number" || idx < 0) return;
+        const len = opts?.config?.steps?.length;
+        if (typeof len !== "number" || idx >= len) return;
+        localStorage.setItem(TOUR_STORAGE_KEY_STEP, String(idx));
+        localStorage.setItem(TOUR_STORAGE_KEY_URL, typeof window !== "undefined" ? window.location.pathname : "/");
+      },
+      onDestroyed: (_el, step, opts) => {
+        const arr = opts?.config?.steps ?? [];
+        const i = arr.findIndex((s) => s === step);
+        if (i === arr.length - 1 && arr.length > 0) {
+          localStorage.setItem(TOUR_STORAGE_KEY_STEP, String(arr.length - 1));
           localStorage.setItem(TOUR_STORAGE_KEY_URL, typeof window !== "undefined" ? window.location.pathname : "/");
         }
       },
@@ -178,9 +236,11 @@ export default function Home() {
     }
 
     if (hasValidResume) {
-      const resume = window.confirm(
-        `Тур был прерван. Вернуться к последнему достигнутому шагу (шаг ${stepIndex + 1} из ${steps.length})?\n\n«OK» — продолжить с этого места\n«Отмена» — начать тур сначала`
-      );
+      const isCompleted = stepIndex === steps.length - 1;
+      const msg = isCompleted
+        ? "Тур уже пройден. Показать итоговый экран или пройти с начала?\n\n«OK» — итог\n«Отмена» — с начала"
+        : `Тур был прерван. Вернуться к последнему достигнутому шагу (шаг ${stepIndex + 1} из ${steps.length})?\n\n«OK» — продолжить с этого места\n«Отмена» — начать тур сначала`;
+      const resume = window.confirm(msg);
       if (resume) {
         if (typeof window !== "undefined" && window.location.pathname !== savedUrl) {
           router.push(savedUrl);

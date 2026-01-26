@@ -29,17 +29,26 @@ interface Interviewer {
   name: string
 }
 
+type Office = 'minsk' | 'warsaw' | 'gomel'
+
 export default function WorkflowHeader({ onSlotsClick, slotsOpen }: WorkflowHeaderProps) {
   const [selectedWorkflow, setSelectedWorkflow] = useState<WorkflowType>('screening')
   const [selectedVacancy, setSelectedVacancy] = useState('frontend-react')
   const [interviewFormat, setInterviewFormat] = useState<InterviewFormat>('online')
   const [selectedInterviewers, setSelectedInterviewers] = useState<string[]>([])
+  const [selectedOffice, setSelectedOffice] = useState<Office>('minsk')
 
   // Моковые данные интервьюеров
   const interviewers: Interviewer[] = [
     { id: '1', name: 'Иван Петров' },
     { id: '2', name: 'Мария Сидорова' },
     { id: '3', name: 'Алексей Иванов' },
+  ]
+
+  const offices: { id: Office; label: string }[] = [
+    { id: 'minsk', label: 'Минск' },
+    { id: 'warsaw', label: 'Варшава' },
+    { id: 'gomel', label: 'Гомель' },
   ]
 
   const handleInterviewerToggle = (interviewerId: string) => {
@@ -179,6 +188,22 @@ export default function WorkflowHeader({ onSlotsClick, slotsOpen }: WorkflowHead
           
           {/* Кнопки управления строго под выпадающим списком */}
           <Flex gap="2" align="center" justify="end" className={styles.controlsRow}>
+            {/* Тогглер выбора офиса */}
+            <Flex gap="1" align="center" className={styles.officeToggle}>
+              {offices.map(office => (
+                <Box
+                  key={office.id}
+                  className={styles.officeButton}
+                  data-selected={selectedOffice === office.id}
+                  onClick={() => setSelectedOffice(office.id)}
+                >
+                  <Text size="1" weight={selectedOffice === office.id ? "medium" : "regular"}>
+                    {office.label}
+                  </Text>
+                </Box>
+              ))}
+            </Flex>
+
             {/* Кнопка 1: Календарь с иконкой "Поделиться" */}
             <Button
               variant="soft"
