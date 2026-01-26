@@ -580,3 +580,38 @@
     margin-right: 0;
   }
 }
+
+/* Тогглер выбора офиса */
+.officeToggle {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.officeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  background-color: var(--gray-3);
+  border: 1px solid var(--gray-6);
+  min-height: 27px;
+}
+
+.officeButton[data-selected="true"] {
+  background-color: var(--accent-9);
+  border-color: var(--accent-9);
+  color: #ffffff;
+}
+
+.officeButton:hover {
+  background-color: var(--gray-4);
+}
+
+.officeButton[data-selected="true"]:hover {
+  background-color: var(--accent-10);
+}

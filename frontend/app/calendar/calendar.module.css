@@ -1,0 +1,138 @@
+.calendarContainer {
+  padding: 24px;
+  width: 100%;
+  height: 100%;
+}
+
+/* Тогглер выбора офиса */
+.officeToggle {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.officeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  background-color: var(--gray-3);
+  border: 1px solid var(--gray-6);
+  min-height: 27px;
+}
+
+.officeButton[data-selected="true"] {
+  background-color: var(--accent-9);
+  border-color: var(--accent-9);
+  color: #ffffff;
+}
+
+.officeButton:hover {
+  background-color: var(--gray-4);
+}
+
+.officeButton[data-selected="true"]:hover {
+  background-color: var(--accent-10);
+}
+
+/* Календарная сетка */
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background-color: var(--gray-6);
+  border: 1px solid var(--gray-6);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.weekDayHeader {
+  background-color: var(--gray-2);
+  padding: 12px;
+  text-align: center;
+  border-bottom: 2px solid var(--gray-6);
+}
+
+.calendarDay {
+  background-color: var(--color-surface);
+  min-height: 120px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.calendarDay:hover {
+  background-color: var(--gray-2);
+}
+
+.calendarDay[data-today="true"] {
+  background-color: var(--accent-2);
+  border: 2px solid var(--accent-9);
+}
+
+.calendarDay[data-other-month="true"] {
+  background-color: var(--gray-1);
+  opacity: 0.5;
+}
+
+.eventBadge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.eventBadge:hover {
+  opacity: 0.9;
+}
+
+.eventBadge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.eventBadge:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .calendarContainer {
+    padding: 16px;
+  }
+
+  .calendarDay {
+    min-height: 80px;
+    padding: 4px;
+  }
+
+  .eventBadge {
+    font-size: 10px;
+    padding: 2px 4px;
+  }
+}

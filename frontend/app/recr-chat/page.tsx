@@ -439,6 +439,7 @@ const getMessageDotInfo = (candidate: any) => {
 
 type WorkflowType = 'screening' | 'interview'
 type InterviewFormat = 'online' | 'office'
+type Office = 'minsk' | 'warsaw' | 'gomel'
 
 interface Interviewer {
   id: string
@@ -783,6 +784,14 @@ export default function RecrChatPage() {
   const [interviewFormat, setInterviewFormat] = useState<InterviewFormat>('online')
   const [selectedInterviewers, setSelectedInterviewers] = useState<string[]>([])
   const [slotsOpen, setSlotsOpen] = useState(false)
+  const [selectedOffice, setSelectedOffice] = useState<Office>('minsk')
+  
+  // Офисы для выбора
+  const offices: { id: Office; label: string }[] = [
+    { id: 'minsk', label: 'Минск' },
+    { id: 'warsaw', label: 'Варшава' },
+    { id: 'gomel', label: 'Гомель' },
+  ]
   
   // Моковые данные интервьюеров (автор добавляется в начало списка)
   const currentUser = { id: 'author', name: 'Я (Андрей Голубенко)' }
@@ -2823,7 +2832,25 @@ export default function RecrChatPage() {
               <Box className={styles.quickButton} style={{ backgroundColor: '#10b981', flexShrink: 0 }}>
                 <Text size="5" weight="bold" style={{ color: '#ffffff' }}>+</Text>
               </Box>
+            </Flex>
 
+            {/* Тогглер выбора офиса (над блоком с кнопками) */}
+            <Flex gap="1" align="center" className={styles.officeToggle} mb="2">
+              {offices.map(office => (
+                <Box
+                  key={office.id}
+                  className={styles.officeButton}
+                  data-selected={selectedOffice === office.id}
+                  onClick={() => setSelectedOffice(office.id)}
+                >
+                  <Text size="1" weight={selectedOffice === office.id ? "medium" : "regular"}>
+                    {office.label}
+                  </Text>
+                </Box>
+              ))}
+            </Flex>
+
+            <Flex gap="2" align="center" style={{ flexShrink: 0, minWidth: 'max-content' }}>
               {/* Тогглеры этапов процесса */}
               <Box
                 className={styles.workflowButton}
@@ -3200,6 +3227,21 @@ export default function RecrChatPage() {
 
               {/* Тогглеры и кнопка справа - всегда видимы */}
               <Flex gap="3" align="center" style={{ flexShrink: 0 }}>
+                {/* Тогглер выбора офиса (перед блоком с кнопками, когда ширина позволяет) */}
+                <Flex gap="1" align="center" className={styles.officeToggle}>
+                  {offices.map(office => (
+                    <Box
+                      key={office.id}
+                      className={styles.officeButton}
+                      data-selected={selectedOffice === office.id}
+                      onClick={() => setSelectedOffice(office.id)}
+                    >
+                      <Text size="1" weight={selectedOffice === office.id ? "medium" : "regular"}>
+                        {office.label}
+                      </Text>
+                    </Box>
+                  ))}
+                </Flex>
                 {/* Тогглер этапов процесса */}
                 <Flex gap="3" align="center">
                   <Box

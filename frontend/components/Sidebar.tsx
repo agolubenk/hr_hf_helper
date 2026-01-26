@@ -33,7 +33,7 @@ import { useToast } from "@/components/Toast/ToastContext"
 
 // Пункты меню «в разработке»: при клике показываем toast вместо перехода
 const IN_DEVELOPMENT_IDS = new Set([
-  'calendar', 'invites-list', 'invites-create',
+  'invites-list', 'invites-create',
   'benchmarks-dashboard', 'benchmarks-all',
   'integrations-clickup', 'integrations-notion', 'integrations-hh', 'integrations-n8n',
   'reporting-recruiter', 'reporting-vacancy', 'reporting-interviewer', 'reporting-funnel',
