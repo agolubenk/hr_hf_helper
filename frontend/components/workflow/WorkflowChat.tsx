@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Text, Flex, TextArea, Button, Table } from "@radix-ui/themes"
-import { ChevronDownIcon, ChevronUpIcon, PaperPlaneIcon, OpenInNewWindowIcon, EyeOpenIcon, CalendarIcon, CheckIcon, PersonIcon, Cross2Icon, ClipboardIcon, CopyIcon, Link2Icon } from "@radix-ui/react-icons"
+import { ChevronDownIcon, ChevronUpIcon, PaperPlaneIcon, OpenInNewWindowIcon, EyeOpenIcon, CalendarIcon, CheckIcon, PersonIcon, Cross2Icon, ClipboardIcon, CopyIcon, Link2Icon, ExclamationTriangleIcon } from "@radix-ui/react-icons"
 import { useState, useRef, useEffect, useCallback } from "react"
 import styles from './WorkflowChat.module.css'
 
@@ -63,6 +63,8 @@ interface ChatMessage {
     participants?: string[]
   }
   status?: string
+  rejectionReason?: string
+  showRejectionPrompt?: boolean
   deleteType?: 'Удаление кандидата' | 'Удаление записи' | 'Удаление события'
   deletedEventInfo?: {
     eventDate?: string
@@ -81,6 +83,8 @@ export default function WorkflowChat() {
   const [hiddenMessages, setHiddenMessages] = useState<Set<string>>(new Set())
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([])
   const [currentCommand, setCurrentCommand] = useState<string | null>(null)
+  const [rejectedCandidates, setRejectedCandidates] = useState<Set<string>>(new Set())
+  const [rejectionReasons, setRejectionReasons] = useState<Map<string, string>>(new Map())
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
@@ -257,6 +261,7 @@ export default function WorkflowChat() {
         level: 'Middle',
       },
       status: 'Данные сохранены и переданы в Huntflow',
+      showRejectionPrompt: false,
     },
     {
       id: '9',
@@ -275,6 +280,49 @@ export default function WorkflowChat() {
         vacancy: 'Fullstack Engineer',
       },
       status: 'Последнее действие отменено',
+    },
+    {
+      id: '10',
+      type: 'user',
+      url: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/79013656',
+      timestamp: '26.01.2026 10:56',
+      tag: '#hr_screening',
+      text: '1) ожидаю от 1000$ на руки\n2) Готов к работе в офисе\n3) Да\n4) Высшее образование\n5) Военный билет есть\n6) Нет ограничений\n7) Ищу стабильную работу\n8) В течение 2 недель\n9) React, JavaScript, HTML, CSS\n10) Junior',
+    },
+    {
+      id: '10-response',
+      type: 'response',
+      timestamp: '26.01.2026 10:56',
+      tag: '#hr_screening',
+      candidate: {
+        name: 'Егор Говсь',
+        vacancy: 'Frontend Engineer',
+        salary: '1000 USD',
+        level: 'Junior',
+      },
+      status: 'Данные сохранены и переданы в Huntflow',
+    },
+    {
+      id: '11',
+      type: 'user',
+      url: 'https://huntflow.ru/my/softnetix#/vacancy/3936868/filter/workon/id/79013657',
+      timestamp: '26.01.2026 10:39',
+      tag: '#hr_screening',
+      text: '1) ожидаю от 1700$ на руки\n2) Только офисный формат работы\n3) Да\n4) Высшее образование\n5) Военный билет есть\n6) Нет ограничений\n7) Предпочитаю офисную работу\n8) В течение месяца\n9) React, TypeScript, Vue.js\n10) Middle',
+    },
+    {
+      id: '11-response',
+      type: 'response',
+      timestamp: '26.01.2026 10:39',
+      tag: '#hr_screening',
+      candidate: {
+        name: 'Евгений Хилько',
+        vacancy: 'Frontend Engineer',
+        salary: '1700 USD',
+        level: 'Middle',
+      },
+      status: 'Данные сохранены. Статус - Отказ: Офисный формат',
+      rejectionReason: 'Офисный формат',
     },
   ]
 
@@ -966,17 +1014,82 @@ export default function WorkflowChat() {
                                         <Link2Icon width={14} height={14} />
                                       </Button>
                                     )}
+                                    {msg.tag === '#hr_screening' && msg.rejectionReason && (
+                                      <Button 
+                                        size="1" 
+                                        variant="soft" 
+                                        style={{ backgroundColor: 'var(--accent-9, #ef4444)', color: '#ffffff', width: '32px', height: '32px', padding: 0, minWidth: '32px' }}
+                                        onClick={() => {
+                                          const url = window.location.href
+                                          navigator.clipboard.writeText(url).catch(() => {})
+                                        }}
+                                        title="Копировать ссылку"
+                                      >
+                                        <Cross2Icon width={14} height={14} />
+                                      </Button>
+                                    )}
                                   </Flex>
                                 ) : null}
                               </Flex>
 
                               {msg.status && (
-                                <Flex align="center" gap="2" className={styles.statusBar} mt="2">
-                                  <CheckIcon width={14} height={14} style={{ color: '#10b981' }} />
-                                  <Text size="2" style={{ color: '#10b981' }}>
+                                <Flex align="center" gap="2" className={styles.statusBar} mt="2" style={{ 
+                                  backgroundColor: msg.rejectionReason ? '#fee2e2' : '#d1fae5',
+                                  border: msg.rejectionReason ? '1px solid #fca5a5' : undefined
+                                }}>
+                                  {msg.rejectionReason ? (
+                                    <Cross2Icon width={14} height={14} style={{ color: '#dc2626' }} />
+                                  ) : (
+                                    <CheckIcon width={14} height={14} style={{ color: '#10b981' }} />
+                                  )}
+                                  <Text size="2" style={{ color: msg.rejectionReason ? '#dc2626' : '#10b981' }}>
                                     {msg.status}
                                   </Text>
                                 </Flex>
+                              )}
+
+                              {msg.tag === '#hr_screening' && !msg.rejectionReason && !rejectedCandidates.has(msg.id) && msg.showRejectionPrompt !== false && (
+                                <Box className={styles.rejectionPrompt} mt="2">
+                                  <Flex align="center" gap="2" mb="2">
+                                    <ExclamationTriangleIcon width={18} height={18} style={{ color: '#f97316', flexShrink: 0 }} />
+                                    <Text size="2" weight="bold" style={{ color: '#f97316' }}>
+                                      Отказать кандидату?
+                                    </Text>
+                                  </Flex>
+                                  <Flex gap="2" justify="start">
+                                    <Button 
+                                      size="1" 
+                                      variant="soft"
+                                      onClick={() => {
+                                        const reason = prompt('Укажите причину отказа:')
+                                        if (reason) {
+                                          setRejectedCandidates(prev => new Set(prev).add(msg.id))
+                                          setRejectionReasons(prev => new Map(prev).set(msg.id, reason))
+                                          setMessages(prev => prev.map(m => 
+                                            m.id === msg.id 
+                                              ? { ...m, rejectionReason: reason, status: `Данные сохранены. Статус - Отказ: ${reason}` }
+                                              : m
+                                          ))
+                                        }
+                                      }}
+                                      style={{ backgroundColor: '#ef4444', color: '#ffffff', border: 'none' }}
+                                    >
+                                      <Cross2Icon width={12} height={12} />
+                                      <Text size="1" style={{ color: '#ffffff' }}>Да</Text>
+                                    </Button>
+                                    <Button 
+                                      size="1" 
+                                      variant="solid"
+                                      onClick={() => {
+                                        setRejectedCandidates(prev => new Set(prev).add(msg.id))
+                                      }}
+                                      style={{ backgroundColor: '#10b981', color: '#ffffff', border: 'none' }}
+                                    >
+                                      <CheckIcon width={12} height={12} />
+                                      <Text size="1" style={{ color: '#ffffff' }}>Нет</Text>
+                                    </Button>
+                                  </Flex>
+                                </Box>
                               )}
                             </Box>
                           )}
