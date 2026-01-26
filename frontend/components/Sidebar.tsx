@@ -33,7 +33,7 @@ import { useToast } from "@/components/Toast/ToastContext"
 
 // Пункты меню «в разработке»: при клике показываем toast вместо перехода
 const IN_DEVELOPMENT_IDS = new Set([
-  'benchmarks-dashboard', 'benchmarks-all',
+  'benchmarks-dashboard',
   'integrations-clickup', 'integrations-notion', 'integrations-hh', 'integrations-n8n',
   'reporting-recruiter', 'reporting-vacancy', 'reporting-interviewer', 'reporting-funnel',
   'company-settings-benchmark',
@@ -86,7 +86,7 @@ function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefi
   }
   if (item.id === 'finance' && (
     pathname.startsWith('/vacancies/salary-ranges') ||
-    pathname.startsWith('/vacancies/benchmarks')
+    pathname.startsWith('/finance/benchmarks')
   )) {
     return true
   }
@@ -372,13 +372,13 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               id: 'benchmarks-dashboard',
               label: 'Dashboard',
               icon: <DashboardIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-              href: '/vacancies/benchmarks',
+              href: '/finance/benchmarks',
             },
             {
               id: 'benchmarks-all',
               label: 'Все бенчмарки',
               icon: <ListBulletIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-              href: '/vacancies/benchmarks/all',
+              href: '/finance/benchmarks',
             },
           ],
         },
@@ -702,10 +702,10 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             )) ||
             (item.id === 'finance' && (
               pathname?.startsWith('/vacancies/salary-ranges') ||
-              pathname?.startsWith('/vacancies/benchmarks')
+              pathname?.startsWith('/finance/benchmarks')
             )) ||
             (item.id === 'finance-salary-ranges' && pathname?.startsWith('/vacancies/salary-ranges')) ||
-            (item.id === 'finance-benchmarks' && pathname?.startsWith('/vacancies/benchmarks')) ||
+            (item.id === 'finance-benchmarks' && pathname?.startsWith('/finance/benchmarks')) ||
             (item.id === 'integrations' && (
               pathname?.startsWith('/huntflow') ||
               pathname?.startsWith('/aichat') ||

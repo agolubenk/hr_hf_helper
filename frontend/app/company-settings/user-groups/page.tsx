@@ -2,9 +2,10 @@
 
 import AppLayout from "@/components/AppLayout"
 import { Flex, Text, Button, Box, TextField, Select, Badge, Table } from "@radix-ui/themes"
-import { PlusIcon, Pencil1Icon, TrashIcon, CheckIcon, Cross2Icon, MagnifyingGlassIcon } from "@radix-ui/react-icons"
+import { PlusIcon, Pencil1Icon, TrashIcon, CheckIcon, Cross2Icon, MagnifyingGlassIcon, GearIcon } from "@radix-ui/react-icons"
 import { useState, useEffect } from "react"
 import { useToast } from "@/components/Toast/ToastContext"
+import GroupAccessModal, { type AccessRights } from "@/components/company-settings/GroupAccessModal"
 
 interface UserGroup {
   id: string
@@ -12,6 +13,8 @@ interface UserGroup {
   description: string
   user_count?: number
   permissions: string[]
+  applications?: string[]
+  access_rights?: AccessRights
   created_at: string
   updated_at: string
 }
@@ -24,10 +27,14 @@ export default function UserGroupsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [editingGroup, setEditingGroup] = useState<UserGroup | null>(null)
   const [showAddForm, setShowAddForm] = useState(false)
+  const [accessModalOpen, setAccessModalOpen] = useState(false)
+  const [selectedGroup, setSelectedGroup] = useState<UserGroup | null>(null)
   const [newGroup, setNewGroup] = useState<Partial<UserGroup>>({
     name: '',
     description: '',
     permissions: [],
+    applications: [],
+    access_rights: {},
   })
 
   useEffect(() => {
@@ -48,6 +55,18 @@ export default function UserGroupsPage() {
           description: 'Полный доступ ко всем функциям системы',
           user_count: 3,
           permissions: ['all'],
+          applications: ['huntflow', 'telegram', 'notion', 'clickup', 'hhru'],
+          access_rights: {
+            home: { view: true, edit: true },
+            vacancies: { view: true, edit: true },
+            'vacancies-list': { view: true, edit: true },
+            recruiting: { view: true, edit: true },
+            interviewers: { view: true, edit: true },
+            integrations: { view: true, edit: true },
+            wiki: { view: true, edit: true },
+            reporting: { view: true, edit: true },
+            'company-settings': { view: true, edit: true },
+          },
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },
@@ -57,6 +76,19 @@ export default function UserGroupsPage() {
           description: 'Доступ к работе с кандидатами и вакансиями',
           user_count: 12,
           permissions: ['candidates', 'vacancies', 'interviews'],
+          applications: ['huntflow', 'telegram'],
+          access_rights: {
+            home: { view: true, edit: false },
+            vacancies: { view: true, edit: true },
+            'vacancies-list': { view: true, edit: true },
+            recruiting: { view: true, edit: true },
+            interviewers: { view: true, edit: false },
+            integrations: { view: true, edit: false },
+            'integrations-huntflow': { view: true, edit: true },
+            'integrations-telegram': { view: true, edit: true },
+            wiki: { view: true, edit: false },
+            reporting: { view: true, edit: false },
+          },
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },
@@ -66,6 +98,19 @@ export default function UserGroupsPage() {
           description: 'Просмотр отчетов и статистики',
           user_count: 5,
           permissions: ['reports', 'analytics'],
+          applications: ['huntflow'],
+          access_rights: {
+            home: { view: true, edit: false },
+            vacancies: { view: true, edit: false },
+            recruiting: { view: true, edit: false },
+            interviewers: { view: true, edit: false },
+            integrations: { view: true, edit: false },
+            wiki: { view: true, edit: false },
+            reporting: { view: true, edit: false },
+            'reporting-main': { view: true, edit: false },
+            'reporting-hiring-plan': { view: true, edit: false },
+            'reporting-company': { view: true, edit: false },
+          },
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },
@@ -128,6 +173,24 @@ export default function UserGroupsPage() {
       console.error('Error updating group:', error)
       setSaving(false)
     }
+  }
+
+  const handleOpenAccessModal = (group: UserGroup) => {
+    setSelectedGroup(group)
+    setAccessModalOpen(true)
+  }
+
+  const handleApplyAccess = (applications: string[], access: AccessRights) => {
+    if (!selectedGroup) return
+    
+    const updatedGroup: UserGroup = {
+      ...selectedGroup,
+      applications,
+      access_rights: access,
+    }
+    
+    setGroups(prev => prev.map(g => g.id === selectedGroup.id ? updatedGroup : g))
+    toast.showSuccess('Успешно', 'Доступы и приложения обновлены')
   }
 
   const handleDeleteGroup = (id: string) => {
@@ -321,7 +384,8 @@ export default function UserGroupsPage() {
                   <Table.ColumnHeaderCell>Название</Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell>Описание</Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell>Пользователей</Table.ColumnHeaderCell>
-                  <Table.ColumnHeaderCell style={{ width: '120px' }}>Действия</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell>Приложения</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell style={{ width: '180px' }}>Действия</Table.ColumnHeaderCell>
                 </Table.Row>
               </Table.Header>
               <Table.Body>
@@ -362,6 +426,24 @@ export default function UserGroupsPage() {
                         )}
                       </Table.Cell>
                       <Table.Cell>
+                        {group.applications && group.applications.length > 0 ? (
+                          <Flex gap="1" wrap="wrap">
+                            {group.applications.slice(0, 3).map(app => (
+                              <Badge key={app} size="1" color="green">
+                                {app}
+                              </Badge>
+                            ))}
+                            {group.applications.length > 3 && (
+                              <Badge size="1" color="gray">
+                                +{group.applications.length - 3}
+                              </Badge>
+                            )}
+                          </Flex>
+                        ) : (
+                          <Text size="2" color="gray">—</Text>
+                        )}
+                      </Table.Cell>
+                      <Table.Cell>
                         {isEditing ? (
                           <Flex gap="2">
                             <Button
@@ -387,6 +469,14 @@ export default function UserGroupsPage() {
                             <Button
                               size="2"
                               variant="soft"
+                              onClick={() => handleOpenAccessModal(group)}
+                              title="Настроить доступы и приложения"
+                            >
+                              <GearIcon width={14} height={14} />
+                            </Button>
+                            <Button
+                              size="2"
+                              variant="soft"
                               onClick={() => setEditingGroup({ ...group })}
                             >
                               <Pencil1Icon width={14} height={14} />
@@ -409,6 +499,18 @@ export default function UserGroupsPage() {
             </Table.Root>
           )}
         </Box>
+
+        {/* Модальное окно управления доступами */}
+        {selectedGroup && (
+          <GroupAccessModal
+            open={accessModalOpen}
+            onOpenChange={setAccessModalOpen}
+            groupName={selectedGroup.name}
+            initialApplications={selectedGroup.applications || []}
+            initialAccess={selectedGroup.access_rights}
+            onApply={handleApplyAccess}
+          />
+        )}
       </Flex>
     </AppLayout>
   )

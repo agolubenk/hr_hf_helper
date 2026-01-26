@@ -4,8 +4,167 @@ import AppLayout from "@/components/AppLayout"
 import { Box, Flex, Text, Button, TextField, Table, Badge, Select, Card } from "@radix-ui/themes"
 import { PlusIcon, MagnifyingGlassIcon, ReloadIcon, EyeOpenIcon, Pencil2Icon, TrashIcon, ExternalLinkIcon, CalendarIcon, SewingPinFilledIcon, BackpackIcon } from "@radix-ui/react-icons"
 import { useState, useEffect } from "react"
-import { benchmarksApi, Benchmark, BenchmarkStats, BenchmarkSettings, gradesApi, Grade, vacanciesApi, Vacancy } from "@/lib/api"
+import { Benchmark, BenchmarkStats, BenchmarkSettings, Grade, Vacancy } from "@/lib/api"
 import styles from './benchmarks.module.css'
+
+// Моковые данные
+const MOCK_BENCHMARKS: Benchmark[] = [
+  {
+    id: 1,
+    type: 'candidate',
+    vacancy: 1,
+    vacancy_name: 'Frontend Developer',
+    grade: 1,
+    grade_name: 'Middle',
+    salary_from: '200000',
+    salary_to: '300000',
+    salary_display: '200 000 - 300 000 ₽',
+    location: 'Москва',
+    work_format: 'гибрид',
+    compensation: 'ДМС, спортзал',
+    benefits: 'Обеды, корпоративы',
+    development: 'Конференции, курсы',
+    technologies: 'React, TypeScript, Next.js',
+    domain: 'fintech',
+    domain_display: 'FinTech',
+    hh_vacancy_id: '12345678',
+    date_added: '2026-01-20T10:00:00Z',
+    is_active: true,
+    created_at: '2026-01-20T10:00:00Z',
+    updated_at: '2026-01-20T10:00:00Z',
+  },
+  {
+    id: 2,
+    type: 'vacancy',
+    vacancy: 2,
+    vacancy_name: 'Backend Developer',
+    grade: 2,
+    grade_name: 'Senior',
+    salary_from: '300000',
+    salary_to: '450000',
+    salary_display: '300 000 - 450 000 ₽',
+    location: 'Санкт-Петербург',
+    work_format: 'удаленка',
+    compensation: 'ДМС',
+    benefits: 'Обеды',
+    development: 'Курсы',
+    technologies: 'Python, Django, PostgreSQL',
+    domain: 'ecommerce',
+    domain_display: 'E-commerce',
+    hh_vacancy_id: '87654321',
+    date_added: '2026-01-19T14:30:00Z',
+    is_active: true,
+    created_at: '2026-01-19T14:30:00Z',
+    updated_at: '2026-01-19T14:30:00Z',
+  },
+  {
+    id: 3,
+    type: 'candidate',
+    vacancy: 3,
+    vacancy_name: 'DevOps Engineer',
+    grade: 1,
+    grade_name: 'Middle',
+    salary_from: '250000',
+    salary_to: '350000',
+    salary_display: '250 000 - 350 000 ₽',
+    location: 'Казань',
+    work_format: 'офис',
+    compensation: 'ДМС, спортзал',
+    benefits: 'Обеды, корпоративы',
+    development: 'Конференции',
+    technologies: 'Kubernetes, Docker, AWS',
+    domain: 'saas',
+    domain_display: 'SaaS',
+    date_added: '2026-01-18T09:15:00Z',
+    is_active: true,
+    created_at: '2026-01-18T09:15:00Z',
+    updated_at: '2026-01-18T09:15:00Z',
+  },
+  {
+    id: 4,
+    type: 'vacancy',
+    vacancy: 1,
+    vacancy_name: 'Frontend Developer',
+    grade: 3,
+    grade_name: 'Lead',
+    salary_from: '400000',
+    salary_to: '600000',
+    salary_display: '400 000 - 600 000 ₽',
+    location: 'Москва',
+    work_format: 'гибрид',
+    compensation: 'ДМС, спортзал, парковка',
+    benefits: 'Обеды, корпоративы, тимбилдинги',
+    development: 'Конференции, курсы, менторинг',
+    technologies: 'React, TypeScript, Next.js, GraphQL',
+    domain: 'fintech',
+    domain_display: 'FinTech',
+    hh_vacancy_id: '11223344',
+    date_added: '2026-01-17T16:45:00Z',
+    is_active: false,
+    created_at: '2026-01-17T16:45:00Z',
+    updated_at: '2026-01-17T16:45:00Z',
+  },
+  {
+    id: 5,
+    type: 'candidate',
+    vacancy: 4,
+    vacancy_name: 'QA Engineer',
+    grade: 1,
+    grade_name: 'Junior',
+    salary_from: '120000',
+    salary_to: '180000',
+    salary_display: '120 000 - 180 000 ₽',
+    location: 'Новосибирск',
+    work_format: 'удаленка',
+    compensation: 'ДМС',
+    benefits: 'Обеды',
+    development: 'Курсы',
+    technologies: 'Selenium, Python, Postman',
+    domain: 'gaming',
+    domain_display: 'Gaming',
+    date_added: '2026-01-16T11:20:00Z',
+    is_active: true,
+    created_at: '2026-01-16T11:20:00Z',
+    updated_at: '2026-01-16T11:20:00Z',
+  },
+]
+
+const MOCK_STATS: BenchmarkStats = {
+  total_benchmarks: 5,
+  active_benchmarks: 4,
+  type_stats: [
+    { type: 'candidate', count: 3, avg_salary_from: '190000', avg_salary_to: '276667' },
+    { type: 'vacancy', count: 2, avg_salary_from: '350000', avg_salary_to: '525000' },
+  ],
+  grade_stats: [
+    { grade__name: 'Middle', count: 2, avg_salary_from: '225000', avg_salary_to: '325000' },
+    { grade__name: 'Senior', count: 1, avg_salary_from: '300000', avg_salary_to: '450000' },
+    { grade__name: 'Lead', count: 1, avg_salary_from: '400000', avg_salary_to: '600000' },
+    { grade__name: 'Junior', count: 1, avg_salary_from: '120000', avg_salary_to: '180000' },
+  ],
+}
+
+const MOCK_SETTINGS: BenchmarkSettings = {
+  id: 1,
+  vacancy_fields: ['work_format', 'compensation', 'benefits', 'development', 'technologies', 'domain'],
+  candidate_fields: ['work_format', 'compensation', 'benefits'],
+}
+
+const MOCK_GRADES: Grade[] = [
+  { id: 1, name: 'Junior' },
+  { id: 2, name: 'Middle' },
+  { id: 3, name: 'Senior' },
+  { id: 4, name: 'Lead' },
+  { id: 5, name: 'Principal' },
+]
+
+const MOCK_VACANCIES: Vacancy[] = [
+  { id: 1, name: 'Frontend Developer', title: 'Frontend Developer' },
+  { id: 2, name: 'Backend Developer', title: 'Backend Developer' },
+  { id: 3, name: 'DevOps Engineer', title: 'DevOps Engineer' },
+  { id: 4, name: 'QA Engineer', title: 'QA Engineer' },
+  { id: 5, name: 'Project Manager', title: 'Project Manager' },
+]
 
 export default function BenchmarksPage() {
   const [benchmarks, setBenchmarks] = useState<Benchmark[]>([])
@@ -33,6 +192,56 @@ export default function BenchmarksPage() {
   const loadBenchmarks = async () => {
     setLoading(true)
     try {
+      // Имитация задержки API
+      await new Promise(resolve => setTimeout(resolve, 300))
+      
+      // Фильтрация моковых данных
+      let filteredBenchmarks = [...MOCK_BENCHMARKS]
+      
+      // Фильтр по поиску
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase()
+        filteredBenchmarks = filteredBenchmarks.filter(b => 
+          b.vacancy_name?.toLowerCase().includes(query) ||
+          b.grade_name?.toLowerCase().includes(query) ||
+          b.location?.toLowerCase().includes(query) ||
+          b.technologies?.toLowerCase().includes(query)
+        )
+      }
+      
+      // Фильтр по типу
+      if (typeFilter) {
+        filteredBenchmarks = filteredBenchmarks.filter(b => b.type === typeFilter)
+      }
+      
+      // Фильтр по вакансии
+      if (vacancyFilter) {
+        filteredBenchmarks = filteredBenchmarks.filter(b => b.vacancy === parseInt(vacancyFilter))
+      }
+      
+      // Фильтр по грейду
+      if (gradeFilter) {
+        filteredBenchmarks = filteredBenchmarks.filter(b => b.grade === parseInt(gradeFilter))
+      }
+      
+      // Фильтр по статусу
+      if (statusFilter === 'true') {
+        filteredBenchmarks = filteredBenchmarks.filter(b => b.is_active === true)
+      } else if (statusFilter === 'false') {
+        filteredBenchmarks = filteredBenchmarks.filter(b => b.is_active === false)
+      }
+      
+      // Пагинация
+      const pageSize = 15
+      const startIndex = (page - 1) * pageSize
+      const endIndex = startIndex + pageSize
+      const paginatedBenchmarks = filteredBenchmarks.slice(startIndex, endIndex)
+      
+      setBenchmarks(paginatedBenchmarks)
+      setTotalCount(filteredBenchmarks.length)
+      
+      // TODO: Когда будет готов API, раскомментировать:
+      /*
       const params: any = {
         page,
         page_size: 15,
@@ -51,6 +260,7 @@ export default function BenchmarksPage() {
       } else if (response.error) {
         console.error('Ошибка загрузки бенчмарков:', response.error)
       }
+      */
     } catch (error) {
       console.error('Ошибка при загрузке бенчмарков:', error)
     } finally {
@@ -60,10 +270,18 @@ export default function BenchmarksPage() {
 
   const loadStats = async () => {
     try {
+      // Имитация задержки API
+      await new Promise(resolve => setTimeout(resolve, 200))
+      
+      setStats(MOCK_STATS)
+      
+      // TODO: Когда будет готов API, раскомментировать:
+      /*
       const response = await benchmarksApi.getStats()
       if (response.data) {
         setStats(response.data)
       }
+      */
     } catch (error) {
       console.error('Ошибка при загрузке статистики:', error)
     }
@@ -71,10 +289,24 @@ export default function BenchmarksPage() {
 
   const loadSettings = async () => {
     try {
+      // Имитация задержки API
+      await new Promise(resolve => setTimeout(resolve, 200))
+      
+      setSettings(MOCK_SETTINGS)
+      
+      // Инициализируем видимость полей на основе настроек
+      const enabledFields = MOCK_SETTINGS.vacancy_fields || []
+      const initialVisibility: Record<string, boolean> = {}
+      enabledFields.forEach((field: string) => {
+        initialVisibility[field] = false
+      })
+      setVisibleFields(initialVisibility)
+      
+      // TODO: Когда будет готов API, раскомментировать:
+      /*
       const response = await benchmarksApi.getSettings()
       if (response.data) {
         setSettings(response.data)
-        // Инициализируем видимость полей на основе настроек
         const enabledFields = response.data.vacancy_fields || []
         const initialVisibility: Record<string, boolean> = {}
         enabledFields.forEach((field: string) => {
@@ -82,6 +314,7 @@ export default function BenchmarksPage() {
         })
         setVisibleFields(initialVisibility)
       }
+      */
     } catch (error) {
       console.error('Ошибка при загрузке настроек:', error)
     }
@@ -89,10 +322,18 @@ export default function BenchmarksPage() {
 
   const loadGrades = async () => {
     try {
+      // Имитация задержки API
+      await new Promise(resolve => setTimeout(resolve, 200))
+      
+      setGrades(MOCK_GRADES)
+      
+      // TODO: Когда будет готов API, раскомментировать:
+      /*
       const response = await gradesApi.getAll()
       if (response.data) {
         setGrades(response.data)
       }
+      */
     } catch (error) {
       console.error('Ошибка при загрузке грейдов:', error)
     }
@@ -100,6 +341,13 @@ export default function BenchmarksPage() {
 
   const loadVacancies = async () => {
     try {
+      // Имитация задержки API
+      await new Promise(resolve => setTimeout(resolve, 200))
+      
+      setVacancies(MOCK_VACANCIES)
+      
+      // TODO: Когда будет готов API, раскомментировать:
+      /*
       const response = await vacanciesApi.getAll()
       if (response.data) {
         setVacancies(response.data.map(v => ({
@@ -107,6 +355,7 @@ export default function BenchmarksPage() {
           name: v.name || v.title || `Вакансия ${v.id}`
         })))
       }
+      */
     } catch (error) {
       console.error('Ошибка при загрузке вакансий:', error)
     }
