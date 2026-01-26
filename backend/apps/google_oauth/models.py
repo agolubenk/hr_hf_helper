@@ -2589,7 +2589,8 @@ class Invite(models.Model):
                 else:
                     # Для онлайн формата используем старую логику
                     # Генерируем описание события без секции "Для интервьюеров"
-                    description_text = self._generate_event_description_text(include_huntflow_link=False)
+                    # Используем plain_text=True для получения простого текста без HTML-ссылок
+                    description_text = self._generate_event_description_text(include_huntflow_link=False, plain_text=True)
                     
                     # Получаем Google Meet ссылку
                     meet_link = self.google_meet_url or ""
@@ -2689,8 +2690,13 @@ class Invite(models.Model):
             print(f"❌ Ошибка генерации текста приглашения: {e}")
             return f"Ошибка генерации приглашения: {str(e)}"
     
-    def _generate_event_description_text(self, include_huntflow_link=True):
-        """Генерирует текст описания события (без секции 'Для интервьюеров' для копирования)"""
+    def _generate_event_description_text(self, include_huntflow_link=True, plain_text=False):
+        """Генерирует текст описания события (без секции 'Для интервьюеров' для копирования)
+        
+        Args:
+            include_huntflow_link: Включать ли ссылку на Huntflow
+            plain_text: Если True, возвращает простой текст без HTML-тегов (для копирования)
+        """
         try:
             # Определяем, является ли это интервью (нет google_drive_file_id)
             is_interview = not bool(self.google_drive_file_id)
@@ -2739,9 +2745,13 @@ class Invite(models.Model):
                     
                     # Добавляем текст про телеграм после "Как пройти"
                     if telegram_username and telegram_link:
-                        # Формируем ссылку на телеграм (Google Calendar поддерживает HTML в описании)
-                        telegram_text_link = f'<a href="{telegram_link}">@{telegram_username}</a>'
-                        description += f"\n\nПо приходу, а также если возникнут вопросы -- на связи в телеграм {telegram_text_link}"
+                        # Для plain_text используем просто никнейм, иначе HTML-ссылку
+                        if plain_text:
+                            telegram_text = f"@{telegram_username}"
+                        else:
+                            # Формируем ссылку на телеграм (Google Calendar поддерживает HTML в описании)
+                            telegram_text = f'<a href="{telegram_link}">@{telegram_username}</a>'
+                        description += f"\n\nПо приходу, а также если возникнут вопросы -- на связи в телеграм {telegram_text}"
                     else:
                         # Если телеграм не найден, используем дефолтный
                         description += "\n\nПо приходу, а также если возникнут вопросы -- на связи в телеграм @talent_softnetix"
@@ -2775,13 +2785,18 @@ class Invite(models.Model):
                             # Убираем @ если есть
                             if telegram_username.startswith('@'):
                                 telegram_username = telegram_username[1:]
-                            telegram_link = f"https://t.me/{telegram_username}"
-                            telegram_text_link = f'<a href="{telegram_link}">@{telegram_username}</a>'
                             
-                            # Заменяем [телеграм рекрутера] на текст-ссылку
+                            # Для plain_text используем просто никнейм, иначе HTML-ссылку
+                            if plain_text:
+                                telegram_text = f"@{telegram_username}"
+                            else:
+                                telegram_link = f"https://t.me/{telegram_username}"
+                                telegram_text = f'<a href="{telegram_link}">@{telegram_username}</a>'
+                            
+                            # Заменяем [телеграм рекрутера] на текст или ссылку
                             invite_text = re.sub(
                                 r'\[телеграм рекрутера\]', 
-                                telegram_text_link, 
+                                telegram_text, 
                                 invite_text, 
                                 flags=re.IGNORECASE
                             )

@@ -33,7 +33,6 @@ import { useToast } from "@/components/Toast/ToastContext"
 
 // Пункты меню «в разработке»: при клике показываем toast вместо перехода
 const IN_DEVELOPMENT_IDS = new Set([
-  'invites-list', 'invites-create',
   'benchmarks-dashboard', 'benchmarks-all',
   'integrations-clickup', 'integrations-notion', 'integrations-hh', 'integrations-n8n',
   'reporting-recruiter', 'reporting-vacancy', 'reporting-interviewer', 'reporting-funnel',
@@ -76,9 +75,18 @@ function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefi
   if (item.id === 'wiki' && pathname.startsWith('/wiki')) {
     return true
   }
-  if (item.id === 'google-related' && (
-    pathname.startsWith('/calendar') || 
-    pathname.startsWith('/invites')
+  if (item.id === 'recruiting' && (
+    pathname.startsWith('/recr-chat') ||
+    pathname.startsWith('/invites') ||
+    pathname.startsWith('/vacancies') ||
+    pathname.startsWith('/hiring-requests') ||
+    pathname.startsWith('/interviewers')
+  )) {
+    return true
+  }
+  if (item.id === 'finance' && (
+    pathname.startsWith('/vacancies/salary-ranges') ||
+    pathname.startsWith('/vacancies/benchmarks')
   )) {
     return true
   }
@@ -291,68 +299,64 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       href: '/workflow',
     },
     {
-      id: 'google-related',
-      label: 'Google & Related',
-      icon: <Text size="1" weight="bold" style={{ color: 'var(--gray-12)', width: '16px', textAlign: 'center' }}>G</Text>,
+      id: 'calendar',
+      label: 'Календарь',
+      icon: <CalendarIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+      href: '/calendar',
+    },
+    {
+      id: 'recruiting',
+      label: 'Рекрутинг',
+      icon: <ChatBubbleIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
       children: [
         {
-          id: 'calendar',
-          label: 'Календарь',
-          icon: <CalendarIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-          href: '/calendar',
+          id: 'recr-chat',
+          label: 'Talent Pool',
+          icon: <ChatBubbleIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+          href: '/recr-chat',
         },
         {
           id: 'invites',
           label: 'Инвайты',
           icon: <EnvelopeClosedIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+          href: '/invites',
+        },
+        {
+          id: 'vacancies',
+          label: 'Вакансии',
+          icon: <Box style={{ width: '16px', height: '16px', border: '1px solid var(--gray-12)', borderRadius: '2px' }} />,
           children: [
             {
-              id: 'invites-list',
-              label: 'Список инвайтов',
+              id: 'vacancies-list',
+              label: 'Вакансии',
               icon: <ListBulletIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-              href: '/invites',
+              href: '/vacancies',
             },
             {
-              id: 'invites-create',
-              label: 'Создать инвайт',
-              icon: <PlusIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-              href: '/invites/create',
+              id: 'vacancies-requests',
+              label: 'Заявки',
+              icon: <ClipboardIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+              href: '/hiring-requests',
             },
           ],
+        },
+        {
+          id: 'interviewers',
+          label: 'Интервьюеры',
+          icon: <PersonIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+          href: '/interviewers',
         },
       ],
     },
     {
-      id: 'recr-chat',
-      label: 'Рекрутинг',
-      icon: <ChatBubbleIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-      href: '/recr-chat',
-    },
-    {
-      id: 'vacancies',
-      label: 'Вакансии и финансы',
-      icon: <Box style={{ width: '16px', height: '16px', border: '1px solid var(--gray-12)', borderRadius: '2px' }} />,
+      id: 'finance',
+      label: 'Финансы',
+      icon: <Box style={{ width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Text size="1" style={{ color: 'var(--gray-12)' }}>$</Text>
+      </Box>,
       children: [
         {
-          id: 'vacancies-dashboard',
-          label: 'Дашборд',
-          icon: <ClockIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-          href: '/vacancies',
-        },
-        {
-          id: 'vacancies-list',
-          label: 'Вакансии',
-          icon: <ListBulletIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-          href: '/vacancies',
-        },
-        {
-          id: 'vacancies-requests',
-          label: 'Заявки',
-          icon: <ClipboardIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-          href: '/hiring-requests',
-        },
-        {
-          id: 'vacancies-salary-ranges',
+          id: 'finance-salary-ranges',
           label: 'Зарплатные вилки',
           icon: <Box style={{ width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Text size="1" style={{ color: 'var(--gray-12)' }}>$</Text>
@@ -360,7 +364,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           href: '/vacancies/salary-ranges',
         },
         {
-          id: 'vacancies-benchmarks',
+          id: 'finance-benchmarks',
           label: 'Бенчмарки',
           icon: <ListBulletIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
           children: [
@@ -379,12 +383,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           ],
         },
       ],
-    },
-    {
-      id: 'interviewers',
-      label: 'Интервьюеры',
-      icon: <PersonIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-      href: '/interviewers',
     },
     {
       id: 'integrations',
@@ -688,14 +686,26 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           let isActive = pathname === item.href || 
             (item.id === 'home' && pathname === '/workflow') ||
             (item.id === 'wiki' && pathname?.startsWith('/wiki')) ||
-            (item.id === 'google-related' && (
-              pathname?.startsWith('/calendar') || 
-              pathname?.startsWith('/invites')
+            (item.id === 'calendar' && pathname?.startsWith('/calendar')) ||
+            (item.id === 'recruiting' && (
+              pathname?.startsWith('/recr-chat') ||
+              pathname?.startsWith('/invites') ||
+              pathname?.startsWith('/vacancies') ||
+              pathname?.startsWith('/hiring-requests') ||
+              pathname?.startsWith('/interviewers')
             )) ||
+            (item.id === 'recr-chat' && pathname?.startsWith('/recr-chat')) ||
+            (item.id === 'invites' && pathname?.startsWith('/invites')) ||
             (item.id === 'vacancies' && (
               pathname?.startsWith('/vacancies') ||
               pathname?.startsWith('/hiring-requests')
             )) ||
+            (item.id === 'finance' && (
+              pathname?.startsWith('/vacancies/salary-ranges') ||
+              pathname?.startsWith('/vacancies/benchmarks')
+            )) ||
+            (item.id === 'finance-salary-ranges' && pathname?.startsWith('/vacancies/salary-ranges')) ||
+            (item.id === 'finance-benchmarks' && pathname?.startsWith('/vacancies/benchmarks')) ||
             (item.id === 'integrations' && (
               pathname?.startsWith('/huntflow') ||
               pathname?.startsWith('/aichat') ||

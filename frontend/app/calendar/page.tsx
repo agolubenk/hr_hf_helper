@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import AppLayout from "@/components/AppLayout"
-import { Box, Flex, Text, Button, Card, Table, Select, Badge, Dialog, Separator } from "@radix-ui/themes"
+import { Box, Flex, Text, Button, Card, Table, Select, Badge, Dialog, Separator, Tabs, TextField } from "@radix-ui/themes"
 import { 
   CalendarIcon, 
   ChevronLeftIcon, 
@@ -16,8 +16,12 @@ import {
   Cross2Icon,
   ExclamationTriangleIcon,
   ExternalLinkIcon,
+  ListBulletIcon,
+  MagnifyingGlassIcon,
+  CopyIcon
 } from "@radix-ui/react-icons"
 import { useToast } from "@/components/Toast/ToastContext"
+import SlotsPanel from "@/components/workflow/SlotsPanel"
 import styles from './calendar.module.css'
 
 interface Attendee {
@@ -54,6 +58,8 @@ export default function CalendarPage() {
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
   const [eventModalOpen, setEventModalOpen] = useState(false)
   const [isSyncing, setIsSyncing] = useState(false)
+  const [activeTab, setActiveTab] = useState<'calendar' | 'list' | 'slots'>('calendar')
+  const [searchQuery, setSearchQuery] = useState('')
   const toast = useToast()
 
   // Моковые данные событий
@@ -274,11 +280,52 @@ export default function CalendarPage() {
   const weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
   const days = getDaysInMonth(currentDate)
 
+  // Фильтрация событий для списка
+  const filteredEvents = mockEvents.filter(event => {
+    if (!searchQuery) return true
+    const query = searchQuery.toLowerCase()
+    return (
+      event.title.toLowerCase().includes(query) ||
+      event.candidate?.toLowerCase().includes(query) ||
+      event.vacancy?.toLowerCase().includes(query) ||
+      event.description?.toLowerCase().includes(query)
+    )
+  })
+
+  const copyEventLink = (event: CalendarEvent) => {
+    // В реальном приложении здесь будет ссылка на Google Calendar
+    const link = `https://calendar.google.com/event?eid=${event.id}`
+    navigator.clipboard.writeText(link).then(() => {
+      toast.showSuccess('Ссылка скопирована', 'Ссылка на событие скопирована в буфер обмена')
+    }).catch(() => {
+      toast.showError('Ошибка', 'Не удалось скопировать ссылку')
+    })
+  }
+
   return (
     <AppLayout pageTitle="Календарь">
       <Box className={styles.calendarContainer}>
-        {/* Заголовок с навигацией */}
-        <Flex align="center" justify="between" mb="4" wrap="wrap" gap="3">
+        {/* Вкладки */}
+        <Tabs.Root value={activeTab} onValueChange={(value) => setActiveTab(value as 'calendar' | 'list' | 'slots')}>
+          <Tabs.List mb="4">
+            <Tabs.Trigger value="calendar">
+              <CalendarIcon width={16} height={16} />
+              <Text size="2" style={{ marginLeft: '8px' }}>Календарь</Text>
+            </Tabs.Trigger>
+            <Tabs.Trigger value="list">
+              <ListBulletIcon width={16} height={16} />
+              <Text size="2" style={{ marginLeft: '8px' }}>Список событий</Text>
+            </Tabs.Trigger>
+            <Tabs.Trigger value="slots">
+              <ClockIcon width={16} height={16} />
+              <Text size="2" style={{ marginLeft: '8px' }}>Слоты</Text>
+            </Tabs.Trigger>
+          </Tabs.List>
+
+          {/* Вкладка: Календарь */}
+          <Tabs.Content value="calendar">
+            {/* Заголовок с навигацией */}
+            <Flex align="center" justify="between" mb="4" wrap="wrap" gap="3">
           <Flex align="center" gap="3">
             <Button
               variant="soft"
@@ -489,6 +536,175 @@ export default function CalendarPage() {
             </Box>
           </Card>
         )}
+          </Tabs.Content>
+
+          {/* Вкладка: Список событий */}
+          <Tabs.Content value="list">
+            <Card>
+              <Box p="4">
+                {/* Поиск и фильтры */}
+                <Flex direction="column" gap="4" mb="4">
+                  <Flex align="center" gap="3" wrap="wrap">
+                    <TextField.Root
+                      placeholder="Поиск по названию, кандидату, вакансии..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      style={{ flex: 1, minWidth: '300px' }}
+                    >
+                      <TextField.Slot>
+                        <MagnifyingGlassIcon width={16} height={16} />
+                      </TextField.Slot>
+                    </TextField.Root>
+                    {searchQuery && (
+                      <Button
+                        variant="soft"
+                        size="2"
+                        onClick={() => setSearchQuery('')}
+                      >
+                        <Cross2Icon width={14} height={14} />
+                        <Text size="2" style={{ marginLeft: '4px' }}>Очистить</Text>
+                      </Button>
+                    )}
+                  </Flex>
+                </Flex>
+
+                {/* Таблица событий */}
+                {filteredEvents.length > 0 ? (
+                  <Table.Root>
+                    <Table.Header>
+                      <Table.Row>
+                        <Table.ColumnHeaderCell style={{ width: '25%' }}>Название встречи</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell style={{ width: '20%' }}>Дата и время</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell style={{ width: '15%' }}>Google Meet</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell style={{ width: '35%' }}>Описание</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell style={{ width: '5%' }}>Ссылка</Table.ColumnHeaderCell>
+                      </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                      {filteredEvents.map(event => (
+                        <Table.Row 
+                          key={event.id}
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => handleEventClick(event)}
+                        >
+                          <Table.Cell>
+                            <Flex align="center" gap="2">
+                              {event.status === 'confirmed' ? (
+                                <CheckIcon width={16} height={16} style={{ color: '#10b981' }} />
+                              ) : event.status === 'tentative' ? (
+                                <ExclamationTriangleIcon width={16} height={16} style={{ color: '#f59e0b' }} />
+                              ) : event.status === 'cancelled' ? (
+                                <Cross2Icon width={16} height={16} style={{ color: '#ef4444' }} />
+                              ) : (
+                                <BoxIcon width={16} height={16} style={{ color: '#6b7280' }} />
+                              )}
+                              <Text size="2" weight="bold">{event.title}</Text>
+                            </Flex>
+                          </Table.Cell>
+                          <Table.Cell>
+                            <Text size="2">
+                              {event.allDay 
+                                ? `${event.start.toLocaleDateString('ru-RU')} (Весь день)`
+                                : `${event.start.toLocaleDateString('ru-RU')} ${formatTime(event.start)} - ${formatTime(event.end)}`
+                              }
+                            </Text>
+                          </Table.Cell>
+                          <Table.Cell>
+                            {event.meetLink ? (
+                              <Button
+                                variant="soft"
+                                size="1"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  window.open(event.meetLink, '_blank')
+                                }}
+                                style={{ backgroundColor: '#10b981', color: '#ffffff' }}
+                              >
+                                <VideoIcon width={12} height={12} />
+                                <Text size="1" style={{ color: '#ffffff', marginLeft: '4px' }}>
+                                  Google Meet
+                                  {event.attendees && event.attendees.length > 0 && (
+                                    <Badge style={{ marginLeft: '4px', backgroundColor: '#ffffff', color: '#10b981' }}>
+                                      {event.attendees.length}
+                                    </Badge>
+                                  )}
+                                </Text>
+                              </Button>
+                            ) : (
+                              <Text size="2" style={{ color: 'var(--gray-11)' }}>-</Text>
+                            )}
+                          </Table.Cell>
+                          <Table.Cell>
+                            {event.description ? (
+                              <Text size="2" style={{ color: 'var(--gray-11)', maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {event.description}
+                              </Text>
+                            ) : (
+                              <Text size="2" style={{ color: 'var(--gray-11)' }}>-</Text>
+                            )}
+                          </Table.Cell>
+                          <Table.Cell>
+                            <Button
+                              variant="soft"
+                              size="1"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                copyEventLink(event)
+                              }}
+                              style={{ backgroundColor: 'var(--accent-9)', color: '#ffffff' }}
+                            >
+                              <ExternalLinkIcon width={12} height={12} />
+                            </Button>
+                          </Table.Cell>
+                        </Table.Row>
+                      ))}
+                    </Table.Body>
+                  </Table.Root>
+                ) : (
+                  <Box style={{ textAlign: 'center', padding: '48px' }}>
+                    <CalendarIcon width={48} height={48} style={{ color: 'var(--gray-11)', marginBottom: '16px' }} />
+                    <Text size="4" weight="bold" style={{ color: 'var(--gray-11)', display: 'block', marginBottom: '8px' }}>
+                      События не найдены
+                    </Text>
+                    <Text size="2" style={{ color: 'var(--gray-11)' }}>
+                      {searchQuery 
+                        ? 'Попробуйте изменить параметры поиска'
+                        : 'События календаря не синхронизированы. Запустите синхронизацию.'
+                      }
+                    </Text>
+                  </Box>
+                )}
+              </Box>
+            </Card>
+          </Tabs.Content>
+
+          {/* Вкладка: Слоты */}
+          <Tabs.Content value="slots">
+            <Card>
+              <Box p="4">
+                <Flex align="center" justify="between" mb="4">
+                  <Flex align="center" gap="2">
+                    <ClockIcon width={20} height={20} style={{ color: '#10b981' }} />
+                    <Text size="4" weight="bold">Свободные слоты</Text>
+                  </Flex>
+                  <Button
+                    variant="soft"
+                    size="2"
+                    onClick={() => {
+                      // Функция копирования всех слотов
+                      toast.showInfo('Копирование', 'Функция копирования всех слотов в разработке')
+                    }}
+                    style={{ backgroundColor: '#10b981', color: '#ffffff' }}
+                  >
+                    <CopyIcon width={14} height={14} />
+                    <Text size="2" style={{ color: '#ffffff', marginLeft: '4px' }}>Копировать все</Text>
+                  </Button>
+                </Flex>
+                <SlotsPanel />
+              </Box>
+            </Card>
+          </Tabs.Content>
+        </Tabs.Root>
 
         {/* Модальное окно для детального просмотра события */}
         <Dialog.Root open={eventModalOpen} onOpenChange={setEventModalOpen}>

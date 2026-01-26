@@ -319,3 +319,71 @@ export const benchmarksApi = {
       body: JSON.stringify(data),
     }),
 }
+
+// Типы для Invites API
+export interface Invite {
+  id: number
+  candidate_name: string
+  candidate_email?: string
+  candidate_url?: string
+  candidate_id?: string
+  candidate_grade?: string
+  vacancy_id?: string
+  vacancy_title?: string
+  interview_datetime: string
+  interview_datetime_formatted?: string
+  custom_duration_minutes?: number
+  status: 'pending' | 'sent' | 'completed' | 'cancelled'
+  status_display?: string
+  interview_format?: 'online' | 'office'
+  google_drive_file_id?: string
+  google_drive_file_url?: string
+  calendar_event_id?: string
+  calendar_event_url?: string
+  google_meet_url?: string
+  interviewer?: number
+  interviewer_name?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface InviteListResponse {
+  count: number
+  next: string | null
+  previous: string | null
+  results: Invite[]
+}
+
+// API для инвайтов
+export const invitesApi = {
+  getAll: (params?: {
+    search?: string
+    status?: string
+    page?: number
+    page_size?: number
+  }) => {
+    const queryParams = new URLSearchParams()
+    if (params?.search) queryParams.append('search', params.search)
+    if (params?.status) queryParams.append('status', params.status)
+    if (params?.page) queryParams.append('page', params.page.toString())
+    if (params?.page_size) queryParams.append('page_size', params.page_size.toString())
+    
+    const queryString = queryParams.toString()
+    const endpoint = `google-oauth/invites/${queryString ? `?${queryString}` : ''}`
+    return apiRequest<InviteListResponse>(endpoint)
+  },
+  getById: (id: number) => apiRequest<Invite>(`google-oauth/invites/${id}/`),
+  getInvitationText: (id: number) =>
+    apiRequest<{ success: boolean; invitation_text: string }>(`google-oauth/invites/${id}/invitation-text/`, {
+      method: 'POST',
+    }),
+  update: (id: number, data: Partial<Invite>) =>
+    apiRequest<Invite>(`google-oauth/invites/${id}/`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
+  delete: (id: number) =>
+    apiRequest<void>(`google-oauth/invites/${id}/`, {
+      method: 'DELETE',
+    }),
+}
