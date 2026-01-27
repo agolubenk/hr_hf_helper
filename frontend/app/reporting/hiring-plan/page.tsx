@@ -1,3 +1,37 @@
+/**
+ * HiringPlanPage (reporting/hiring-plan/page.tsx) - Страница плана найма (заявки на найм)
+ * 
+ * Назначение:
+ * - Отображение заявок на найм с фильтрацией и поиском
+ * - Статистика по заявкам (всего, планируется, в процессе, закрыто, отменено)
+ * - Метрики SLA и Time-to-Hire
+ * - Переход к годовой таблице плана найма
+ * 
+ * Функциональность:
+ * - Список заявок на найм в таблице
+ * - Поиск по вакансии, кандидату, проекту
+ * - Фильтрация по статусу, периоду, вакансии, рекрутеру
+ * - Пагинация с настраиваемым лимитом записей
+ * - Статистика: всего заявок, планируется, в процессе, закрыто, отменено
+ * - Метрики: выполнение (%), среднее SLA (план/факт), средний Time-to-Hire
+ * - Переход к годовой таблице плана найма
+ * 
+ * Связи:
+ * - AppLayout: оборачивает страницу в общий layout
+ * - Link: навигация к годовой таблице плана найма
+ * - reporting/hiring-plan/yearly/page.tsx: годовая таблица плана найма
+ * - hiring-requests/page.tsx: страница управления заявками на найм
+ * 
+ * Поведение:
+ * - При загрузке отображает все заявки
+ * - Фильтрует заявки по поисковому запросу, статусу, периоду, вакансии, рекрутеру
+ * - Сортирует заявки по дате открытия (новые сверху)
+ * - Ограничивает количество отображаемых заявок через пагинацию
+ * - При клике на "Годовая таблица" переходит к годовой таблице
+ * 
+ * TODO: Заменить моковые данные на реальные из API
+ */
+
 'use client'
 
 import AppLayout from '@/components/AppLayout'
@@ -7,9 +41,36 @@ import { useState } from 'react'
 import Link from 'next/link'
 import styles from './hiring-plan.module.css'
 
-// Моковые данные (без API)
+/**
+ * LIMIT_OPTIONS - опции лимита записей на странице для пагинации
+ * 
+ * Используется для:
+ * - Выбора количества отображаемых заявок на странице
+ * - Настройки пагинации
+ */
 const LIMIT_OPTIONS = [5, 10, 15, 25, 50, 100] as const
 
+/**
+ * MOCK_REQUESTS - моковые данные заявок на найм
+ * 
+ * Структура заявки:
+ * - id: уникальный идентификатор заявки
+ * - vacancy: название вакансии
+ * - grade, grade_short: грейд (полный и сокращенный)
+ * - project: проект (может быть null)
+ * - priority: приоритет (1 - высокий, 2 - средний, 3 - низкий)
+ * - status: статус ('planned', 'in_progress', 'closed', 'cancelled')
+ * - opening_date, deadline, closed_date: даты открытия, дедлайна, закрытия
+ * - days_in_progress: количество дней в работе
+ * - sla_to_offer: SLA по времени до оффера (в днях)
+ * - sla_status_display: статус SLA ('В срок', 'Просрочено', 'Риск просрочки', 'Нормально', 'Нет SLA')
+ * - time2hire: время до найма в днях (может быть null)
+ * - recruiters: массив рекрутеров с количеством дней работы каждого
+ * - candidate_name, candidate_id: информация о найденном кандидате (может быть null)
+ * - is_overdue: флаг просрочки заявки
+ * 
+ * TODO: Заменить на реальные данные из API
+ */
 const MOCK_REQUESTS = [
   { id: 1, vacancy: 'Frontend Engineer (React)', grade: 'Middle', grade_short: 'M', project: 'PUI Skins', priority: 2, status: 'in_progress', opening_date: '2025-12-17', deadline: '2026-01-21', closed_date: null, days_in_progress: 26, sla_to_offer: 35, sla_status_display: 'Нормально', time2hire: null, recruiters: [{ name: 'Голубенко А.', days: 22 }], candidate_name: null, candidate_id: null, is_overdue: false },
   { id: 2, vacancy: 'DevOps Engineer', grade: 'Middle+', grade_short: 'M+', project: null, priority: 2, status: 'closed', opening_date: '2025-12-11', deadline: '2026-01-20', closed_date: '2026-01-06', days_in_progress: 26, sla_to_offer: 40, sla_status_display: 'В срок', time2hire: 67, recruiters: [{ name: 'Голубенко А.', days: 15 }, { name: 'Черномордин А.', days: 6 }, { name: 'Петрова М.', days: 5 }], candidate_name: 'Aleksander Volvachev', candidate_id: '76779160', is_overdue: false },
@@ -23,6 +84,13 @@ const MOCK_REQUESTS = [
   { id: 10, vacancy: 'Security Engineer', grade: 'Senior', grade_short: 'S', project: 'Analytics', priority: 1, status: 'in_progress', opening_date: '2025-12-22', deadline: '2026-02-15', closed_date: null, days_in_progress: 34, sla_to_offer: 50, sla_status_display: 'Нормально', time2hire: null, recruiters: [{ name: 'Голубенко А.', days: 24 }], candidate_name: null, candidate_id: null, is_overdue: false },
 ]
 
+/**
+ * STATUS_OPTIONS - опции статусов заявок для фильтрации
+ * 
+ * Используется для:
+ * - Выбора статуса при фильтрации заявок
+ * - Отображения текущего фильтра
+ */
 const STATUS_OPTIONS = [
   { value: '', label: 'Все статусы' },
   { value: 'planned', label: 'Планируется' },
@@ -31,17 +99,54 @@ const STATUS_OPTIONS = [
   { value: 'cancelled', label: 'Отменена' },
 ]
 
+/**
+ * fmt - форматирование даты из формата YYYY-MM-DD в DD.MM.YYYY
+ * 
+ * Функциональность:
+ * - Преобразует дату из ISO формата в читаемый формат
+ * - Возвращает '—' если дата отсутствует
+ * 
+ * Используется для:
+ * - Отображения дат в таблице заявок
+ * 
+ * @param d - дата в формате YYYY-MM-DD или null
+ * @returns отформатированная дата в формате DD.MM.YYYY или '—'
+ */
 function fmt(d: string | null) {
   if (!d) return '—'
   const [y, m, day] = d.split('-')
   return `${day}.${m}.${y}`
 }
 
+/**
+ * statusBadge - получение CSS класса для бейджа статуса
+ * 
+ * Функциональность:
+ * - Возвращает CSS класс для стилизации бейджа статуса
+ * 
+ * Используется для:
+ * - Цветовой индикации статуса заявки
+ * 
+ * @param s - статус заявки
+ * @returns CSS класс для бейджа статуса
+ */
 function statusBadge(s: string) {
   const map: Record<string, string> = { planned: styles.badgePlanned, in_progress: styles.badgeProgress, closed: styles.badgeClosed, cancelled: styles.badgeCancelled }
   return map[s] || styles.badgePlanned
 }
 
+/**
+ * slaBadge - получение CSS класса для бейджа статуса SLA
+ * 
+ * Функциональность:
+ * - Возвращает CSS класс для стилизации бейджа статуса SLA
+ * 
+ * Используется для:
+ * - Цветовой индикации статуса SLA (в срок, просрочено, риск просрочки)
+ * 
+ * @param s - статус SLA
+ * @returns CSS класс для бейджа статуса SLA
+ */
 function slaBadge(s: string) {
   if (s === 'В срок') return styles.badgeSlaOk
   if (s === 'Просрочено') return styles.badgeSlaOver
@@ -49,12 +154,29 @@ function slaBadge(s: string) {
   return styles.badgeSlaNormal
 }
 
+/**
+ * HiringPlanPage - компонент страницы плана найма
+ * 
+ * Состояние:
+ * - search: поисковый запрос
+ * - status: выбранный статус для фильтрации
+ * - period: выбранный период для фильтрации (YYYY-MM)
+ * - vacancy: выбранная вакансия для фильтрации
+ * - recruiter: выбранный рекрутер для фильтрации
+ * - tableLimit: лимит записей на странице для пагинации
+ */
 export default function HiringPlanPage() {
+  // Поисковый запрос для фильтрации заявок
   const [search, setSearch] = useState('')
+  // Выбранный статус для фильтрации (пустая строка - все статусы)
   const [status, setStatus] = useState('')
+  // Выбранный период для фильтрации в формате YYYY-MM (пустая строка - все периоды)
   const [period, setPeriod] = useState('')
+  // Выбранная вакансия для фильтрации (пустая строка - все вакансии)
   const [vacancy, setVacancy] = useState('')
+  // Выбранный рекрутер для фильтрации (пустая строка - все рекрутеры)
   const [recruiter, setRecruiter] = useState('')
+  // Лимит записей на странице для пагинации (по умолчанию 10)
   const [tableLimit, setTableLimit] = useState<number>(10)
 
   const filtered = MOCK_REQUESTS.filter((r) => {

@@ -5,6 +5,7 @@ import * as Tooltip from '@radix-ui/react-tooltip'
 import { PersonIcon, PaperPlaneIcon } from "@radix-ui/react-icons"
 import { Message } from "@/app/aichat/page"
 import { useState } from "react"
+import FormattedText from "./FormattedText"
 import styles from './ChatMessages.module.css'
 
 interface ChatMessagesProps {
@@ -96,9 +97,13 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
           >
             {message.content && (
               <Box className={`${styles.messageBubble} ${message.role === 'user' ? styles.messageBubbleUser : styles.messageBubbleAssistant}`}>
-                <Text size="2" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>
-                  {message.content}
-                </Text>
+                {message.role === 'assistant' ? (
+                  <FormattedText content={message.content} />
+                ) : (
+                  <Text size="2" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>
+                    {message.content}
+                  </Text>
+                )}
               </Box>
             )}
 

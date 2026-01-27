@@ -1,3 +1,38 @@
+/**
+ * UserGroupsPage (company-settings/user-groups/page.tsx) - Страница управления группами пользователей
+ * 
+ * Назначение:
+ * - Управление группами пользователей компании
+ * - Настройка прав доступа для групп
+ * - Управление приложениями, доступными группам
+ * - Создание, редактирование и удаление групп
+ * 
+ * Функциональность:
+ * - Список всех групп пользователей
+ * - Поиск групп по названию и описанию
+ * - Форма добавления новой группы
+ * - Форма редактирования группы (inline в таблице)
+ * - Управление правами доступа через GroupAccessModal
+ * - Управление приложениями для групп
+ * - Отображение количества пользователей в группе
+ * 
+ * Связи:
+ * - AppLayout: оборачивает страницу в общий layout
+ * - GroupAccessModal: модальное окно управления правами доступа и приложениями
+ * - useToast: для отображения уведомлений (подтверждение удаления, успешное сохранение)
+ * - Sidebar: содержит ссылку на эту страницу в разделе "Настройки компании"
+ * 
+ * Поведение:
+ * - При загрузке загружает список групп пользователей
+ * - При поиске фильтрует группы по введенному запросу
+ * - При добавлении группы показывает форму, при сохранении скрывает её
+ * - При редактировании группы открывает inline-редактирование в таблице
+ * - При удалении показывает подтверждение через toast
+ * - При клике на "Настроить доступы" открывает GroupAccessModal
+ * 
+ * TODO: Заменить моковые данные на реальные из API
+ */
+
 'use client'
 
 import AppLayout from "@/components/AppLayout"
@@ -7,6 +42,19 @@ import { useState, useEffect } from "react"
 import { useToast } from "@/components/Toast/ToastContext"
 import GroupAccessModal, { type AccessRights } from "@/components/company-settings/GroupAccessModal"
 
+/**
+ * UserGroup - интерфейс группы пользователей
+ * 
+ * Структура:
+ * - id: уникальный идентификатор группы
+ * - name: название группы
+ * - description: описание группы
+ * - user_count: количество пользователей в группе (опционально)
+ * - permissions: массив разрешений группы
+ * - applications: массив приложений, доступных группе (опционально)
+ * - access_rights: права доступа к разделам приложения (опционально)
+ * - created_at, updated_at: даты создания и обновления
+ */
 interface UserGroup {
   id: string
   name: string
@@ -19,16 +67,40 @@ interface UserGroup {
   updated_at: string
 }
 
+/**
+ * UserGroupsPage - компонент страницы управления группами пользователей
+ * 
+ * Состояние:
+ * - groups: массив всех групп пользователей
+ * - loading: флаг загрузки данных
+ * - saving: флаг сохранения данных
+ * - searchTerm: поисковый запрос для фильтрации групп
+ * - editingGroup: редактируемая группа (null если не редактируется)
+ * - showAddForm: флаг отображения формы добавления группы
+ * - accessModalOpen: флаг открытия модального окна прав доступа
+ * - selectedGroup: группа, для которой открыто модальное окно прав доступа
+ * - newGroup: данные новой группы для формы добавления
+ */
 export default function UserGroupsPage() {
+  // Хук для отображения уведомлений
   const toast = useToast()
+  // Массив всех групп пользователей компании
   const [groups, setGroups] = useState<UserGroup[]>([])
+  // Флаг загрузки данных групп
   const [loading, setLoading] = useState(true)
+  // Флаг сохранения данных (показывает индикатор при создании/редактировании)
   const [saving, setSaving] = useState(false)
+  // Поисковый запрос для фильтрации групп
   const [searchTerm, setSearchTerm] = useState('')
+  // Редактируемая группа: null если не редактируется, иначе - объект группы
   const [editingGroup, setEditingGroup] = useState<UserGroup | null>(null)
+  // Флаг отображения формы добавления новой группы
   const [showAddForm, setShowAddForm] = useState(false)
+  // Флаг открытия модального окна управления правами доступа
   const [accessModalOpen, setAccessModalOpen] = useState(false)
+  // Группа, для которой открыто модальное окно прав доступа
   const [selectedGroup, setSelectedGroup] = useState<UserGroup | null>(null)
+  // Данные новой группы для формы добавления
   const [newGroup, setNewGroup] = useState<Partial<UserGroup>>({
     name: '',
     description: '',
@@ -37,6 +109,16 @@ export default function UserGroupsPage() {
     access_rights: {},
   })
 
+  /**
+   * useEffect - загрузка групп при монтировании компонента
+   * 
+   * Функциональность:
+   * - Вызывает loadGroups() при монтировании компонента
+   * 
+   * Поведение:
+   * - Выполняется один раз при загрузке страницы
+   * - Загружает список всех групп пользователей компании
+   */
   useEffect(() => {
     loadGroups()
   }, [])

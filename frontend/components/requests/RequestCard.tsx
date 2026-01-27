@@ -1,9 +1,60 @@
+/**
+ * RequestCard (components/requests/RequestCard.tsx) - Компонент карточки заявки на найм (режим "Карточки")
+ * 
+ * Назначение:
+ * - Отображение информации о заявке на найм в виде карточки
+ * - Используется в режиме отображения "Карточки" на странице заявок
+ * 
+ * Функциональность:
+ * - Заголовок и ID заявки
+ * - Статус заявки (планируется, в процессе, отменена, закрыта) с цветовой индикацией
+ * - Приоритет заявки (высокий, средний, низкий) с цветовой индикацией
+ * - Информация об отделе
+ * - Информация о рекрутере
+ * - Список технологий
+ * - Количество кандидатов
+ * - Дата заявки
+ * - Предупреждения (если есть)
+ * - Кнопки действий: просмотр и редактирование
+ * 
+ * Связи:
+ * - hiring-requests/page.tsx: используется в режиме отображения "Карточки"
+ * - hiring-requests/[id]/page.tsx: переход к детальному просмотру при клике
+ * - hiring-requests/[id]/edit/page.tsx: переход к редактированию при клике на кнопку редактирования
+ * 
+ * Поведение:
+ * - При клике на карточку (если передан onClick) - переход к детальному просмотру
+ * - При клике на кнопку просмотра - переход к детальному просмотру
+ * - При клике на кнопку редактирования - переход к редактированию
+ * 
+ * Дизайн:
+ * - Карточка с информацией о заявке
+ * - Цветовая индикация статуса и приоритета
+ * - Иконки для визуального различия информации
+ */
 'use client'
 
 import { Box, Flex, Text, Button } from "@radix-ui/themes"
 import { PersonIcon, ExclamationTriangleIcon, EyeOpenIcon, Pencil1Icon } from "@radix-ui/react-icons"
 import styles from './RequestCard.module.css'
 
+/**
+ * Request - интерфейс данных заявки на найм
+ * 
+ * Структура:
+ * - id: уникальный идентификатор заявки
+ * - title: название заявки
+ * - status: статус заявки ('planned', 'in_process', 'cancelled', 'closed')
+ * - department: отдел
+ * - recruiter: имя рекрутера
+ * - priority: приоритет заявки ('high', 'medium', 'low')
+ * - technologies: массив технологий
+ * - candidates: количество кандидатов
+ * - date: дата заявки (опционально)
+ * - hasWarning: флаг наличия предупреждения
+ * - warningText: текст предупреждения (опционально)
+ * - Дополнительные поля для таблицы (опционально): grade, project, recruiterDays, statusDate, startDate, endDate, isOverdue, factDays, slaDays, slaStatus, t2hDays, t2hSlaDays, candidate
+ */
 interface Request {
   id: number
   title: string
@@ -35,12 +86,35 @@ interface Request {
   }
 }
 
+/**
+ * RequestCardProps - интерфейс пропсов компонента RequestCard
+ * 
+ * Структура:
+ * - request: данные заявки для отображения
+ * - onClick: обработчик клика на карточку (переход к детальному просмотру)
+ */
 interface RequestCardProps {
   request: Request
   onClick?: () => void
 }
 
+/**
+ * RequestCard - компонент карточки заявки на найм
+ * 
+ * Функциональность:
+ * - Отображает информацию о заявке в виде карточки
+ * - Форматирует статус и приоритет для отображения
+ */
 export default function RequestCard({ request, onClick }: RequestCardProps) {
+  /**
+   * getStatusLabel - получение текстового представления статуса
+   * 
+   * Функциональность:
+   * - Преобразует код статуса в читаемый текст
+   * 
+   * @param status - код статуса
+   * @returns текстовое представление статуса
+   */
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'planned': return 'Планируется'
@@ -51,6 +125,15 @@ export default function RequestCard({ request, onClick }: RequestCardProps) {
     }
   }
 
+  /**
+   * getPriorityLabel - получение текстового представления приоритета
+   * 
+   * Функциональность:
+   * - Преобразует код приоритета в читаемый текст
+   * 
+   * @param priority - код приоритета
+   * @returns текстовое представление приоритета
+   */
   const getPriorityLabel = (priority: string) => {
     switch (priority) {
       case 'high': return 'Высокий'
@@ -60,15 +143,28 @@ export default function RequestCard({ request, onClick }: RequestCardProps) {
     }
   }
 
+  /**
+   * Рендер компонента RequestCard
+   * 
+   * Структура:
+   * - Заголовок и статус: название, ID, отдел, рекрутер, статус, приоритет, кнопки действий
+   * - Технологии: список технологий в виде тегов
+   * - Кандидаты: количество кандидатов
+   * - Дата: дата заявки (если есть)
+   * - Предупреждение: предупреждение (если есть)
+   */
   return (
     <Box className={styles.requestCard} onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }}>
-      {/* Заголовок и статус */}
+      {/* Заголовок и статус
+          - Левая часть: название, ID, отдел, рекрутер
+          - Правая часть: статус, приоритет, кнопки действий */}
       <Flex justify="between" align="start" mb="2">
         <Box>
+          {/* Название заявки */}
           <Text size="4" weight="bold" style={{ color: 'var(--accent-11)' }}>
             {request.title}
             <br></br>
-            {/* ID */}
+            {/* ID заявки */}
             <Text size="2" weight="bold" style={{ color: 'var(--gray-11)' }}>
               # {request.id}
             </Text>
@@ -78,13 +174,17 @@ export default function RequestCard({ request, onClick }: RequestCardProps) {
           <Text size="2" style={{ color: 'var(--gray-11)' }} mb="1">
             {request.department}
           </Text>
-          {/* Рекрутер */}
+          {/* Рекрутер
+              - Иконка человека и имя рекрутера */}
           <Flex align="center" gap="2" mb="2">
             <PersonIcon width={16} height={16} />
             <Text size="2">{request.recruiter}</Text>
           </Flex>
         </Box>
+        {/* Правая часть: статус, приоритет, кнопки действий */}
         <Flex direction="column" align="end" gap="1">
+          {/* Тег статуса заявки
+              - Цветовая индикация в зависимости от статуса */}
           <Box 
             className={`${styles.statusTag} ${
               request.status === 'planned' ? styles.statusPlanned :
@@ -98,6 +198,8 @@ export default function RequestCard({ request, onClick }: RequestCardProps) {
               {getStatusLabel(request.status)}
             </Text>
           </Box>
+          {/* Тег приоритета заявки
+              - Цветовая индикация в зависимости от приоритета */}
           <Box 
             className={`${styles.priorityTag} ${
               request.priority === 'high' ? styles.priorityHigh :
@@ -109,6 +211,7 @@ export default function RequestCard({ request, onClick }: RequestCardProps) {
               {getPriorityLabel(request.priority)}
             </Text>
           </Box>
+          {/* Кнопки действий: просмотр и редактирование */}
           <Flex className={styles.actionButtons}>
             <Button variant="ghost" size="1" className={styles.actionButton}>
               <EyeOpenIcon width={16} height={16} />
@@ -120,7 +223,9 @@ export default function RequestCard({ request, onClick }: RequestCardProps) {
         </Flex>
       </Flex>
 
-      {/* Технологии */}
+      {/* Технологии заявки
+          - Показывается только если есть технологии
+          - Отображается в виде тегов */}
       {request.technologies.length > 0 && (
         <Flex direction="column" gap="1" mb="2">
           <Text size="2" style={{ color: 'var(--gray-11)' }}>
@@ -136,7 +241,8 @@ export default function RequestCard({ request, onClick }: RequestCardProps) {
         </Flex>
       )}
 
-      {/* Кандидаты */}
+      {/* Количество кандидатов
+          - Иконка людей и количество */}
       <Flex align="center" gap="2" mb="2">
         <Box style={{ width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           👥
@@ -144,14 +250,17 @@ export default function RequestCard({ request, onClick }: RequestCardProps) {
         <Text size="2">{request.candidates} кандидатов</Text>
       </Flex>
 
-      {/* Дата */}
+      {/* Дата заявки
+          - Показывается только если есть дата */}
       {request.date && (
         <Text size="2" style={{ color: 'var(--gray-11)' }} mb="2">
           Дата: {request.date}
         </Text>
       )}
 
-      {/* Предупреждение */}
+      {/* Предупреждение
+          - Показывается только если hasWarning === true
+          - Оранжевая иконка и текст */}
       {request.hasWarning && (
         <Flex align="center" gap="2" mb="3">
           <ExclamationTriangleIcon width={16} height={16} style={{ color: '#f59e0b' }} />

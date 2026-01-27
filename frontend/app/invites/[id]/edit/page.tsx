@@ -1,3 +1,39 @@
+/**
+ * InviteEditPage (invites/[id]/edit/page.tsx) - Страница редактирования инвайта
+ * 
+ * Назначение:
+ * - Редактирование существующего инвайта на интервью
+ * - Изменение данных кандидата, времени интервью, формата
+ * - Обновление статуса инвайта
+ * - Управление связями с вакансией и офисом
+ * 
+ * Функциональность:
+ * - Загрузка данных инвайта для редактирования
+ * - Форма редактирования всех полей инвайта
+ * - Выбор вакансии из списка
+ * - Выбор офиса для очного интервью
+ * - Настройка времени и формата интервью
+ * - Обновление статуса инвайта
+ * - Сохранение изменений
+ * 
+ * Связи:
+ * - AppLayout: оборачивает страницу в общий layout
+ * - useParams: получение ID инвайта из URL
+ * - useRouter: для навигации после сохранения
+ * - useToast: для отображения уведомлений
+ * - invitesApi: API для работы с инвайтами
+ * - vacanciesApi: API для получения списка вакансий
+ * - invites/[id]/page.tsx: страница детального просмотра инвайта
+ * 
+ * Поведение:
+ * - При загрузке загружает данные инвайта по ID из URL
+ * - Если ID отсутствует - перенаправляет на список инвайтов
+ * - При сохранении обновляет инвайт через API
+ * - После сохранения возвращается на страницу детального просмотра
+ * 
+ * TODO: Заменить моковые данные на реальные из API
+ */
+
 'use client'
 
 import React, { useState, useEffect } from 'react'
@@ -15,6 +51,19 @@ import { invitesApi, Invite, vacanciesApi, Vacancy } from "@/lib/api"
 import { useToast } from "@/components/Toast/ToastContext"
 import styles from './invite-edit.module.css'
 
+/**
+ * STATUS_OPTIONS - опции статусов инвайта
+ * 
+ * Используется для:
+ * - Выбора статуса при редактировании инвайта
+ * - Отображения текущего статуса
+ * 
+ * Статусы:
+ * - pending: ожидает отправки
+ * - sent: отправлен кандидату
+ * - completed: завершен (интервью проведено)
+ * - cancelled: отменен
+ */
 const STATUS_OPTIONS = [
   { value: 'pending', label: 'Ожидает' },
   { value: 'sent', label: 'Отправлен' },
@@ -22,11 +71,29 @@ const STATUS_OPTIONS = [
   { value: 'cancelled', label: 'Отменен' },
 ]
 
+/**
+ * INTERVIEW_FORMAT_OPTIONS - опции формата интервью
+ * 
+ * Используется для:
+ * - Выбора формата интервью при редактировании
+ * - Определения необходимости выбора офиса
+ * 
+ * Форматы:
+ * - online: онлайн интервью (Google Meet)
+ * - office: очное интервью в офисе
+ */
 const INTERVIEW_FORMAT_OPTIONS = [
   { value: 'online', label: 'Онлайн' },
   { value: 'office', label: 'Офис' },
 ]
 
+/**
+ * CANDIDATE_GRADE_OPTIONS - опции грейдов кандидата
+ * 
+ * Используется для:
+ * - Выбора грейда кандидата при редактировании
+ * - Отображения текущего грейда
+ */
 const CANDIDATE_GRADE_OPTIONS = [
   { value: 'Intern', label: 'Intern' },
   { value: 'Junior', label: 'Junior' },
@@ -36,18 +103,53 @@ const CANDIDATE_GRADE_OPTIONS = [
   { value: 'Principal', label: 'Principal' },
 ]
 
+/**
+ * InviteEditPage - компонент страницы редактирования инвайта
+ * 
+ * Состояние:
+ * - invite: данные редактируемого инвайта
+ * - vacancies: список вакансий для выбора
+ * - offices: список офисов для выбора (для очного интервью)
+ * - loading: флаг загрузки данных
+ * - saving: флаг сохранения данных
+ * - formData: данные формы редактирования
+ */
 export default function InviteEditPage() {
+  // Хук Next.js для программной навигации
   const router = useRouter()
+  // Получение динамических параметров из URL
   const params = useParams()
+  // Хук для отображения уведомлений
   const toast = useToast()
+  // ID инвайта из URL параметра [id] (преобразуется в число)
   const inviteId = params?.id ? parseInt(params.id as string, 10) : null
   
+  // Данные редактируемого инвайта
   const [invite, setInvite] = useState<Invite | null>(null)
+  // Список вакансий для выбора при редактировании
   const [vacancies, setVacancies] = useState<Vacancy[]>([])
+  // Список офисов для выбора (для очного интервью)
   const [offices, setOffices] = useState<Array<{ id: number; name: string; address?: string }>>([])
+  // Флаг загрузки данных инвайта
   const [loading, setLoading] = useState(true)
+  // Флаг сохранения данных (показывает индикатор при сохранении)
   const [saving, setSaving] = useState(false)
   
+  /**
+   * formData - данные формы редактирования инвайта
+   * 
+   * Структура:
+   * - candidate_name: имя кандидата
+   * - interview_datetime: дата и время интервью (ISO строка)
+   * - status: статус инвайта
+   * - interview_format: формат интервью (online/office)
+   * - custom_duration_minutes: длительность интервью в минутах
+   * - candidate_grade: грейд кандидата
+   * - candidate_url: ссылка на кандидата в Huntflow
+   * - vacancy_id: ID вакансии
+   * - scorecard_template_url: ссылка на шаблон Scorecard
+   * - office_id: ID офиса (для очного интервью)
+   */
   const [formData, setFormData] = useState({
     candidate_name: '',
     interview_datetime: '',

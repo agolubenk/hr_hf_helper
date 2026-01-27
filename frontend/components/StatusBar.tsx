@@ -1,3 +1,37 @@
+/**
+ * StatusBar (components/StatusBar.tsx) - Статусная панель для страницы recr-chat
+ * 
+ * Назначение:
+ * - Отображение статусов кандидатов по выбранной вакансии
+ * - Фильтрация кандидатов по статусам
+ * - Выбор вакансии для отображения статусов
+ * - Группировка неактивных статусов (без кандидатов)
+ * 
+ * Функциональность:
+ * - Выбор вакансии: выпадающий список с вакансиями (Мои, Все, конкретные вакансии)
+ * - Статусы: горизонтальный скролл со статусами кандидатов
+ * - Группировка: неактивные статусы группируются в "N этапов без кандидатов"
+ * - Раскрытие групп: клик по группе раскрывает все статусы в группе
+ * - Статус "Все": показывает всех кандидатов независимо от статуса
+ * - Добавление вакансии: кнопка "Добавить вакансию" в выпадающем списке
+ * - Общие настройки: переход к общим настройкам
+ * 
+ * Связи:
+ * - AppLayout: отображается только на странице recr-chat (isRecrChatPage)
+ * - AddVacancyModal: модальное окно добавления новой вакансии
+ * - vacancies/page.tsx: страница вакансий, откуда может происходить добавление
+ * 
+ * Поведение:
+ * - Показывается только на странице /recr-chat
+ * - Фиксированная позиция под Header (top: 64px)
+ * - Высота 48px
+ * - При выборе вакансии фильтрует кандидатов по статусам
+ * - При клике на статус фильтрует кандидатов по выбранному статусу
+ * - Неактивные статусы (count === 0 или undefined) группируются
+ * 
+ * TODO: Реализовать реальную фильтрацию кандидатов по статусам
+ */
+
 'use client'
 
 import { Box, Flex, Text, Badge, DropdownMenu, Button } from "@radix-ui/themes"
@@ -6,6 +40,16 @@ import { PlusIcon, ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons"
 import AddVacancyModal, { type AddVacancyFormData } from "./vacancies/AddVacancyModal"
 import styles from './StatusBar.module.css'
 
+/**
+ * StatusBarProps - интерфейс пропсов компонента StatusBar
+ * 
+ * Структура:
+ * - vacancies: массив вакансий для выбора (опционально)
+ * - myVacancyIds: ID вакансий в блоке "Мои" (опционально, по умолчанию первые 2)
+ * - statuses: массив статусов кандидатов (опционально)
+ * - onGeneralSettingsClick: обработчик клика на "Общие настройки" (опционально)
+ * - onAddVacancy: обработчик добавления новой вакансии (опционально)
+ */
 interface StatusBarProps {
   vacancies?: Array<{ id: string; title: string }>
   /** ID вакансий в блоке «Мои»; если не задано, берутся первые 2 из vacancies */
@@ -15,17 +59,43 @@ interface StatusBarProps {
   onAddVacancy?: (data: AddVacancyFormData) => void
 }
 
+/**
+ * StatusGroup - интерфейс группы неактивных статусов
+ * 
+ * Структура:
+ * - type: 'group' - тип элемента (группа)
+ * - statuses: массив статусов в группе
+ * - groupId: уникальный идентификатор группы
+ */
 interface StatusGroup {
   type: 'group'
   statuses: Array<{ id: string; label: string; color: string; count?: number }>
   groupId: string
 }
 
+/**
+ * StatusItem - интерфейс активного статуса
+ * 
+ * Структура:
+ * - type: 'status' - тип элемента (статус)
+ * - status: объект статуса с id, label, color, count
+ */
 interface StatusItem {
   type: 'status'
   status: { id: string; label: string; color: string; count?: number }
 }
 
+/**
+ * defaultStatuses - статусы кандидатов по умолчанию
+ * 
+ * Структура каждого статуса:
+ * - id: уникальный идентификатор статуса
+ * - label: отображаемое название статуса
+ * - color: цвет статуса (hex)
+ * - count: количество кандидатов в статусе (опционально, undefined означает неактивный статус)
+ * 
+ * TODO: Загружать из API или настроек компании
+ */
 const defaultStatuses = [
   { id: 'new', label: 'New', color: '#2180A0', count: 5 },
   { id: 'under-review', label: 'Under Review', color: '#3B82F6', count: 3 },
@@ -43,6 +113,14 @@ const defaultStatuses = [
   { id: 'archived', label: 'Archived', color: '#6B7280', count: 12 },
 ]
 
+/**
+ * defaultVacancies - вакансии по умолчанию
+ * 
+ * Используется для:
+ * - Отображения списка вакансий в выпадающем списке
+ * 
+ * TODO: Загружать из API
+ */
 const defaultVacancies = [
   { id: '1', title: 'Frontend Senior' },
   { id: '2', title: 'Backend Developer' },
@@ -52,6 +130,21 @@ const defaultVacancies = [
   { id: '6', title: 'QA Lead' },
 ]
 
+/**
+ * StatusBar - компонент статусной панели
+ * 
+ * Состояние:
+ * - selectedVacancy: выбранная вакансия (ID или '__my__' / '__all__')
+ * - viewMode: режим просмотра вакансий ('my' - мои, 'all' - все)
+ * - expandedGroups: множество ID раскрытых групп статусов
+ * - addVacancyOpen: флаг открытия модального окна добавления вакансии
+ * 
+ * Функциональность:
+ * - Выбор вакансии для фильтрации статусов
+ * - Группировка неактивных статусов
+ * - Раскрытие/сворачивание групп статусов
+ * - Добавление новой вакансии
+ */
 export default function StatusBar({ 
   vacancies = defaultVacancies,
   myVacancyIds,
@@ -59,15 +152,41 @@ export default function StatusBar({
   onGeneralSettingsClick,
   onAddVacancy,
 }: StatusBarProps) {
+  // Выбранная вакансия: ID вакансии, '__my__' (мои вакансии) или '__all__' (все вакансии)
   const [selectedVacancy, setSelectedVacancy] = useState(vacancies[0]?.id || '__my__')
+  // Режим просмотра вакансий: 'my' - мои вакансии, 'all' - все вакансии
   const [viewMode, setViewMode] = useState<'my' | 'all'>('my')
+  // Множество ID раскрытых групп статусов (для управления раскрытием/сворачиванием)
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set())
+  // Флаг открытия модального окна добавления новой вакансии
   const [addVacancyOpen, setAddVacancyOpen] = useState(false)
 
+  /**
+   * myVacancies - список "моих" вакансий
+   * 
+   * Логика:
+   * - Если передан myVacancyIds - фильтрует вакансии по этим ID
+   * - Иначе - берет первые 2 вакансии из списка
+   * 
+   * Используется для:
+   * - Отображения в разделе "Мои" выпадающего списка
+   */
   const myVacancies = myVacancyIds
     ? vacancies.filter((v) => myVacancyIds.includes(v.id))
     : vacancies.slice(0, 2)
 
+  /**
+   * triggerLabel - текст для кнопки выбора вакансии
+   * 
+   * Логика:
+   * - '__all__' -> 'Все'
+   * - '__my__' -> 'Мои'
+   * - ID вакансии -> название вакансии
+   * - Иначе -> 'Выберите вакансию'
+   * 
+   * Используется для:
+   * - Отображения выбранной вакансии в кнопке выпадающего списка
+   */
   const triggerLabel =
     selectedVacancy === '__all__'
       ? 'Все'
@@ -75,11 +194,41 @@ export default function StatusBar({
         ? 'Мои'
         : vacancies.find((v) => v.id === selectedVacancy)?.title ?? 'Выберите вакансию'
   
+  /**
+   * handleAddVacancy - обработчик добавления новой вакансии
+   * 
+   * Функциональность:
+   * - Открывает модальное окно добавления вакансии
+   * 
+   * Поведение:
+   * - Вызывается при клике на "Добавить вакансию" в выпадающем списке
+   * - Открывает AddVacancyModal
+   */
   const handleAddVacancy = () => {
     setAddVacancyOpen(true)
   }
   
-  // Группируем неактивные статусы
+  /**
+   * groupedStatuses - сгруппированные статусы (активные отдельно, неактивные группами)
+   * 
+   * Функциональность:
+   * - Группирует неактивные статусы (count === undefined || count === 0) в группы
+   * - Активные статусы (count > 0) остаются отдельными элементами
+   * 
+   * Логика:
+   * - Проходит по всем статусам
+   * - Если статус неактивный - добавляет в текущую группу
+   * - Если статус активный - сохраняет предыдущую группу (если есть) и добавляет активный статус
+   * - В конце сохраняет оставшуюся группу (если есть)
+   * 
+   * Используется для:
+   * - Отображения статусов в горизонтальном скролле
+   * - Группировки неактивных статусов для экономии места
+   * 
+   * useMemo:
+   * - Пересчитывается только при изменении statuses
+   * - Оптимизирует производительность при частых рендерах
+   */
   const groupedStatuses = useMemo(() => {
     const result: Array<StatusGroup | StatusItem> = []
     let currentGroup: Array<{ id: string; label: string; color: string; count?: number }> = []
@@ -120,13 +269,26 @@ export default function StatusBar({
     return result
   }, [statuses])
   
+  /**
+   * toggleGroup - переключение раскрытости группы статусов
+   * 
+   * Функциональность:
+   * - Добавляет/удаляет groupId из множества раскрытых групп
+   * 
+   * Поведение:
+   * - Вызывается при клике на группу статусов
+   * - Если группа раскрыта - сворачивает её
+   * - Если группа свернута - раскрывает её
+   * 
+   * @param groupId - ID группы для переключения
+   */
   const toggleGroup = (groupId: string) => {
     setExpandedGroups(prev => {
       const newSet = new Set(prev)
       if (newSet.has(groupId)) {
-        newSet.delete(groupId)
+        newSet.delete(groupId) // Удаляем из множества (сворачиваем)
       } else {
-        newSet.add(groupId)
+        newSet.add(groupId) // Добавляем в множество (раскрываем)
       }
       return newSet
     })

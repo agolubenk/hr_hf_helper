@@ -1,3 +1,41 @@
+/**
+ * WorkflowChat (components/workflow/WorkflowChat.tsx) - Компонент чата workflow (скрининг/интервью)
+ * 
+ * Назначение:
+ * - Чат-интерфейс для управления процессом скрининга и интервью
+ * - Обработка команд через теги (#add, #hr_screening, #tech_screening, #interview, #delete)
+ * - Управление кандидатами и инвайтами
+ * - Отображение истории действий и ответов системы
+ * 
+ * Функциональность:
+ * - Отображение сообщений чата (пользователь, система, инвайты)
+ * - Обработка команд через теги:
+ *   - #add: добавление кандидата из файла резюме
+ *   - #hr_screening: HR скрининг (ссылка Huntflow + текст ответов)
+ *   - #tech_screening: технический скрининг (ссылка Huntflow + дата-время)
+ *   - #interview: создание интервью (ссылка Huntflow + дата-время)
+ *   - #delete: отмена последнего действия
+ * - Управление файлами: загрузка резюме
+ * - Управление инвайтами: создание, копирование, пересоздание scorecard
+ * - Управление отклонениями: выбор причины отказа
+ * - Скрытие сообщений
+ * - Автопрокрутка к новым сообщениям
+ * 
+ * Связи:
+ * - workflow/page.tsx: основной компонент страницы workflow
+ * - WorkflowHeader: управление типом процесса и настройками
+ * - API: отправка команд на сервер для обработки
+ * - Huntflow: интеграция для синхронизации данных
+ * 
+ * Поведение:
+ * - При отправке сообщения с тегом обрабатывает команду и показывает ответ системы
+ * - При загрузке файла резюме обрабатывает и добавляет кандидата
+ * - При отправке ссылки Huntflow извлекает данные и создает/обновляет кандидата
+ * - При отправке даты-времени создает инвайт на интервью
+ * - При команде #delete отменяет последнее действие
+ * 
+ * TODO: Реализовать реальную обработку команд на сервере
+ */
 'use client'
 
 import { Box, Text, Flex, TextArea, Button, Table } from "@radix-ui/themes"
@@ -5,10 +43,30 @@ import { ChevronDownIcon, ChevronUpIcon, PaperPlaneIcon, OpenInNewWindowIcon, Ey
 import { useState, useRef, useEffect, useCallback } from "react"
 import styles from './WorkflowChat.module.css'
 
-// Компонент для отображения списка участников
+/**
+ * ParticipantsList - компонент для отображения списка участников интервью
+ * 
+ * Функциональность:
+ * - Отображает количество участников
+ * - Раскрывает/сворачивает список участников
+ * 
+ * Используется для:
+ * - Отображения участников интервью в сообщениях типа 'response' с candidate.participants
+ * 
+ * @param participants - массив имен участников
+ */
 function ParticipantsList({ participants }: { participants: string[] }) {
   const [isExpanded, setIsExpanded] = useState(false)
   
+  /**
+   * getParticipantsText - форматирование текста количества участников
+   * 
+   * Функциональность:
+   * - Форматирует текст в зависимости от количества участников
+   * 
+   * @param count - количество участников
+   * @returns отформатированный текст (1 Участник, 2-4 Участника, 5+ Участников)
+   */
   const getParticipantsText = (count: number) => {
     if (count === 1) return '1 Участник'
     if (count >= 2 && count <= 4) return `${count} Участника`
@@ -38,6 +96,30 @@ function ParticipantsList({ participants }: { participants: string[] }) {
   )
 }
 
+/**
+ * ChatMessage - интерфейс сообщения в чате
+ * 
+ * Типы сообщений:
+ * - 'user': сообщение от пользователя (команда)
+ * - 'invite': сообщение-инвайт (созданный инвайт)
+ * - 'response': ответ системы на команду пользователя
+ * 
+ * Структура:
+ * - id: уникальный идентификатор сообщения
+ * - type: тип сообщения
+ * - content: текстовое содержимое (опционально)
+ * - url: ссылка на Huntflow (опционально)
+ * - text: текст ответов/команды (опционально)
+ * - file: прикрепленный файл (опционально)
+ * - timestamp: время сообщения
+ * - tag: тег команды (#add, #hr_screening, #tech_screening, #interview, #delete)
+ * - candidate: данные кандидата (опционально, только для response)
+ * - status: статус операции (опционально, только для response)
+ * - rejectionReason: причина отказа (опционально)
+ * - showRejectionPrompt: флаг показа запроса причины отказа (опционально)
+ * - deleteType: тип удаления (опционально, только для response с tag #delete)
+ * - deletedEventInfo: информация об удаленном событии (опционально)
+ */
 interface ChatMessage {
   id: string
   type: 'user' | 'invite' | 'response'
@@ -73,20 +155,52 @@ interface ChatMessage {
   }
 }
 
+/**
+ * AttachedFile - интерфейс прикрепленного файла
+ * 
+ * Структура:
+ * - id: уникальный идентификатор файла
+ * - file: объект File из браузера
+ */
 interface AttachedFile {
   id: string
   file: File
 }
 
+/**
+ * WorkflowChat - компонент чата workflow
+ * 
+ * Состояние:
+ * - message: текст сообщения в поле ввода
+ * - hiddenMessages: множество ID скрытых сообщений
+ * - attachedFiles: массив прикрепленных файлов
+ * - currentCommand: текущая обрабатываемая команда (опционально)
+ * - rejectedCandidates: множество ID отклоненных кандидатов
+ * - rejectionReasons: Map причин отказа (ключ - ID кандидата, значение - причина)
+ * 
+ * Функциональность:
+ * - Управление сообщениями чата
+ * - Обработка команд через теги
+ * - Управление файлами и инвайтами
+ */
 export default function WorkflowChat() {
+  // Текст сообщения в поле ввода
   const [message, setMessage] = useState('')
+  // Множество ID скрытых сообщений (для возможности скрытия сообщений)
   const [hiddenMessages, setHiddenMessages] = useState<Set<string>>(new Set())
+  // Массив прикрепленных файлов (резюме)
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([])
+  // Текущая обрабатываемая команда (опционально, для отслеживания состояния обработки)
   const [currentCommand, setCurrentCommand] = useState<string | null>(null)
+  // Множество ID отклоненных кандидатов
   const [rejectedCandidates, setRejectedCandidates] = useState<Set<string>>(new Set())
+  // Map причин отказа (ключ - ID кандидата, значение - причина отказа)
   const [rejectionReasons, setRejectionReasons] = useState<Map<string, string>>(new Map())
+  // Ref для поля ввода сообщения (для управления фокусом и размером)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  // Ref для input файла (для программного вызова выбора файла)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  // Ref для контейнера сообщений (для автопрокрутки к новым сообщениям)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
 
   // Моковые данные сообщений (начальные)

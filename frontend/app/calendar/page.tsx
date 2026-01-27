@@ -1,3 +1,36 @@
+/**
+ * CalendarPage (calendar/page.tsx) - Страница календаря событий
+ * 
+ * Назначение:
+ * - Отображение календаря событий (интервью, скрининги, встречи)
+ * - Управление событиями календаря
+ * - Синхронизация с Google Calendar
+ * - Просмотр событий в разных режимах (месяц, неделя, день, список)
+ * - Управление слотами (свободное время)
+ * 
+ * Функциональность:
+ * - Календарь в режиме месяца с сеткой дней
+ * - Таблица событий для режима недели/дня
+ * - Список всех событий с поиском
+ * - Панель слотов для копирования свободного времени
+ * - Модальное окно детального просмотра события
+ * - Синхронизация с Google Calendar
+ * - Фильтрация по офисам (Минск, Варшава, Гомель)
+ * - Поиск событий по названию, кандидату, вакансии
+ * 
+ * Связи:
+ * - AppLayout: оборачивает страницу в общий layout
+ * - useToast: для отображения уведомлений (синхронизация, копирование ссылок)
+ * - SlotsPanel: компонент для отображения свободных слотов
+ * 
+ * Поведение:
+ * - При загрузке отображает текущий месяц
+ * - При переключении режима отображения меняет вид календаря
+ * - При клике на событие открывает модальное окно с деталями
+ * - При синхронизации обновляет события из Google Calendar
+ * - При выборе офиса фильтрует события (в будущей реализации)
+ */
+
 'use client'
 
 import { useState } from 'react'
@@ -24,6 +57,19 @@ import { useToast } from "@/components/Toast/ToastContext"
 import SlotsPanel from "@/components/workflow/SlotsPanel"
 import styles from './calendar.module.css'
 
+/**
+ * Attendee - интерфейс участника события
+ * 
+ * Структура:
+ * - email: email участника
+ * - name: имя участника (опционально)
+ * - responseStatus: статус ответа на приглашение
+ *   - 'accepted': принял приглашение
+ *   - 'declined': отклонил приглашение
+ *   - 'tentative': возможно придет
+ *   - 'needsAction': не ответил
+ * - organizer: флаг, является ли участник организатором события
+ */
 interface Attendee {
   email: string
   name?: string
@@ -31,6 +77,26 @@ interface Attendee {
   organizer?: boolean
 }
 
+/**
+ * CalendarEvent - интерфейс события календаря
+ * 
+ * Структура:
+ * - id: уникальный идентификатор события
+ * - title: название события
+ * - start, end: дата и время начала и окончания
+ * - type: тип события ('interview', 'screening', 'meeting', 'other')
+ * - candidate: имя кандидата (опционально)
+ * - interviewer: имя интервьюера (опционально)
+ * - format: формат встречи ('online' - онлайн, 'office' - офис)
+ * - vacancy: название вакансии (опционально)
+ * - status: статус события ('confirmed', 'tentative', 'cancelled')
+ * - location: место проведения (опционально)
+ * - description: описание события (опционально)
+ * - meetLink: ссылка на Google Meet (опционально)
+ * - creatorEmail, creatorName: создатель события
+ * - attendees: массив участников события
+ * - allDay: флаг события на весь день
+ */
 interface CalendarEvent {
   id: string
   title: string
@@ -51,15 +117,37 @@ interface CalendarEvent {
   allDay?: boolean
 }
 
+/**
+ * CalendarPage - компонент страницы календаря
+ * 
+ * Состояние:
+ * - currentDate: текущая дата для отображения календаря
+ * - viewMode: режим отображения ('month', 'week', 'day')
+ * - selectedOffice: выбранный офис для фильтрации
+ * - selectedEvent: выбранное событие для детального просмотра
+ * - eventModalOpen: флаг открытия модального окна события
+ * - isSyncing: флаг синхронизации с Google Calendar
+ * - activeTab: активная вкладка ('calendar', 'list', 'slots')
+ * - searchQuery: поисковый запрос для фильтрации событий
+ */
 export default function CalendarPage() {
+  // Текущая дата для отображения календаря (по умолчанию - сегодня)
   const [currentDate, setCurrentDate] = useState(new Date())
+  // Режим отображения: 'month' - месяц, 'week' - неделя, 'day' - день
   const [viewMode, setViewMode] = useState<'month' | 'week' | 'day'>('month')
+  // Выбранный офис для фильтрации событий
   const [selectedOffice, setSelectedOffice] = useState<'minsk' | 'warsaw' | 'gomel'>('minsk')
+  // Выбранное событие для детального просмотра в модальном окне
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
+  // Флаг открытия модального окна детального просмотра события
   const [eventModalOpen, setEventModalOpen] = useState(false)
+  // Флаг синхронизации с Google Calendar (показывает индикатор загрузки)
   const [isSyncing, setIsSyncing] = useState(false)
+  // Активная вкладка: 'calendar' - календарь, 'list' - список событий, 'slots' - слоты
   const [activeTab, setActiveTab] = useState<'calendar' | 'list' | 'slots'>('calendar')
+  // Поисковый запрос для фильтрации событий в списке
   const [searchQuery, setSearchQuery] = useState('')
+  // Хук для отображения уведомлений
   const toast = useToast()
 
   // Моковые данные событий
@@ -374,7 +462,7 @@ export default function CalendarPage() {
                   key={office.id}
                   className={styles.officeButton}
                   data-selected={selectedOffice === office.id}
-                  onClick={() => setSelectedOffice(office.id)}
+                  onClick={() => setSelectedOffice(office.id as 'minsk' | 'warsaw' | 'gomel')}
                 >
                   <Text size="1" weight={selectedOffice === office.id ? "medium" : "regular"}>
                     {office.label}

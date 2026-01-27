@@ -1,3 +1,37 @@
+/**
+ * Sidebar (components/Sidebar.tsx) - Боковое меню навигации приложения
+ * 
+ * Назначение:
+ * - Навигация по разделам приложения
+ * - Иерархическая структура меню с вложенными пунктами
+ * - Подсветка активного пункта меню
+ * - Автоматическое раскрытие активных разделов
+ * - Закрытие меню на мобильных устройствах при навигации
+ * 
+ * Функциональность:
+ * - Иерархическое меню с поддержкой вложенных пунктов
+ * - Автоматическое определение активного пункта по текущему пути
+ * - Раскрытие/сворачивание разделов меню
+ * - Навигация по внутренним и внешним ссылкам
+ * - Обработка пунктов "в разработке" (показ toast вместо навигации)
+ * - Синхронизация активной вкладки профиля через localStorage и CustomEvent
+ * - Адаптивное поведение (закрытие на мобильных при навигации)
+ * 
+ * Связи:
+ * - AppLayout: получает состояние isOpen и обработчик onClose
+ * - usePathname: определение текущего пути для подсветки активного пункта
+ * - useRouter: выполнение навигации
+ * - useToast: отображение уведомлений для пунктов "в разработке"
+ * - ThemeProvider: получение текущей темы
+ * 
+ * Поведение:
+ * - При открытии автоматически раскрывает разделы с активными пунктами
+ * - При клике на пункт с дочерними элементами - раскрывает/сворачивает
+ * - При клике на пункт без дочерних элементов - выполняет навигацию
+ * - На мобильных устройствах закрывается при навигации
+ * - Пункты "в разработке" показывают toast вместо навигации
+ */
+
 'use client'
 
 import { Flex, Box, Text, Separator } from "@radix-ui/themes"
@@ -31,7 +65,20 @@ import styles from './Sidebar.module.css'
 import { useTheme } from "@/components/ThemeProvider"
 import { useToast } from "@/components/Toast/ToastContext"
 
-// Пункты меню «в разработке»: при клике показываем toast вместо перехода
+/**
+ * IN_DEVELOPMENT_IDS - множество ID пунктов меню, которые находятся в разработке
+ * 
+ * Используется для:
+ * - Определения, какие пункты меню показывают toast вместо навигации
+ * - Обработки кликов на пункты "в разработке"
+ * 
+ * Пункты в разработке:
+ * - benchmarks-dashboard: Dashboard бенчмарков
+ * - integrations-clickup, integrations-notion, integrations-hh, integrations-n8n: интеграции
+ * - reporting-recruiter, reporting-vacancy, reporting-interviewer, reporting-funnel: отчеты
+ * - company-settings-benchmark: настройки бенчмарков
+ * - admin: административная панель
+ */
 const IN_DEVELOPMENT_IDS = new Set([
   'benchmarks-dashboard',
   'integrations-clickup', 'integrations-notion', 'integrations-hh', 'integrations-n8n',
@@ -40,6 +87,17 @@ const IN_DEVELOPMENT_IDS = new Set([
   'admin',
 ])
 
+/**
+ * MenuItem - интерфейс пункта меню
+ * 
+ * Структура:
+ * - id: уникальный идентификатор пункта меню
+ * - label: отображаемый текст пункта
+ * - icon: иконка пункта (опционально)
+ * - children: массив дочерних пунктов (для вложенных меню)
+ * - href: ссылка для навигации (опционально)
+ * - external: флаг внешней ссылки (открывается в новой вкладке)
+ */
 interface MenuItem {
   id: string
   label: string
@@ -49,11 +107,30 @@ interface MenuItem {
   external?: boolean
 }
 
+/**
+ * SidebarProps - интерфейс пропсов компонента Sidebar
+ * 
+ * Структура:
+ * - isOpen: флаг открытости меню
+ * - onClose: обработчик закрытия меню
+ */
 interface SidebarProps {
   isOpen: boolean
   onClose: () => void
 }
 
+/**
+ * MenuItemComponentProps - интерфейс пропсов компонента MenuItemComponent
+ * 
+ * Структура:
+ * - item: пункт меню для отображения
+ * - isActive: флаг активности пункта (подсветка)
+ * - level: уровень вложенности (для отступов)
+ * - onNavigate: обработчик навигации (закрытие меню на мобильных)
+ * - pathname: текущий путь для определения активности
+ * - inDevelopment: флаг "в разработке" (показ toast вместо навигации)
+ * - onInDevelopmentClick: обработчик клика на пункт "в разработке"
+ */
 interface MenuItemComponentProps {
   item: MenuItem
   isActive?: boolean
@@ -64,17 +141,43 @@ interface MenuItemComponentProps {
   onInDevelopmentClick?: () => void
 }
 
-// Функция для проверки, является ли элемент или его дочерние элементы активными
+/**
+ * isItemOrChildrenActive - проверка, является ли пункт меню или его дочерние элементы активными
+ * 
+ * Функциональность:
+ * - Проверяет, соответствует ли текущий путь пункту меню или его дочерним элементам
+ * - Обрабатывает специальные случаи (home -> /workflow, wiki -> /wiki/* и т.д.)
+ * - Рекурсивно проверяет дочерние элементы
+ * 
+ * Используется для:
+ * - Подсветки активного пункта меню
+ * - Автоматического раскрытия разделов с активными пунктами
+ * 
+ * Специальные случаи:
+ * - 'home' активен на '/workflow'
+ * - 'wiki' активен на всех путях, начинающихся с '/wiki'
+ * - 'recruiting' активен на путях рекрутинга
+ * - 'finance' активен на путях финансов
+ * - 'company-settings' активен на всех путях настроек компании
+ * - 'reporting' активен на всех путях отчетности
+ * 
+ * @param item - пункт меню для проверки
+ * @param pathname - текущий путь
+ * @returns true если пункт или его дочерние элементы активны, иначе false
+ */
 function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefined): boolean {
   if (!pathname) return false
   
   // Специальные случаи для проверки активности
+  // 'home' активен на странице '/workflow'
   if (item.id === 'home' && pathname === '/workflow') {
     return true
   }
+  // 'wiki' активен на всех страницах вики
   if (item.id === 'wiki' && pathname.startsWith('/wiki')) {
     return true
   }
+  // 'recruiting' активен на всех страницах рекрутинга
   if (item.id === 'recruiting' && (
     pathname.startsWith('/recr-chat') ||
     pathname.startsWith('/invites') ||
@@ -84,48 +187,58 @@ function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefi
   )) {
     return true
   }
+  // 'finance' активен на страницах финансов
   if (item.id === 'finance' && (
     pathname.startsWith('/vacancies/salary-ranges') ||
     pathname.startsWith('/finance/benchmarks')
   )) {
     return true
   }
+  // 'company-settings' активен на всех страницах настроек компании
   if (item.id === 'company-settings' && pathname.startsWith('/company-settings')) {
     return true
   }
+  // 'company-settings-finance' активен на страницах финансовых настроек
   if (item.id === 'company-settings-finance' && pathname.startsWith('/company-settings/finance')) {
     return true
   }
+  // 'vacancies-requests' активен на странице заявок
   if (item.id === 'vacancies-requests' && pathname.startsWith('/hiring-requests')) {
     return true
   }
+  // 'interviewers' активен на странице интервьюеров
   if (item.id === 'interviewers' && pathname.startsWith('/interviewers')) {
     return true
   }
+  // 'integrations-huntflow' активен на странице Huntflow
   if (item.id === 'integrations-huntflow' && pathname.startsWith('/huntflow')) {
     return true
   }
+  // 'integrations-aichat' активен на странице AI Chat
   if (item.id === 'integrations-aichat' && pathname.startsWith('/aichat')) {
     return true
   }
+  // 'integrations-telegram' активен на страницах Telegram
   if (item.id === 'integrations-telegram' && pathname.startsWith('/telegram')) {
     return true
   }
+  // 'reporting' активен на всех страницах отчетности
   if (item.id === 'reporting' && pathname.startsWith('/reporting')) {
     return true
   }
+  // 'recr-chat' активен на странице Talent Pool
   if (item.id === 'recr-chat' && pathname.startsWith('/recr-chat')) {
     return true
   }
   
-  // Проверяем сам элемент
+  // Проверяем сам элемент: точное совпадение или начало пути
   if (item.href) {
     if (pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))) {
       return true
     }
   }
   
-  // Проверяем дочерние элементы
+  // Проверяем дочерние элементы рекурсивно
   if (item.children && item.children.length > 0) {
     return item.children.some(child => isItemOrChildrenActive(child, pathname))
   }
@@ -133,33 +246,98 @@ function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefi
   return false
 }
 
+/**
+ * MenuItemComponent - компонент пункта меню
+ * 
+ * Функциональность:
+ * - Отображение пункта меню с иконкой и текстом
+ * - Раскрытие/сворачивание дочерних элементов
+ * - Навигация по внутренним и внешним ссылкам
+ * - Подсветка активного пункта
+ * - Обработка пунктов "в разработке"
+ * - Синхронизация активной вкладки профиля
+ * 
+ * Состояние:
+ * - isExpanded: флаг раскрытости дочерних элементов
+ * 
+ * Поведение:
+ * - Автоматически раскрывается, если пункт или его дочерние элементы активны
+ * - При клике на пункт с дочерними элементами - раскрывает/сворачивает
+ * - При клике на пункт без дочерних элементов - выполняет навигацию
+ * - На мобильных закрывает меню при навигации
+ * - Для пунктов "в разработке" показывает toast вместо навигации
+ */
 function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, pathname, inDevelopment = false, onInDevelopmentClick }: MenuItemComponentProps) {
+  // Хук Next.js для программной навигации
   const router = useRouter()
+  // Проверка наличия дочерних элементов
   const hasChildren = item.children && item.children.length > 0
-  // Раскрываем только если элемент или его дочерние элементы активны
+  /**
+   * shouldBeExpanded - должен ли пункт быть раскрыт
+   * 
+   * Логика:
+   * - Раскрывается только если есть дочерние элементы И пункт или его дочерние элементы активны
+   * 
+   * Используется для:
+   * - Автоматического раскрытия разделов с активными пунктами
+   */
   const shouldBeExpanded = hasChildren && isItemOrChildrenActive(item, pathname)
+  // Состояние раскрытости дочерних элементов
   const [isExpanded, setIsExpanded] = useState(shouldBeExpanded)
   
-  // Обновляем состояние при изменении pathname
+  /**
+   * useEffect - обновление состояния раскрытости при изменении pathname
+   * 
+   * Функциональность:
+   * - Обновляет isExpanded при изменении shouldBeExpanded
+   * 
+   * Поведение:
+   * - Выполняется при изменении shouldBeExpanded (который зависит от pathname)
+   * - Обеспечивает автоматическое раскрытие разделов при навигации
+   */
   useEffect(() => {
     setIsExpanded(shouldBeExpanded)
   }, [shouldBeExpanded])
 
+  /**
+   * handleClick - обработчик клика на пункт меню
+   * 
+   * Функциональность:
+   * - Обрабатывает клики на пункты меню
+   * - Для пунктов "в разработке" показывает toast
+   * - Для пунктов с дочерними элементами - раскрывает/сворачивает
+   * - Для пунктов без дочерних элементов - выполняет навигацию
+   * - Синхронизирует активную вкладку профиля через localStorage и CustomEvent
+   * 
+   * Поведение:
+   * - Приоритет 1: Если пункт "в разработке" - показывает toast, навигацию не выполняет
+   * - Приоритет 2: Если есть дочерние элементы - раскрывает/сворачивает, навигацию не выполняет
+   * - Приоритет 3: Если есть href - выполняет навигацию
+   * - На мобильных (< 768px) закрывает меню после навигации
+   * 
+   * Связи:
+   * - router.push: внутренняя навигация
+   * - window.open: внешняя навигация (новая вкладка)
+   * - localStorage: сохранение активной вкладки профиля
+   * - CustomEvent: синхронизация активной вкладки между вкладками браузера
+   * 
+   * @param e - событие клика (опционально)
+   */
   const handleClick = (e?: React.MouseEvent) => {
     if (e) {
-      e.stopPropagation()
-      e.preventDefault()
+      e.stopPropagation() // Предотвращаем всплытие события
+      e.preventDefault() // Предотвращаем стандартное поведение
     }
 
     // Пункт «в разработке»: показываем toast, навигацию не выполняем
     if (inDevelopment) {
-      onInDevelopmentClick?.()
+      onInDevelopmentClick?.() // Показываем toast через обработчик
       return
     }
     
     // ПРИОРИТЕТ: Если есть дочерние элементы, сначала обрабатываем раскрытие/сворачивание
     if (hasChildren) {
-      setIsExpanded(!isExpanded)
+      setIsExpanded(!isExpanded) // Инвертируем состояние раскрытости
       return // Выходим, не выполняя навигацию
     }
     
@@ -185,9 +363,10 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
               tabValue = 'profile'
             }
             
-            // Сохраняем активную вкладку в localStorage
+            // Сохраняем активную вкладку в localStorage для восстановления при загрузке
             localStorage.setItem('profileActiveTab', tabValue)
-            // Отправляем кастомное событие для синхронизации в той же вкладке
+            // Отправляем кастомное событие для синхронизации в той же вкладке браузера
+            // (позволяет обновить активную вкладку без перезагрузки страницы)
             window.dispatchEvent(new CustomEvent('localStorageChange', {
               detail: {
                 key: 'profileActiveTab',
@@ -196,17 +375,34 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
             }))
           }
         }
-        router.push(item.href)
+        router.push(item.href) // Выполняем навигацию
         // Закрываем меню при навигации только на мобильных устройствах (< 768px)
         if (onNavigate && typeof window !== 'undefined' && window.innerWidth < 768) {
-          onNavigate()
+          onNavigate() // Закрываем меню на мобильных
         }
       }
     }
   }
 
+  /**
+   * Рендер компонента MenuItemComponent
+   * 
+   * Структура:
+   * - Flex контейнер пункта меню с иконкой, текстом и индикаторами
+   * - Условный рендеринг дочерних элементов при раскрытии
+   * 
+   * Стили:
+   * - paddingLeft: отступ слева зависит от уровня вложенности (level)
+   * - backgroundColor: подсветка при активности и наведении
+   * - cursor: pointer для кликабельных пунктов
+   */
   return (
     <Box>
+      {/* Контейнер пункта меню
+          - data-tour: атрибут для тура по приложению
+          - className: применяет стили меню и активного состояния
+          - onClick: обработчик клика (раскрытие/навигация)
+          - onMouseEnter/onMouseLeave: визуальная обратная связь при наведении */}
       <Flex
         data-tour={`sidebar-${item.id}`}
         align="center"
@@ -215,37 +411,45 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
         py="2"
         className={`${styles.menuItem} ${isActive ? styles.menuItemActive : ''}`}
         style={{
-          backgroundColor: isActive ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
+          backgroundColor: isActive ? 'rgba(255, 255, 255, 0.15)' : 'transparent', // Подсветка активного пункта
           borderRadius: '6px',
-          cursor: (item.href || hasChildren) ? 'pointer' : 'default',
-          paddingLeft: level > 0 ? `${16 + level * 20}px` : '12px',
+          cursor: (item.href || hasChildren) ? 'pointer' : 'default', // Курсор pointer для кликабельных пунктов
+          paddingLeft: level > 0 ? `${16 + level * 20}px` : '12px', // Отступ слева зависит от уровня вложенности
           position: 'relative',
           marginBottom: '2px',
-          transition: 'all 0.2s ease-in-out',
+          transition: 'all 0.2s ease-in-out', // Плавные переходы
         }}
         onClick={(e) => {
-          e.stopPropagation()
-          handleClick(e)
+          e.stopPropagation() // Предотвращаем всплытие события
+          handleClick(e) // Вызываем обработчик клика
         }}
         onMouseEnter={(e) => {
+          // При наведении показываем легкую подсветку (только для неактивных кликабельных пунктов)
           if (!isActive && (item.href || hasChildren)) {
             e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)'
           }
         }}
         onMouseLeave={(e) => {
+          // При уходе курсора возвращаем прозрачный фон (только для неактивных пунктов)
           if (!isActive) {
             e.currentTarget.style.backgroundColor = 'transparent'
           }
         }}
       >
+        {/* Иконка пункта меню (если есть) */}
         {item.icon && (
           <Box style={{ display: 'flex', alignItems: 'center', minWidth: '20px' }}>
             {item.icon}
           </Box>
         )}
+        {/* Текст пункта меню
+            - flex: 1 - занимает оставшееся пространство */}
         <Text size="2" style={{ flex: 1, color: 'var(--gray-12)' }}>
           {item.label}
         </Text>
+        {/* Индикатор наличия дочерних элементов
+            - ChevronUpIcon: если раскрыто
+            - ChevronDownIcon: если свернуто */}
         {hasChildren && (
           <Box style={{ display: 'flex', alignItems: 'center' }}>
             {isExpanded ? (
@@ -255,10 +459,16 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
             )}
           </Box>
         )}
+        {/* Индикатор внешней ссылки
+            - Показывается только для внешних ссылок (external === true) */}
         {item.external && (
           <OpenInNewWindowIcon width="14" height="14" style={{ color: 'var(--gray-12)', opacity: 0.7 }} />
         )}
       </Flex>
+      {/* Дочерние элементы пункта меню
+          - Рендерятся только если есть дочерние элементы И пункт раскрыт
+          - stopPropagation: предотвращаем всплытие событий от дочерних элементов
+          - Рекурсивный рендеринг MenuItemComponent для каждого дочернего элемента */}
       {hasChildren && isExpanded && (
         <Box onClick={(e) => e.stopPropagation()} onMouseEnter={(e) => e.stopPropagation()} onMouseLeave={(e) => e.stopPropagation()}>
           <Flex direction="column" style={{ marginTop: '4px' }}>
@@ -266,11 +476,11 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
               <MenuItemComponent
                 key={child.id}
                 item={child}
-                level={level + 1}
+                level={level + 1} // Увеличиваем уровень вложенности для отступов
                 onNavigate={onNavigate}
                 pathname={pathname}
-                isActive={isItemOrChildrenActive(child, pathname)}
-                inDevelopment={IN_DEVELOPMENT_IDS.has(child.id)}
+                isActive={isItemOrChildrenActive(child, pathname)} // Определяем активность дочернего элемента
+                inDevelopment={IN_DEVELOPMENT_IDS.has(child.id)} // Проверяем, в разработке ли дочерний элемент
                 onInDevelopmentClick={onInDevelopmentClick}
               />
             ))}
@@ -281,16 +491,76 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
   )
 }
 
+/**
+ * Sidebar - основной компонент бокового меню
+ * 
+ * Состояние:
+ * - isOpen: флаг открытости меню (из пропсов)
+ * - theme: текущая тема приложения
+ * - pathname: текущий путь для определения активных пунктов
+ * 
+ * Функциональность:
+ * - Отображает иерархическое меню навигации
+ * - Определяет активные пункты меню по текущему пути
+ * - Обрабатывает клики на пункты меню
+ * - Закрывается на мобильных при навигации
+ * - Адаптивное позиционирование (учитывает StatusBar на странице recr-chat)
+ */
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+  // Хук для получения текущей темы
   const { theme } = useTheme()
+  // Получение текущего пути для определения активных пунктов
   const pathname = usePathname()
+  // Хук для отображения уведомлений
   const toast = useToast()
+  // Проверка, является ли текущая страница recr-chat (для корректного позиционирования)
   const isRecrChatPage = pathname?.startsWith('/recr-chat')
+  /**
+   * topOffset - отступ сверху для меню
+   * 
+   * Логика:
+   * - На странице recr-chat: 112px (64px Header + 48px StatusBar)
+   * - На остальных страницах: 64px (только Header)
+   * 
+   * Используется для:
+   * - Корректного позиционирования меню под Header и StatusBar
+   */
   const topOffset = isRecrChatPage ? '112px' : '64px' // 64px header + 48px status bar (только для recr-chat)
 
+  /**
+   * handleInDevClick - обработчик клика на пункт "в разработке"
+   * 
+   * Функциональность:
+   * - Показывает toast-уведомление о том, что функция в разработке
+   * 
+   * Поведение:
+   * - Вызывается при клике на пункт меню, который находится в разработке
+   * - Показывает информационное уведомление через toast
+   * 
+   * Используется для:
+   * - Обработки кликов на пункты из IN_DEVELOPMENT_IDS
+   */
   const handleInDevClick = () => toast.showInfo('В разработке', 'Данная страница или функциональность в разработке.')
   
-  // Пример структуры меню - можно вынести в отдельный файл или получать из API
+  /**
+   * menuItems - основная структура меню навигации
+   * 
+   * Структура:
+   * - Иерархическое меню с поддержкой вложенных пунктов
+   * - Каждый пункт имеет id, label, icon, href (опционально), children (опционально)
+   * - Пункты могут быть вложенными (children) для создания подменю
+   * 
+   * Разделы меню:
+   * - Главная: переход на /workflow
+   * - Календарь: переход на /calendar
+   * - Рекрутинг: раздел с подпунктами (Talent Pool, Инвайты, Вакансии, Интервьюеры)
+   * - Финансы: раздел с подпунктами (Зарплатные вилки, Бенчмарки)
+   * - Интеграции: раздел с подпунктами (Huntflow, AI Chat, Telegram и т.д.)
+   * - Вики: переход на /wiki
+   * - Отчетность: раздел с подпунктами (Главная, План найма, По компании и т.д.)
+   * 
+   * TODO: Вынести в отдельный файл или получать из API
+   */
   const menuItems: MenuItem[] = [
     {
       id: 'home',
@@ -512,6 +782,19 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     },
   ]
 
+  /**
+   * settingsItems - структура меню настроек (внизу Sidebar)
+   * 
+   * Структура:
+   * - Пункты настроек пользователя и компании
+   * - Отображаются в нижней части Sidebar
+   * 
+   * Пункты:
+   * - Профиль: переход на /profile (вкладка "Профиль")
+   * - Интеграции и API: переход на /profile (вкладка "Интеграции")
+   * - Настройки компании: раздел с подпунктами (Общие, Оргструктура, Финансы и т.д.)
+   * - Admin-панель: внешняя ссылка (открывается в новой вкладке)
+   */
   const settingsItems: MenuItem[] = [
     {
       id: 'profile',
@@ -664,25 +947,51 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     },
   ]
 
+  /**
+   * Рендер компонента Sidebar
+   * 
+   * Структура:
+   * - Фиксированная позиция справа
+   * - Отступ сверху зависит от наличия StatusBar (topOffset)
+   * - Анимация появления/исчезновения через transform
+   * - Основное меню (menuItems)
+   * - Разделитель
+   * - Меню настроек (settingsItems)
+   * 
+   * Стили:
+   * - transform: translateX(0) когда открыто, translateX(100%) когда закрыто
+   * - transition: плавная анимация появления/исчезновения
+   * - overflowY: auto - вертикальная прокрутка при переполнении
+   */
   return (
     <Box
       position="fixed"
-      top={topOffset}
+      top={topOffset} // Отступ сверху: 112px для recr-chat (Header + StatusBar), 64px для остальных (только Header)
       right="0"
       bottom="0"
       className={styles.sidebar}
       style={{
-        backgroundColor: theme === 'dark' ? 'var(--gray-2, #1c1c1f)' : '#ffffff',
-        borderLeft: '1px solid var(--gray-a6)',
-        transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
-        transition: 'transform 0.2s ease-in-out, background-color 0.2s ease-in-out',
-        overflowY: 'auto',
+        backgroundColor: theme === 'dark' ? 'var(--gray-2, #1c1c1f)' : '#ffffff', // Адаптивный фон в зависимости от темы
+        borderLeft: '1px solid var(--gray-a6)', // Разделительная линия слева
+        transform: isOpen ? 'translateX(0)' : 'translateX(100%)', // Анимация: открыто - видно, закрыто - скрыто справа
+        transition: 'transform 0.2s ease-in-out, background-color 0.2s ease-in-out', // Плавные переходы
+        overflowY: 'auto', // Вертикальная прокрутка при переполнении
       }}
     >
       <Flex direction="column" p="2" gap="1">
-        {/* Основное меню */}
+        {/* Основное меню навигации
+            - Рендерим все пункты основного меню
+            - Определяем активность каждого пункта по текущему пути
+            - Передаем обработчик закрытия меню для мобильных устройств */}
         {menuItems.map((item) => {
-          // Определяем активность пункта меню
+          /**
+           * Определение активности пункта меню
+           * 
+           * Логика:
+           * - Проверяет точное совпадение пути или начало пути
+           * - Обрабатывает специальные случаи (home -> /workflow, wiki -> /wiki/* и т.д.)
+           * - Используется для подсветки активного пункта
+           */
           let isActive = pathname === item.href || 
             (item.id === 'home' && pathname === '/workflow') ||
             (item.id === 'wiki' && pathname?.startsWith('/wiki')) ||
@@ -716,37 +1025,48 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             <MenuItemComponent
               key={item.id}
               item={item}
-              isActive={isActive}
-              onNavigate={onClose}
+              isActive={isActive} // Передаем флаг активности для подсветки
+              onNavigate={onClose} // Обработчик закрытия меню на мобильных при навигации
               pathname={pathname}
-              inDevelopment={IN_DEVELOPMENT_IDS.has(item.id)}
-              onInDevelopmentClick={handleInDevClick}
+              inDevelopment={IN_DEVELOPMENT_IDS.has(item.id)} // Проверяем, в разработке ли пункт
+              onInDevelopmentClick={handleInDevClick} // Обработчик для пунктов "в разработке"
             />
           )
         })}
 
-        {/* Разделитель */}
+        {/* Разделитель между основным меню и настройками
+            - Визуально разделяет основное меню и меню настроек */}
         <Separator size="4" my="2" />
 
-        {/* Настройки */}
+        {/* Меню настроек (внизу Sidebar)
+            - Пункты настроек пользователя и компании
+            - Специальная логика определения активности для профиля (проверка активной вкладки) */}
         {settingsItems.map((item) => {
-          // Проверяем, является ли текущая страница активной
+          /**
+           * Определение активности пункта настроек
+           * 
+           * Логика:
+           * - Для 'settings-integrations': проверяет активную вкладку 'integrations' в localStorage
+           * - Для 'profile': проверяет, что активная вкладка 'profile' или не установлена
+           * - Для 'company-settings': использует isItemOrChildrenActive для проверки пути и дочерних элементов
+           * - Для остальных: проверяет точное совпадение пути
+           */
           let isActive = pathname === item.href
           
           // Для страницы интеграций проверяем активную вкладку в localStorage
           if (item.id === 'settings-integrations' && pathname === '/profile') {
             if (typeof window !== 'undefined') {
               const activeTab = localStorage.getItem('profileActiveTab')
-              isActive = activeTab === 'integrations'
+              isActive = activeTab === 'integrations' // Активен только если активная вкладка 'integrations'
             }
           } else if (item.id === 'profile' && pathname === '/profile') {
             // Для профиля проверяем, что активная вкладка - это профиль (или не установлена)
             if (typeof window !== 'undefined') {
               const activeTab = localStorage.getItem('profileActiveTab')
-              isActive = !activeTab || activeTab === 'profile'
+              isActive = !activeTab || activeTab === 'profile' // Активен если вкладка 'profile' или не установлена
             }
           } else if (item.id === 'company-settings' && pathname?.startsWith('/company-settings')) {
-            // Для настроек компании проверяем путь
+            // Для настроек компании проверяем путь и дочерние элементы
             isActive = isItemOrChildrenActive(item, pathname)
           }
           
@@ -754,11 +1074,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             <MenuItemComponent
               key={item.id}
               item={item}
-              isActive={isActive}
-              onNavigate={onClose}
+              isActive={isActive} // Передаем флаг активности для подсветки
+              onNavigate={onClose} // Обработчик закрытия меню на мобильных при навигации
               pathname={pathname}
-              inDevelopment={IN_DEVELOPMENT_IDS.has(item.id)}
-              onInDevelopmentClick={handleInDevClick}
+              inDevelopment={IN_DEVELOPMENT_IDS.has(item.id)} // Проверяем, в разработке ли пункт
+              onInDevelopmentClick={handleInDevClick} // Обработчик для пунктов "в разработке"
             />
           )
         })}

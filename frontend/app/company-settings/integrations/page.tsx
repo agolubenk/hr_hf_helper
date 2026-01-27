@@ -84,6 +84,26 @@ function filterByGroup(items: Integration[], group: IntegrationGroupId): Integra
   return items.filter((i) => i.group === group)
 }
 
+/**
+ * IntegrationCard - компонент карточки интеграции
+ * 
+ * Функциональность:
+ * - Отображает информацию об интеграции
+ * - Переключатель активности
+ * - Кнопка настройки/подключения
+ * 
+ * Поведение:
+ * - При клике на переключатель активности вызывает onActiveChange
+ * - При клике на кнопку "Настроить"/"Подключить":
+ *   - Если есть href - переходит на страницу настройки
+ *   - Если allowsScopeChoice - открывает модальное окно выбора области
+ *   - Иначе показывает сообщение о разработке
+ * 
+ * @param item - объект интеграции
+ * @param isActive - текущее состояние активности
+ * @param onActiveChange - обработчик изменения активности
+ * @param onOpenScopeModal - обработчик открытия модального окна выбора области
+ */
 function IntegrationCard({
   item,
   isActive,
@@ -95,13 +115,29 @@ function IntegrationCard({
   onActiveChange: (value: boolean) => void
   onOpenScopeModal: (item: Integration) => void
 }) {
+  // Хук Next.js для программной навигации
   const router = useRouter()
+  // Флаг, является ли интеграция ИИ-интеграцией (для отображения специальной иконки)
   const isAi = ['gemini', 'openai', 'cloud-ai', 'n8n'].includes(item.id)
 
+  /**
+   * handleAction - обработчик клика на кнопку "Настроить"/"Подключить"
+   * 
+   * Функциональность:
+   * - Если у интеграции есть href - переходит на страницу настройки
+   * - Если интеграция позволяет выбрать область применения - открывает модальное окно
+   * - Иначе показывает сообщение о разработке
+   * 
+   * Поведение:
+   * - Вызывается при клике на кнопку действия
+   * - Определяет действие в зависимости от свойств интеграции
+   */
   const handleAction = () => {
     if (item.href) {
+      // Переход на страницу настройки интеграции
       router.push(item.href)
     } else if (item.allowsScopeChoice) {
+      // Открытие модального окна выбора области применения
       onOpenScopeModal(item)
     } else if (item.active) {
       /* настроить: пока нет страницы */
@@ -154,24 +190,73 @@ function IntegrationCard({
   )
 }
 
+/**
+ * IntegrationsSettingsPage - компонент страницы управления интеграциями
+ * 
+ * Состояние:
+ * - scopeModalItem: интеграция, для которой открыто модальное окно выбора области
+ * - integrationActive: объект с состоянием активности всех интеграций
+ * - selectedGroup: выбранная группа интеграций для фильтрации
+ */
 export default function IntegrationsSettingsPage() {
+  // Интеграция, для которой открыто модальное окно выбора области применения
   const [scopeModalItem, setScopeModalItem] = useState<Integration | null>(null)
+  // Объект с состоянием активности всех интеграций (ключ - ID интеграции, значение - активна/неактивна)
   const [integrationActive, setIntegrationActiveState] = useState<Record<string, boolean>>({})
+  // Выбранная группа интеграций для фильтрации ('all' - все группы)
   const [selectedGroup, setSelectedGroup] = useState<IntegrationGroupId>('all')
 
+  /**
+   * useEffect - загрузка состояния активности интеграций из localStorage при монтировании
+   * 
+   * Функциональность:
+   * - Загружает состояние активности каждой интеграции из localStorage
+   * - Использует значение по умолчанию из INTEGRATIONS, если в localStorage нет значения
+   * 
+   * Поведение:
+   * - Выполняется один раз при монтировании компонента
+   * - Восстанавливает состояние активности всех интеграций
+   */
   useEffect(() => {
     const next: Record<string, boolean> = {}
     INTEGRATIONS.forEach((i) => {
+      // Загружаем состояние из localStorage или используем значение по умолчанию
       next[i.id] = getIntegrationActive(i.id, i.active)
     })
     setIntegrationActiveState(next)
   }, [])
 
+  /**
+   * handleActiveChange - обработчик изменения активности интеграции
+   * 
+   * Функциональность:
+   * - Сохраняет новое состояние активности в localStorage
+   * - Обновляет состояние компонента
+   * 
+   * Поведение:
+   * - Вызывается при переключении Switch активности интеграции
+   * - Сохраняет состояние для восстановления при следующей загрузке
+   * 
+   * @param id - ID интеграции
+   * @param value - новое состояние активности (true/false)
+   */
   const handleActiveChange = (id: string, value: boolean) => {
+    // Сохраняем в localStorage для восстановления при следующей загрузке
     setIntegrationActive(id, value)
+    // Обновляем состояние компонента
     setIntegrationActiveState((prev) => ({ ...prev, [id]: value }))
   }
 
+  /**
+   * filtered - отфильтрованный список интеграций по выбранной группе
+   * 
+   * Функциональность:
+   * - Фильтрует интеграции по выбранной группе
+   * - Если selectedGroup === 'all' - возвращает все интеграции
+   * 
+   * Используется для:
+   * - Отображения только интеграций выбранной группы
+   */
   const filtered = filterByGroup(INTEGRATIONS, selectedGroup)
 
   return (

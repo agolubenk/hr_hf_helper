@@ -126,7 +126,8 @@ const Toast: React.FC<ToastProps> = ({
                 size="1"
                 variant={action.variant || 'soft'}
                 color={action.color || 'gray'}
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation() // Предотвращаем всплытие события, чтобы не закрывать модальные окна
                   action.onClick()
                   handleClose()
                 }}

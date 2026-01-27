@@ -1,8 +1,8 @@
 'use client'
 
 import AppLayout from '@/components/AppLayout'
-import { Box, Flex, Text, Button } from '@radix-ui/themes'
-import Link from 'next/link'
+import { Box, Flex, Text, Button, TextField, Separator } from '@radix-ui/themes'
+import { useState } from 'react'
 import styles from './telegram.module.css'
 
 /** Детерминированный паттерн, напоминающий QR: углы 7×7, полоса, часть ячеек */
@@ -50,21 +50,40 @@ function getQrPattern(): boolean[][] {
 const QR_PATTERN = getQrPattern()
 
 export default function TelegramLoginPage() {
+  // Номер телефона для входа
+  const [phoneNumber, setPhoneNumber] = useState('')
+
+  /**
+   * handlePhoneInput - обработчик ввода номера телефона
+   * 
+   * Функциональность:
+   * - Разрешает ввод только цифр, круглых скобок и знака +
+   * - Фильтрует недопустимые символы
+   * 
+   * @param value - введенное значение
+   */
+  const handlePhoneInput = (value: string) => {
+    // Разрешаем только цифры, круглые скобки и знак +
+    const filtered = value.replace(/[^0-9()+]/g, '')
+    setPhoneNumber(filtered)
+  }
+
+  /**
+   * handlePhoneLogin - обработчик входа по номеру телефона
+   * 
+   * Функциональность:
+   * - Отправляет запрос на вход по номеру телефона
+   * - TODO: Реализовать интеграцию с Telegram API
+   */
+  const handlePhoneLogin = () => {
+    if (!phoneNumber.trim()) return
+    // TODO: Реализовать вход по номеру телефона через Telegram API
+    console.log('Вход по номеру телефона:', phoneNumber)
+  }
+
   return (
     <AppLayout pageTitle="Telegram — Вход">
       <Box className={styles.container}>
-        <Flex className={styles.navTabs}>
-          <Link href="/telegram" className={`${styles.navTab} ${styles.navTabActive}`}>
-            Вход
-          </Link>
-          <Link href="/telegram/2fa" className={styles.navTab}>
-            2FA
-          </Link>
-          <Link href="/telegram/chats" className={styles.navTab}>
-            Чаты
-          </Link>
-        </Flex>
-
         <Box className={styles.card}>
           <Text size="4" weight="bold" style={{ display: 'block', marginBottom: 8 }}>
             Вход в Telegram
@@ -92,12 +111,35 @@ export default function TelegramLoginPage() {
             QR-код обновляется каждые 60 секунд
           </Text>
 
-          <Flex gap="3" mt="4" wrap="wrap">
-            <Button asChild>
-              <Link href="/telegram/2fa">Настройка 2FA</Link>
-            </Button>
-            <Button asChild variant="soft">
-              <Link href="/telegram/chats">Уже вошли? Перейти к чатам</Link>
+          {/* Разделитель */}
+          <Flex align="center" gap="3" my="4">
+            <Separator style={{ flex: 1 }} />
+            <Text size="2" color="gray">или</Text>
+            <Separator style={{ flex: 1 }} />
+          </Flex>
+
+          {/* Форма входа по номеру телефона */}
+          <Flex direction="column" gap="3" className={styles.phoneLoginForm}>
+            <Text size="3" weight="medium" style={{ textAlign: 'center' }}>
+              Войти по номеру телефона
+            </Text>
+            <TextField.Root
+              placeholder="+7 (999) 123-45-67"
+              value={phoneNumber}
+              onChange={(e) => handlePhoneInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handlePhoneLogin()
+                }
+              }}
+              style={{ width: '100%' }}
+            />
+            <Button 
+              onClick={handlePhoneLogin}
+              disabled={!phoneNumber.trim()}
+              style={{ width: '100%' }}
+            >
+              Войти
             </Button>
           </Flex>
         </Box>

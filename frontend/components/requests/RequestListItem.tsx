@@ -1,3 +1,41 @@
+/**
+ * RequestListItem (components/requests/RequestListItem.tsx) - Компонент элемента списка заявки на найм (режим "Список")
+ * 
+ * Назначение:
+ * - Отображение информации о заявке на найм в виде элемента списка
+ * - Используется в режиме отображения "Список" на странице заявок
+ * - Поддержка группировки нескольких заявок в один элемент списка
+ * 
+ * Функциональность:
+ * - Заголовок, статус, приоритет и ID заявки в первой строке
+ * - Информация об отделе, рекрутере, количестве кандидатов, дате и предупреждениях во второй строке
+ * - Кнопка разворота для отображения детальной таблицы (если есть данные)
+ * - Кнопки действий: просмотр и редактирование
+ * - Развернутая таблица с детальной информацией (для одной заявки или группы заявок)
+ * 
+ * Связи:
+ * - hiring-requests/page.tsx: используется в режиме отображения "Список"
+ * - hiring-requests/[id]/page.tsx: переход к детальному просмотру при клике
+ * - hiring-requests/[id]/edit/page.tsx: переход к редактированию при клике на кнопку редактирования
+ * - RequestTableRowExpanded: компонент строки развернутой таблицы
+ * 
+ * Поведение:
+ * - При клике на элемент списка (если передан onClick) - переход к детальному просмотру
+ * - При клике на кнопку разворота - раскрывает/сворачивает детальную таблицу
+ * - При клике на кнопку просмотра - переход к детальному просмотру
+ * - При клике на кнопку редактирования - переход к редактированию
+ * - stopPropagation предотвращает всплытие событий от кнопок к элементу списка
+ * 
+ * Группировка заявок:
+ * - Если передано несколько заявок (requests), они отображаются в одной таблице
+ * - Таблица развернута по умолчанию для группы заявок
+ * - Каждая заявка в группе отображается отдельной строкой в таблице
+ * 
+ * Отличия от RequestCard:
+ * - Горизонтальное расположение информации (вместо вертикального)
+ * - Компактное отображение (все в одной строке)
+ * - Поддержка развернутой таблицы с детальной информацией
+ */
 'use client'
 
 import { Box, Flex, Text, Button, Table } from "@radix-ui/themes"
@@ -7,6 +45,23 @@ import { useRouter } from "next/navigation"
 import RequestTableRowExpanded from "./RequestTableRowExpanded"
 import styles from './RequestListItem.module.css'
 
+/**
+ * Request - интерфейс данных заявки на найм
+ * 
+ * Структура:
+ * - id: уникальный идентификатор заявки
+ * - title: название заявки
+ * - status: статус заявки
+ * - department: отдел
+ * - recruiter: имя рекрутера
+ * - priority: приоритет заявки
+ * - technologies: массив технологий
+ * - candidates: количество кандидатов
+ * - date: дата заявки (опционально)
+ * - hasWarning: флаг наличия предупреждения
+ * - warningText: текст предупреждения (опционально)
+ * - Дополнительные поля для таблицы (опционально): grade, project, recruiterDays, statusDate, startDate, endDate, isOverdue, factDays, slaDays, slaStatus, t2hDays, t2hSlaDays, candidate
+ */
 interface Request {
   id: number
   title: string
@@ -38,6 +93,15 @@ interface Request {
   }
 }
 
+/**
+ * RequestListItemProps - интерфейс пропсов компонента RequestListItem
+ * 
+ * Структура:
+ * - request: данные заявки для отображения (основная заявка)
+ * - onClick: обработчик клика на элемент списка (переход к детальному просмотру)
+ * - requestsCount: количество заявок в группе (опционально)
+ * - requests: массив заявок для группировки (опционально, если передано - отображаются все в таблице)
+ */
 interface RequestListItemProps {
   request: Request
   onClick?: () => void
@@ -45,12 +109,33 @@ interface RequestListItemProps {
   requests?: Request[]
 }
 
+/**
+ * RequestListItem - компонент элемента списка заявки на найм
+ * 
+ * Состояние:
+ * - isExpanded: флаг раскрытости детальной таблицы
+ * 
+ * Функциональность:
+ * - Отображает информацию о заявке в виде элемента списка
+ * - Поддерживает группировку нескольких заявок
+ * - Управляет раскрытием/сворачиванием детальной таблицы
+ */
 export default function RequestListItem({ request, onClick, requestsCount, requests }: RequestListItemProps) {
   const router = useRouter()
   // Если переданы несколько заявок, показываем их в таблице (развернута по умолчанию)
   const hasMultipleRequests = requests && requests.length > 1
+  // Флаг раскрытости детальной таблицы (по умолчанию развернута для группы заявок)
   const [isExpanded, setIsExpanded] = useState(hasMultipleRequests || false)
 
+  /**
+   * getStatusLabel - получение текстового представления статуса
+   * 
+   * Функциональность:
+   * - Преобразует код статуса в читаемый текст
+   * 
+   * @param status - код статуса
+   * @returns текстовое представление статуса
+   */
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'planned': return 'Планируется'
@@ -61,6 +146,15 @@ export default function RequestListItem({ request, onClick, requestsCount, reque
     }
   }
 
+  /**
+   * getPriorityLabel - получение текстового представления приоритета
+   * 
+   * Функциональность:
+   * - Преобразует код приоритета в читаемый текст
+   * 
+   * @param priority - код приоритета
+   * @returns текстовое представление приоритета
+   */
   const getPriorityLabel = (priority: string) => {
     switch (priority) {
       case 'high': return 'Высокий'
@@ -70,8 +164,26 @@ export default function RequestListItem({ request, onClick, requestsCount, reque
     }
   }
 
+  /**
+   * hasTableData - проверка наличия данных для детальной таблицы
+   * 
+   * Функциональность:
+   * - Проверяет наличие всех необходимых полей для отображения детальной таблицы
+   * 
+   * Используется для:
+   * - Определения, нужно ли показывать кнопку разворота и таблицу
+   */
   const hasTableData = request.grade && request.startDate && request.endDate && request.factDays && request.slaDays
-  // Показываем кнопку разворота если есть данные для таблицы (для одиночных заявок) или если это группа заявок
+  /**
+   * shouldShowExpandButton - определение необходимости показа кнопки разворота
+   * 
+   * Функциональность:
+   * - Показываем кнопку разворота если есть данные для таблицы (для одиночных заявок)
+   * - Или если это группа заявок и хотя бы у одной есть данные для таблицы
+   * 
+   * Используется для:
+   * - Условного отображения кнопки разворота детальной таблицы
+   */
   const shouldShowExpandButton = hasTableData || (hasMultipleRequests && requests && requests.some(r => r.grade && r.startDate && r.endDate && r.factDays && r.slaDays))
 
   return (

@@ -1,3 +1,38 @@
+/**
+ * OfferTemplatePage (company-settings/recruiting/offer-template/page.tsx) - Страница управления шаблоном оффера
+ * 
+ * Назначение:
+ * - Управление шаблоном оффера для кандидатов
+ * - Загрузка шаблона в форматах DOCX, PPTX, Figma
+ * - Настройка переменных для подстановки в шаблон
+ * - Предпросмотр шаблона с подставленными значениями
+ * 
+ * Функциональность:
+ * - Загрузка файла шаблона (drag & drop или выбор файла)
+ * - Поддержка форматов: .docx, .pptx, .figma
+ * - Предпросмотр DOCX и PPTX файлов в браузере
+ * - Настройка переменных для подстановки в шаблон
+ * - Автоматическое масштабирование предпросмотра под размер контейнера
+ * - Модальное окно предпросмотра для мобильных устройств
+ * - Подстановка значений переменных в предпросмотр
+ * 
+ * Связи:
+ * - AppLayout: оборачивает страницу в общий layout
+ * - useToast: для отображения уведомлений
+ * - mammoth.js: библиотека для конвертации DOCX в HTML
+ * - JSZip: библиотека для парсинга PPTX файлов
+ * - Sidebar: содержит ссылку на эту страницу в разделе "Настройки рекрутинга"
+ * 
+ * Поведение:
+ * - При загрузке файла автоматически генерируется предпросмотр
+ * - При изменении переменных обновляется предпросмотр
+ * - На мобильных устройствах предпросмотр открывается в модальном окне
+ * - Переменные в шаблоне должны быть в формате {variable_name}
+ * 
+ * TODO: Реализовать сохранение шаблона на сервер
+ * TODO: Реализовать обработку Figma файлов на сервере
+ */
+
 'use client'
 
 import AppLayout from "@/components/AppLayout"
@@ -7,7 +42,15 @@ import { useState, useEffect, useRef } from "react"
 import { useToast } from "@/components/Toast/ToastContext"
 import styles from '../../company-settings.module.css'
 
-// Динамический импорт библиотек для предпросмотра
+/**
+ * Динамический импорт библиотек для предпросмотра файлов
+ * 
+ * mammoth: библиотека для конвертации DOCX в HTML
+ * pptx2html: библиотека для конвертации PPTX в HTML (не используется, парсим вручную через JSZip)
+ * 
+ * Загружаются динамически только в браузере (typeof window !== 'undefined')
+ * для уменьшения размера бандла и поддержки SSR
+ */
 let mammoth: any = null
 let pptx2html: any = null
 
@@ -35,6 +78,15 @@ if (typeof window !== 'undefined') {
   }
 }
 
+/**
+ * Variable - интерфейс переменной для подстановки в шаблон
+ * 
+ * Структура:
+ * - key: ключ переменной в формате {variable_name}
+ * - value: значение переменной для подстановки
+ * - category: категория переменной (для группировки)
+ * - label: отображаемое название переменной
+ */
 interface Variable {
   key: string
   value: string
@@ -42,6 +94,15 @@ interface Variable {
   label: string
 }
 
+/**
+ * VariableOption - интерфейс опции переменной из списка доступных
+ * 
+ * Структура:
+ * - key: ключ переменной в формате {variable_name}
+ * - label: отображаемое название переменной
+ * - category: категория переменной
+ * - defaultValue: значение по умолчанию для переменной
+ */
 interface VariableOption {
   key: string
   label: string
@@ -49,6 +110,21 @@ interface VariableOption {
   defaultValue: string
 }
 
+/**
+ * AVAILABLE_VARIABLES - список доступных переменных для подстановки в шаблон
+ * 
+ * Категории переменных:
+ * - Компания и вакансия: информация о компании и вакансии
+ * - Условия оффера: зарплата, бонусы, условия работы
+ * - Кандидат: информация о кандидате
+ * - Рекрутер: контакты рекрутера
+ * - Системные: системные переменные (дата формирования и т.д.)
+ * 
+ * Используется для:
+ * - Отображения списка доступных переменных при добавлении
+ * - Предзаполнения значений по умолчанию
+ * - Группировки переменных по категориям
+ */
 const AVAILABLE_VARIABLES: VariableOption[] = [
   // Компания и вакансия
   { key: '{company_name}', label: 'Название компании', category: 'Компания и вакансия', defaultValue: 'ООО "Компания"' },
@@ -79,13 +155,45 @@ const AVAILABLE_VARIABLES: VariableOption[] = [
   { key: '{generation_date}', label: 'Дата формирования', category: 'Системные', defaultValue: new Date().toLocaleDateString('ru-RU') },
 ]
 
+/**
+ * OfferTemplatePage - компонент страницы управления шаблоном оффера
+ * 
+ * Состояние:
+ * - templateFile: загруженный файл шаблона
+ * - isDragging: флаг перетаскивания файла (для визуальной обратной связи)
+ * - previewContent: HTML содержимое предпросмотра
+ * - previewLoading: флаг загрузки предпросмотра
+ * - previewError: ошибка при обработке файла
+ * - variables: массив переменных для подстановки в шаблон
+ * - selectedVariableKey: выбранная переменная для добавления
+ * - newVariableValue: значение новой переменной
+ * - isMobilePreviewOpen: флаг открытия модального окна предпросмотра на мобильных
+ * - fileType: тип загруженного файла ('docx', 'pptx', 'figma')
+ * - isMobile: флаг определения мобильного устройства
+ */
 export default function OfferTemplatePage() {
+  // Хук для отображения уведомлений
   const toast = useToast()
+  // Загруженный файл шаблона (DOCX, PPTX или Figma)
   const [templateFile, setTemplateFile] = useState<File | null>(null)
+  // Флаг перетаскивания файла (для визуальной обратной связи при drag & drop)
   const [isDragging, setIsDragging] = useState(false)
+  // HTML содержимое предпросмотра шаблона
   const [previewContent, setPreviewContent] = useState<string>('')
+  // Флаг загрузки предпросмотра (показывает индикатор загрузки)
   const [previewLoading, setPreviewLoading] = useState(false)
+  // Ошибка при обработке файла (отображается в предпросмотре)
   const [previewError, setPreviewError] = useState<string | null>(null)
+  /**
+   * variables - массив переменных для подстановки в шаблон
+   * 
+   * Инициализируется с предустановленными переменными:
+   * - company_name, vacancy_name: информация о компании и вакансии
+   * - candidate_name: имя кандидата
+   * - salary_before_tax, currency: условия оффера
+   * - start_date: дата старта работы
+   * - generation_date: дата формирования оффера
+   */
   const [variables, setVariables] = useState<Variable[]>([
     { key: '{company_name}', value: 'ООО "Компания"', category: 'Компания и вакансия', label: 'Название компании' },
     { key: '{vacancy_name}', value: 'Frontend Developer', category: 'Компания и вакансия', label: 'Название вакансии' },
@@ -95,13 +203,25 @@ export default function OfferTemplatePage() {
     { key: '{start_date}', value: '01.02.2026', category: 'Кандидат', label: 'Дата старта' },
     { key: '{generation_date}', value: new Date().toLocaleDateString('ru-RU'), category: 'Системные', label: 'Дата формирования' },
   ])
+  // Выбранная переменная из списка доступных для добавления
   const [selectedVariableKey, setSelectedVariableKey] = useState<string>('')
+  // Значение новой переменной при добавлении
   const [newVariableValue, setNewVariableValue] = useState('')
+  // Флаг открытия модального окна предпросмотра на мобильных устройствах
   const [isMobilePreviewOpen, setIsMobilePreviewOpen] = useState(false)
+  // Тип загруженного файла: 'docx', 'pptx' или 'figma'
   const [fileType, setFileType] = useState<'docx' | 'pptx' | 'figma' | null>(null)
+  // Ref для контейнера предпросмотра (используется для автоматического масштабирования)
   const previewContainerRef = useRef<HTMLDivElement>(null)
   
-  // Определяем, мобильное ли устройство
+  /**
+   * isMobile - флаг определения мобильного устройства
+   * 
+   * Используется для:
+   * - Адаптации интерфейса под мобильные устройства
+   * - Открытия предпросмотра в модальном окне на мобильных
+   * - Изменения раскладки (вертикальная вместо горизонтальной)
+   */
   const [isMobile, setIsMobile] = useState(false)
   
   useEffect(() => {

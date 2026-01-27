@@ -1,3 +1,35 @@
+/**
+ * WorkflowHeader (components/workflow/WorkflowHeader.tsx) - Заголовок страницы workflow (скрининг/интервью)
+ * 
+ * Назначение:
+ * - Управление процессом скрининга и интервью
+ * - Выбор типа процесса (скрининг/интервью)
+ * - Выбор вакансии
+ * - Настройка параметров интервью (формат, интервьюеры, офис)
+ * - Быстрые действия (ссылки на коммуникацию, календарь, вакансия, слоты)
+ * 
+ * Функциональность:
+ * - Быстрые кнопки: ссылки на коммуникацию (Telegram, WhatsApp, Viber, LinkedIn, Email)
+ * - Тогглер типа процесса: Скрининг (30 мин) / Интервью (90 мин)
+ * - Выбор вакансии: выпадающий список с вакансиями
+ * - Выбор офиса: тогглер офисов (Минск, Варшава, Гомель)
+ * - Кнопки управления: Календарь, Вакансия, Свободные слоты, Обновить
+ * - Настройки интервью (только для типа "Интервью"):
+ *   - Формат интервью: Онлайн / Офис
+ *   - Выбор интервьюеров: чекбоксы для выбора нескольких интервьюеров
+ * 
+ * Связи:
+ * - workflow/page.tsx: используется на странице workflow
+ * - SlotsPanel: открывается при клике на кнопку "слоты"
+ * - Google Calendar: переход к календарю
+ * - Huntflow: переход к вакансии
+ * 
+ * Поведение:
+ * - При выборе типа процесса обновляет интерфейс
+ * - При выборе "Интервью" показывает панель настроек интервью
+ * - При клике на "слоты" открывает/закрывает панель слотов
+ * - Быстрые кнопки открывают соответствующие сервисы в новой вкладке
+ */
 'use client'
 
 import { Flex, Box, Text, Button, Select, Checkbox, Separator } from "@radix-ui/themes"
@@ -16,46 +48,126 @@ import {
 import { useState } from "react"
 import styles from './WorkflowHeader.module.css'
 
+/**
+ * WorkflowHeaderProps - интерфейс пропсов компонента WorkflowHeader
+ * 
+ * Структура:
+ * - onSlotsClick: обработчик клика на кнопку "слоты" (открытие/закрытие панели слотов)
+ * - slotsOpen: флаг открытости панели слотов
+ */
 interface WorkflowHeaderProps {
   onSlotsClick: () => void
   slotsOpen: boolean
 }
 
+/**
+ * WorkflowType - тип процесса workflow
+ * 
+ * Варианты:
+ * - 'screening': скрининг (30 минут)
+ * - 'interview': интервью (90 минут)
+ */
 type WorkflowType = 'screening' | 'interview'
+
+/**
+ * InterviewFormat - формат интервью
+ * 
+ * Варианты:
+ * - 'online': онлайн интервью
+ * - 'office': офисное интервью
+ */
 type InterviewFormat = 'online' | 'office'
 
+/**
+ * Interviewer - интерфейс интервьюера
+ * 
+ * Структура:
+ * - id: уникальный идентификатор интервьюера
+ * - name: имя интервьюера
+ */
 interface Interviewer {
   id: string
   name: string
 }
 
+/**
+ * Office - тип офиса
+ * 
+ * Варианты:
+ * - 'minsk': Минск
+ * - 'warsaw': Варшава
+ * - 'gomel': Гомель
+ */
 type Office = 'minsk' | 'warsaw' | 'gomel'
 
+/**
+ * WorkflowHeader - компонент заголовка страницы workflow
+ * 
+ * Состояние:
+ * - selectedWorkflow: выбранный тип процесса (скрининг/интервью)
+ * - selectedVacancy: выбранная вакансия
+ * - interviewFormat: формат интервью (онлайн/офис)
+ * - selectedInterviewers: массив ID выбранных интервьюеров
+ * - selectedOffice: выбранный офис
+ * 
+ * Функциональность:
+ * - Управление типом процесса и настройками
+ */
 export default function WorkflowHeader({ onSlotsClick, slotsOpen }: WorkflowHeaderProps) {
+  // Выбранный тип процесса (по умолчанию 'screening' - скрининг)
   const [selectedWorkflow, setSelectedWorkflow] = useState<WorkflowType>('screening')
+  // Выбранная вакансия (по умолчанию 'frontend-react')
   const [selectedVacancy, setSelectedVacancy] = useState('frontend-react')
+  // Формат интервью (по умолчанию 'online' - онлайн)
   const [interviewFormat, setInterviewFormat] = useState<InterviewFormat>('online')
+  // Массив ID выбранных интервьюеров
   const [selectedInterviewers, setSelectedInterviewers] = useState<string[]>([])
+  // Выбранный офис (по умолчанию 'minsk' - Минск)
   const [selectedOffice, setSelectedOffice] = useState<Office>('minsk')
 
-  // Моковые данные интервьюеров
+  /**
+   * interviewers - моковые данные интервьюеров
+   * 
+   * Используется для:
+   * - Выбора интервьюеров при настройке интервью
+   * 
+   * TODO: Загружать из API
+   */
   const interviewers: Interviewer[] = [
     { id: '1', name: 'Иван Петров' },
     { id: '2', name: 'Мария Сидорова' },
     { id: '3', name: 'Алексей Иванов' },
   ]
 
+  /**
+   * offices - список офисов
+   * 
+   * Используется для:
+   * - Выбора офиса при настройке интервью
+   */
   const offices: { id: Office; label: string }[] = [
     { id: 'minsk', label: 'Минск' },
     { id: 'warsaw', label: 'Варшава' },
     { id: 'gomel', label: 'Гомель' },
   ]
 
+  /**
+   * handleInterviewerToggle - обработчик переключения выбора интервьюера
+   * 
+   * Функциональность:
+   * - Добавляет/удаляет интервьюера из списка выбранных
+   * 
+   * Поведение:
+   * - Если интервьюер уже выбран - удаляет его из списка
+   * - Если интервьюер не выбран - добавляет его в список
+   * 
+   * @param interviewerId - ID интервьюера для переключения
+   */
   const handleInterviewerToggle = (interviewerId: string) => {
     setSelectedInterviewers(prev =>
       prev.includes(interviewerId)
-        ? prev.filter(id => id !== interviewerId)
-        : [...prev, interviewerId]
+        ? prev.filter(id => id !== interviewerId) // Удаляем если уже выбран
+        : [...prev, interviewerId] // Добавляем если не выбран
     )
   }
 

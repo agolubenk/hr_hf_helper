@@ -1,3 +1,42 @@
+/**
+ * SalaryRangesPage (vacancies/salary-ranges/page.tsx) - Страница управления зарплатными вилками
+ * 
+ * Назначение:
+ * - Управление зарплатными вилками для вакансий
+ * - Создание, редактирование и удаление зарплатных вилок
+ * - Импорт/экспорт зарплатных вилок в Excel
+ * - Фильтрация и поиск зарплатных вилок
+ * 
+ * Функциональность:
+ * - SalaryRangesSearchFilters: поиск и фильтры по вакансии, грейду, статусу
+ * - SalaryRangesStats: статистика по зарплатным вилкам
+ * - SalaryRangeCard: карточка зарплатной вилки (режим "Карточки")
+ * - SalaryRangeListItem: элемент списка зарплатной вилки (режим "Список")
+ * - CreateSalaryRangeModal: модальное окно создания новой зарплатной вилки
+ * - SalaryRangeDetailModal: модальное окно детального просмотра/редактирования
+ * - Переключатель режима отображения: "Карточки", "Список", "Таблица"
+ * - Импорт/экспорт Excel через кнопки
+ * - Обработка редиректа с /vacancies/salary-ranges/[id] через параметр ?detail=
+ * 
+ * Связи:
+ * - AppLayout: оборачивает страницу в общий layout
+ * - useSearchParams: получение параметра ?detail= из URL для открытия модального окна
+ * - vacancies/salary-ranges/[id]/page.tsx: редирект на эту страницу с параметром ?detail=
+ * - XLSX: библиотека для работы с Excel файлами
+ * 
+ * Поведение:
+ * - При загрузке отображает все зарплатные вилки
+ * - Фильтрует вилки по поисковому запросу, вакансии, грейду и статусу (активна/неактивна)
+ * - В режиме "Карточки" отображает вилки в виде карточек
+ * - В режиме "Список" отображает вилки в виде списка
+ * - В режиме "Таблица" отображает вилки в виде таблицы
+ * - При клике на вилку открывает модальное окно детального просмотра
+ * - При экспорте создает Excel файл с данными вилок
+ * - При импорте читает Excel файл и обновляет/добавляет вилки
+ * 
+ * TODO: Заменить моковые данные на реальные из API
+ */
+
 'use client'
 
 import AppLayout from "@/components/AppLayout"
@@ -14,7 +53,20 @@ import { useSearchParams } from "next/navigation"
 import * as XLSX from 'xlsx'
 import styles from './salary-ranges.module.css'
 
-// Моковые данные зарплатных вилок
+/**
+ * mockSalaryRanges - моковые данные зарплатных вилок
+ * 
+ * Структура зарплатной вилки:
+ * - id: уникальный идентификатор вилки
+ * - vacancyId: ID вакансии в Huntflow
+ * - vacancyName: название вакансии
+ * - grade: грейд (Junior, Middle, Senior и т.д.)
+ * - salaryUsd, salaryByn, salaryPln, salaryEur: зарплатные вилки в разных валютах (min, max)
+ * - isActive: флаг активности вилки
+ * - updatedAt: дата последнего обновления
+ * 
+ * TODO: Заменить на реальные данные из API
+ */
 const mockSalaryRanges = [
   {
     id: 1,
@@ -126,24 +178,63 @@ const mockSalaryRanges = [
   },
 ]
 
+/**
+ * SalaryRangesPageContent - основной компонент содержимого страницы зарплатных вилок
+ * 
+ * Состояние:
+ * - viewMode: режим отображения ('cards', 'list', 'table')
+ * - searchQuery: поисковый запрос
+ * - selectedVacancy: выбранная вакансия для фильтрации ('all' - все)
+ * - selectedGrade: выбранный грейд для фильтрации ('all' - все)
+ * - activeTab: активная вкладка ('active', 'inactive', 'all')
+ * - isCreateModalOpen: флаг открытия модального окна создания вилки
+ * - salaryRanges: массив всех зарплатных вилок
+ * - selectedRange: выбранная вилка для детального просмотра
+ */
 function SalaryRangesPageContent() {
+  // Получение параметров из URL
   const searchParams = useSearchParams()
+  // Режим отображения: 'cards' - карточки, 'list' - список, 'table' - таблица
   const [viewMode, setViewMode] = useState<'cards' | 'list' | 'table'>('cards')
+  // Поисковый запрос для фильтрации вилок
   const [searchQuery, setSearchQuery] = useState('')
+  // Выбранная вакансия для фильтрации ('all' - все вакансии)
   const [selectedVacancy, setSelectedVacancy] = useState('all')
+  // Выбранный грейд для фильтрации ('all' - все грейды)
   const [selectedGrade, setSelectedGrade] = useState('all')
+  // Активная вкладка: 'active' - только активные, 'inactive' - только неактивные, 'all' - все
   const [activeTab, setActiveTab] = useState<'active' | 'inactive' | 'all'>('active')
+  // Флаг открытия модального окна создания зарплатной вилки
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  // Массив всех зарплатных вилок
   const [salaryRanges, setSalaryRanges] = useState(mockSalaryRanges)
+  // Выбранная вилка для детального просмотра в модальном окне
   const [selectedRange, setSelectedRange] = useState<typeof mockSalaryRanges[0] | null>(null)
+  // Ref для скрытого input элемента для импорта Excel
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Открыть модалку по ?detail=id (редирект с /vacancies/salary-ranges/[id])
+  /**
+   * useEffect - открытие модального окна детального просмотра по параметру ?detail=
+   * 
+   * Функциональность:
+   * - Обрабатывает редирект с /vacancies/salary-ranges/[id]
+   * - Находит вилку по ID из параметра ?detail=
+   * - Открывает модальное окно детального просмотра
+   * 
+   * Поведение:
+   * - Выполняется при изменении searchParams или salaryRanges
+   * - Если параметр ?detail= присутствует - находит вилку и открывает модальное окно
+   * - Используется для глубоких ссылок на конкретную вилку
+   * 
+   * Связи:
+   * - vacancies/salary-ranges/[id]/page.tsx: выполняет редирект на эту страницу с параметром ?detail=
+   */
   useEffect(() => {
     const detailId = searchParams.get('detail')
     if (!detailId) return
     const id = parseInt(detailId, 10)
     if (isNaN(id)) return
+    // Находим вилку по ID и открываем модальное окно
     const r = salaryRanges.find((x) => x.id === id)
     if (r) setSelectedRange(r)
   }, [searchParams, salaryRanges])

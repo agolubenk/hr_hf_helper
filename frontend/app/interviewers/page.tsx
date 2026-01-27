@@ -1,3 +1,42 @@
+/**
+ * InterviewersPage (interviewers/page.tsx) - Страница управления интервьюерами
+ * 
+ * Назначение:
+ * - Управление базой интервьюеров компании
+ * - Добавление, редактирование и удаление интервьюеров
+ * - Активация/деактивация интервьюеров
+ * - Просмотр календарей интервьюеров
+ * - Поиск и фильтрация интервьюеров
+ * - Пагинация списка интервьюеров
+ * 
+ * Функциональность:
+ * - Список всех интервьюеров в таблице
+ * - Поиск интервьюеров по имени, фамилии, email
+ * - Пагинация с настраиваемым количеством элементов на странице
+ * - Форма добавления нового интервьюера
+ * - Форма редактирования интервьюера (inline в таблице)
+ * - Удаление интервьюера с подтверждением
+ * - Активация/деактивация интервьюера через Switch
+ * - Копирование ссылки на календарь интервьюера
+ * - Открытие календаря интервьюера в новой вкладке
+ * 
+ * Связи:
+ * - AppLayout: оборачивает страницу в общий layout
+ * - useToast: для отображения уведомлений (подтверждение удаления, успешное копирование)
+ * - Sidebar: содержит ссылку на эту страницу в разделе "Рекрутинг"
+ * - Google Calendar: ссылки на календари интервьюеров
+ * 
+ * Поведение:
+ * - При загрузке загружает список интервьюеров
+ * - При поиске фильтрует интервьюеров по введенному запросу
+ * - При добавлении интервьюера показывает форму, при сохранении скрывает её
+ * - При редактировании интервьюера открывает inline-редактирование в таблице
+ * - При удалении показывает подтверждение через toast
+ * - При копировании ссылки на календарь копирует в буфер обмена и показывает уведомление
+ * 
+ * TODO: Заменить моковые данные на реальные из API
+ */
+
 'use client'
 
 import AppLayout from "@/components/AppLayout"
@@ -7,6 +46,19 @@ import { useToast } from "@/components/Toast/ToastContext"
 import { MagnifyingGlassIcon, Pencil1Icon, TrashIcon, CalendarIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon, PersonIcon, EnvelopeClosedIcon, CopyIcon, BarChartIcon, GearIcon, PlusIcon, ArrowLeftIcon, CheckCircledIcon } from "@radix-ui/react-icons"
 import styles from './interviewers.module.css'
 
+/**
+ * Interviewer - интерфейс интервьюера
+ * 
+ * Структура:
+ * - id: уникальный идентификатор интервьюера
+ * - firstName: имя интервьюера
+ * - lastName: фамилия интервьюера
+ * - middleName: отчество интервьюера (опционально)
+ * - email: email интервьюера
+ * - isActive: флаг активности интервьюера
+ * - createdAt: дата добавления интервьюера
+ * - calendarLink: ссылка на календарь интервьюера в Google Calendar (опционально)
+ */
 interface Interviewer {
   id: number
   firstName: string
@@ -18,7 +70,19 @@ interface Interviewer {
   calendarLink?: string
 }
 
-// Моковые данные интервьюеров
+/**
+ * mockInterviewers - моковые данные интервьюеров
+ * 
+ * Структура каждого интервьюера:
+ * - id: уникальный идентификатор
+ * - firstName, lastName, middleName: ФИО
+ * - email: email интервьюера
+ * - isActive: флаг активности
+ * - createdAt: дата создания записи
+ * - calendarLink: ссылка на Google Calendar интервьюера
+ * 
+ * TODO: Заменить на реальные данные из API
+ */
 const mockInterviewers: Interviewer[] = [
   {
     id: 1,

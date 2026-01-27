@@ -1,3 +1,36 @@
+/**
+ * WorkflowSidebar (components/workflow/WorkflowSidebar.tsx) - Боковая панель страницы workflow
+ * 
+ * Назначение:
+ * - Отображение отчетов по последним неделям
+ * - Быстрый доступ к вики
+ * - Быстрые действия для коммуникации (Telegram, WhatsApp, Viber, LinkedIn, Email)
+ * 
+ * Функциональность:
+ * - Кнопка "Вики": открытие вики в новой вкладке
+ * - Отчеты последних недель: раскрывающиеся секции с таблицами этапов
+ *   - Текущая неделя: статистика по этапам за текущую неделю
+ *   - Предыдущая неделя: статистика по этапам за предыдущую неделю
+ * - Быстрые действия: карточки для быстрого доступа к коммуникации
+ *   - Telegram: несколько аккаунтов
+ *   - WhatsApp: несколько номеров
+ *   - Viber: несколько номеров
+ *   - LinkedIn: несколько профилей
+ *   - Email: несколько адресов
+ * 
+ * Связи:
+ * - workflow/page.tsx: отображается на странице workflow
+ * - wiki/page.tsx: переход к вики при клике на кнопку
+ * - Внешние сервисы: открытие в новой вкладке при клике на карточки
+ * 
+ * Поведение:
+ * - При клике на "Вики" открывает вики в новой вкладке
+ * - При клике на секцию отчета раскрывает/сворачивает её
+ * - При открытии одной недели автоматически закрывает другую
+ * - При клике на карточку быстрого действия открывает соответствующий сервис в новой вкладке
+ * 
+ * TODO: Загружать данные отчетов из API
+ */
 'use client'
 
 import { Box, Text, Flex, Button, Table } from "@radix-ui/themes"
@@ -5,15 +38,51 @@ import { ChevronDownIcon, CalendarIcon, ChevronUpIcon, OpenInNewWindowIcon, Pape
 import { useState } from "react"
 import styles from './WorkflowSidebar.module.css'
 
+/**
+ * WorkflowSidebar - компонент боковой панели страницы workflow
+ * 
+ * Состояние:
+ * - reportsExpanded: флаг раскрытости секции "Отчеты последних недель"
+ * - currentWeekExpanded: флаг раскрытости секции "Текущая неделя"
+ * - previousWeekExpanded: флаг раскрытости секции "Предыдущая неделя"
+ * 
+ * Функциональность:
+ * - Управление раскрытием/сворачиванием секций отчетов
+ * - Отображение таблиц статистики по этапам
+ */
 export default function WorkflowSidebar() {
+  // Флаг раскрытости секции "Отчеты последних недель" (по умолчанию раскрыта)
   const [reportsExpanded, setReportsExpanded] = useState(true)
+  // Флаг раскрытости секции "Текущая неделя" (по умолчанию свернута)
   const [currentWeekExpanded, setCurrentWeekExpanded] = useState(false)
+  // Флаг раскрытости секции "Предыдущая неделя" (по умолчанию свернута)
   const [previousWeekExpanded, setPreviousWeekExpanded] = useState(false)
 
+  /**
+   * handleWikiClick - обработчик клика на кнопку "Вики"
+   * 
+   * Функциональность:
+   * - Открывает страницу вики в новой вкладке
+   * 
+   * Поведение:
+   * - Вызывается при клике на кнопку "Вики"
+   * - Открывает /wiki в новой вкладке браузера
+   */
   const handleWikiClick = () => {
     window.open('/wiki', '_blank')
   }
 
+  /**
+   * handleCurrentWeekClick - обработчик клика на секцию "Текущая неделя"
+   * 
+   * Функциональность:
+   * - Переключает раскрытость секции "Текущая неделя"
+   * - Закрывает секцию "Предыдущая неделя" при открытии текущей
+   * 
+   * Поведение:
+   * - Инвертирует состояние currentWeekExpanded
+   * - Если открываем текущую неделю - закрываем предыдущую
+   */
   const handleCurrentWeekClick = () => {
     const newState = !currentWeekExpanded
     setCurrentWeekExpanded(newState)
@@ -23,6 +92,17 @@ export default function WorkflowSidebar() {
     }
   }
 
+  /**
+   * handlePreviousWeekClick - обработчик клика на секцию "Предыдущая неделя"
+   * 
+   * Функциональность:
+   * - Переключает раскрытость секции "Предыдущая неделя"
+   * - Закрывает секцию "Текущая неделя" при открытии предыдущей
+   * 
+   * Поведение:
+   * - Инвертирует состояние previousWeekExpanded
+   * - Если открываем предыдущую неделю - закрываем текущую
+   */
   const handlePreviousWeekClick = () => {
     const newState = !previousWeekExpanded
     setPreviousWeekExpanded(newState)
@@ -32,7 +112,18 @@ export default function WorkflowSidebar() {
     }
   }
 
-  // Данные для таблиц
+  /**
+   * stages - данные для таблиц отчетов
+   * 
+   * Структура:
+   * - stage: название этапа найма
+   * - count: количество кандидатов на этом этапе
+   * 
+   * Используется для:
+   * - Отображения статистики по этапам в таблицах отчетов
+   * 
+   * TODO: Загружать из API
+   */
   const stages = [
     { stage: 'HR-screening', count: 0 },
     { stage: 'Tech Screening', count: 0 },

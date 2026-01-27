@@ -35,10 +35,10 @@ body[data-theme="light"] .radix-themes,
 .radix-themes[data-appearance="light"] {
   background-color: #ffffff;
 }
-/* === Z-index: меню 3000, тосты 3001 (меню+1), модалки < тостов (≤2000) === */
+/* === Z-index: меню 3000, тосты 10000 (выше всех), модалки < тостов (≤2000) === */
 :root {
   --z-menu: 3000;
-  --z-toasts: 3001;
+  --z-toasts: 10000;
   --z-modals: 2000;
 }
 
@@ -54,11 +54,26 @@ body [data-radix-select-viewport] {
   overflow-y: auto;
 }
 
-/* Модалки: Radix Dialog — строго ниже тостов (2000 < 3001) */
+/* Модалки: Radix Dialog — строго ниже тостов (2000 < 10000) */
 [data-radix-dialog-overlay],
 [data-radix-dialog-content],
 .rt-DialogOverlay,
-.rt-DialogContent {
+.rt-DialogContent,
+div[data-radix-dialog-overlay],
+div[data-radix-dialog-content] {
+  z-index: 2000 !important;
+}
+
+/* Убеждаемся, что все порталы Dialog имеют правильный z-index */
+body > [data-radix-portal] [data-radix-dialog-overlay],
+body > [data-radix-portal] [data-radix-dialog-content],
+[data-radix-portal] [data-radix-dialog-overlay],
+[data-radix-portal] [data-radix-dialog-content] {
+  z-index: 2000 !important;
+}
+
+/* Убеждаемся, что порталы Dialog сами не перекрывают тосты */
+[data-radix-portal] {
   z-index: 2000 !important;
 }
 

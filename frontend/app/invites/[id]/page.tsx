@@ -1,3 +1,44 @@
+/**
+ * InviteDetailPage (invites/[id]/page.tsx) - Страница детального просмотра инвайта
+ * 
+ * Назначение:
+ * - Отображение полной информации об инвайте на интервью
+ * - Просмотр данных кандидата, вакансии, времени интервью
+ * - Управление инвайтом (копирование текста, пересоздание scorecard, удаление)
+ * - Переход к редактированию инвайта
+ * 
+ * Функциональность:
+ * - Загрузка данных инвайта по ID из URL
+ * - Отображение информации о кандидате (имя, email, грейд, ссылка в Huntflow)
+ * - Отображение информации о вакансии
+ * - Отображение времени и формата интервью
+ * - Отображение ссылок на Google Meet и Google Calendar
+ * - Отображение ссылки на Scorecard в Google Drive
+ * - Кнопка копирования текста инвайта
+ * - Кнопка пересоздания Scorecard
+ * - Кнопка редактирования инвайта
+ * - Кнопка удаления инвайта
+ * 
+ * Связи:
+ * - AppLayout: оборачивает страницу в общий layout
+ * - useParams: получение ID инвайта из URL
+ * - useRouter: для навигации после удаления
+ * - useToast: для отображения уведомлений
+ * - invitesApi: API для работы с инвайтами
+ * - invites/[id]/edit/page.tsx: страница редактирования инвайта
+ * - invites/page.tsx: страница списка инвайтов, откуда происходит переход
+ * 
+ * Поведение:
+ * - При загрузке загружает данные инвайта по ID из URL
+ * - Если ID отсутствует - перенаправляет на список инвайтов
+ * - При копировании текста инвайта получает текст через API и копирует в буфер обмена
+ * - При пересоздании Scorecard отправляет запрос на сервер
+ * - При удалении показывает подтверждение и удаляет инвайт
+ * - После удаления возвращается на страницу списка инвайтов
+ * 
+ * TODO: Заменить моковые данные на реальные из API
+ */
+
 'use client'
 
 import React, { useState, useEffect } from 'react'
@@ -15,7 +56,7 @@ import {
   CalendarIcon,
   VideoIcon,
   FileTextIcon,
-  FolderIcon,
+  BoxIcon,
   CheckCircledIcon,
   InfoCircledIcon,
   CrossCircledIcon
@@ -24,6 +65,18 @@ import { invitesApi, Invite } from "@/lib/api"
 import { useToast } from "@/components/Toast/ToastContext"
 import styles from './invite-detail.module.css'
 
+/**
+ * STATUS_COLORS - маппинг статусов инвайта на цвета для Badge
+ * 
+ * Используется для:
+ * - Отображения статуса инвайта с соответствующим цветом
+ * 
+ * Статусы:
+ * - pending: ожидает отправки (желтый)
+ * - sent: отправлен (синий)
+ * - completed: завершен (зеленый)
+ * - cancelled: отменен (серый)
+ */
 const STATUS_COLORS: Record<string, string> = {
   pending: 'yellow',
   sent: 'blue',
@@ -31,13 +84,26 @@ const STATUS_COLORS: Record<string, string> = {
   cancelled: 'gray',
 }
 
+/**
+ * InviteDetailPage - компонент страницы детального просмотра инвайта
+ * 
+ * Состояние:
+ * - invite: данные инвайта для отображения
+ * - loading: флаг загрузки данных
+ */
 export default function InviteDetailPage() {
+  // Хук Next.js для программной навигации
   const router = useRouter()
+  // Получение динамических параметров из URL
   const params = useParams()
+  // Хук для отображения уведомлений
   const toast = useToast()
+  // ID инвайта из URL параметра [id] (преобразуется в число)
   const inviteId = params?.id ? parseInt(params.id as string, 10) : null
   
+  // Данные инвайта для отображения
   const [invite, setInvite] = useState<Invite | null>(null)
+  // Флаг загрузки данных инвайта
   const [loading, setLoading] = useState(true)
 
   const loadInvite = async () => {
@@ -349,7 +415,7 @@ export default function InviteDetailPage() {
                     <Text size="2" weight="medium" mb="2" as="div" color="gray">
                       Статус:
                     </Text>
-                    <Badge color={STATUS_COLORS[invite.status] || 'gray'} mb="3">
+                    <Badge color={(STATUS_COLORS[invite.status] || 'gray') as any} mb="3">
                       {invite.status_display || invite.status}
                     </Badge>
                   </Box>

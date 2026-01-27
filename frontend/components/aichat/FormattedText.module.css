@@ -1,0 +1,33 @@
+/* Inline код */
+.inlineCode {
+  background-color: var(--gray-3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+  font-size: 0.9em;
+  border: 1px solid var(--gray-6);
+  color: var(--accent-11);
+}
+
+/* Блок кода */
+.codeBlock {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+  position: relative;
+}
+
+/* Кнопка копирования кода */
+.copyButton {
+  transition: opacity 0.2s;
+}
+
+.copyButton:hover {
+  opacity: 0.9;
+}
+
+/* Цитата */
+.quote {
+  white-space: pre-wrap;
+  background-color: rgba(128, 128, 128, 0.1) !important;
+  font-style: italic;
+  opacity: 0.85;
+}

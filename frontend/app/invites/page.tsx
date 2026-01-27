@@ -1,3 +1,41 @@
+/**
+ * InvitesPage (invites/page.tsx) - Страница управления инвайтами на интервью
+ * 
+ * Назначение:
+ * - Управление инвайтами на интервью
+ * - Создание новых инвайтов
+ * - Просмотр и редактирование существующих инвайтов
+ * - Фильтрация и поиск инвайтов
+ * 
+ * Функциональность:
+ * - InvitesStats: статистика по инвайтам (всего, ожидает, отправлен, завершен)
+ * - Список всех инвайтов в таблице
+ * - Поиск инвайтов по имени кандидата, вакансии
+ * - Фильтрация по статусу
+ * - CreateInviteModal: модальное окно создания нового инвайта
+ * - Переход к детальному просмотру инвайта
+ * - Переход к редактированию инвайта
+ * - Удаление инвайта
+ * 
+ * Связи:
+ * - AppLayout: оборачивает страницу в общий layout
+ * - useRouter: для навигации к детальной странице или редактированию
+ * - useToast: для отображения уведомлений
+ * - invitesApi: API для работы с инвайтами
+ * - invites/[id]/page.tsx: страница детального просмотра инвайта
+ * - invites/[id]/edit/page.tsx: страница редактирования инвайта
+ * 
+ * Поведение:
+ * - При загрузке загружает список инвайтов
+ * - При поиске фильтрует инвайты по введенному запросу
+ * - При фильтрации по статусу показывает только инвайты с выбранным статусом
+ * - При клике на инвайт происходит переход на детальную страницу
+ * - При клике на редактирование происходит переход на страницу редактирования
+ * - При создании инвайта открывает модальное окно
+ * 
+ * TODO: Заменить моковые данные на реальные из API
+ */
+
 'use client'
 
 import React, { useState, useEffect } from 'react'
@@ -20,6 +58,13 @@ import InvitesStats from "@/components/invites/InvitesStats"
 import CreateInviteModal from "@/components/invites/CreateInviteModal"
 import styles from './invites.module.css'
 
+/**
+ * STATUS_OPTIONS - опции статусов инвайта для фильтрации
+ * 
+ * Используется для:
+ * - Выбора статуса при фильтрации инвайтов
+ * - Отображения текущего фильтра
+ */
 const STATUS_OPTIONS = [
   { value: 'all', label: 'Все статусы' },
   { value: 'pending', label: 'Ожидает' },
@@ -28,6 +73,13 @@ const STATUS_OPTIONS = [
   { value: 'cancelled', label: 'Отменен' },
 ]
 
+/**
+ * STATUS_COLORS - маппинг статусов инвайта на цвета для Badge
+ * 
+ * Используется для:
+ * - Отображения статуса инвайта с цветовой индикацией
+ * - Визуального различия статусов
+ */
 const STATUS_COLORS: Record<string, string> = {
   pending: 'yellow',
   sent: 'blue',
@@ -35,7 +87,14 @@ const STATUS_COLORS: Record<string, string> = {
   cancelled: 'gray',
 }
 
-// Моковые данные статистики
+/**
+ * MOCK_STATS - моковые данные статистики по инвайтам
+ * 
+ * Используется для:
+ * - Отображения статистики в компоненте InvitesStats
+ * 
+ * TODO: Загружать из API
+ */
 const MOCK_STATS = {
   total: 563,
   pending: 13,
@@ -43,7 +102,26 @@ const MOCK_STATS = {
   completed: 0,
 }
 
-// Моковые данные инвайтов
+/**
+ * MOCK_INVITES - моковые данные инвайтов
+ * 
+ * Структура инвайта:
+ * - id: уникальный идентификатор инвайта
+ * - candidate_name: имя кандидата
+ * - candidate_email: email кандидата
+ * - candidate_url: ссылка на кандидата в Huntflow
+ * - vacancy_title: название вакансии
+ * - interview_datetime: дата и время интервью (ISO строка)
+ * - interview_datetime_formatted: отформатированная дата и время
+ * - status: статус инвайта
+ * - status_display: отображаемое название статуса
+ * - interview_format: формат интервью ('online' или 'office')
+ * - google_meet_url: ссылка на Google Meet (для онлайн интервью)
+ * - google_drive_file_url: ссылка на файл в Google Drive (опционально)
+ * - created_at, updated_at: даты создания и обновления
+ * 
+ * TODO: Заменить на реальные данные из API
+ */
 const MOCK_INVITES: Invite[] = [
   {
     id: 1,
@@ -92,19 +170,63 @@ const MOCK_INVITES: Invite[] = [
   },
 ]
 
+/**
+ * InvitesPage - компонент страницы управления инвайтами
+ * 
+ * Состояние:
+ * - invites: массив всех инвайтов
+ * - loading: флаг загрузки данных
+ * - searchQuery: поисковый запрос для фильтрации инвайтов
+ * - statusFilter: выбранный статус для фильтрации ('all' - все статусы)
+ * - page: текущая страница пагинации
+ * - totalCount: общее количество инвайтов
+ * - hasNext: флаг наличия следующей страницы
+ * - hasPrevious: флаг наличия предыдущей страницы
+ * - isCreateModalOpen: флаг открытия модального окна создания инвайта
+ */
 function InvitesPage() {
+  // Хук Next.js для программной навигации
   const router = useRouter()
+  // Хук для отображения уведомлений
   const toast = useToast()
+  // Массив всех инвайтов
   const [invites, setInvites] = useState<Invite[]>(MOCK_INVITES)
+  // Флаг загрузки данных инвайтов
   const [loading, setLoading] = useState(false)
+  // Поисковый запрос для фильтрации инвайтов
   const [searchQuery, setSearchQuery] = useState('')
+  // Выбранный статус для фильтрации ('all' - все статусы)
   const [statusFilter, setStatusFilter] = useState('all')
+  // Текущая страница пагинации (начинается с 1)
   const [page, setPage] = useState(1)
+  // Общее количество инвайтов (для пагинации)
   const [totalCount, setTotalCount] = useState(0)
+  // Флаг наличия следующей страницы (для пагинации)
   const [hasNext, setHasNext] = useState(false)
+  // Флаг наличия предыдущей страницы (для пагинации)
   const [hasPrevious, setHasPrevious] = useState(false)
+  // Флаг открытия модального окна создания нового инвайта
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
+  /**
+   * loadInvites - загрузка списка инвайтов
+   * 
+   * Функциональность:
+   * - Загружает список инвайтов с учетом фильтров
+   * - Применяет поиск и фильтр по статусу
+   * - Устанавливает состояние loading во время загрузки
+   * - Обрабатывает ошибки загрузки
+   * 
+   * Поведение:
+   * - Вызывается при изменении page или statusFilter
+   * - В текущей реализации использует моковые данные с фильтрацией
+   * - В будущем будет использовать API для загрузки данных
+   * 
+   * Связи:
+   * - invitesApi: API для получения списка инвайтов
+   * 
+   * TODO: Заменить моковые данные на реальный API вызов
+   */
   const loadInvites = async () => {
     // Пока используем моковые данные
     setLoading(true)
@@ -115,7 +237,7 @@ function InvitesPage() {
       // Фильтрация моковых данных
       let filteredInvites = [...MOCK_INVITES]
       
-      // Фильтр по поиску
+      // Фильтр по поиску: проверяет имя кандидата и название вакансии
       if (searchQuery) {
         const query = searchQuery.toLowerCase()
         filteredInvites = filteredInvites.filter(invite =>
@@ -124,7 +246,7 @@ function InvitesPage() {
         )
       }
       
-      // Фильтр по статусу
+      // Фильтр по статусу: если выбран не 'all', фильтрует по статусу
       if (statusFilter && statusFilter !== 'all') {
         filteredInvites = filteredInvites.filter(invite => invite.status === statusFilter)
       }
@@ -163,23 +285,69 @@ function InvitesPage() {
     }
   }
 
+  /**
+   * useEffect - загрузка инвайтов при изменении страницы или фильтра статуса
+   * 
+   * Функциональность:
+   * - Вызывает loadInvites() при изменении page или statusFilter
+   * 
+   * Поведение:
+   * - Выполняется при изменении page (переключение страниц пагинации)
+   * - Выполняется при изменении statusFilter (изменение фильтра по статусу)
+   * - Загружает инвайты с учетом текущих фильтров
+   */
   useEffect(() => {
     loadInvites()
   }, [page, statusFilter])
 
+  /**
+   * useEffect - debounce для поиска
+   * 
+   * Функциональность:
+   * - Задерживает загрузку инвайтов на 500мс после ввода поискового запроса
+   * - Если текущая страница не первая - сбрасывает на первую страницу
+   * 
+   * Поведение:
+   * - Выполняется при изменении searchQuery
+   * - Использует debounce для уменьшения количества запросов при вводе
+   * - Очищает таймер при размонтировании или изменении searchQuery
+   * 
+   * Причина debounce:
+   * - Предотвращает избыточные запросы при быстром вводе текста
+   * - Улучшает производительность и снижает нагрузку на сервер
+   */
   useEffect(() => {
-    // Debounce для поиска
+    // Debounce для поиска: задержка 500мс перед загрузкой
     const timer = setTimeout(() => {
       if (page === 1) {
+        // Если уже на первой странице - просто загружаем
         loadInvites()
       } else {
+        // Если не на первой странице - сбрасываем на первую
         setPage(1)
       }
     }, 500)
 
+    // Очищаем таймер при размонтировании или изменении searchQuery
     return () => clearTimeout(timer)
   }, [searchQuery])
 
+  /**
+   * handleDelete - обработчик удаления инвайта
+   * 
+   * Функциональность:
+   * - Показывает подтверждение удаления
+   * - Удаляет инвайт через API
+   * - Обновляет список инвайтов после удаления
+   * 
+   * Поведение:
+   * - Вызывается при клике на кнопку удаления
+   * - Показывает confirm диалог для подтверждения
+   * - При подтверждении отправляет запрос на удаление
+   * - После успешного удаления обновляет список инвайтов
+   * 
+   * @param id - ID инвайта для удаления
+   */
   const handleDelete = async (id: number) => {
     if (!confirm('Вы уверены, что хотите удалить этот инвайт?')) {
       return
@@ -192,13 +360,29 @@ function InvitesPage() {
         return
       }
       toast.showSuccess('Успешно', 'Инвайт успешно удален')
-      loadInvites()
+      loadInvites() // Обновляем список после удаления
     } catch (error) {
       toast.showError('Ошибка удаления', 'Не удалось удалить инвайт')
       console.error('Error deleting invite:', error)
     }
   }
 
+  /**
+   * handleCopyInvitation - обработчик копирования текста инвайта
+   * 
+   * Функциональность:
+   * - Получает текст инвайта через API
+   * - Копирует текст в буфер обмена
+   * - Показывает уведомление об успешном копировании
+   * 
+   * Поведение:
+   * - Вызывается при клике на кнопку копирования текста инвайта
+   * - Запрашивает текст инвайта через API
+   * - Копирует текст в буфер обмена браузера
+   * - Показывает toast-уведомление об успехе или ошибке
+   * 
+   * @param id - ID инвайта для копирования текста
+   */
   const handleCopyInvitation = async (id: number) => {
     try {
       const response = await invitesApi.getInvitationText(id)
@@ -217,6 +401,19 @@ function InvitesPage() {
     }
   }
 
+  /**
+   * formatDate - форматирование даты для отображения
+   * 
+   * Функциональность:
+   * - Преобразует ISO строку даты в читаемый формат
+   * - Обрабатывает ошибки парсинга даты
+   * 
+   * Используется для:
+   * - Отображения дат создания и времени интервью в таблице
+   * 
+   * @param dateString - дата в формате ISO строки
+   * @returns отформатированная дата в формате DD.MM.YYYY HH:MM или исходная строка при ошибке
+   */
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString)
@@ -228,7 +425,7 @@ function InvitesPage() {
         minute: '2-digit',
       })
     } catch {
-      return dateString
+      return dateString // Возвращаем исходную строку при ошибке парсинга
     }
   }
 
@@ -370,7 +567,7 @@ function InvitesPage() {
                           </Flex>
                         </Table.Cell>
                         <Table.Cell>
-                          <Badge color={STATUS_COLORS[invite.status] || 'gray'}>
+                          <Badge color={(STATUS_COLORS[invite.status] || 'gray') as any}>
                             {invite.status_display || invite.status}
                           </Badge>
                         </Table.Cell>

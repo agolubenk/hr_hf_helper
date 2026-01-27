@@ -1,13 +1,15 @@
-/* z-index: тосты = меню+1 (3000+1=3001); модалки строго < тостов */
+/* z-index: тосты должны быть выше всех модальных окон (10000) */
 .toastContainer {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  z-index: 3001;
+  z-index: 10000 !important;
   display: flex;
   flex-direction: column;
   gap: 12px;
   pointer-events: none;
+  /* Убеждаемся, что тосты всегда поверх модальных окон */
+  isolation: isolate;
 }
 
 .toast {

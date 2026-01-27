@@ -1,3 +1,34 @@
+/**
+ * AddVacancyModal (components/vacancies/AddVacancyModal.tsx) - Модальное окно добавления новой вакансии
+ * 
+ * Назначение:
+ * - Создание новой вакансии с настройкой всех параметров
+ * - Многошаговая форма с вкладками для разных разделов настроек
+ * - Адаптивная верстка для мобильных устройств (overlay режим)
+ * 
+ * Функциональность:
+ * - 12 вкладок настроек: Основная информация, Текст вакансии, Рекрутеры, Заказчики и интервьюеры,
+ *   Вопросы и ссылки, Связи и интеграции, Статусы, Зарплатные вилки, Встречи и интервью,
+ *   Scorecard, Обработка данных, История правок
+ * - Боковая панель с навигацией по вкладкам
+ * - Адаптивный режим overlay для мобильных устройств (< 800px)
+ * - Валидация обязательных полей перед сохранением
+ * - Управление рекрутерами (выбор нескольких, назначение главного)
+ * 
+ * Связи:
+ * - vacancies/page.tsx: открывается при клике на "Добавить вакансию"
+ * - BasicInfoEditSection: компонент редактирования основной информации
+ * - Использует моковые данные для департаментов и рекрутеров
+ * 
+ * Поведение:
+ * - При открытии показывает первую вкладку "Основная информация"
+ * - При закрытии сбрасывает форму и активную вкладку
+ * - На мобильных устройствах открывает overlay для контента вкладки
+ * - При сохранении валидирует обязательные поля и вызывает onSave
+ * 
+ * TODO: Реализовать все вкладки настроек
+ * TODO: Заменить моковые данные на реальные из API
+ */
 'use client'
 
 import {
@@ -18,7 +49,14 @@ import { useState, useEffect } from 'react'
 import BasicInfoEditSection from './edit/BasicInfoEditSection'
 import styles from './AddVacancyModal.module.css'
 
-// Типы для данных формы
+/**
+ * AddVacancyFormData - интерфейс данных формы добавления вакансии
+ * 
+ * Структура:
+ * - basicInfo: основная информация (название, статус, рекрутер, технологии, Huntflow ID)
+ * - text: текст вакансии (департамент, заголовок)
+ * - recruiters: рекрутеры (выбранные ID, главный рекрутер)
+ */
 export interface AddVacancyFormData {
   basicInfo: {
     title: string
@@ -37,6 +75,23 @@ export interface AddVacancyFormData {
   }
 }
 
+/**
+ * AddVacancyTab - тип вкладки настроек вакансии
+ * 
+ * Вкладки:
+ * - basic: Основная информация
+ * - text: Текст вакансии
+ * - recruiters: Рекрутеры
+ * - customers: Заказчики и интервьюеры
+ * - questions: Вопросы и ссылки
+ * - integrations: Связи и интеграции
+ * - statuses: Статусы
+ * - salary: Зарплатные вилки
+ * - interviews: Встречи и интервью
+ * - scorecard: Scorecard
+ * - dataProcessing: Обработка данных
+ * - history: История правок
+ */
 type AddVacancyTab =
   | 'basic'
   | 'text'
@@ -51,7 +106,15 @@ type AddVacancyTab =
   | 'dataProcessing'
   | 'history'
 
-// Моковые отделы (упрощённая иерархия)
+/**
+ * Department - интерфейс департамента (упрощённая иерархия)
+ * 
+ * Структура:
+ * - id: уникальный идентификатор департамента
+ * - name: название департамента
+ * - parent: ID родительского департамента (null для корневых)
+ * - children: массив дочерних департаментов (опционально)
+ */
 interface Department {
   id: string
   name: string
@@ -59,6 +122,14 @@ interface Department {
   children?: Department[]
 }
 
+/**
+ * mockDepartments - моковые данные департаментов
+ * 
+ * Используется для:
+ * - Выбора департамента при создании вакансии
+ * 
+ * TODO: Загружать из API
+ */
 const mockDepartments: Department[] = [
   {
     id: '1',
@@ -80,6 +151,20 @@ const mockDepartments: Department[] = [
   { id: '4', name: 'HR Департамент', parent: null, children: [] },
 ]
 
+/**
+ * getAllDepartmentsFlat - преобразование иерархической структуры департаментов в плоский список
+ * 
+ * Функциональность:
+ * - Рекурсивно обходит дерево департаментов
+ * - Создает плоский список с указанием уровня вложенности
+ * 
+ * Используется для:
+ * - Отображения департаментов в выпадающем списке с отступами
+ * 
+ * @param departments - массив департаментов (иерархическая структура)
+ * @param level - текущий уровень вложенности (по умолчанию 0)
+ * @returns плоский массив департаментов с уровнями
+ */
 function getAllDepartmentsFlat(
   departments: Department[],
   level = 0
@@ -94,9 +179,22 @@ function getAllDepartmentsFlat(
   return result
 }
 
+/**
+ * flatDepartments - плоский список всех департаментов с уровнями
+ * 
+ * Используется для:
+ * - Отображения в выпадающем списке с отступами в зависимости от уровня
+ */
 const flatDepartments = getAllDepartmentsFlat(mockDepartments)
 
-// Моковые рекрутеры
+/**
+ * mockRecruiters - моковые данные рекрутеров
+ * 
+ * Используется для:
+ * - Выбора рекрутеров при создании вакансии
+ * 
+ * TODO: Загружать из API
+ */
 const mockRecruiters = [
   { id: '1', name: 'Иван Иванов', email: 'ivan@company.com', phone: '+7 (999) 111-22-33', position: 'Senior Recruiter' },
   { id: '2', name: 'Петр Петров', email: 'petr@company.com', phone: '+7 (999) 222-33-44', position: 'Recruiter' },
@@ -105,6 +203,13 @@ const mockRecruiters = [
   { id: '5', name: 'Дмитрий Козлов', email: 'dmitry@company.com', phone: '+7 (999) 555-66-77', position: 'Junior Recruiter' },
 ]
 
+/**
+ * initialFormData - начальные данные формы
+ * 
+ * Используется для:
+ * - Инициализации формы при открытии модального окна
+ * - Сброса формы при закрытии
+ */
 const initialFormData: AddVacancyFormData = {
   basicInfo: {
     title: '',
@@ -123,80 +228,192 @@ const initialFormData: AddVacancyFormData = {
   },
 }
 
+/**
+ * AddVacancyModalProps - интерфейс пропсов компонента AddVacancyModal
+ * 
+ * Структура:
+ * - isOpen: флаг открытости модального окна
+ * - onClose: обработчик закрытия модального окна
+ * - onSave: обработчик сохранения вакансии
+ */
 interface AddVacancyModalProps {
   isOpen: boolean
   onClose: () => void
   onSave: (data: AddVacancyFormData) => void
 }
 
+/**
+ * useMatchMedia - хук для определения соответствия медиа-запросу
+ * 
+ * Функциональность:
+ * - Определяет, соответствует ли текущий размер экрана медиа-запросу
+ * - Обновляется при изменении размера окна
+ * 
+ * Используется для:
+ * - Определения overlay режима на мобильных устройствах
+ * 
+ * @param query - медиа-запрос (например, '(max-width: 799px)')
+ * @returns true если запрос соответствует, false иначе
+ */
 function useMatchMedia(query: string): boolean {
   const [matches, setMatches] = useState(false)
   useEffect(() => {
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined') return // SSR: пропускаем
     const m = window.matchMedia(query)
-    setMatches(m.matches)
-    const listener = () => setMatches(m.matches)
+    setMatches(m.matches) // Устанавливаем начальное значение
+    const listener = () => setMatches(m.matches) // Обновляем при изменении
     m.addEventListener('change', listener)
-    return () => m.removeEventListener('change', listener)
+    return () => m.removeEventListener('change', listener) // Cleanup
   }, [query])
   return matches
 }
 
+/**
+ * AddVacancyModal - компонент модального окна добавления вакансии
+ * 
+ * Состояние:
+ * - activeTab: активная вкладка настроек
+ * - formData: данные формы
+ * - isContentOverlayOpen: флаг открытости overlay контента (для мобильных)
+ * - isOverlayMode: флаг overlay режима (определяется через useMatchMedia)
+ * 
+ * Функциональность:
+ * - Управление вкладками настроек
+ * - Управление данными формы
+ * - Адаптивное поведение для мобильных устройств
+ */
 export default function AddVacancyModal({ isOpen, onClose, onSave }: AddVacancyModalProps) {
+  // Активная вкладка настроек (по умолчанию 'basic' - Основная информация)
   const [activeTab, setActiveTab] = useState<AddVacancyTab>('basic')
+  // Данные формы добавления вакансии
   const [formData, setFormData] = useState<AddVacancyFormData>(initialFormData)
+  // Флаг открытости overlay контента (для мобильных устройств)
   const [isContentOverlayOpen, setContentOverlayOpen] = useState(false)
+  // Определение overlay режима (для экранов < 800px)
   const isOverlayMode = useMatchMedia('(max-width: 799px)')
 
+  /**
+   * useEffect - сброс формы и управление overlay при открытии/закрытии модального окна
+   * 
+   * Функциональность:
+   * - При закрытии: сбрасывает форму, активную вкладку и overlay
+   * - При открытии на мобильных: открывает overlay для контента
+   * 
+   * Поведение:
+   * - Выполняется при изменении isOpen или isOverlayMode
+   * - Обеспечивает чистое состояние при каждом открытии
+   */
   useEffect(() => {
     if (!isOpen) {
+      // При закрытии: сбрасываем форму, активную вкладку и overlay
       setFormData(initialFormData)
       setActiveTab('basic')
       setContentOverlayOpen(false)
     } else if (isOverlayMode) {
+      // При открытии на мобильных: открываем overlay для контента
       setContentOverlayOpen(true)
     }
   }, [isOpen, isOverlayMode])
 
+  /**
+   * handleBasicInfoChange - обработчик изменения основной информации
+   * 
+   * Функциональность:
+   * - Обновляет данные основной информации в форме
+   * 
+   * Поведение:
+   * - Вызывается из BasicInfoEditSection при изменении полей
+   * - Обновляет только измененные поля (через spread)
+   * 
+   * @param data - частичные данные основной информации
+   */
   const handleBasicInfoChange = (data: Partial<AddVacancyFormData['basicInfo']>) => {
     setFormData((prev) => ({
       ...prev,
-      basicInfo: { ...prev.basicInfo, ...data },
+      basicInfo: { ...prev.basicInfo, ...data }, // Объединяем с существующими данными
     }))
   }
 
+  /**
+   * handleRecruiterToggle - обработчик переключения выбора рекрутера
+   * 
+   * Функциональность:
+   * - Добавляет/удаляет рекрутера из списка выбранных
+   * - Если удаляется главный рекрутер - сбрасывает главного
+   * 
+   * Поведение:
+   * - Если рекрутер уже выбран - удаляет его из списка
+   * - Если рекрутер не выбран - добавляет его в список
+   * - Если удаляется главный рекрутер - сбрасывает главного
+   * 
+   * @param id - ID рекрутера для переключения
+   */
   const handleRecruiterToggle = (id: string) => {
     setFormData((prev) => {
       const next = new Set(prev.recruiters.selectedIds)
       if (next.has(id)) {
+        // Если рекрутер уже выбран - удаляем его
         next.delete(id)
+        // Если это был главный рекрутер - сбрасываем главного
         const mainId = prev.recruiters.mainId === id ? null : prev.recruiters.mainId
         return { ...prev, recruiters: { selectedIds: [...next], mainId } }
       }
+      // Если рекрутер не выбран - добавляем его
       next.add(id)
       return { ...prev, recruiters: { ...prev.recruiters, selectedIds: [...next] } }
     })
   }
 
+  /**
+   * handleMainRecruiterToggle - обработчик переключения главного рекрутера
+   * 
+   * Функциональность:
+   * - Устанавливает/снимает главного рекрутера
+   * 
+   * Поведение:
+   * - Если рекрутер не выбран - не выполняет действий
+   * - Если рекрутер уже главный - снимает его с главного
+   * - Если рекрутер не главный - делает его главным
+   * 
+   * @param id - ID рекрутера для переключения главного статуса
+   */
   const handleMainRecruiterToggle = (id: string) => {
     setFormData((prev) => {
+      // Если рекрутер не выбран - не выполняем действий
       if (!prev.recruiters.selectedIds.includes(id)) return prev
+      // Переключаем главного рекрутера
       const mainId = prev.recruiters.mainId === id ? null : id
       return { ...prev, recruiters: { ...prev.recruiters, mainId } }
     })
   }
 
+  /**
+   * handleSave - обработчик сохранения вакансии
+   * 
+   * Функциональность:
+   * - Валидирует обязательные поля
+   * - Сохраняет вакансию через onSave
+   * - Закрывает модальное окно
+   * 
+   * Поведение:
+   * - Проверяет наличие названия вакансии
+   * - Проверяет наличие ответственного рекрутера
+   * - При ошибке валидации показывает alert
+   * - При успехе вызывает onSave и закрывает модальное окно
+   */
   const handleSave = () => {
+    // Валидация: проверяем наличие названия вакансии
     if (!formData.basicInfo.title?.trim()) {
       alert('Заполните название вакансии')
       return
     }
+    // Валидация: проверяем наличие ответственного рекрутера
     if (!formData.basicInfo.recruiter) {
       alert('Выберите ответственного рекрутера')
       return
     }
-    onSave(formData)
-    onClose()
+    onSave(formData) // Сохраняем вакансию
+    onClose() // Закрываем модальное окно
   }
 
   const tabs: { id: AddVacancyTab; label: string }[] = [
