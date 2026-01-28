@@ -1,0 +1,300 @@
+{
+  "name": "Toast",
+  "type": "component",
+  "description": "Директория `components/Toast` содержит систему уведомлений (toast notifications) для приложения. Система обеспечивает централизованное управление уведомлениями различных типов (информационные, предупреждения, ошибки, успех, системные) с поддержкой действий (кнопок) и автоматическим закрытием.\n\n**Расположение**: `@/components/Toast`",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/components/Toast/COMPONENTS_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [
+    {
+      "name": "ToastType",
+      "definition": "type ToastType = 'info' | 'warning' | 'error' | 'success' | 'system'",
+      "fields": []
+    },
+    {
+      "name": "ToastProps",
+      "definition": "interface ToastProps {\n  id: string                                    // Уникальный идентификатор уведомления\n  type: ToastType                                // Тип уведомления\n  title: string                                  // Заголовок уведомления\n  message: string                                // Текст сообщения\n  duration?: number                              // Продолжительность отображения в миллисекундах\n  onClose: (id: string) => void                // Обработчик закрытия уведомления\n  actions?: Array<{                              // Массив действий (кнопок)\n    label: string                                // Текст кнопки\n    onClick: () => void                          // Обработчик клика\n    variant?: 'solid' | 'soft' | 'outline' | 'ghost'  // Вариант кнопки\n    color?: 'blue' | 'green' | 'red' | 'yellow' | 'gray'  // Цвет кнопки\n  }>\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "Уникальный идентификатор уведомления"
+        },
+        {
+          "name": "type",
+          "type": "ToastType",
+          "optional": false,
+          "comment": "Тип уведомления"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "optional": false,
+          "comment": "Заголовок уведомления"
+        },
+        {
+          "name": "message",
+          "type": "string",
+          "optional": false,
+          "comment": "Текст сообщения"
+        },
+        {
+          "name": "duration",
+          "type": "number",
+          "optional": true,
+          "comment": "Продолжительность отображения в миллисекундах"
+        },
+        {
+          "name": "onClose",
+          "type": "(id: string) => void",
+          "optional": false,
+          "comment": "Обработчик закрытия уведомления"
+        },
+        {
+          "name": "actions",
+          "type": "Array<{",
+          "optional": true,
+          "comment": "Массив действий (кнопок)"
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "optional": false,
+          "comment": "Текст кнопки"
+        },
+        {
+          "name": "onClick",
+          "type": "() => void",
+          "optional": false,
+          "comment": "Обработчик клика"
+        },
+        {
+          "name": "variant",
+          "type": "'solid' | 'soft' | 'outline' | 'ghost'",
+          "optional": true,
+          "comment": "Вариант кнопки"
+        },
+        {
+          "name": "color",
+          "type": "'blue' | 'green' | 'red' | 'yellow' | 'gray'",
+          "optional": true,
+          "comment": "Цвет кнопки"
+        }
+      ]
+    },
+    {
+      "name": "ToastAction",
+      "definition": "interface ToastAction {\n  label: string                                  // Текст кнопки действия\n  onClick: () => void                            // Обработчик клика на кнопку\n  variant?: 'solid' | 'soft' | 'outline' | 'ghost'  // Вариант кнопки\n  color?: 'blue' | 'green' | 'red' | 'yellow' | 'gray'  // Цвет кнопки\n}",
+      "fields": [
+        {
+          "name": "label",
+          "type": "string",
+          "optional": false,
+          "comment": "Текст кнопки действия"
+        },
+        {
+          "name": "onClick",
+          "type": "() => void",
+          "optional": false,
+          "comment": "Обработчик клика на кнопку"
+        },
+        {
+          "name": "variant",
+          "type": "'solid' | 'soft' | 'outline' | 'ghost'",
+          "optional": true,
+          "comment": "Вариант кнопки"
+        },
+        {
+          "name": "color",
+          "type": "'blue' | 'green' | 'red' | 'yellow' | 'gray'",
+          "optional": true,
+          "comment": "Цвет кнопки"
+        }
+      ]
+    },
+    {
+      "name": "ToastData",
+      "definition": "interface ToastData {\n  id: string                                    // Уникальный идентификатор уведомления\n  type: ToastType                                // Тип уведомления\n  title: string                                  // Заголовок уведомления\n  message: string                                // Текст сообщения\n  duration?: number                              // Продолжительность отображения в миллисекундах\n  actions?: ToastAction[]                        // Массив действий (кнопок)\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "Уникальный идентификатор уведомления"
+        },
+        {
+          "name": "type",
+          "type": "ToastType",
+          "optional": false,
+          "comment": "Тип уведомления"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "optional": false,
+          "comment": "Заголовок уведомления"
+        },
+        {
+          "name": "message",
+          "type": "string",
+          "optional": false,
+          "comment": "Текст сообщения"
+        },
+        {
+          "name": "duration",
+          "type": "number",
+          "optional": true,
+          "comment": "Продолжительность отображения в миллисекундах"
+        },
+        {
+          "name": "actions",
+          "type": "ToastAction[]",
+          "optional": true,
+          "comment": "Массив действий (кнопок)"
+        }
+      ]
+    },
+    {
+      "name": "ToastContextType",
+      "definition": "interface ToastContextType {\n  showToast: (toast: Omit<ToastData, 'id'>) => void  // Базовая функция для показа уведомления\n  showInfo: (title: string, message: string, options?: { duration?: number; actions?: ToastAction[] }) => void\n  showWarning: (title: string, message: string, options?: { duration?: number; actions?: ToastAction[] }) => void\n  showError: (title: string, message: string, options?: { duration?: number; actions?: ToastAction[] }) => void\n  showSuccess: (title: string, message: string, options?: { duration?: number; actions?: ToastAction[] }) => void\n  showSystem: (title: string, message: string, options?: { duration?: number; actions?: ToastAction[] }) => void\n  removeToast: (id: string) => void              // Функция удаления уведомления\n}",
+      "fields": [
+        {
+          "name": "showToast",
+          "type": "(toast: Omit<ToastData, 'id'>) => void",
+          "optional": false,
+          "comment": "Базовая функция для показа уведомления"
+        },
+        {
+          "name": "showInfo",
+          "type": "(title: string, message: string, options?: { duration?: number; actions?: ToastAction[] }) => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "showWarning",
+          "type": "(title: string, message: string, options?: { duration?: number; actions?: ToastAction[] }) => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "showError",
+          "type": "(title: string, message: string, options?: { duration?: number; actions?: ToastAction[] }) => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "showSuccess",
+          "type": "(title: string, message: string, options?: { duration?: number; actions?: ToastAction[] }) => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "showSystem",
+          "type": "(title: string, message: string, options?: { duration?: number; actions?: ToastAction[] }) => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "removeToast",
+          "type": "(id: string) => void",
+          "optional": false,
+          "comment": "Функция удаления уведомления"
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Логирование уведомлений на сервер\n   - POST `/api/logs/toasts/`\n   - Параметры: тип, заголовок, сообщение, timestamp\n   - Для аналитики и отладки",
+      "method": "POST",
+      "endpoint": "/api/logs/toasts/",
+      "parameters": "тип, заголовок, сообщение, timestamp",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Персистентность критических уведомлений\n   - Сохранение важных уведомлений в localStorage\n   - Восстановление при перезагрузке страницы\n   - Отметка о прочтении",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Группировка похожих уведомлений\n   - Объединение уведомлений одного типа\n   - Счетчик количества похожих уведомлений\n   - Развертывание списка при клике",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Звуковые уведомления\n   - Опциональные звуки для разных типов\n   - Настройка в профиле пользователя\n   - Разные звуки для разных типов",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Уведомления в фоне (Web Notifications API)\n   - Показ системных уведомлений браузера\n   - Запрос разрешения пользователя\n   - Уведомления даже когда вкладка неактивна",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "История уведомлений\n   - Сохранение истории уведомлений\n   - Просмотр последних уведомлений\n   - Фильтрация по типу и дате",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Настройки уведомлений\n   - Включение/выключение типов уведомлений\n   - Настройка длительности по умолчанию\n   - Настройка позиции (верх/низ, лево/право)",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Автоматическое закрытие при взаимодействии\n   - Пауза таймера при наведении мыши\n   - Продление времени при фокусе на уведомлении",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Поддержка HTML в сообщениях\n   - Рендеринг HTML в сообщениях\n   - Безопасный парсинг и санитизация\n   - Поддержка ссылок и форматирования",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Адаптация для сенсорных устройств\n    - Увеличенные области клика\n    - Свайп для закрытия\n    - Тактильная обратная связь",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.320816"
+}

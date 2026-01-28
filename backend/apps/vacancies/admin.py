@@ -58,7 +58,7 @@ class VacancyAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Блок 6: Промпт для анализа после скрининга', {
-            'fields': ('candidate_update_prompt',),
+            'fields': ('use_common_prompt', 'candidate_update_prompt',),
             'classes': ('collapse',)
         }),
         ('Блок 7: Интервьюеры (только связанные с вакансией)', {

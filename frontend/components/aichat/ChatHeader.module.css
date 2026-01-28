@@ -1,0 +1,146 @@
+.chatHeader {
+  background: var(--accent-9);
+  padding: 12px 16px;
+  border-radius: 12px 12px 0 0;
+}
+
+.titleContainer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.titleContainer:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.chatTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  user-select: none;
+  flex: 1;
+}
+
+.titleInput {
+  flex: 1;
+}
+
+.titleInput input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(100, 181, 246, 0.6);
+  border-radius: 4px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 4px 8px;
+}
+
+.titleInput input:focus {
+  outline: none;
+  border-color: rgba(100, 181, 246, 1);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.titleInput input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.saveButton {
+  width: 28px;
+  height: 28px;
+  background: #10b981;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.saveButton:hover {
+  background: #059669;
+}
+
+.saveButton svg {
+  color: #ffffff;
+}
+
+.cancelButton {
+  width: 28px;
+  height: 28px;
+  background: #6b7280;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.cancelButton:hover {
+  background: #4b5563;
+}
+
+.cancelButton svg {
+  color: #ffffff;
+}
+
+.deleteButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid rgba(239, 68, 68, 0.6);
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.deleteButton:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.8);
+}
+
+.deleteButton svg {
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.deleteButtonText {
+  color: #ffffff;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.editIcon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+.editIcon:hover {
+  opacity: 1;
+}
+
+.editIcon svg {
+  color: #ffffff;
+}
+

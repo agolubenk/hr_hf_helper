@@ -109,11 +109,25 @@ def vacancy_create(request):
     # Получаем все активные зарплатные вилки
     salary_ranges = SalaryRange.objects.filter(is_active=True).order_by('grade__name')
     
+    # Получаем активный единый промпт из настроек компании
+    from apps.company_settings.models import VacancyPrompt
+    common_prompt = None
+    has_active_common_prompt = False
+    try:
+        prompt_obj = VacancyPrompt.get_prompt()
+        if prompt_obj.is_active:
+            common_prompt = prompt_obj.prompt
+            has_active_common_prompt = True
+    except Exception:
+        pass
+    
     context = {
         'form': form,
         'title': 'Создание вакансии',
         'submit_text': 'Создать вакансию',
         'salary_ranges': salary_ranges,
+        'common_prompt': common_prompt,
+        'has_active_common_prompt': has_active_common_prompt,
     }
     
     return render(request, 'vacancies/vacancy_form.html', context)
@@ -136,12 +150,26 @@ def vacancy_edit(request, pk):
     # Получаем только зарплатные вилки для ЭТОЙ вакансии
     salary_ranges = SalaryRange.objects.filter(vacancy=vacancy).order_by('grade__name')
     
+    # Получаем активный единый промпт из настроек компании
+    from apps.company_settings.models import VacancyPrompt
+    common_prompt = None
+    has_active_common_prompt = False
+    try:
+        prompt_obj = VacancyPrompt.get_prompt()
+        if prompt_obj.is_active:
+            common_prompt = prompt_obj.prompt
+            has_active_common_prompt = True
+    except Exception:
+        pass
+    
     context = {
         'form': form,
         'vacancy': vacancy,
         'title': f'Редактирование вакансии "{vacancy.name}"',
         'submit_text': 'Сохранить изменения',
         'salary_ranges': salary_ranges,
+        'common_prompt': common_prompt,
+        'has_active_common_prompt': has_active_common_prompt,
     }
     
     return render(request, 'vacancies/vacancy_form.html', context)

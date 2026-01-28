@@ -1,0 +1,79 @@
+/* Глобальные стили для применения темы к body */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+/* Светлая тема */
+body[data-theme="light"],
+body.light-theme {
+  background-color: #ffffff !important;
+  color: #000000;
+}
+
+/* Темная тема */
+body[data-theme="dark"],
+body.dark-theme {
+  background-color: var(--gray-1, #1c1c1f) !important;
+  color: var(--gray-12, #ffffff);
+}
+
+/* Применяем тему к корневому элементу Radix Themes */
+body[data-theme="dark"] .radix-themes,
+.radix-themes[data-appearance="dark"] {
+  background-color: var(--gray-1, #1c1c1f);
+}
+
+body[data-theme="light"] .radix-themes,
+.radix-themes[data-appearance="light"] {
+  background-color: #ffffff;
+}
+/* === Z-index: меню 3000, тосты 10000 (выше всех), модалки < тостов (≤2000) === */
+:root {
+  --z-menu: 3000;
+  --z-toasts: 10000;
+  --z-modals: 2000;
+}
+
+/* Меню: Select, dropdown, Popover — слой 3000 */
+body [data-radix-popper-content-wrapper],
+body [data-radix-select-content],
+body .rt-SelectContent {
+  z-index: 3000 !important;
+}
+
+body [data-radix-select-viewport] {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Модалки: Radix Dialog — строго ниже тостов (2000 < 10000) */
+[data-radix-dialog-overlay],
+[data-radix-dialog-content],
+.rt-DialogOverlay,
+.rt-DialogContent,
+div[data-radix-dialog-overlay],
+div[data-radix-dialog-content] {
+  z-index: 2000 !important;
+}
+
+/* Убеждаемся, что все порталы Dialog имеют правильный z-index */
+body > [data-radix-portal] [data-radix-dialog-overlay],
+body > [data-radix-portal] [data-radix-dialog-content],
+[data-radix-portal] [data-radix-dialog-overlay],
+[data-radix-portal] [data-radix-dialog-content] {
+  z-index: 2000 !important;
+}
+
+/* Убеждаемся, что порталы Dialog сами не перекрывают тосты */
+[data-radix-portal] {
+  z-index: 2000 !important;
+}
+

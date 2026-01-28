@@ -1,0 +1,44 @@
+.filtersContainer {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: var(--gray-2);
+  border-radius: 12px;
+  border: 1px solid var(--gray-6);
+}
+
+/* Для темной темы */
+[data-theme="dark"] .filtersContainer,
+.radix-themes[data-appearance="dark"] .filtersContainer {
+  background: var(--gray-3);
+}
+
+.searchContainer :global(.rt-TextFieldRoot) {
+  background: var(--gray-2);
+}
+
+/* Для темной темы */
+[data-theme="dark"] .searchContainer :global(.rt-TextFieldRoot),
+.radix-themes[data-appearance="dark"] .searchContainer :global(.rt-TextFieldRoot) {
+  background: var(--gray-4);
+}
+
+.searchContainer :global(.rt-Button) {
+  background: var(--gray-2) !important;
+  border: 1px solid var(--gray-6) !important;
+}
+
+/* Для темной темы */
+[data-theme="dark"] .searchContainer :global(.rt-Button),
+.radix-themes[data-appearance="dark"] .searchContainer :global(.rt-Button) {
+  background: var(--gray-4) !important;
+}
+
+.searchContainer {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .filtersContainer {
+    padding: 16px;
+  }
+}

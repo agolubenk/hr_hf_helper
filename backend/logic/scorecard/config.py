@@ -25,7 +25,7 @@ def get_scorecard_rules(vacancy_name: str = None, candidate_grade: str = None) -
                 'priority': 100,
                 'source': 'config',
                 'action': 'keep',
-                'sheets': ['all', 'score'],
+                'sheets': ['all', 'score', "Task's"],
                 'conditions': {}
             }
         ],
@@ -75,7 +75,7 @@ def get_scorecard_rules(vacancy_name: str = None, candidate_grade: str = None) -
                 'priority': 50,
                 'source': 'config',
                 'fields': {
-                    'A1': 'Python Developer Scorecard',
+                    # Убрали A1, чтобы не перезаписывать [LINK] или другие плейсхолдеры
                     'B1': '[NAME]',
                     'C1': '[GRADE]'
                 },
@@ -90,7 +90,7 @@ def get_scorecard_rules(vacancy_name: str = None, candidate_grade: str = None) -
                 'priority': 50,
                 'source': 'config',
                 'fields': {
-                    'A1': 'Frontend Developer Scorecard',
+                    # Убрали A1, чтобы не перезаписывать [LINK] или другие плейсхолдеры
                     'B1': '[NAME]',
                     'C1': '[GRADE]'
                 },

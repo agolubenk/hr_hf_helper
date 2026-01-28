@@ -1,0 +1,227 @@
+{
+  "name": "workflow",
+  "type": "component",
+  "description": "Директория `components/workflow` содержит компоненты для управления процессом скрининга и интервью кандидатов в HR Helper. Компоненты обеспечивают чат-интерфейс для обработки команд, управление расписанием интервью, отображение свободных слотов, настройку параметров интервью и отображение статистики.\n\n**Расположение**: `@/components/workflow`",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/components/workflow/COMPONENTS_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### interviewers\n- **Тип**: `Interviewer[]`\n- **Назначение**: Моковые данные интервьюеров\n- **Используется для**: Выбора интервьюеров при настройке интервью\n- **TODO**: Загружать из API",
+      "extracted_from": "documentation"
+    },
+    "mockData_1": {
+      "description": "### offices\n- **Тип**: массив объектов с полями `id`, `label`\n- **Назначение**: Список офисов\n- **Используется для**: Выбора офиса при настройке интервью",
+      "extracted_from": "documentation"
+    },
+    "mockData_2": {
+      "description": "### stages\n- **Тип**: массив объектов с полями `stage`, `count`\n- **Назначение**: Данные для таблиц отчетов\n- **Используется для**: Отображения статистики по этапам в таблицах отчетов\n- **TODO**: Загружать из API",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [
+    {
+      "name": "WorkflowType",
+      "definition": "type WorkflowType = 'screening' | 'interview'",
+      "fields": []
+    },
+    {
+      "name": "InterviewFormat",
+      "definition": "type InterviewFormat = 'online' | 'office'",
+      "fields": []
+    },
+    {
+      "name": "Office",
+      "definition": "type Office = 'minsk' | 'warsaw' | 'gomel'",
+      "fields": []
+    },
+    {
+      "name": "Interviewer",
+      "definition": "interface Interviewer {\n  id: string                                    // Уникальный идентификатор интервьюера\n  name: string                                 // Имя интервьюера\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "Уникальный идентификатор интервьюера"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false,
+          "comment": "Имя интервьюера"
+        }
+      ]
+    },
+    {
+      "name": "WeekSlot",
+      "definition": "interface WeekSlot {\n  date: string                                  // Дата слота (DD.MM.YYYY)\n  dayOfWeek: string                            // День недели (сокращенный)\n  slots: string[]                              // Массив временных интервалов\n  count: number                                // Количество свободных слотов\n}",
+      "fields": [
+        {
+          "name": "date",
+          "type": "string",
+          "optional": false,
+          "comment": "Дата слота (DD.MM.YYYY)"
+        },
+        {
+          "name": "dayOfWeek",
+          "type": "string",
+          "optional": false,
+          "comment": "День недели (сокращенный)"
+        },
+        {
+          "name": "slots",
+          "type": "string[]",
+          "optional": false,
+          "comment": "Массив временных интервалов"
+        },
+        {
+          "name": "count",
+          "type": "number",
+          "optional": false,
+          "comment": "Количество свободных слотов"
+        }
+      ]
+    },
+    {
+      "name": "WeekSection",
+      "definition": "interface WeekSection {\n  title: string                                // Название секции\n  slots: WeekSlot[]                            // Массив слотов на неделю\n}",
+      "fields": [
+        {
+          "name": "title",
+          "type": "string",
+          "optional": false,
+          "comment": "Название секции"
+        },
+        {
+          "name": "slots",
+          "type": "WeekSlot[]",
+          "optional": false,
+          "comment": "Массив слотов на неделю"
+        }
+      ]
+    },
+    {
+      "name": "AttachedFile",
+      "definition": "interface AttachedFile {\n  id: string                                   // Уникальный идентификатор файла\n  name: string                                 // Имя файла\n  size: number                                 // Размер файла\n  type: string                                 // Тип файла\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "Уникальный идентификатор файла"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false,
+          "comment": "Имя файла"
+        },
+        {
+          "name": "size",
+          "type": "number",
+          "optional": false,
+          "comment": "Размер файла"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "optional": false,
+          "comment": "Тип файла"
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Обработка команд чата\n   - POST `/api/workflow/commands/`\n   - Параметры: команда, аргументы\n   - Возвращает: результат выполнения команды",
+      "method": "POST",
+      "endpoint": "/api/workflow/commands/",
+      "parameters": "команда, аргументы",
+      "returns": "результат выполнения команды",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка списка вакансий\n   - GET `/api/vacancies/`\n   - Возвращает: список вакансий для выбора",
+      "method": "GET",
+      "endpoint": "/api/vacancies/",
+      "parameters": null,
+      "returns": "список вакансий для выбора",
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Загрузка списка интервьюеров\n   - GET `/api/interviewers/`\n   - Возвращает: список интервьюеров",
+      "method": "GET",
+      "endpoint": "/api/interviewers/",
+      "parameters": null,
+      "returns": "список интервьюеров",
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Создание инвайта на интервью\n   - POST `/api/workflow/invites/`\n   - Параметры: данные инвайта (кандидат, дата-время, интервьюеры, формат)\n   - Возвращает: созданный инвайт",
+      "method": "POST",
+      "endpoint": "/api/workflow/invites/",
+      "parameters": "данные инвайта (кандидат, дата-время, интервьюеры, формат)",
+      "returns": "созданный инвайт",
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Загрузка свободных слотов\n   - GET `/api/workflow/slots/`\n   - Параметры: неделя, интервьюеры\n   - Возвращает: свободные слоты (синхронизация с Google Calendar)",
+      "method": "GET",
+      "endpoint": "/api/workflow/slots/",
+      "parameters": "неделя, интервьюеры",
+      "returns": "свободные слоты (синхронизация с Google Calendar)",
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Загрузка отчетов по неделям\n   - GET `/api/workflow/reports/`\n   - Параметры: неделя\n   - Возвращает: статистику по этапам",
+      "method": "GET",
+      "endpoint": "/api/workflow/reports/",
+      "parameters": "неделя",
+      "returns": "статистику по этапам",
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Добавление кандидата из резюме\n   - POST `/api/workflow/candidates/`\n   - Параметры: файл резюме\n   - Возвращает: данные кандидата",
+      "method": "POST",
+      "endpoint": "/api/workflow/candidates/",
+      "parameters": "файл резюме",
+      "returns": "данные кандидата",
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Создание HR скрининга\n   - POST `/api/workflow/hr-screening/`\n   - Параметры: ссылка Huntflow, текст ответов\n   - Возвращает: результат скрининга",
+      "method": "POST",
+      "endpoint": "/api/workflow/hr-screening/",
+      "parameters": "ссылка Huntflow, текст ответов",
+      "returns": "результат скрининга",
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Создание технического скрининга\n   - POST `/api/workflow/tech-screening/`\n   - Параметры: ссылка Huntflow, дата-время\n   - Возвращает: результат скрининга",
+      "method": "POST",
+      "endpoint": "/api/workflow/tech-screening/",
+      "parameters": "ссылка Huntflow, дата-время",
+      "returns": "результат скрининга",
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Отмена последнего действия\n    - POST `/api/workflow/undo/`\n    - Возвращает: статус отмены",
+      "method": "POST",
+      "endpoint": "/api/workflow/undo/",
+      "parameters": null,
+      "returns": "статус отмены",
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.324670"
+}

@@ -1,0 +1,95 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal {
+  background: var(--color-panel);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modalHeader {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--gray-6);
+}
+
+.modalContent {
+  padding: 24px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.modalFooter {
+  padding: 16px 24px;
+  border-top: 1px solid var(--gray-6);
+}
+
+.dropZone {
+  border: 2px dashed var(--gray-6);
+  border-radius: 8px;
+  background: var(--gray-2);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 16px;
+}
+
+.dropZone:hover {
+  border-color: var(--accent-9);
+  background: var(--gray-3);
+}
+
+/* Для темной темы */
+[data-theme="dark"] .dropZone,
+.radix-themes[data-appearance="dark"] .dropZone {
+  background: var(--gray-4);
+}
+
+.errorBox {
+  padding: 12px;
+  background: var(--red-3);
+  border: 1px solid var(--red-6);
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.infoBox {
+  padding: 12px;
+  background: var(--gray-2);
+  border-radius: 6px;
+  border: 1px solid var(--gray-6);
+}
+
+/* Для темной темы */
+[data-theme="dark"] .infoBox,
+.radix-themes[data-appearance="dark"] .infoBox {
+  background: var(--gray-4);
+}
+
+@media (max-width: 768px) {
+  .modal {
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .modalOverlay {
+    padding: 0;
+  }
+}

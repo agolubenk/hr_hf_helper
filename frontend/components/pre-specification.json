@@ -1,0 +1,439 @@
+{
+  "name": "components",
+  "type": "component",
+  "description": "Корневая директория `components` содержит основные компоненты приложения HR Helper, которые обеспечивают базовую структуру, навигацию, управление темой и общие UI элементы. Эти компоненты используются во всем приложении и формируют основу пользовательского интерфейса.\n\n**Расположение**: `@/components`",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/components/COMPONENTS_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [
+    {
+      "name": "AppLayoutProps",
+      "definition": "interface AppLayoutProps {\n  children: ReactNode                              // Содержимое страницы\n  pageTitle?: string                               // Заголовок страницы\n  userName?: string                                // Имя пользователя\n  onLogout?: () => void                            // Обработчик выхода из системы\n}",
+      "fields": [
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "optional": false,
+          "comment": "Содержимое страницы"
+        },
+        {
+          "name": "pageTitle",
+          "type": "string",
+          "optional": true,
+          "comment": "Заголовок страницы"
+        },
+        {
+          "name": "userName",
+          "type": "string",
+          "optional": true,
+          "comment": "Имя пользователя"
+        },
+        {
+          "name": "onLogout",
+          "type": "() => void",
+          "optional": true,
+          "comment": "Обработчик выхода из системы"
+        }
+      ]
+    },
+    {
+      "name": "FloatingAction",
+      "definition": "interface FloatingAction {\n  id: string                                       // Уникальный идентификатор действия\n  icon: ReactNode                                  // ReactNode иконки действия\n  onClick?: () => void                             // Обработчик клика\n  label?: string                                  // Подсказка при наведении\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "Уникальный идентификатор действия"
+        },
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "optional": false,
+          "comment": "ReactNode иконки действия"
+        },
+        {
+          "name": "onClick",
+          "type": "() => void",
+          "optional": true,
+          "comment": "Обработчик клика"
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "optional": true,
+          "comment": "Подсказка при наведении"
+        }
+      ]
+    },
+    {
+      "name": "FloatingActionsProps",
+      "definition": "interface FloatingActionsProps {\n  actions?: FloatingAction[]                        // Массив кастомных действий\n}",
+      "fields": [
+        {
+          "name": "actions",
+          "type": "FloatingAction[]",
+          "optional": true,
+          "comment": "Массив кастомных действий"
+        }
+      ]
+    },
+    {
+      "name": "FloatingLabelInputProps",
+      "definition": "interface FloatingLabelInputProps {\n  id: string                                       // Уникальный идентификатор поля\n  label: string                                    // Текст метки поля\n  type?: string                                    // Тип поля ввода\n  value: string                                    // Значение поля\n  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void  // Обработчик изменения\n  placeholder?: string                             // Текст плейсхолдера\n  required?: boolean                               // Флаг обязательности поля\n  icon?: ReactNode                                 // Иконка слева от поля\n  disabled?: boolean                               // Флаг отключенного состояния\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "Уникальный идентификатор поля"
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "optional": false,
+          "comment": "Текст метки поля"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "optional": true,
+          "comment": "Тип поля ввода"
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "optional": false,
+          "comment": "Значение поля"
+        },
+        {
+          "name": "onChange",
+          "type": "(e: React.ChangeEvent<HTMLInputElement>) => void",
+          "optional": false,
+          "comment": "Обработчик изменения"
+        },
+        {
+          "name": "placeholder",
+          "type": "string",
+          "optional": true,
+          "comment": "Текст плейсхолдера"
+        },
+        {
+          "name": "required",
+          "type": "boolean",
+          "optional": true,
+          "comment": "Флаг обязательности поля"
+        },
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "optional": true,
+          "comment": "Иконка слева от поля"
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "optional": true,
+          "comment": "Флаг отключенного состояния"
+        }
+      ]
+    },
+    {
+      "name": "HeaderProps",
+      "definition": "interface HeaderProps {\n  pageTitle: string                                // Заголовок текущей страницы\n  userName?: string                                 // Имя пользователя\n  onMenuToggle?: () => void                        // Обработчик открытия/закрытия меню\n  onThemeToggle: () => void                        // Обработчик переключения темы\n  currentTheme: 'light' | 'dark'                   // Текущая тема\n  menuOpen?: boolean                               // Флаг открытости меню\n  onLogout: () => void                             // Обработчик выхода из системы\n}",
+      "fields": [
+        {
+          "name": "pageTitle",
+          "type": "string",
+          "optional": false,
+          "comment": "Заголовок текущей страницы"
+        },
+        {
+          "name": "userName",
+          "type": "string",
+          "optional": true,
+          "comment": "Имя пользователя"
+        },
+        {
+          "name": "onMenuToggle",
+          "type": "() => void",
+          "optional": true,
+          "comment": "Обработчик открытия/закрытия меню"
+        },
+        {
+          "name": "onThemeToggle",
+          "type": "() => void",
+          "optional": false,
+          "comment": "Обработчик переключения темы"
+        },
+        {
+          "name": "currentTheme",
+          "type": "'light' | 'dark'",
+          "optional": false,
+          "comment": "Текущая тема"
+        },
+        {
+          "name": "menuOpen",
+          "type": "boolean",
+          "optional": true,
+          "comment": "Флаг открытости меню"
+        },
+        {
+          "name": "onLogout",
+          "type": "() => void",
+          "optional": false,
+          "comment": "Обработчик выхода из системы"
+        }
+      ]
+    },
+    {
+      "name": "QuickButton",
+      "definition": "interface QuickButton {\n  id: string                                       // Уникальный идентификатор кнопки\n  name: string                                     // Название кнопки\n  icon: string                                     // Имя иконки\n  color: string                                    // Цвет фона кнопки\n  type: 'link' | 'text' | 'datetime'              // Тип кнопки\n  value: string                                    // Значение (URL, текст, дата/время)\n  order: number                                    // Порядок сортировки\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "Уникальный идентификатор кнопки"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false,
+          "comment": "Название кнопки"
+        },
+        {
+          "name": "icon",
+          "type": "string",
+          "optional": false,
+          "comment": "Имя иконки"
+        },
+        {
+          "name": "color",
+          "type": "string",
+          "optional": false,
+          "comment": "Цвет фона кнопки"
+        },
+        {
+          "name": "type",
+          "type": "'link' | 'text' | 'datetime'",
+          "optional": false,
+          "comment": "Тип кнопки"
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "optional": false,
+          "comment": "Значение (URL, текст, дата/время)"
+        },
+        {
+          "name": "order",
+          "type": "number",
+          "optional": false,
+          "comment": "Порядок сортировки"
+        }
+      ]
+    },
+    {
+      "name": "SidebarProps",
+      "definition": "interface SidebarProps {\n  isOpen: boolean                                  // Флаг открытости меню\n  onClose: () => void                             // Обработчик закрытия меню\n}",
+      "fields": [
+        {
+          "name": "isOpen",
+          "type": "boolean",
+          "optional": false,
+          "comment": "Флаг открытости меню"
+        },
+        {
+          "name": "onClose",
+          "type": "() => void",
+          "optional": false,
+          "comment": "Обработчик закрытия меню"
+        }
+      ]
+    },
+    {
+      "name": "StatusBarProps",
+      "definition": "interface StatusBarProps {\n  vacancies?: Array<{ id: string; title: string }>  // Массив вакансий\n  myVacancyIds?: string[]                          // ID вакансий в блоке \"Мои\"\n  statuses?: Array<{ id: string; label: string; color: string; count?: number }>  // Статусы\n  onGeneralSettingsClick?: () => void              // Обработчик клика на \"Общие настройки\"\n  onAddVacancy?: (data: AddVacancyFormData) => void  // Обработчик добавления вакансии\n}",
+      "fields": [
+        {
+          "name": "vacancies",
+          "type": "Array<{ id: string; title: string }>",
+          "optional": true,
+          "comment": "Массив вакансий"
+        },
+        {
+          "name": "myVacancyIds",
+          "type": "string[]",
+          "optional": true,
+          "comment": "ID вакансий в блоке \"Мои\""
+        },
+        {
+          "name": "statuses",
+          "type": "Array<{ id: string; label: string; color: string; count?: number }>",
+          "optional": true,
+          "comment": "Статусы"
+        },
+        {
+          "name": "onGeneralSettingsClick",
+          "type": "() => void",
+          "optional": true,
+          "comment": "Обработчик клика на \"Общие настройки\""
+        },
+        {
+          "name": "onAddVacancy",
+          "type": "(data: AddVacancyFormData) => void",
+          "optional": true,
+          "comment": "Обработчик добавления вакансии"
+        }
+      ]
+    },
+    {
+      "name": "ThemeProviderProps",
+      "definition": "interface ThemeProviderProps {\n  children: ReactNode                              // Дочерние компоненты\n}",
+      "fields": [
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "optional": false,
+          "comment": "Дочерние компоненты"
+        }
+      ]
+    },
+    {
+      "name": "ThemeContextType",
+      "definition": "interface ThemeContextType {\n  theme: ThemeMode                                 // Текущая тема\n  toggleTheme: () => void                         // Функция переключения темы\n  lightThemeAccentColor: AccentColorValue          // Акцентный цвет для светлой темы\n  darkThemeAccentColor: AccentColorValue          // Акцентный цвет для темной темы\n  setLightThemeAccentColor: (color: AccentColorValue) => void  // Установка цвета для светлой темы\n  setDarkThemeAccentColor: (color: AccentColorValue) => void  // Установка цвета для темной темы\n}",
+      "fields": [
+        {
+          "name": "theme",
+          "type": "ThemeMode",
+          "optional": false,
+          "comment": "Текущая тема"
+        },
+        {
+          "name": "toggleTheme",
+          "type": "() => void",
+          "optional": false,
+          "comment": "Функция переключения темы"
+        },
+        {
+          "name": "lightThemeAccentColor",
+          "type": "AccentColorValue",
+          "optional": false,
+          "comment": "Акцентный цвет для светлой темы"
+        },
+        {
+          "name": "darkThemeAccentColor",
+          "type": "AccentColorValue",
+          "optional": false,
+          "comment": "Акцентный цвет для темной темы"
+        },
+        {
+          "name": "setLightThemeAccentColor",
+          "type": "(color: AccentColorValue) => void",
+          "optional": false,
+          "comment": "Установка цвета для светлой темы"
+        },
+        {
+          "name": "setDarkThemeAccentColor",
+          "type": "(color: AccentColorValue) => void",
+          "optional": false,
+          "comment": "Установка цвета для темной темы"
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка настроек быстрых кнопок из API\n   - GET `/api/user/quick-buttons/`\n   - Возвращает: настройки быстрых кнопок пользователя\n   - Синхронизация с FloatingActions",
+      "method": "GET",
+      "endpoint": "/api/user/quick-buttons/",
+      "parameters": null,
+      "returns": "настройки быстрых кнопок пользователя",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Сохранение настроек быстрых кнопок\n   - PUT `/api/user/quick-buttons/`\n   - Параметры: настройки быстрых кнопок\n   - Синхронизация с localStorage",
+      "method": "PUT",
+      "endpoint": "/api/user/quick-buttons/",
+      "parameters": "настройки быстрых кнопок",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Загрузка структуры меню из API\n   - GET `/api/menu/`\n   - Возвращает: структуру меню навигации\n   - Замена hardcoded menuItems в Sidebar",
+      "method": "GET",
+      "endpoint": "/api/menu/",
+      "parameters": null,
+      "returns": "структуру меню навигации",
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Загрузка статусов кандидатов из API\n   - GET `/api/recr-chat/statuses/`\n   - Параметры: vacancy_id\n   - Возвращает: статусы с количеством кандидатов\n   - Замена defaultStatuses в StatusBar",
+      "method": "GET",
+      "endpoint": "/api/recr-chat/statuses/",
+      "parameters": "vacancy_id",
+      "returns": "статусы с количеством кандидатов",
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Загрузка вакансий для StatusBar\n   - GET `/api/vacancies/`\n   - Параметры: фильтры\n   - Возвращает: список вакансий\n   - Замена defaultVacancies в StatusBar",
+      "method": "GET",
+      "endpoint": "/api/vacancies/",
+      "parameters": "фильтры",
+      "returns": "список вакансий",
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Синхронизация темы с сервером\n   - PUT `/api/user/theme/`\n   - Параметры: theme, accentColors\n   - Сохранение предпочтений пользователя на сервере",
+      "method": "PUT",
+      "endpoint": "/api/user/theme/",
+      "parameters": "theme, accentColors",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Загрузка темы пользователя при входе\n   - GET `/api/user/settings/`\n   - Возвращает: настройки пользователя, включая тему\n   - Восстановление темы при входе",
+      "method": "GET",
+      "endpoint": "/api/user/settings/",
+      "parameters": null,
+      "returns": "настройки пользователя, включая тему",
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Уведомления в Header\n   - GET `/api/notifications/`\n   - Возвращает: список уведомлений\n   - Отображение количества непрочитанных уведомлений",
+      "method": "GET",
+      "endpoint": "/api/notifications/",
+      "parameters": null,
+      "returns": "список уведомлений",
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Глобальный поиск\n   - GET `/api/search/`\n   - Параметры: query, scope\n   - Возвращает: результаты поиска\n   - Реализация функциональности поиска в GlobalSearch",
+      "method": "GET",
+      "endpoint": "/api/search/",
+      "parameters": "query, scope",
+      "returns": "результаты поиска",
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Информация о пользователе в Header\n    - GET `/api/user/profile/`\n    - Возвращает: информацию о пользователе\n    - Замена мокового userName",
+      "method": "GET",
+      "endpoint": "/api/user/profile/",
+      "parameters": null,
+      "returns": "информацию о пользователе",
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.316357"
+}

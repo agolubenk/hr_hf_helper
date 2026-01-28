@@ -1,0 +1,295 @@
+{
+  "name": "recr-chat",
+  "type": "page",
+  "description": "Страница чата рекрутера с кандидатами. Централизованный интерфейс для общения со всеми кандидатами из разных мессенджеров (Telegram, WhatsApp, Viber), управления контактами, информацией о кандидатах, настройками вакансий и workflow процессами.\n\n**Путь**: `/recr-chat`\n\n**Размер файла**: ~7982 строки кода (очень большой компонент)",
+  "route_path": "`/recr-chat`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/recr-chat/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockCandidates\n- **Тип**: Array<Candidate>\n- **Структура**: массив из 5 кандидатов\n- **Пример записи**: \n  ```typescript\n  {\n    id: '1',\n    name: 'John Doe',\n    position: 'Senior Developer',\n    status: 'Interview',\n    statusColor: '#8B5CF6',\n    avatar: 'JD',\n    timeAgo: '2 days ago',\n    unread: 3,\n    unreadSources: { telegram: 2, whatsapp: 1 },\n    isViewed: true,\n    hasUnviewedChanges: false,\n    email: 'john@example.com',\n    phone: '+1 (555) 123-4567',\n    emails: ['john@example.com'],\n    phones: ['+1 (555) 123-4567'],\n    location: 'New York, USA',\n    hasDuplicateSuspicion: true,\n    // ... контакты мессенджеров и соцсетей\n  }\n  ```\n- **TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    },
+    "mockData_1": {
+      "description": "### mockConversations\n- **Тип**: Array с диалогами\n- **Структура**: массив диалогов с кандидатами\n- **TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    },
+    "mockData_2": {
+      "description": "### mockVacancies\n- **Тип**: Array с вакансиями\n- **Структура**: массив вакансий для настроек\n- **TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    },
+    "mockData_3": {
+      "description": "### mockHistory\n- **Тип**: Array с историей\n- **Структура**: массив записей истории взаимодействий\n- **TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    },
+    "mockData_4": {
+      "description": "- **Тип**: Array<Candidate>\n- **Структура**: массив из 5 кандидатов",
+      "extracted_from": "documentation"
+    },
+    "mockData_5": {
+      "description": "- **Тип**: Array с диалогами\n- **Структура**: массив диалогов с кандидатами",
+      "extracted_from": "documentation"
+    },
+    "mockData_6": {
+      "description": "- **Тип**: Array с вакансиями\n- **Структура**: массив вакансий для настроек",
+      "extracted_from": "documentation"
+    },
+    "mockData_7": {
+      "description": "- **Тип**: Array с историей\n- **Структура**: массив записей истории взаимодействий",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [
+    {
+      "name": "WorkflowType",
+      "definition": "type WorkflowType = 'screening' | 'interview'  // Тип workflow процесса",
+      "fields": []
+    },
+    {
+      "name": "InterviewFormat",
+      "definition": "type InterviewFormat = 'online' | 'office'    // Формат интервью",
+      "fields": []
+    },
+    {
+      "name": "Office",
+      "definition": "type Office = 'minsk' | 'warsaw' | 'gomel'     // Офис",
+      "fields": []
+    },
+    {
+      "name": "Interviewer",
+      "definition": "interface Interviewer {\n  id: string                                   // ID интервьюера\n  name: string                                 // Имя интервьюера\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "ID интервьюера"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false,
+          "comment": "Имя интервьюера"
+        }
+      ]
+    },
+    {
+      "name": "HistoryItem",
+      "definition": "interface HistoryItem {\n  id: string                                   // ID записи истории\n  date: string                                 // Дата изменения\n  user: string                                 // Пользователь, внесший изменения\n  changes: string                              // Описание изменений\n  version: number                              // Номер версии\n  fullText?: string                            // Полный текст версии\n  fieldsState?: {                              // Состояние полей для восстановления\n    title: string\n    department: string\n    header: string\n    responsibilities: string\n    requirements: string\n    niceToHave: string\n    conditions: string\n    closing: string\n    link: string\n    fieldSettings: Record<string, { active: boolean; visible: boolean }>\n  }\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "ID записи истории"
+        },
+        {
+          "name": "date",
+          "type": "string",
+          "optional": false,
+          "comment": "Дата изменения"
+        },
+        {
+          "name": "user",
+          "type": "string",
+          "optional": false,
+          "comment": "Пользователь, внесший изменения"
+        },
+        {
+          "name": "changes",
+          "type": "string",
+          "optional": false,
+          "comment": "Описание изменений"
+        },
+        {
+          "name": "version",
+          "type": "number",
+          "optional": false,
+          "comment": "Номер версии"
+        },
+        {
+          "name": "fullText",
+          "type": "string",
+          "optional": true,
+          "comment": "Полный текст версии"
+        },
+        {
+          "name": "fieldsState",
+          "type": "{",
+          "optional": true,
+          "comment": "Состояние полей для восстановления"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "department",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "header",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "responsibilities",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "requirements",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "niceToHave",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "conditions",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "closing",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "link",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "fieldSettings",
+          "type": "Record<string, { active: boolean; visible: boolean }>",
+          "optional": false,
+          "comment": null
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка списка кандидатов из API\n   - GET `/api/candidates/` - получение списка кандидатов\n   - Замена mockCandidates на данные из API",
+      "method": "GET",
+      "endpoint": "/api/candidates/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка сообщений из мессенджеров через API\n   - GET `/api/messages/` - получение сообщений из Telegram, WhatsApp, Viber\n   - Обновление счетчиков непрочитанных сообщений",
+      "method": "GET",
+      "endpoint": "/api/messages/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Отправка сообщений через API\n   - POST `/api/messages/send/` - отправка сообщений через мессенджеры\n   - Интеграция с WorkflowChat",
+      "method": "POST",
+      "endpoint": "/api/messages/send/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Редактирование кандидата через API\n   - PUT `/api/candidates/{id}/` - обновление информации о кандидате\n   - Сохранение изменений контактов",
+      "method": "PUT",
+      "endpoint": "/api/candidates/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Управление контактами через API\n   - POST `/api/candidates/{id}/contacts/` - добавление контакта\n   - DELETE `/api/candidates/{id}/contacts/{contactId}/` - удаление контакта\n   - PUT `/api/candidates/{id}/contacts/{contactId}/` - обновление контакта",
+      "method": "POST",
+      "endpoint": "/api/candidates/{id}/contacts/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Загрузка аватара через API\n   - POST `/api/candidates/{id}/avatar/` - загрузка аватара\n   - PUT `/api/candidates/{id}/avatar/` - обновление аватара\n   - DELETE `/api/candidates/{id}/avatar/` - удаление аватара",
+      "method": "POST",
+      "endpoint": "/api/candidates/{id}/avatar/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Загрузка документов через API\n   - POST `/api/candidates/{id}/documents/` - загрузка документа\n   - DELETE `/api/candidates/{id}/documents/{docId}/` - удаление документа\n   - PUT `/api/candidates/{id}/documents/{docId}/visibility/` - изменение видимости",
+      "method": "POST",
+      "endpoint": "/api/candidates/{id}/documents/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Отметка как просмотренного через API\n   - PATCH `/api/candidates/{id}/viewed/` - отметка как просмотренного\n   - Обновление флага isViewed",
+      "method": "PATCH",
+      "endpoint": "/api/candidates/{id}/viewed/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Управление дубликатами через API\n   - POST `/api/candidates/duplicates/merge/` - объединение кандидатов\n   - POST `/api/candidates/duplicates/resolve/` - разрешение дубликата",
+      "method": "POST",
+      "endpoint": "/api/candidates/duplicates/merge/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Настройки вакансии через API\n    - GET `/api/vacancies/{id}/settings/` - получение настроек вакансии\n    - PUT `/api/vacancies/{id}/settings/` - сохранение настроек вакансии\n    - POST `/api/vacancies/{id}/publish/` - публикация вакансии\n    - GET `/api/vacancies/{id}/history/` - получение истории изменений\n    - POST `/api/vacancies/{id}/history/{versionId}/restore/` - восстановление версии",
+      "method": "GET",
+      "endpoint": "/api/vacancies/{id}/settings/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 11,
+      "description": "Слоты через API\n    - GET `/api/calendar/slots/` - получение свободных слотов\n    - Синхронизация с Google Calendar",
+      "method": "GET",
+      "endpoint": "/api/calendar/slots/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 12,
+      "description": "Workflow процессы через API\n    - POST `/api/workflow/screening/` - запуск скрининга\n    - POST `/api/workflow/interview/` - запуск интервью\n    - Обновление статусов кандидатов",
+      "method": "POST",
+      "endpoint": "/api/workflow/screening/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.277498"
+}

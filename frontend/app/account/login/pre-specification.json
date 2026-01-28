@@ -1,0 +1,57 @@
+{
+  "name": "login",
+  "type": "page",
+  "description": "Страница входа в систему. Поддерживает два метода авторизации: email/пароль и Google OAuth, позволяет переключать тему и переходить на восстановление пароля.\n\n**Путь**: `/account/login`",
+  "route_path": "`/account/login`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/account/login/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "`handleEmailLogin()` - реализовать реальную авторизацию через API\n   - POST `/api/auth/login` с `{ email, password }`\n   - Обработка ответа: `{ token, user }` или `{ error }`\n   - Сохранение токена в secure storage\n   - Редирект на главную страницу",
+      "method": "POST",
+      "endpoint": "/api/auth/login",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "`handleGoogleLogin()` - реализовать реальную интеграцию с Google OAuth\n   - Правильный URL: `/api/auth/google` или внешний OAuth endpoint\n   - Настройка Google OAuth credentials\n   - Обработка callback с токеном",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Сохранение токена - реализовать через secure storage\n   - Использовать httpOnly cookies для безопасности\n   - Или localStorage с защитой от XSS\n   - Обновление заголовков запросов с токеном",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Редирект после авторизации - реализовать с учетом роли пользователя\n   - Администратор → `/admin`\n   - Обычный пользователь → `/workflow`\n   - Сохранение URL, с которого пришел пользователь (для редиректа обратно)",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Обработка ошибок - реализовать детальные сообщения об ошибках\n   - \"Неверный email или пароль\"\n   - \"Аккаунт не активирован\"\n   - \"Аккаунт заблокирован\"\n   - \"Слишком много попыток входа\"",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.292073"
+}

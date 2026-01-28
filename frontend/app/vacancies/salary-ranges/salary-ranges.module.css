@@ -1,0 +1,67 @@
+.salaryRangesContainer {
+  padding: 0 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.addButton {
+  margin-bottom: 16px;
+}
+
+.sectionHeader {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--gray-a6);
+}
+
+.viewToggle {
+  display: flex;
+  gap: 4px;
+}
+
+.viewButton {
+  padding: 6px 12px;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tableCard {
+  overflow: hidden;
+}
+
+/* Адаптивность для мобильных */
+.buttonTextDesktop {
+  display: inline;
+}
+
+.buttonTextMobile {
+  display: none;
+}
+
+.updateTextDesktop {
+  display: inline;
+}
+
+@media (max-width: 768px) {
+  .buttonTextDesktop {
+    display: none;
+  }
+
+  .buttonTextMobile {
+    display: inline;
+  }
+
+  .updateTextDesktop {
+    display: none;
+  }
+}

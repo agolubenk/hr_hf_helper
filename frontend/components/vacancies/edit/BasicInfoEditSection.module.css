@@ -1,0 +1,28 @@
+.sectionCard {
+  background: var(--gray-2);
+  border: 1px solid var(--gray-6);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.header {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--gray-6);
+}
+
+.iconCircle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-9);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .sectionCard {
+    padding: 16px;
+  }
+}

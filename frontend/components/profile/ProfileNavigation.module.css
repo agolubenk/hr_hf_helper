@@ -1,0 +1,40 @@
+/* Стили для навигации профиля */
+
+.navigation {
+  background-color: var(--color-panel);
+  border: 1px solid var(--gray-a6);
+  border-radius: 12px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menuItem {
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  user-select: none;
+}
+
+.menuItem:hover {
+  background-color: var(--gray-a3);
+}
+
+.menuItem.active {
+  background-color: var(--accent-9);
+  color: white;
+}
+
+.menuItem.active svg {
+  color: white;
+}
+
+.menuItem:not(.active) {
+  color: var(--gray-12);
+}
+
+.menuItem:not(.active) svg {
+  color: var(--accent-9);
+}

@@ -10,17 +10,25 @@
 
 <!-- Скрытое поле с структурой для JavaScript -->
 <div id="saved-structure" data-structure='{{ settings.folder_structure|escapejs }}' style="display: none;"></div>
+<!-- Скрытое поле с защищёнными листами для JavaScript -->
+<div id="saved-protected-sheets" data-protected-sheets='{{ settings.protected_sheet_names|escapejs }}' style="display: none;"></div>
 
 <div class="row">
     
     <!-- Настройки структуры папок -->
     <div class="col-12 mb-4">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">
                     <i class="fas fa-folder-tree me-2"></i>
                     Настройки структуры папок
                 </h5>
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="openProtectedSheetsModal()">
+                        <i class="fas fa-shield-alt me-1"></i>
+                        Защищённые листы scorecard
+                    </button>
+                </div>
             </div>
             <div class="card-body">
                 
@@ -159,6 +167,30 @@
                                 </button>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Текущее значение защищённых листов -->
+                <div class="alert alert-secondary mb-4">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="mb-1">
+                                <i class="fas fa-shield-alt me-2"></i>
+                                Листы, которые нельзя удалять из scorecard
+                            </h6>
+                            <div class="text-muted small">
+                                Укажите названия листов (в точности как в Google Sheets) через запятую.
+                            </div>
+                            <div class="mt-2">
+                                <code id="protected-sheets-preview">
+                                    {% if settings.protected_sheet_names %}{{ settings.protected_sheet_names }}{% else %}—{% endif %}
+                                </code>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="openProtectedSheetsModal()">
+                            <i class="fas fa-pen me-1"></i>
+                            Изменить
+                        </button>
                     </div>
                 </div>
                 
@@ -893,7 +925,9 @@ function saveStructure() {
             'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         },
         body: JSON.stringify({
-            folder_structure: structure
+            folder_structure: structure,
+            // Сохраняем также защищённые листы (если они заданы)
+            protected_sheet_names: (document.getElementById('saved-protected-sheets')?.dataset?.protectedSheets || '')
         })
     })
     .then(response => response.json())
@@ -907,6 +941,57 @@ function saveStructure() {
             updateFullPathPreview();
         } else {
             alert('Ошибка сохранения: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при сохранении');
+    });
+}
+
+// ====== Защищённые листы (нельзя удалять из scorecard) ======
+function openProtectedSheetsModal() {
+    const el = document.getElementById('saved-protected-sheets');
+    const current = (el?.dataset?.protectedSheets || '').trim();
+    const input = document.getElementById('protectedSheetsInput');
+    if (input) input.value = current;
+    const modalEl = document.getElementById('protectedSheetsModal');
+    if (modalEl && typeof bootstrap !== 'undefined') {
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+    }
+}
+
+function saveProtectedSheets() {
+    const input = document.getElementById('protectedSheetsInput');
+    const value = (input?.value || '').trim();
+
+    fetch('{% url "google_oauth:api_scorecard_path_settings" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            protected_sheet_names: value
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Обновляем скрытое значение и превью
+            const el = document.getElementById('saved-protected-sheets');
+            if (el) el.dataset.protectedSheets = value;
+            const preview = document.getElementById('protected-sheets-preview');
+            if (preview) preview.textContent = value || '—';
+            // Закрываем модалку
+            const modalEl = document.getElementById('protectedSheetsModal');
+            if (modalEl && typeof bootstrap !== 'undefined') {
+                bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+            }
+            alert('Список защищённых листов сохранён!');
+        } else {
+            alert('Ошибка сохранения: ' + (data.message || 'unknown'));
         }
     })
     .catch(error => {
@@ -1514,6 +1599,40 @@ document.addEventListener('DOMContentLoaded', function() {
                         </button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно: защищённые листы scorecard -->
+<div class="modal fade" id="protectedSheetsModal" tabindex="-1" aria-labelledby="protectedSheetsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="protectedSheetsModalLabel">
+                    <i class="fas fa-shield-alt me-2"></i>
+                    Защищённые листы scorecard
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">
+                    Укажите названия листов (как в Google Sheets) <strong>через запятую</strong>. Эти листы не будут удаляться при обработке scorecard.
+                </div>
+                <div class="mb-2 text-muted small">
+                    Пример: <code>all, score, instructions</code>
+                </div>
+                <textarea class="form-control" id="protectedSheetsInput" rows="3" placeholder="all, score, ..."></textarea>
+                <div class="form-text">
+                    Регистр не важен, пробелы вокруг запятых игнорируются, дубли удаляются.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" onclick="saveProtectedSheets()">
+                    <i class="fas fa-save me-1"></i>
+                    Сохранить
+                </button>
             </div>
         </div>
     </div>

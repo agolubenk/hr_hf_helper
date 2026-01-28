@@ -1,0 +1,93 @@
+{
+  "name": "reporting",
+  "type": "page",
+  "description": "Главная страница отчетности. Отображает основные метрики и KPI (ключевые показатели эффективности) по рекрутингу в виде дашборда, предоставляет быстрый доступ к разделам отчетности и связанным страницам.\n\n**Путь**: `/reporting`",
+  "route_path": "`/reporting`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/reporting/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### metrics\n- **Тип**: объект с полями метрик\n- **Структура**: \n  ```typescript\n  {\n    // HR метрики\n    totalInterviewers: 23,\n    activeInterviewers: 22,\n    totalRequests: 38,\n    plannedRequests: 5,\n    inProcessRequests: 15,\n    closedRequests: 12,\n    cancelledRequests: 6,\n    totalVacancies: 25,\n    activeVacancies: 18,\n    inactiveVacancies: 7,\n    \n    // SLA метрики\n    totalSLAs: 38,\n    activeSLAs: 35,\n    slaCoverage: 92,\n    \n    // Скорость и исполнение\n    avgTimeToOffer: 45,\n    avgTimeToHire: 60,\n    avgRecruiterDays: 25,\n    onTimeRequests: 28,\n    overdueRequests: 10,\n    \n    // Результаты\n    totalCandidates: 45,\n    hiredCandidates: 12,\n    interviewCompletionRate: 85,\n    offerAcceptanceRate: 78\n  }\n  ```\n- **Использование**: передается напрямую в JSX для отображения\n- **TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    },
+    "mockData_1": {
+      "description": "- **Тип**: объект с полями метрик\n- **Структура**: \n  ```typescript\n  {\n    // HR метрики\n    totalInterviewers: 23,\n    activeInterviewers: 22,\n    totalRequests: 38,\n    plannedRequests: 5,\n    inProcessRequests: 15,\n    closedRequests: 12,\n    cancelledRequests: 6,\n    totalVacancies: 25,\n    activeVacancies: 18,\n    inactiveVacancies: 7,\n    \n    // SLA метрики\n    totalSLAs: 38,\n    activeSLAs: 35,\n    slaCoverage: 92,\n    \n    // Скорость и исполнение\n    avgTimeToOffer: 45,\n    avgTimeToHire: 60,\n    avgRecruiterDays: 25,\n    onTimeRequests: 28,\n    overdueRequests: 10,\n    \n    // Результаты\n    totalCandidates: 45,\n    hiredCandidates: 12,\n    interviewCompletionRate: 85,\n    offerAcceptanceRate: 78\n  }\n  ```",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка HR метрик из API\n   - GET `/api/reporting/hr-metrics/` - получение HR метрик\n   - Параметры: период (опционально)\n   - Замена моковых данных для интервьюеров, заявок, вакансий",
+      "method": "GET",
+      "endpoint": "/api/reporting/hr-metrics/",
+      "parameters": "период (опционально)",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка SLA метрик из API\n   - GET `/api/reporting/sla-metrics/` - получение SLA метрик\n   - Параметры: период (опционально)\n   - Замена моковых данных для покрытия SLA",
+      "method": "GET",
+      "endpoint": "/api/reporting/sla-metrics/",
+      "parameters": "период (опционально)",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Загрузка метрик скорости из API\n   - GET `/api/reporting/speed-metrics/` - получение метрик скорости\n   - Параметры: период (опционально)\n   - Замена моковых данных для Time-to-Offer, Time-to-Hire, дней рекрутера",
+      "method": "GET",
+      "endpoint": "/api/reporting/speed-metrics/",
+      "parameters": "период (опционально)",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Загрузка метрик исполнения из API\n   - GET `/api/reporting/execution-metrics/` - получение метрик исполнения\n   - Параметры: период (опционально)\n   - Замена моковых данных для заявок в срок и просроченных",
+      "method": "GET",
+      "endpoint": "/api/reporting/execution-metrics/",
+      "parameters": "период (опционально)",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Загрузка метрик результатов из API\n   - GET `/api/reporting/results-metrics/` - получение метрик результатов\n   - Параметры: период (опционально)\n   - Замена моковых данных для кандидатов, нанятых, процентов завершения",
+      "method": "GET",
+      "endpoint": "/api/reporting/results-metrics/",
+      "parameters": "период (опционально)",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Кэширование метрик\n   - Кэширование метрик на клиенте для уменьшения количества запросов\n   - Обновление метрик по таймеру или при изменении данных",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Обработка ошибок API\n   - Отображение ошибок при загрузке метрик\n   - Fallback значения при ошибках\n   - Toast уведомления об ошибках",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Оптимизация загрузки данных\n   - Параллельная загрузка всех метрик\n   - Ленивая загрузка метрик (загружать только видимые)\n   - Debounce для обновления метрик",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.270640"
+}

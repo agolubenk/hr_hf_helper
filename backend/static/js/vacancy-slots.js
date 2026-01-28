@@ -8,6 +8,13 @@ console.log('🔍 DEBUG: Начинаем загрузку событий...');
 // Переменные будут объявлены в шаблоне
 let vacancyData = {};
 
+// Текущий выбранный часовой пояс (по умолчанию Минск)
+let currentTimezone = 'minsk'; // 'minsk' или 'warsaw'
+
+// Исходные слоты в Минске (для конвертации в другие часовые пояса)
+window.originalScreeningSlots = null;
+window.originalInterviewSlots = null;
+
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🔍 DEBUG: Количество событий в контексте:', calendarEvents ? calendarEvents.length : 0);
@@ -17,7 +24,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (vacancyDataElement) {
         try {
             vacancyData = JSON.parse(vacancyDataElement.textContent);
-            console.log('🔍 DEBUG: Данные вакансии загружены:', vacancyData);
+            window.vacancyData = vacancyData;
+            console.log('🔍 DEBUG: Данные вакансии загружены, window.vacancyData установлен:', vacancyData);
         } catch (e) {
             console.error('❌ Ошибка парсинга данных вакансии:', e);
         }
@@ -34,9 +42,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Настраиваем обработчики для кнопок сворачивания
     setupCollapseButtons();
     
+    // Настраиваем обработчик изменения часового пояса (до загрузки слотов)
+    setupTimezoneToggle();
+    
     // Если есть предрассчитанные слоты, используем их, иначе генерируем на клиенте
     if (window.screeningSlots && window.screeningSlots.length > 0) {
         console.log('✅ [SLOTS] Используем предрассчитанные слоты с backend');
+        // Применяем текущий часовой пояс к слотам
+        applyTimezoneToSlots();
         window.switchSlotsByMeetingType('screening');
     } else {
         console.log('⚠️ [SLOTS] Предрассчитанные слоты не найдены, генерируем на клиенте');
@@ -244,6 +257,48 @@ function calculateAvailableSlots(dayEvents, date) {
             return;
         }
         
+        // Пропускаем отклоненные события (статус 'declined' или 'cancelled')
+        // Событие считается отклоненным, если:
+        // 1. Статус самого события 'cancelled'
+        // 2. Статус события 'declined' (если есть такое поле)
+        // 3. Текущий пользователь отклонил событие (если он участник)
+        // 4. Все участники отклонили приглашение (если есть информация об участниках)
+        if (event.status === 'cancelled' || event.status === 'declined') {
+            console.log(`  ❌ Исключаем отклоненное событие: "${event.title}" (статус: ${event.status})`);
+            return;
+        }
+        
+        // Проверяем, отклонил ли текущий пользователь событие
+        if (window.currentUserEmail && event.attendees && Array.isArray(event.attendees) && event.attendees.length > 0) {
+            const currentUserAttendee = event.attendees.find(attendee => {
+                const attendeeEmail = (attendee.email || '').toLowerCase();
+                return attendeeEmail === window.currentUserEmail;
+            });
+            
+            if (currentUserAttendee) {
+                const userResponseStatus = currentUserAttendee.response_status || currentUserAttendee.responseStatus || 'needsAction';
+                if (userResponseStatus === 'declined') {
+                    console.log(`  ❌ Исключаем событие, которое отклонил текущий пользователь: "${event.title}"`);
+                    return;
+                }
+            }
+        }
+        
+        // Проверяем участников: если все отклонили, пропускаем событие
+        if (event.attendees && Array.isArray(event.attendees) && event.attendees.length > 0) {
+            // Проверяем, есть ли хотя бы один участник, который принял или еще не ответил
+            const hasAcceptedOrPending = event.attendees.some(attendee => {
+                const responseStatus = attendee.response_status || attendee.responseStatus || 'needsAction';
+                return responseStatus === 'accepted' || responseStatus === 'tentative' || responseStatus === 'needsAction';
+            });
+            
+            // Если все участники отклонили, пропускаем событие
+            if (!hasAcceptedOrPending) {
+                console.log(`  ❌ Исключаем событие с отклоненными участниками: "${event.title}"`);
+                return;
+            }
+        }
+        
         const eventStart = new Date(event.start);
         const eventEnd = new Date(event.end);
         
@@ -265,7 +320,7 @@ function calculateAvailableSlots(dayEvents, date) {
                 end: intervalEnd
             });
             
-            console.log(`🚫 Занятый интервал: ${formatTime(intervalStart)} - ${formatTime(intervalEnd)} (событие: ${formatTime(eventStart)} - ${formatTime(eventEnd)})`);
+            console.log(`🚫 Занятый интервал: ${formatTime(intervalStart, currentTimezone)} - ${formatTime(intervalEnd, currentTimezone)} (событие: ${formatTime(eventStart, currentTimezone)} - ${formatTime(eventEnd, currentTimezone)})`);
         }
     });
     
@@ -327,8 +382,8 @@ function calculateAvailableSlots(dayEvents, date) {
         
         // Показываем интервал только если он длится больше 15 минут И больше или равен требуемой продолжительности
         if (durationMinutes >= 15 && durationMinutes >= requiredDuration) {
-            const startTime = formatTime(interval.start);
-            const endTime = formatTime(interval.end);
+            const startTime = formatTime(interval.start, currentTimezone);
+            const endTime = formatTime(interval.end, currentTimezone);
             
             if (startTime === endTime) {
                 availableRanges.push(startTime);
@@ -338,8 +393,8 @@ function calculateAvailableSlots(dayEvents, date) {
             
             console.log(`✅ Свободный интервал: ${startTime} - ${endTime} (${durationMinutes} мин) - подходит для встречи ${requiredDuration} мин`);
         } else if (durationMinutes >= 15) {
-            const startTime = formatTime(interval.start);
-            const endTime = formatTime(interval.end);
+            const startTime = formatTime(interval.start, currentTimezone);
+            const endTime = formatTime(interval.end, currentTimezone);
             console.log(`❌ Свободный интервал: ${startTime} - ${endTime} (${durationMinutes} мин) - слишком короткий для встречи ${requiredDuration} мин`);
         }
     });
@@ -347,48 +402,108 @@ function calculateAvailableSlots(dayEvents, date) {
     return availableRanges.length > 0 ? availableRanges.join(', ') : 'Нет свободных слотов';
 }
 
-// Вспомогательная функция для форматирования времени
-function formatTime(date) {
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
+// Функция для конвертации времени между часовыми поясами
+function convertTimezone(date, targetTimezone) {
+    if (!date) return date;
+    
+    // Если date - это строка, преобразуем в Date объект
+    let dateObj = date;
+    if (typeof date === 'string') {
+        dateObj = new Date(date);
+    }
+    
+    // Минск: Europe/Minsk (UTC+3, не переходит на летнее время)
+    // Варшава: Europe/Warsaw (UTC+1 зимой, UTC+2 летом)
+    
+    try {
+        if (targetTimezone === 'minsk') {
+            // Конвертируем в Минск
+            return new Date(dateObj.toLocaleString('en-US', { timeZone: 'Europe/Minsk' }));
+        } else if (targetTimezone === 'warsaw') {
+            // Конвертируем в Варшаву
+            return new Date(dateObj.toLocaleString('en-US', { timeZone: 'Europe/Warsaw' }));
+        }
+    } catch (e) {
+        console.error('Ошибка конвертации часового пояса:', e);
+        return dateObj;
+    }
+    
+    return dateObj;
+}
+
+// Вспомогательная функция для форматирования времени с учетом часового пояса
+function formatTime(date, timezone = null) {
+    if (!date) return '';
+    
+    // Если date - это строка, преобразуем в Date объект
+    let dateObj = date;
+    if (typeof date === 'string') {
+        dateObj = new Date(date);
+    }
+    
+    // Используем текущий часовой пояс или переданный
+    const tz = timezone || currentTimezone;
+    
+    // Конвертируем в нужный часовой пояс
+    const convertedDate = convertTimezone(dateObj, tz);
+    
+    // Получаем часы и минуты в нужном часовом поясе
+    let hours, minutes;
+    
+    if (tz === 'minsk') {
+        // Используем Intl API для получения времени в Минске
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            timeZone: 'Europe/Minsk',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+        const parts = formatter.formatToParts(dateObj);
+        hours = parseInt(parts.find(p => p.type === 'hour').value);
+        minutes = parseInt(parts.find(p => p.type === 'minute').value);
+    } else if (tz === 'warsaw') {
+        // Используем Intl API для получения времени в Варшаве
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            timeZone: 'Europe/Warsaw',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+        const parts = formatter.formatToParts(dateObj);
+        hours = parseInt(parts.find(p => p.type === 'hour').value);
+        minutes = parseInt(parts.find(p => p.type === 'minute').value);
+    } else {
+        // По умолчанию используем локальное время
+        hours = convertedDate.getHours();
+        minutes = convertedDate.getMinutes();
+    }
+    
     return `${hours}.${minutes.toString().padStart(2, '0')}`;
 }
 
-// Функция для получения продолжительности встречи
+// Функция для получения продолжительности встречи (для копирования слотов и отображения)
 function getMeetingDuration() {
     console.log('🔍 [DURATION] Получаем длительность встречи...');
     
-    // Сначала проверяем новую глобальную переменную
-    if (typeof window !== 'undefined' && window.currentMeetingDuration) {
+    if (typeof window !== 'undefined' && window.currentMeetingDuration != null) {
         console.log(`✅ [DURATION] Используем window.currentMeetingDuration: ${window.currentMeetingDuration}`);
         return window.currentMeetingDuration;
     }
     
-    // Затем проверяем глобальную переменную window.vacancyData
-    if (typeof window !== 'undefined' && window.vacancyData && window.vacancyData.duration) {
-        console.log(`✅ [DURATION] Используем window.vacancyData.duration: ${window.vacancyData.duration}`);
-        return window.vacancyData.duration;
+    var source = typeof window !== 'undefined' && window.vacancyData ? window.vacancyData : (typeof vacancyData !== 'undefined' ? vacancyData : null);
+    if (source) {
+        var isInterview = document.querySelector('.btn-meeting-type.active')?.id === 'btnInterview';
+        var mins = isInterview
+            ? (source.tech_interview_duration != null ? source.tech_interview_duration : 90)
+            : (source.screening_duration != null ? source.screening_duration : 45);
+        console.log(`✅ [DURATION] По активному типу (${isInterview ? 'интервью' : 'скрининг'}): ${mins} мин`);
+        return mins;
     }
     
-    // Затем проверяем локальную переменную vacancyData
-    if (typeof vacancyData !== 'undefined' && vacancyData) {
-        console.log('🔍 [DURATION] vacancyData найден:', vacancyData);
-        
-        // Пытаемся получить продолжительность из данных вакансии
-        // Это может быть поле duration, meeting_duration или аналогичное
-        if (vacancyData.duration) {
-            console.log(`✅ [DURATION] Используем vacancyData.duration: ${vacancyData.duration}`);
-            return vacancyData.duration;
-        }
-        if (vacancyData.meeting_duration) {
-            console.log(`✅ [DURATION] Используем vacancyData.meeting_duration: ${vacancyData.meeting_duration}`);
-            return vacancyData.meeting_duration;
-        }
-    }
-    
-    // Если нет данных о продолжительности, используем значение по умолчанию
-    console.log('⚠️ [DURATION] Данные не найдены, используем значение по умолчанию: 60 мин');
-    return 60; // 60 минут по умолчанию
+    var isInterviewFallback = document.querySelector('.btn-meeting-type.active')?.id === 'btnInterview';
+    var defaultMins = isInterviewFallback ? 90 : 45;
+    console.log(`⚠️ [DURATION] Нет данных вакансии, по умолчанию: ${defaultMins} мин`);
+    return defaultMins;
 }
 
 function generateWeekSlots(weekOffset) {
@@ -463,6 +578,43 @@ function generateWeekSlots(weekOffset) {
                     title.includes('выходной') || title.includes('day off')) {
                     console.log(`  🏖️ Исключаем нерабочее событие: "${event.title}"`);
                     return false;
+                }
+                
+                // Исключаем отклоненные события (статус 'declined' или 'cancelled')
+                if (event.status === 'cancelled' || event.status === 'declined') {
+                    console.log(`  ❌ Исключаем отклоненное событие: "${event.title}" (статус: ${event.status})`);
+                    return false;
+                }
+                
+                // Проверяем, отклонил ли текущий пользователь событие
+                if (window.currentUserEmail && event.attendees && Array.isArray(event.attendees) && event.attendees.length > 0) {
+                    const currentUserAttendee = event.attendees.find(attendee => {
+                        const attendeeEmail = (attendee.email || '').toLowerCase();
+                        return attendeeEmail === window.currentUserEmail;
+                    });
+                    
+                    if (currentUserAttendee) {
+                        const userResponseStatus = currentUserAttendee.response_status || currentUserAttendee.responseStatus || 'needsAction';
+                        if (userResponseStatus === 'declined') {
+                            console.log(`  ❌ Исключаем событие, которое отклонил текущий пользователь: "${event.title}"`);
+                            return false;
+                        }
+                    }
+                }
+                
+                // Проверяем участников: если все отклонили, исключаем событие
+                if (event.attendees && Array.isArray(event.attendees) && event.attendees.length > 0) {
+                    // Проверяем, есть ли хотя бы один участник, который принял или еще не ответил
+                    const hasAcceptedOrPending = event.attendees.some(attendee => {
+                        const responseStatus = attendee.response_status || attendee.responseStatus || 'needsAction';
+                        return responseStatus === 'accepted' || responseStatus === 'tentative' || responseStatus === 'needsAction';
+                    });
+                    
+                    // Если все участники отклонили, исключаем событие
+                    if (!hasAcceptedOrPending) {
+                        console.log(`  ❌ Исключаем событие с отклоненными участниками: "${event.title}"`);
+                        return false;
+                    }
                 }
                 
                 return true;
@@ -555,7 +707,8 @@ function updateLastUpdateTime() {
     }
 }
 
-function updateSlotsDisplay(currentWeekSlots, nextWeekSlots) {
+// Экспортируем функцию в глобальную область
+window.updateSlotsDisplay = function(currentWeekSlots, nextWeekSlots) {
     console.log('🔄 Обновление отображения слотов...');
     
     // Обновляем текущую неделю
@@ -588,9 +741,19 @@ function updateSlotsDisplay(currentWeekSlots, nextWeekSlots) {
     updateSlotButtons(currentWeekSlots, nextWeekSlots);
 }
 
+// Флаг для предотвращения рекурсии при обновлении слотов интервью
+let isUpdatingInterviewSlots = false;
+
 // Новая функция для переключения между предрассчитанными слотами
 function switchSlotsByMeetingType(meetingType) {
     console.log(`🔄 [SLOTS] Переключение на слоты для типа: ${meetingType}`);
+    
+    // Если переключаемся на интервью и не идет процесс обновления, обновляем слоты с учетом выбранных участников
+    if (meetingType === 'interview' && typeof window.updateInterviewSlots === 'function' && !isUpdatingInterviewSlots) {
+        console.log(`🔄 [SLOTS] Переключение на интервью - обновляем слоты с учетом выбранных участников`);
+        window.updateInterviewSlots();
+        return; // updateInterviewSlots сам вызовет обновление отображения
+    }
     
     // Определяем какие слоты использовать
     let slots = [];
@@ -684,21 +847,56 @@ function updateSlotButtons(currentWeekSlots, nextWeekSlots) {
         }
     }
     
-    // Кнопка копирования всех слотов (деактивируется, если хотя бы одна неделя не имеет слотов)
-    const allSlotsBtn = document.querySelector('.btn-copy-all-slots');
-    if (allSlotsBtn) {
-        if (currentWeekHasSlots && nextWeekHasSlots) {
-            allSlotsBtn.disabled = false;
-            allSlotsBtn.classList.remove('disabled');
-            allSlotsBtn.title = 'Скопировать все слоты';
-        } else {
-            allSlotsBtn.disabled = true;
-            allSlotsBtn.classList.add('disabled');
-            allSlotsBtn.title = 'Не все недели имеют доступные слоты';
-        }
-    }
+    // Кнопка копирования всех слотов:
+    // должна быть активна, если доступно хотя бы 2 недели из 2-х или 3-х.
+    updateAllSlotsButtonState();
     
     console.log('✅ Состояние кнопок слотов обновлено');
+}
+
+function getWeekVisibilityAndHasSlots(weekSelector) {
+    const section = document.querySelector(weekSelector);
+    if (!section) return { visible: false, hasSlots: false };
+
+    const display = window.getComputedStyle(section).display;
+    const visible = display !== 'none';
+
+    const cards = section.querySelectorAll('.slot-card');
+    const hasSlots = visible && Array.from(cards).some(card => {
+        const slotsEl = card.querySelector('.text-primary');
+        const slotsText = (slotsEl?.textContent || '').trim();
+        return slotsText && slotsText !== 'Нет свободных слотов';
+    });
+
+    return { visible, hasSlots };
+}
+
+function updateAllSlotsButtonState() {
+    const allSlotsBtn = document.querySelector('.btn-copy-all-slots');
+    if (!allSlotsBtn) return;
+
+    const current = getWeekVisibilityAndHasSlots('.week-section.current-week');
+    const next = getWeekVisibilityAndHasSlots('.week-section.next-week');
+    const third = getWeekVisibilityAndHasSlots('.week-section.third-week');
+
+    // Всегда считаем минимум 2 недели (current + next). Третья учитывается только если показана.
+    const weeksTotal = 2 + (third.visible ? 1 : 0);
+    const weeksWithSlots = (current.hasSlots ? 1 : 0) + (next.hasSlots ? 1 : 0) + (third.visible && third.hasSlots ? 1 : 0);
+
+    if (weeksWithSlots >= 2) {
+        allSlotsBtn.disabled = false;
+        allSlotsBtn.classList.remove('disabled');
+        allSlotsBtn.title = 'Скопировать все слоты';
+        return;
+    }
+
+    allSlotsBtn.disabled = true;
+    allSlotsBtn.classList.add('disabled');
+    if (weeksWithSlots === 0) {
+        allSlotsBtn.title = 'Нет доступных слотов';
+    } else {
+        allSlotsBtn.title = `Доступна только одна неделя из ${weeksTotal}`;
+    }
 }
 
 function createSlotCard(slot) {
@@ -751,15 +949,21 @@ window.copyAllSlots = function() {
         });
     }
     
-    // Копируем слоты из третьей недели, если она загружена
+    // Копируем слоты из третьей недели, если она загружена.
+    // ВАЖНО: не полагаемся на inline style.display (он может быть пустым при показе через CSS),
+    // а ориентируемся на наличие карточек и фактическую видимость.
     const thirdWeekSection = document.querySelector('.week-section.third-week');
-    if (thirdWeekSection && thirdWeekSection.style.display !== 'none') {
-        thirdWeekSection.querySelectorAll('.slot-card').forEach(card => {
-            const slotData = extractSlotData(card);
-            if (slotData) {
-                thirdWeekSlots.push(slotData);
-            }
-        });
+    if (thirdWeekSection) {
+        const computedDisplay = window.getComputedStyle(thirdWeekSection).display;
+        const thirdWeekCards = thirdWeekSection.querySelectorAll('.slot-card');
+        if (computedDisplay !== 'none' && thirdWeekCards.length > 0) {
+            thirdWeekCards.forEach(card => {
+                const slotData = extractSlotData(card);
+                if (slotData) {
+                    thirdWeekSlots.push(slotData);
+                }
+            });
+        }
     }
     
     if (currentWeekSlots.length === 0 && nextWeekSlots.length === 0 && thirdWeekSlots.length === 0) {
@@ -780,7 +984,11 @@ window.copyAllSlots = function() {
         currentWeekSlots.forEach(slot => {
             // Пропускаем дни без свободных слотов
             if (slot.slots && slot.slots !== 'Нет свободных слотов') {
-                text += `${slot.weekday} ${slot.slots}\n`;
+                console.log('🔍 copyAllSlots current: slot.date =', slot.date);
+                const relativeDay = getRelativeDayLabel(slot.date);
+                console.log('🔍 copyAllSlots current: relativeDay =', relativeDay);
+                const relativeDayText = relativeDay ? ` (${relativeDay})` : '';
+                text += `${slot.weekday} ${slot.slots}${relativeDayText}\n`;
             }
         });
     }
@@ -797,7 +1005,11 @@ window.copyAllSlots = function() {
         nextWeekSlots.forEach(slot => {
             // Пропускаем дни без свободных слотов
             if (slot.slots && slot.slots !== 'Нет свободных слотов') {
-                text += `${slot.weekday} (${slot.date}) ${slot.slots}\n`;
+                console.log('🔍 copyAllSlots next: slot.date =', slot.date);
+                const relativeDay = getRelativeDayLabel(slot.date);
+                console.log('🔍 copyAllSlots next: relativeDay =', relativeDay);
+                const relativeDayText = relativeDay ? ` (${relativeDay})` : '';
+                text += `${slot.weekday} (${slot.date}) ${slot.slots}${relativeDayText}\n`;
             }
         });
     }
@@ -823,7 +1035,10 @@ window.copyAllSlots = function() {
     // Добавляем информацию о продолжительности встречи
     const meetingDuration = getMeetingDuration();
     if (meetingDuration) {
-        text += `\n\nПо времени нужно будет примерно ${meetingDuration} минут.\nКогда комфортнее?`;
+        const durationText = formatMeetingDurationForCopy(meetingDuration);
+        if (durationText) {
+            text += `\n\nПо времени нужно будет примерно ${durationText}.\nКогда комфортнее?`;
+        }
     }
     
     copySlotsToClipboard(text.trim());
@@ -878,11 +1093,15 @@ window.copyWeekSlots = function(weekType) {
         if (slotsSettings.currentWeekPrefix) {
             text += `${slotsSettings.currentWeekPrefix}\n`;
         }
-        // Формат для текущей недели: ПН 12-15, 17
+        // Формат для текущей недели: ПН 12-15, 17 (завтра) или ПН 12-15, 17 (послезавтра)
         // Пропускаем дни без свободных слотов
         slots.forEach(slot => {
             if (slot.slots && slot.slots !== 'Нет свободных слотов') {
-                text += `${slot.weekday} ${slot.slots}\n`;
+                console.log('🔍 copyWeekSlots current: slot.date =', slot.date);
+                const relativeDay = getRelativeDayLabel(slot.date);
+                console.log('🔍 copyWeekSlots current: relativeDay =', relativeDay);
+                const relativeDayText = relativeDay ? ` (${relativeDay})` : '';
+                text += `${slot.weekday} ${slot.slots}${relativeDayText}\n`;
             }
         });
     } else if (weekType === 'next') {
@@ -890,15 +1109,21 @@ window.copyWeekSlots = function(weekType) {
         if (slotsSettings.nextWeekPrefix) {
             text += `${slotsSettings.nextWeekPrefix}\n`;
         }
-        // Формат для следующей недели: ПН (15.09) 11-14, 15
+        // Формат для следующей недели: ПН (15.09) 11-14, 15 (завтра) или ПН (15.09) 11-14, 15 (послезавтра)
         // Пропускаем дни без свободных слотов
         slots.forEach(slot => {
             if (slot.slots && slot.slots !== 'Нет свободных слотов') {
-                text += `${slot.weekday} (${slot.date}) ${slot.slots}\n`;
+                console.log('🔍 copyWeekSlots next: slot =', slot);
+                console.log('🔍 copyWeekSlots next: slot.date =', slot.date, 'тип:', typeof slot.date);
+                const relativeDay = getRelativeDayLabel(slot.date);
+                console.log('🔍 copyWeekSlots next: relativeDay =', relativeDay);
+                const relativeDayText = relativeDay ? ` (${relativeDay})` : '';
+                text += `${slot.weekday} (${slot.date}) ${slot.slots}${relativeDayText}\n`;
+                console.log('🔍 copyWeekSlots next: сформированная строка =', `${slot.weekday} (${slot.date}) ${slot.slots}${relativeDayText}`);
             }
         });
     } else if (weekType === 'third') {
-        // Для третьей недели используем тот же формат, что и для следующей
+        // Для третьей недели используем тот же формат, что и для следующей (без завтра/послезавтра)
         slots.forEach(slot => {
             if (slot.slots && slot.slots !== 'Нет свободных слотов') {
                 text += `${slot.weekday} (${slot.date}) ${slot.slots}\n`;
@@ -909,11 +1134,93 @@ window.copyWeekSlots = function(weekType) {
     // Добавляем информацию о продолжительности встречи
     const meetingDuration = getMeetingDuration();
     if (meetingDuration) {
-        text += `\n\nПо времени нужно будет примерно ${meetingDuration} минут.\nКогда комфортнее?`;
+        const durationText = formatMeetingDurationForCopy(meetingDuration);
+        if (durationText) {
+            text += `\n\nПо времени нужно будет примерно ${durationText}.\nКогда комфортнее?`;
+        }
     }
     
     copySlotsToClipboard(text.trim());
 };
+
+/**
+ * Определяет, является ли дата "завтра" или "послезавтра" от текущей даты
+ * @param {string} dateStr - Строка даты в формате "DD.MM"
+ * @returns {string|null} - "завтра", "послезавтра" или null
+ */
+function getRelativeDayLabel(dateStr) {
+    try {
+        if (!dateStr) {
+            console.warn('⚠️ getRelativeDayLabel: dateStr пустой');
+            return null;
+        }
+        
+        // Убираем лишние пробелы и нормализуем строку
+        const normalizedDateStr = dateStr.trim();
+        
+        let day, month, year;
+        
+        // Парсим строку даты - поддерживаем форматы "DD.MM" и "DD.MM.YYYY"
+        const dateMatchWithYear = normalizedDateStr.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+        const dateMatchWithoutYear = normalizedDateStr.match(/^(\d{1,2})\.(\d{1,2})$/);
+        
+        if (dateMatchWithYear) {
+            // Формат "DD.MM.YYYY"
+            day = parseInt(dateMatchWithYear[1], 10);
+            month = parseInt(dateMatchWithYear[2], 10);
+            year = parseInt(dateMatchWithYear[3], 10);
+        } else if (dateMatchWithoutYear) {
+            // Формат "DD.MM"
+            day = parseInt(dateMatchWithoutYear[1], 10);
+            month = parseInt(dateMatchWithoutYear[2], 10);
+            const today = new Date();
+            year = today.getFullYear();
+        } else {
+            console.warn('⚠️ getRelativeDayLabel: не удалось распарсить дату (формат должен быть DD.MM или DD.MM.YYYY):', normalizedDateStr);
+            return null;
+        }
+        
+        if (isNaN(day) || isNaN(month) || day < 1 || day > 31 || month < 1 || month > 12) {
+            console.warn('⚠️ getRelativeDayLabel: невалидные значения дня/месяца:', day, month);
+            return null;
+        }
+        
+        // Создаем дату из строки (месяц в JS начинается с 0)
+        const slotDate = new Date(year, month - 1, day);
+        
+        // Проверяем, что дата валидна (защита от 31 февраля и т.д.)
+        if (slotDate.getDate() !== day || slotDate.getMonth() !== month - 1 || slotDate.getFullYear() !== year) {
+            console.warn('⚠️ getRelativeDayLabel: невалидная дата (например, 31 февраля):', normalizedDateStr);
+            return null;
+        }
+        
+        // Нормализуем время для сравнения только дат
+        const today = new Date();
+        const todayNormalized = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const slotDateNormalized = new Date(slotDate.getFullYear(), slotDate.getMonth(), slotDate.getDate());
+        
+        // Вычисляем разницу в днях
+        const diffTime = slotDateNormalized - todayNormalized;
+        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+        
+        console.log(`🔍 getRelativeDayLabel: дата "${normalizedDateStr}" -> ${day}.${month}.${year}, разница: ${diffDays} дней`);
+        console.log(`🔍 getRelativeDayLabel: сегодня = ${todayNormalized.toISOString().split('T')[0]}, дата слота = ${slotDateNormalized.toISOString().split('T')[0]}`);
+        
+        if (diffDays === 1) {
+            console.log(`✅ getRelativeDayLabel: возвращаем "завтра" для даты ${normalizedDateStr}`);
+            return 'завтра';
+        } else if (diffDays === 2) {
+            console.log(`✅ getRelativeDayLabel: возвращаем "послезавтра" для даты ${normalizedDateStr}`);
+            return 'послезавтра';
+        }
+        
+        console.log(`ℹ️ getRelativeDayLabel: дата ${normalizedDateStr} не является завтра или послезавтра (разница: ${diffDays} дней)`);
+        return null;
+    } catch (e) {
+        console.error('❌ Ошибка определения относительного дня:', e, 'dateStr:', dateStr);
+        return null;
+    }
+}
 
 function extractSlotData(card) {
     try {
@@ -936,17 +1243,331 @@ function extractSlotData(card) {
             return null;
         }
         
+        const dateText = dateElement.textContent.trim();
         const slotData = {
-            date: dateElement.textContent.trim(),
+            date: dateText,
             weekday: weekdayElement.textContent.trim(),
             slots: slotsElement.textContent.trim()
         };
         
         console.log('🔍 Извлеченные данные слота:', slotData);
+        console.log('🔍 Дата из DOM (raw):', dateText, 'тип:', typeof dateText, 'длина:', dateText.length);
         return slotData;
     } catch (e) {
         console.error('Ошибка извлечения данных слота:', e);
         return null;
+    }
+}
+
+// Настройка обработчика переключателя часового пояса
+function setupTimezoneToggle() {
+    // Всегда устанавливаем Минск по умолчанию
+    currentTimezone = 'minsk';
+    
+    const timezoneInputs = document.querySelectorAll('input[name="timezone-toggle"]');
+    
+    // Если переключатель видим, устанавливаем значение из него
+    if (timezoneInputs.length > 0) {
+        const checkedInput = document.querySelector('input[name="timezone-toggle"]:checked');
+        if (checkedInput) {
+            currentTimezone = checkedInput.value;
+            console.log('🕐 Начальный часовой пояс из переключателя:', currentTimezone);
+        }
+        
+        timezoneInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                const selectedTimezone = this.value;
+                console.log('🕐 Изменен часовой пояс:', selectedTimezone);
+                
+                // Обновляем глобальную переменную
+                currentTimezone = selectedTimezone;
+                
+                // Пересчитываем и обновляем отображение слотов
+                updateSlotsForTimezone();
+            });
+        });
+    } else {
+        // Если переключатель скрыт, всегда используем Минск
+        console.log('🕐 Переключатель часового пояса скрыт, используем Минск по умолчанию');
+    }
+}
+
+// Функция для применения часового пояса к слотам при первой загрузке
+function applyTimezoneToSlots() {
+    // Сохраняем исходные слоты в Минске (если еще не сохранены)
+    if (window.screeningSlots && window.screeningSlots.length > 0 && !window.originalScreeningSlots) {
+        window.originalScreeningSlots = JSON.parse(JSON.stringify(window.screeningSlots));
+        console.log('💾 Сохранены исходные слоты скринингов в Минске');
+    }
+    
+    if (window.interviewSlots && window.interviewSlots.length > 0 && !window.originalInterviewSlots) {
+        window.originalInterviewSlots = JSON.parse(JSON.stringify(window.interviewSlots));
+        console.log('💾 Сохранены исходные слоты интервью в Минске');
+    }
+    
+    if (currentTimezone === 'minsk') {
+        // Если выбран Минск, слоты уже в правильном часовом поясе
+        return;
+    }
+    
+    // Применяем часовой пояс к предрассчитанным слотам
+    if (window.screeningSlots && window.screeningSlots.length > 0) {
+        window.screeningSlots = window.screeningSlots.map(slot => 
+            recalculateSlotTimes(slot, currentTimezone)
+        );
+    }
+    
+    if (window.interviewSlots && window.interviewSlots.length > 0) {
+        window.interviewSlots = window.interviewSlots.map(slot => 
+            recalculateSlotTimes(slot, currentTimezone)
+        );
+    }
+}
+
+// Функция для обновления слотов при изменении часового пояса
+function updateSlotsForTimezone() {
+    console.log('🔄 Обновление слотов для часового пояса:', currentTimezone);
+    
+    // Получаем текущий тип встречи
+    const meetingType = window.getCurrentMeetingType ? window.getCurrentMeetingType() : 'screening';
+    
+    // Получаем исходные слоты (в Минске) для текущего типа встречи
+    let originalSlots = [];
+    if (meetingType === 'screening' && window.screeningSlots) {
+        // Сохраняем исходные слоты в Минске (если еще не сохранены)
+        if (!window.originalScreeningSlots) {
+            window.originalScreeningSlots = JSON.parse(JSON.stringify(window.screeningSlots));
+        }
+        originalSlots = window.originalScreeningSlots;
+    } else if (meetingType === 'interview') {
+        // Для интервью всегда используем сохраненные исходные слоты в Минске
+        // Они должны быть сохранены при обновлении через API
+        if (window.originalInterviewSlots && window.originalInterviewSlots.length > 0) {
+            originalSlots = window.originalInterviewSlots;
+            console.log('✅ [TIMEZONE] Используем сохраненные исходные слоты интервью в Минске');
+        } else if (window.interviewSlots && window.interviewSlots.length > 0) {
+            // Если исходные слоты не сохранены, сохраняем текущие как исходные
+            window.originalInterviewSlots = JSON.parse(JSON.stringify(window.interviewSlots));
+            originalSlots = window.originalInterviewSlots;
+            console.log('💾 [TIMEZONE] Сохранены текущие слоты интервью как исходные в Минске');
+        }
+    }
+    
+    // Если нет исходных слотов, используем текущие (fallback)
+    if (originalSlots.length === 0) {
+        if (meetingType === 'screening' && window.screeningSlots) {
+            originalSlots = window.screeningSlots;
+        } else if (meetingType === 'interview' && window.interviewSlots) {
+            originalSlots = window.interviewSlots;
+        }
+    }
+    
+    if (originalSlots.length === 0) {
+        console.warn('⚠️ Нет слотов для обновления');
+        return;
+    }
+    
+    // Пересчитываем слоты с учетом нового часового пояса
+    const updatedSlots = recalculateSlotsForTimezone(originalSlots);
+    
+    // Обновляем отображение
+    if (updatedSlots.currentWeek && updatedSlots.nextWeek) {
+        window.updateSlotsDisplay(updatedSlots.currentWeek, updatedSlots.nextWeek);
+    }
+    
+    // Также обновляем третью неделю, если она загружена
+    const thirdWeekSection = document.querySelector('.week-section.third-week');
+    if (thirdWeekSection) {
+        const thirdWeekCards = thirdWeekSection.querySelectorAll('.slot-card');
+        thirdWeekCards.forEach(card => {
+            const slotData = extractSlotData(card);
+            if (slotData) {
+                // Получаем исходное время из данных карточки и конвертируем
+                const updatedSlot = recalculateSlotTimes(slotData, currentTimezone);
+                // Обновляем текст в карточке
+                const slotsElement = card.querySelector('.text-primary');
+                if (slotsElement) {
+                    slotsElement.textContent = updatedSlot.availableSlots || updatedSlot.slots;
+                }
+            }
+        });
+    }
+}
+
+// Функция для пересчета слотов с учетом часового пояса
+function recalculateSlotsForTimezone(slots) {
+    const currentWeek = [];
+    const nextWeek = [];
+    
+    // Разделяем слоты на текущую и следующую неделю
+    const now = new Date();
+    const currentWeekStart = new Date(now);
+    currentWeekStart.setDate(now.getDate() - now.getDay() + 1); // Понедельник текущей недели
+    currentWeekStart.setHours(0, 0, 0, 0);
+    
+    const nextWeekStart = new Date(currentWeekStart);
+    nextWeekStart.setDate(currentWeekStart.getDate() + 7);
+    
+    const thirdWeekStart = new Date(nextWeekStart);
+    thirdWeekStart.setDate(nextWeekStart.getDate() + 7);
+    
+    slots.forEach(slot => {
+        // Парсим дату слота - может быть в разных форматах
+        let slotDate = null;
+        
+        // Пробуем разные форматы даты
+        if (slot.date) {
+            // Если date - это строка в формате ISO или другой
+            if (typeof slot.date === 'string') {
+                slotDate = parseSlotDate(slot.date) || new Date(slot.date);
+            } else if (slot.date instanceof Date) {
+                slotDate = slot.date;
+            }
+        } else if (slot.dateStr) {
+            slotDate = parseSlotDate(slot.dateStr);
+        }
+        
+        if (!slotDate || isNaN(slotDate.getTime())) {
+            console.warn('⚠️ Не удалось распарсить дату слота:', slot);
+            return;
+        }
+        
+        // Пересчитываем время слотов с учетом часового пояса
+        const updatedSlots = recalculateSlotTimes(slot, currentTimezone);
+        
+        // Определяем, к какой неделе относится слот
+        if (slotDate >= currentWeekStart && slotDate < nextWeekStart) {
+            currentWeek.push(updatedSlots);
+        } else if (slotDate >= nextWeekStart && slotDate < thirdWeekStart) {
+            nextWeek.push(updatedSlots);
+        }
+    });
+    
+    return { currentWeek, nextWeek };
+}
+
+// Функция для парсинга даты слота
+function parseSlotDate(dateStr) {
+    if (!dateStr) return null;
+    
+    try {
+        // Формат может быть "DD.MM" или "DD.MM.YYYY"
+        const parts = dateStr.split('.');
+        if (parts.length < 2) return null;
+        
+        const day = parseInt(parts[0]);
+        const month = parseInt(parts[1]) - 1; // Месяц в JS начинается с 0
+        const year = parts[2] ? parseInt(parts[2]) : new Date().getFullYear();
+        
+        return new Date(year, month, day);
+    } catch (e) {
+        console.error('Ошибка парсинга даты:', e);
+        return null;
+    }
+}
+
+// Функция для пересчета времени слотов с учетом часового пояса
+function recalculateSlotTimes(slot, timezone) {
+    if (!slot.availableSlots || slot.availableSlots === 'Нет свободных слотов') {
+        return slot;
+    }
+    
+    // Получаем дату слота в разных форматах
+    const dateStr = slot.dateStr || (slot.date ? (typeof slot.date === 'string' ? slot.date : slot.date.toLocaleDateString('ru-RU')) : '');
+    
+    // Парсим временные интервалы из строки слотов
+    const timeRanges = slot.availableSlots.split(',').map(s => s.trim());
+    const updatedRanges = [];
+    
+    timeRanges.forEach(range => {
+        if (range.includes('-')) {
+            // Интервал вида "11.00-12.00"
+            const [startStr, endStr] = range.split('-').map(s => s.trim());
+            const updatedStart = convertSlotTime(startStr, dateStr, timezone);
+            const updatedEnd = convertSlotTime(endStr, dateStr, timezone);
+            updatedRanges.push(`${updatedStart}-${updatedEnd}`);
+        } else {
+            // Одно время вида "11.00"
+            const updatedTime = convertSlotTime(range, dateStr, timezone);
+            updatedRanges.push(updatedTime);
+        }
+    });
+    
+    // Создаем копию слота с обновленными временами
+    const updatedSlot = { ...slot };
+    updatedSlot.availableSlots = updatedRanges.join(', ');
+    
+    return updatedSlot;
+}
+
+// Функция для конвертации времени слота в другой часовой пояс
+// Предполагается, что исходное время всегда в Минске (UTC+3)
+function convertSlotTime(timeStr, dateStr, targetTimezone) {
+    if (!timeStr || !dateStr) return timeStr;
+    
+    // Если часовой пояс не изменился, возвращаем исходное время
+    if (targetTimezone === 'minsk') {
+        return timeStr;
+    }
+    
+    try {
+        // Парсим время (формат: "HH.MM" или "HH:MM")
+        const timeMatch = timeStr.match(/(\d{1,2})[.:](\d{2})/);
+        if (!timeMatch) return timeStr;
+        
+        const hours = parseInt(timeMatch[1]);
+        const minutes = parseInt(timeMatch[2]);
+        
+        // Парсим дату
+        const slotDate = parseSlotDate(dateStr);
+        if (!slotDate || isNaN(slotDate.getTime())) {
+            console.warn('⚠️ Не удалось распарсить дату для конвертации времени:', dateStr);
+            return timeStr;
+        }
+        
+        // Создаем Date объект с временем в Минске
+        // Используем правильный подход: создаем дату в формате ISO с указанием часового пояса Минска
+        const year = slotDate.getFullYear();
+        const month = String(slotDate.getMonth() + 1).padStart(2, '0');
+        const day = String(slotDate.getDate()).padStart(2, '0');
+        const hoursStr = String(hours).padStart(2, '0');
+        const minutesStr = String(minutes).padStart(2, '0');
+        
+        // Создаем строку даты и времени в формате ISO для Минска (UTC+3)
+        // Формат: YYYY-MM-DDTHH:MM:00+03:00
+        const minskDateTimeStr = `${year}-${month}-${day}T${hoursStr}:${minutesStr}:00+03:00`;
+        const minskDate = new Date(minskDateTimeStr);
+        
+        // Проверяем, что дата валидна
+        if (isNaN(minskDate.getTime())) {
+            console.warn('⚠️ Невалидная дата после создания:', minskDateTimeStr);
+            return timeStr;
+        }
+        
+        // Конвертируем в целевой часовой пояс
+        if (targetTimezone === 'warsaw') {
+            // Используем Intl API для получения времени в Варшаве
+            // API автоматически учитывает переход на летнее время
+            const formatter = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'Europe/Warsaw',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+            
+            // Форматируем дату в Варшаве
+            const parts = formatter.formatToParts(minskDate);
+            const warHours = parseInt(parts.find(p => p.type === 'hour').value);
+            const warMinutes = parseInt(parts.find(p => p.type === 'minute').value);
+            
+            return `${warHours}.${warMinutes.toString().padStart(2, '0')}`;
+        } else {
+            // Минск - возвращаем исходное время
+            return timeStr;
+        }
+    } catch (e) {
+        console.error('Ошибка конвертации времени:', e, 'timeStr:', timeStr, 'dateStr:', dateStr);
+        return timeStr;
     }
 }
 
@@ -984,6 +1605,26 @@ function fallbackCopySlotsToClipboard(text) {
     }
     
     document.body.removeChild(textArea);
+}
+
+function formatMeetingDurationForCopy(meetingDurationMinutes) {
+    const minutes = parseInt(meetingDurationMinutes, 10);
+    if (!Number.isFinite(minutes) || minutes <= 0) return null;
+
+    const meetingType = document.querySelector('.btn-meeting-type.active')?.id === 'btnInterview'
+        ? 'interview'
+        : 'screening';
+
+    // Для интервью: если длительность кратна 60 или 90 (60/90/120/180/...),
+    // показываем в часах.
+    if (meetingType === 'interview' && (minutes % 60 === 0 || minutes % 90 === 0)) {
+        const hours = minutes / 60;
+        const unit = hours === 1 ? 'час' : 'часа';
+        return `${hours} ${unit}`;
+    }
+
+    // Иначе показываем как было — в минутах
+    return `${minutes} минут`;
 }
 
 // Функция для обновления слотов
@@ -1057,11 +1698,21 @@ window.addThirdWeek = function() {
     // Получаем параметры для запроса
     const meetingType = document.querySelector('.btn-meeting-type.active')?.id === 'btnInterview' ? 'interview' : 'screening';
     const vacancyId = new URLSearchParams(window.location.search).get('vacancy_id');
+
+    // Для интервью подтягиваем слоты ТОЛЬКО по выбранным интервьюерам
+    const selectedInterviewerIds = [];
+    if (meetingType === 'interview') {
+        document.querySelectorAll('.btn-interviewer-pill.active').forEach(btn => {
+            const id = btn.getAttribute('data-interviewer-id');
+            if (id) selectedInterviewerIds.push(id);
+        });
+    }
+    const interviewerIdsQuery = selectedInterviewerIds.length > 0 ? `&interviewer_ids=${selectedInterviewerIds.join(',')}` : '';
     
     console.log(`📡 Запрос слотов третьей недели: meetingType=${meetingType}, vacancyId=${vacancyId}`);
     
     // Делаем AJAX запрос на бэкенд
-    fetch(`/google-oauth/api/third-week-slots/?vacancy_id=${vacancyId}&meeting_type=${meetingType}`)
+    fetch(`/google-oauth/api/third-week-slots/?vacancy_id=${vacancyId}&meeting_type=${meetingType}${interviewerIdsQuery}`)
         .then(response => response.json())
         .then(data => {
             console.log('✅ Получены слоты третьей недели:', data);
@@ -1127,17 +1778,32 @@ function displayThirdWeekSlots(slots) {
     });
     
     console.log(`✅ Отображено ${slots.length} слотов третьей недели`);
+
+    // После загрузки/отрисовки третьей недели пересчитываем доступность "Копировать все слоты"
+    // (кнопка должна активироваться, если теперь доступно 2 недели из 3).
+    if (typeof updateAllSlotsButtonState === 'function') {
+        updateAllSlotsButtonState();
+    }
 }
 
 // Функция для перезагрузки слотов третьей недели при смене типа встречи
 function reloadThirdWeekSlots() {
     const meetingType = document.querySelector('.btn-meeting-type.active')?.id === 'btnInterview' ? 'interview' : 'screening';
     const vacancyId = new URLSearchParams(window.location.search).get('vacancy_id');
+
+    const selectedInterviewerIds = [];
+    if (meetingType === 'interview') {
+        document.querySelectorAll('.btn-interviewer-pill.active').forEach(btn => {
+            const id = btn.getAttribute('data-interviewer-id');
+            if (id) selectedInterviewerIds.push(id);
+        });
+    }
+    const interviewerIdsQuery = selectedInterviewerIds.length > 0 ? `&interviewer_ids=${selectedInterviewerIds.join(',')}` : '';
     
     console.log(`📡 Перезагрузка слотов третьей недели: meetingType=${meetingType}, vacancyId=${vacancyId}`);
     
     // Делаем AJAX запрос на бэкенд
-    fetch(`/google-oauth/api/third-week-slots/?vacancy_id=${vacancyId}&meeting_type=${meetingType}`)
+    fetch(`/google-oauth/api/third-week-slots/?vacancy_id=${vacancyId}&meeting_type=${meetingType}${interviewerIdsQuery}`)
         .then(response => response.json())
         .then(data => {
             console.log('✅ Получены слоты третьей недели:', data);

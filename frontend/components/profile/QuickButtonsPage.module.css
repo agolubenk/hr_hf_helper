@@ -1,0 +1,53 @@
+.quickButtonsBlock {
+  width: 100%;
+  position: relative;
+  overflow: visible;
+}
+
+.header {
+  padding: 16px 24px;
+  background: linear-gradient(135deg, var(--accent-9) 0%, var(--accent-10) 100%);
+  color: white;
+  border-radius: 12px 12px 0 0;
+  margin-bottom: 0;
+}
+
+.content {
+  padding: 24px;
+  background-color: var(--color-panel);
+  border: 1px solid var(--gray-a6);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--gray-11);
+}
+
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tableContainer table {
+  width: 100%;
+}
+
+/* Для темной темы */
+[data-theme="dark"] .header,
+.radix-themes[data-appearance="dark"] .header {
+  background: linear-gradient(135deg, var(--accent-9) 0%, var(--accent-10) 100%);
+}
+
+[data-theme="dark"] .content,
+.radix-themes[data-appearance="dark"] .content {
+  background-color: var(--gray-2, #1c1c1f);
+}
+
+/* Для светлой темы */
+[data-theme="light"] .content,
+.radix-themes[data-appearance="light"] .content {
+  background-color: #ffffff;
+}

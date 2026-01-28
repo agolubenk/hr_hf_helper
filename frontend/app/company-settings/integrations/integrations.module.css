@@ -1,0 +1,53 @@
+/* Табы групп интеграций */
+.groupTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.groupTab {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid var(--gray-6);
+  background: var(--gray-2);
+  color: var(--gray-11);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.groupTab:hover {
+  background: var(--gray-4);
+  color: var(--gray-12);
+}
+
+.groupTabActive {
+  background: var(--accent-9);
+  color: #fff;
+  border-color: var(--accent-9);
+}
+
+.card {
+  background: var(--gray-2);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid var(--gray-6);
+  min-height: 140px;
+}
+
+.iconBox {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.moreMessage {
+  padding: 12px 0;
+  border-top: 1px solid var(--gray-6);
+}

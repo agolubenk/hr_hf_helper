@@ -18,6 +18,23 @@ class HuntflowService:
         Args:
             user: Пользователь с настройками Huntflow
         """
+        from apps.accounts.models import User
+        
+        # Проверяем, что user является объектом пользователя
+        if not user:
+            raise ValueError("Пользователь не указан для HuntflowService")
+        
+        if isinstance(user, str):
+            # Если user является строкой, получаем объект пользователя
+            try:
+                user = User.objects.get(username=user)
+                logger.info(f"🔍 HUNTFLOW_SERVICE: Преобразована строка в объект пользователя: {user.username}")
+            except User.DoesNotExist:
+                raise ValueError(f"Пользователь с username '{user}' не найден")
+        elif not isinstance(user, User):
+            logger.error(f"❌ HUNTFLOW_SERVICE: Неверный тип user: {type(user)}, значение: {user}")
+            raise ValueError(f"Ожидается объект User, получен {type(user)}")
+        
         self.user = user
         self.token_service = HuntflowTokenService(user)
     
@@ -28,17 +45,21 @@ class HuntflowService:
         else:
             return self.user.huntflow_sandbox_url
     
-    def _get_api_key(self) -> str:
-        """Получает API ключ для аутентификации (fallback для старой системы)"""
+    def _get_api_key(self) -> Optional[str]:
+        """Получает API ключ для аутентификации (только для sandbox)"""
+        # Для PROD не используем API ключи, только токены
         if self.user.active_system == 'prod':
-            return self.user.huntflow_prod_api_key
+            return None
         else:
-            return self.user.huntflow_sandbox_api_key
+            # Для sandbox используем API ключ, если он есть
+            return getattr(self.user, 'huntflow_sandbox_api_key', None)
     
     def _get_headers(self):
         """Получает заголовки для API запросов с валидным токеном"""
-        # Если активная система - prod и есть токены, используем токены
-        if self.user.active_system == 'prod' and self.user.huntflow_access_token:
+        # Если активная система - prod, используем только токены
+        if self.user.active_system == 'prod':
+            if not self.user.huntflow_access_token:
+                raise Exception("Для PROD системы необходимо настроить токены Huntflow в профиле пользователя")
             # Получаем валидный токен
             access_token = self.token_service.ensure_valid_token()
             if access_token:
@@ -46,8 +67,10 @@ class HuntflowService:
                     'Authorization': f'Bearer {access_token}',
                     'Content-Type': 'application/json'
                 }
+            else:
+                raise Exception("Не удалось получить валидный токен для PROD системы. Проверьте настройки токенов в профиле.")
         
-        # Если активная система - sandbox или нет токенов, используем API ключ
+        # Если активная система - sandbox, используем API ключ (fallback)
         api_key = self._get_api_key()
         if api_key:
             return {
@@ -594,6 +617,18 @@ class HuntflowService:
         """
         return self._make_request('GET', f"/accounts/{account_id}/vacancies/statuses")
     
+    def get_rejection_reasons(self, account_id: int) -> Optional[Dict[str, Any]]:
+        """
+        Получает список причин отказа
+        
+        Args:
+            account_id: ID организации
+            
+        Returns:
+            Список причин отказа или None
+        """
+        return self._make_request('GET', f"/accounts/{account_id}/rejection_reasons")
+    
     def get_vacancy_additional_fields(self, account_id: int) -> Optional[Dict[str, Any]]:
         """
         Получает схему дополнительных полей вакансий
@@ -708,6 +743,306 @@ class HuntflowService:
         """
         return self._make_request('GET', f"/accounts/{account_id}/applicants/{applicant_id}/questionary")
     
+    def get_applicant_responses(self, account_id: int, applicant_id: int, count: int = 30, next_page_cursor: str = None) -> Optional[Dict[str, Any]]:
+        """
+        Получает отклики кандидата из Huntflow
+        
+        Args:
+            account_id: ID организации
+            applicant_id: ID кандидата
+            count: Количество результатов на странице (макс 100)
+            next_page_cursor: Курсор для следующей страницы
+            
+        Returns:
+            Список откликов кандидата или None
+        """
+        params = {'count': min(count, 100)}
+        if next_page_cursor:
+            params['next_page_cursor'] = next_page_cursor
+        
+        query_params = '&'.join([f"{k}={v}" for k, v in params.items()])
+        endpoint = f"/accounts/{account_id}/applicants/{applicant_id}/responses"
+        if query_params:
+            endpoint += f"?{query_params}"
+        
+        return self._make_request('GET', endpoint)
+    
+    def get_vacancy_responses(self, account_id: int, vacancy_id: int, count: int = 30, page: int = 1) -> Optional[Dict[str, Any]]:
+        """
+        Получает отклики (responses) по вакансии из Huntflow
+        
+        ВАЖНО: Получает именно responses (отклики), а не кандидатов на вакансии.
+        Responses - это отдельная сущность, которая может быть у кандидатов,
+        которые еще не привязаны к вакансии или находятся в статусе "отклик".
+        
+        Args:
+            account_id: ID организации
+            vacancy_id: ID вакансии
+            count: Количество откликов на странице (для пагинации)
+            page: Номер страницы (для пагинации отображения)
+            
+        Returns:
+            Словарь с откликами или None
+        """
+        try:
+            all_responses = []
+            processed_applicant_ids = set()  # Чтобы не обрабатывать одного кандидата дважды
+            processed_response_ids = set()  # Чтобы не дублировать отклики
+            
+            # Получаем источники для поиска кандидатов из HH.ru
+            sources_data = self._make_request('GET', f"/accounts/{account_id}/applicants/sources")
+            hh_source_id = None
+            if sources_data and 'items' in sources_data:
+                for source in sources_data['items']:
+                    source_name = source.get('name', '').lower()
+                    if 'hh' in source_name or 'headhunter' in source_name or 'хедхантер' in source_name:
+                        hh_source_id = source.get('id')
+                        break
+            
+            if not hh_source_id:
+                hh_source_id = 2  # Стандартный ID для HH.ru
+            
+            logger.info(f"Поиск откликов для вакансии {vacancy_id}, источник HH.ru: {hh_source_id}")
+            
+            # Стратегия: получаем кандидатов, которые уже на вакансии (они точно имеют responses)
+            # и также получаем кандидатов из HH.ru источника, которые могут иметь responses на эту вакансию
+            
+            # Шаг 1: Получаем кандидатов, которые уже на вакансии
+            logger.info(f"Шаг 1: Получение кандидатов на вакансии {vacancy_id}")
+            vacancy_applicants_page = 1
+            max_vacancy_pages = 100  # Лимит страниц для кандидатов на вакансии
+            
+            while vacancy_applicants_page <= max_vacancy_pages:
+                vacancy_applicants_data = self.get_applicants(
+                    account_id=account_id,
+                    vacancy=vacancy_id,
+                    count=30,
+                    page=vacancy_applicants_page
+                )
+                
+                if not vacancy_applicants_data or 'items' not in vacancy_applicants_data:
+                    break
+                
+                vacancy_applicants = vacancy_applicants_data.get('items', [])
+                if not vacancy_applicants:
+                    break
+                
+                logger.info(f"Обработка страницы {vacancy_applicants_page} кандидатов на вакансии, получено {len(vacancy_applicants)} кандидатов")
+                
+                for applicant in vacancy_applicants:
+                    applicant_id = applicant.get('id')
+                    if not applicant_id or applicant_id in processed_applicant_ids:
+                        continue
+                    
+                    processed_applicant_ids.add(applicant_id)
+                    
+                    # Получаем все отклики кандидата с пагинацией
+                    next_cursor = None
+                    while True:
+                        responses_data = self.get_applicant_responses(
+                            account_id, 
+                            applicant_id, 
+                            count=100,
+                            next_page_cursor=next_cursor
+                        )
+                        
+                        if not responses_data or 'items' not in responses_data:
+                            break
+                        
+                        # Фильтруем отклики по вакансии
+                        for response in responses_data['items']:
+                            response_id = response.get('id')
+                            if response_id in processed_response_ids:
+                                continue
+                            
+                            response_vacancy = response.get('vacancy', {})
+                            if isinstance(response_vacancy, dict):
+                                response_vacancy_id = response_vacancy.get('id')
+                            elif isinstance(response_vacancy, int):
+                                response_vacancy_id = response_vacancy
+                            else:
+                                response_vacancy_id = None
+                            
+                            # Добавляем только отклики для данной вакансии
+                            if response_vacancy_id == vacancy_id:
+                                processed_response_ids.add(response_id)
+                                # Получаем полные данные кандидата (только если их нет)
+                                if 'applicant' not in response or not response.get('applicant'):
+                                    applicant_full = self.get_applicant(account_id, applicant_id)
+                                    response['applicant'] = applicant_full or applicant
+                                else:
+                                    response['applicant'] = applicant
+                                all_responses.append(response)
+                                
+                                # Логируем каждые 100 откликов
+                                if len(all_responses) % 100 == 0:
+                                    logger.info(f"Найдено {len(all_responses)} откликов для вакансии {vacancy_id}")
+                        
+                        # Проверяем, есть ли следующая страница
+                        next_cursor = responses_data.get('next_page_cursor')
+                        if not next_cursor:
+                            break
+                
+                # Проверяем, есть ли еще страницы
+                total_pages_vacancy = vacancy_applicants_data.get('pages', 1)
+                if vacancy_applicants_page >= total_pages_vacancy:
+                    break
+                
+                vacancy_applicants_page += 1
+                
+                # Логируем прогресс каждые 10 страниц
+                if vacancy_applicants_page % 10 == 0:
+                    logger.info(f"Обработано {vacancy_applicants_page} страниц кандидатов на вакансии, найдено {len(all_responses)} откликов")
+            
+            logger.info(f"Шаг 1 завершен: найдено {len(all_responses)} откликов из кандидатов на вакансии")
+            
+            # Шаг 2: Получаем кандидатов из HH.ru источника, которые могут иметь responses на эту вакансию
+            # (но еще не привязаны к вакансии)
+            # ВАЖНО: Этот шаг может быть очень медленным, поэтому ограничиваем его
+            # Если уже нашли достаточно откликов на шаге 1, пропускаем шаг 2
+            if len(all_responses) > 0:
+                logger.info(f"Шаг 2 пропущен: уже найдено {len(all_responses)} откликов на шаге 1")
+            else:
+                logger.info(f"Шаг 2: Поиск откликов у кандидатов из HH.ru источника")
+                search_page = 1
+                max_search_pages = 20  # Ограничиваем для производительности (уменьшено с 50)
+                
+                while search_page <= max_search_pages and len(all_responses) < 5000:
+                    # Получаем кандидатов (без фильтра по вакансии)
+                    search_applicants_data = self.get_applicants(
+                        account_id=account_id,
+                        count=30,
+                        page=search_page
+                    )
+                    
+                    if not search_applicants_data or 'items' not in search_applicants_data:
+                        break
+                    
+                    search_applicants = search_applicants_data.get('items', [])
+                    if not search_applicants:
+                        break
+                    
+                    logger.info(f"Обработка страницы {search_page} всех кандидатов, получено {len(search_applicants)} кандидатов")
+                    
+                    for applicant in search_applicants:
+                        applicant_id = applicant.get('id')
+                        if not applicant_id or applicant_id in processed_applicant_ids:
+                            continue
+                        
+                        # Проверяем, есть ли у кандидата источник HH.ru
+                        externals = applicant.get('externals', [])
+                        has_hh_source = False
+                        for external in externals:
+                            if external.get('account_source') == hh_source_id:
+                                has_hh_source = True
+                                break
+                        
+                        # Если кандидат не из HH.ru, пропускаем
+                        if not has_hh_source:
+                            continue
+                        
+                        processed_applicant_ids.add(applicant_id)
+                        
+                        # Получаем все отклики кандидата с пагинацией
+                        next_cursor = None
+                        while True:
+                            responses_data = self.get_applicant_responses(
+                                account_id, 
+                                applicant_id, 
+                                count=100,
+                                next_page_cursor=next_cursor
+                            )
+                            
+                            if not responses_data or 'items' not in responses_data:
+                                break
+                            
+                            # Фильтруем отклики по вакансии
+                            for response in responses_data['items']:
+                                response_id = response.get('id')
+                                if response_id in processed_response_ids:
+                                    continue
+                                
+                                response_vacancy = response.get('vacancy', {})
+                                if isinstance(response_vacancy, dict):
+                                    response_vacancy_id = response_vacancy.get('id')
+                                elif isinstance(response_vacancy, int):
+                                    response_vacancy_id = response_vacancy
+                                else:
+                                    response_vacancy_id = None
+                                
+                                # Добавляем только отклики для данной вакансии
+                                if response_vacancy_id == vacancy_id:
+                                    processed_response_ids.add(response_id)
+                                    # Получаем полные данные кандидата (только если их нет)
+                                    if 'applicant' not in response or not response.get('applicant'):
+                                        applicant_full = self.get_applicant(account_id, applicant_id)
+                                        response['applicant'] = applicant_full or applicant
+                                    else:
+                                        response['applicant'] = applicant
+                                    all_responses.append(response)
+                                    
+                                    # Логируем каждые 100 откликов
+                                    if len(all_responses) % 100 == 0:
+                                        logger.info(f"Найдено {len(all_responses)} откликов для вакансии {vacancy_id}")
+                            
+                            # Проверяем, есть ли следующая страница
+                            next_cursor = responses_data.get('next_page_cursor')
+                            if not next_cursor:
+                                break
+                    
+                    # Проверяем, есть ли еще страницы
+                    total_pages_search = search_applicants_data.get('pages', 1)
+                    if search_page >= total_pages_search:
+                        break
+                    
+                    search_page += 1
+                    
+                    # Логируем прогресс каждые 10 страниц
+                    if search_page % 10 == 0:
+                        logger.info(f"Обработано {search_page} страниц всех кандидатов, найдено {len(all_responses)} откликов")
+                    
+                    # Если нашли достаточно откликов, останавливаемся
+                    if len(all_responses) >= 100:  # Если нашли хотя бы 100, останавливаемся для производительности
+                        logger.info(f"Найдено достаточно откликов ({len(all_responses)}), останавливаем поиск")
+                        break
+            
+            logger.info(f"Всего получено откликов для вакансии {vacancy_id}: {len(all_responses)} (обработано кандидатов: {len(processed_applicant_ids)})")
+            
+            if not all_responses:
+                logger.warning(f"Не найдено откликов для вакансии {vacancy_id}. Обработано кандидатов: {len(processed_applicant_ids)}, источник HH.ru ID: {hh_source_id}")
+                return {
+                    'items': [],
+                    'total': 0,
+                    'page': page,
+                    'count': count,
+                    'total_applicants': len(processed_applicant_ids)
+                }
+            
+            # Применяем пагинацию для отображения
+            total_responses = len(all_responses)
+            start_idx = (page - 1) * count
+            end_idx = start_idx + count
+            paginated_responses = all_responses[start_idx:end_idx]
+            
+            total_pages = max(1, (total_responses + count - 1) // count) if total_responses > 0 else 1
+            
+            logger.info(f"Получено откликов для вакансии {vacancy_id}: {len(paginated_responses)} из {total_responses} (страница {page} из {total_pages})")
+            
+            return {
+                'items': paginated_responses,
+                'total': total_responses,
+                'page': page,
+                'count': count,
+                'total_pages': total_pages,
+                'total_applicants': len(processed_applicant_ids)
+            }
+            
+        except Exception as e:
+            logger.error(f"Ошибка при получении откликов по вакансии: {e}")
+            import traceback
+            traceback.print_exc()
+            return None
+    
     def get_applicant_logs(self, account_id: int, applicant_id: int) -> Optional[Dict[str, Any]]:
         """
         Получает логи кандидата (включая комментарии)
@@ -763,7 +1098,7 @@ class HuntflowService:
         
         return result
     
-    def update_applicant_status(self, account_id: int, applicant_id: int, status_id: int, comment: str = None, vacancy_id: int = None) -> Optional[Dict[str, Any]]:
+    def update_applicant_status(self, account_id: int, applicant_id: int, status_id: int, comment: str = None, vacancy_id: int = None, rejection_reason_id: int = None) -> Optional[Dict[str, Any]]:
         """
         Обновляет статус кандидата через добавление на вакансию с привязкой к вакансии и статусу
         
@@ -773,6 +1108,7 @@ class HuntflowService:
             status_id: ID нового статуса
             comment: Комментарий к изменению статуса
             vacancy_id: ID вакансии (если не указан, получаем из данных кандидата)
+            rejection_reason_id: ID причины отказа (опционально)
             
         Returns:
             Результат обновления или None
@@ -791,7 +1127,7 @@ class HuntflowService:
             print(f"DEBUG: У кандидата {applicant_id} нет привязанной вакансии ({vacancy_id})")
             return None
         
-        print(f"DEBUG: Обновляем статус кандидата {applicant_id} на статус {status_id} для вакансии {vacancy_id} с комментарием: {comment}")
+        print(f"DEBUG: Обновляем статус кандидата {applicant_id} на статус {status_id} для вакансии {vacancy_id} с комментарием: {comment}, rejection_reason_id: {rejection_reason_id}")
         
         # Используем проверенный эндпоинт с множественным числом
         endpoint = f"/accounts/{account_id}/applicants/{applicant_id}/vacancy"
@@ -804,6 +1140,11 @@ class HuntflowService:
         
         if comment:
             data['comment'] = comment
+        
+        # Добавляем rejection_reason_id если указан
+        if rejection_reason_id:
+            data['rejection_reason'] = rejection_reason_id
+            print(f"DEBUG: Добавляем rejection_reason={rejection_reason_id} в запрос")
         
         print(f"DEBUG: Пробуем эндпоинт {endpoint} с данными {data}")
         
@@ -900,23 +1241,28 @@ class HuntflowService:
             for data in data_variants:
                 print(f"DEBUG: Пробуем обновить анкету через {endpoint} с данными {data}")
                 result = self._make_request('PATCH', endpoint, json=data)
-                if result:
+                # Проверяем, что результат не None (даже пустой dict считается успешным)
+                if result is not None:
                     # Сбрасываем кэш для этого кандидата
                     user_id = self.user.id
                     HuntflowAPICache.clear_candidate(user_id, account_id, applicant_id)
+                    print(f"✅ Анкета успешно обновлена через {endpoint}")
                     print(f"🗑️ Сброшен кэш для кандидата: {applicant_id}")
                     return result
                     
                 # Также пробуем POST для специального эндпоинта
                 if endpoint.endswith('/questionary'):
                     result = self._make_request('POST', endpoint, json=data)
-                    if result:
+                    # Проверяем, что результат не None
+                    if result is not None:
                         # Сбрасываем кэш для этого кандидата
                         user_id = self.user.id
                         HuntflowAPICache.clear_candidate(user_id, account_id, applicant_id)
+                        print(f"✅ Анкета успешно обновлена через POST {endpoint}")
                         print(f"🗑️ Сброшен кэш для кандидата: {applicant_id}")
                         return result
         
+        print(f"❌ Не удалось обновить анкету ни одним из способов")
         return None
     
     def update_applicant_scorecard_field(self, account_id: int, applicant_id: int, scorecard_url: str) -> Optional[Dict[str, Any]]:
@@ -1126,9 +1472,23 @@ class HuntflowService:
             Результат загрузки с распарсенными данными или None
         """
         try:
+            # Определяем MIME тип файла
+            import mimetypes
+            mime_type, _ = mimetypes.guess_type(file_name)
+            if not mime_type:
+                # Определяем по расширению
+                if file_name.lower().endswith('.pdf'):
+                    mime_type = 'application/pdf'
+                elif file_name.lower().endswith(('.doc', '.docx')):
+                    mime_type = 'application/msword' if file_name.lower().endswith('.doc') else 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                elif file_name.lower().endswith('.txt'):
+                    mime_type = 'text/plain'
+                else:
+                    mime_type = 'application/pdf'  # По умолчанию
+            
             # Подготавливаем файл
             files = {
-                'file': (file_name, file_data, 'application/pdf')
+                'file': (file_name, file_data, mime_type)
             }
             
             # Подготавливаем заголовки
@@ -1159,7 +1519,17 @@ class HuntflowService:
             print(f"📥 Тело ответа: {response.text[:500]}...")
             
             if response.status_code in [200, 201]:
-                return response.json()
+                try:
+                    result = response.json()
+                    if result and isinstance(result, dict):
+                        return result
+                    else:
+                        print(f"⚠️ Ответ API не является словарем: {type(result)}")
+                        return None
+                except Exception as e:
+                    print(f"❌ Ошибка парсинга JSON ответа: {e}")
+                    print(f"📥 Тело ответа: {response.text[:500]}")
+                    return None
             else:
                 print(f"❌ Ошибка загрузки файла: {response.status_code} - {response.text}")
                 return None
@@ -1192,7 +1562,8 @@ class HuntflowService:
                         'auth_type': 'NATIVE',
                         'data': {
                             'body': candidate_data.get('resume_text', '')
-                        }
+                        },
+                        'account_source': 2  # ID источника HH.ru в Huntflow
                     }
                 ]
             }
@@ -1534,14 +1905,6 @@ class HuntflowService:
                 if applicant_id:
                     # Собираем все метки для добавления
                     tags_to_add = []
-                    
-                    # Добавляем метку clickup-new
-                    clickup_tag_id = self._find_tag_by_name(account_id, "clickup-new")
-                    if clickup_tag_id:
-                        tags_to_add.append(clickup_tag_id)
-                        print(f"🏷️ Добавляем метку clickup-new (ID: {clickup_tag_id})")
-                    else:
-                        print(f"❌ Не удалось найти метку clickup-new")
                     
                     # Добавляем тег с исполнителем, если есть
                     if assignee_info:
@@ -2057,8 +2420,7 @@ class HuntflowService:
             endpoint = f"/accounts/{account_id}/applicants/{applicant_id}/vacancy"
             data = {
                 'vacancy': vacancy_id,
-                'status': target_status,
-                'comment': 'Автоматически добавлен из ClickUp'
+                'status': target_status
             }
             
             result = self._make_request('POST', endpoint, json=data)
@@ -2372,4 +2734,186 @@ class HuntflowService:
         except Exception as e:
             print(f"❌ Ошибка при обновлении поля кандидата: {e}")
             return False
+    
+    def _get_account_source_id(self, account_id: int, source_type: str) -> Optional[int]:
+        """
+        Получает ID источника (account_source) для указанного типа
+        
+        Args:
+            account_id: ID организации в Huntflow
+            source_type: 'HH' для hh.ru, 'RABOTABY' для rabota.by
+            
+        Returns:
+            ID источника или None
+        """
+        try:
+            sources_data = self._make_request('GET', f"/accounts/{account_id}/applicants/sources")
+            if sources_data and 'items' in sources_data:
+                for source in sources_data['items']:
+                    source_name = source.get('name', '').lower()
+                    if source_type == 'HH':
+                        if 'hh' in source_name or 'headhunter' in source_name or 'хедхантер' in source_name:
+                            return source.get('id')
+                    elif source_type == 'RABOTABY':
+                        if 'rabota' in source_name or 'работа' in source_name or 'rabota.by' in source_name:
+                            return source.get('id')
+            
+            # Fallback значения
+            if source_type == 'HH':
+                return 2  # Стандартный ID для HH.ru
+            return None
+        except Exception as e:
+            print(f"❌ Ошибка получения account_source для {source_type}: {e}")
+            return None
+    
+    def _extract_resume_url(self, text: str) -> Optional[Dict[str, str]]:
+        """
+        Извлекает ссылку на резюме из текста (hh.ru или rabota.by)
+        
+        Args:
+            text: Текст сообщения
+            
+        Returns:
+            Словарь с ключами: 'url', 'source_type' ('HH' или 'RABOTABY'), 'resume_id'
+            или None если ссылка не найдена
+        """
+        import re
+        
+        # Паттерны для hh.ru
+        hh_patterns = [
+            r'https?://(?:www\.)?(?:hh\.ru|headhunter\.ru)/resume/([a-f0-9]+)',
+            r'https?://(?:www\.)?(?:hh\.ru|headhunter\.ru)/applicants/resume\?id=([a-f0-9]+)',
+        ]
+        
+        # Паттерны для rabota.by (ID резюме может содержать буквы и цифры)
+        rabota_patterns = [
+            r'https?://(?:www\.)?rabota\.by/resume/([a-f0-9]+)',
+            r'https?://(?:www\.)?rabota\.by/applicants/resume\?id=([a-f0-9]+)',
+        ]
+        
+        # Проверяем hh.ru
+        for pattern in hh_patterns:
+            match = re.search(pattern, text, re.IGNORECASE)
+            if match:
+                resume_id = match.group(1)
+                url = match.group(0)
+                return {
+                    'url': url,
+                    'source_type': 'HH',
+                    'resume_id': resume_id
+                }
+        
+        # Проверяем rabota.by
+        for pattern in rabota_patterns:
+            match = re.search(pattern, text, re.IGNORECASE)
+            if match:
+                resume_id = match.group(1)
+                url = match.group(0)
+                return {
+                    'url': url,
+                    'source_type': 'RABOTABY',
+                    'resume_id': resume_id
+                }
+        
+        return None
+    
+    def create_applicant_from_url(self, account_id: int, resume_url: str, vacancy_id: int = None, 
+                                   source_type: str = None, resume_id: str = None) -> Optional[Dict[str, Any]]:
+        """
+        Создает кандидата в Huntflow только по ссылке на резюме (hh.ru или rabota.by)
+        
+        Args:
+            account_id: ID организации
+            resume_url: Ссылка на резюме
+            vacancy_id: ID вакансии для привязки (опционально)
+            source_type: 'HH' или 'RABOTABY' (опционально, определяется автоматически)
+            resume_id: ID резюме в источнике (опционально, извлекается из URL)
+            
+        Returns:
+            Созданный кандидат или None
+        """
+        try:
+            # Определяем тип источника, если не указан
+            if not source_type:
+                if 'hh.ru' in resume_url or 'headhunter.ru' in resume_url:
+                    source_type = 'HH'
+                elif 'rabota.by' in resume_url:
+                    source_type = 'RABOTABY'
+                else:
+                    print(f"❌ Неизвестный тип источника для URL: {resume_url}")
+                    return None
+            
+            # Извлекаем ID резюме, если не указан
+            if not resume_id:
+                url_info = self._extract_resume_url(resume_url)
+                if url_info:
+                    resume_id = url_info.get('resume_id')
+                else:
+                    print(f"⚠️ Не удалось извлечь ID резюме из URL: {resume_url}")
+            
+            # Получаем account_source
+            account_source = self._get_account_source_id(account_id, source_type)
+            if not account_source:
+                print(f"⚠️ Не удалось получить account_source для {source_type}, создаем без него")
+            
+            # Определяем auth_type
+            auth_type = 'HH' if source_type == 'HH' else 'RABOTABY'
+            
+            # Формируем данные для создания кандидата
+            # API Huntflow требует минимум first_name или last_name даже при создании по ссылке
+            applicant_data = {
+                'first_name': 'Кандидат',  # Временное имя, будет заменено после парсинга резюме
+                'last_name': 'из внешнего источника',  # Временная фамилия
+                'externals': [
+                    {
+                        'auth_type': auth_type,
+                        'source_url': resume_url,
+                    }
+                ]
+            }
+            
+            # Добавляем account_source, если найден
+            if account_source:
+                applicant_data['externals'][0]['account_source'] = account_source
+            
+            # Добавляем ID резюме в data, если есть
+            if resume_id:
+                if 'data' not in applicant_data['externals'][0]:
+                    applicant_data['externals'][0]['data'] = {}
+                if source_type == 'HH':
+                    applicant_data['externals'][0]['data']['hh_id'] = resume_id
+                    applicant_data['externals'][0]['data']['hh_url'] = resume_url
+                elif source_type == 'RABOTABY':
+                    applicant_data['externals'][0]['data']['rabota_id'] = resume_id
+                    applicant_data['externals'][0]['data']['rabota_url'] = resume_url
+            
+            print(f"📤 Создаем кандидата по ссылке: {resume_url}")
+            print(f"📤 Данные: {applicant_data}")
+            
+            # Создаем кандидата
+            result = self._make_request('POST', f'/accounts/{account_id}/applicants', json=applicant_data)
+            
+            if result and result.get('id'):
+                applicant_id = result['id']
+                print(f"✅ Кандидат создан по ссылке: {applicant_id}")
+                
+                # Привязываем к вакансии, если указана
+                if vacancy_id:
+                    print(f"🔗 Привязываем к вакансии {vacancy_id}")
+                    vacancy_result = self._bind_applicant_to_vacancy(account_id, applicant_id, vacancy_id)
+                    if vacancy_result:
+                        print("✅ Кандидат привязан к вакансии")
+                    else:
+                        print("❌ Не удалось привязать к вакансии")
+                
+                return result
+            
+            print(f"❌ Кандидат не создан: {result}")
+            return None
+                
+        except Exception as e:
+            print(f"❌ Ошибка создания кандидата по ссылке: {e}")
+            import traceback
+            traceback.print_exc()
+            return None
     

@@ -1,0 +1,75 @@
+.salaryRangeListItem {
+  padding: 16px;
+  border: 1px solid var(--gray-a6);
+  border-radius: 8px;
+  background: var(--color-panel);
+  margin-bottom: 8px;
+  transition: all 0.2s;
+}
+
+.salaryRangeListItem:hover {
+  background: var(--gray-2);
+  border-color: var(--gray-a8);
+}
+
+/* Десктопная версия - показываем по умолчанию */
+.desktopLayout {
+  display: flex;
+}
+
+.mobileLayout {
+  display: none;
+}
+
+/* Мобильная версия - вертикальный layout */
+@media (max-width: 768px) {
+  .desktopLayout {
+    display: none;
+  }
+
+  .mobileLayout {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .mobileActionsRow {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.statusTag {
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.statusActive {
+  background: var(--green-3);
+  color: var(--green-11);
+}
+
+.statusInactive {
+  background: var(--gray-3);
+  color: var(--gray-11);
+}
+
+.actionButtons {
+  display: flex;
+  gap: 1px;
+}
+
+.actionButton {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  margin-left: 2px;
+  margin-right: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -752,9 +752,15 @@ class EnhancedDateTimeParser:
         
         return validation_result
     
-    def parse_datetime(self, text: str, existing_bookings: List = None, vacancy_prompt: str = None) -> Dict:
+    def parse_datetime(self, text: str, existing_bookings: List = None, vacancy_prompt: str = None, skip_time_adjustment: bool = False) -> Dict:
         """
         Основной метод парсинга даты и времени с полной валидацией и коррекцией
+        
+        Args:
+            text: Текст для анализа
+            existing_bookings: Список существующих бронирований
+            vacancy_prompt: Промпт из вакансии
+            skip_time_adjustment: Если True, не переносит время при конфликтах (для технических интервью)
         
         Возвращает словарь с результатами анализа:
         {
@@ -877,7 +883,8 @@ class EnhancedDateTimeParser:
         validation_result = self.validate_datetime(result_datetime, existing_bookings)
         
         # Если слот занят, пытаемся найти следующий доступный слот в тот же день недели
-        if not validation_result['is_valid']:
+        # НО: для технических интервью (skip_time_adjustment=True) НЕ переносим время
+        if not validation_result['is_valid'] and not skip_time_adjustment:
             # Проверяем, занят ли слот
             slot_occupied_error = next((err for err in validation_result['errors'] if err['type'] == 'slot_occupied'), None)
             
@@ -912,6 +919,17 @@ class EnhancedDateTimeParser:
                 else:
                     # Если не нашли свободный слот за 4 недели, оставляем как есть
                     print(f"⚠️ [ENHANCED_PARSER] Не удалось найти свободный слот в течение 4 недель")
+        elif not validation_result['is_valid'] and skip_time_adjustment:
+            # Для технических интервью не переносим время, даже если слот занят
+            slot_occupied_error = next((err for err in validation_result['errors'] if err['type'] == 'slot_occupied'), None)
+            if slot_occupied_error:
+                print(f"🔒 [ENHANCED_PARSER] Техническое интервью: слот {result_datetime.strftime('%d.%m %H:%M')} занят, но время НЕ переносится (строгое время)")
+                # Добавляем предупреждение, но не изменяем время
+                validation_result['warnings'] = validation_result.get('warnings', [])
+                validation_result['warnings'].append({
+                    'type': 'slot_occupied_warning',
+                    'description': f'Слот занят, но время сохранено без изменений (техническое интервью)'
+                })
         
         # Генерация альтернатив
         alternatives = self.generate_alternatives(result_datetime, existing_bookings)
@@ -973,7 +991,8 @@ def parse_datetime_with_validation(
     user=None,
     existing_bookings: List = None, 
     vacancy_prompt: str = None,
-    timezone_name: str = 'Europe/Minsk'
+    timezone_name: str = 'Europe/Minsk',
+    skip_time_adjustment: bool = False
 ) -> Dict:
     """
     Функция для парсинга даты и времени с полной валидацией
@@ -984,12 +1003,13 @@ def parse_datetime_with_validation(
         existing_bookings: Список существующих бронирований
         vacancy_prompt: Промпт из вакансии для дополнительного контекста
         timezone_name: Название временной зоны
+        skip_time_adjustment: Если True, не переносит время при конфликтах (для технических интервью)
     
     Returns:
         Словарь с результатами парсинга
     """
     parser = EnhancedDateTimeParser(user, timezone_name)
-    return parser.parse_datetime(text, existing_bookings, vacancy_prompt)
+    return parser.parse_datetime(text, existing_bookings, vacancy_prompt, skip_time_adjustment)
 
 
 # Обратная совместимость с существующим кодом

@@ -6,7 +6,8 @@ from logic.utilities.user_management import (
     test_clickup_api_handler, test_notion_api_handler,
     profile_template_handler, profile_edit_template_handler,
     integrations_template_handler,
-    api_keys_template_handler, google_oauth_redirect,
+    api_keys_template_handler, quick_buttons_template_handler,
+    google_oauth_redirect,
     google_oauth_callback, unified_login, unified_logout,
     google_oauth_demo, google_oauth_test, oauth_debug
 )

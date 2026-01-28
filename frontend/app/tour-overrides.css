@@ -1,0 +1,104 @@
+/* Стили тура — в едином ключе с приложением (акценты, радиусы, прогресс-бар) */
+
+.driver-popover.hrhelper-tour-popover {
+  position: relative !important;
+  padding: 24px 28px !important;
+  min-width: 300px !important;
+  max-width: 420px !important;
+  box-shadow:
+    0 12px 48px rgba(0, 0, 0, 0.2),
+    0 0 0 1px var(--gray-a6, rgba(0, 0, 0, 0.08)) !important;
+  border-radius: 12px !important;
+  background-color: var(--color-panel, var(--gray-2, #fafafa)) !important;
+  border: 1px solid var(--gray-a6, rgba(0, 0, 0, 0.08)) !important;
+  overflow: hidden !important;
+}
+
+/* Верхняя граница = прогресс-бар (доливается через onPopoverRender) */
+.hrhelper-tour-progress-bar {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  height: 4px !important;
+  background: var(--accent-9, #3b82f6) !important;
+  border-radius: 12px 12px 0 0 !important;
+  transition: width 0.25s ease !important;
+  z-index: 1 !important;
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-title {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+  color: var(--gray-12, #111) !important;
+  margin-bottom: 6px !important;
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-description {
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+  color: var(--gray-11, #333) !important;
+  font-weight: 400 !important;
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-progress-text {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: var(--gray-11, #555) !important;
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-footer {
+  margin-top: 18px !important;
+  gap: 10px !important;
+}
+
+/* Кнопки: радиус 8px как в приложении, акцент для основных */
+.driver-popover.hrhelper-tour-popover .driver-popover-footer button {
+  padding: 10px 18px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  min-height: 40px !important;
+  transition: opacity 0.15s, transform 0.08s, background-color 0.15s !important;
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-footer button:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-next-btn {
+  background: var(--accent-9, #3b82f6) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-next-btn:hover {
+  background: var(--accent-10, #2563eb) !important;
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-prev-btn {
+  background: var(--gray-2, #f3f4f6) !important;
+  color: var(--gray-12, #111) !important;
+  border: 1px solid var(--gray-6, #d1d5db) !important;
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-prev-btn:hover {
+  background: var(--gray-3, #e5e7eb) !important;
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-close-btn {
+  width: 36px !important;
+  height: 36px !important;
+  font-size: 22px !important;
+  top: 10px !important;
+  right: 10px !important;
+  color: var(--gray-11, #666) !important;
+  border-radius: 8px !important;
+  transition: color 0.15s, background-color 0.15s !important;
+}
+
+.driver-popover.hrhelper-tour-popover .driver-popover-close-btn:hover {
+  color: var(--gray-12, #111) !important;
+  background: var(--gray-a3, rgba(0, 0, 0, 0.06)) !important;
+}

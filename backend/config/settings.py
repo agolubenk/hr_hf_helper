@@ -87,10 +87,16 @@ INSTALLED_APPS = [
     'apps.notion_int',
     'apps.hiring_plan',
     'apps.company_settings',
+    'apps.wiki',
+    'apps.reporting',
+    'apps.hhru',
+    'apps.n8n_integration',
+    'apps.huntflow_updates',
     
     
     # Django REST Framework
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
     
     # Django Allauth
@@ -175,6 +181,10 @@ STATICFILES_DIRS = [
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Настройки для массовых операций в Django Admin
+# Увеличиваем лимит количества полей в POST запросе для массового удаления
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 100000
 
 # Custom user model
 AUTH_USER_MODEL = 'accounts.User'
@@ -266,6 +276,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ],

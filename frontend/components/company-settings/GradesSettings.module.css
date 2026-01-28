@@ -1,0 +1,20 @@
+.card {
+  padding: 24px;
+  border: 1px solid var(--gray-a6);
+  border-radius: 8px;
+  background: var(--color-panel);
+}
+
+.orderButton {
+  padding: 0 !important;
+  min-width: 20px !important;
+  height: 16px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actionButton {
+  margin-left: 2px;
+  margin-right: 2px;
+}

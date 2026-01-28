@@ -1,0 +1,51 @@
+.section {
+  margin-bottom: 32px;
+}
+
+.header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--gray-a6);
+}
+
+.infoBox {
+  margin-bottom: 16px;
+}
+
+.error {
+  padding: 12px;
+  background: var(--red-2);
+  border: 1px solid var(--red-6);
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.addForm {
+  padding: 16px;
+  background: var(--gray-2);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.gradesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.gradeCard {
+  padding: 16px;
+  background: var(--color-panel);
+  border: 1px solid var(--gray-a6);
+  border-radius: 8px;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.2s;
+}
+
+.gradeCard:hover {
+  border-color: var(--gray-a8);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}

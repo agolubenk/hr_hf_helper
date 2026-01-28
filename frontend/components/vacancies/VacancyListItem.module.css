@@ -1,0 +1,81 @@
+.vacancyListItem {
+  background: var(--gray-2);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid var(--gray-6);
+  transition: all 0.2s ease-in-out;
+}
+
+.vacancyListItem:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: var(--gray-7);
+}
+
+.statusTag {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.statusActive {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.statusInactive {
+  background: var(--gray-4);
+  color: var(--gray-11);
+}
+
+.techTag {
+  background: var(--gray-4);
+  color: var(--gray-12);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.actionButton {
+  background: var(--gray-3) !important;
+  color: var(--gray-11) !important;
+  border: 1px solid var(--gray-6) !important;
+  border-radius: 6px !important;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  max-width: 40px !important;
+  padding: 0 !important;
+  margin: 1px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease-in-out;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.actionButton:hover {
+  background: var(--gray-4) !important;
+  border-color: var(--gray-7) !important;
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .vacancyListItem {
+    padding: 16px;
+  }
+  
+  .actionButtons {
+    flex-direction: column;
+  }
+}

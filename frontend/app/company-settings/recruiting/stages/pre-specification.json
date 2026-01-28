@@ -1,0 +1,80 @@
+{
+  "name": "stages",
+  "type": "page",
+  "description": "Страница управления этапами найма и причинами отказа. Позволяет создавать, редактировать и удалять этапы найма, настраивать их порядок, управлять причинами отказа для каждого этапа. Этапы задают структуру pipeline в ATS и используются в отчётах. Важно настроить до начала активного подбора.\n\n**Путь**: `/company-settings/recruiting/stages`",
+  "route_path": "`/company-settings/recruiting/stages`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/company-settings/recruiting/stages/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockStages\nМассив объектов этапов найма с полями:\n- `id`: уникальный идентификатор\n- `name`: название этапа (Заявка, Скрининг, Интервью, Оффер, Принят, Отказ)\n- `order`: порядок следования в воронке (1, 2, 3, ...)\n- `description`: описание этапа (опционально)\n- `parameters`: параметры этапа (SLA, длительность и т.д.)\n- `rejectionReasons`: массив причин отказа для этого этапа\n\n**Стандартные этапы**:\n- Заявка (order: 1)\n- Скрининг (order: 2)\n- Интервью (order: 3)\n- Оффер (order: 4)\n- Принят (order: 5)\n- Отказ (order: 6)\n\n**TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка этапов найма из API\n   - GET `/api/company-settings/recruiting/stages/` - получение списка этапов\n   - Параметры: фильтры, сортировка\n   - Возвращает: массив этапов с причинами отказа\n   - Заменить mockStages на данные из API",
+      "method": "GET",
+      "endpoint": "/api/company-settings/recruiting/stages/",
+      "parameters": "фильтры, сортировка",
+      "returns": "массив этапов с причинами отказа",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Создание этапа через API\n   - POST `/api/company-settings/recruiting/stages/` - создание нового этапа\n   - Параметры: name, order, description, parameters\n   - Возвращает: созданный этап\n   - Реализовать в handleAddStage",
+      "method": "POST",
+      "endpoint": "/api/company-settings/recruiting/stages/",
+      "parameters": "name, order, description, parameters",
+      "returns": "созданный этап",
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Обновление этапа через API\n   - PUT `/api/company-settings/recruiting/stages/{id}/` - обновление этапа\n   - Параметры: все поля этапа\n   - Возвращает: обновленный этап\n   - Реализовать в handleEditStage",
+      "method": "PUT",
+      "endpoint": "/api/company-settings/recruiting/stages/{id}/",
+      "parameters": "все поля этапа",
+      "returns": "обновленный этап",
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Удаление этапа через API\n   - DELETE `/api/company-settings/recruiting/stages/{id}/` - удаление этапа\n   - Подтверждение удаления\n   - Реализовать в handleDeleteStage",
+      "method": "DELETE",
+      "endpoint": "/api/company-settings/recruiting/stages/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Переупорядочивание этапов через API\n   - PATCH `/api/company-settings/recruiting/stages/reorder/` - обновление порядка\n   - Параметры: массив ID этапов в новом порядке\n   - Возвращает: обновленный порядок\n   - Реализовать в handleReorderStages",
+      "method": "PATCH",
+      "endpoint": "/api/company-settings/recruiting/stages/reorder/",
+      "parameters": "массив ID этапов в новом порядке",
+      "returns": "обновленный порядок",
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Управление причинами отказа через API\n   - GET `/api/company-settings/recruiting/stages/{id}/rejection-reasons/` - получение причин отказа\n   - POST `/api/company-settings/recruiting/stages/{id}/rejection-reasons/` - добавление причины\n   - PUT `/api/company-settings/recruiting/stages/{id}/rejection-reasons/{reasonId}/` - обновление причины\n   - DELETE `/api/company-settings/recruiting/stages/{id}/rejection-reasons/{reasonId}/` - удаление причины",
+      "method": "GET",
+      "endpoint": "/api/company-settings/recruiting/stages/{id}/rejection-reasons/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Drag & drop для переупорядочивания\n   - Реализовать drag & drop интерфейс для изменения порядка этапов\n   - Использовать библиотеку react-beautiful-dnd или dnd-kit",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.307540"
+}

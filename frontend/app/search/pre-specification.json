@@ -1,0 +1,139 @@
+{
+  "name": "search",
+  "type": "page",
+  "description": "Страница результатов глобального поиска по приложению. Отображает результаты поиска с возможностью фильтрации по областям (вакансии, кандидаты, компании). Управляет областью поиска через URL параметры для поддержки глубоких ссылок и возможности делиться результатами поиска.\n\n**Путь**: `/search`",
+  "route_path": "`/search`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/search/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [
+    {
+      "name": "SCOPE_LABELS",
+      "definition": "const SCOPE_LABELS: Record<string, string> = {\n  all: 'Во всех данных',        // Поиск во всех данных\n  vacancies: 'Вакансии',        // Поиск только в вакансиях\n  candidates: 'Кандидаты',      // Поиск только в кандидатах\n  companies: 'Компании',        // Поиск только в компаниях\n}",
+      "fields": [
+        {
+          "name": "SCOPE_LABELS",
+          "type": "Record<string, string> = {",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "all",
+          "type": "'Во всех данных',",
+          "optional": false,
+          "comment": "Поиск во всех данных"
+        },
+        {
+          "name": "vacancies",
+          "type": "'Вакансии',",
+          "optional": false,
+          "comment": "Поиск только в вакансиях"
+        },
+        {
+          "name": "candidates",
+          "type": "'Кандидаты',",
+          "optional": false,
+          "comment": "Поиск только в кандидатах"
+        },
+        {
+          "name": "companies",
+          "type": "'Компании',",
+          "optional": false,
+          "comment": "Поиск только в компаниях"
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Реализация поиска через API\n   - GET `/api/search/` - выполнение поиска\n   - Параметры: q (запрос), scope (область), page (страница), page_size (размер страницы)\n   - Возвращает результаты поиска с пагинацией",
+      "method": "GET",
+      "endpoint": "/api/search/",
+      "parameters": "q (запрос), scope (область), page (страница), page_size (размер страницы)",
+      "returns": "результаты поиска с пагинацией",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Отображение результатов поиска\n   - Компонент для отображения результатов\n   - Группировка результатов по типам (вакансии, кандидаты, компании)\n   - Отображение метаданных результатов (количество, время поиска)",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Фильтрация по области на сервере\n   - Фильтрация результатов по scope на сервере\n   - Оптимизация запросов для каждой области",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Навигация к результатам\n   - Переход на детальную страницу вакансии: `/vacancies/[id]`\n   - Переход на детальную страницу кандидата: `/candidates/[id]` (TODO: реализовать)\n   - Переход на детальную страницу компании: `/companies/[id]` (TODO: реализовать)",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Подсветка совпадений\n   - Выделение найденного текста в результатах\n   - Подсветка совпадающих фрагментов",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Пагинация результатов\n   - Отображение результатов по страницам\n   - Кнопки навигации по страницам\n   - Отображение общего количества результатов",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Автодополнение запросов\n   - Предложения запросов при вводе\n   - История поиска\n   - Популярные запросы",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Обработка ошибок API\n   - Отображение ошибок при поиске\n   - Fallback сообщения при отсутствии результатов\n   - Toast уведомления об ошибках",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Оптимизация поиска\n   - Debounce для запросов при вводе\n   - Кэширование результатов поиска\n   - Ленивая загрузка результатов",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Интеграция с GlobalSearch\n    - Перенаправление с GlobalSearch на эту страницу\n    - Передача параметров q и scope через URL\n    - Синхронизация состояния поиска",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.275182"
+}

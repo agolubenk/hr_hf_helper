@@ -11,6 +11,7 @@ from .serializers import (
 )
 from logic.utilities.user_api import UserViewSet as LogicUserViewSet, GroupViewSet as LogicGroupViewSet
 from logic.base.response_handler import UnifiedResponseHandler
+from rest_framework.authtoken.models import Token
 
 
 class UserViewSet(LogicUserViewSet):
@@ -188,6 +189,29 @@ class UserViewSet(LogicUserViewSet):
         except Exception as e:
             response_data = UnifiedResponseHandler.error_response(str(e))
             return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=False, methods=['get'], url_path='token')
+    def token(self, request):
+        """
+        Возвращает (или создает) DRF Token для текущего пользователя.
+        Удобно для интеграций, где cookies недоступны (например, Chrome extension на LinkedIn).
+        
+        GET /api/v1/accounts/users/token/
+        """
+        try:
+            token, _ = Token.objects.get_or_create(user=request.user)
+            return Response(
+                UnifiedResponseHandler.success_response(
+                    {"token": token.key},
+                    "Токен получен"
+                ),
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                UnifiedResponseHandler.error_response(str(e)),
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class GroupViewSet(LogicGroupViewSet):

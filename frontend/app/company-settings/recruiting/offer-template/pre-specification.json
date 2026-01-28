@@ -1,0 +1,57 @@
+{
+  "name": "offer-template",
+  "type": "page",
+  "description": "Страница управления шаблоном оффера (предложения о работе). Позволяет загружать шаблоны в форматах DOCX, PPTX, Figma, настраивать переменные для подстановки и просматривать предпросмотр с подставленными значениями.",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/company-settings/recruiting/offer-template/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "`handleSave()` - реализовать сохранение шаблона на сервер через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка сохраненного шаблона - реализовать через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Обработка Figma файлов - реализовать на сервере",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Предпросмотр Figma - реализовать отображение после обработки на сервере",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Сохранение переменных - сохранять настройки переменных через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.308599"
+}

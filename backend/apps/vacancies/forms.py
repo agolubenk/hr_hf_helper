@@ -142,9 +142,9 @@ class VacancyForm(forms.ModelForm):
         # Ограничиваем выбор только активными интервьюерами для обязательных участников
         self.fields['mandatory_tech_interviewers'].queryset = Interviewer.objects.filter(is_active=True)
         
-        # Ограничиваем выбор только активными грейдами (все грейды активны по умолчанию)
-        from apps.finance.models import Grade
-        self.fields['available_grades'].queryset = Grade.objects.all()
+        # Ограничиваем выбор только активными грейдами компании
+        from apps.company_settings.utils import get_active_grades_queryset
+        self.fields['available_grades'].queryset = get_active_grades_queryset()
         
         # Ограничиваем выбор только активными интервьюерами
         self.fields['interviewers'].queryset = Interviewer.objects.filter(is_active=True)
@@ -163,7 +163,7 @@ class VacancyForm(forms.ModelForm):
             'name', 'external_id', 'recruiter', 'technologies', 'tech_interview_duration', 'mandatory_tech_interviewers',
             'invite_title', 'invite_text', 'tech_invite_title', 'tech_invite_text', 'scorecard_title', 'scorecard_link', 
             'questions_belarus', 'questions_poland', 'vacancy_link_belarus', 'vacancy_link_poland',
-            'candidate_update_prompt', 'screening_duration',
+            'candidate_update_prompt', 'use_common_prompt', 'screening_duration',
             'hr_screening_stage', 'tech_screening_stage', 'tech_interview_stage',
             'available_grades', 'interviewers', 'is_active'
         ]
@@ -239,7 +239,12 @@ class VacancyForm(forms.ModelForm):
             'candidate_update_prompt': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 4,
-                'placeholder': 'Промпт для обновления информации о кандидате'
+                'placeholder': 'Промпт для обновления информации о кандидате',
+                'id': 'id_candidate_update_prompt'
+            }),
+            'use_common_prompt': forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+                'id': 'id_use_common_prompt'
             }),
             'screening_duration': forms.NumberInput(attrs={
                 'class': 'form-control',
@@ -275,6 +280,7 @@ class VacancyForm(forms.ModelForm):
             'vacancy_link_belarus': 'Ссылка на вакансию (Беларусь)',
             'vacancy_link_poland': 'Ссылка на вакансию (Польша)',
             'candidate_update_prompt': 'Промпт для обновления кандидата',
+            'use_common_prompt': 'Использовать общий промпт',
             'screening_duration': 'Длительность скринингов',
             'available_grades': 'Доступные грейды',
             'interviewers': 'Интервьюеры',
@@ -293,6 +299,7 @@ class VacancyForm(forms.ModelForm):
             'vacancy_link_belarus': 'Ссылка на вакансию в Беларуси (например, rabota.by, jobs.tut.by)',
             'vacancy_link_poland': 'Ссылка на вакансию в Польше (например, pracuj.pl, nofluffjobs.com)',
             'candidate_update_prompt': 'Промпт для обновления информации о кандидате',
+            'use_common_prompt': 'Если включено, используется единый промпт из настроек компании. Если выключено, используется индивидуальный промпт.',
             'screening_duration': 'Длительность скринингов в минутах (по умолчанию 45 минут)',
             'available_grades': 'Грейды, доступные для данной вакансии',
             'interviewers': 'Интервьюеры, привязанные к вакансии',
@@ -440,6 +447,10 @@ class SalaryRangeForm(forms.ModelForm):
         # Ограничиваем выбор только активными вакансиями
         self.fields['vacancy'].queryset = Vacancy.objects.filter(is_active=True)
         
+        # Ограничиваем выбор только активными грейдами компании
+        from apps.company_settings.utils import get_active_grades_queryset
+        self.fields['grade'].queryset = get_active_grades_queryset().order_by('name')
+        
         # Делаем обязательные поля
         self.fields['vacancy'].required = True  # Поле vacancy теперь обязательное
         self.fields['grade'].required = True
@@ -532,9 +543,9 @@ class SalaryRangeSearchForm(forms.Form):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        from apps.finance.models import Grade
+        from apps.company_settings.utils import get_active_grades_queryset
         
         # Ограничиваем выбор только активными вакансиями
         self.fields['vacancy'].queryset = Vacancy.objects.filter(is_active=True).order_by('name')
-        self.fields['grade'].queryset = Grade.objects.all().order_by('name')
+        self.fields['grade'].queryset = get_active_grades_queryset().order_by('name')
 

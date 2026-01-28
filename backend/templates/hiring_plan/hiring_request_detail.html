@@ -1,8 +1,8 @@
 {% extends 'common/base.html' %}
 {% load static %}
 
-{% block title %}{{ request }} - HR Helper{% endblock %}
-{% block page_title %}{{ request }}{% endblock %}
+{% block title %}{{ hiring_request }} - HR Helper{% endblock %}
+{% block page_title %}{{ hiring_request }}{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -12,10 +12,10 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-user me-2"></i>
-                        {{ request }}
+                        {{ hiring_request }}
                     </h5>
                     <div class="btn-group" role="group">
-                        <a href="{% url 'hiring_plan:hiring_request_update' request.pk %}" class="btn btn-primary">
+                        <a href="{% url 'hiring_plan:hiring_request_update' hiring_request.pk %}" class="btn btn-primary">
                             <i class="fas fa-edit me-2"></i>Редактировать
                         </a>
                         <a href="{% url 'hiring_plan:hiring_requests_list' %}" class="btn btn-outline-secondary">
@@ -40,17 +40,17 @@
                                 <table class="table table-borderless">
                                     <tr>
                                         <td><strong>Вакансия:</strong></td>
-                                        <td>{{ request.vacancy.name }}</td>
+                                        <td>{{ hiring_request.vacancy.name }}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Грейд:</strong></td>
-                                        <td><span class="badge bg-info">{{ request.grade.name }}</span></td>
+                                        <td><span class="badge bg-info">{{ hiring_request.grade.name }}</span></td>
                                     </tr>
                                     <tr>
                                         <td><strong>Проект:</strong></td>
                                         <td>
-                                            {% if request.project %}
-                                                {{ request.project }}
+                                            {% if hiring_request.project %}
+                                                {{ hiring_request.project }}
                                             {% else %}
                                                 <span class="text-muted">Не указан</span>
                                             {% endif %}
@@ -59,13 +59,13 @@
                                     <tr>
                                         <td><strong>Рекрутер:</strong></td>
                                         <td>
-                                            {% if request.recruiter %}
+                                            {% if hiring_request.recruiter %}
                                                 <div class="d-flex align-items-center">
                                                     <i class="fas fa-user me-2 text-muted"></i>
-                                                    <span>{{ request.recruiter.get_full_name|default:request.recruiter.username }}</span>
+                                                    <span>{{ hiring_request.recruiter.get_full_name|default:hiring_request.recruiter.username }}</span>
                                                 </div>
-                                                {% if request.recruiter_work_days > 0 %}
-                                                    <small class="text-muted">Работает {{ request.recruiter_work_days }} дней</small>
+                                                {% if hiring_request.recruiter_work_days > 0 %}
+                                                    <small class="text-muted">Работает {{ hiring_request.recruiter_work_days }} дней</small>
                                                 {% endif %}
                                             {% else %}
                                                 <span class="text-muted">Не назначен</span>
@@ -75,13 +75,13 @@
                                     <tr>
                                         <td><strong>Приоритет:</strong></td>
                                         <td>
-                                            {% if request.priority == 1 %}
+                                            {% if hiring_request.priority == 1 %}
                                                 <span class="badge bg-danger">Критический</span>
-                                            {% elif request.priority == 2 %}
+                                            {% elif hiring_request.priority == 2 %}
                                                 <span class="badge bg-warning">Высокий</span>
-                                            {% elif request.priority == 3 %}
+                                            {% elif hiring_request.priority == 3 %}
                                                 <span class="badge bg-info">Средний</span>
-                                            {% elif request.priority == 4 %}
+                                            {% elif hiring_request.priority == 4 %}
                                                 <span class="badge bg-secondary">Низкий</span>
                                             {% endif %}
                                         </td>
@@ -89,22 +89,22 @@
                                     <tr>
                                         <td><strong>Статус:</strong></td>
                                         <td>
-                                            {% if request.status == 'planned' %}
+                                            {% if hiring_request.status == 'planned' %}
                                                 <span class="badge bg-info">Планируется</span>
-                                            {% elif request.status == 'in_progress' %}
+                                            {% elif hiring_request.status == 'in_progress' %}
                                                 <span class="badge bg-warning">В процессе</span>
-                                            {% elif request.status == 'closed' %}
+                                            {% elif hiring_request.status == 'closed' %}
                                                 <div>
                                                     <span class="badge bg-success">Закрыта</span>
-                                                    {% if request.closed_date %}
-                                                        <br><small class="text-muted">{{ request.closed_date|date:"d.m.Y" }}</small>
+                                                    {% if hiring_request.closed_date %}
+                                                        <br><small class="text-muted">{{ hiring_request.closed_date|date:"d.m.Y" }}</small>
                                                     {% endif %}
                                                 </div>
-                                            {% elif request.status == 'cancelled' %}
+                                            {% elif hiring_request.status == 'cancelled' %}
                                                 <div>
                                                     <span class="badge bg-secondary">Отменена</span>
-                                                    {% if request.closed_date %}
-                                                        <br><small class="text-muted">{{ request.closed_date|date:"d.m.Y" }}</small>
+                                                    {% if hiring_request.closed_date %}
+                                                        <br><small class="text-muted">{{ hiring_request.closed_date|date:"d.m.Y" }}</small>
                                                     {% endif %}
                                                 </div>
                                             {% endif %}
@@ -112,7 +112,7 @@
                                     </tr>
                                     <tr>
                                         <td><strong>Причина открытия:</strong></td>
-                                        <td>{{ request.get_opening_reason_display }}</td>
+                                        <td>{{ hiring_request.get_opening_reason_display }}</td>
                                     </tr>
                                 </table>
                             </div>
@@ -131,14 +131,14 @@
                                 <table class="table table-borderless">
                                     <tr>
                                         <td><strong>Дата открытия:</strong></td>
-                                        <td>{{ request.opening_date|date:"d.m.Y" }}</td>
+                                        <td>{{ hiring_request.opening_date|date:"d.m.Y" }}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Дедлайн:</strong></td>
                                         <td>
-                                            {% if request.deadline %}
-                                                {{ request.deadline|date:"d.m.Y" }}
-                                                {% if request.is_overdue %}
+                                            {% if hiring_request.deadline %}
+                                                {{ hiring_request.deadline|date:"d.m.Y" }}
+                                                {% if hiring_request.is_overdue %}
                                                     <br><small class="text-danger">Просрочено</small>
                                                 {% endif %}
                                             {% else %}
@@ -149,8 +149,8 @@
                                     <tr>
                                         <td><strong>Дата закрытия:</strong></td>
                                         <td>
-                                            {% if request.closed_date %}
-                                                {{ request.closed_date|date:"d.m.Y" }}
+                                            {% if hiring_request.closed_date %}
+                                                {{ hiring_request.closed_date|date:"d.m.Y" }}
                                             {% else %}
                                                 <span class="text-muted">Не закрыто</span>
                                             {% endif %}
@@ -159,30 +159,30 @@
                                     <tr>
                                         <td><strong>Дней в работе:</strong></td>
                                         <td>
-                                            <strong>{{ request.days_in_progress }}</strong> дней
+                                            <strong>{{ hiring_request.days_in_progress }}</strong> дней
                                         </td>
                                     </tr>
                                     <tr>
                                         <td><strong>SLA статус:</strong></td>
                                         <td>
-                                            {% if request.sla_status_display == 'В срок' %}
+                                            {% if hiring_request.sla_status_display == 'В срок' %}
                                                 <span class="badge bg-success">В срок</span>
-                                            {% elif request.sla_status_display == 'Просрочено' %}
+                                            {% elif hiring_request.sla_status_display == 'Просрочено' %}
                                                 <span class="badge bg-danger">Просрочено</span>
-                                            {% elif request.sla_status_display == 'Нормально' %}
+                                            {% elif hiring_request.sla_status_display == 'Нормально' %}
                                                 <span class="badge bg-info">Нормально</span>
-                                            {% elif request.sla_status_display == 'Риск просрочки' %}
+                                            {% elif hiring_request.sla_status_display == 'Риск просрочки' %}
                                                 <span class="badge bg-warning">Риск просрочки</span>
                                             {% else %}
-                                                <span class="badge bg-secondary">{{ request.sla_status_display }}</span>
+                                                <span class="badge bg-secondary">{{ hiring_request.sla_status_display }}</span>
                                             {% endif %}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td><strong>Соответствие SLA:</strong></td>
                                         <td>
-                                            {% if request.sla_compliance %}
-                                                {{ request.sla_compliance }}%
+                                            {% if hiring_request.sla_compliance %}
+                                                {{ hiring_request.sla_compliance }}%
                                             {% else %}
                                                 <span class="text-muted">Не рассчитано</span>
                                             {% endif %}
@@ -195,7 +195,7 @@
                 </div>
 
                 <!-- SLA информация -->
-                {% if request.sla %}
+                {% if hiring_request.sla %}
                 <div class="row mt-4">
                     <div class="col-12">
                         <div class="card">
@@ -209,15 +209,15 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <strong>Time-to-Fill:</strong><br>
-                                        <span class="badge bg-primary">{{ request.sla.time_to_fill }} дней</span>
+                                        <span class="badge bg-primary">{{ hiring_request.sla.time_to_fill }} дней</span>
                                     </div>
                                     <div class="col-md-4">
                                         <strong>Time-to-Hire:</strong><br>
-                                        <span class="badge bg-info">{{ request.sla.time_to_hire }} дней</span>
+                                        <span class="badge bg-info">{{ hiring_request.sla.time_to_hire }} дней</span>
                                     </div>
                                     <div class="col-md-4">
                                         <strong>Статус SLA:</strong><br>
-                                        {% if request.sla.is_active %}
+                                        {% if hiring_request.sla.is_active %}
                                             <span class="badge bg-success">Активен</span>
                                         {% else %}
                                             <span class="badge bg-secondary">Неактивен</span>
@@ -231,7 +231,7 @@
                 {% endif %}
 
                 <!-- Информация о кандидате -->
-                {% if request.candidate_id or request.candidate_name %}
+                {% if hiring_request.candidate_id or hiring_request.candidate_name %}
                 <div class="row mt-4">
                     <div class="col-12">
                         <div class="card">
@@ -248,8 +248,8 @@
                                             <tr>
                                                 <td><strong>ID кандидата:</strong></td>
                                                 <td>
-                                                    {% if request.candidate_id %}
-                                                        {{ request.candidate_id }}
+                                                    {% if hiring_request.candidate_id %}
+                                                        {{ hiring_request.candidate_id }}
                                                     {% else %}
                                                         <span class="text-muted">Не указан</span>
                                                     {% endif %}
@@ -258,8 +258,8 @@
                                             <tr>
                                                 <td><strong>Имя кандидата:</strong></td>
                                                 <td>
-                                                    {% if request.candidate_name %}
-                                                        {{ request.candidate_name }}
+                                                    {% if hiring_request.candidate_name %}
+                                                        {{ hiring_request.candidate_name }}
                                                     {% else %}
                                                         <span class="text-muted">Не указано</span>
                                                     {% endif %}
@@ -275,7 +275,7 @@
                 {% endif %}
 
                 <!-- Заметки -->
-                {% if request.notes %}
+                {% if hiring_request.notes %}
                 <div class="row mt-4">
                     <div class="col-12">
                         <div class="card">
@@ -286,7 +286,7 @@
                                 </h6>
                             </div>
                             <div class="card-body">
-                                <p class="mb-0">{{ request.notes|linebreaks }}</p>
+                                <p class="mb-0">{{ hiring_request.notes|linebreaks }}</p>
                             </div>
                         </div>
                     </div>
@@ -309,16 +309,16 @@
                                         <table class="table table-borderless">
                                             <tr>
                                                 <td><strong>Создано:</strong></td>
-                                                <td>{{ request.created_at|date:"d.m.Y H:i" }}</td>
+                                                <td>{{ hiring_request.created_at|date:"d.m.Y H:i" }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Обновлено:</strong></td>
-                                                <td>{{ request.updated_at|date:"d.m.Y H:i" }}</td>
+                                                <td>{{ hiring_request.updated_at|date:"d.m.Y H:i" }}</td>
                                             </tr>
-                                            {% if request.created_by %}
+                                            {% if hiring_request.created_by %}
                                             <tr>
                                                 <td><strong>Создано пользователем:</strong></td>
-                                                <td>{{ request.created_by.get_full_name|default:request.created_by.username }}</td>
+                                                <td>{{ hiring_request.created_by.get_full_name|default:hiring_request.created_by.username }}</td>
                                             </tr>
                                             {% endif %}
                                         </table>

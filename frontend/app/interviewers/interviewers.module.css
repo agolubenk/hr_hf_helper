@@ -1,0 +1,156 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 0 24px;
+}
+
+.searchCard {
+  background: var(--gray-2);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid var(--gray-6);
+}
+
+.tableContainer {
+  background: var(--gray-2);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid var(--gray-6);
+  overflow-x: auto;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--accent-9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.statusBadgeActive {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 12px;
+  padding: 4px 10px;
+  display: inline-block;
+}
+
+.statusBadgeInactive {
+  background: var(--gray-4);
+  border: 1px solid var(--gray-6);
+  border-radius: 12px;
+  padding: 4px 10px;
+  display: inline-block;
+}
+
+.actionButton {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  padding: 0 !important;
+  margin-left: 2px !important;
+  margin-right: 2px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+}
+
+.actionButton:hover {
+  background: var(--gray-4) !important;
+}
+
+.pagination {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  width: fit-content;
+  margin: 0 auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--gray-6);
+}
+
+.paginationPageInfo {
+  background: var(--accent-9);
+  color: #ffffff;
+  padding: 10px 24px;
+  min-width: 150px;
+  height: 39px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.paginationButton {
+  background: var(--gray-2) !important;
+  color: var(--accent-9) !important;
+  border: none !important;
+  border-left: 1px solid var(--gray-6) !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  width: 39px !important;
+  min-width: 39px !important;
+  max-width: 39px !important;
+  height: 39px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer;
+}
+
+.paginationButton:first-child {
+  border-left: none !important;
+  border-radius: 8px 0 0 8px !important;
+}
+
+.paginationButton:last-child {
+  border-radius: 0 8px 8px 0 !important;
+}
+
+.paginationButton:hover:not(:disabled) {
+  background: var(--gray-3) !important;
+  color: var(--accent-10) !important;
+  transform: translateY(-1px);
+}
+
+.paginationButton:active:not(:disabled) {
+  transform: translateY(0);
+  background: var(--gray-4) !important;
+}
+
+.paginationButton:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  background: var(--gray-1) !important;
+  color: var(--gray-9) !important;
+}
+
+.modalHeader {
+  background: linear-gradient(135deg, var(--accent-9) 0%, var(--accent-10) 100%);
+  padding: 20px;
+  border-radius: 12px 12px 0 0;
+  margin: -24px -24px 0 -24px;
+}
+
+.modalHeaderIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

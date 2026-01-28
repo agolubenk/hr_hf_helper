@@ -1,0 +1,182 @@
+.sidebar {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel {
+  background: var(--gray-2);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.quickActionsPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.panelHeader {
+  background: var(--accent-9); /* Акцентный цвет из темы */
+  padding: 12px 16px;
+  border-radius: 12px 12px 0 0;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.panelContent {
+  padding: 8px;
+  background: var(--gray-2); /* Адаптивный фон для светлой и темной темы */
+}
+
+.quickActionsPanel .panelContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  max-height: 100%;
+}
+
+/* Стили для скроллбара */
+.quickActionsPanel .panelContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.quickActionsPanel .panelContent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.quickActionsPanel .panelContent::-webkit-scrollbar-thumb {
+  background: var(--gray-8);
+  border-radius: 3px;
+}
+
+.quickActionsPanel .panelContent::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-9);
+}
+
+/* Для темной темы */
+[data-theme="dark"] .panelContent,
+.radix-themes[data-appearance="dark"] .panelContent {
+  background: var(--gray-3);
+}
+
+.commandItem {
+  padding: 12px;
+  background: var(--gray-2);
+  border-radius: 8px;
+  border: 1px solid var(--gray-6);
+}
+
+.commandLabel {
+  padding: 4px 8px;
+  border-radius: 4px;
+  min-width: 32px;
+  text-align: center;
+}
+
+.reportItem {
+  padding: 8px 12px;
+  background: var(--gray-2);
+  border-radius: 8px;
+  border: 1px solid var(--gray-6);
+  transition: all 0.2s ease-in-out;
+}
+
+.reportItem:hover {
+  background: var(--gray-3);
+  border-color: var(--gray-8);
+  transform: translateX(4px);
+}
+
+.reportTable {
+  margin-top: 8px;
+  padding: 0;
+  background: var(--gray-2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Для темной темы */
+[data-theme="dark"] .reportTable,
+.radix-themes[data-appearance="dark"] .reportTable {
+  background: var(--gray-3);
+}
+
+.tableHeader {
+  text-align: center;
+  background: var(--gray-4);
+  font-weight: 600;
+}
+
+/* Для темной темы */
+[data-theme="dark"] .tableHeader,
+.radix-themes[data-appearance="dark"] .tableHeader {
+  background: var(--gray-4);
+}
+
+.reportTable :global(.rt-TableCell) {
+  text-align: left;
+}
+
+.reportTable :global(.rt-TableCell:last-child) {
+  text-align: center;
+}
+
+/* Стили для быстрых действий - круглые кнопки по аналогии с backend шаблоном */
+.quickActionButton {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.quickActionButton:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.quickActionButton:active {
+  transform: scale(0.95);
+}
+
+/* Устаревшие стили для quickActionBlock (оставлены для обратной совместимости) */
+.quickActionBlock {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 2px solid;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  background: transparent;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.quickActionBlock:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.quickActionBlock:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}

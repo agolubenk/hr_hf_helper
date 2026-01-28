@@ -1,0 +1,55 @@
+.basicInfoCard {
+  background: var(--gray-2);
+  border: 1px solid var(--gray-6);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.header {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--gray-6);
+}
+
+.iconCircle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-9);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.techTag {
+  background: var(--gray-4);
+  color: var(--gray-12);
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.huntflowButton {
+  background: var(--accent-9);
+  color: #ffffff;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.statusActive {
+  background: var(--accent-9);
+}
+
+.statusInactive {
+  background: var(--gray-8);
+}
+
+@media (max-width: 768px) {
+  .basicInfoCard {
+    padding: 16px;
+  }
+}

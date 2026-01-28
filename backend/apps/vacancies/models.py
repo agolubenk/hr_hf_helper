@@ -94,6 +94,12 @@ class Vacancy(models.Model):
         blank=True
     )
     
+    use_common_prompt = models.BooleanField(
+        default=False,
+        verbose_name='Использовать общий промпт',
+        help_text='Если включено, используется единый промпт из настроек компании. Если выключено, используется индивидуальный промпт.'
+    )
+    
     # Этапы для перевода кандидатов
     hr_screening_stage = models.CharField(
         max_length=100,

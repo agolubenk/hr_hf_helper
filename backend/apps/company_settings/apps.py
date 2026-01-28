@@ -6,3 +6,4 @@ class CompanySettingsConfig(AppConfig):
     name = 'apps.company_settings'
     verbose_name = 'Настройки компании'
 
+

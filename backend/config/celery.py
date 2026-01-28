@@ -31,7 +31,7 @@ app.conf.update(
 )
 
 # Автоматическое обнаружение задач в установленных приложениях
-app.autodiscover_tasks(['apps.finance', 'apps.clickup_int', 'apps.notion_int', 'apps.huntflow'])
+app.autodiscover_tasks(['apps.finance', 'apps.clickup_int', 'apps.notion_int', 'apps.huntflow', 'apps.google_oauth'])
 
 # Принудительно регистрируем задачи finance после настройки Django
 @app.task
@@ -105,6 +105,10 @@ app.conf.beat_schedule = {
     # },
     'validate-oauth-tokens': {
         'task': 'apps.google_oauth.tasks.validate_oauth_tokens',
+        'schedule': 3600.0,  # Каждый час
+    },
+    'sync-calendar-events-by-vacancies': {
+        'task': 'apps.google_oauth.tasks.sync_calendar_events_by_vacancies',
         'schedule': 3600.0,  # Каждый час
     },
     

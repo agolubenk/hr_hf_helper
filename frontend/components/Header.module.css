@@ -1,0 +1,62 @@
+/* Стили для адаптивного header */
+
+/* На мобильных устройствах скрываем название страницы */
+.pageTitle {
+  display: block;
+}
+
+.userFullName {
+  display: block;
+}
+
+.userName {
+  display: none;
+}
+
+.logoutText {
+  display: inline-block;
+}
+
+.logoutButton {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+/* На мобильных устройствах (до 768px) */
+@media (max-width: 767px) {
+  .pageTitle {
+    display: none;
+  }
+
+  .userFullName {
+    display: none;
+  }
+
+  .userName {
+    display: block;
+  }
+
+  .logoutText {
+    display: none;
+  }
+
+  .logoutButton {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}
+
+/* Стили для формы поиска */
+.searchContainer {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+  min-width: 200px;
+}
+
+@media (max-width: 767px) {
+  .searchContainer {
+    max-width: 150px;
+    min-width: 120px;
+  }
+}

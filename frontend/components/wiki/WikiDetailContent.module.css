@@ -1,0 +1,107 @@
+.content {
+  background: var(--gray-2);
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid var(--gray-6);
+}
+
+/* Для темной темы */
+[data-theme="dark"] .content,
+.radix-themes[data-appearance="dark"] .content {
+  background: var(--gray-3);
+}
+
+.mainHeading {
+  color: var(--gray-12);
+  margin-bottom: 24px;
+  display: block;
+}
+
+.section {
+  margin-bottom: 24px;
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.sectionTitle {
+  color: var(--gray-12);
+  margin-bottom: 12px;
+  display: block;
+}
+
+.sectionContent {
+  color: var(--gray-11);
+  line-height: 1.6;
+  margin-bottom: 12px;
+  white-space: pre-wrap;
+  font-family: monospace;
+  font-size: 0.9em;
+  background: var(--gray-3);
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--gray-6);
+}
+
+/* Для темной темы */
+[data-theme="dark"] .sectionContent,
+.radix-themes[data-appearance="dark"] .sectionContent {
+  background: var(--gray-4);
+}
+
+.subsection {
+  margin-top: 12px;
+  margin-left: 20px;
+}
+
+.subsectionTitle {
+  color: var(--gray-11);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.itemsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-left: 20px;
+}
+
+.listItem {
+  margin-bottom: 8px;
+  position: relative;
+  padding-left: 20px;
+  color: var(--gray-11);
+}
+
+.listItem::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--gray-9);
+  font-weight: bold;
+}
+
+/* Стили для ссылок на модули (например, apps.accounts) */
+.content :global(code) {
+  background: var(--gray-4);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  color: #a855f7;
+  font-size: 0.9em;
+}
+
+/* Для темной темы */
+[data-theme="dark"] .content :global(code),
+.radix-themes[data-appearance="dark"] .content :global(code) {
+  background: var(--gray-5);
+  color: #c084fc;
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding: 16px;
+  }
+}

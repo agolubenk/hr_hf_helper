@@ -1,0 +1,178 @@
+.wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.inputRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.scopeChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--accent-3);
+  color: var(--accent-11);
+  border: 1px solid var(--accent-6);
+  flex-shrink: 0;
+  cursor: default;
+}
+
+.scopeChipRemove {
+  cursor: pointer;
+  padding: 0 2px;
+  margin: 0 -2px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scopeChipRemove:hover {
+  background: var(--accent-5);
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background: var(--color-surface);
+  border: 1px solid var(--gray-a6);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1100;
+  max-height: 420px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.section {
+  padding: 8px 0;
+}
+
+.section:not(:last-child) {
+  border-bottom: 1px solid var(--gray-a5);
+}
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-11);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: 4px 12px 6px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  transition: background 0.15s;
+}
+
+.item:hover,
+.item[data-active="true"] {
+  background: var(--gray-3);
+}
+
+.itemScope {
+  background: var(--gray-2);
+  border-left: 3px solid var(--accent-8);
+}
+
+.itemScope:hover,
+.itemScope[data-active="true"] {
+  background: var(--accent-2);
+}
+
+.entityIcon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: var(--gray-4);
+  color: var(--gray-11);
+}
+
+.scopeIcon {
+  flex-shrink: 0;
+  color: var(--accent-9);
+}
+
+.entityContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.entityTitle {
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.entityMeta {
+  font-size: 11px;
+  color: var(--gray-11);
+  margin-top: 2px;
+}
+
+.queryMatch {
+  font-weight: 500;
+  color: inherit;
+}
+
+.queryRest {
+  color: var(--gray-11);
+  font-weight: 400;
+}
+
+.scopeBadge {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent-11);
+  padding: 1px 4px;
+  background: var(--accent-4);
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.scopeLabel {
+  font-size: 13px;
+}
+
+.shortcutSlot {
+  display: flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--gray-4);
+  border: 1px solid var(--gray-a6);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--gray-11);
+  user-select: none;
+  flex-shrink: 0;
+}

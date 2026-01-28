@@ -1,0 +1,271 @@
+/* z-index: тосты должны быть выше всех модальных окон (10000) */
+.toastContainer {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 10000 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+  /* Убеждаемся, что тосты всегда поверх модальных окон */
+  isolation: isolate;
+}
+
+.toast {
+  position: relative;
+  min-width: 320px;
+  max-width: 420px;
+  pointer-events: auto;
+  animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.16),
+    0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.toastExiting {
+  animation: slideOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Light theme */
+[data-theme="light"] .toast,
+.light-theme .toast {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Dark theme */
+[data-theme="dark"] .toast,
+.dark-theme .toast {
+  background: rgba(28, 28, 31, 0.85);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Format colors */
+.toastInfo {
+  border-left: 4px solid var(--blue-9);
+}
+
+.toastWarning {
+  border-left: 4px solid var(--yellow-9);
+}
+
+.toastError {
+  border-left: 4px solid var(--red-9);
+}
+
+.toastSuccess {
+  border-left: 4px solid var(--green-9);
+}
+
+.toastSystem {
+  border-left: 4px solid var(--gray-9);
+}
+
+.toastHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px 12px 20px;
+  position: relative;
+}
+
+.toastIcon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.toastIconInfo {
+  color: var(--blue-9);
+}
+
+.toastIconWarning {
+  color: var(--yellow-9);
+}
+
+.toastIconError {
+  color: var(--red-9);
+}
+
+.toastIconSuccess {
+  color: var(--green-9);
+}
+
+.toastIconSystem {
+  color: var(--gray-9);
+}
+
+.toastTitle {
+  flex: 1;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+[data-theme="light"] .toastTitle,
+.light-theme .toastTitle {
+  color: var(--gray-12);
+}
+
+[data-theme="dark"] .toastTitle,
+.dark-theme .toastTitle {
+  color: var(--gray-12);
+}
+
+.toastCloseButton {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  color: var(--gray-9);
+}
+
+.toastCloseButton:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--gray-12);
+}
+
+[data-theme="dark"] .toastCloseButton:hover,
+.dark-theme .toastCloseButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.toastProgressBar {
+  height: 3px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.toastProgressBarFill {
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: progress 3s linear forwards;
+}
+
+.toastProgressBarInfo {
+  background: var(--blue-9);
+}
+
+.toastProgressBarWarning {
+  background: var(--yellow-9);
+}
+
+.toastProgressBarError {
+  background: var(--red-9);
+}
+
+.toastProgressBarSuccess {
+  background: var(--green-9);
+}
+
+.toastProgressBarSystem {
+  background: var(--gray-9);
+}
+
+.toastBody {
+  padding: 12px 20px 16px 20px;
+}
+
+.toastMessage {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+[data-theme="light"] .toastMessage,
+.light-theme .toastMessage {
+  color: var(--gray-11);
+}
+
+[data-theme="dark"] .toastMessage,
+.dark-theme .toastMessage {
+  color: var(--gray-11);
+}
+
+.toastActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid;
+}
+
+[data-theme="light"] .toastActions,
+.light-theme .toastActions {
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .toastActions,
+.dark-theme .toastActions {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(calc(100% + 24px));
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(calc(100% + 24px));
+    opacity: 0;
+  }
+}
+
+@keyframes progress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .toastContainer {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+  }
+
+  .toast {
+    min-width: auto;
+    max-width: 100%;
+  }
+}

@@ -21,10 +21,16 @@ window.copyQuestions = function(country) {
     
     if (text) {
         navigator.clipboard.writeText(text).then(() => {
-            showCopySuccess();
+            if (typeof window.showCopySuccess === 'function') {
+                window.showCopySuccess();
+            } else {
+                console.log('✅ Скопировано в буфер обмена!');
+            }
         }).catch(err => {
             console.error('Ошибка копирования:', err);
         });
+    } else {
+        console.warn('Текст для копирования не найден');
     }
 };
 
@@ -47,10 +53,16 @@ window.copyVacancyLink = function(country) {
     const link = country === 'belarus' ? window.vacancyLinkBelarus : window.vacancyLinkPoland;
     if (link) {
         navigator.clipboard.writeText(link).then(() => {
-            showCopySuccess();
+            if (typeof window.showCopySuccess === 'function') {
+                window.showCopySuccess();
+            } else {
+                console.log('✅ Скопировано в буфер обмена!');
+            }
         }).catch(err => {
             console.error('Ошибка копирования:', err);
         });
+    } else {
+        console.warn(`Ссылка на вакансию для ${country} не найдена`);
     }
 };
 

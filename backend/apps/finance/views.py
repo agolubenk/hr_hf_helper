@@ -213,8 +213,11 @@ def benchmarks_dashboard(request):
         count=Count('id')
     ).order_by('month', 'vacancy__name')
     
-    # Данные для фильтров
-    available_grades = Benchmark.objects.filter(is_active=True).values_list('grade__id', 'grade__name').distinct().order_by('grade__name')
+    # Данные для фильтров - показываем все грейды, которые есть в бенчмарках
+    # (бенчмарки связаны с внешними данными и рынком, поэтому используем все грейды)
+    available_grades = Benchmark.objects.filter(
+        is_active=True
+    ).values_list('grade__id', 'grade__name').distinct().order_by('grade__name')
     available_vacancies = Benchmark.objects.filter(is_active=True).values_list('vacancy__id', 'vacancy__name').distinct().order_by('vacancy__name')
     available_locations = Benchmark.objects.filter(is_active=True).values_list('location', flat=True).distinct().order_by('location')
     
@@ -294,10 +297,17 @@ def dashboard(request):
     - Передает данные в: finance/dashboard.html
     - Может вызываться из: finance/ URL patterns
     """
-    grades = Grade.objects.all().order_by('name')
+    # Используем только активные грейды компании
+    from apps.company_settings.utils import get_active_grades_queryset
+    active_grades = get_active_grades_queryset()
+    grades = active_grades.order_by('name')
     currency_rates = CurrencyRate.objects.all().order_by('code')
     pln_taxes = PLNTax.objects.filter(is_active=True).order_by('name')
-    salary_ranges = SalaryRange.objects.select_related('vacancy', 'grade').filter(is_active=True).order_by('grade__name', 'vacancy__name')
+    # Фильтруем вилки только по активным грейдам
+    salary_ranges = SalaryRange.objects.select_related('vacancy', 'grade').filter(
+        is_active=True,
+        grade__in=active_grades
+    ).order_by('grade__name', 'vacancy__name')
     
     # Статистика
     active_salary_ranges_count = salary_ranges.count()
@@ -877,8 +887,9 @@ def salary_ranges_list(request):
     
     # Получаем списки для фильтров
     from apps.vacancies.models import Vacancy
+    from apps.company_settings.utils import get_active_grades_queryset
     vacancies = Vacancy.objects.filter(is_active=True).order_by('name')
-    grades = Grade.objects.all().order_by('name')
+    grades = get_active_grades_queryset().order_by('name')
     
     context = {
         'page_obj': page_obj,
@@ -979,6 +990,12 @@ def salary_range_create(request):
         if not all([vacancy_id, grade_id, salary_min_usd, salary_max_usd]):
             return JsonResponse({'success': False, 'message': 'Все поля обязательны'})
         
+        # Проверяем, что грейд является активным для компании
+        from apps.company_settings.utils import get_active_grades_queryset
+        active_grades = get_active_grades_queryset()
+        if not active_grades.filter(id=grade_id).exists():
+            return JsonResponse({'success': False, 'message': 'Выбранный грейд не является активным для компании'})
+        
         try:
             salary_min_usd = float(salary_min_usd)
             salary_max_usd = float(salary_max_usd)
@@ -1057,7 +1074,16 @@ def salary_range_update(request, pk):
         
         salary_min_usd = data.get('salary_min_usd')
         salary_max_usd = data.get('salary_max_usd')
+        grade_id = data.get('grade_id')
         is_active = data.get('is_active')
+        
+        # Если обновляется грейд, проверяем, что он является активным для компании
+        if grade_id is not None and grade_id != salary_range.grade_id:
+            from apps.company_settings.utils import get_active_grades_queryset
+            active_grades = get_active_grades_queryset()
+            if not active_grades.filter(id=grade_id).exists():
+                return JsonResponse({'success': False, 'message': 'Выбранный грейд не является активным для компании'})
+            salary_range.grade_id = grade_id
         
         if salary_min_usd is not None:
             try:
@@ -1131,8 +1157,9 @@ def salary_range_edit(request, pk):
         salary_range = get_object_or_404(SalaryRange, pk=pk)
         
         # Получаем списки для выпадающих меню
+        from apps.company_settings.utils import get_active_grades_queryset
         vacancies = Vacancy.objects.filter(is_active=True).order_by('name')
-        grades = Grade.objects.all().order_by('name')
+        grades = get_active_grades_queryset().order_by('name')
         
         context = {
             'salary_range': salary_range,
@@ -1299,8 +1326,9 @@ def benchmarks_list(request):
     
     # Получаем списки для фильтров
     from apps.vacancies.models import Vacancy
+    from apps.company_settings.utils import get_active_grades_queryset
     vacancies = Vacancy.objects.filter(is_active=True).order_by('name')
-    grades = Grade.objects.all().order_by('name')
+    grades = get_active_grades_queryset().order_by('name')
     
     # Статистика
     candidate_count = Benchmark.objects.filter(type='candidate', is_active=True).count()
@@ -1698,7 +1726,9 @@ def benchmark_edit(request, pk):
             messages.error(request, f'Ошибка при обновлении бенчмарка: {str(e)}')
     
     # Получаем списки для форм
+    # Для бенчмарок используем ВСЕ грейды, т.к. они связаны с внешними данными и рынком
     from apps.vacancies.models import Vacancy
+    from apps.finance.models import Grade
     vacancies = Vacancy.objects.filter(is_active=True).order_by('name')
     grades = Grade.objects.all().order_by('name')
     
@@ -1814,8 +1844,9 @@ def hh_analysis_dashboard(request):
     - Может вызываться из: finance/ URL patterns
     """
     from apps.vacancies.models import Vacancy
+    from apps.finance.models import Grade
     
-    # Получаем активные вакансии и грейды
+    # Получаем активные вакансии и ВСЕ грейды (для анализа внешних данных и рынка)
     vacancies = Vacancy.objects.filter(is_active=True).order_by('name')
     grades = Grade.objects.all().order_by('name')
     
@@ -1887,6 +1918,7 @@ def start_hh_analysis(request):
             })
         
         # Проверяем существование объектов
+        # Для анализа hh.ru используем ВСЕ грейды (это анализ внешних данных и рынка)
         try:
             vacancy = Vacancy.objects.get(id=vacancy_id)
             grade = Grade.objects.get(id=grade_id)

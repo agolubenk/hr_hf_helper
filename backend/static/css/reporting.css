@@ -1,0 +1,108 @@
+/* Общие стили для страниц отчетности */
+
+/* Отступы между секциями отчетности */
+.reporting-section {
+    padding-top: 20px;
+    padding-bottom: 15px;
+}
+
+.reporting-section:first-child {
+    padding-top: 0;
+}
+
+/* Стили для карточек статистики */
+.reporting-stats-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.reporting-stats-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Стили для таблиц отчетности */
+.reporting-table {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.reporting-table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.reporting-table thead th {
+    border: none;
+    padding: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.reporting-table thead th a {
+    color: white;
+    text-decoration: none;
+}
+
+.reporting-table thead th a:hover {
+    color: #f0f0f0;
+}
+
+.reporting-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.reporting-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.reporting-table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+/* Стили для карточек фильтров */
+.reporting-filter-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease;
+}
+
+.reporting-filter-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* Стили для карточек графиков */
+.reporting-chart-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.reporting-chart-card .card-header {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-bottom: 2px solid #e9ecef;
+    padding: 1.25rem;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .reporting-table {
+        font-size: 0.875rem;
+    }
+    
+    .reporting-table thead th {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    .reporting-table tbody td {
+        padding: 0.75rem 0.5rem;
+    }
+}

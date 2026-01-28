@@ -538,10 +538,16 @@ class HiringRequestsListView(LoginRequiredMixin, ListView):
         context['cancelled_requests'] = requests.filter(status='cancelled').count()
         
         # Опции для фильтров
+        from apps.company_settings.utils import get_active_grades_queryset
+        active_grades = get_active_grades_queryset()
+        
         context['status_choices'] = HiringRequest.STATUS_CHOICES
         context['priority_choices'] = HiringRequest.PRIORITY_CHOICES
         context['reason_choices'] = HiringRequest.REASON_CHOICES
-        context['grade_choices'] = HiringRequest.objects.values_list('grade__id', 'grade__name').distinct()
+        # Фильтруем только активные грейды компании для фильтров
+        context['grade_choices'] = HiringRequest.objects.filter(
+            grade__in=active_grades
+        ).values_list('grade__id', 'grade__name').distinct()
         context['vacancy_choices'] = HiringRequest.objects.values_list('vacancy__id', 'vacancy__name').distinct()
         context['recruiter_choices'] = HiringRequest.objects.filter(
             closed_by__isnull=False
@@ -554,7 +560,7 @@ class HiringRequestDetailView(LoginRequiredMixin, DetailView):
     """Детальный просмотр заявки"""
     model = HiringRequest
     template_name = 'hiring_plan/hiring_request_detail.html'
-    context_object_name = 'request'
+    context_object_name = 'hiring_request'
 
 
 class HiringRequestCreateView(LoginRequiredMixin, CreateView):
@@ -708,10 +714,10 @@ class VacancySLAListView(LoginRequiredMixin, ListView):
         
         # Добавляем списки для фильтров
         from apps.vacancies.models import Vacancy
-        from apps.finance.models import Grade
+        from apps.company_settings.utils import get_active_grades_queryset
         
         context['vacancies'] = Vacancy.objects.filter(is_active=True).order_by('name')
-        context['grades'] = Grade.objects.all().order_by('name')
+        context['grades'] = get_active_grades_queryset().order_by('name')
         
         # Добавляем текущие значения фильтров
         context['current_vacancy'] = self.request.GET.get('vacancy', '')
@@ -719,8 +725,9 @@ class VacancySLAListView(LoginRequiredMixin, ListView):
         context['current_is_active'] = self.request.GET.get('is_active', '')
         
         # Проверяем, можно ли создавать новые SLA (только для активных вакансий)
+        from apps.company_settings.utils import get_active_grades_queryset
         active_vacancies = Vacancy.objects.filter(is_active=True)
-        all_grades = Grade.objects.all()
+        all_grades = get_active_grades_queryset()
         total_possible_slas = active_vacancies.count() * all_grades.count()
         existing_slas_for_active = VacancySLA.objects.filter(vacancy__in=active_vacancies).count()
         
@@ -899,13 +906,13 @@ def get_available_grades(request):
     
     try:
         from apps.vacancies.models import Vacancy
-        from apps.finance.models import Grade
+        from apps.company_settings.utils import get_active_grades_queryset
         
         # Получаем вакансию
         vacancy = Vacancy.objects.get(id=vacancy_id)
         
-        # Получаем все грейды
-        all_grades = Grade.objects.all()
+        # Получаем активные грейды компании
+        all_grades = get_active_grades_queryset()
         
         # Получаем грейды, для которых уже созданы SLA
         existing_grades = VacancySLA.objects.filter(vacancy=vacancy).values_list('grade', flat=True)
@@ -936,6 +943,34 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
     """Годовая таблица заявок с цветными ячейками по месяцам"""
     template_name = 'hiring_plan/yearly_hiring_plan.html'
     
+    @staticmethod
+    def _status_as_of(request, as_of_date):
+        """
+        Статус заявки на конец указанной даты (as_of_date).
+
+        Правило:
+        - если заявка закрыта/отменена и closed_date <= as_of_date → показываем closed/cancelled
+        - иначе если opening_date > as_of_date → planned
+        - иначе → in_progress
+        """
+        # Закрыта/отменена к указанной дате
+        if getattr(request, 'closed_date', None) and request.closed_date <= as_of_date:
+            return request.status if request.status in ['closed', 'cancelled'] else 'closed'
+
+        # Еще не началась к указанной дате
+        if getattr(request, 'opening_date', None) and request.opening_date > as_of_date:
+            return 'planned'
+
+        return 'in_progress'
+
+    @staticmethod
+    def _effective_period_end(year):
+        """Конец периода для расчетов (для текущего года — сегодня, иначе 31.12)."""
+        from datetime import datetime
+        year_end = datetime(year, 12, 31).date()
+        today = timezone.now().date()
+        return min(year_end, today) if year == timezone.now().year else year_end
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
@@ -943,47 +978,82 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
         year = int(self.request.GET.get('year', timezone.now().year))
         context['year'] = year
         
-        # Получаем все заявки за год + переходящие (открытые до года, но не закрытые)
+        # Период выбранного года
+        from datetime import datetime
+        period_start = datetime(year, 1, 1).date()
+        period_end = datetime(year, 12, 31).date()
+        effective_period_end = self._effective_period_end(year)
+
+        # Получаем все заявки, которые пересекают период года:
+        # opening_date <= конец года AND (closed_date IS NULL OR closed_date >= начало года)
         requests = HiringRequest.objects.filter(
-            models.Q(opening_date__year=year) |  # Заявки, открытые в этом году
-            models.Q(
-                opening_date__year__lt=year,  # Открытые до этого года
-                status__in=['in_progress', 'planned']  # Но не закрытые
-            )
+            opening_date__lte=period_end
+        ).filter(
+            models.Q(closed_date__isnull=True) | models.Q(closed_date__gte=period_start)
         ).select_related('vacancy', 'grade', 'sla', 'closed_by', 'recruiter').order_by('vacancy__name', 'grade__name')
         
-        # Создаем данные для таблицы
+        table_data = self._build_table_data(requests, year)
+        
+        context['table_data'] = table_data
+        context['months'] = [
+            'Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн',
+            'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'
+        ]
+        
+        # Доступные годы для фильтра
+        # Получаем годы из существующих заявок
+        years_from_db = list(HiringRequest.objects.values_list('opening_date__year', flat=True).distinct())
+        
+        # Добавляем текущий год и следующий год, если их еще нет в списке
+        current_year = timezone.now().year
+        next_year = current_year + 1
+        
+        years_set = set(years_from_db)
+        if current_year not in years_set:
+            years_set.add(current_year)
+        if next_year not in years_set:
+            years_set.add(next_year)
+        
+        # Сортируем по убыванию
+        years = sorted(years_set, reverse=True)
+        context['available_years'] = years
+        
+        # Рассчитываем медианы
+        context['medians'] = self._calculate_medians(requests, year)
+        
+        return context
+
+    def _build_table_data(self, requests, year):
+        """Собрать строки таблицы годового плана по тем же правилам, что и UI."""
+        from datetime import datetime
+        effective_period_end = self._effective_period_end(year)
+
         table_data = []
         for request in requests:
-            # Считаем общее количество дней работы (включая предыдущие годы)
+            status_as_of_year_end = self._status_as_of(request, effective_period_end)
+
+            # Считаем общее количество дней работы (накапливается, включая предыдущие годы)
             days_in_year = 0
-            if request.status in ['in_progress', 'closed', 'cancelled']:
-                from datetime import datetime
+            if status_as_of_year_end in ['in_progress', 'closed', 'cancelled']:
                 start_date = request.opening_date
-                
-                # Для закрытых и отмененных заявок используем дату закрытия, для остальных - текущую дату
-                if request.status in ['closed', 'cancelled'] and request.closed_date:
+                if request.closed_date and request.closed_date <= effective_period_end:
                     end_date = request.closed_date
                 else:
-                    end_date = timezone.now().date()
-                
-                # Ограничиваем только конец периода выбранным годом
-                year_end = datetime(year, 12, 31).date()
-                if end_date > year_end:
-                    end_date = year_end
-                
-                # Если это текущий год, ограничиваем текущей датой (только для активных заявок)
-                if year == timezone.now().year and request.status not in ['closed', 'cancelled']:
-                    today = timezone.now().date()
-                    if end_date > today:
-                        end_date = today
-                
-                # Считаем общее количество дней работы
+                    end_date = effective_period_end
+
                 days_in_year = (end_date - start_date).days + 1
-                
                 if days_in_year < 0:
                     days_in_year = 0
-            
+
+            # Time-to-hire на конец периода (накапливается)
+            time2hire_as_of_year_end = None
+            if status_as_of_year_end in ['in_progress', 'closed', 'cancelled'] and request.opening_date:
+                if request.closed_date and request.closed_date <= effective_period_end:
+                    end_date = request.closed_date
+                else:
+                    end_date = effective_period_end
+                time2hire_as_of_year_end = (end_date - request.opening_date).days
+
             row_data = {
                 'request': request,
                 'request_id': request.id,
@@ -994,29 +1064,15 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
                 'sla_time2hire': request.sla.time_to_hire if request.sla else '-',
                 'opening_date': request.opening_date,
                 'deadline': request.deadline,
-                'status': request.status,
+                'status': status_as_of_year_end,
                 'days_in_year': days_in_year,
                 'months': self._get_monthly_data(request, year),
-                'closed_by': request.closed_by,
+                'closed_by': request.closed_by if (request.closed_date and request.closed_date <= effective_period_end) else None,
                 'recruiter': request.recruiter,
-                'time2hire': request.time2hire
+                'time2hire': time2hire_as_of_year_end
             }
             table_data.append(row_data)
-        
-        context['table_data'] = table_data
-        context['months'] = [
-            'Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн',
-            'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'
-        ]
-        
-        # Доступные годы для фильтра
-        years = HiringRequest.objects.values_list('opening_date__year', flat=True).distinct().order_by('-opening_date__year')
-        context['available_years'] = years
-        
-        # Рассчитываем медианы
-        context['medians'] = self._calculate_medians(requests, year)
-        
-        return context
+        return table_data
     
     def _calculate_medians(self, requests, year):
         """Рассчитать медианы согласно алгоритму"""
@@ -1024,6 +1080,8 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
         from datetime import datetime, timedelta
         
         medians = {}
+        period_end = datetime(year, 12, 31).date()
+        effective_period_end = self._effective_period_end(year)
         
         # 1. Медианный грейд специалистов (по id грейда)
         grade_ids = [request.grade.id for request in requests]
@@ -1053,7 +1111,9 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
         
         for request in requests:
             original_start_date = request.opening_date
-            end_date = request.closed_date or timezone.now().date()
+            end_date = request.closed_date or effective_period_end
+            if end_date > effective_period_end:
+                end_date = effective_period_end
             
             # Для каждого месяца в выбранном году считаем полный срок работы с заявкой
             for month in range(1, 13):
@@ -1116,19 +1176,15 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
         # 4. Медиана "в работе (дней)" - полное количество дней работы с заявкой
         work_days = []
         for request in requests:
-            if request.status in ['in_progress', 'closed', 'cancelled']:  # Включаем отмененные
-                # Считаем полное количество дней работы с заявкой (включая все предыдущие периоды)
+            status_as_of = self._status_as_of(request, effective_period_end)
+            if status_as_of in ['in_progress', 'closed', 'cancelled']:
                 start_date = request.opening_date
-                
-                # Для закрытых и отмененных заявок используем дату закрытия, для остальных - текущую дату
-                if request.status in ['closed', 'cancelled'] and request.closed_date:
+                if request.closed_date and request.closed_date <= effective_period_end:
                     end_date = request.closed_date
                 else:
-                    end_date = timezone.now().date()
-                
-                # Считаем полное количество дней работы (без ограничений по годам)
+                    end_date = effective_period_end
+
                 total_days = (end_date - start_date).days + 1
-                
                 if total_days > 0:
                     work_days.append(total_days)
         
@@ -1184,7 +1240,15 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
             averages['work_days'] = "—"
         
         # 5.5. Среднее для T2H
-        time2hire_values = [request.time2hire for request in requests if request.time2hire is not None]
+        time2hire_values = []
+        for request in requests:
+            status_as_of = self._status_as_of(request, effective_period_end)
+            if status_as_of in ['in_progress', 'closed', 'cancelled'] and request.opening_date:
+                if request.closed_date and request.closed_date <= effective_period_end:
+                    end_date = request.closed_date
+                else:
+                    end_date = effective_period_end
+                time2hire_values.append((end_date - request.opening_date).days)
         if time2hire_values:
             average_time2hire = sum(time2hire_values) / len(time2hire_values)
             averages['time2hire'] = f"{average_time2hire:.0f}д"
@@ -1227,7 +1291,7 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
         
         # 8. Процент закрытых вакансий
         total_requests = len(requests)
-        closed_requests = len([r for r in requests if r.status == 'closed'])
+        closed_requests = len([r for r in requests if self._status_as_of(r, effective_period_end) == 'closed'])
         if total_requests > 0:
             closed_percentage = (closed_requests / total_requests) * 100
             medians['closed_percentage'] = f"{closed_percentage:.1f}%"
@@ -1246,6 +1310,12 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
         # Определяем период работы над заявкой
         start_date = request.opening_date
         end_date = request.closed_date or timezone.now().date()
+
+        # Для текущего года не показываем "будущее" сверх сегодняшнего дня
+        if year == timezone.now().year:
+            today = timezone.now().date()
+            if end_date > today:
+                end_date = today
         
         # Для планируемых заявок показываем только месяц планируемого открытия
         if request.status == 'planned':
@@ -1255,19 +1325,22 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
                     if month == planned_month:
                         months[month] = {
                             'color': 'lightblue',
-                            'active': True
+                            'active': True,
+                            'days': 0  # Планируемые заявки еще не начались
                         }
                     else:
                         months[month] = {
                             'color': 'transparent',
-                            'active': False
+                            'active': False,
+                            'days': 0
                         }
             else:
                 # Если планируемая заявка не в этом году, не показываем
                 for month in range(1, 13):
                     months[month] = {
                         'color': 'transparent',
-                        'active': False
+                        'active': False,
+                        'days': 0
                     }
             return months
         
@@ -1290,24 +1363,41 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
             # Проверяем, пересекается ли заявка с этим месяцем
             if start_date <= month_end and end_date >= month_start:
                 # Определяем цвет ячейки
-                color = self._get_cell_color(request, month_start, month_end)
+                as_of_date = min(month_end, self._effective_period_end(year))
+                color = self._get_cell_color(request, as_of_date)
+                
+                # Вычисляем количество дней в этом месяце
+                # Начало периода - максимум из начала заявки и начала месяца
+                period_start = max(start_date, month_start)
+                # Конец периода - минимум из конца заявки и конца месяца
+                period_end = min(end_date, month_end)
+                
+                # Считаем количество дней
+                days_in_month = (period_end - period_start).days + 1
+                if days_in_month < 0:
+                    days_in_month = 0
+                
                 months[month] = {
                     'color': color,
-                    'active': True
+                    'active': True,
+                    'days': days_in_month
                 }
             else:
                 months[month] = {
                     'color': 'transparent',
-                    'active': False
+                    'active': False,
+                    'days': 0
                 }
         
         return months
     
-    def _get_cell_color(self, request, month_start, month_end):
-        """Определить цвет ячейки на основе статуса заявки"""
-        if request.status == 'cancelled':
+    def _get_cell_color(self, request, as_of_date):
+        """Определить цвет ячейки на основе статуса заявки на дату as_of_date"""
+        status = self._status_as_of(request, as_of_date)
+
+        if status == 'cancelled':
             return 'gray'
-        elif request.status == 'closed':
+        elif status == 'closed':
             if request.closed_date and request.deadline:
                 if request.closed_date <= request.deadline:
                     return 'green'  # Закрыто в срок
@@ -1315,15 +1405,157 @@ class YearlyHiringPlanView(LoginRequiredMixin, TemplateView):
                     return 'red'    # Закрыто с просрочкой
             else:
                 return 'green'  # Закрыто (нет дедлайна)
-        elif request.status == 'in_progress':
+        elif status == 'in_progress':
             # Проверяем, просрочена ли заявка
-            if request.deadline and timezone.now().date() > request.deadline:
+            if request.deadline and as_of_date > request.deadline:
                 return 'yellow'  # Просрочена в работе
             else:
                 return 'blue'  # В работе
-        elif request.status == 'planned':
+        elif status == 'planned':
             return 'lightblue'  # Планируется
         else:
             return 'lightgray'  # Остальные статусы
+
+
+@login_required
+def yearly_hiring_plan_export_excel(request):
+    """Скачать годовой план найма в Excel (XLSX)."""
+    from datetime import datetime
+    from io import BytesIO
+    from django.http import HttpResponse
+    from openpyxl import Workbook
+    from openpyxl.styles import PatternFill, Font, Alignment
+    from openpyxl.utils import get_column_letter
+
+    year = int(request.GET.get('year', timezone.now().year))
+    view = YearlyHiringPlanView()
+
+    period_start = datetime(year, 1, 1).date()
+    period_end = datetime(year, 12, 31).date()
+
+    qs = HiringRequest.objects.filter(
+        opening_date__lte=period_end
+    ).filter(
+        models.Q(closed_date__isnull=True) | models.Q(closed_date__gte=period_start)
+    ).select_related('vacancy', 'grade', 'sla', 'closed_by', 'recruiter').order_by('vacancy__name', 'grade__name')
+
+    table_data = view._build_table_data(qs, year)
+    medians = view._calculate_medians(qs, year)
+
+    months_short = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек']
+
+    # Цвета как в UI
+    fills = {
+        'green': PatternFill('solid', fgColor='D4EDDA'),
+        'red': PatternFill('solid', fgColor='F8D7DA'),
+        'blue': PatternFill('solid', fgColor='CCE5FF'),
+        'lightblue': PatternFill('solid', fgColor='E3F2FD'),
+        'yellow': PatternFill('solid', fgColor='FFF3CD'),
+        'gray': PatternFill('solid', fgColor='E9ECEF'),
+        'lightgray': PatternFill('solid', fgColor='F8F9FA'),
+        'transparent': None,
+    }
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = f"План {year}"
+
+    headers = ['Вакансия', 'Грейд', 'Проект', *months_short, 'SLA (д)', 'Факт (д)', 'T2H | SLA', 'Рекрутер', 'Статус']
+    ws.append(headers)
+    header_font = Font(bold=True)
+    header_fill = PatternFill('solid', fgColor='F8F9FA')
+    for col_idx, _ in enumerate(headers, start=1):
+        cell = ws.cell(row=1, column=col_idx)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
+
+    def _status_label(s):
+        return {
+            'planned': 'Планируется',
+            'in_progress': 'В работе',
+            'closed': 'Закрыто',
+            'cancelled': 'Отменено',
+        }.get(s, str(s))
+
+    # Data rows
+    for row in table_data:
+        t2h_part = '—'
+        if row['status'] != 'planned':
+            t2h = row.get('time2hire')
+            sla_t2h = row.get('sla_time2hire')
+            parts = []
+            parts.append(f"T2H: {t2h}д" if t2h is not None else "T2H: —")
+            parts.append(f"SLA: {sla_t2h}д" if sla_t2h != '-' else "SLA: —")
+            t2h_part = '; '.join(parts)
+
+        values = [
+            row['vacancy'],
+            row['grade'],
+            row['project'],
+        ]
+        # Months
+        for m in range(1, 13):
+            md = row['months'].get(m, {'active': False, 'days': 0, 'color': 'transparent'})
+            values.append(md.get('days') if md.get('active') and md.get('days') else '')
+        values += [
+            row['sla_days'] if row['sla_days'] != '-' else '',
+            row['days_in_year'] if row['status'] != 'planned' else '',
+            t2h_part,
+            (row['recruiter'].get_full_name() if row.get('recruiter') else '') if row.get('recruiter') else '',
+            _status_label(row['status']),
+        ]
+
+        ws.append(values)
+        current_row = ws.max_row
+
+        # Apply month fills
+        month_start_col = 4
+        for m in range(1, 13):
+            md = row['months'].get(m, {'color': 'transparent'})
+            fill = fills.get(md.get('color', 'transparent'))
+            if fill:
+                ws.cell(row=current_row, column=month_start_col + (m - 1)).fill = fill
+
+    # Medians row
+    ws.append([])
+    ws.append(['Медианы', medians.get('grade', ''), '', *[
+        (medians.get('monthly_days', {}).get(m, 0) or 0) for m in range(1, 13)
+    ], medians.get('sla', ''), medians.get('work_days', ''), f"T2H: {medians.get('time2hire','')}; SLA: {medians.get('sla_time2hire','')}", '', medians.get('closed_percentage', '')])
+
+    # Basic formatting
+    ws.freeze_panes = 'A2'
+    ws.auto_filter.ref = f"A1:{get_column_letter(len(headers))}1"
+
+    # Column widths
+    widths = {
+        1: 40,  # Вакансия
+        2: 10,  # Грейд
+        3: 18,  # Проект
+        16: 10, # SLA
+        17: 10, # Факт
+        18: 28, # T2H | SLA
+        19: 18, # Рекрутер
+        20: 14, # Статус
+    }
+    for i in range(1, len(headers) + 1):
+        ws.column_dimensions[get_column_letter(i)].width = widths.get(i, 7)
+
+    # Align months center
+    for r in range(2, ws.max_row + 1):
+        for c in range(4, 16):  # month columns
+            ws.cell(row=r, column=c).alignment = Alignment(horizontal='center', vertical='center')
+
+    buf = BytesIO()
+    wb.save(buf)
+    buf.seek(0)
+
+    filename = f"hiring_plan_{year}.xlsx"
+    resp = HttpResponse(
+        buf.getvalue(),
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    resp['Content-Disposition'] = f'attachment; filename=\"{filename}\"'
+    return resp
 
 

@@ -13,9 +13,15 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
+from datetime import timedelta
 import json
+import logging
 
 from .services import HuntflowService
+from .forms import CreateApplicantForm
+
+logger = logging.getLogger(__name__)
 
 
 def get_correct_account_id(user, fallback_account_id=None):
@@ -586,20 +592,49 @@ def applicant_detail(request, account_id, applicant_id):
         # Получаем информацию об организации для хлебных крошек
         accounts = huntflow_service.get_accounts()
         account_name = f'Организация {account_id}'
+        account_slug = None  # Для формирования URL
         if accounts and 'items' in accounts:
             for account in accounts['items']:
                 if account['id'] == account_id:
                     account_name = account.get('name', account_name)
+                    # Формируем slug для URL (название в нижнем регистре, без пробелов и спецсимволов)
+                    import re
+                    account_slug = re.sub(r'[^a-z0-9]', '', account_name.lower()) if account_name else None
                     break
+        
+        # Получаем ID вакансии для формирования ссылки
+        vacancy_id_for_link = None
+        if applicant.get('vacancy_info') and applicant['vacancy_info'].get('id'):
+            vacancy_id_for_link = applicant['vacancy_info']['id']
+        elif applicant.get('links') and len(applicant['links']) > 0:
+            # Пытаемся получить из links
+            link = applicant['links'][0]
+            if 'vacancy' in link:
+                vacancy_id_for_link = link['vacancy']
         
         # Формируем имя кандидата для хлебных крошек
         applicant_name = f'Кандидат {applicant_id}'
         if applicant.get('first_name') or applicant.get('last_name'):
             applicant_name = f"{applicant.get('first_name', '')} {applicant.get('last_name', '')}".strip()
         
+        # Формируем ссылку на кандидата в Huntflow
+        huntflow_link = None
+        if account_slug and vacancy_id_for_link:
+            base_url = huntflow_service._get_base_url()
+            # Извлекаем домен из base_url (например, https://api.huntflow.ru/v2 -> https://huntflow.ru)
+            if 'api.huntflow' in base_url:
+                domain = base_url.replace('api.huntflow', 'huntflow').replace('/v2', '').replace('/api', '').rstrip('/')
+            elif 'huntflow.ru' in base_url or 'huntflow.dev' in base_url:
+                domain = base_url.replace('/v2', '').replace('/api', '').rstrip('/')
+            else:
+                domain = 'https://huntflow.ru'
+            
+            huntflow_link = f"{domain}/my/{account_slug}#/vacancy/{vacancy_id_for_link}/filter/workon/id/{applicant_id}"
+        
         context = {
             'account_id': correct_account_id,  # Используем правильный account_id
             'account_name': account_name,
+            'account_slug': account_slug,
             'accounts': accounts,  # Добавляем для sidebar menu
             'applicant': applicant,
             'applicant_name': applicant_name,
@@ -607,7 +642,9 @@ def applicant_detail(request, account_id, applicant_id):
             'questionary_schema': questionary_schema,
             'applicant_logs': applicant_logs_processed,
             'comments': comments,
-            'comments_count': comments_count
+            'comments_count': comments_count,
+            'huntflow_link': huntflow_link,
+            'vacancy_id_for_link': vacancy_id_for_link
         }
         
         
@@ -1201,3 +1238,1235 @@ def get_applicants_ajax(request, account_id):
             'success': False,
             'message': f'Ошибка: {str(e)}'
         })
+
+
+# ==================== HH.RU ИНТЕГРАЦИЯ ====================
+
+@login_required
+def hh_vacancy_select(request, account_id):
+    """
+    Страница выбора вакансии для работы с HH.ru откликами
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации в Huntflow
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HuntflowService: получение списка вакансий
+    - HHSyncConfiguration: сохраненные конфигурации синхронизации
+    
+    ОБРАБОТКА:
+    - Получение списка вакансий из Huntflow
+    - Получение сохраненных конфигураций синхронизации
+    - Отображение страницы выбора вакансии
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с вакансиями и конфигурациями
+    - render: HTML страница 'huntflow/hh_vacancy_select.html'
+    """
+    try:
+        from apps.huntflow.models import HHSyncConfiguration
+        
+        huntflow_service = HuntflowService(request.user)
+        
+        # Получаем список вакансий
+        vacancies_data = huntflow_service.get_vacancies(account_id)
+        vacancies = vacancies_data.get('items', []) if vacancies_data else []
+        
+        # Получаем сохраненные конфигурации
+        sync_configs = HHSyncConfiguration.objects.filter(
+            user=request.user,
+            account_id=account_id,
+            enabled=True
+        )
+        
+        # Создаем словарь конфигураций по vacancy_id для быстрого доступа
+        configs_by_vacancy = {config.vacancy_id: config for config in sync_configs}
+        
+        context = {
+            'account_id': account_id,
+            'vacancies': vacancies,
+            'sync_configs': configs_by_vacancy,
+            'total_vacancies': len(vacancies)
+        }
+        
+        return render(request, 'huntflow/hh_vacancy_select.html', context)
+        
+    except Exception as e:
+        messages.error(request, f'Ошибка при загрузке вакансий: {str(e)}')
+        return render(request, 'huntflow/hh_vacancy_select.html', {
+            'account_id': account_id,
+            'vacancies': [],
+            'error': str(e)
+        })
+
+
+@login_required
+def hh_responses_list(request, account_id, vacancy_id):
+    """
+    Страница просмотра откликов из HH.ru для вакансии
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации в Huntflow
+    - vacancy_id: ID вакансии в Huntflow
+    - request.GET: параметры фильтрации и пагинации
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HH.ru API: получение откликов напрямую из HH.ru
+    - HHResponse: сохраненные отклики из БД (для связи)
+    - HHSyncConfiguration: конфигурация синхронизации
+    
+    ОБРАБОТКА:
+    - Получение информации о вакансии
+    - Получение откликов напрямую из HH.ru API
+    - Проверка, какие отклики уже обработаны
+    - Применение фильтров
+    - Отображение откликов с возможностью управления
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с откликами, вакансией и фильтрами
+    - render: HTML страница 'huntflow/hh_responses_list.html'
+    """
+    try:
+        from apps.huntflow.models import HHResponse, HHSyncConfiguration
+        from apps.huntflow.hh_integration import HHResponsesHandler
+        
+        huntflow_service = HuntflowService(request.user)
+        
+        # Получаем информацию о вакансии
+        vacancy = huntflow_service.get_vacancy(account_id, vacancy_id)
+        
+        # Получаем конфигурацию синхронизации для получения hh_vacancy_id
+        sync_config = HHSyncConfiguration.objects.filter(
+            user=request.user,
+            account_id=account_id,
+            vacancy_id=vacancy_id
+        ).first()
+        
+        # Получаем hh_vacancy_id из конфигурации или запроса
+        hh_vacancy_id = None
+        if sync_config:
+            hh_vacancy_id = sync_config.hh_vacancy_id
+        else:
+            hh_vacancy_id = request.GET.get('hh_vacancy_id')
+        
+        # Получаем отклики из Huntflow API (они уже там есть)
+        page = max(int(request.GET.get('page', 1)), 1)  # Huntflow использует 1-based пагинацию
+        per_page = min(int(request.GET.get('count', 20)), 30)  # Максимум 30 для Huntflow
+        
+        try:
+            # Получаем отклики из Huntflow
+            huntflow_responses_data = huntflow_service.get_vacancy_responses(
+                account_id=account_id,
+                vacancy_id=vacancy_id,
+                count=per_page,
+                page=page
+            )
+            
+            if not huntflow_responses_data:
+                messages.error(request, "Ошибка получения откликов из Huntflow")
+                huntflow_responses = []
+                total_responses = 0
+                total_pages = 1
+            else:
+                huntflow_responses = huntflow_responses_data.get('items', [])
+                total_responses = huntflow_responses_data.get('total', 0)
+                total_applicants = huntflow_responses_data.get('total_applicants', 0)
+                total_pages = huntflow_responses_data.get('total_pages', 1)
+                logger.info(f"Получено откликов из Huntflow: {len(huntflow_responses)} из {total_responses} (страница {page} из {total_pages})")
+        except Exception as e:
+            logger.error(f"Ошибка при получении откликов из Huntflow: {e}")
+            messages.error(request, f'Ошибка при загрузке откликов: {str(e)}')
+            huntflow_responses = []
+            total_responses = 0
+            total_pages = 1
+        
+        # Проверяем, какие отклики уже обработаны (сохранены в БД)
+        imported_hh_response_ids = set()
+        if hh_vacancy_id:
+            imported_hh_response_ids = set(
+                HHResponse.objects.filter(
+                    account_id=account_id,
+                    vacancy_id=vacancy_id,
+                    hh_vacancy_id=hh_vacancy_id
+                ).values_list('hh_response_id', flat=True)
+            )
+        else:
+            # Если hh_vacancy_id не указан, проверяем все отклики для вакансии
+            imported_hh_response_ids = set(
+                HHResponse.objects.filter(
+                    account_id=account_id,
+                    vacancy_id=vacancy_id
+                ).values_list('hh_response_id', flat=True)
+            )
+        
+        # Получаем фильтры из GET параметров или используем сохраненные
+        hh_filters = {}
+        if sync_config:
+            hh_filters = sync_config.get_filters()
+        
+        # Переопределяем фильтры из GET параметров, если они есть
+        if request.GET.get('min_age'):
+            hh_filters['min_age'] = int(request.GET.get('min_age'))
+        if request.GET.get('max_age'):
+            hh_filters['max_age'] = int(request.GET.get('max_age'))
+        if request.GET.get('min_experience_years'):
+            hh_filters['min_experience_years'] = int(request.GET.get('min_experience_years'))
+        if request.GET.get('max_experience_years'):
+            hh_filters['max_experience_years'] = int(request.GET.get('max_experience_years'))
+        if request.GET.get('allowed_locations'):
+            hh_filters['allowed_locations'] = request.GET.get('allowed_locations').split(',')
+        if request.GET.get('allowed_genders'):
+            hh_filters['allowed_genders'] = [request.GET.get('allowed_genders')]
+        
+        # Обогащаем данные откликов
+        enriched_responses = []
+        passed_filters = []
+        rejected_by_filters = []
+        
+        for response in huntflow_responses:
+            response_id = response.get('id')  # ID отклика в Huntflow
+            response_foreign = response.get('foreign', '')  # Foreign ID (из HH.ru)
+            applicant = response.get('applicant', {})
+            vacancy_external = response.get('vacancy_external', {})
+            
+            # Проверяем, обработан ли отклик (по foreign ID)
+            is_processed = False
+            hh_response_db = None
+            if response_foreign and hh_vacancy_id:
+                is_processed = str(response_foreign) in imported_hh_response_ids
+                if is_processed:
+                    hh_response_db = HHResponse.objects.filter(
+                        hh_response_id=str(response_foreign)
+                    ).first()
+            
+            # Извлекаем данные резюме из applicant
+            resume = {}
+            if applicant:
+                # Получаем резюме из externals кандидата
+                externals = applicant.get('externals', [])
+                for external in externals:
+                    if external.get('auth_type') == 'HH':  # HeadHunter
+                        resume_data = external.get('data', {})
+                        resume = external.get('resume', {}) or resume_data
+                        break
+                
+                # Если резюме не найдено, используем данные из applicant как fallback
+                if not resume:
+                    resume = {
+                        'first_name': applicant.get('first_name', ''),
+                        'last_name': applicant.get('last_name', ''),
+                        'middle_name': applicant.get('middle_name', ''),
+                        'area': applicant.get('area', {}),
+                        'contacts': []
+                    }
+                    # Добавляем контакты из applicant
+                    if applicant.get('email'):
+                        resume['contacts'] = resume.get('contacts', []) + [{
+                            'type': {'id': 'email'},
+                            'value': applicant.get('email')
+                        }]
+                    if applicant.get('phone'):
+                        resume['contacts'] = resume.get('contacts', []) + [{
+                            'type': {'id': 'phone'},
+                            'value': applicant.get('phone')
+                        }]
+            
+            # Применяем фильтры HH.ru к отклику
+            passes_filter = True
+            filter_reasons = []
+            
+            if hh_filters and any([
+                hh_filters.get('min_age') is not None or hh_filters.get('max_age') is not None,
+                hh_filters.get('min_experience_years') is not None or hh_filters.get('max_experience_years') is not None,
+                hh_filters.get('allowed_locations'),
+                hh_filters.get('allowed_genders') and 'any' not in hh_filters.get('allowed_genders', [])
+            ]):
+                # Проверяем возраст
+                age = None
+                birth_date_str = resume.get('birth_date')
+                if birth_date_str:
+                    try:
+                        from datetime import datetime, date
+                        if 'T' in birth_date_str:
+                            birthday = datetime.fromisoformat(birth_date_str.replace('Z', '+00:00')).date()
+                        else:
+                            birthday = datetime.strptime(birth_date_str, '%Y-%m-%d').date()
+                        today = date.today()
+                        age = today.year - birthday.year - (
+                            (today.month, today.day) < (birthday.month, birthday.day)
+                        )
+                    except:
+                        pass
+                
+                if age is not None:
+                    min_age = hh_filters.get('min_age')
+                    max_age = hh_filters.get('max_age')
+                    if min_age is not None or max_age is not None:
+                        min_age = min_age if min_age is not None else 0
+                        max_age = max_age if max_age is not None else 200
+                        if not (min_age <= age <= max_age):
+                            passes_filter = False
+                            filter_reasons.append(f'Возраст {age} не в диапазоне {min_age}-{max_age}')
+                
+                # Проверяем опыт (если есть данные в резюме)
+                experience_list = resume.get('experience', [])
+                if experience_list:
+                    total_days = 0
+                    today = date.today()
+                    for exp in experience_list:
+                        try:
+                            start_str = exp.get('start', '')
+                            end_str = exp.get('end')
+                            
+                            if 'T' in start_str:
+                                start = datetime.fromisoformat(start_str.replace('Z', '+00:00')).date()
+                            else:
+                                start = datetime.strptime(start_str, '%Y-%m-%d').date()
+                            
+                            if end_str:
+                                if 'T' in end_str:
+                                    end = datetime.fromisoformat(end_str.replace('Z', '+00:00')).date()
+                                else:
+                                    end = datetime.strptime(end_str, '%Y-%m-%d').date()
+                            else:
+                                end = today
+                            
+                            total_days += (end - start).days
+                        except:
+                            pass
+                    
+                    experience_years = total_days / 365.25 if total_days > 0 else 0
+                    min_exp = hh_filters.get('min_experience_years')
+                    max_exp = hh_filters.get('max_experience_years')
+                    if min_exp is not None or max_exp is not None:
+                        min_exp = min_exp if min_exp is not None else 0
+                        max_exp = max_exp if max_exp is not None else 200
+                        if not (min_exp <= experience_years <= max_exp):
+                            passes_filter = False
+                            filter_reasons.append(f'Опыт {experience_years:.1f} лет не в диапазоне {min_exp}-{max_exp}')
+                
+                # Проверяем локацию
+                area = resume.get('area', {})
+                location_id = str(area.get('id', '')) if area else None
+                if location_id:
+                    allowed_locations = hh_filters.get('allowed_locations', [])
+                    if allowed_locations and location_id not in allowed_locations:
+                        passes_filter = False
+                        filter_reasons.append(f'Локация не в списке разрешенных')
+                
+                # Проверяем пол
+                gender_obj = resume.get('gender', {})
+                gender = gender_obj.get('id', '') if isinstance(gender_obj, dict) else str(gender_obj) if gender_obj else None
+                if gender:
+                    allowed_genders = hh_filters.get('allowed_genders', ['any'])
+                    if 'any' not in allowed_genders and gender not in allowed_genders:
+                        passes_filter = False
+                        filter_reasons.append(f'Пол не соответствует фильтру')
+            
+            # Парсим дату создания отклика
+            created_at = None
+            created_at_str = response.get('created_at')
+            if created_at_str:
+                try:
+                    from datetime import datetime
+                    if 'T' in created_at_str:
+                        created_at = datetime.fromisoformat(created_at_str.replace('Z', '+00:00'))
+                    else:
+                        created_at = datetime.strptime(created_at_str, '%Y-%m-%d')
+                except:
+                    pass
+            
+            # Получаем информацию о вакансии из отклика
+            response_vacancy = response.get('vacancy', {})
+            vacancy_external = response.get('vacancy_external', {})
+            
+            response_data = {
+                'huntflow_response': response,  # Полный объект отклика из Huntflow
+                'response_id': response_id,  # ID отклика в Huntflow (например, 17800665)
+                'response_foreign': response_foreign,  # Foreign ID (из HH.ru)
+                'applicant': applicant,  # Данные кандидата
+                'resume': resume,  # Данные резюме
+                'is_processed': is_processed,  # Обработан ли отклик
+                'hh_response_db': hh_response_db,  # Запись в БД
+                'created_at': created_at,  # Дата создания отклика
+                'vacancy': response_vacancy,  # Информация о вакансии
+                'vacancy_external': vacancy_external,  # Внешняя публикация вакансии
+                'passes_hh_filters': passes_filter,  # Прошел ли фильтры
+                'filter_reasons': filter_reasons  # Причины отклонения фильтрами
+            }
+            
+            enriched_responses.append(response_data)
+            
+            if passes_filter:
+                passed_filters.append(response_data)
+            else:
+                rejected_by_filters.append(response_data)
+        
+        # Статистика
+        imported_count = len([r for r in enriched_responses if r['is_processed']])
+        not_imported_count = len(enriched_responses) - imported_count
+        passed_hh_filters = len(passed_filters)
+        rejected_by_hh_filters = len(rejected_by_filters)
+        
+        # Применяем фильтры из GET параметров для отображения
+        source_filter = request.GET.get('source', '')
+        filter_status = request.GET.get('filter_status', '')
+        
+        if source_filter == 'processed':
+            enriched_responses = [r for r in enriched_responses if r['is_processed']]
+        elif source_filter == 'new':
+            enriched_responses = [r for r in enriched_responses if not r['is_processed']]
+        
+        if filter_status == 'passed':
+            enriched_responses = [r for r in enriched_responses if r['passes_hh_filters']]
+        elif filter_status == 'rejected':
+            enriched_responses = [r for r in enriched_responses if not r['passes_hh_filters']]
+        
+        # Получаем название статуса отклика (если есть)
+        response_status_name = None
+        
+        context = {
+            'account_id': account_id,
+            'vacancy_id': vacancy_id,
+            'vacancy': vacancy,
+            'sync_config': sync_config,
+            'hh_vacancy_id': hh_vacancy_id,
+            'responses': enriched_responses,
+            'total_responses': total_responses,
+            'imported_count': imported_count,
+            'not_imported_count': not_imported_count,
+            'passed_hh_filters': passed_hh_filters,
+            'rejected_by_hh_filters': rejected_by_hh_filters,
+            'current_page': page + 1,  # Для отображения (1-based)
+            'total_pages': total_pages,
+            'hh_filters': hh_filters,
+            'response_status_name': response_status_name,
+            'current_filters': {
+                'source': source_filter,
+                'filter_status': filter_status,
+                'min_age': hh_filters.get('min_age'),
+                'max_age': hh_filters.get('max_age'),
+                'min_experience_years': hh_filters.get('min_experience_years'),
+                'max_experience_years': hh_filters.get('max_experience_years'),
+                'allowed_locations': ','.join(hh_filters.get('allowed_locations', [])),
+                'allowed_genders': hh_filters.get('allowed_genders', ['any'])[0] if hh_filters.get('allowed_genders') else 'any'
+            },
+            'pagination': {
+                'has_previous': page > 1,
+                'has_next': page < total_pages,
+                'previous_page': page - 1,
+                'next_page': page + 1,
+                'current_page': page,
+                'total_pages': total_pages
+            }
+        }
+        
+        return render(request, 'huntflow/hh_responses_list.html', context)
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        logger.error(f"Ошибка в hh_responses_list: {e}")
+        messages.error(request, f'Ошибка при загрузке откликов: {str(e)}')
+        return render(request, 'huntflow/hh_responses_list.html', {
+            'account_id': account_id,
+            'vacancy_id': vacancy_id,
+            'error': str(e),
+            'responses': []
+        })
+
+
+@login_required
+@require_http_methods(["POST"])
+def hh_import_responses_ajax(request, account_id, vacancy_id):
+    """
+    AJAX endpoint для импорта откликов из HH.ru
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации в Huntflow
+    - vacancy_id: ID вакансии в Huntflow
+    - request.POST: hh_vacancy_id, filters (JSON)
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HH.ru API: получение откликов
+    - HuntflowOperations: импорт в Huntflow
+    
+    ОБРАБОТКА:
+    - Получение откликов из HH.ru
+    - Фильтрация по критериям
+    - Импорт в Huntflow
+    - Сохранение в БД
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JsonResponse с результатами импорта
+    """
+    try:
+        from logic.integration.shared.huntflow_operations import HuntflowOperations
+        import json
+        
+        hh_vacancy_id = request.POST.get('hh_vacancy_id')
+        filters_json = request.POST.get('filters', '{}')
+        
+        if not hh_vacancy_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Требуется hh_vacancy_id'
+            }, status=400)
+        
+        try:
+            filters = json.loads(filters_json) if filters_json else {}
+        except json.JSONDecodeError:
+            filters = {}
+        
+        operations = HuntflowOperations(request.user)
+        result = operations.get_and_import_hh_responses(
+            account_id=int(account_id),
+            vacancy_id=int(vacancy_id),
+            hh_vacancy_id=hh_vacancy_id,
+            filters=filters
+        )
+        
+        return JsonResponse(result)
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка: {str(e)}'
+        }, status=500)
+
+
+@login_required
+@require_http_methods(["POST"])
+def hh_reject_response_ajax(request, account_id, vacancy_id):
+    """
+    AJAX endpoint для отклонения отклика в HH.ru
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации в Huntflow
+    - vacancy_id: ID вакансии в Huntflow
+    - request.POST: negotiation_id, hh_vacancy_id, message (опционально)
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HH.ru API: отклонение отклика
+    - HHResponse: сохранение статуса в БД
+    
+    ОБРАБОТКА:
+    - Отклонение отклика в HH.ru
+    - Сохранение информации об отклонении в БД
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JsonResponse с результатами операции
+    """
+    try:
+        from apps.huntflow.hh_integration import HHResponsesHandler
+        from apps.huntflow.models import HHResponse
+        
+        negotiation_id = request.POST.get('negotiation_id')
+        hh_vacancy_id = request.POST.get('hh_vacancy_id')
+        message = request.POST.get('message', '')
+        
+        if not negotiation_id or not hh_vacancy_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Требуется negotiation_id и hh_vacancy_id'
+            }, status=400)
+        
+        handler = HHResponsesHandler(request.user)
+        result = handler.reject_response(negotiation_id, hh_vacancy_id, message)
+        
+        # Сохраняем информацию об отклонении в БД
+        if result['success']:
+            HHResponse.objects.update_or_create(
+                hh_response_id=negotiation_id,
+                defaults={
+                    'account_id': account_id,
+                    'vacancy_id': vacancy_id,
+                    'hh_vacancy_id': hh_vacancy_id,
+                    'import_status': 'filtered',
+                    'response_state': 'rejected',
+                    'imported_by': request.user,
+                }
+            )
+        
+        return JsonResponse(result)
+        
+    except Exception as e:
+        logger.error(f"Ошибка при отклонении отклика: {e}")
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка: {str(e)}'
+        }, status=500)
+
+
+@login_required
+@require_http_methods(["POST"])
+def hh_archive_response_ajax(request, account_id, vacancy_id):
+    """
+    AJAX endpoint для архивирования отклика в HH.ru
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации в Huntflow
+    - vacancy_id: ID вакансии в Huntflow
+    - request.POST: negotiation_id
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HH.ru API: архивирование отклика
+    
+    ОБРАБОТКА:
+    - Архивирование отклика в HH.ru
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JsonResponse с результатами операции
+    """
+    try:
+        from apps.huntflow.hh_integration import HHResponsesHandler
+        
+        negotiation_id = request.POST.get('negotiation_id')
+        
+        if not negotiation_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Требуется negotiation_id'
+            }, status=400)
+        
+        handler = HHResponsesHandler(request.user)
+        result = handler.archive_response(negotiation_id)
+        
+        return JsonResponse(result)
+        
+    except Exception as e:
+        logger.error(f"Ошибка при архивировании отклика: {e}")
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка: {str(e)}'
+        }, status=500)
+
+
+@login_required
+@require_http_methods(["POST"])
+def hh_mark_viewed_ajax(request, account_id, vacancy_id):
+    """
+    AJAX endpoint для отметки отклика как просмотренного в HH.ru
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - account_id: ID организации в Huntflow
+    - vacancy_id: ID вакансии в Huntflow
+    - request.POST: negotiation_id
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HH.ru API: отметка как просмотренный
+    
+    ОБРАБОТКА:
+    - Отметка отклика как просмотренного в HH.ru
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JsonResponse с результатами операции
+    """
+    try:
+        from apps.huntflow.hh_integration import HHResponsesHandler
+        
+        negotiation_id = request.POST.get('negotiation_id')
+        
+        if not negotiation_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Требуется negotiation_id'
+            }, status=400)
+        
+        handler = HHResponsesHandler(request.user)
+        result = handler.mark_as_viewed(negotiation_id)
+        
+        return JsonResponse(result)
+        
+    except Exception as e:
+        logger.error(f"Ошибка при отметке отклика: {e}")
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка: {str(e)}'
+        }, status=500)
+
+
+@login_required
+def create_applicant(request):
+    """
+    Страница для создания кандидата и привязки к вакансии
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.user: аутентифицированный пользователь
+    - request.POST: данные формы создания кандидата
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - CreateApplicantForm: форма для создания кандидата
+    - Vacancy.objects: список активных вакансий
+    - HuntflowService: сервис для создания кандидата в Huntflow
+    
+    ОБРАБОТКА:
+    - Отображение формы с активными вакансиями
+    - Валидация данных формы
+    - Создание кандидата в Huntflow через API
+    - Привязка кандидата к выбранной вакансии
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - context: словарь с формой и данными
+    - render: HTML страница 'huntflow/create_applicant.html'
+    - redirect: перенаправление на страницу кандидата после создания
+    
+    СВЯЗИ:
+    - Использует: CreateApplicantForm, HuntflowService, Vacancy
+    - Передает данные в: huntflow/create_applicant.html
+    - Может вызываться из: huntflow/ URL patterns
+    """
+    try:
+        # Получаем правильный account_id
+        correct_account_id = get_correct_account_id(request.user)
+        
+        if not correct_account_id:
+            messages.error(request, 'Не удалось определить организацию Huntflow. Проверьте настройки.')
+            return redirect('huntflow:dashboard')
+        
+        huntflow_service = HuntflowService(request.user)
+        
+        # Получаем информацию об организации для хлебных крошек
+        accounts = huntflow_service.get_accounts()
+        account_name = f'Организация {correct_account_id}'
+        if accounts and 'items' in accounts:
+            for account in accounts['items']:
+                if account['id'] == correct_account_id:
+                    account_name = account.get('name', account_name)
+                    break
+        
+        if request.method == 'POST':
+            form = CreateApplicantForm(request.POST, request.FILES, user=request.user)
+            
+            if form.is_valid():
+                try:
+                    # Проверяем, загружен ли файл резюме
+                    resume_file = form.cleaned_data.get('resume_file')
+                    parsed_data = None
+                    parsed_file_id = request.POST.get('parsed_file_id')  # ID файла из AJAX парсинга
+                    
+                    # Если загружен файл, парсим его через Huntflow
+                    if resume_file:
+                        try:
+                            # Читаем файл
+                            file_data = resume_file.read()
+                            file_name = resume_file.name
+                            
+                            logger.info(f"Загружен файл резюме: {file_name} ({len(file_data)} байт)")
+                            
+                            # Загружаем и парсим файл через Huntflow API
+                            parsed_data = huntflow_service.upload_file(
+                                account_id=correct_account_id,
+                                file_data=file_data,
+                                file_name=file_name,
+                                parse_file=True
+                            )
+                            
+                            if parsed_data:
+                                logger.info(f"Файл успешно обработан парсером Huntflow")
+                                
+                                # Извлекаем данные из распарсенного файла
+                                fields = parsed_data.get('fields', {})
+                                name_data = fields.get('name', {})
+                                
+                                # Автозаполняем форму данными из парсера, если поля пустые
+                                if not form.cleaned_data.get('first_name') and name_data.get('first'):
+                                    form.cleaned_data['first_name'] = name_data.get('first')
+                                
+                                if not form.cleaned_data.get('last_name') and name_data.get('last'):
+                                    form.cleaned_data['last_name'] = name_data.get('last')
+                                
+                                if not form.cleaned_data.get('middle_name') and name_data.get('middle'):
+                                    form.cleaned_data['middle_name'] = name_data.get('middle')
+                                
+                                if not form.cleaned_data.get('email') and fields.get('email'):
+                                    form.cleaned_data['email'] = fields.get('email')
+                                
+                                if not form.cleaned_data.get('phone') and fields.get('phones'):
+                                    phones = fields.get('phones', [])
+                                    if phones and len(phones) > 0:
+                                        form.cleaned_data['phone'] = phones[0]
+                                
+                                if not form.cleaned_data.get('position') and fields.get('position'):
+                                    form.cleaned_data['position'] = fields.get('position')
+                                
+                                if not form.cleaned_data.get('salary') and fields.get('salary'):
+                                    form.cleaned_data['salary'] = str(fields.get('salary'))
+                                
+                                # Если текст резюме не заполнен, используем текст из парсера
+                                if not form.cleaned_data.get('resume_text') and parsed_data.get('text'):
+                                    form.cleaned_data['resume_text'] = parsed_data.get('text')
+                                
+                                messages.info(request, 'Файл резюме успешно обработан. Данные автоматически заполнены.')
+                            else:
+                                messages.warning(request, 'Не удалось обработать файл через парсер Huntflow. Продолжаем с введенными данными.')
+                                
+                        except Exception as e:
+                            logger.error(f"Ошибка при обработке файла: {e}")
+                            messages.warning(request, f'Ошибка при обработке файла: {str(e)}. Продолжаем с введенными данными.')
+                    
+                    # Получаем данные из формы (возможно уже заполненные парсером)
+                    candidate_data = {
+                        'first_name': form.cleaned_data['first_name'],
+                        'last_name': form.cleaned_data['last_name'],
+                        'middle_name': form.cleaned_data.get('middle_name', ''),
+                        'email': form.cleaned_data.get('email', ''),
+                        'phone': form.cleaned_data.get('phone', ''),
+                        'position': form.cleaned_data.get('position', ''),
+                        'company': form.cleaned_data.get('company', ''),
+                        'salary': form.cleaned_data.get('salary', ''),
+                        'resume_text': form.cleaned_data.get('resume_text', '')
+                    }
+                    
+                    # Получаем ID вакансии из Huntflow (external_id из нашей БД)
+                    vacancy = form.cleaned_data['vacancy']
+                    vacancy_id = int(vacancy.external_id) if vacancy.external_id else None
+                    
+                    if not vacancy_id:
+                        messages.error(request, 'У выбранной вакансии не указан ID для связи с Huntflow')
+                        form = CreateApplicantForm(user=request.user)
+                    else:
+                        # Если есть распарсенные данные, используем create_applicant_from_parsed_data
+                        # для более полного использования данных парсера
+                        if parsed_data:
+                            # Добавляем ID файла в parsed_data если он был загружен
+                            if parsed_data.get('id') or parsed_file_id:
+                                file_id = parsed_data.get('id') or parsed_file_id
+                                if file_id and 'id' not in parsed_data:
+                                    parsed_data['id'] = file_id
+                                
+                                # Используем create_applicant_from_parsed_data для полной поддержки парсера
+                                created_applicant = huntflow_service.create_applicant_from_parsed_data(
+                                    account_id=correct_account_id,
+                                    parsed_data=parsed_data,
+                                    vacancy_id=vacancy_id
+                                )
+                            else:
+                                # Если файл не был сохранен, используем обычный метод
+                                created_applicant = huntflow_service.create_applicant_manual(
+                                    account_id=correct_account_id,
+                                    candidate_data=candidate_data,
+                                    vacancy_id=vacancy_id
+                                )
+                        else:
+                            # Создаем кандидата в Huntflow обычным способом
+                            created_applicant = huntflow_service.create_applicant_manual(
+                                account_id=correct_account_id,
+                                candidate_data=candidate_data,
+                                vacancy_id=vacancy_id
+                            )
+                        
+                        if created_applicant:
+                            applicant_id = created_applicant.get('id')
+                            messages.success(
+                                request, 
+                                f'Кандидат успешно создан и привязан к вакансии "{vacancy.name}"'
+                            )
+                            return redirect('huntflow:applicant_detail', 
+                                          account_id=correct_account_id, 
+                                          applicant_id=applicant_id)
+                        else:
+                            messages.error(request, 'Не удалось создать кандидата в Huntflow. Проверьте данные и попробуйте снова.')
+                            form = CreateApplicantForm(request.POST, request.FILES, user=request.user)
+                            
+                except Exception as e:
+                    logger.error(f"Ошибка при создании кандидата: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    messages.error(request, f'Ошибка при создании кандидата: {str(e)}')
+                    form = CreateApplicantForm(request.POST, request.FILES, user=request.user)
+        else:
+            form = CreateApplicantForm(user=request.user)
+        
+        context = {
+            'form': form,
+            'account_id': correct_account_id,
+            'account_name': account_name,
+            'accounts': accounts,
+        }
+        
+        return render(request, 'huntflow/create_applicant.html', context)
+        
+    except Exception as e:
+        logger.error(f"Ошибка при загрузке страницы создания кандидата: {e}")
+        messages.error(request, f'Ошибка: {str(e)}')
+        return redirect('huntflow:dashboard')
+
+
+@login_required
+@require_http_methods(["POST"])
+def parse_resume_file_ajax(request):
+    """
+    AJAX endpoint для парсинга файла резюме через Huntflow API
+    
+    ВХОДЯЩИЕ ДАННЫЕ:
+    - request.FILES: загруженный файл резюме
+    - request.user: аутентифицированный пользователь
+    
+    ИСТОЧНИКИ ДАННЫХ:
+    - HuntflowService.upload_file: загрузка и парсинг файла
+    
+    ОБРАБОТКА:
+    - Загрузка файла
+    - Парсинг через Huntflow API
+    - Возврат распарсенных данных для автозаполнения формы
+    
+    ВЫХОДЯЩИЕ ДАННЫЕ:
+    - JSON с распарсенными данными кандидата
+    
+    СВЯЗИ:
+    - Использует: HuntflowService
+    - Передает: JSON ответ с данными для автозаполнения
+    """
+    try:
+        if 'file' not in request.FILES:
+            return JsonResponse({
+                'success': False,
+                'message': 'Файл не загружен'
+            }, status=400)
+        
+        resume_file = request.FILES['file']
+        
+        # Получаем правильный account_id
+        correct_account_id = get_correct_account_id(request.user)
+        
+        if not correct_account_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Не удалось определить организацию Huntflow'
+            }, status=400)
+        
+        huntflow_service = HuntflowService(request.user)
+        
+        # Читаем файл
+        file_data = resume_file.read()
+        file_name = resume_file.name
+        
+        logger.info(f"Парсинг файла резюме: {file_name} ({len(file_data)} байт)")
+        
+        # Загружаем и парсим файл через Huntflow API
+        parsed_data = huntflow_service.upload_file(
+            account_id=correct_account_id,
+            file_data=file_data,
+            file_name=file_name,
+            parse_file=True
+        )
+        
+        if not parsed_data:
+            return JsonResponse({
+                'success': False,
+                'message': 'Не удалось обработать файл через парсер Huntflow'
+            }, status=400)
+        
+        # Проверяем, что parsed_data - это словарь
+        if not isinstance(parsed_data, dict):
+            logger.error(f"parsed_data не является словарем: {type(parsed_data)}")
+            return JsonResponse({
+                'success': False,
+                'message': 'Неверный формат данных от парсера Huntflow'
+            }, status=400)
+        
+        # Извлекаем данные из распарсенного файла (безопасно)
+        fields = parsed_data.get('fields') if parsed_data else {}
+        if not fields or not isinstance(fields, dict):
+            fields = {}
+        
+        name_data = fields.get('name') if fields else {}
+        if not name_data or not isinstance(name_data, dict):
+            name_data = {}
+        
+        # Формируем ответ с данными для автозаполнения
+        response_data = {
+            'success': True,
+            'parsed_data': parsed_data,  # Полные распарсенные данные для создания кандидата
+            'data': {
+                'first_name': name_data.get('first', ''),
+                'last_name': name_data.get('last', ''),
+                'middle_name': name_data.get('middle', ''),
+                'email': fields.get('email', ''),
+                'phone': fields.get('phones', [None])[0] if fields.get('phones') else '',
+                'position': fields.get('position', ''),
+                'salary': str(fields.get('salary', '')) if fields.get('salary') else '',
+                'resume_text': parsed_data.get('text', ''),
+                'file_id': parsed_data.get('id'),  # ID загруженного файла для привязки
+            }
+        }
+        
+        logger.info(f"Файл успешно обработан. Извлечено: {response_data['data']['first_name']} {response_data['data']['last_name']}")
+        
+        return JsonResponse(response_data)
+        
+    except Exception as e:
+        logger.error(f"Ошибка при парсинге файла: {e}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка при обработке файла: {str(e)}'
+        }, status=500)
+
+
+@login_required
+def chrome_extension_management(request):
+    """
+    Страница управления данными Chrome расширения
+    
+    Показывает:
+    - Список всех LinkedIn → Huntflow связей пользователя
+    - Список всех Thread → Profile маппингов
+    - Статистику
+    - Кнопки уровней из Huntflow
+    """
+    from .models import LinkedInHuntflowLink, LinkedInThreadProfile
+    from apps.google_oauth.cache_service import HuntflowAPICache
+    
+    # Получаем все связи LinkedIn → Huntflow
+    links = LinkedInHuntflowLink.objects.filter(user=request.user).order_by('-created_at')
+    
+    # Получаем все маппинги Thread → Profile
+    thread_mappings = LinkedInThreadProfile.objects.filter(user=request.user).order_by('-last_accessed_at')
+    
+    # Статистика
+    stats = {
+        'total_links': links.count(),
+        'total_thread_mappings': thread_mappings.count(),
+        'links_with_vacancy': links.exclude(vacancy_id__isnull=True).count(),
+        'recent_links': links.filter(created_at__gte=timezone.now() - timedelta(days=7)).count(),
+    }
+    
+    # Вакансии — из apps.vacancies (БД). Грейды — из Huntflow (схема анкеты, поле «Уровень»).
+    from .models import LevelText
+    from apps.vacancies.models import Vacancy
+
+    level_texts = {}
+    try:
+        for lt in LevelText.objects.filter(user=request.user).order_by('vacancy_name', 'level'):
+            level_texts[(lt.vacancy_name, lt.level)] = lt.text
+    except Exception as e:
+        logger.warning(f"LevelText lookup failed: {e}")
+
+    # Грейды из Huntflow: схема анкеты, поле «Уровень» / level / grade
+    levels_from_huntflow = []
+    account_id = get_correct_account_id(request.user)
+    try:
+        api = HuntflowService(user=request.user)
+        if account_id:
+            schema = api.get_applicant_questionary_schema(account_id)
+            if isinstance(schema, dict):
+                fields_dict = {}
+                if 'fields' in schema:
+                    for f in schema.get('fields', []) or []:
+                        if isinstance(f, dict):
+                            fid = f.get('id') or f.get('key')
+                            if fid:
+                                fields_dict[fid] = f
+                else:
+                    fields_dict = schema
+                for _fid, finfo in fields_dict.items():
+                    if not isinstance(finfo, dict):
+                        continue
+                    title = (finfo.get('title') or '').lower()
+                    if 'уровень' in title or 'level' in title or 'grade' in title or 'грейд' in title:
+                        if finfo.get('type') == 'select' and finfo.get('values'):
+                            for v in finfo.get('values', []) or []:
+                                n = v.get('name') or v.get('value') or v.get('id') if isinstance(v, dict) else v
+                                if n:
+                                    levels_from_huntflow.append(str(n))
+                        break
+            levels_from_huntflow = sorted(set(levels_from_huntflow))
+    except Exception as e:
+        logger.warning(f"Huntflow levels: {e}")
+
+    # Все вакансии из БД (apps.vacancies). У каждой — одни и те же грейды из Huntflow.
+    vacancy_list = []
+    for v in Vacancy.objects.all().order_by('name'):
+        vacancy_list.append({
+            'id': v.external_id,
+            'name': v.name,
+            'levels': levels_from_huntflow,
+        })
+
+    vacancies_with_levels = vacancy_list
+    
+    context = {
+        'links': links,
+        'thread_mappings': thread_mappings,
+        'stats': stats,
+        'vacancies_with_levels': vacancies_with_levels,
+        'level_texts': level_texts,
+    }
+    
+    return render(request, 'huntflow/chrome_extension_management.html', context)
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def chrome_extension_level_text_ajax(request, vacancy_name, level):
+    """
+    AJAX endpoint для получения или сохранения текста для уровня по вакансии.
+    """
+    from .models import LevelText
+    from urllib.parse import unquote
+    
+    vacancy_name = unquote(vacancy_name)
+    
+    if request.method == 'GET':
+        try:
+            level_text = LevelText.objects.get(
+                user=request.user, vacancy_name=vacancy_name, level=level
+            )
+            return JsonResponse({'success': True, 'text': level_text.text})
+        except LevelText.DoesNotExist:
+            return JsonResponse({'success': True, 'text': ''})
+    
+    elif request.method == 'POST':
+        try:
+            import json
+            data = json.loads(request.body)
+            text = data.get('text', '').strip()
+            level_text, created = LevelText.objects.get_or_create(
+                user=request.user,
+                vacancy_name=vacancy_name,
+                level=level,
+                defaults={'text': text},
+            )
+            if not created:
+                level_text.text = text
+                level_text.save()
+            return JsonResponse({'success': True, 'message': 'Текст сохранен'})
+        except Exception as e:
+            logger.error(f"Error saving level text: {e}")
+            return JsonResponse({'success': False, 'message': str(e)}, status=400)
+
+
+@login_required
+@require_http_methods(["PATCH", "DELETE"])
+def chrome_extension_link_ajax(request, link_id):
+    """
+    AJAX endpoint для обновления или удаления LinkedIn → Huntflow связи
+    """
+    from .models import LinkedInHuntflowLink
+    
+    try:
+        link = LinkedInHuntflowLink.objects.get(id=link_id, user=request.user)
+    except LinkedInHuntflowLink.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'message': 'Связь не найдена'
+        }, status=404)
+    
+    if request.method == 'DELETE':
+        link.delete()
+        return JsonResponse({
+            'success': True,
+            'message': 'Связь удалена'
+        })
+    
+    # PATCH - обновление
+    data = json.loads(request.body)
+    
+    if 'linkedin_url' in data:
+        link.linkedin_url = data['linkedin_url']
+    if 'target_url' in data:
+        link.target_url = data['target_url']
+    if 'account_id' in data:
+        try:
+            link.account_id = int(data['account_id']) if data['account_id'] and str(data['account_id']).strip() else None
+        except (ValueError, TypeError):
+            link.account_id = None
+    if 'applicant_id' in data:
+        try:
+            link.applicant_id = int(data['applicant_id']) if data['applicant_id'] and str(data['applicant_id']).strip() else None
+        except (ValueError, TypeError):
+            link.applicant_id = None
+    if 'vacancy_id' in data:
+        try:
+            link.vacancy_id = int(data['vacancy_id']) if data['vacancy_id'] and str(data['vacancy_id']).strip() else None
+        except (ValueError, TypeError):
+            link.vacancy_id = None
+    
+    link.save()
+    
+    return JsonResponse({
+        'success': True,
+        'message': 'Связь обновлена',
+        'data': {
+            'id': link.id,
+            'linkedin_url': link.linkedin_url,
+            'target_url': link.target_url,
+            'account_id': link.account_id,
+            'applicant_id': link.applicant_id,
+            'vacancy_id': link.vacancy_id,
+            'created_at': link.created_at.isoformat(),
+            'updated_at': link.updated_at.isoformat(),
+        }
+    })
+
+
+@login_required
+@require_http_methods(["PATCH", "DELETE"])
+def chrome_extension_thread_ajax(request, thread_id):
+    """
+    AJAX endpoint для обновления или удаления Thread → Profile маппинга
+    """
+    from .models import LinkedInThreadProfile
+    
+    try:
+        thread = LinkedInThreadProfile.objects.get(id=thread_id, user=request.user)
+    except LinkedInThreadProfile.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'message': 'Маппинг не найден'
+        }, status=404)
+    
+    if request.method == 'DELETE':
+        thread.delete()
+        return JsonResponse({
+            'success': True,
+            'message': 'Маппинг удален'
+        })
+    
+    # PATCH - обновление
+    data = json.loads(request.body)
+    
+    if 'thread_id' in data:
+        thread.thread_id = data['thread_id']
+    if 'profile_url' in data:
+        thread.profile_url = data['profile_url']
+    
+    thread.save()
+    
+    return JsonResponse({
+        'success': True,
+        'message': 'Маппинг обновлен',
+        'data': {
+            'id': thread.id,
+            'thread_id': thread.thread_id,
+            'profile_url': thread.profile_url,
+            'created_at': thread.created_at.isoformat(),
+            'last_accessed_at': thread.last_accessed_at.isoformat(),
+        }
+    })
+
+
+@login_required
+@require_http_methods(["POST"])
+def chrome_extension_clear_cache_ajax(request):
+    """
+    AJAX endpoint для очистки кэша расширения
+    """
+    from apps.google_oauth.cache_service import HuntflowAPICache
+    
+    try:
+        HuntflowAPICache.invalidate_user_cache(request.user.id)
+        return JsonResponse({
+            'success': True,
+            'message': 'Кэш очищен'
+        })
+    except Exception as e:
+        logger.error(f"Ошибка очистки кэша: {e}")
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка очистки кэша: {str(e)}'
+        }, status=500)

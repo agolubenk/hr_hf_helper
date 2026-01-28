@@ -11,7 +11,10 @@ from apps.finance.views_api import (
 )
 from apps.vacancies.views_api import VacancyViewSet
 from apps.interviewers.views_api import InterviewerViewSet, InterviewRuleViewSet
-from apps.huntflow.views_api import HuntflowCacheViewSet, HuntflowLogViewSet, HuntflowApiRequestViewSet
+from apps.huntflow.views_api import (
+    HuntflowCacheViewSet, HuntflowLogViewSet, HuntflowApiRequestViewSet,
+    HHResponsesViewSet, LinkedInApplicantsViewSet, LinkedInThreadMappingViewSet
+)
 from apps.google_oauth.views_api import (
     GoogleOAuthAccountViewSet, SyncSettingsViewSet, ScorecardPathSettingsViewSet,
     SlotsSettingsViewSet, InviteViewSet, HRScreeningViewSet, QuestionTemplateViewSet,
@@ -28,6 +31,9 @@ from apps.notion_int.views_api import (
 from apps.clickup_int.views_api import (
     ClickUpSettingsViewSet, ClickUpTaskViewSet, ClickUpSyncLogViewSet,
     ClickUpBulkImportViewSet
+)
+from apps.hhru.views_api import (
+    HHRUAccountViewSet, HHRUConfigurationViewSet, HHRUAPILogViewSet
 )
 
 # Создание роутера
@@ -58,6 +64,11 @@ router.register(r'interviewers/interview-rules', InterviewRuleViewSet, basename=
 router.register(r'huntflow/cache', HuntflowCacheViewSet, basename='huntflow-cache')
 router.register(r'huntflow/logs', HuntflowLogViewSet, basename='huntflow-log')
 router.register(r'huntflow/api', HuntflowApiRequestViewSet, basename='huntflow-api')
+router.register(r'huntflow/hh-responses', HHResponsesViewSet, basename='hh-responses')
+router.register(r'huntflow/linkedin-applicants', LinkedInApplicantsViewSet, basename='huntflow-linkedin-applicants')
+
+# LinkedIn Integration
+router.register(r'linkedin/thread-mapping', LinkedInThreadMappingViewSet, basename='linkedin-thread-mapping')
 
 # Google OAuth
 router.register(r'google-oauth/accounts', GoogleOAuthAccountViewSet, basename='google-oauth-account')
@@ -91,6 +102,11 @@ router.register(r'clickup/settings', ClickUpSettingsViewSet, basename='clickup-s
 router.register(r'clickup/tasks', ClickUpTaskViewSet, basename='clickup-task')
 router.register(r'clickup/sync-logs', ClickUpSyncLogViewSet, basename='clickup-sync-log')
 router.register(r'clickup/bulk-imports', ClickUpBulkImportViewSet, basename='clickup-bulk-import')
+
+# HeadHunter.ru Integration
+router.register(r'hhru/accounts', HHRUAccountViewSet, basename='hhru-account')
+router.register(r'hhru/configurations', HHRUConfigurationViewSet, basename='hhru-configuration')
+router.register(r'hhru/logs', HHRUAPILogViewSet, basename='hhru-log')
 
 # URL patterns для API
 urlpatterns = [

@@ -1,0 +1,133 @@
+.aichatContainer {
+  width: 100%;
+  height: calc(100vh - 104px);
+  display: flex;
+  padding-right: 12px;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.mainContent {
+  width: 100%;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
+.sidebarColumn {
+  width: 300px;
+  flex-shrink: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-left: 24px;
+}
+
+.chatColumn {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chatCard {
+  background: var(--gray-2);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.messagesWrapper {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.messagesContainer {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  background: var(--gray-2);
+}
+
+.scrollToBottomBtn {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.inputContainer {
+  padding: 4px;
+  border-top: 1px solid var(--gray-6);
+  background: var(--gray-2);
+  border-radius: 0 0 12px 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Темная тема */
+:global([data-theme='dark']) .chatCard,
+:global([data-theme='dark']) .messagesContainer,
+:global([data-theme='dark']) .inputContainer {
+  background: var(--gray-3);
+}
+
+/* Скроллбар */
+.messagesContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messagesContainer::-webkit-scrollbar-track {
+  background: var(--gray-3);
+  border-radius: 4px;
+}
+
+.messagesContainer::-webkit-scrollbar-thumb {
+  background: var(--gray-6);
+  border-radius: 4px;
+}
+
+.messagesContainer::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-8);
+}
+
+@media (max-width: 1024px) {
+  .sidebarColumn {
+    width: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .aichatContainer {
+    padding: 16px;
+  }
+
+  .mainContent {
+    flex-direction: column;
+  }
+  
+  .sidebarColumn {
+    width: 100%;
+  }
+
+  .chatCard {
+    height: auto;
+    min-height: 500px;
+  }
+}

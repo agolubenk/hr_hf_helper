@@ -1,0 +1,11 @@
+{
+  "name": "402",
+  "type": "page",
+  "description": "Страница ошибки 402 (Payment Required). Отображается при необходимости оплаты подписки или при истечении подписки. Использует единый дизайн с другими страницами ошибок: анимированный фон с плавающими иконками, крупный код ошибки, и кнопки навигации.\n\n**Путь**: `/errors/402`",
+  "route_path": "`/errors/402`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/errors/402/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [],
+  "api_endpoints": [],
+  "generated_at": "2026-01-28T18:00:33.293677"
+}

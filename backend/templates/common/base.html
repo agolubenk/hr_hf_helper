@@ -58,16 +58,31 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link{% if request.resolver_match.url_name == 'company_settings' %} active{% endif %}" href="{% url 'company_settings:company_settings' %}">
+                            <a class="nav-link{% if request.resolver_match.namespace == 'company_settings' %} active{% endif %}" href="{% url 'company_settings:overview' %}">
                                 <i class="fas fa-building me-2"></i>
                                 Настройки компании
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link{% if request.resolver_match.namespace == 'admin' %} active{% endif %}" href="{% url 'admin:index' %}">
-                                <i class="fas fa-cog me-2"></i>
-                                Admin-панель
-                            </a>
+                            {% get_admin_url as admin_app_url %}
+                            <div class="nav-link{% if request.resolver_match.namespace == 'admin' %} active{% endif %} d-flex align-items-center justify-content-between" style="display: flex !important; align-items: center !important; justify-content: space-between !important;">
+                                <a href="{{ admin_app_url }}" 
+                                   target="_blank"
+                                   class="d-flex align-items-center text-decoration-none flex-grow-1"
+                                   style="color: inherit; min-width: 0; display: flex !important; align-items: center !important; flex: 1 1 auto !important;">
+                                    <i class="fas fa-cog me-2"></i>
+                                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Admin-панель</span>
+                                </a>
+                                <a href="{% url 'admin:index' %}" 
+                                   target="_blank"
+                                   class="admin-main-link"
+                                   style="z-index: 1000; color: inherit; text-decoration: none; display: inline-flex !important; align-items: center !important; justify-content: center !important; width: 20px !important; height: 20px !important; border: 1px solid rgba(0,0,0,0.2); border-radius: 4px; padding: 0 !important; transition: all 0.2s; opacity: 0.7; background-color: rgba(0,0,0,0.02); flex: 0 0 20px !important; margin-left: 8px !important;"
+                                   title="Открыть главную страницу админки в новой вкладке"
+                                   onmouseover="this.style.opacity='1'; this.style.borderColor='rgba(0,0,0,0.4)'; this.style.backgroundColor='rgba(0,0,0,0.05)';" 
+                                   onmouseout="this.style.opacity='0.7'; this.style.borderColor='rgba(0,0,0,0.2)'; this.style.backgroundColor='rgba(0,0,0,0.02)';">
+                                    <i class="fas fa-external-link-alt" style="font-size: 0.65rem; line-height: 1; margin: 0; padding: 0; display: block;"></i>
+                                </a>
+                            </div>
                         </li>
                     </ul>
             </div>
@@ -638,6 +653,9 @@
             return { sidebar, mainContent };
         }
         
+        // Передаем текущий namespace в JavaScript
+        window.currentNamespace = '{{ request.resolver_match.namespace|default:"" }}';
+        
         // Инициализация hover меню (версия 2.0 - исправлена логика скрытия)
         function initHoverMenu() {
             const sidebarToggle = document.getElementById('sidebarToggle');
@@ -757,9 +775,34 @@
                                     { title: 'Логи', icon: 'fas fa-history', url: '/notion/logs/' },
                                     { title: 'Настройки', icon: 'fas fa-cog', url: '/notion/settings/' }
                                 ]
+                            },
+                            { 
+                                title: 'HeadHunter.ru', 
+                                icon: 'fab fa-hire-a-helper', 
+                                url: '/hhru/',
+                                submenu: [
+                                    { title: 'Главная', icon: 'fas fa-tachometer-alt', url: '/hhru/' },
+                                    { title: 'Аккаунты', icon: 'fas fa-user-circle', url: '/hhru/accounts/' },
+                                    { title: 'Конфигурации', icon: 'fas fa-cog', url: '/hhru/configurations/' },
+                                    { title: 'Создать конфигурацию', icon: 'fas fa-plus', url: '/hhru/configurations/create/' },
+                                    { title: 'Логи', icon: 'fas fa-history', url: '/hhru/logs/' }
+                                ]
                             }
                         ]
-                    }
+                    },
+                    { 
+                        title: 'Отчетность', 
+                        icon: 'fas fa-chart-bar', 
+                        url: '/reporting/',
+                        submenu: [
+                            { title: 'Главная', icon: 'fas fa-tachometer-alt', url: '/reporting/' },
+                            { title: 'По компании', icon: 'fas fa-building', url: '/reporting/company/' },
+                            { title: 'По рекрутеру', icon: 'fas fa-user-tie', url: '/reporting/recruiter/' },
+                            { title: 'По вакансии', icon: 'fas fa-briefcase', url: '/reporting/vacancy/' },
+                            { title: 'По интервьюеру', icon: 'fas fa-user-check', url: '/reporting/interviewer/' }
+                        ]
+                    },
+                    { title: 'Вики', icon: 'fas fa-book', url: '/wiki/' }
                 ];
                 
                 // Создаем элементы меню
@@ -783,14 +826,37 @@
                 additionalNav.style.margin = '0';
                 additionalNav.style.padding = '0';
                 
+                // Определяем URL для админки текущего приложения
+                const currentNamespace = window.currentNamespace || '';
+                const namespaceToAdmin = {
+                    'wiki': 'wiki',
+                    'company_settings': 'company_settings',
+                    'finance': 'finance',
+                    'vacancies': 'vacancies',
+                    'hiring_plan': 'hiring_plan',
+                    'google_oauth': 'google_oauth',
+                    'gemini': 'gemini',
+                    'interviewers': 'interviewers',
+                    'accounts': 'accounts',
+                    'clickup_int': 'clickup_int',
+                    'notion_int': 'notion_int',
+                    'huntflow': 'huntflow',
+                    'reporting': 'reporting',
+                };
+                
+                const adminAppUrl = currentNamespace && namespaceToAdmin[currentNamespace] 
+                    ? `/admin/${namespaceToAdmin[currentNamespace]}/` 
+                    : '/admin/';
+                
                 const additionalItems = [
                     { title: 'Профиль', icon: 'fas fa-user', url: '/accounts/' },
                     { title: 'Интеграции', icon: 'fas fa-plug', url: '/accounts/integrations/' },
-                    { title: 'Admin-панель', icon: 'fas fa-cog', url: '/admin/' }
+                    { title: 'Настройки компании', icon: 'fas fa-building', url: '/company-settings/' },
+                    { title: 'Admin-панель', icon: 'fas fa-cog', url: adminAppUrl, isAdmin: true }
                 ];
                 
                 additionalItems.forEach(item => {
-                    const menuItem = createMenuItem(item);
+                    const menuItem = item.isAdmin ? createAdminMenuItem(item) : createMenuItem(item);
                     additionalNav.appendChild(menuItem);
                 });
                 
@@ -918,6 +984,95 @@
                     submenu.appendChild(submenuUl);
                     li.appendChild(submenu);
                 }
+                
+                return li;
+            }
+            
+            // Создаем элемент меню для админ-панели с дополнительной кнопкой
+            function createAdminMenuItem(item) {
+                const li = document.createElement('li');
+                li.className = 'nav-item';
+                
+                // Обёртка nav-link
+                const navLinkWrapper = document.createElement('div');
+                navLinkWrapper.className = 'nav-link d-flex align-items-center justify-content-between';
+                
+                // Основная ссылка для перехода на админку приложения
+                const mainLink = document.createElement('a');
+                mainLink.href = item.url;
+                mainLink.target = '_blank';
+                mainLink.className = 'd-flex align-items-center flex-grow-1';
+                mainLink.style.color = 'inherit';
+                mainLink.style.textDecoration = 'none';
+                mainLink.style.minWidth = '0';
+                
+                // Иконка
+                const icon = document.createElement('i');
+                icon.className = item.icon + ' me-2';
+                icon.style.width = '20px';
+                icon.style.textAlign = 'center';
+                icon.style.fontSize = '0.875rem';
+                icon.style.marginRight = '12px';
+                icon.style.flexShrink = '0';
+                mainLink.appendChild(icon);
+                
+                // Текст
+                const textSpan = document.createElement('span');
+                textSpan.textContent = item.title;
+                textSpan.style.whiteSpace = 'nowrap';
+                textSpan.style.overflow = 'hidden';
+                textSpan.style.textOverflow = 'ellipsis';
+                mainLink.appendChild(textSpan);
+                
+                navLinkWrapper.appendChild(mainLink);
+                
+                // Кнопка для открытия главной страницы админки (выравнивается как стрелки)
+                const adminMainBtn = document.createElement('a');
+                adminMainBtn.href = '/admin/';
+                adminMainBtn.target = '_blank';
+                adminMainBtn.className = 'admin-main-link';
+                adminMainBtn.style.zIndex = '1000';
+                adminMainBtn.style.color = 'inherit';
+                adminMainBtn.style.textDecoration = 'none';
+                adminMainBtn.style.display = 'inline-flex';
+                adminMainBtn.style.alignItems = 'center';
+                adminMainBtn.style.justifyContent = 'center';
+                adminMainBtn.style.width = '20px';
+                adminMainBtn.style.height = '20px';
+                adminMainBtn.style.border = '1px solid rgba(0,0,0,0.2)';
+                adminMainBtn.style.borderRadius = '4px';
+                adminMainBtn.style.padding = '0';
+                adminMainBtn.style.transition = 'all 0.2s';
+                adminMainBtn.style.opacity = '0.7';
+                adminMainBtn.style.backgroundColor = 'rgba(0,0,0,0.02)';
+                adminMainBtn.style.flexShrink = '0';
+                adminMainBtn.style.marginLeft = '8px';
+                adminMainBtn.title = 'Открыть главную страницу админки в новой вкладке';
+                adminMainBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+                adminMainBtn.addEventListener('mouseenter', function() {
+                    this.style.opacity = '1';
+                    this.style.borderColor = 'rgba(0,0,0,0.4)';
+                    this.style.backgroundColor = 'rgba(0,0,0,0.05)';
+                });
+                adminMainBtn.addEventListener('mouseleave', function() {
+                    this.style.opacity = '0.7';
+                    this.style.borderColor = 'rgba(0,0,0,0.2)';
+                    this.style.backgroundColor = 'rgba(0,0,0,0.02)';
+                });
+                
+                const externalIcon = document.createElement('i');
+                externalIcon.className = 'fas fa-external-link-alt';
+                externalIcon.style.fontSize = '0.65rem';
+                externalIcon.style.lineHeight = '1';
+                externalIcon.style.margin = '0';
+                externalIcon.style.padding = '0';
+                externalIcon.style.display = 'block';
+                adminMainBtn.appendChild(externalIcon);
+                
+                navLinkWrapper.appendChild(adminMainBtn);
+                li.appendChild(navLinkWrapper);
                 
                 return li;
             }
@@ -1371,13 +1526,15 @@
                             mainContent.style.width = 'calc(100% - 240px)';
                         }
                         
-                        // Обновляем кнопку переключения сайдбара
+                        // Устанавливаем состояние "unpinned" и показываем иконку pin
+                        localStorage.setItem('sidebarState', 'unpinned');
                         const toggleBtn = document.getElementById('sidebarToggle');
                         if (toggleBtn) {
-                            toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
+                            toggleBtn.className = 'fas fa-map-pin sidebar-toggle';
+                            toggleBtn.setAttribute('title', 'Закрепить сайдбар');
                         }
                         
-                        console.log('📂 Раскрытие основного сайдбара из hover меню');
+                        console.log('📂 Раскрытие основного сайдбара из hover меню (незакреплен)');
                     }
                     
                     // Скрываем hover меню
@@ -1431,6 +1588,18 @@
             if (isToggling) return; // Предотвращаем повторные вызовы
             isToggling = true;
             
+            // Проверяем, если текущая иконка - pin (fa-map-pin), то фиксируем сайдбар
+            if (toggleBtn.classList.contains('fa-map-pin')) {
+                // Фиксируем сайдбар
+                sidebarVisible = true;
+                localStorage.setItem('sidebarState', 'visible');
+                toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
+                toggleBtn.setAttribute('title', 'Свернуть сайдбар');
+                console.log('📌 Сайдбар закреплен');
+                isToggling = false;
+                return;
+            }
+            
             sidebarVisible = !sidebarVisible;
             
             // Сохраняем состояние сайдбара в localStorage
@@ -1453,6 +1622,7 @@
                 }
                 
                 toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
+                toggleBtn.setAttribute('title', 'Свернуть сайдбар');
             } else {
                 sidebar.classList.add('hidden');
                 sidebar.classList.remove('show');
@@ -1465,6 +1635,7 @@
                 
                 overlay.classList.remove('show');
                 toggleBtn.className = 'fas fa-caret-square-right sidebar-toggle';
+                toggleBtn.setAttribute('title', 'Развернуть сайдбар');
             }
             
             // Принудительно перерисовываем layout
@@ -1499,6 +1670,7 @@
             }
             overlay.classList.remove('show');
             toggleBtn.className = 'fas fa-caret-square-right sidebar-toggle';
+            toggleBtn.setAttribute('title', 'Развернуть сайдбар');
             
             // Принудительно перерисовываем layout
             setTimeout(() => {
@@ -1529,6 +1701,7 @@
                     }
                     overlay.classList.remove('show');
                     toggleBtn.className = 'fas fa-caret-square-right sidebar-toggle';
+                    toggleBtn.setAttribute('title', 'Развернуть сайдбар');
                 } else if (savedState === 'visible') {
                     sidebarVisible = true;
                     sidebar.classList.remove('hidden');
@@ -1539,6 +1712,18 @@
                         mainContent.style.width = 'calc(100% - 240px)';
                     }
                     toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
+                    toggleBtn.setAttribute('title', 'Свернуть сайдбар');
+                } else if (savedState === 'unpinned') {
+                    sidebarVisible = true;
+                    sidebar.classList.remove('hidden');
+                    sidebar.classList.add('show');
+                    if (mainContent) {
+                        mainContent.classList.remove('sidebar-hidden');
+                        mainContent.style.marginLeft = '240px';
+                        mainContent.style.width = 'calc(100% - 240px)';
+                    }
+                    toggleBtn.className = 'fas fa-map-pin sidebar-toggle';
+                    toggleBtn.setAttribute('title', 'Закрепить сайдбар');
                 }
             } else {
                 console.log('🆕 Нет сохраненного состояния сайдбара, используем значение по умолчанию');
@@ -1591,6 +1776,7 @@
                     }
                     sidebarVisible = false;
                     toggleBtn.className = 'fas fa-caret-square-right sidebar-toggle';
+                    toggleBtn.setAttribute('title', 'Развернуть сайдбар');
                 } else {
                     sidebar.classList.remove('hidden');
                     sidebar.classList.add('show');
@@ -1600,7 +1786,15 @@
                         mainContent.style.width = 'calc(100% - 240px)';
                     }
                     sidebarVisible = true;
-                    toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
+                    // Проверяем состояние, чтобы показать правильную иконку
+                    const savedState = localStorage.getItem('sidebarState');
+                    if (savedState === 'unpinned') {
+                        toggleBtn.className = 'fas fa-map-pin sidebar-toggle';
+                        toggleBtn.setAttribute('title', 'Закрепить сайдбар');
+                    } else {
+                        toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
+                        toggleBtn.setAttribute('title', 'Свернуть сайдбар');
+                    }
                 }
                 overlay.classList.remove('show');
                 
@@ -1641,6 +1835,7 @@
             hideSidebar();
         } else {
             toggleBtn.className = 'fas fa-caret-square-left sidebar-toggle';
+            toggleBtn.setAttribute('title', 'Свернуть сайдбар');
             // Принудительно устанавливаем стили для десктопа
             if (mainContent) {
                 mainContent.style.marginLeft = '240px';

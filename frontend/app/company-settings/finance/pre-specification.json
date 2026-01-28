@@ -1,0 +1,30 @@
+{
+  "name": "finance",
+  "type": "page",
+  "description": "Страница финансовых настроек компании. Дублирует функционал страницы `/finance`, но находится в разделе настроек компании.",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/company-settings/finance/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Все операции - аналогичны странице `/finance`",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "TODO: Объединить или разделить функционал с `/finance`",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.306300"
+}

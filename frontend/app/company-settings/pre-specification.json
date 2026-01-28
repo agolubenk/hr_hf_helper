@@ -1,0 +1,289 @@
+{
+  "name": "company-settings",
+  "type": "page",
+  "description": "Раздел настроек компании - это комплексная система управления всеми параметрами и конфигурациями компании в HR Helper. Включает общие настройки, управление пользователями, грейдами, финансами, интеграциями, настройками рекрутинга и другими аспектами работы системы.\n\n**Базовый путь**: `/company-settings`",
+  "route_path": "`/company-settings`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/company-settings/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [
+    {
+      "name": "Office",
+      "definition": "interface Office {\n  id: number                    // Уникальный идентификатор офиса\n  address: string              // Адрес офиса\n  mapLink: string              // Ссылка на карту\n  country: string              // Страна\n  directions: string           // Инструкции по проезду\n  isMain: boolean              // Флаг главного офиса\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "number",
+          "optional": false,
+          "comment": "Уникальный идентификатор офиса"
+        },
+        {
+          "name": "address",
+          "type": "string",
+          "optional": false,
+          "comment": "Адрес офиса"
+        },
+        {
+          "name": "mapLink",
+          "type": "string",
+          "optional": false,
+          "comment": "Ссылка на карту"
+        },
+        {
+          "name": "country",
+          "type": "string",
+          "optional": false,
+          "comment": "Страна"
+        },
+        {
+          "name": "directions",
+          "type": "string",
+          "optional": false,
+          "comment": "Инструкции по проезду"
+        },
+        {
+          "name": "isMain",
+          "type": "boolean",
+          "optional": false,
+          "comment": "Флаг главного офиса"
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка текущих настроек компании - реализовать API вызов",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Сохранение логотипа - реализовать загрузку файла через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Управление офисами - реализовать CRUD операции через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Управление календарем - реализовать сохранение через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Сохранение базовых параметров - реализовать через API\n\n### Грейды",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 1,
+      "description": "Загрузка списка грейдов - GET `/api/company-settings/grades/`",
+      "method": "GET",
+      "endpoint": "/api/company-settings/grades/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Создание грейда - POST `/api/company-settings/grades/`",
+      "method": "POST",
+      "endpoint": "/api/company-settings/grades/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Редактирование грейда - PUT `/api/company-settings/grades/{id}/`",
+      "method": "PUT",
+      "endpoint": "/api/company-settings/grades/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Удаление грейда - DELETE `/api/company-settings/grades/{id}/`\n\n### Пользователи",
+      "method": "DELETE",
+      "endpoint": "/api/company-settings/grades/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 1,
+      "description": "Загрузка списка пользователей - GET `/api/company-settings/users/`",
+      "method": "GET",
+      "endpoint": "/api/company-settings/users/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Создание пользователя - POST `/api/company-settings/users/`",
+      "method": "POST",
+      "endpoint": "/api/company-settings/users/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Редактирование пользователя - PUT `/api/company-settings/users/{id}/`",
+      "method": "PUT",
+      "endpoint": "/api/company-settings/users/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Удаление пользователя - DELETE `/api/company-settings/users/{id}/`",
+      "method": "DELETE",
+      "endpoint": "/api/company-settings/users/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Управление правами доступа - PUT `/api/company-settings/users/{id}/access/`\n\n### Интеграции",
+      "method": "PUT",
+      "endpoint": "/api/company-settings/users/{id}/access/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 1,
+      "description": "Загрузка списка интеграций - GET `/api/company-settings/integrations/`",
+      "method": "GET",
+      "endpoint": "/api/company-settings/integrations/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Включение/выключение интеграции - PUT `/api/company-settings/integrations/{id}/active/`",
+      "method": "PUT",
+      "endpoint": "/api/company-settings/integrations/{id}/active/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Настройка области действия - PUT `/api/company-settings/integrations/{id}/scope/`",
+      "method": "PUT",
+      "endpoint": "/api/company-settings/integrations/{id}/scope/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Подключение интеграции - POST `/api/company-settings/integrations/{id}/connect/`\n\n### Настройки рекрутинга",
+      "method": "POST",
+      "endpoint": "/api/company-settings/integrations/{id}/connect/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 1,
+      "description": "Загрузка этапов найма - GET `/api/company-settings/recruiting/stages/`",
+      "method": "GET",
+      "endpoint": "/api/company-settings/recruiting/stages/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Создание/редактирование этапа - POST/PUT `/api/company-settings/recruiting/stages/`",
+      "method": "PUT",
+      "endpoint": "/api/company-settings/recruiting/stages/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Загрузка команд workflow - GET `/api/company-settings/recruiting/commands/`",
+      "method": "GET",
+      "endpoint": "/api/company-settings/recruiting/commands/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Создание/редактирование команды - POST/PUT `/api/company-settings/recruiting/commands/`",
+      "method": "PUT",
+      "endpoint": "/api/company-settings/recruiting/commands/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Загрузка SLA правил - GET `/api/company-settings/sla/`",
+      "method": "GET",
+      "endpoint": "/api/company-settings/sla/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Создание/редактирование SLA - POST/PUT `/api/company-settings/sla/`",
+      "method": "PUT",
+      "endpoint": "/api/company-settings/sla/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Загрузка дополнительных полей - GET `/api/company-settings/candidate-fields/`",
+      "method": "GET",
+      "endpoint": "/api/company-settings/candidate-fields/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Создание/редактирование поля - POST/PUT `/api/company-settings/candidate-fields/`",
+      "method": "PUT",
+      "endpoint": "/api/company-settings/candidate-fields/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.272637"
+}

@@ -1,0 +1,47 @@
+.sectionCard {
+  background: var(--gray-2);
+  border: 1px solid var(--gray-6);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.sectionHeader {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--gray-6);
+  background: var(--accent-9);
+  color: #ffffff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: -24px -24px 16px -24px;
+}
+
+.tableContainer {
+  overflow-x: auto;
+  margin-top: 16px;
+}
+
+.gradeTag {
+  background: var(--gray-4);
+  color: var(--gray-11);
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.statusTag {
+  background: var(--accent-3);
+  color: var(--accent-11);
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+@media (max-width: 768px) {
+  .sectionCard {
+    padding: 16px;
+  }
+  
+  .sectionHeader {
+    margin: -16px -16px 16px -16px;
+  }
+}

@@ -1,0 +1,59 @@
+.vacanciesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+}
+
+.sectionHeader {
+  margin-top: 8px;
+}
+
+.viewToggle {
+  background: var(--gray-3);
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.viewButton {
+  min-width: 36px;
+  height: 36px;
+  padding: 0;
+}
+
+.addButton {
+  background: var(--accent-9);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.addButton:hover {
+  background: var(--accent-10);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .cardsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .vacanciesContainer {
+    padding: 16px;
+  }
+}

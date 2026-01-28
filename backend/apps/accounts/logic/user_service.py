@@ -5,6 +5,8 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.db import transaction
+from django.utils import timezone
+from datetime import timedelta
 
 User = get_user_model()
 
@@ -85,9 +87,16 @@ class UserService:
         return {
             'huntflow': {
                 'name': 'Huntflow',
-                'enabled': bool(user.huntflow_sandbox_api_key or user.huntflow_prod_api_key),
-                'sandbox_configured': bool(user.huntflow_sandbox_api_key),
-                'prod_configured': bool(user.huntflow_prod_api_key),
+                'enabled': bool(
+                    (getattr(user, 'huntflow_sandbox_api_key', None) and user.huntflow_sandbox_url) or
+                    (user.huntflow_access_token and user.huntflow_prod_url) or
+                    (user.huntflow_access_token and user.huntflow_sandbox_url)
+                ),
+                'sandbox_configured': bool(
+                    (getattr(user, 'huntflow_sandbox_api_key', None) and user.huntflow_sandbox_url) or
+                    (user.huntflow_access_token and user.huntflow_sandbox_url)
+                ),
+                'prod_configured': bool(user.huntflow_prod_url and user.huntflow_access_token),
                 'active_system': user.active_system,
             },
             'gemini': {
@@ -122,11 +131,43 @@ class UserService:
             user.clickup_api_key = data.get('clickup_api_key', user.clickup_api_key)
             user.notion_integration_token = data.get('notion_integration_token', user.notion_integration_token)
             user.huntflow_sandbox_api_key = data.get('huntflow_sandbox_api_key', user.huntflow_sandbox_api_key)
-            user.huntflow_prod_api_key = data.get('huntflow_prod_api_key', user.huntflow_prod_api_key)
+            # huntflow_prod_api_key больше не используется, для PROD используются токены
             user.huntflow_sandbox_url = data.get('huntflow_sandbox_url', user.huntflow_sandbox_url)
             user.huntflow_prod_url = data.get('huntflow_prod_url', user.huntflow_prod_url)
             user.active_system = data.get('active_system', user.active_system)
-            user.save()
+            
+            # Сохраняем токены Huntflow с установкой времени истечения
+            if 'huntflow_access_token' in data or 'huntflow_refresh_token' in data:
+                access_token = data.get('huntflow_access_token', user.huntflow_access_token)
+                refresh_token = data.get('huntflow_refresh_token', user.huntflow_refresh_token)
+                
+                # Если оба токена указаны, используем метод set_huntflow_tokens для установки времени истечения
+                if access_token and refresh_token:
+                    # Используем стандартные значения времени жизни токенов Huntflow
+                    # access token: 7 дней (604800 секунд)
+                    # refresh token: 14 дней (1209600 секунд)
+                    user.set_huntflow_tokens(
+                        access_token=access_token,
+                        refresh_token=refresh_token,
+                        expires_in=604800,  # 7 дней
+                        refresh_expires_in=1209600  # 14 дней
+                    )
+                elif access_token:
+                    # Если указан только access token, сохраняем его отдельно
+                    user.huntflow_access_token = access_token
+                    # Устанавливаем время истечения по умолчанию
+                    user.huntflow_token_expires_at = timezone.now() + timedelta(seconds=604800)
+                    user.save(update_fields=['huntflow_access_token', 'huntflow_token_expires_at'])
+                elif refresh_token:
+                    # Если указан только refresh token, сохраняем его отдельно
+                    user.huntflow_refresh_token = refresh_token
+                    # Устанавливаем время истечения по умолчанию
+                    user.huntflow_refresh_expires_at = timezone.now() + timedelta(seconds=1209600)
+                    user.save(update_fields=['huntflow_refresh_token', 'huntflow_refresh_expires_at'])
+            
+            # Сохраняем остальные изменения, если токены не были обновлены выше
+            if 'huntflow_access_token' not in data and 'huntflow_refresh_token' not in data:
+                user.save()
         
         return user
     

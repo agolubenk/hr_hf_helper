@@ -1,0 +1,407 @@
+{
+  "name": "profile",
+  "type": "component",
+  "description": "Директория `components/profile` содержит компоненты для управления профилем пользователя. Компоненты обеспечивают просмотр и редактирование информации профиля, настройку интеграций, управление быстрыми кнопками и настройку акцентного цвета.\n\n**Расположение**: `@/components/profile`",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/components/profile/COMPONENTS_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [
+    {
+      "name": "ProfileNavigationProps",
+      "definition": "interface ProfileNavigationProps {\n  activeTab: TabType     // 'profile' | 'edit' | 'integrations' | 'quick-buttons'\n  onTabChange: (tab: TabType) => void\n}",
+      "fields": [
+        {
+          "name": "activeTab",
+          "type": "TabType",
+          "optional": false,
+          "comment": "'profile' | 'edit' | 'integrations' | 'quick-buttons'"
+        },
+        {
+          "name": "onTabChange",
+          "type": "(tab: TabType) => void",
+          "optional": false,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "TabType",
+      "definition": "type TabType = 'profile' | 'edit' | 'integrations' | 'quick-buttons'",
+      "fields": []
+    },
+    {
+      "name": "ProfileInfoProps",
+      "definition": "interface ProfileInfoProps {\n  userData: {\n    firstName: string\n    lastName: string\n    email: string\n    telegram?: string\n    linkedin?: string\n    registrationDate: string\n    lastLoginDate: string\n    workSchedule: string\n    meetingInterval: string\n    activeEnvironment: string\n  }\n}",
+      "fields": [
+        {
+          "name": "userData",
+          "type": "{",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "firstName",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "lastName",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "telegram",
+          "type": "string",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "linkedin",
+          "type": "string",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "registrationDate",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "lastLoginDate",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "workSchedule",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "meetingInterval",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "activeEnvironment",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "ProfileEditFormProps",
+      "definition": "interface ProfileEditFormProps {\n  initialData: {\n    firstName: string\n    lastName: string\n    email: string\n    telegram?: string\n    linkedin?: string\n    workStartTime?: string\n    workEndTime?: string\n    meetingInterval?: string\n  }\n  onCancel: () => void\n  onSave: (data: ProfileEditFormProps['initialData']) => void\n}",
+      "fields": [
+        {
+          "name": "initialData",
+          "type": "{",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "firstName",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "lastName",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "telegram",
+          "type": "string",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "linkedin",
+          "type": "string",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "workStartTime",
+          "type": "string",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "workEndTime",
+          "type": "string",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "meetingInterval",
+          "type": "string",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "onCancel",
+          "type": "() => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onSave",
+          "type": "(data: ProfileEditFormProps['initialData']) => void",
+          "optional": false,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "UserCardProps",
+      "definition": "interface UserCardProps {\n  firstName: string\n  lastName: string\n  email: string\n  telegram?: string\n  avatarUrl?: string\n}",
+      "fields": [
+        {
+          "name": "firstName",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "lastName",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "telegram",
+          "type": "string",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "avatarUrl",
+          "type": "string",
+          "optional": true,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "GoogleIntegrationProps",
+      "definition": "interface GoogleIntegrationProps {\n  isConnected: boolean\n  tokenStatus: string\n  email: string\n  name: string\n}",
+      "fields": [
+        {
+          "name": "isConnected",
+          "type": "boolean",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "tokenStatus",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "IntegrationSettingsModalProps",
+      "definition": "interface IntegrationSettingsModalProps {\n  integrationName: string\n  isOpen: boolean\n  onClose: () => void\n  onSave: (data: any) => void\n  initialActiveSystem?: 'prod' | 'sandbox'\n}",
+      "fields": [
+        {
+          "name": "integrationName",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "isOpen",
+          "type": "boolean",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onClose",
+          "type": "() => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onSave",
+          "type": "(data: any) => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "initialActiveSystem",
+          "type": "'prod' | 'sandbox'",
+          "optional": true,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "AccentColorSettingsProps",
+      "definition": "interface AccentColorSettingsProps {\n  lightThemeColor: AccentColorValue\n  darkThemeColor: AccentColorValue\n  onLightThemeColorChange: (color: AccentColorValue) => void\n  onDarkThemeColorChange: (color: AccentColorValue) => void\n}",
+      "fields": [
+        {
+          "name": "lightThemeColor",
+          "type": "AccentColorValue",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "darkThemeColor",
+          "type": "AccentColorValue",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onLightThemeColorChange",
+          "type": "(color: AccentColorValue) => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onDarkThemeColorChange",
+          "type": "(color: AccentColorValue) => void",
+          "optional": false,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "AccentColorValue",
+      "definition": "type AccentColorValue = typeof ACCENT_COLORS[number]['value']\n// 'blue' | 'tomato' | 'red' | 'ruby' | 'crimson' | 'pink' | 'plum' | 'purple' | 'violet' | 'iris' | 'indigo' | 'cyan' | 'teal' | 'jade' | 'green' | 'grass' | 'lime' | 'yellow' | 'amber' | 'orange' | 'brown'",
+      "fields": []
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка данных профиля из API\n   - GET `/api/user/profile/`\n   - Возвращает: данные профиля пользователя",
+      "method": "GET",
+      "endpoint": "/api/user/profile/",
+      "parameters": null,
+      "returns": "данные профиля пользователя",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Сохранение данных профиля через API\n   - PUT/PATCH `/api/user/profile/`\n   - Параметры: все поля профиля",
+      "method": "PATCH",
+      "endpoint": "/api/user/profile/",
+      "parameters": "все поля профиля",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Загрузка статуса интеграций из API\n   - GET `/api/user/integrations/status/`\n   - Возвращает: статус всех интеграций",
+      "method": "GET",
+      "endpoint": "/api/user/integrations/status/",
+      "parameters": null,
+      "returns": "статус всех интеграций",
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Сохранение настроек интеграций через API\n   - PUT `/api/user/integrations/{integrationName}/`\n   - Параметры: API ключи, токены, настройки",
+      "method": "PUT",
+      "endpoint": "/api/user/integrations/{integrationName}/",
+      "parameters": "API ключи, токены, настройки",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Тестирование подключения интеграций\n   - POST `/api/user/integrations/{integrationName}/test/`\n   - Параметры: API ключ/токен\n   - Возвращает: результат теста",
+      "method": "POST",
+      "endpoint": "/api/user/integrations/{integrationName}/test/",
+      "parameters": "API ключ/токен",
+      "returns": "результат теста",
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Загрузка быстрых кнопок из API\n   - GET `/api/user/quick-buttons/`\n   - Возвращает: массив быстрых кнопок",
+      "method": "GET",
+      "endpoint": "/api/user/quick-buttons/",
+      "parameters": null,
+      "returns": "массив быстрых кнопок",
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Сохранение быстрых кнопок через API\n   - POST `/api/user/quick-buttons/` - создание\n   - PUT/PATCH `/api/user/quick-buttons/{id}/` - обновление\n   - DELETE `/api/user/quick-buttons/{id}/` - удаление",
+      "method": "POST",
+      "endpoint": "/api/user/quick-buttons/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Сохранение настроек акцентного цвета\n   - PUT `/api/user/settings/accent-color/`\n   - Параметры: lightThemeColor, darkThemeColor",
+      "method": "PUT",
+      "endpoint": "/api/user/settings/accent-color/",
+      "parameters": "lightThemeColor, darkThemeColor",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Загрузка аватара пользователя\n   - GET `/api/user/avatar/`\n   - Возвращает: URL аватара",
+      "method": "GET",
+      "endpoint": "/api/user/avatar/",
+      "parameters": null,
+      "returns": "URL аватара",
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Загрузка аватара на сервер\n    - POST `/api/user/avatar/upload/`\n    - Параметры: файл изображения",
+      "method": "POST",
+      "endpoint": "/api/user/avatar/upload/",
+      "parameters": "файл изображения",
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.323821"
+}

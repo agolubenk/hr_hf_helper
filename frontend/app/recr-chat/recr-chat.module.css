@@ -1,0 +1,617 @@
+.container {
+  display: flex;
+  height: calc(100vh - 112px); /* 64px header + 48px status bar */
+  gap: 16px;
+  padding: 16px;
+  background-color: var(--gray-2);
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+/* Левая колонка */
+.leftColumn {
+  flex: 1;
+  max-width: 650px;
+  min-width: 380px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--gray-a6);
+  border-radius: 8px;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabSwitcher {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-a6) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tabSwitcher::-webkit-scrollbar {
+  height: 4px;
+}
+
+.tabSwitcher::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tabSwitcher::-webkit-scrollbar-thumb {
+  background: var(--gray-a6);
+  border-radius: 2px;
+}
+
+.tabSwitcher::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-a8);
+}
+
+.tabButton {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+/* Список кандидатов */
+.candidatesList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.candidateItem {
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--gray-a6);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: var(--color-surface);
+}
+
+.candidateItem:hover {
+  background-color: rgba(33, 128, 160, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateX(2px);
+}
+
+.candidateItem.selected {
+  background-color: rgba(33, 128, 160, 0.12);
+  border-left: 3px solid #2180A0;
+}
+
+/* Список диалогов */
+.conversationsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.conversationItem {
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--gray-a6);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: var(--color-surface);
+}
+
+.conversationItem:hover {
+  background-color: rgba(33, 128, 160, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Контейнер чата */
+.chatContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.chatContainer > * {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Настройки вакансии */
+.vacancySettings {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Правая колонка */
+.rightColumn {
+  flex: 2;
+  min-width: 340px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.candidateCard {
+  padding: 24px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--gray-a6);
+  border-radius: 8px;
+  min-height: 993px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Выравнивание колонок только в таблице Application Details (label | value) */
+.applicationDetailsTable :global(.rt-TableRoot) {
+  width: 100%;
+}
+
+.applicationDetailsTable :global(.rt-TableRoot table) {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.applicationDetailsTable :global(.rt-TableRoot table) :global(tbody tr td:first-child) {
+  width: 35%;
+  min-width: 140px;
+  max-width: 200px;
+}
+
+.applicationDetailsTable :global(.rt-TableRoot table) :global(tbody tr td:last-child) {
+  width: 65%;
+}
+
+/* Таблица зарплатных вилок: фиксированные адекватные ширины колонок */
+.salaryForksTableWrapper {
+  overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
+}
+
+.salaryForksTableWrapper :global(.rt-TableRoot) {
+  width: max-content;
+  max-width: 100%;
+}
+
+.salaryForksTableWrapper :global(.rt-TableRoot table) {
+  table-layout: fixed;
+  width: max-content;
+  max-width: 100%;
+}
+
+.salaryForksTableWrapper :global(.rt-ScrollAreaRoot),
+.salaryForksTableWrapper :global(.rt-ScrollAreaViewport) {
+  max-width: 100%;
+}
+
+.subTabs {
+  border-bottom: 1px solid var(--gray-a6);
+}
+
+/* История */
+.historyItem {
+  padding: 12px 0;
+}
+
+/* Социальные сети */
+.socialButtonWrapper {
+  position: relative;
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.socialButton {
+  transition: all 0.2s ease-in-out;
+  width: 35px;
+  height: 35px;
+  border-radius: 8px;
+  aspect-ratio: 1 / 1;
+  overflow: visible;
+}
+
+.socialButton:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.socialEditButton {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  pointer-events: none;
+}
+
+.socialButtonWrapper:hover .socialEditButton {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.socialEditContainer {
+  animation: expandSocial 0.3s ease-in-out;
+  height: 35px !important;
+  box-sizing: border-box;
+}
+
+.socialEditInput :global(.rt-TextFieldRoot) {
+  height: 35px !important;
+  min-height: 35px !important;
+  max-height: 35px !important;
+  display: flex !important;
+  align-items: center !important;
+  overflow: hidden !important;
+  position: relative !important;
+  margin: 0 !important;
+}
+
+.socialEditInput :global(.rt-TextFieldInput) {
+  height: 35px !important;
+  min-height: 35px !important;
+  max-height: 35px !important;
+  padding-top: 12px !important;
+  padding-bottom: 2px !important;
+  padding-left: calc(0.5rem + 1px) !important;
+  padding-right: calc(0.5rem + 1px) !important;
+  font-size: calc(0.875rem + 1px) !important;
+  line-height: calc(0.875rem + 1px) !important;
+  box-sizing: border-box;
+  vertical-align: middle !important;
+  margin: 0 !important;
+  border: none !important;
+  position: relative !important;
+  top: -12px !important;
+}
+
+.socialEditInput :global(.rt-TextFieldSlot) {
+  padding: calc(0.25rem + 1px) calc(0.5rem + 1px) !important;
+  width: calc(1rem + 2px) !important;
+  height: calc(1rem + 2px) !important;
+}
+
+.socialEditInput :global(.rt-TextFieldSlot svg),
+.socialEditInput :global(.rt-TextFieldSlot *) {
+  width: calc(0.875rem + 1px) !important;
+  height: calc(0.875rem + 1px) !important;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes expandSocial {
+  from {
+    width: 48px;
+    opacity: 0.8;
+  }
+  to {
+    width: auto;
+    opacity: 1;
+  }
+}
+
+/* Адаптивность */
+@media (min-width: 800px) {
+  .container {
+    flex-direction: row;
+  }
+
+  .leftColumn {
+    flex: 1;
+    max-width: 650px;
+  }
+
+  .rightColumn {
+    flex: 2;
+    position: relative !important;
+    transform: none !important;
+    z-index: auto !important;
+  }
+  
+  .modalOverlay {
+    display: none;
+  }
+}
+
+/* Кнопки workflow */
+.workflowButtonsContainer {
+  padding: 0;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  backdrop-filter: none !important;
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 32px);
+  max-width: 100%;
+  margin-left: 16px;
+  margin-right: 16px;
+  box-sizing: border-box;
+}
+
+.workflowButtonsContainer > :global(.rt-Flex) {
+  margin-left: 0;
+  margin-right: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.workflowScrollContainer {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.workflowScrollContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.slotsButtonText {
+  display: inline;
+}
+
+@media (max-width: 980px) {
+  .slotsButtonText {
+    display: none;
+  }
+}
+
+.quickButton {
+  width: 44px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  box-sizing: border-box;
+}
+
+.quickButton:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.flagBadge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  font-size: 20px;
+  line-height: 1;
+  overflow: visible;
+}
+
+.workflowButton {
+  position: relative;
+  padding: 0 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: #1e40af;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 108px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.workflowButton[data-selected="true"] {
+  background-color: #10b981;
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  height: 42px;
+  box-sizing: border-box;
+}
+
+.workflowButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.workflowIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.selectedBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #10b981;
+  border: 2px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.interviewOptionsPanel {
+  background: color-mix(in srgb, var(--gray-2) 50%, transparent);
+  border-radius: 8px;
+  padding: 4px 12px;
+  margin-top: 4px;
+  margin-right: 16px;
+  border: 1px solid var(--gray-6);
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(10px);
+}
+
+.participantsScrollContainer {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-a6) transparent;
+}
+
+.participantsScrollContainer::-webkit-scrollbar {
+  height: 4px;
+}
+
+.participantsScrollContainer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.participantsScrollContainer::-webkit-scrollbar-thumb {
+  background: var(--gray-a6);
+  border-radius: 2px;
+}
+
+.participantsScrollContainer::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-a8);
+}
+
+.formatButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: var(--gray-3);
+  border: 1px solid var(--gray-6);
+}
+
+.formatButton[data-selected="true"] {
+  background-color: var(--accent-9);
+  border-color: var(--accent-9);
+  color: #ffffff;
+}
+
+.formatButton:hover {
+  background-color: var(--gray-4);
+}
+
+.formatButton[data-selected="true"]:hover {
+  background-color: var(--accent-10);
+}
+
+@media (max-width: 799px) {
+  .container {
+    flex-direction: column;
+    position: relative;
+  }
+
+  .leftColumn {
+    width: 100%;
+    max-width: 100%;
+    max-height: calc(100vh - 112px);
+  }
+
+  .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1999;
+    backdrop-filter: blur(2px);
+  }
+
+  .rightColumn {
+    width: 100%;
+    max-width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    background-color: var(--color-surface);
+    padding: 16px;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .rightColumn.open {
+    transform: translateX(0);
+  }
+
+  .tabSwitcher {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabButton {
+    flex: 0 0 auto;
+    min-width: 120px;
+  }
+  
+  .workflowButtonsContainer {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+/* Тогглер выбора офиса */
+.officeToggle {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.officeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  background-color: var(--gray-3);
+  border: 1px solid var(--gray-6);
+  min-height: 27px;
+}
+
+.officeButton[data-selected="true"] {
+  background-color: var(--accent-9);
+  border-color: var(--accent-9);
+  color: #ffffff;
+}
+
+.officeButton:hover {
+  background-color: var(--gray-4);
+}
+
+.officeButton[data-selected="true"]:hover {
+  background-color: var(--accent-10);
+}

@@ -1,10 +1,56 @@
 {% extends 'common/base.html' %}
 {% load static %}
+{% load vacancy_extras %}
 
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid" id="mainContentContainer" style="position: relative;">
+    <!-- Обертка для плавающего блока (нужна для сдвига контента при закреплении) -->
+    {% if quick_buttons %}
+    <div class="quick-buttons-wrapper">
+        <!-- Плавающий блок с кнопками -->
+        <div id="quickButtonsPanel" class="quick-buttons-panel">
+            <div class="quick-buttons-content">
+            <div class="quick-buttons-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-bolt me-2"></i>
+                    Быстрые кнопки
+                </h6>
+            </div>
+            <div class="quick-buttons-list">
+                {% for button in quick_buttons %}
+                <div class="quick-button-item" data-button-type="{{ button.button_type }}" data-button-value="{{ button.value|escapejs }}">
+                    <button type="button" 
+                            class="quick-button-btn" 
+                            title="{{ button.name }}" 
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="left"
+                            onclick="handleQuickButton(this)"
+                            style="background-color: {{ button.color }}; --button-color: {{ button.color }};">
+                        <i class="{{ button.icon }}"></i>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+            <!-- Кнопка pin для фиксации блока -->
+            <div class="quick-buttons-footer">
+                <button type="button" 
+                        id="quickButtonsPin" 
+                        class="quick-buttons-pin-btn" 
+                        title="Закрепить панель" 
+                        onclick="toggleQuickButtonsPanel()">
+                    <i class="fas fa-thumbtack"></i>
+                </button>
+            </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- ОБЕРТКА ДЛЯ ВСЕГО ОСНОВНОГО КОНТЕНТА -->
+    <div id="mainContentWrapper" class="main-content-wrapper">
+    
     <!-- Предупреждение о календаре компании -->
     {% if company_calendar_warning %}
     <div class="row mb-3">
@@ -98,26 +144,18 @@
                                                 <div class="copy-tooltip">Скопировать слоты следующей недели</div>
                                             </button>
                                             
-                                            <button class="btn-copy btn-copy-all-slots" 
-                                                    onclick="window.copyAllSlots()"
-                                                    title="Скопировать все слоты">
-                                                <i class="fas fa-copy"></i>
-                                                <div class="copy-tooltip">Скопировать все слоты</div>
-                                            </button>
-                                            
-                                            <!-- Кнопка добавления третьей недели -->
                                             <button class="btn-copy btn-add-week" 
                                                     onclick="window.addThirdWeek()"
                                                     title="Загрузить слоты третьей недели">
                                                 <i class="fas fa-plus"></i>
                                                 <div class="copy-tooltip">Загрузить слоты третьей недели</div>
                                             </button>
-                                            
-                                            <button class="btn-copy btn-refresh-slots" 
-                                                    onclick="window.refreshSlots()"
-                                                    title="Обновить слоты">
-                                                <i class="fas fa-sync-alt"></i>
-                                                <div class="copy-tooltip">Обновить слоты</div>
+
+                                            <button class="btn-copy btn-copy-all-slots" 
+                                                    onclick="window.copyAllSlots()"
+                                                    title="Скопировать все слоты">
+                                                <i class="fas fa-copy"></i>
+                                                <div class="copy-tooltip">Скопировать все слоты</div>
                                             </button>
                                         </div>
                                             
@@ -126,7 +164,9 @@
                                                 <button class="btn-meeting-type position-relative active" 
                                                         id="btnScreening" 
                                                         onclick="switchMeetingType('screening')"
-                                                        title="Скрининг: {{ selected_vacancy.screening_duration|default:45 }} мин">
+                                                        data-bs-toggle="tooltip" 
+                                                        data-bs-placement="top"
+                                                        title="Выберите тип встречи: Скрининг. Длительность: {{ selected_vacancy.screening_duration|default:45 }} минут">
                                                     <i class="fas fa-clipboard-list"></i>
                                                     <div class="meeting-type-text">
                                                         <div class="meeting-type-name">Скрининг</div>
@@ -137,12 +177,14 @@
                                                 <button class="btn-meeting-type position-relative" 
                                                         id="btnInterview" 
                                                         onclick="switchMeetingType('interview')"
-                                                        title="Интервью: {{ selected_vacancy.tech_interview_duration|default:90 }} мин">
+                                                        data-bs-toggle="tooltip" 
+                                                        data-bs-placement="top"
+                                                        title="Выберите тип встречи: Техническое интервью. Длительность: {{ selected_vacancy.tech_interview_duration|default:90 }} минут. После выбора откроются настройки формата и интервьюеров">
                                                     <i class="fas fa-users"></i>
                                                     <div class="meeting-type-text">
                                                         <div class="meeting-type-name">Интервью</div>
                                                         <div class="meeting-type-duration">{{ selected_vacancy.tech_interview_duration|default:90 }} мин</div>
-                                                    </div>
+                                    </div>
                                                 </button>
                                             </div>
                                         </div>
@@ -166,6 +208,56 @@
                         </form>
                         {% if selected_vacancy %}
                         <div class="mt-2 text-end">
+                            <!-- Переключатель часового пояса - показываем только если есть вопросы и ссылка для Польши -->
+                            {% if selected_vacancy.questions_poland and selected_vacancy.vacancy_link_poland %}
+                            <div class="btn-group me-3" role="group" style="vertical-align: middle; box-shadow: 0 2px 6px rgba(0,0,0,0.15); border-radius: 8px; overflow: hidden;">
+                                <input type="radio" class="btn-check" name="timezone-toggle" id="timezone-minsk" value="minsk" checked>
+                                <label class="btn" for="timezone-minsk" title="Часовой пояс: Минск (UTC+3)" style="font-weight: 600; padding: 4px 12px; font-size: 12px; background-color: #ffffff; color: #0d6efd; border: 2px solid #0d6efd; border-radius: 8px 0 0 8px;">
+                                    <i class="fas fa-map-marker-alt me-1"></i>Минск
+                                </label>
+                                
+                                <input type="radio" class="btn-check" name="timezone-toggle" id="timezone-warsaw" value="warsaw">
+                                <label class="btn" for="timezone-warsaw" title="Часовой пояс: Варшава (UTC+1)" style="font-weight: 600; padding: 4px 12px; font-size: 12px; background-color: #0d6efd; color: white; border: 2px solid #0d6efd; border-radius: 0 8px 8px 0;">
+                                    <i class="fas fa-map-marker-alt me-1"></i>Варшава
+                                </label>
+                            </div>
+                            <style>
+                                /* Стили для активного состояния переключателя (белый фон, синий текст) */
+                                #timezone-minsk:checked + label {
+                                    background-color: #ffffff !important;
+                                    color: #0d6efd !important;
+                                    border-color: #0d6efd !important;
+                                    border-radius: 8px 0 0 8px !important;
+                                }
+                                #timezone-warsaw:checked + label {
+                                    background-color: #ffffff !important;
+                                    color: #0d6efd !important;
+                                    border-color: #0d6efd !important;
+                                    border-radius: 0 8px 8px 0 !important;
+                                }
+                                /* Стили для неактивного состояния (синий фон, белый текст) */
+                                #timezone-minsk:not(:checked) + label {
+                                    background-color: #0d6efd !important;
+                                    color: white !important;
+                                    border-color: #0d6efd !important;
+                                    border-radius: 8px 0 0 8px !important;
+                                }
+                                #timezone-warsaw:not(:checked) + label {
+                                    background-color: #0d6efd !important;
+                                    color: white !important;
+                                    border-color: #0d6efd !important;
+                                    border-radius: 0 8px 8px 0 !important;
+                                }
+                                /* Hover эффект */
+                                #timezone-minsk + label:hover,
+                                #timezone-warsaw + label:hover {
+                                    opacity: 0.9 !important;
+                                }
+                            </style>
+                            {% else %}
+                            <!-- Скрытый переключатель с выбранным Минском по умолчанию -->
+                            <input type="radio" class="btn-check" name="timezone-toggle" id="timezone-minsk" value="minsk" checked style="display: none;">
+                            {% endif %}
                             <a href="https://calendar.google.com/calendar/u/0/r/week" target="_blank" class="badge bg-info fs-6 me-2 clickable-badge" style="text-decoration: none; cursor: pointer;" title="Календарь">
                                 <i class="fas fa-calendar"></i>
                                 <i class="fas fa-external-link-alt ms-1"></i>
@@ -177,8 +269,112 @@
                             <span class="badge bg-success fs-6 clickable-badge" onclick="toggleSlotsCard()" style="cursor: pointer;">
                                 <i class="fas fa-clock me-md-2"></i> <span class="d-inline d-md-none">Свободные </span><span class="d-inline">слоты</span>
                             </span>
+                            <button class="btn-copy btn-refresh-slots ms-2 position-relative" 
+                                    onclick="window.refreshSlots()"
+                                    title="Обновить слоты"
+                                    style="width: 32px; height: 32px; border-radius: 50%; border: none; background: #0d6efd; color: white; padding: 0; margin: 0; vertical-align: middle; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"
+                                    onmouseover="this.style.background='#0b5ed7'; this.style.transform='scale(1.1)';"
+                                    onmouseout="this.style.background='#0d6efd'; this.style.transform='scale(1)';">
+                                <i class="fas fa-sync-alt"></i>
+                                <div class="copy-tooltip">Обновить слоты</div>
+                            </button>
                         </div>
                         {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Расширяющееся полотно для настроек интервью -->
+                <div class="interview-options-panel" id="interviewOptionsPanel" style="display: none;" data-bs-toggle="tooltip" data-bs-placement="top" title="Настройки технического интервью: выберите формат (онлайн/офис) и интервьюеров">
+                    <div class="row mt-1 p-3 bg-light rounded">
+                        <div class="col-12">
+                            <!-- Выбор формата интервью и интервьюеров в один ряд -->
+                            <div class="interview-options-row">
+                                <!-- Кнопки формата интервью -->
+                                <div class="interview-format-buttons">
+                                    <button type="button" 
+                                            class="btn-interview-format active" 
+                                            id="btnFormatOnline" 
+                                            onclick="switchInterviewFormat('online')"
+                                            data-bs-toggle="tooltip" 
+                                            data-bs-placement="top"
+                                            title="Формат интервью: Онлайн (видеозвонок)">
+                                        <i class="fas fa-video"></i>
+                                    </button>
+                                    <button type="button" 
+                                            class="btn-interview-format" 
+                                            id="btnFormatOffice" 
+                                            onclick="switchInterviewFormat('office')"
+                                            data-bs-toggle="tooltip" 
+                                            data-bs-placement="top"
+                                            title="Формат интервью: Офис (личная встреча)">
+                                        <i class="fas fa-building"></i>
+                                    </button>
+                                    <input type="hidden" name="interviewFormat" id="interviewFormatInput" value="online">
+                                </div>
+                                
+                                <!-- Разделитель -->
+                                <span class="interview-separator">|</span>
+                                
+                                <!-- Участники интервью (пользователь + интервьюеры) -->
+                                <div class="interviewers-container">
+                                    <!-- Кнопка для выбора самого пользователя -->
+                                    <button type="button" 
+                                            class="btn-interviewer-pill active" 
+                                            id="interviewer_user"
+                                            onclick="toggleInterviewer('user')"
+                                            data-interviewer-id="user"
+                                            data-is-user="true"
+                                            data-bs-toggle="tooltip" 
+                                            data-bs-placement="top"
+                                            title="Выберите себя как участника интервью. Нажмите для выбора/отмены">
+                                        <span class="interviewer-name-full d-none d-md-inline">Я ({% if user.last_name %}{{ user.last_name }} {{ user.first_name|default:"" }}{% else %}{{ user.get_full_name|default:user.email }}{% endif %})</span>
+                                        <span class="interviewer-name-short d-md-none">Я{% if user.last_name %} ({{ user.last_name }}){% endif %}</span>
+                                    </button>
+                                    <input type="hidden" 
+                                           name="interviewers" 
+                                           id="interviewer_input_user" 
+                                           value="user">
+                                    
+                                    <!-- Интервьюеры -->
+                                    {% if vacancy_interviewers %}
+                                        {% for interviewer in vacancy_interviewers %}
+                                        <button type="button" 
+                                                class="btn-interviewer-pill{% if vacancy_interviewers|length == 1 %} active{% endif %}" 
+                                                id="interviewer_{{ interviewer.id }}"
+                                                onclick="toggleInterviewer({{ interviewer.id }})"
+                                                data-interviewer-id="{{ interviewer.id }}"
+                                                data-bs-toggle="tooltip" 
+                                                data-bs-placement="top"
+                                                title="Выберите интервьюера: {{ interviewer.get_full_name }}{% if interviewer.email %} ({{ interviewer.email }}){% endif %}. Нажмите для выбора/отмены">
+                                            <span class="interviewer-name-full d-none d-md-inline">{{ interviewer.last_name }} {{ interviewer.first_name }}</span>
+                                            <span class="interviewer-name-short d-md-none">{{ interviewer.last_name }}</span>
+                                        </button>
+                                        <input type="hidden" 
+                                               name="interviewers" 
+                                               id="interviewer_input_{{ interviewer.id }}" 
+                                               value="{{ interviewer.id }}"
+                                               {% if vacancy_interviewers|length != 1 %}disabled{% endif %}>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Индикатор статуса обновления слотов -->
+                                <span class="interview-separator">|</span>
+                                <div class="slots-status-indicator" id="slotsStatusIndicator" style="display: none;">
+                                    <span class="slots-status-text">
+                                        <i class="fas fa-spinner fa-spin me-1"></i>
+                                        <span class="slots-status-message">Обновление слотов...</span>
+                                    </span>
+                                </div>
+                                
+                                {% if not vacancy_interviewers %}
+                                <div class="alert alert-info alert-sm mt-2">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Для этой вакансии не назначены интервьюеры. Добавьте их в настройках вакансии.
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -261,19 +457,28 @@
                     <!-- Сообщения чата -->
                     <div id="chat-messages" class="chat-messages" style="overflow-y: auto;">
                                 {% for message in messages %}
-                            <div class="message mb-3 {% if message.message_type == 'user' %}user-message{% elif message.message_type == 'hrscreening' %}system-message hr-screening-message{% elif message.message_type == 'invite' %}system-message invite-message{% elif message.message_type == 'delete' %}system-message delete-message{% else %}system-message{% endif %}">
+                            <div class="message mb-3 {% if message.message_type == 'user' %}user-message{% elif message.message_type == 'hrscreening' %}system-message hr-screening-message{% elif message.message_type == 'invite' %}system-message invite-message{% elif message.message_type == 'delete' %}system-message delete-message{% elif message.metadata and message.metadata.action_type == 'add_candidate' %}system-message add-candidate-message{% else %}system-message{% endif %}">
                                         <div class="d-flex {% if message.message_type == 'user' %}justify-content-end{% else %}justify-content-start{% endif %} align-items-end">
-                                            <div class="message-bubble {% if message.message_type == 'user' %}user-bubble{% else %}system-bubble{% endif %}" {% if message.message_type == 'user' %}style="position: relative;"{% endif %}>
+                                            {% if message.message_type != 'user' %}
+                                            <!-- Аватар системы слева -->
+                                            <div class="message-avatar me-2" style="margin-bottom: -18px; position: relative; z-index: 100;">
+                                                <img src="{% static 'img/logo-light.png' %}" alt="HR Helper" class="ai-avatar-image light-theme-logo">
+                                                <img src="{% static 'img/logo-dark.png' %}" alt="HR Helper" class="ai-avatar-image dark-theme-logo">
+                                            </div>
+                                            {% endif %}
+                                            <div class="message-bubble {% if message.message_type == 'user' %}user-bubble{% else %}system-bubble{% endif %}" {% if message.message_type == 'user' %}style="position: relative;"{% else %}style="margin-left: -26px;"{% endif %}>
                                         
                                         <!-- Пользовательское сообщение -->
                                                 {% if message.message_type == 'user' %}
                                                         {% comment %}Команда определена в view и передана как message.command_used{% endcomment %}
-                                                        <div class="message-content user-content">{{ message.content|linebreaks }}</div>
+                                                        <div class="message-content user-content">{{ message.content|remove_command|linebreaks }}</div>
                                                         {% if message.command_used %}
                                                             {% if message.command_used == '/s' or message.command_used == '/hr' %}
-                                                                <span class="command-indicator badge bg-success" style="position: absolute; bottom: 4px; left: 4px; font-size: 0.7em; z-index: 10;">{{ message.command_used }}</span>
+                                                                <span class="command-indicator badge bg-success" style="position: absolute; bottom: -10px; right: 26px; font-size: 0.7em; z-index: 10; border: 1px solid #6c757d;">#hrscreening</span>
+                                                            {% elif message.command_used == '/t' %}
+                                                                <span class="command-indicator badge bg-warning" style="position: absolute; bottom: -10px; right: 26px; font-size: 0.7em; z-index: 10; border: 1px solid #6c757d;">#tech_screening</span>
                                                             {% elif message.command_used == '/in' or message.command_used == '/invite' %}
-                                                                <span class="command-indicator badge bg-warning" style="position: absolute; bottom: 4px; left: 4px; font-size: 0.7em; z-index: 10;">{{ message.command_used }}</span>
+                                                                <span class="command-indicator badge bg-info" style="position: absolute; bottom: -10px; right: 26px; font-size: 0.7em; z-index: 10; border: 1px solid #6c757d;">#final_interview</span>
                                                             {% endif %}
                                                         {% endif %}
                                                         <div class="message-footer">
@@ -326,6 +531,34 @@
                                                             <i class="fas fa-check-circle me-1"></i>
                                                             Данные сохранены и переданы в Huntflow
                                                         </div>
+                                                        
+                                                        <!-- Форма отказа кандидата -->
+                                                        {% comment %}DEBUG: message.id={{ message.id }}, show_rejection_form={{ message.metadata.show_rejection_form|default:"NOT SET" }}, rejection_form_answered={{ message.metadata.rejection_form_answered|default:"NOT SET" }}, rejected={{ message.metadata.rejected|default:"NOT SET" }}, should_show_rejection_form={{ message.should_show_rejection_form|default:"NOT SET" }}{% endcomment %}
+                                                        {% if message.should_show_rejection_form %}
+                                                                    <div class="rejection-form-container mt-3 p-3 bg-warning bg-opacity-10 rounded border border-warning">
+                                                                        <div class="d-flex align-items-center justify-content-between">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                                                                <strong>Отказать кандидату?</strong>
+                                                                            </div>
+                                                                            <div class="rejection-buttons">
+                                                                                <button type="button" 
+                                                                                        class="btn btn-sm btn-danger me-2 reject-candidate-btn" 
+                                                                                        data-hr-screening-id="{{ message.metadata.hr_screening_id }}"
+                                                                                        data-message-id="{{ message.id }}"
+                                                                                        title="Отказать кандидату">
+                                                                                    <i class="fas fa-times me-1"></i>Да
+                                                                                </button>
+                                                                                <button type="button" 
+                                                                                        class="btn btn-sm btn-success reject-candidate-no-btn" 
+                                                                                        data-message-id="{{ message.id }}"
+                                                                                        title="Не отказывать">
+                                                                                    <i class="fas fa-check me-1"></i>Нет
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                        {% endif %}
                                                     </div>
                                                     
                                                     <!-- Кнопки действий справа -->
@@ -335,6 +568,32 @@
                                                                 <a href="{{ message.metadata.candidate_url }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Открыть в Huntflow">
                                                                             <i class="fas fa-external-link-alt"></i>
                                                                         </a>
+                                                                    {% endif %}
+                                                                    {% comment %}Кнопка копирования шаблона отказа по офисному формату{% endcomment %}
+                                                                    {% if message.metadata.office_format_rejected %}
+                                                                    {% if message.metadata.rejection_template_message %}
+                                                                <button type="button" class="btn btn-sm btn-outline-danger copy-rejection-template-btn" 
+                                                                        data-template-message="{{ message.metadata.rejection_template_message|escapejs }}" 
+                                                                        data-template-title="{% if message.metadata.rejection_template_title %}{{ message.metadata.rejection_template_title|escapejs }}{% endif %}"
+                                                                        title="Скопировать шаблон отказа по офисному формату">
+                                                                            <i class="fas fa-times"></i>
+                                                                        </button>
+                                                                    {% else %}
+                                                                    <!-- DEBUG: office_format_rejected=True, но rejection_template_message отсутствует -->
+                                                                    {% endif %}
+                                                                    {% endif %}
+                                                                    {% comment %}Кнопка копирования шаблона отказа "Финансы - больше"{% endcomment %}
+                                                                    {% if message.metadata.salary_above_range %}
+                                                                    {% if message.metadata.finance_more_template_message %}
+                                                                <button type="button" class="btn btn-sm btn-outline-danger copy-finance-more-template-btn" 
+                                                                        data-template-message="{{ message.metadata.finance_more_template_message|escapejs }}" 
+                                                                        data-template-title="{% if message.metadata.finance_more_template_title %}{{ message.metadata.finance_more_template_title|escapejs }}{% endif %}"
+                                                                        title="Скопировать шаблон отказа 'Финансы - больше'">
+                                                                            <i class="fas fa-times"></i>
+                                                                        </button>
+                                                                    {% else %}
+                                                                    <!-- DEBUG: salary_above_range=True, но finance_more_template_message отсутствует -->
+                                                                    {% endif %}
                                                                     {% endif %}
                                                             </div>
                                                         {% endif %}
@@ -384,13 +643,20 @@
                                                                 </div>
                                                             {% endif %}
                                                             
-                                                            {% if message.invite.google_meet_url %}
-                                                                <div class="info-row-table">
-                                                                    <span class="info-label-table">Google Meet:</span>
-                                                                    <a href="{{ message.invite.google_meet_url }}" target="_blank" class="info-link-compact">
-                                                                        Присоединиться <i class="fas fa-external-link-alt ms-1"></i>
-                                                                    </a>
-                                                                </div>
+                                                            {% if message.invite %}
+                                                                {% if message.invite.interview_format == 'office' %}
+                                                                    <div class="info-row-table">
+                                                                        <span class="info-label-table">Офис:</span>
+                                                                        <span class="info-value-table">{{ message.invite.google_meet_url }}</span>
+                                                                    </div>
+                                                                {% elif message.invite.google_meet_url %}
+                                                                    <div class="info-row-table">
+                                                                        <span class="info-label-table">Google Meet:</span>
+                                                                        <a href="{{ message.invite.google_meet_url }}" target="_blank" class="info-link-compact">
+                                                                            Присоединиться <i class="fas fa-external-link-alt ms-1"></i>
+                                                                        </a>
+                                                                    </div>
+                                                                {% endif %}
                                                             {% endif %}
                                                             
                                                             {% if message.invite.interview_datetime %}
@@ -444,6 +710,77 @@
                                                         </div>
                                                         <div class="message-content bot-content-fixed">{{ message.content|safe }}</div>
                                                 
+                                        <!-- Добавление кандидата -->
+                                                {% elif message.metadata and message.metadata.action_type == 'add_candidate' %}
+                                                        <div class="message-header">
+                                                            <i class="fas fa-user-plus me-1"></i>
+                                                            <strong>Добавление кандидата</strong>
+                                                            <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                                                        </div>
+                                            <div class="message-content bot-content-fixed">
+                                                <!-- Контейнер с информацией и кнопками -->
+                                                <div class="message-body-with-buttons">
+                                                    <div class="message-info">
+                                                        <!-- Информация о кандидате -->
+                                                        <div class="candidate-info-table">
+                                                            {% if message.metadata.candidate_name %}
+                                                                <div class="info-row-table">
+                                                                    <span class="info-label-table">Кандидат:</span>
+                                                                    <span class="info-value-table">{{ message.metadata.candidate_name }}</span>
+                                                                </div>
+                                                            {% endif %}
+                                                            
+                                                            {% if message.metadata.vacancy_name %}
+                                                                <div class="info-row-table">
+                                                                    <span class="info-label-table">Вакансия:</span>
+                                                                    <span class="info-value-table">{{ message.metadata.vacancy_name }}</span>
+                                                                </div>
+                                                            {% endif %}
+                                                            
+                                                            {% if message.metadata.applicant_id %}
+                                                                <div class="info-row-table">
+                                                                    <span class="info-label-table">ID кандидата:</span>
+                                                                    <span class="info-value-table">{{ message.metadata.applicant_id }}</span>
+                                                                </div>
+                                                            {% endif %}
+                                                            
+                                                            {% if message.metadata.attached_file_name %}
+                                                                <div class="info-row-table">
+                                                                    <span class="info-label-table">Файл:</span>
+                                                                    <span class="info-value-table">
+                                                                        {{ message.metadata.attached_file_name }}
+                                                                        {% if message.metadata.attached_file_type %}
+                                                                        <span class="badge bg-secondary ms-2">{{ message.metadata.attached_file_type }}</span>
+                                                                        {% endif %}
+                                                                    </span>
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                        
+                                                        <div class="status-message-compact">
+                                                            <i class="fas fa-check-circle me-1"></i>
+                                                            Данные сохранены и переданы в Huntflow
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <!-- Кнопки действий справа -->
+                                                    {% if message.metadata %}
+                                                    <div class="action-buttons-right">
+                                                        {% if message.metadata.candidate_url %}
+                                                        <a href="{{ message.metadata.candidate_url }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Открыть в Huntflow">
+                                                            <i class="fas fa-external-link-alt"></i>
+                                                        </a>
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary copy-huntflow-link-btn" 
+                                                                data-huntflow-url="{{ message.metadata.candidate_url|escapejs }}" 
+                                                                title="Копировать ссылку на Huntflow">
+                                                            <i class="fas fa-copy"></i>
+                                                        </button>
+                                                        {% endif %}
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                                
                                         <!-- Системное сообщение -->
                                                 {% else %}
                                                         <div class="message-header">
@@ -483,8 +820,32 @@
                                               class="tag-label badge bg-primary me-2"
                                               style="display:none; font-weight:bold;">
                                         </span>
+                                        
+                                        <!-- Отображение прикрепленного файла -->
+                                        <div id="attached-file-info" class="mb-2" style="display: none;">
+                                            <div class="d-flex align-items-center bg-light p-2 rounded" style="border: 1px solid #dee2e6;">
+                                                <i class="fas fa-file-alt text-primary me-2"></i>
+                                                <span id="attached-file-name" class="flex-grow-1"></span>
+                                                <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="removeAttachedFile()">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
 
                                         <div class="input-group position-relative">
+                                            <!-- Кнопка прикрепления файла -->
+                                            <label for="resume-file-input" class="btn btn-outline-secondary rounded-circle me-2" 
+                                                   style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer;"
+                                                   title="Прикрепить файл резюме">
+                                                <i class="fas fa-paperclip"></i>
+                                            </label>
+                                            <input type="file" 
+                                                   id="resume-file-input" 
+                                                   name="resume_file" 
+                                                   accept=".pdf,.doc,.docx,.txt"
+                                                   style="display: none;"
+                                                   onchange="handleFileSelect(event)">
+                                            
                                             {{ form.message }}
                                             <button type="submit" class="btn btn-primary" id="send-btn">
                                                 <i class="fas fa-paper-plane"></i>
@@ -516,104 +877,208 @@
                     </div>
                 </div>
 
-                <!-- Блок команд -->
-                <div class="col-lg-4">
-                    <!-- Инструкция по командам -->
-                    <div class="card shadow">
-                <div class="card-header py-3 d-flex justify-content-between align-items-center" style="cursor: pointer;" onclick="toggleCommandsCard()">
-                    <h6 class="m-0 font-weight-bold text-primary">
+                <!-- Кнопка команд чата -->
+                <div class="col-lg-4" style="display: flex; flex-direction: column; min-height: 0;">
+                    <a href="/wiki/" class="btn btn-primary btn-lg w-100 shadow" style="flex-shrink: 0;">
                         <i class="fas fa-keyboard me-2"></i>Команды чата
-                    </h6>
-                    <i class="fas fa-chevron-down" id="commandsToggleIcon"></i>
-                </div>
-                <div class="card-body p-3" id="commandsCardBody">
-                    <div class="commands-list">
-                        <!-- Функциональность чата -->
-                        <div class="command-item mb-3 command-hover-card">
-                            <div class="command-header">
-                                <span class="command-badge bg-primary">📝</span>
-                                <strong class="ms-2">Функциональность чата</strong>
+                    </a>
+
+                    <!-- Отчеты последних недель -->
+                    <div class="card shadow mt-3" style="flex-shrink: 0;">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-chart-line me-2"></i>Отчеты последних недель
+                            </h6>
+                        </div>
+                        <div class="card-body p-3" id="weeklyReportsCardBody">
+                            <!-- Текущая неделя -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2" style="cursor: pointer;" onclick="toggleCurrentWeekCollapse()">
+                                    <h6 class="m-0 text-primary">
+                                        <i class="fas fa-calendar-week me-2"></i>Текущая неделя
+                                    </h6>
+                                    <i class="fas fa-chevron-down" id="currentWeekToggleIcon"></i>
+                                </div>
+                                <div class="collapse" id="currentWeekCollapse">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover table-sm weekly-reports-table" id="currentWeekTable">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th style="width: 50%;">Этап</th>
+                                                    <th style="width: 50%;">Количество</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><strong>HR-screening</strong></td>
+                                                    <td class="text-center" id="current-hr-screening">—</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Tech Screening</strong></td>
+                                                    <td class="text-center" id="current-tech-screening">—</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Interview</strong></td>
+                                                    <td class="text-center" id="current-interview">—</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Offer</strong></td>
+                                                    <td class="text-center" id="current-offer">—</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Offer Accepted</strong></td>
+                                                    <td class="text-center" id="current-offer-accepted">—</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Onboarding</strong></td>
+                                                    <td class="text-center" id="current-onboarding">—</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="command-example mt-1">
-                                <code class="text-primary small">[дата время] (45 мин) @Иван Петров<br>Управление временем и интервьюерами</code>
+
+                            <!-- Предыдущая неделя -->
+                            <div>
+                                <div class="d-flex justify-content-between align-items-center mb-2" style="cursor: pointer;" onclick="togglePreviousWeekCollapse()">
+                                    <h6 class="m-0 text-primary">
+                                        <i class="fas fa-calendar-alt me-2"></i>Предыдущая неделя
+                                    </h6>
+                                    <i class="fas fa-chevron-down" id="previousWeekToggleIcon"></i>
+                                </div>
+                                <div class="collapse" id="previousWeekCollapse">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover table-sm weekly-reports-table" id="previousWeekTable">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th style="width: 50%;">Этап</th>
+                                                    <th style="width: 50%;">Количество</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><strong>HR-screening</strong></td>
+                                                    <td class="text-center" id="previous-hr-screening">—</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Tech Screening</strong></td>
+                                                    <td class="text-center" id="previous-tech-screening">—</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Interview</strong></td>
+                                                    <td class="text-center" id="previous-interview">—</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Offer</strong></td>
+                                                    <td class="text-center" id="previous-offer">—</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Offer Accepted</strong></td>
+                                                    <td class="text-center" id="previous-offer-accepted">—</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Onboarding</strong></td>
+                                                    <td class="text-center" id="previous-onboarding">—</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="command-details-hover">
-                                <div class="alert alert-info mb-0">
-                                    <div class="d-flex align-items-start">
-                                        <i class="fas fa-info-circle me-2 mt-1"></i>
-                                        <div>
-                                            <strong>Управление временем встречи (скобочки):</strong><br>
-                                            Добавьте в скобочках после даты и времени:
-                                            <p class="mb-0 mt-2">
-                                                <code>(45 мин)</code> OR <code>(1 час)</code> OR <code>(1h)</code><br>
-                                                <code>(30 минут)</code> OR <code>(30m)</code> OR <code>(полчаса)</code>
-                                            </p>
-                                            <div class="mt-2">
-                                                <strong>Добавление интервьюера (символ @):</strong><br>
-                                                <code>@Иван Петров</code> OR <code>@Анна Сидорова</code><br>
-                                                <code>@john.doe</code> OR <code>@jane_smith</code>
-                                            </div>
-                                            <div class="mt-2">
-                                                <strong>Примеры комбинаций:</strong><br>
-                                                <code>[15.11.2024 14:00] (1 ч) @Иван Петров</code><br>
-                                                <code>[16.11.2024 10:30] (45 мин) @Анна Сидорова</code>
-                                            </div>
-                                        </div>
+
+                        </div>
+                    </div>
+                    
+                    <!-- Контактная информация кандидата под блоком отчетов -->
+                    {% if candidate_social_links.communication_where or candidate_social_links.telegram or candidate_social_links.linkedin or candidate_social_links.email %}
+                    <div class="mt-3" id="currentContactInfo" style="flex-shrink: 0;">
+                        <!-- Если заполнено "Где ведется коммуникация", показываем только его -->
+                        {% if candidate_social_links.communication_where %}
+                        {% if 'http' in candidate_social_links.communication_where|lower %}
+                        <a href="{{ candidate_social_links.communication_where }}" target="_blank" rel="noopener noreferrer"
+                           class="btn btn-outline-primary w-100 mb-2" 
+                           style="border-color: #0088cc; color: #0088cc;">
+                            {% if 't.me/' in candidate_social_links.communication_where|lower %}
+                                <i class="fab fa-telegram me-2"></i>Где ведется коммуникация: {{ candidate_social_links.communication_where|cut:"https://t.me/"|cut:"http://t.me/" }}
+                            {% else %}
+                                <i class="fas fa-comments me-2"></i>Где ведется коммуникация: {{ candidate_social_links.communication_where }}
+                            {% endif %}
+                        </a>
+                        {% else %}
+                        <div class="card mb-2" style="border: 1px solid #0088cc; border-radius: 8px;">
+                            <div class="card-body p-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-comments me-2" style="color: #0088cc;"></i>
+                                    <div>
+                                        <strong style="color: #0088cc;">Где ведется коммуникация:</strong>
+                                        <div>{{ candidate_social_links.communication_where }}</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Команды чата -->
-                        <div class="command-item mb-3">
-                            <div class="command-header">
-                                <span class="command-badge bg-success">/s</span>
-                                <strong class="ms-2">HR-скрининг</strong>
-                            </div>
-                            <div class="command-example mt-1">
-                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[ответы]</code>
-                            </div>
-                        </div>
+                        {% endif %}
+                        {% else %}
+                        <!-- Если "Где ведется коммуникация" не заполнено, показываем остальные поля -->
                         
-                        <div class="command-item mb-3">
-                            <div class="command-header">
-                                <span class="command-badge bg-warning">/in</span>
-                                <strong class="ms-2">Инвайт</strong>
-                            </div>
-                            <div class="command-example mt-1">
-                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (время) @интервьюер</code>
-                            </div>
-                        </div>
+                        <!-- Telegram -->
+                        {% if candidate_social_links.telegram %}
+                        <a href="https://t.me/{{ candidate_social_links.telegram }}" target="_blank" rel="noopener noreferrer"
+                           class="btn btn-outline-primary w-100 mb-2" 
+                           style="border-color: #0088cc; color: #0088cc;">
+                            <i class="fab fa-telegram me-2"></i>Telegram: {{ candidate_social_links.telegram }}
+                        </a>
+                        {% endif %}
                         
-                        <div class="command-item mb-3" id="additionalCommand1">
-                            <div class="command-header">
-                                <span class="command-badge bg-info">/t</span>
-                                <strong class="ms-2">Техническое интервью</strong>
-                            </div>
-                            <div class="command-example mt-1">
-                                <code class="text-primary small">https://huntflow.ru/vacancy/123/candidate/456<br>[дата время] (время) @интервьюер</code>
-                            </div>
-                        </div>
+                        <!-- LinkedIn -->
+                        {% if candidate_social_links.linkedin %}
+                        <a href="{% if 'http' not in candidate_social_links.linkedin %}https://{% endif %}{{ candidate_social_links.linkedin }}" target="_blank" rel="noopener noreferrer"
+                           class="btn btn-outline-info w-100 mb-2" 
+                           style="border-color: #0077B5; color: #0077B5;">
+                            <i class="fab fa-linkedin me-2"></i>LinkedIn: {{ candidate_social_links.linkedin }}
+                        </a>
+                        {% endif %}
                         
-                        <div class="command-item" id="additionalCommand2">
-                            <div class="command-header">
-                                <span class="command-badge bg-danger">/del</span>
-                                <strong class="ms-2">Отменить последнее действие</strong>
-                            </div>
-                            <div class="command-example mt-1">
-                                <code class="text-primary small">Отменяет последнее созданное действие<br>(инвайт, скрининг, интервью)</code>
-                            </div>
-                        </div>
+                        <!-- Email -->
+                        {% if candidate_social_links.email %}
+                        <a href="mailto:{{ candidate_social_links.email }}" 
+                           class="btn btn-outline-secondary w-100 mb-2" 
+                           style="border-color: #6c757d; color: #6c757d;">
+                            <i class="fas fa-envelope me-2"></i>Email: {{ candidate_social_links.email }}
+                        </a>
+                        {% endif %}
+                        {% endif %}
                     </div>
-                </div>
+                    {% endif %}
+                    
+                    <!-- История контактной информации -->
+                    <div class="mt-3" id="contactHistoryContainer" style="flex: 1; display: flex; flex-direction: column; min-height: 0; max-height: calc(100vh - 510px);">
+                        <div class="card shadow" style="display: flex; flex-direction: column; flex: 1; min-height: 0;">
+                            <div class="card-header py-2" style="flex-shrink: 0;">
+                                <h6 class="m-0 font-weight-bold text-primary">
+                                    <i class="fas fa-history me-2"></i>История контактов
+                                    <span class="badge bg-secondary ms-2" id="contactHistoryCount">0</span>
+                                </h6>
+                            </div>
+                            <div class="card-body p-2" id="contactHistoryList" style="flex: 1; overflow-y: auto; min-height: 0;">
+                                <!-- История будет загружена через JavaScript из бэкенда и localStorage -->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    </div>
+    <!-- КОНЕЦ ОБЕРТКИ ДЛЯ ОСНОВНОГО КОНТЕНТА -->
 </div>
 
 <style>
+/* === СТИЛИ ДЛЯ ПЕРВОЙ СТРОКИ КОНТЕЙНЕРА === */
+.main-content .container-fluid .row:first-child {
+    margin-top: 7px !important;
+}
+
 /* === ЕДИНООБРАЗИЕ РАЗМЕРОВ ШРИФТОВ === */
 .card .chat-messages {
     background-color: #ffffff; /* Белый фон для светлой темы */
@@ -809,9 +1274,8 @@
     min-width: 120px;
 }
 
-/* Системные сообщения - БЕЗ ОГРАНИЧЕНИЙ ШИРИНЫ */
+/* Системные сообщения - ограничение ширины для ошибок */
 .card .system-message .message-bubble {
-    max-width: none !important;
     min-width: fit-content !important;
     width: auto !important;
 }
@@ -1009,6 +1473,18 @@
     max-width: none !important;
 }
 
+/* Ограничение ширины системных сообщений (ответы HR-системы) - только для базового класса без дополнительных */
+.card .system-message:not(.hr-screening-message):not(.invite-message):not(.delete-message):not(.add-candidate-message) .d-flex {
+    max-width: 60% !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+.card .system-message:not(.hr-screening-message):not(.invite-message):not(.delete-message):not(.add-candidate-message) .message-bubble {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
 .card .user-message .message-bubble {
     border-bottom-right-radius: 3px;
 }
@@ -1031,6 +1507,34 @@
     object-fit: cover;
     border: 2px solid white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+}
+
+/* Аватары системных сообщений */
+.card .message-avatar .ai-avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+}
+
+/* Показываем правильный логотип в зависимости от темы */
+.card .message-avatar .light-theme-logo {
+    display: block;
+}
+
+.card .message-avatar .dark-theme-logo {
+    display: none;
+}
+
+[data-theme="dark"] .card .message-avatar .light-theme-logo {
+    display: none;
+}
+
+[data-theme="dark"] .card .message-avatar .dark-theme-logo {
+    display: block;
 }
 
 /* Футер сообщения пользователя */
@@ -1052,6 +1556,15 @@
 }
 
 .card .hr-screening-message .message-header {
+    color: #2e7d32;
+}
+
+.card .add-candidate-message .system-bubble {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.08) 0%, rgba(76, 175, 80, 0.03) 100%);
+    border-color: rgba(76, 175, 80, 0.2);
+}
+
+.card .add-candidate-message .message-header {
     color: #2e7d32;
 }
 
@@ -1175,6 +1688,45 @@
     min-height: 36px;
 }
 
+/* Стили для истории контактов */
+#contactHistoryContainer {
+    height: calc(100vh - 560px);
+    min-height: 200px;
+}
+
+/* Стили для формы отказа кандидата */
+.rejection-form-container {
+    border-left: 4px solid #ffc107 !important;
+}
+
+.rejection-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.reject-candidate-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#contactHistoryList {
+    max-height: 100%;
+}
+
+.contact-history-item {
+    transition: opacity 0.2s ease;
+}
+
+.contact-history-item:hover {
+    opacity: 1 !important;
+}
+
+.contact-history-item .btn {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /* Заголовок карточки */
 .card .card-header {
     padding: 12px 16px !important;
@@ -1207,16 +1759,17 @@
 
 /* Адаптивность для мобильных - сохраняем пропорциональность */
 @media (max-width: 768px) {
+    #contactHistoryContainer {
+        height: 60vh;
+    }
+    
     .card .message-bubble {
         max-width: 95%;
         padding: 6px 10px;
         font-size: 0.85rem !important; /* На мобильных чуть меньше, но одинаково */
     }
     
-    .card .system-message .message-bubble {
-        min-width: 200px;
-        max-width: 95%;
-    }
+    /* Системные сообщения обрабатываются отдельным медиа-запросом выше */
     
     .card .message-content {
         font-size: 0.85rem !important; /* На мобильных чуть меньше, но одинаково */
@@ -1373,6 +1926,15 @@
     color: #81c784;
 }
 
+[data-theme="dark"] .card .add-candidate-message .system-bubble {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.12) 0%, rgba(76, 175, 80, 0.06) 100%);
+    border-color: rgba(76, 175, 80, 0.3);
+}
+
+[data-theme="dark"] .card .add-candidate-message .message-header {
+    color: #81c784;
+}
+
 [data-theme="dark"] .card .invite-message .system-bubble {
     background: linear-gradient(135deg, rgba(33, 150, 243, 0.12) 0%, rgba(33, 150, 243, 0.06) 100%);
     border-color: rgba(33, 150, 243, 0.3);
@@ -1469,23 +2031,23 @@
      line-height: 1;
  }
 
- .copy-tooltip {
-     position: absolute;
-     bottom: 100%;
-     left: 50%;
-     transform: translateX(-50%);
-     background: var(--hr-dark, #333);
-     color: white;
-     padding: 4px 8px;
-     border-radius: 4px;
-     font-size: 0.75rem;
-     white-space: nowrap;
-     opacity: 0;
-     visibility: hidden;
-     transition: all 0.2s ease;
-     z-index: 1000;
-     margin-bottom: 5px;
- }
+.copy-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--hr-dark, #333);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    z-index: 99999 !important;
+    margin-bottom: 5px;
+}
 
  .btn-copy:hover .copy-tooltip {
      opacity: 1;
@@ -1756,22 +2318,22 @@
      to { opacity: 1; }
  }
 
- .copy-buttons .btn-copy .copy-tooltip {
-     position: absolute !important;
-     bottom: -35px !important;
-     left: 50% !important;
-     transform: translateX(-50%) !important;
-     background: rgba(0, 0, 0, 0.8) !important;
-     color: white !important;
-     padding: 5px 10px !important;
-     border-radius: 5px !important;
-     font-size: 12px !important;
-     white-space: nowrap !important;
-     opacity: 0 !important;
-     transition: opacity 0.3s ease !important;
-     pointer-events: none !important;
-     z-index: 1000 !important;
- }
+.copy-buttons .btn-copy .copy-tooltip {
+    position: absolute !important;
+    bottom: -35px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+    color: white !important;
+    padding: 5px 10px !important;
+    border-radius: 5px !important;
+    font-size: 12px !important;
+    white-space: nowrap !important;
+    opacity: 0 !important;
+    transition: opacity 0.3s ease !important;
+    pointer-events: none !important;
+    z-index: 99999 !important;
+}
 
  .copy-buttons .btn-copy:hover .copy-tooltip {
      opacity: 1 !important;
@@ -2211,6 +2773,421 @@
     100% { box-shadow: 0 6px 20px rgba(40, 167, 69, 0.8); }
 }
 
+/* === СТИЛИ ДЛЯ РАСШИРЯЮЩЕГОСЯ ПОЛОТНА НАСТРОЕК ИНТЕРВЬЮ === */
+.interview-options-panel {
+    margin-top: 10px;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.interview-options-panel .bg-light {
+    background: rgba(248, 249, 250, 0.45) !important;
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Стили для контейнера элементов в один ряд */
+.interview-options-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-wrap: wrap !important;
+}
+
+.interview-format-buttons {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+}
+
+.interview-separator {
+    color: rgba(0, 0, 0, 0.3) !important;
+    font-size: 18px !important;
+    font-weight: 300 !important;
+    padding: 0 4px !important;
+    flex-shrink: 0 !important;
+    line-height: 1 !important;
+}
+
+[data-theme="dark"] .interview-separator {
+    color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.interviewers-container {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 15px !important;
+    flex: 1 !important;
+    justify-content: flex-start !important;
+    min-width: 0 !important;
+}
+
+/* На десктопе тоже оставляем порядок слева направо (без space-between) */
+@media (min-width: 768px) {
+    .interviewers-container {
+        justify-content: flex-start !important;
+        gap: 15px !important;
+    }
+}
+
+.slots-status-indicator {
+    display: inline-flex !important;
+    align-items: center !important;
+    font-size: 13px !important;
+    padding: 2px 8px !important;
+    margin-left: 8px !important;
+    white-space: nowrap !important;
+}
+
+.slots-status-indicator .slots-status-text {
+    display: inline-flex !important;
+    align-items: center !important;
+}
+
+.slots-status-indicator i {
+    font-size: 12px !important;
+    margin-right: 4px !important;
+}
+
+[data-theme="dark"] .slots-status-indicator {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.alert-sm {
+    padding: 6px 10px !important;
+    font-size: 0.85rem !important;
+    margin: 0 !important;
+}
+
+.interview-options-panel h6 {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.interview-options-panel .form-label {
+    font-size: 0.95rem;
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+.interview-options-panel .form-check {
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    margin-bottom: 5px;
+}
+
+.interview-options-panel .form-check:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+.interview-options-panel .form-check-input {
+    margin-top: 0.4rem;
+    cursor: pointer;
+}
+
+.interview-options-panel .form-check-label {
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #495057;
+    display: flex;
+    align-items: center;
+}
+
+.interview-options-panel .form-check-label i {
+    margin-right: 6px;
+    color: #007bff;
+}
+
+.interview-options-panel .interviewer-checkbox {
+    margin-top: 0.35rem;
+}
+
+.interview-options-panel .alert-info {
+    font-size: 0.9rem;
+    padding: 10px 15px;
+    border-radius: 6px;
+}
+
+/* Темная тема для панели настроек интервью */
+[data-theme="dark"] .interview-options-panel .bg-light {
+    background: rgba(52, 58, 64, 0.45) !important;
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .interview-options-panel h6 {
+    color: #e9ecef;
+}
+
+[data-theme="dark"] .interview-options-panel .form-label {
+    color: #e9ecef;
+}
+
+[data-theme="dark"] .interview-options-panel .form-check-label {
+    color: #e9ecef;
+}
+
+[data-theme="dark"] .interview-options-panel .form-check:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* === СТИЛИ ДЛЯ КНОПОК ФОРМАТА ИНТЕРВЬЮ === */
+.btn-interview-format {
+    background: linear-gradient(135deg, #007bff, #0056b3) !important;
+    color: white !important;
+    border: 1px solid #fff !important;
+    box-shadow: 0 1px 4px rgba(0, 123, 255, 0.3) !important;
+    padding: 0 !important;
+    border-radius: 7px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 10px !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    width: 28px !important;
+    height: 28px !important;
+    opacity: 0.7 !important;
+    filter: grayscale(0.2) !important;
+    position: relative !important;
+}
+
+.btn-interview-format:hover:not(.active) {
+    opacity: 0.8 !important;
+    filter: grayscale(0.1) !important;
+    transform: scale(1.05) !important;
+}
+
+.btn-interview-format.active {
+    opacity: 1 !important;
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.7) !important;
+    transform: scale(1.1) !important;
+    border: 2px solid #fff !important;
+    z-index: 10 !important;
+    animation: pulse-active 2s infinite !important;
+}
+
+.btn-interview-format.active::before {
+    content: "✓" !important;
+    position: absolute !important;
+    top: -5px !important;
+    right: -5px !important;
+    background: #fff !important;
+    color: #28a745 !important;
+    border-radius: 50% !important;
+    width: 12px !important;
+    height: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 7px !important;
+    font-weight: bold !important;
+    box-shadow: 0 1.5px 3px rgba(0,0,0,0.3) !important;
+    border: 1px solid #28a745 !important;
+    z-index: 11 !important;
+}
+
+.btn-interview-format i {
+    font-size: 12px !important;
+}
+
+/* Темная тема для кнопок формата интервью */
+[data-theme="dark"] .btn-interview-format {
+    background: linear-gradient(135deg, #495057, #343a40) !important;
+    border: 1px solid #2c2c2c !important;
+    box-shadow: 0 1px 4px rgba(73, 80, 87, 0.4) !important;
+}
+
+[data-theme="dark"] .btn-interview-format.active {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.8) !important;
+    border: 2px solid #fff !important;
+    animation: pulse-active-dark 2s infinite !important;
+}
+
+[data-theme="dark"] .btn-interview-format.active::before {
+    background: #fff !important;
+    color: #28a745 !important;
+    border: 1px solid #28a745 !important;
+    box-shadow: 0 1.5px 3px rgba(0,0,0,0.5) !important;
+}
+
+/* === СТИЛИ ДЛЯ ПИЛЮЛЕЙ ИНТЕРВЬЮЕРОВ === */
+.btn-interviewer-pill {
+    background: linear-gradient(135deg, #6c757d, #5a6268) !important;
+    color: white !important;
+    border: 1px solid #fff !important;
+    box-shadow: 0 1px 3px rgba(108, 117, 125, 0.3) !important;
+    padding: 3px 8px !important;
+    border-radius: 14px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    opacity: 0.7 !important;
+    filter: grayscale(0.2) !important;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    line-height: 1.2 !important;
+}
+
+.btn-interviewer-pill:hover:not(.active) {
+    opacity: 0.85 !important;
+    filter: grayscale(0.1) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 4px rgba(108, 117, 125, 0.4) !important;
+}
+
+.btn-interviewer-pill.active {
+    opacity: 1 !important;
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    box-shadow: 0 2px 6px rgba(40, 167, 69, 0.5) !important;
+    transform: translateY(-1px) scale(1.05) !important;
+    border: 1px solid #fff !important;
+    z-index: 5 !important;
+}
+
+.btn-interviewer-pill.active::before {
+    content: "✓" !important;
+    position: absolute !important;
+    top: -3px !important;
+    right: -3px !important;
+    background: #fff !important;
+    color: #28a745 !important;
+    border-radius: 50% !important;
+    width: 10px !important;
+    height: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 7px !important;
+    font-weight: bold !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+    border: 1px solid #28a745 !important;
+    z-index: 6 !important;
+}
+
+.btn-interviewer-pill .interviewer-name-full {
+    display: inline-block !important;
+}
+
+.btn-interviewer-pill .interviewer-name-short {
+    display: inline-block !important;
+}
+
+/* Убеждаемся, что только один span виден */
+@media (min-width: 768px) {
+    .btn-interviewer-pill .interviewer-name-short {
+        display: none !important;
+    }
+    .btn-interviewer-pill .interviewer-name-full {
+        display: inline-block !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .btn-interviewer-pill .interviewer-name-full {
+        display: none !important;
+    }
+    .btn-interviewer-pill .interviewer-name-short {
+        display: inline-block !important;
+    }
+}
+
+/* Темная тема для пилюлей интервьюеров */
+[data-theme="dark"] .btn-interviewer-pill {
+    background: linear-gradient(135deg, #495057, #343a40) !important;
+    border: 1px solid #2c2c2c !important;
+    box-shadow: 0 1px 3px rgba(73, 80, 87, 0.4) !important;
+}
+
+[data-theme="dark"] .btn-interviewer-pill.active {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    box-shadow: 0 2px 6px rgba(40, 167, 69, 0.6) !important;
+    border: 1px solid #fff !important;
+}
+
+[data-theme="dark"] .btn-interviewer-pill.active::before {
+    background: #fff !important;
+    color: #28a745 !important;
+    border: 1px solid #28a745 !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.5) !important;
+}
+
+/* === СТИЛИ ДЛЯ ТАБЛИЦЫ ОТЧЕТОВ ТЕКУЩЕЙ НЕДЕЛИ === */
+.weekly-reports-table {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.weekly-reports-table thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #dee2e6;
+    padding: 8px 4px;
+}
+
+.weekly-reports-table tbody td {
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #dee2e6;
+    padding: 8px 4px;
+}
+
+.weekly-reports-table tbody td:first-child {
+    text-align: left;
+    font-weight: 500;
+}
+
+.weekly-reports-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* === СТИЛИ ДЛЯ КОЛЛАПСОВ НЕДЕЛЬ === */
+#currentWeekCollapse,
+#previousWeekCollapse {
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+}
+
+#currentWeekCollapse.show,
+#previousWeekCollapse.show {
+    max-height: 1000px;
+    opacity: 1;
+}
+
+#currentWeekCollapse .table-responsive,
+#previousWeekCollapse .table-responsive {
+    margin-top: 10px;
+}
+
 </style>
 
 <script>
@@ -2444,12 +3421,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const lastAtIndex = textBeforeCursor.lastIndexOf('@');
         
         if (lastAtIndex !== -1) {
-            // Заменяем текст от @ до курсора на username интервьюера
-            const newValue = value.substring(0, lastAtIndex) + interviewer.username + ' ' + value.substring(cursorPos);
+            // Заменяем текст от @ до курсора на @username интервьюера (сохраняем @)
+            const newValue = value.substring(0, lastAtIndex) + '@' + interviewer.username + ' ' + value.substring(cursorPos);
             messageInput.value = newValue;
             
-            // Устанавливаем курсор после username
-            const newCursorPos = lastAtIndex + interviewer.username.length + 1;
+            // Устанавливаем курсор после @username
+            const newCursorPos = lastAtIndex + interviewer.username.length + 2; // +2 для @ и пробела
             messageInput.setSelectionRange(newCursorPos, newCursorPos);
             
             // Добавляем информацию об интервьюере в скрытое поле для отправки на сервер
@@ -2534,6 +3511,173 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
+    
+    // Копирование ссылки на Huntflow
+    if (e.target.closest('.copy-huntflow-link-btn')) {
+        e.preventDefault();
+        const btn = e.target.closest('.copy-huntflow-link-btn');
+        const huntflowUrl = btn.getAttribute('data-huntflow-url');
+        const originalText = btn.innerHTML;
+        
+        if (!huntflowUrl) {
+            alert('Ссылка на Huntflow не найдена');
+            return;
+        }
+        
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        btn.disabled = true;
+        
+        navigator.clipboard.writeText(huntflowUrl).then(() => {
+            btn.innerHTML = '<i class="fas fa-check"></i>';
+            btn.classList.remove('btn-outline-secondary');
+            btn.classList.add('btn-success');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-outline-secondary');
+                btn.disabled = false;
+            }, 1500);
+        }).catch(err => {
+            console.error('Ошибка копирования ссылки:', err);
+            alert('Не удалось скопировать ссылку в буфер обмена');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
+    }
+});
+
+// Обработчик кнопки копирования шаблона отказа по офисному формату
+document.addEventListener('click', function(e) {
+    function decodeEscapeJsString(value) {
+        if (!value) return value;
+        // data-* заполнено через Django |escapejs, поэтому получаем строки вида "\u002D", "\n" и т.п.
+        // Декодируем их обратно в "нормальный" текст.
+        try {
+            return JSON.parse('"' + String(value).replace(/"/g, '\\"') + '"');
+        } catch (err) {
+            return value;
+        }
+    }
+
+    if (e.target.closest('.copy-rejection-template-btn')) {
+        const btn = e.target.closest('.copy-rejection-template-btn');
+        const templateMessageRaw = btn.getAttribute('data-template-message');
+        const templateTitleRaw = btn.getAttribute('data-template-title');
+        const templateMessage = decodeEscapeJsString(templateMessageRaw);
+        const templateTitle = decodeEscapeJsString(templateTitleRaw);
+        
+        if (!templateMessage) {
+            alert('Текст шаблона не найден');
+            return;
+        }
+        
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        
+        // Копируем текст шаблона в буфер обмена
+        navigator.clipboard.writeText(templateMessage).then(() => {
+            btn.innerHTML = '<i class="fas fa-check"></i>';
+            btn.classList.remove('btn-outline-danger');
+            btn.classList.add('btn-success');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-outline-danger');
+                btn.disabled = false;
+            }, 2000);
+        }).catch(err => {
+            console.error('Clipboard error:', err);
+            // Fallback для старых браузеров
+            const textArea = document.createElement('textarea');
+            textArea.value = templateMessage;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                btn.innerHTML = '<i class="fas fa-check"></i>';
+                btn.classList.remove('btn-outline-danger');
+                btn.classList.add('btn-success');
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-outline-danger');
+                    btn.disabled = false;
+                }, 2000);
+            } catch (err2) {
+                console.error('Fallback copy error:', err2);
+                alert('Ошибка копирования в буфер обмена');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+            document.body.removeChild(textArea);
+        });
+        return;
+    }
+    
+    // Обработчик для кнопки копирования шаблона отказа "Финансы - больше"
+    if (e.target.closest('.copy-finance-more-template-btn')) {
+        const btn = e.target.closest('.copy-finance-more-template-btn');
+        const templateMessageRaw = btn.getAttribute('data-template-message');
+        const templateTitleRaw = btn.getAttribute('data-template-title');
+        const templateMessage = decodeEscapeJsString(templateMessageRaw);
+        const templateTitle = decodeEscapeJsString(templateTitleRaw);
+        
+        if (!templateMessage) {
+            alert('Текст шаблона не найден');
+            return;
+        }
+        
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        
+        // Копируем текст шаблона в буфер обмена
+        navigator.clipboard.writeText(templateMessage).then(() => {
+            btn.innerHTML = '<i class="fas fa-check"></i>';
+            btn.classList.remove('btn-outline-danger');
+            btn.classList.add('btn-success');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-outline-danger');
+                btn.disabled = false;
+            }, 2000);
+        }).catch(err => {
+            console.error('Clipboard error:', err);
+            // Fallback для старых браузеров
+            const textArea = document.createElement('textarea');
+            textArea.value = templateMessage;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                btn.innerHTML = '<i class="fas fa-check"></i>';
+                btn.classList.remove('btn-outline-danger');
+                btn.classList.add('btn-success');
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-outline-danger');
+                    btn.disabled = false;
+                }, 2000);
+            } catch (err2) {
+                console.error('Fallback copy error:', err2);
+                alert('Ошибка копирования в буфер обмена');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+            document.body.removeChild(textArea);
+        });
+        return;
+    }
 });
 
 </script>
@@ -2593,28 +3737,51 @@ console.log('⚠️ DEBUG: Вакансия не выбрана');
 {% endif %}
 
 <script type="application/json" id="slots-settings-data">
-{{ slots_settings.to_dict|default:"{}"|safe }}
+{{ slots_settings_json|safe }}
 </script>
 
 <!-- Отладочная информация для настроек слотов -->
 <script>
-console.log('🔍 DEBUG: slots_settings.to_dict:', {{ slots_settings.to_dict|default:"{}"|safe }});
+// Настройки слотов из Django контекста (уже сериализованы в JSON)
+const slotsSettingsElement = document.getElementById('slots-settings-data');
+let slotsSettings = {};
+if (slotsSettingsElement) {
+    try {
+        slotsSettings = JSON.parse(slotsSettingsElement.textContent);
+    } catch (e) {
+        console.error('Ошибка парсинга настроек слотов:', e);
+        slotsSettings = {};
+    }
+}
+console.log('🔍 DEBUG: Настройки слотов:', slotsSettings);
+</script>
+
+<script type="application/json" id="calendar-events-count">
+{{ calendar_events_data|length|default:"0" }}
+</script>
+
+<script type="application/json" id="screening-slots-data">
+{{ screening_slots_json|safe }}
+</script>
+
+<script type="application/json" id="interview-slots-data">
+{{ interview_slots_json|safe }}
 </script>
 
 <script>
 // Данные событий из Django контекста (как на странице календаря)
 console.log('🔍 DEBUG: Начинаем загрузку событий...');
-console.log('🔍 DEBUG: Количество событий в контексте:', {{ calendar_events_data|length|default:"0" }});
+const eventsCountElement = document.getElementById('calendar-events-count');
+if (eventsCountElement) {
+    const eventsCount = parseInt(eventsCountElement.textContent.trim()) || 0;
+    console.log('🔍 DEBUG: Количество событий в контексте:', eventsCount);
+}
 
 // Загружаем реальные данные событий
 let calendarEvents = JSON.parse(document.getElementById('calendar-events').textContent);
 console.log('🔍 DEBUG: Загружены реальные события, количество:', calendarEvents.length);
 // Делаем переменную глобальной для изменения в других скриптах
 window.calendarEvents = calendarEvents;
-
-// Настройки слотов из Django контекста
-let slotsSettings = {{ slots_settings.to_dict|default:"{}"|safe }};
-console.log('🔍 DEBUG: Настройки слотов:', slotsSettings);
 
 console.log('📊 Загружено событий календаря:', calendarEvents.length);
 console.log('🔍 DEBUG: Первое событие:', calendarEvents[0]);
@@ -2628,16 +3795,405 @@ window.questionsPoland = "{{ selected_vacancy.questions_poland|escapejs }}";
 {% endif %}
 
 // Предрассчитанные слоты с backend
-window.screeningSlots = {{ screening_slots_json|safe|default:"[]" }};
-window.interviewSlots = {{ interview_slots_json|safe|default:"[]" }};
+const screeningSlotsElement = document.getElementById('screening-slots-data');
+const interviewSlotsElement = document.getElementById('interview-slots-data');
+if (screeningSlotsElement) {
+    window.screeningSlots = JSON.parse(screeningSlotsElement.textContent);
+} else {
+    window.screeningSlots = [];
+}
+if (interviewSlotsElement) {
+    window.interviewSlots = JSON.parse(interviewSlotsElement.textContent);
+} else {
+    window.interviewSlots = [];
+}
 console.log('📊 Слоты для скринингов:', window.screeningSlots);
 console.log('📊 Слоты для интервью:', window.interviewSlots);
+
+// URL фото пользователя для аватара в AJAX-сообщениях
+{% if user_photo_url %}
+window.userPhotoUrl = "{{ user_photo_url|escapejs }}";
+{% else %}
+window.userPhotoUrl = null;
+{% endif %}
+
+// Email пользователя для фильтрации отклоненных событий
+{% if user_email %}
+window.currentUserEmail = "{{ user_email|escapejs }}".toLowerCase();
+console.log('📧 Email текущего пользователя для фильтрации событий:', window.currentUserEmail);
+{% else %}
+window.currentUserEmail = null;
+console.warn('⚠️ Email пользователя не найден, фильтрация отклоненных событий может работать некорректно');
+{% endif %}
 </script>
 
+<!-- Данные по скринингам и интервью из БД -->
+<script type="application/json" id="screenings-data">
+{{ screenings_data|safe }}
+</script>
+<script type="application/json" id="interviews-data">
+{{ interviews_data|safe }}
+</script>
+<script>
+// Загружаем данные по скринингам и интервью
+const screeningsDataElement = document.getElementById('screenings-data');
+const interviewsDataElement = document.getElementById('interviews-data');
+if (screeningsDataElement) {
+    try {
+        window.screeningsData = JSON.parse(screeningsDataElement.textContent);
+        console.log('📊 Загружено скринингов из БД:', window.screeningsData.length);
+    } catch (e) {
+        console.error('❌ Ошибка парсинга данных скринингов:', e);
+        window.screeningsData = [];
+    }
+} else {
+    window.screeningsData = [];
+}
+
+if (interviewsDataElement) {
+    try {
+        window.interviewsData = JSON.parse(interviewsDataElement.textContent);
+        console.log('📊 Загружено интервью/скринингов из БД:', window.interviewsData.length);
+    } catch (e) {
+        console.error('❌ Ошибка парсинга данных интервью:', e);
+        window.interviewsData = [];
+    }
+} else {
+    window.interviewsData = [];
+}
+</script>
+
+            <script src="{% static 'js/copy-buttons.js' %}"></script>
             <script src="{% static 'js/vacancy-slots.js' %}"></script>
             <script src="{% static 'js/meeting-type-switcher.js' %}"></script>
             
             <script>
+            // Функция для переключения формата интервью
+            window.switchInterviewFormat = function(format) {
+                console.log(`🔄 [FORMAT] Переключение на: ${format}`);
+                
+                // Убираем активный класс со всех кнопок формата
+                const allFormatButtons = document.querySelectorAll('.btn-interview-format');
+                allFormatButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Добавляем активный класс к выбранной кнопке
+                const activeFormatBtn = document.getElementById(`btnFormat${format.charAt(0).toUpperCase() + format.slice(1)}`);
+                if (activeFormatBtn) {
+                    activeFormatBtn.classList.add('active');
+                    console.log(`✅ [FORMAT] Кнопка формата активирована: ${format}`);
+                } else {
+                    console.error(`❌ [FORMAT] Кнопка формата не найдена: btnFormat${format.charAt(0).toUpperCase() + format.slice(1)}`);
+                }
+                
+                // Обновляем скрытое поле
+                const formatInput = document.getElementById('interviewFormatInput');
+                if (formatInput) {
+                    formatInput.value = format;
+                    console.log(`✅ [FORMAT] Значение обновлено: ${format}`);
+                }
+            };
+            
+            // Функция для переключения выбора интервьюера
+            window.toggleInterviewer = function(interviewerId) {
+                console.log(`🔄 [INTERVIEWER] Переключение интервьюера: ${interviewerId}`);
+                
+                const pillButton = document.getElementById(`interviewer_${interviewerId}`);
+                const hiddenInput = document.getElementById(`interviewer_input_${interviewerId}`);
+                
+                if (!pillButton || !hiddenInput) {
+                    console.error(`❌ [INTERVIEWER] Элементы не найдены для интервьюера: ${interviewerId}`);
+                    return;
+                }
+                
+                // Переключаем активное состояние
+                const isActive = pillButton.classList.contains('active');
+                
+                if (isActive) {
+                    // Убираем активное состояние
+                    pillButton.classList.remove('active');
+                    hiddenInput.disabled = true;
+                    console.log(`✅ [INTERVIEWER] Интервьюер ${interviewerId} отключен`);
+                } else {
+                    // Добавляем активное состояние
+                    pillButton.classList.add('active');
+                    hiddenInput.disabled = false;
+                    console.log(`✅ [INTERVIEWER] Интервьюер ${interviewerId} включен`);
+                }
+                
+                // Если выбран тип "Интервью", пересчитываем слоты
+                if (typeof window.getCurrentMeetingType === 'function' && window.getCurrentMeetingType() === 'interview') {
+                    console.log(`🔄 [INTERVIEWER] Пересчитываем слоты для интервью с учетом выбранных участников`);
+                    if (typeof window.updateInterviewSlots === 'function') {
+                        window.updateInterviewSlots();
+                    }
+                }
+            };
+            
+            // Функция для обновления слотов интервью с учетом выбранных участников
+            window.updateInterviewSlots = function() {
+                console.log(`🔄 [SLOTS] Обновление слотов интервью с учетом выбранных участников`);
+                
+                // Устанавливаем флаг, чтобы предотвратить рекурсию
+                if (window.isUpdatingInterviewSlots) {
+                    console.log(`⚠️ [SLOTS] Обновление уже идет, пропускаем`);
+                    return;
+                }
+                window.isUpdatingInterviewSlots = true;
+                
+                // Получаем ID вакансии из URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const vacancyId = urlParams.get('vacancy_id');
+                
+                if (!vacancyId) {
+                    console.warn(`⚠️ [SLOTS] vacancy_id не найден в URL`);
+                    window.isUpdatingInterviewSlots = false;
+                    return;
+                }
+                
+                // Получаем выбранных участников (пользователь + интервьюеры)
+                const selectedInterviewers = [];
+                const includeUser = document.getElementById('interviewer_user')?.classList.contains('active') || false;
+                
+                document.querySelectorAll('.btn-interviewer-pill.active').forEach(button => {
+                    const interviewerId = button.getAttribute('data-interviewer-id');
+                    const isUser = button.getAttribute('data-is-user') === 'true';
+                    // Добавляем только интервьюеров (не пользователя, он обрабатывается отдельно)
+                    if (interviewerId && !isUser) {
+                        selectedInterviewers.push(interviewerId);
+                    }
+                });
+                
+                console.log(`🔍 [SLOTS] Выбранные участники: пользователь=${includeUser ? 'да' : 'нет'}, интервьюеры=${selectedInterviewers.length > 0 ? selectedInterviewers.join(', ') : 'нет'}`);
+                
+                // Показываем индикатор статуса в строке с интервьюерами
+                const slotsStatusIndicator = document.getElementById('slotsStatusIndicator');
+                const slotsStatusMessage = slotsStatusIndicator?.querySelector('.slots-status-message');
+                if (slotsStatusIndicator) {
+                    slotsStatusIndicator.style.display = 'inline-flex';
+                    if (slotsStatusMessage) {
+                        slotsStatusMessage.textContent = 'Обновление слотов...';
+                    }
+                    // Убираем классы успеха/ошибки, оставляем только загрузку
+                    slotsStatusIndicator.className = 'slots-status-indicator';
+                    slotsStatusIndicator.querySelector('i')?.classList.remove('fa-check-circle', 'fa-exclamation-circle', 'fa-spinner', 'fa-spin');
+                    slotsStatusIndicator.querySelector('i')?.classList.add('fa-spinner', 'fa-spin');
+                }
+                
+                // Формируем URL для API
+                // Передаем информацию о том, включен ли пользователь, и список интервьюеров
+                const interviewerIds = selectedInterviewers.length > 0 ? selectedInterviewers.join(',') : '';
+                const includeUserParam = includeUser ? '1' : '0';
+                const apiUrl = `/google-oauth/api/interview-slots/?vacancy_id=${vacancyId}&interviewer_ids=${interviewerIds}&include_user=${includeUserParam}`;
+                
+                console.log(`🔍 [SLOTS] Запрос к API: ${apiUrl}`);
+                
+                // Запрашиваем обновленные слоты
+                fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    console.log(`🔍 [SLOTS] Ответ от API, status: ${response.status}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(`🔍 [SLOTS] Данные от API:`, data);
+                    
+                    // Обновляем индикатор статуса - показываем успех
+                    const slotsStatusIndicator = document.getElementById('slotsStatusIndicator');
+                    const slotsStatusMessage = slotsStatusIndicator?.querySelector('.slots-status-message');
+                    if (slotsStatusIndicator && slotsStatusMessage) {
+                        slotsStatusMessage.textContent = 'Слоты обновлены';
+                        slotsStatusIndicator.querySelector('i')?.classList.remove('fa-spinner', 'fa-spin');
+                        slotsStatusIndicator.querySelector('i')?.classList.add('fa-check-circle');
+                        slotsStatusIndicator.classList.add('text-success');
+                        
+                        // Скрываем индикатор через 2 секунды
+                        setTimeout(() => {
+                            if (slotsStatusIndicator) {
+                                slotsStatusIndicator.style.display = 'none';
+                            }
+                        }, 2000);
+                    }
+                    
+                    if (data.success && data.slots) {
+                        console.log(`✅ [SLOTS] Получено ${data.slots.length} дней со слотами для ${data.interviewer_count || 0} интервьюеров`);
+                        
+                        // ВАЖНО: Всегда сохраняем исходные слоты в Минске (они приходят с сервера в Минске)
+                        // Это нужно для правильного пересчета при смене локации
+                        window.originalInterviewSlots = JSON.parse(JSON.stringify(data.slots));
+                        console.log(`💾 [SLOTS] Сохранены исходные слоты интервью в Минске: ${window.originalInterviewSlots.length} дней`);
+                        
+                        // Обновляем глобальную переменную с учетом текущего часового пояса
+                        // Если текущий часовой пояс Минск, используем слоты как есть
+                        // Если другой часовой пояс, пересчитываем слоты
+                        if (typeof currentTimezone !== 'undefined' && currentTimezone === 'minsk') {
+                            window.interviewSlots = data.slots;
+                        } else {
+                            // Применяем часовой пояс к слотам через функцию пересчета
+                            if (typeof recalculateSlotsForTimezone === 'function') {
+                                const updatedSlots = recalculateSlotsForTimezone(data.slots);
+                                // Объединяем слоты для window.interviewSlots
+                                window.interviewSlots = [...(updatedSlots.currentWeek || []), ...(updatedSlots.nextWeek || [])];
+                                console.log(`🔄 [SLOTS] Применен часовой пояс ${currentTimezone}, пересчитано слотов: ${window.interviewSlots.length}`);
+                            } else {
+                                window.interviewSlots = data.slots;
+                            }
+                        }
+                        
+                        // Сбрасываем флаг перед обновлением отображения
+                        window.isUpdatingInterviewSlots = false;
+                        // Обновляем отображение напрямую, используя логику из switchSlotsByMeetingType
+                        if (window.interviewSlots && window.interviewSlots.length > 0) {
+                            const today = new Date();
+                            const currentWeekSlots = [];
+                            const nextWeekSlots = [];
+                            
+                            // Определяем начало следующей недели (следующий понедельник)
+                            const dayOfWeek = today.getDay();
+                            const daysUntilMonday = dayOfWeek === 0 ? 1 : (7 - dayOfWeek + 1);
+                            const nextMonday = new Date(today);
+                            nextMonday.setDate(today.getDate() + daysUntilMonday);
+                            nextMonday.setHours(0, 0, 0, 0);
+                            
+                            // Разделяем слоты по неделям (используем уже пересчитанные слоты с учетом часового пояса)
+                            window.interviewSlots.forEach(slot => {
+                                const slotDate = new Date(slot.date);
+                                if (slotDate < nextMonday) {
+                                    currentWeekSlots.push(slot);
+                                } else {
+                                    nextWeekSlots.push(slot);
+                                }
+                            });
+                            
+                            console.log(`📅 Разделение слотов: текущая неделя = ${currentWeekSlots.length} дней, следующая = ${nextWeekSlots.length} дней`);
+                            
+                            // Используем функцию обновления отображения из vacancy-slots.js
+                            if (typeof updateSlotsDisplay === 'function') {
+                                updateSlotsDisplay(currentWeekSlots, nextWeekSlots);
+                            } else if (typeof window.switchSlotsByMeetingType === 'function') {
+                                // Fallback: используем стандартную функцию
+                                window.switchSlotsByMeetingType('interview');
+                            }
+                        } else {
+                            // Если слотов нет, очищаем отображение
+                            if (typeof updateSlotsDisplay === 'function') {
+                                updateSlotsDisplay([], []);
+                            }
+                            console.warn(`⚠️ [SLOTS] Нет доступных слотов для выбранных интервьюеров`);
+                        }
+                    } else {
+                        console.error(`❌ [SLOTS] Ошибка получения слотов:`, data.message || data);
+                        // Показываем сообщение об ошибке пользователю
+                        const slotsCardBody = document.getElementById('slotsCardBody');
+                        if (slotsCardBody) {
+                            const errorDiv = document.createElement('div');
+                            errorDiv.className = 'alert alert-warning alert-sm';
+                            errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>Не удалось обновить слоты: ${data.message || 'Неизвестная ошибка'}`;
+                            slotsCardBody.insertBefore(errorDiv, slotsCardBody.firstChild);
+                            // Удаляем сообщение через 5 секунд
+                            setTimeout(() => {
+                                if (errorDiv.parentNode) {
+                                    errorDiv.parentNode.removeChild(errorDiv);
+                                }
+                            }, 5000);
+                        }
+                        window.isUpdatingInterviewSlots = false;
+                    }
+                })
+                .catch(error => {
+                    console.error(`❌ [SLOTS] Ошибка при запросе к API:`, error);
+                    
+                    // Обновляем индикатор статуса - показываем ошибку
+                    const slotsStatusIndicator = document.getElementById('slotsStatusIndicator');
+                    const slotsStatusMessage = slotsStatusIndicator?.querySelector('.slots-status-message');
+                    if (slotsStatusIndicator && slotsStatusMessage) {
+                        slotsStatusMessage.textContent = 'Ошибка обновления';
+                        slotsStatusIndicator.querySelector('i')?.classList.remove('fa-spinner', 'fa-spin');
+                        slotsStatusIndicator.querySelector('i')?.classList.add('fa-exclamation-circle');
+                        slotsStatusIndicator.classList.remove('text-success');
+                        slotsStatusIndicator.classList.add('text-danger');
+                        
+                        // Скрываем индикатор через 3 секунды
+                        setTimeout(() => {
+                            if (slotsStatusIndicator) {
+                                slotsStatusIndicator.style.display = 'none';
+                            }
+                        }, 3000);
+                    }
+                    
+                    window.isUpdatingInterviewSlots = false;
+                });
+            };
+            
+            // Автоматическое выделение единственного интервьюера при загрузке страницы
+            // и инициализация слотов для выбранных участников
+            document.addEventListener('DOMContentLoaded', function() {
+                // Пользователь всегда выбран по умолчанию
+                const userPill = document.getElementById('interviewer_user');
+                if (userPill && !userPill.classList.contains('active')) {
+                    userPill.classList.add('active');
+                    const userInput = document.getElementById('interviewer_input_user');
+                    if (userInput) {
+                        userInput.disabled = false;
+                    }
+                }
+                // Автоматически активируем единственного интервьюера (если есть только один, кроме пользователя)
+                const interviewerPills = document.querySelectorAll('.btn-interviewer-pill:not([data-is-user="true"])');
+                if (interviewerPills.length === 1) {
+                    const singlePill = interviewerPills[0];
+                    const interviewerId = singlePill.getAttribute('data-interviewer-id');
+                    if (interviewerId) {
+                        // Активируем единственного интервьюера
+                        singlePill.classList.add('active');
+                        const hiddenInput = document.getElementById(`interviewer_input_${interviewerId}`);
+                        if (hiddenInput) {
+                            hiddenInput.disabled = false;
+                            console.log(`✅ [INTERVIEWER] Единственный интервьюер ${interviewerId} автоматически активирован`);
+                        }
+                    }
+                }
+                
+                // Инициализация слотов для выбранных участников при загрузке страницы
+                // Ждем немного, чтобы все скрипты загрузились
+                setTimeout(function() {
+                    // Проверяем, есть ли активные интервьюеры
+                    const activeInterviewers = document.querySelectorAll('.btn-interviewer-pill.active');
+                    
+                    // Проверяем, выбран ли тип встречи "интервью"
+                    const interviewBtn = document.getElementById('btnInterview');
+                    const isInterviewTypeActive = interviewBtn && interviewBtn.classList.contains('active');
+                    const currentType = typeof window.getCurrentMeetingType === 'function' ? window.getCurrentMeetingType() : null;
+                    
+                    // Если тип интервью активен (по кнопке или по функции), обновляем слоты
+                    if (isInterviewTypeActive || currentType === 'interview') {
+                        if (activeInterviewers.length > 0) {
+                            console.log(`🔄 [INIT] При загрузке страницы найдено ${activeInterviewers.length} активных интервьюеров, обновляем слоты для выбранных участников`);
+                            if (typeof window.updateInterviewSlots === 'function') {
+                                window.updateInterviewSlots();
+                            } else {
+                                console.warn(`⚠️ [INIT] Функция updateInterviewSlots не найдена`);
+                            }
+                        } else {
+                            console.log(`ℹ️ [INIT] Тип интервью активен, но нет выбранных интервьюеров - будут использованы обязательные из API`);
+                            // Даже если нет выбранных интервьюеров, обновляем слоты (API использует обязательных)
+                            if (typeof window.updateInterviewSlots === 'function') {
+                                window.updateInterviewSlots();
+                            }
+                        }
+                    } else {
+                        console.log(`ℹ️ [INIT] Тип встречи не интервью, слоты не обновляем`);
+                    }
+                }, 800); // Увеличиваем задержку, чтобы все скрипты точно загрузились
+            });
+            
             // Настройки пользователя для рабочих часов
             window.userWorkHours = {
                 startHour: {{ user.interview_start_time.hour|default:11 }},
@@ -2718,14 +4274,106 @@ console.log('📊 Слоты для интервью:', window.interviewSlots);
                 });
             });
             
-            
-            // Функция для переключения карточки команд
+
+            function toggleCurrentWeekCollapse() {
+                console.log('🔄 toggleCurrentWeekCollapse вызвана');
+                const collapse = document.getElementById('currentWeekCollapse');
+                const toggleIcon = document.getElementById('currentWeekToggleIcon');
+                
+                if (collapse && toggleIcon) {
+                    if (collapse.classList.contains('show')) {
+                        collapse.classList.remove('show');
+                        toggleIcon.className = 'fas fa-chevron-down';
+                        console.log('📅 Текущая неделя свернута');
+                    } else {
+                        collapse.classList.add('show');
+                        toggleIcon.className = 'fas fa-chevron-up';
+                        console.log('📅 Текущая неделя развернута');
+                        // Загружаем данные при первом разворачивании
+                        loadWeeklyReportsData('current');
+                    }
+                }
+            }
+
+            function togglePreviousWeekCollapse() {
+                console.log('🔄 togglePreviousWeekCollapse вызвана');
+                const collapse = document.getElementById('previousWeekCollapse');
+                const toggleIcon = document.getElementById('previousWeekToggleIcon');
+                
+                if (collapse && toggleIcon) {
+                    if (collapse.classList.contains('show')) {
+                        collapse.classList.remove('show');
+                        toggleIcon.className = 'fas fa-chevron-down';
+                        console.log('📅 Предыдущая неделя свернута');
+                    } else {
+                        collapse.classList.add('show');
+                        toggleIcon.className = 'fas fa-chevron-up';
+                        console.log('📅 Предыдущая неделя развернута');
+                        // Загружаем данные при первом разворачивании
+                        loadWeeklyReportsData('previous');
+                    }
+                }
+            }
+
+            function loadWeeklyReportsData(weekType) {
+                // Получаем vacancy_id из URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const vacancyId = urlParams.get('vacancy_id');
+                
+                if (!vacancyId) {
+                    console.warn('⚠️ vacancy_id не найден в URL');
+                    return;
+                }
+                
+                console.log(`📊 Загрузка данных отчетов для ${weekType} недели, vacancy_id=${vacancyId}`);
+                
+                // Формируем URL для API
+                const apiUrl = `{% url 'google_oauth:api_weekly_reports' %}?vacancy_id=${vacancyId}&week_type=${weekType}`;
+                
+                // Загружаем данные
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && data.data) {
+                            updateWeeklyReportsTable(weekType, data.data);
+                        } else {
+                            console.error('❌ Ошибка загрузки данных:', data.message || 'Неизвестная ошибка');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('❌ Ошибка при запросе данных:', error);
+                    });
+            }
+
+            function updateWeeklyReportsTable(weekType, data) {
+                const prefix = weekType === 'current' ? 'current' : 'previous';
+                
+                // Обновляем значения в таблице
+                const elements = {
+                    'hr-screening': data.hr_screening || 0,
+                    'tech-screening': data.tech_screening || 0,
+                    'interview': data.interview || 0,
+                    'offer': data.offer || 0,
+                    'offer-accepted': data.offer_accepted || 0,
+                    'onboarding': data.onboarding || 0,
+                };
+                
+                for (const [key, value] of Object.entries(elements)) {
+                    const elementId = `${prefix}-${key}`;
+                    const element = document.getElementById(elementId);
+                    if (element) {
+                        element.textContent = value;
+                    }
+                }
+                
+                console.log(`✅ Данные для ${weekType} недели обновлены:`, data);
+            }
+
             function toggleCommandsCard() {
                 console.log('🔄 toggleCommandsCard вызвана');
                 const commandsCardBody = document.getElementById('commandsCardBody');
                 const toggleIcon = document.getElementById('commandsToggleIcon');
                 const additionalCommand1 = document.getElementById('additionalCommand1');
-                const additionalCommand2 = document.getElementById('additionalCommand2');
                 
                 if (commandsCardBody) {
                     // Проверяем, свернута ли карточка (скрыты ли дополнительные команды)
@@ -2734,13 +4382,11 @@ console.log('📊 Слоты для интервью:', window.interviewSlots);
                     if (isCollapsed) {
                         // Разворачиваем - показываем все команды
                         additionalCommand1.style.display = 'block';
-                        additionalCommand2.style.display = 'block';
                         toggleIcon.className = 'fas fa-chevron-up';
                         console.log('📖 Команды развернуты');
                     } else {
                         // Сворачиваем - показываем только первые 2 команды
                         additionalCommand1.style.display = 'none';
-                        additionalCommand2.style.display = 'none';
                         toggleIcon.className = 'fas fa-chevron-down';
                         console.log('📕 Команды свернуты');
                     }
@@ -2827,17 +4473,170 @@ console.log('📊 Слоты для интервью:', window.interviewSlots);
             // Инициализация состояния карточки команд (свернутое состояние по умолчанию)
             document.addEventListener('DOMContentLoaded', function() {
                 const additionalCommand1 = document.getElementById('additionalCommand1');
-                const additionalCommand2 = document.getElementById('additionalCommand2');
                 const toggleIcon = document.getElementById('commandsToggleIcon');
                 
-                if (additionalCommand1 && additionalCommand2 && toggleIcon) {
+                if (additionalCommand1 && toggleIcon) {
                     // Устанавливаем свернутое состояние по умолчанию
                     additionalCommand1.style.display = 'none';
-                    additionalCommand2.style.display = 'none';
                     toggleIcon.className = 'fas fa-chevron-down';
                     console.log('📕 Карточка команд инициализирована в свернутом состоянии');
                 }
+                
+                // Инициализация Bootstrap tooltips
+                if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+                    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                    tooltipTriggerList.map(function (tooltipTriggerEl) {
+                        return new bootstrap.Tooltip(tooltipTriggerEl);
+                    });
+                    console.log('✅ Bootstrap tooltips инициализированы:', tooltipTriggerList.length);
+                } else {
+                    console.warn('⚠️ Bootstrap недоступен, tooltips не будут работать');
+                }
+                
+                // Обработчик для кнопки "Да" (отказать кандидата)
+                document.addEventListener('click', function(e) {
+                    if (e.target.closest('.reject-candidate-btn')) {
+                        e.preventDefault();
+                        const btn = e.target.closest('.reject-candidate-btn');
+                        const hrScreeningId = btn.getAttribute('data-hr-screening-id');
+                        const messageId = btn.getAttribute('data-message-id');
+                        
+                        if (!hrScreeningId) {
+                            alert('Ошибка: не указан ID скрининга');
+                            return;
+                        }
+                        
+                        // Подтверждение
+                        if (!confirm('Вы уверены, что хотите отказать кандидату?')) {
+                            return;
+                        }
+                        
+                        // Блокируем кнопку
+                        btn.disabled = true;
+                        const originalHtml = btn.innerHTML;
+                        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обработка...';
+                        
+                        // Формируем URL для отказа
+                        const rejectUrl = '{% url "google_oauth:reject_candidate" 999999 %}'.replace('999999', hrScreeningId);
+                        
+                        // Отправляем запрос
+                        fetch(rejectUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': getCookie('csrftoken') || document.querySelector('[name=csrfmiddlewaretoken]').value
+                            },
+                            body: JSON.stringify({
+                                message_id: messageId
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Обновляем статус в сообщении
+                                const rejectionForm = btn.closest('.rejection-form-container');
+                                if (rejectionForm) {
+                                    const statusMessage = rejectionForm.previousElementSibling;
+                                    if (statusMessage && statusMessage.classList.contains('status-message-compact')) {
+                                        statusMessage.innerHTML = '<i class="fas fa-times-circle me-1 text-danger"></i>' + (data.status_text || 'Кандидат отклонен');
+                                    }
+                                    
+                                    // Скрываем форму отказа
+                                    rejectionForm.style.display = 'none';
+                                }
+                                
+                                // Показываем уведомление
+                                alert('Кандидат успешно отклонен');
+                                
+                                // Перезагружаем страницу, чтобы убедиться, что форма не появится снова
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1000);
+                            } else {
+                                alert('Ошибка при отклонении кандидата: ' + (data.error || 'Неизвестная ошибка'));
+                                btn.disabled = false;
+                                btn.innerHTML = originalHtml;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Ошибка при отправке запроса:', error);
+                            alert('Ошибка при отправке запроса');
+                            btn.disabled = false;
+                            btn.innerHTML = originalHtml;
+                        });
+                    }
+                    
+                    // Обработчик для кнопки "Нет" (скрыть форму и сохранить ответ)
+                    if (e.target.closest('.reject-candidate-no-btn')) {
+                        e.preventDefault();
+                        const btn = e.target.closest('.reject-candidate-no-btn');
+                        const rejectionForm = btn.closest('.rejection-form-container');
+                        // Получаем message_id напрямую из кнопки "Нет"
+                        const messageId = btn.getAttribute('data-message-id') || rejectionForm.querySelector('.reject-candidate-btn')?.getAttribute('data-message-id');
+                        
+                        if (!messageId) {
+                            console.error('❌ Не найден message_id для сохранения ответа');
+                            alert('Ошибка: не найден ID сообщения');
+                            return;
+                        }
+                        
+                        if (rejectionForm) {
+                            // Скрываем форму
+                            rejectionForm.style.display = 'none';
+                            
+                            // Сохраняем в metadata, что пользователь ответил на форму
+                            console.log(`💾 Сохраняем ответ "нет" для сообщения ${messageId}`);
+                                fetch('{% url "google_oauth:chat_ajax_handler" chat_session.id %}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRFToken': getCookie('csrftoken') || document.querySelector('[name=csrfmiddlewaretoken]').value
+                                    },
+                                    body: JSON.stringify({
+                                        action: 'save_rejection_form_answer',
+                                        message_id: messageId,
+                                        answer: 'no'
+                                    })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        console.log(`✅ Форма отказа скрыта, ответ "нет" сохранен для сообщения ${messageId}`);
+                                        // Перезагружаем страницу, чтобы убедиться, что форма не появится снова
+                                        setTimeout(() => {
+                                            window.location.reload();
+                                        }, 500);
+                                    } else {
+                                        console.error('❌ Ошибка при сохранении ответа:', data.error);
+                                        alert('Ошибка при сохранении ответа: ' + (data.error || 'Неизвестная ошибка'));
+                                        rejectionForm.style.display = 'block'; // Показываем форму обратно
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('❌ Ошибка при сохранении ответа:', error);
+                                    alert('Ошибка при сохранении ответа');
+                                    rejectionForm.style.display = 'block'; // Показываем форму обратно
+                                });
+                        }
+                    }
+                });
             });
+            
+            // Функция для получения CSRF токена
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
             
             </script>
             
@@ -2848,4 +4647,793 @@ console.log('📊 Слоты для интервью:', window.interviewSlots);
                 window.sessionId = {{ chat_session.id }};
             </script>
             <script src="{% static 'js/chat_actions.js' %}?v={{ timestamp }}"></script>
+            
+            <!-- Передача истории контактов с бэкенда в JavaScript -->
+            <script id="backendContactHistory" type="application/json" style="display: none;">
+                {% if contact_history %}{{ contact_history|safe }}{% else %}[]{% endif %}
+            </script>
+            <script>
+                // Сохраняем историю в глобальную переменную
+                try {
+                    const backendHistoryScript = document.getElementById('backendContactHistory');
+                    if (backendHistoryScript) {
+                        window.contactHistory = JSON.parse(backendHistoryScript.textContent || '[]');
+                        console.log('✅ CONTACT_HISTORY: Загружено с бэкенда:', window.contactHistory.length, 'записей');
+                    }
+                } catch (e) {
+                    console.warn('⚠️ CONTACT_HISTORY: Ошибка загрузки истории с бэкенда:', e);
+                    window.contactHistory = [];
+                }
+            </script>
+            
+            <!-- Функция обработки выбора файла -->
+            <script>
+                let attachedFile = null;
+                let parsedFileData = null;
+                
+                function handleFileSelect(event) {
+                    const fileInput = event.target;
+                    const file = fileInput.files[0];
+                    
+                    if (file) {
+                        console.log('✅ Файл выбран:', file.name, file.size, 'байт');
+                        attachedFile = file;
+                        
+                        // Показываем информацию о файле
+                        const fileInfo = document.getElementById('attached-file-info');
+                        const fileName = document.getElementById('attached-file-name');
+                        if (fileInfo && fileName) {
+                            fileName.textContent = file.name + ' (' + (file.size / 1024).toFixed(2) + ' KB)';
+                            fileInfo.style.display = 'block';
+                        }
+                        
+                        // Обновляем иконку кнопки
+                        const fileLabel = fileInput.previousElementSibling;
+                        if (fileLabel && fileLabel.tagName === 'LABEL') {
+                            const icon = fileLabel.querySelector('i');
+                            if (icon) {
+                                icon.className = 'fas fa-file-check text-success';
+                                fileLabel.title = `Файл: ${file.name}`;
+                            }
+                        }
+                        
+                        // Автоматически отправляем файл для парсинга
+                        parseFile(file);
+                    }
+                }
+                
+                function removeAttachedFile() {
+                    attachedFile = null;
+                    parsedFileData = null;
+                    window.parsedFileData = null;
+                    
+                    const fileInput = document.getElementById('resume-file-input');
+                    if (fileInput) {
+                        fileInput.value = '';
+                    }
+                    
+                    const fileInfo = document.getElementById('attached-file-info');
+                    if (fileInfo) {
+                        fileInfo.style.display = 'none';
+                    }
+                    
+                    const fileLabel = document.querySelector('label[for="resume-file-input"]');
+                    if (fileLabel) {
+                        const icon = fileLabel.querySelector('i');
+                        if (icon) {
+                            icon.className = 'fas fa-paperclip';
+                            fileLabel.title = 'Прикрепить файл резюме';
+                        }
+                    }
+                }
+                
+                function parseFile(file) {
+                    console.log('🔍 Парсинг файла:', file.name);
+                    
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    
+                    const csrfToken = getCSRFToken();
+                    if (!csrfToken) {
+                        console.error('❌ CSRF токен не найден');
+                        return;
+                    }
+                    
+                    fetch('/huntflow/parse-resume-file/', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: formData,
+                        credentials: 'same-origin'
+                    })
+                    .then(response => {
+                        // Сначала получаем JSON, потом проверяем статус
+                        return response.json().then(data => {
+                            if (!response.ok) {
+                                throw new Error(data.message || `HTTP error! status: ${response.status}`);
+                            }
+                            return data;
+                        });
+                    })
+                    .then(data => {
+                        if (data.success && data.parsed_data) {
+                            console.log('✅ Файл успешно распарсен:', data);
+                            parsedFileData = data.parsed_data;
+                            // Сохраняем в глобальной переменной для использования при отправке
+                            window.parsedFileData = parsedFileData;
+                            
+                            // Проверяем, что parsed_data - это объект
+                            if (!parsedFileData || typeof parsedFileData !== 'object') {
+                                throw new Error('Неверный формат данных от парсера');
+                            }
+                            
+                            // Обновляем индикатор файла
+                            const fileName = document.getElementById('attached-file-name');
+                            if (fileName) {
+                                const originalText = fileName.textContent.split(' <span')[0]; // Убираем предыдущий badge если есть
+                                fileName.innerHTML = originalText + ' <span class="badge bg-info ms-2"><i class="fas fa-spinner fa-spin"></i> Создание кандидата...</span>';
+                            }
+                            
+                            // Автоматически создаем кандидата после парсинга файла
+                            createCandidateFromParsedFile(parsedFileData);
+                        } else {
+                            const errorMessage = data.message || 'Не удалось обработать файл';
+                            console.error('❌ Ошибка парсинга файла:', errorMessage);
+                            throw new Error(errorMessage);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('❌ Ошибка при парсинге файла:', error);
+                        const errorMsg = error.message || 'Неизвестная ошибка';
+                        alert('Ошибка обработки файла: ' + errorMsg);
+                        
+                        // Обновляем индикатор файла при ошибке
+                        const fileName = document.getElementById('attached-file-name');
+                        if (fileName) {
+                            const originalText = fileName.textContent.split(' <span')[0];
+                            fileName.innerHTML = originalText + ' <span class="badge bg-danger ms-2"><i class="fas fa-times"></i> Ошибка</span>';
+                        }
+                        
+                        // Очищаем файл при ошибке
+                        removeAttachedFile();
+                    });
+                }
+                
+                function createCandidateFromParsedFile(parsedData) {
+                    console.log('🔍 Автоматически создаем кандидата из распарсенного файла');
+                    
+                    const csrfToken = getCSRFToken();
+                    if (!csrfToken) {
+                        console.error('❌ CSRF токен не найден');
+                        alert('Ошибка: CSRF токен не найден. Перезагрузите страницу.');
+                        return;
+                    }
+                    
+                    const sessionId = window.sessionId;
+                    if (!sessionId) {
+                        console.error('❌ Session ID не найден');
+                        alert('Ошибка: Session ID не найден. Перезагрузите страницу.');
+                        return;
+                    }
+                    
+                    // Получаем информацию о файле
+                    const fileInput = document.getElementById('resume-file-input');
+                    let attachedFileName = '';
+                    let attachedFileType = '';
+                    if (fileInput && fileInput.files && fileInput.files[0]) {
+                        const file = fileInput.files[0];
+                        attachedFileName = file.name;
+                        // Определяем тип файла по расширению
+                        const extension = file.name.split('.').pop().toLowerCase();
+                        const typeMap = {
+                            'pdf': 'PDF',
+                            'doc': 'DOC',
+                            'docx': 'DOCX',
+                            'txt': 'TXT'
+                        };
+                        attachedFileType = typeMap[extension] || extension.toUpperCase();
+                    }
+                    
+                    // Формируем payload для команды /add
+                    const payload = {
+                        'message': '/add',  // Команда /add без дополнительного текста
+                        'session_id': sessionId,
+                        'parsed_file_data': parsedData,
+                        'attached_file_name': attachedFileName,
+                        'attached_file_type': attachedFileType
+                    };
+                    
+                    console.log('✅ Отправляем команду /add с распарсенными данными');
+                    
+                    fetch('/google-oauth/api/send-message/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: JSON.stringify(payload),
+                        credentials: 'same-origin'
+                    })
+                    .then(response => {
+                        console.log('✅ Response status:', response.status);
+                        if (!response.ok) {
+                            return response.text().then(text => {
+                                console.error('❌ Response error:', text);
+                                throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('✅ Response data:', data);
+                        if (data.success) {
+                            // Обновляем индикатор файла
+                            const fileName = document.getElementById('attached-file-name');
+                            if (fileName) {
+                                const originalText = fileName.textContent.split(' <span')[0];
+                                fileName.innerHTML = originalText + ' <span class="badge bg-success ms-2"><i class="fas fa-check"></i> Кандидат создан</span>';
+                            }
+                            
+                            // Добавляем ответ в чат
+                            if (data.message_html) {
+                                console.log('✅ Добавляем HTML сообщение, длина:', data.message_html.length);
+                                if (typeof addMessageToChat === 'function') {
+                                    addMessageToChat(data.message_html);
+                                }
+                            }
+                            
+                            // Обновляем страницу после создания кандидата
+                            if (data.reload_page) {
+                                console.log('🔄 Обновляем страницу после создания кандидата');
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1500); // Задержка, чтобы пользователь увидел сообщение
+                                return;
+                            }
+                            
+                            // Очищаем файл после успешного создания (если не обновляем страницу)
+                            setTimeout(() => {
+                                removeAttachedFile();
+                            }, 2000);
+                        } else {
+                            console.error('❌ Ошибка создания кандидата:', data.error);
+                            alert('Ошибка создания кандидата: ' + (data.error || 'Неизвестная ошибка'));
+                            
+                            // Обновляем индикатор файла при ошибке
+                            const fileName = document.getElementById('attached-file-name');
+                            if (fileName) {
+                                const originalText = fileName.textContent.split(' <span')[0];
+                                fileName.innerHTML = originalText + ' <span class="badge bg-danger ms-2"><i class="fas fa-times"></i> Ошибка создания</span>';
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('❌ Ошибка при создании кандидата:', error);
+                        alert('Ошибка при создании кандидата: ' + error.message);
+                        
+                        // Обновляем индикатор файла при ошибке
+                        const fileName = document.getElementById('attached-file-name');
+                        if (fileName) {
+                            const originalText = fileName.textContent.split(' <span')[0];
+                            fileName.innerHTML = originalText + ' <span class="badge bg-danger ms-2"><i class="fas fa-times"></i> Ошибка</span>';
+                        }
+                    });
+                }
+                
+                function getCSRFToken() {
+                    const cookies = document.cookie.split(';');
+                    for (let cookie of cookies) {
+                        const [name, value] = cookie.trim().split('=');
+                        if (name === 'csrftoken') {
+                            return value;
+                        }
+                    }
+                    // Также проверяем в meta теге
+                    const metaTag = document.querySelector('meta[name="csrf-token"]');
+                    if (metaTag) {
+                        return metaTag.getAttribute('content');
+                    }
+                    // И в скрытом поле формы
+                    const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+                    if (csrfInput) {
+                        return csrfInput.value;
+                    }
+                    return null;
+                }
+            </script>
+            
+            <!-- Инициализация истории контактов при загрузке страницы -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Загружаем историю контактов (из localStorage и бэкенда)
+                    if (typeof renderContactHistory === 'function') {
+                        renderContactHistory();
+                    }
+                });
+            </script>
+            
+            <!-- Плавающий блок с быстрыми кнопками -->
+            {% if quick_buttons %}
+            <style>
+                /* Контейнер для плавающего блока */
+                .quick-buttons-wrapper {
+                    position: absolute;
+                    right: 0;
+                    bottom: 0;
+                    width: 0;
+                    height: calc(100vh - var(--header-height, 70px));
+                    z-index: 1000;
+                    transition: width 0.3s ease-in-out;
+                    pointer-events: none; /* Чтобы не блокировать клики когда скрыт */
+                    display: flex;
+                    align-items: flex-end; /* Прижимаем к низу */
+                }
+                
+                /* Когда блок закреплен - обертка занимает место */
+                .quick-buttons-wrapper.has-pinned {
+                    width: 80px;
+                    pointer-events: auto;
+                }
+                
+                /* Когда блок закреплен - он часть потока и сдвигает контент */
+                .quick-buttons-panel.pinned {
+                    position: relative;
+                    right: 0;
+                    top: 30px; /* Отступ сверху */
+                    width: 80px;
+                    transform: translateX(0);
+                    align-self: flex-end; /* Прижимаем к низу обертки */
+                    height: calc(100% - 30px); /* Учитываем отступ сверху */
+                    display: flex;
+                    flex-direction: column;
+                }
+                
+                /* Когда блок не закреплен - он fixed и не сдвигает контент */
+                .quick-buttons-panel:not(.pinned) {
+                    position: fixed;
+                    right: 0;
+                    bottom: 0;
+                    width: 80px;
+                    z-index: 1000;
+                    transition: transform 0.3s ease-in-out;
+                    transform: translateX(100%);
+                    pointer-events: auto;
+                }
+                
+                .quick-buttons-panel:not(.pinned):hover {
+                    transform: translateX(0);
+                }
+                
+                /* Обертка для основного контента */
+                .main-content-wrapper {
+                    transition: margin-right 0.3s ease-in-out;
+                    box-sizing: border-box;
+                }
+                
+                /* Сдвигаем обертку основного контента когда блок закреплен */
+                #mainContentContainer.has-pinned-content .main-content-wrapper {
+                    margin-right: 80px !important;
+                }
+                
+                
+                .quick-buttons-content {
+                    background: var(--color-surface, #ffffff);
+                    border-left: 2px solid var(--color-border, #dee2e6);
+                    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
+                    height: 100%; /* Занимает всю высоту панели */
+                    justify-content: flex-end; /* Прижимаем содержимое к низу */
+                }
+                
+                [data-theme="dark"] .quick-buttons-content {
+                    background: var(--color-surface, #1a1a1a);
+                    border-left-color: var(--color-border, #21262d);
+                }
+                
+                .quick-buttons-header {
+                    padding: 0.5rem;
+                    border-bottom: 1px solid var(--color-border, #dee2e6);
+                    display: none; /* Скрываем заголовок для компактности */
+                }
+                
+                .quick-buttons-list {
+                    flex: 0 0 auto; /* Не растягивается, занимает только необходимое место */
+                    overflow-y: auto;
+                    padding: 1rem 0.5rem;
+                    display: flex;
+                    flex-direction: column-reverse; /* Показываем кнопки снизу вверх */
+                    align-items: center;
+                    gap: 1rem;
+                    max-height: 100%; /* Ограничиваем максимальную высоту */
+                }
+                
+                .quick-button-item {
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
+                }
+                
+                .quick-button-btn {
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 50%;
+                    border: 2px solid transparent;
+                    background: var(--button-color, #007bff);
+                    color: white;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                    position: relative;
+                }
+                
+                .quick-button-btn:hover {
+                    transform: scale(1.1);
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                }
+                
+                .quick-button-btn:active {
+                    transform: scale(0.95);
+                }
+                
+                .quick-button-btn i {
+                    font-size: 1.3rem;
+                }
+                
+                .quick-button-label {
+                    display: none; /* Скрываем текст, только иконка */
+                }
+                
+                /* Футер с кнопкой pin */
+                .quick-buttons-footer {
+                    padding: 1rem 0.5rem;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-top: 1px solid var(--color-border, #dee2e6);
+                    margin-top: auto; /* Прижимаем к низу */
+                    flex-shrink: 0; /* Не сжимается */
+                }
+                
+                .quick-buttons-pin-btn {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    background: var(--color-primary, #007bff);
+                    color: white;
+                    border: none;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                    transition: all 0.2s ease;
+                }
+                
+                .quick-buttons-pin-btn:hover {
+                    background: var(--color-primary-dark, #0056b3);
+                    transform: scale(1.1);
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                }
+                
+                .quick-buttons-pin-btn i {
+                    font-size: 1rem;
+                }
+                
+                /* Когда блок закреплен, кнопка pin меняет цвет и иконку */
+                .quick-buttons-panel.pinned .quick-buttons-pin-btn {
+                    background: var(--color-danger, #dc3545);
+                }
+                
+                .quick-buttons-panel.pinned .quick-buttons-pin-btn:hover {
+                    background: var(--color-danger-dark, #c82333);
+                }
+                
+                .quick-buttons-panel.pinned .quick-buttons-pin-btn i {
+                    transform: rotate(45deg);
+                }
+                
+                
+                /* Скроллбар для списка кнопок */
+                .quick-buttons-list::-webkit-scrollbar {
+                    width: 4px;
+                }
+                
+                .quick-buttons-list::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                
+                .quick-buttons-list::-webkit-scrollbar-thumb {
+                    background: var(--color-border, #dee2e6);
+                    border-radius: 2px;
+                }
+                
+                .quick-buttons-list::-webkit-scrollbar-thumb:hover {
+                    background: var(--color-text-muted, #6c757d);
+                }
+            </style>
+            
+            <script>
+                // Вычисляем высоту хэдера динамически
+                function getHeaderHeight() {
+                    const stickyHeader = document.querySelector('.sticky-top');
+                    if (stickyHeader) {
+                        return stickyHeader.offsetHeight;
+                    }
+                    return 70; // Значение по умолчанию
+                }
+                
+                // Устанавливаем высоту хэдера в CSS переменную
+                function updateHeaderHeight() {
+                    const headerHeight = getHeaderHeight();
+                    document.documentElement.style.setProperty('--header-height', headerHeight + 'px');
+                    
+                    // Обновляем высоту контента панели
+                    const panelContent = document.querySelector('.quick-buttons-content');
+                    if (panelContent) {
+                        panelContent.style.height = `calc(100vh - ${headerHeight}px)`;
+                    }
+                }
+                
+                // Функция для переключения состояния панели (закреплена/не закреплена)
+                function toggleQuickButtonsPanel() {
+                    const panel = document.getElementById('quickButtonsPanel');
+                    const pinBtn = document.getElementById('quickButtonsPin');
+                    const wrapper = document.querySelector('.quick-buttons-wrapper');
+                    const mainContainer = document.getElementById('mainContentContainer');
+                    
+                    if (panel && pinBtn) {
+                        panel.classList.toggle('pinned');
+                        const icon = pinBtn.querySelector('i');
+                        
+                        if (panel.classList.contains('pinned')) {
+                            pinBtn.title = 'Открепить панель';
+                            // Когда закреплен, обертка занимает место и сдвигает контент
+                            if (wrapper) {
+                                wrapper.classList.add('has-pinned');
+                            }
+                            // Сдвигаем основной контент через класс
+                            if (mainContainer) {
+                                mainContainer.classList.add('has-pinned-content');
+                            }
+                        } else {
+                            pinBtn.title = 'Закрепить панель';
+                            // Когда не закреплен, обертка не занимает место
+                            if (wrapper) {
+                                wrapper.classList.remove('has-pinned');
+                            }
+                            // Убираем отступ у основного контента
+                            if (mainContainer) {
+                                mainContainer.classList.remove('has-pinned-content');
+                            }
+                        }
+                    }
+                }
+                
+                // Обновляем высоту при загрузке и изменении размера окна
+                document.addEventListener('DOMContentLoaded', function() {
+                    updateHeaderHeight();
+                    
+                    // Обновляем при изменении размера окна
+                    let resizeTimeout;
+                    window.addEventListener('resize', function() {
+                        clearTimeout(resizeTimeout);
+                        resizeTimeout = setTimeout(updateHeaderHeight, 100);
+                    });
+                });
+                
+                // Функция для обработки клика по быстрой кнопке
+                // Функция для декодирования escape-последовательностей в тексте
+                function decodeEscapedText(text) {
+                    if (!text) return text;
+                    
+                    // Создаем временный элемент для декодирования HTML-сущностей
+                    const tempDiv = document.createElement('div');
+                    tempDiv.textContent = text;
+                    let decoded = tempDiv.textContent || tempDiv.innerText || '';
+                    
+                    // Заменяем все возможные escape-последовательности на нормальные символы
+                    // Обрабатываем Unicode escape-последовательности из escapejs
+                    decoded = decoded
+                        // Общий случай: \uXXXX (например, \u002D для '-')
+                        .replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => {
+                            try {
+                                return String.fromCharCode(parseInt(hex, 16));
+                            } catch (e) {
+                                return _;
+                            }
+                        })
+                        // Unicode escape-последовательности (CRLF, LF, CR)
+                        .replace(/\\u000D\\u000A/g, '\n')  // CRLF -> \n
+                        .replace(/\\u000A/g, '\n')         // LF -> \n
+                        .replace(/\\u000D/g, '\n')         // CR -> \n
+                        .replace(/\\u0009/g, '\t')         // Tab -> \t
+                        // Обычные escape-последовательности
+                        .replace(/\\r\\n/g, '\n')          // \r\n -> \n
+                        .replace(/\\n/g, '\n')             // \n -> \n
+                        .replace(/\\r/g, '\n')             // \r -> \n
+                        .replace(/\\t/g, '\t')             // \t -> табуляция
+                        // Экранированные символы (должны быть последними)
+                        .replace(/\\\\/g, '\\')            // \\ -> \
+                        .replace(/\\"/g, '"')              // \" -> "
+                        .replace(/\\'/g, "'");              // \' -> '
+                    
+                    return decoded;
+                }
+                
+                function handleQuickButton(buttonElement) {
+                    const item = buttonElement.closest('.quick-button-item');
+                    if (!item) return;
+                    
+                    const buttonType = item.dataset.buttonType;
+                    let buttonValue = item.dataset.buttonValue;
+                    
+                    if (!buttonValue) return;
+                    
+                    // Декодируем escape-последовательности для текстовых значений
+                    if (buttonType === 'text' || buttonType === 'datetime') {
+                        buttonValue = decodeEscapedText(buttonValue);
+                    }
+                    
+                    try {
+                        if (buttonType === 'link') {
+                            // Для ссылок открываем в новой вкладке
+                            if (buttonValue.startsWith('http://') || buttonValue.startsWith('https://')) {
+                                window.open(buttonValue, '_blank');
+                            } else if (buttonValue.startsWith('/')) {
+                                window.location.href = buttonValue;
+                            } else if (buttonValue.startsWith('mailto:')) {
+                                window.location.href = buttonValue;
+                            } else if (buttonValue.startsWith('tel:')) {
+                                window.location.href = buttonValue;
+                            } else {
+                                // Если не похоже на URL, пробуем открыть как относительный путь
+                                window.location.href = buttonValue;
+                            }
+                        } else if (buttonType === 'text') {
+                            // Для текста копируем в буфер обмена
+                            navigator.clipboard.writeText(buttonValue).then(() => {
+                                // Показываем уведомление
+                                showQuickButtonNotification('Текст скопирован в буфер обмена');
+                            }).catch(err => {
+                                console.error('Ошибка копирования:', err);
+                                showQuickButtonNotification('Ошибка копирования текста', 'error');
+                            });
+                        } else if (buttonType === 'datetime') {
+                            // Для даты/времени копируем в буфер обмена
+                            navigator.clipboard.writeText(buttonValue).then(() => {
+                                showQuickButtonNotification('Дата/время скопированы в буфер обмена');
+                            }).catch(err => {
+                                console.error('Ошибка копирования:', err);
+                                showQuickButtonNotification('Ошибка копирования даты/времени', 'error');
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Ошибка обработки быстрой кнопки:', error);
+                        showQuickButtonNotification('Ошибка при выполнении действия', 'error');
+                    }
+                }
+                
+                // Функция для показа уведомлений
+                function showQuickButtonNotification(message, type = 'success') {
+                    // Создаем элемент уведомления
+                    const notification = document.createElement('div');
+                    notification.className = `quick-button-notification ${type}`;
+                    notification.textContent = message;
+                    notification.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        right: 320px;
+                        background: ${type === 'error' ? '#dc3545' : '#28a745'};
+                        color: white;
+                        padding: 1rem 1.5rem;
+                        border-radius: 0.375rem;
+                        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                        z-index: 10000;
+                        animation: slideIn 0.3s ease;
+                    `;
+                    
+                    document.body.appendChild(notification);
+                    
+                    // Удаляем уведомление через 3 секунды
+                    setTimeout(() => {
+                        notification.style.animation = 'slideOut 0.3s ease';
+                        setTimeout(() => {
+                            if (notification.parentNode) {
+                                notification.parentNode.removeChild(notification);
+                            }
+                        }, 300);
+                    }, 3000);
+                }
+                
+                // Добавляем стили для анимации уведомлений
+                if (!document.getElementById('quick-buttons-notification-styles')) {
+                    const style = document.createElement('style');
+                    style.id = 'quick-buttons-notification-styles';
+                    style.textContent = `
+                        @keyframes slideIn {
+                            from {
+                                transform: translateX(100%);
+                                opacity: 0;
+                            }
+                            to {
+                                transform: translateX(0);
+                                opacity: 1;
+                            }
+                        }
+                        @keyframes slideOut {
+                            from {
+                                transform: translateX(0);
+                                opacity: 1;
+                            }
+                            to {
+                                transform: translateX(100%);
+                                opacity: 0;
+                            }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+                
+                // Инициализация при загрузке страницы
+                document.addEventListener('DOMContentLoaded', function() {
+                    updateHeaderHeight();
+                    
+                    // Обновляем при изменении размера окна
+                    let resizeTimeout;
+                    window.addEventListener('resize', function() {
+                        clearTimeout(resizeTimeout);
+                        resizeTimeout = setTimeout(updateHeaderHeight, 100);
+                    });
+                    
+                    const panel = document.getElementById('quickButtonsPanel');
+                    const wrapper = document.querySelector('.quick-buttons-wrapper');
+                    const mainContainer = document.getElementById('mainContentContainer');
+                    
+                    if (panel) {
+                        // Проверяем сохраненное состояние из localStorage
+                        const isPinned = localStorage.getItem('quickButtonsPinned') === 'true';
+                        const pinBtn = document.getElementById('quickButtonsPin');
+                        if (isPinned) {
+                            panel.classList.add('pinned');
+                            // Применяем стили для закрепленной панели
+                            if (wrapper) {
+                                wrapper.classList.add('has-pinned');
+                            }
+                            // Сдвигаем основной контент через класс
+                            if (mainContainer) {
+                                mainContainer.classList.add('has-pinned-content');
+                            }
+                            // Обновляем кнопку pin
+                            if (pinBtn) {
+                                pinBtn.title = 'Открепить панель';
+                            }
+                        }
+                        
+                        // Инициализация Bootstrap tooltips для кнопок
+                        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+                            const tooltipTriggerList = [].slice.call(panel.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                                return new bootstrap.Tooltip(tooltipTriggerEl);
+                            });
+                        }
+                    }
+                });
+                
+                // Сохраняем состояние при изменении
+                const originalToggle = toggleQuickButtonsPanel;
+                toggleQuickButtonsPanel = function() {
+                    originalToggle();
+                    const panel = document.getElementById('quickButtonsPanel');
+                    if (panel) {
+                        localStorage.setItem('quickButtonsPinned', panel.classList.contains('pinned') ? 'true' : 'false');
+                    }
+                };
+            </script>
+            {% endif %}
             {% endblock %}

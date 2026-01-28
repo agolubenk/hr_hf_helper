@@ -108,13 +108,15 @@
     }
     
     .yearly-table .month-cell {
-        width: 35px;
-        min-width: 35px;
-        max-width: 35px;
+        width: 45px;
+        min-width: 45px;
+        max-width: 45px;
         height: 30px;
         min-height: 30px;
         position: relative;
         padding: 2px;
+        font-weight: 600;
+        font-size: 0.85rem;
     }
     
     /* Цвета для статусов */
@@ -613,17 +615,25 @@
                 
                 <!-- Селектор года справа -->
                 <div class="year-selector">
-                    <form method="get" class="d-inline">
-                        <div class="input-group">
-                            <select name="year" class="form-select" onchange="this.form.submit()">
-                                {% for available_year in available_years %}
-                                    <option value="{{ available_year }}" {% if available_year == year %}selected{% endif %}>
-                                        {{ available_year }} год
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </form>
+                    <div class="d-flex gap-2 align-items-center">
+                        <a class="btn btn-outline-success btn-sm"
+                           href="{% url 'hiring_plan:yearly_hiring_plan_export_excel' %}?year={{ year }}"
+                           title="Скачать таблицу в XLSX">
+                            <i class="fas fa-file-excel me-1"></i>
+                            Excel
+                        </a>
+                        <form method="get" class="d-inline">
+                            <div class="input-group">
+                                <select name="year" class="form-select" onchange="this.form.submit()">
+                                    {% for available_year in available_years %}
+                                        <option value="{{ available_year }}" {% if available_year == year %}selected{% endif %}>
+                                            {{ available_year }} год
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
             
@@ -666,7 +676,9 @@
                                     {% with month_num|add:1 as month %}
                                         {% with row.months|get_item:month as month_data %}
                                             <td class="month-cell cell-{{ month_data.color }}">
-                                                {% if month_data.active %}
+                                                {% if month_data.active and month_data.days > 0 %}
+                                                    <span title="Активна в {{ month_name }}">{{ month_data.days }}</span>
+                                                {% elif month_data.active %}
                                                     <span title="Активна в {{ month_name }}"></span>
                                                 {% endif %}
                                             </td>

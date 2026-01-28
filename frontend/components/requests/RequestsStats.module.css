@@ -1,0 +1,31 @@
+.statsContainer {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.statCard {
+  flex: 1;
+  min-width: 200px;
+  background: var(--gray-2);
+  border-radius: 12px;
+  padding: 16px 20px;
+  border: 1px solid var(--gray-6);
+  background: linear-gradient(135deg, var(--gray-2) 0%, var(--gray-3) 100%);
+  transition: all 0.2s ease-in-out;
+}
+
+.statCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .statsContainer {
+    flex-direction: column;
+  }
+  
+  .statCard {
+    width: 100%;
+  }
+}

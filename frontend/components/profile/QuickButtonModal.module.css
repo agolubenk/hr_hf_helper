@@ -1,0 +1,223 @@
+/* Стили для модального окна быстрой кнопки */
+
+/* z-index: модалки < тостов (3001); здесь 2000 */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.modal {
+  background-color: var(--color-panel, #ffffff) !important;
+  background: var(--color-panel, #ffffff) !important;
+  opacity: 1 !important;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  position: relative;
+  z-index: 2000;
+  min-height: 0;
+}
+
+/* Для темной темы */
+[data-theme="dark"] .modal,
+.radix-themes[data-appearance="dark"] .modal {
+  background-color: var(--gray-2, #1c1c1f) !important;
+  background: var(--gray-2, #1c1c1f) !important;
+}
+
+/* Для светлой темы */
+[data-theme="light"] .modal,
+.radix-themes[data-appearance="light"] .modal {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
+.modalHeader {
+  background: var(--accent-9) !important;
+  background-color: var(--accent-9) !important;
+  padding: 16px 24px;
+  color: white;
+  flex-shrink: 0;
+  opacity: 1 !important;
+}
+
+.modalContent {
+  padding: 24px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  min-height: 0;
+  background-color: var(--color-panel, #ffffff) !important;
+  background: var(--color-panel, #ffffff) !important;
+  opacity: 1 !important;
+  box-sizing: border-box;
+  max-height: calc(90vh - 140px); /* Учитываем header и footer */
+}
+
+.modalContent input,
+.modalContent textarea,
+.modalContent select {
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+}
+
+.colorPicker {
+  width: 40px !important;
+  height: auto !important;
+  min-width: 40px !important;
+  flex-shrink: 0 !important;
+}
+
+.colorPicker input[type="color"] {
+  width: 40px !important;
+  height: 32px !important;
+  min-width: 40px !important;
+  min-height: 32px !important;
+  padding: 4px !important;
+  border: 1px solid var(--gray-a6) !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+}
+
+/* Стиль для цветного квадратика внутри input[type="color"] с отступами */
+.colorPicker input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 3px !important;
+  box-sizing: border-box !important;
+}
+
+.colorPicker input[type="color"]::-webkit-color-swatch {
+  border: none !important;
+  border-radius: 3px !important;
+  box-sizing: border-box !important;
+}
+
+.colorPicker input[type="color"]::-moz-color-swatch {
+  border: none !important;
+  border-radius: 3px !important;
+  box-sizing: border-box !important;
+}
+
+.modalContent input[type="color"] {
+  width: 40px !important;
+  height: 32px !important;
+  min-width: 40px !important;
+  min-height: 32px !important;
+  padding: 4px !important;
+  border: 1px solid var(--gray-a6) !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.modalContent input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 3px !important;
+  box-sizing: border-box !important;
+}
+
+.modalContent input[type="color"]::-webkit-color-swatch {
+  border: none !important;
+  border-radius: 3px !important;
+  box-sizing: border-box !important;
+}
+
+.modalContent input[type="color"]::-moz-color-swatch {
+  border: none !important;
+  border-radius: 3px !important;
+  box-sizing: border-box !important;
+}
+
+/* Для темной темы */
+[data-theme="dark"] .modalContent,
+.radix-themes[data-appearance="dark"] .modalContent {
+  background-color: var(--gray-2, #1c1c1f) !important;
+  background: var(--gray-2, #1c1c1f) !important;
+}
+
+/* Для светлой темы */
+[data-theme="light"] .modalContent,
+.radix-themes[data-appearance="light"] .modalContent {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
+.modalFooter {
+  padding: 16px 24px;
+  border-top: 1px solid var(--gray-a6);
+  background-color: var(--gray-a2) !important;
+  background: var(--gray-a2) !important;
+  flex-shrink: 0;
+  opacity: 1 !important;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+  .modalOverlay {
+    padding: 0 !important;
+    align-items: stretch !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+  }
+
+  .modal {
+    max-width: 100% !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+  }
+
+  .modalHeader {
+    padding: 12px 16px !important;
+    flex-shrink: 0 !important;
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 10 !important;
+    margin: 0 !important;
+  }
+
+  .modalContent {
+    padding: 16px !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    max-height: none !important;
+  }
+
+  .modalFooter {
+    padding: 12px 16px !important;
+    flex-shrink: 0 !important;
+    position: relative !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 10 !important;
+    margin: 0 !important;
+    margin-top: auto !important;
+  }
+}

@@ -1,0 +1,218 @@
+{
+  "name": "huntflow",
+  "type": "page",
+  "description": "Страница настройки интеграции с Huntflow. Позволяет настроить маппинг (связь) данных между HR Helper и Huntflow для синхронизации заявок, кандидатов, этапов найма и других данных между системами.\n\n**Путь**: `/huntflow`",
+  "route_path": "`/huntflow`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/huntflow/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### MOCK_HUNTFLOW_ORGS\n- **Тип**: Array<{ id: number, name: string }>\n- **Структура**: массив организаций Huntflow\n- **Пример**: \n  ```typescript\n  [\n    { id: 291341, name: 'Softnetix' },\n  ]\n  ```\n- **TODO**: Загружать из API Huntflow",
+      "extracted_from": "documentation"
+    },
+    "mockData_1": {
+      "description": "### MOCK_OUR_OFFICES\n- **Тип**: Array<{ id: string, name: string }>\n- **Структура**: массив офисов HR Helper\n- **Пример**: \n  ```typescript\n  [\n    { id: '1', name: 'Офис Минск' },\n    { id: '2', name: 'Офис Варшава' },\n  ]\n  ```\n- **TODO**: Загружать из настроек компании",
+      "extracted_from": "documentation"
+    },
+    "mockData_2": {
+      "description": "### MOCK_OUR_STAGES\n- **Тип**: Array<{ id: string, name: string }>\n- **Структура**: массив этапов найма HR Helper\n- **Пример**: \n  ```typescript\n  [\n    { id: '1', name: 'Заявка' },\n    { id: '2', name: 'Скрининг' },\n    { id: '3', name: 'Интервью' },\n    { id: '4', name: 'Оффер' },\n    { id: '5', name: 'Принят' },\n    { id: '6', name: 'Отказ' },\n  ]\n  ```\n- **TODO**: Загружать из `/company-settings/recruiting/stages`",
+      "extracted_from": "documentation"
+    },
+    "mockData_3": {
+      "description": "### MOCK_HUNTFLOW_STAGES\n- **Тип**: Array<{ id: number, name: string }>\n- **Структура**: массив этапов найма Huntflow\n- **Пример**: \n  ```typescript\n  [\n    { id: 101, name: 'Новый' },\n    { id: 102, name: 'Скрининг' },\n    { id: 103, name: 'Интервью' },\n    { id: 104, name: 'Оффер' },\n    { id: 105, name: 'Принят' },\n    { id: 106, name: 'Отказ' },\n    { id: 107, name: 'Архив' },\n  ]\n  ```\n- **TODO**: Загружать из API Huntflow",
+      "extracted_from": "documentation"
+    },
+    "mockData_4": {
+      "description": "### MOCK_OUR_REJECTION_REASONS\n- **Тип**: Array<{ id: string, name: string }>\n- **Структура**: массив причин отказа HR Helper\n- **Пример**: \n  ```typescript\n  [\n    { id: 'r1', name: 'Не подходит по опыту' },\n    { id: 'r2', name: 'Зарплатные ожидания' },\n    { id: 'r3', name: 'Другая причина' },\n  ]\n  ```\n- **TODO**: Загружать из `/company-settings/recruiting/stages`",
+      "extracted_from": "documentation"
+    },
+    "mockData_5": {
+      "description": "### MOCK_HF_REJECTION_REASONS\n- **Тип**: Array<{ id: number, name: string }>\n- **Структура**: массив причин отказа Huntflow\n- **Пример**: \n  ```typescript\n  [\n    { id: 201, name: 'Опыт не подходит' },\n    { id: 202, name: 'ЗП' },\n    { id: 203, name: 'Кандидат отказался' },\n    { id: 204, name: 'Прочее' },\n  ]\n  ```\n- **TODO**: Загружать из API Huntflow",
+      "extracted_from": "documentation"
+    },
+    "mockData_6": {
+      "description": "### MOCK_OUR_FIELDS\n- **Тип**: Array<{ id: string, name: string }>\n- **Структура**: массив дополнительных полей кандидата HR Helper\n- **Пример**: \n  ```typescript\n  [\n    { id: 'f1', name: 'Ожидания по ЗП' },\n    { id: 'f2', name: 'Источник' },\n    { id: 'f3', name: 'Готовность к релокации' },\n    { id: 'f4', name: 'Грейд' },\n  ]\n  ```\n- **TODO**: Загружать из `/company-settings/candidate-fields`",
+      "extracted_from": "documentation"
+    },
+    "mockData_7": {
+      "description": "### MOCK_HF_FIELDS\n- **Тип**: Array<{ id: number, name: string }>\n- **Структура**: массив дополнительных полей кандидата Huntflow\n- **Пример**: \n  ```typescript\n  [\n    { id: 301, name: 'Ожидания по ЗП' },\n    { id: 302, name: 'Источник' },\n    { id: 303, name: 'Релокация' },\n    { id: 304, name: 'Уровень' },\n    { id: 305, name: 'Ссылка на портфолио' },\n    { id: 306, name: 'Комментарий рекрутера' },\n  ]\n  ```\n- **TODO**: Загружать из API Huntflow",
+      "extracted_from": "documentation"
+    },
+    "mockData_8": {
+      "description": "### MOCK_OUR_SOURCES\n- **Тип**: Array<{ id: string, name: string }>\n- **Структура**: массив источников кандидатов HR Helper\n- **Пример**: \n  ```typescript\n  [\n    { id: 's1', name: 'hh.ru' },\n    { id: 's2', name: 'Рекомендация' },\n    { id: 's3', name: 'Прямой отклик' },\n  ]\n  ```\n- **TODO**: Загружать из настроек компании",
+      "extracted_from": "documentation"
+    },
+    "mockData_9": {
+      "description": "### MOCK_HF_SOURCES\n- **Тип**: Array<{ id: number, name: string }>\n- **Структура**: массив источников кандидатов Huntflow\n- **Пример**: \n  ```typescript\n  [\n    { id: 401, name: 'HeadHunter' },\n    { id: 402, name: 'Рекомендация сотрудника' },\n    { id: 403, name: 'Сайт компании' },\n    { id: 404, name: 'LinkedIn' },\n    { id: 405, name: 'Другое' },\n  ]\n  ```\n- **TODO**: Загружать из API Huntflow",
+      "extracted_from": "documentation"
+    },
+    "mockData_10": {
+      "description": "### QUICK_LINKS\n- **Тип**: Array<{ label: string, href: string, icon: IconComponent }>\n- **Структура**: массив быстрых ссылок на связанные страницы\n- **Значения**: \n  - { label: 'Вакансии', href: '/vacancies', icon: FileTextIcon }\n  - { label: 'Грейды', href: '/company-settings/grades', icon: StarIcon }\n  - { label: 'Этапы найма и причины отказа', href: '/company-settings/recruiting/stages', icon: MixerHorizontalIcon }\n  - { label: 'Дополнительные поля кандидатов', href: '/company-settings/candidate-fields', icon: PersonIcon }",
+      "extracted_from": "documentation"
+    },
+    "mockData_11": {
+      "description": "- **Тип**: Array<{ id: number, name: string }>\n- **Структура**: массив организаций Huntflow",
+      "extracted_from": "documentation"
+    },
+    "mockData_12": {
+      "description": "- **Тип**: Array<{ id: string, name: string }>\n- **Структура**: массив офисов HR Helper",
+      "extracted_from": "documentation"
+    },
+    "mockData_13": {
+      "description": "- **Тип**: Array<{ id: string, name: string }>\n- **Структура**: массив этапов найма HR Helper",
+      "extracted_from": "documentation"
+    },
+    "mockData_14": {
+      "description": "- **Тип**: Array<{ id: number, name: string }>\n- **Структура**: массив этапов найма Huntflow",
+      "extracted_from": "documentation"
+    },
+    "mockData_15": {
+      "description": "- **Тип**: Array<{ id: string, name: string }>\n- **Структура**: массив причин отказа HR Helper",
+      "extracted_from": "documentation"
+    },
+    "mockData_16": {
+      "description": "- **Тип**: Array<{ id: number, name: string }>\n- **Структура**: массив причин отказа Huntflow",
+      "extracted_from": "documentation"
+    },
+    "mockData_17": {
+      "description": "- **Тип**: Array<{ id: string, name: string }>\n- **Структура**: массив дополнительных полей кандидата HR Helper",
+      "extracted_from": "documentation"
+    },
+    "mockData_18": {
+      "description": "- **Тип**: Array<{ id: number, name: string }>\n- **Структура**: массив дополнительных полей кандидата Huntflow",
+      "extracted_from": "documentation"
+    },
+    "mockData_19": {
+      "description": "- **Тип**: Array<{ id: string, name: string }>\n- **Структура**: массив источников кандидатов HR Helper",
+      "extracted_from": "documentation"
+    },
+    "mockData_20": {
+      "description": "- **Тип**: Array<{ id: number, name: string }>\n- **Структура**: массив источников кандидатов Huntflow",
+      "extracted_from": "documentation"
+    },
+    "mockData_21": {
+      "description": "- **Тип**: Array<{ label: string, href: string, icon: IconComponent }>\n- **Структура**: массив быстрых ссылок на связанные страницы",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Проверка статуса подключения через API\n   - GET `/api/integrations/huntflow/status/` - проверка статуса подключения\n   - Обновление статуса в карточке подключения",
+      "method": "GET",
+      "endpoint": "/api/integrations/huntflow/status/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка организаций Huntflow из API\n   - GET `/api/integrations/huntflow/organizations/` - получение списка организаций\n   - Замена MOCK_HUNTFLOW_ORGS",
+      "method": "GET",
+      "endpoint": "/api/integrations/huntflow/organizations/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Загрузка офисов HR Helper из API\n   - GET `/api/company-settings/offices/` - получение списка офисов\n   - Замена MOCK_OUR_OFFICES",
+      "method": "GET",
+      "endpoint": "/api/company-settings/offices/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Загрузка этапов найма HR Helper из API\n   - GET `/api/company-settings/recruiting/stages/` - получение списка этапов\n   - Замена MOCK_OUR_STAGES",
+      "method": "GET",
+      "endpoint": "/api/company-settings/recruiting/stages/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Загрузка этапов найма Huntflow из API\n   - GET `/api/integrations/huntflow/stages/` - получение списка этапов\n   - Замена MOCK_HUNTFLOW_STAGES",
+      "method": "GET",
+      "endpoint": "/api/integrations/huntflow/stages/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Загрузка причин отказа HR Helper из API\n   - GET `/api/company-settings/recruiting/rejection-reasons/` - получение списка причин\n   - Замена MOCK_OUR_REJECTION_REASONS",
+      "method": "GET",
+      "endpoint": "/api/company-settings/recruiting/rejection-reasons/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Загрузка причин отказа Huntflow из API\n   - GET `/api/integrations/huntflow/rejection-reasons/` - получение списка причин\n   - Замена MOCK_HF_REJECTION_REASONS",
+      "method": "GET",
+      "endpoint": "/api/integrations/huntflow/rejection-reasons/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Загрузка дополнительных полей HR Helper из API\n   - GET `/api/company-settings/candidate-fields/` - получение списка полей\n   - Замена MOCK_OUR_FIELDS",
+      "method": "GET",
+      "endpoint": "/api/company-settings/candidate-fields/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Загрузка дополнительных полей Huntflow из API\n   - GET `/api/integrations/huntflow/fields/` - получение списка полей\n   - Замена MOCK_HF_FIELDS",
+      "method": "GET",
+      "endpoint": "/api/integrations/huntflow/fields/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Загрузка источников HR Helper из API\n    - GET `/api/company-settings/sources/` - получение списка источников\n    - Замена MOCK_OUR_SOURCES",
+      "method": "GET",
+      "endpoint": "/api/company-settings/sources/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 11,
+      "description": "Загрузка источников Huntflow из API\n    - GET `/api/integrations/huntflow/sources/` - получение списка источников\n    - Замена MOCK_HF_SOURCES",
+      "method": "GET",
+      "endpoint": "/api/integrations/huntflow/sources/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 12,
+      "description": "Загрузка текущих маппингов из API\n    - GET `/api/integrations/huntflow/mappings/` - получение всех маппингов\n    - Инициализация состояния маппингов из API",
+      "method": "GET",
+      "endpoint": "/api/integrations/huntflow/mappings/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 13,
+      "description": "Сохранение маппингов через API\n    - PUT `/api/integrations/huntflow/mappings/` - сохранение всех маппингов\n    - Параметры: объект со всеми маппингами\n    - Обновление состояния после успешного сохранения",
+      "method": "PUT",
+      "endpoint": "/api/integrations/huntflow/mappings/",
+      "parameters": "объект со всеми маппингами",
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.273873"
+}

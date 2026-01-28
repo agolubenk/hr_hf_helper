@@ -1,0 +1,337 @@
+{
+  "name": "requests",
+  "type": "component",
+  "description": "Директория `components/requests` содержит компоненты для управления заявками на найм (hiring requests). Компоненты обеспечивают отображение статистики, поиск и фильтрацию, отображение заявок в разных режимах (карточки, список, таблица), создание новых заявок и детальное отображение.\n\n**Расположение**: `@/components/requests`",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/components/requests/COMPONENTS_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [
+    {
+      "name": "RequestsStatsProps",
+      "definition": "interface RequestsStatsProps {\n  total: number          // Общее количество заявок\n  planned: number       // Количество заявок со статусом \"planned\"\n  inProcess: number     // Количество заявок со статусом \"in_process\"\n  cancelled: number     // Количество заявок со статусом \"cancelled\"\n  closed: number        // Количество заявок со статусом \"closed\"\n}",
+      "fields": [
+        {
+          "name": "total",
+          "type": "number",
+          "optional": false,
+          "comment": "Общее количество заявок"
+        },
+        {
+          "name": "planned",
+          "type": "number",
+          "optional": false,
+          "comment": "Количество заявок со статусом \"planned\""
+        },
+        {
+          "name": "inProcess",
+          "type": "number",
+          "optional": false,
+          "comment": "Количество заявок со статусом \"in_process\""
+        },
+        {
+          "name": "cancelled",
+          "type": "number",
+          "optional": false,
+          "comment": "Количество заявок со статусом \"cancelled\""
+        },
+        {
+          "name": "closed",
+          "type": "number",
+          "optional": false,
+          "comment": "Количество заявок со статусом \"closed\""
+        }
+      ]
+    },
+    {
+      "name": "RequestsSearchFiltersProps",
+      "definition": "interface RequestsSearchFiltersProps {\n  searchQuery: string\n  onSearchChange: (value: string) => void\n  selectedRecruiter: string\n  onRecruiterChange: (value: string) => void\n  selectedStatus: string\n  onStatusChange: (value: string) => void\n  selectedPriority: string\n  onPriorityChange: (value: string) => void\n}",
+      "fields": [
+        {
+          "name": "searchQuery",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onSearchChange",
+          "type": "(value: string) => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "selectedRecruiter",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onRecruiterChange",
+          "type": "(value: string) => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "selectedStatus",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onStatusChange",
+          "type": "(value: string) => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "selectedPriority",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onPriorityChange",
+          "type": "(value: string) => void",
+          "optional": false,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "RequestCardProps",
+      "definition": "interface RequestCardProps {\n  request: Request\n  onClick?: () => void\n}",
+      "fields": [
+        {
+          "name": "request",
+          "type": "Request",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onClick",
+          "type": "() => void",
+          "optional": true,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "RequestListItemProps",
+      "definition": "interface RequestListItemProps {\n  request: Request\n  onClick?: () => void\n  requestsCount?: number\n  requests?: Request[]\n}",
+      "fields": [
+        {
+          "name": "request",
+          "type": "Request",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onClick",
+          "type": "() => void",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "requestsCount",
+          "type": "number",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "requests",
+          "type": "Request[]",
+          "optional": true,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "RequestsTableProps",
+      "definition": "interface RequestsTableProps {\n  requests: Request[]\n  onView?: (id: number) => void\n  onEdit?: (id: number) => void\n}",
+      "fields": [
+        {
+          "name": "requests",
+          "type": "Request[]",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onView",
+          "type": "(id: number) => void",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "onEdit",
+          "type": "(id: number) => void",
+          "optional": true,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "RequestTableRowProps",
+      "definition": "interface RequestTableRowProps {\n  request: Request\n  onView?: (id: number) => void\n  onEdit?: (id: number) => void\n}",
+      "fields": [
+        {
+          "name": "request",
+          "type": "Request",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onView",
+          "type": "(id: number) => void",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "onEdit",
+          "type": "(id: number) => void",
+          "optional": true,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "RequestTableRowExpandedProps",
+      "definition": "interface RequestTableRowExpandedProps {\n  request: Request\n  onView?: (id: number) => void\n  onEdit?: (id: number) => void\n}",
+      "fields": [
+        {
+          "name": "request",
+          "type": "Request",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onView",
+          "type": "(id: number) => void",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "onEdit",
+          "type": "(id: number) => void",
+          "optional": true,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "CreateRequestModalProps",
+      "definition": "interface CreateRequestModalProps {\n  isOpen: boolean\n  onClose: () => void\n  onSave: (data: any) => void\n}",
+      "fields": [
+        {
+          "name": "isOpen",
+          "type": "boolean",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onClose",
+          "type": "() => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onSave",
+          "type": "(data: any) => void",
+          "optional": false,
+          "comment": null
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка статистики из API\n   - GET `/api/hiring-requests/stats/`\n   - Возвращает: объект с количеством заявок по статусам",
+      "method": "GET",
+      "endpoint": "/api/hiring-requests/stats/",
+      "parameters": null,
+      "returns": "объект с количеством заявок по статусам",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка списка рекрутеров из API\n   - GET `/api/recruiters/`\n   - Возвращает: массив рекрутеров\n   - Используется в `RequestsSearchFilters` для фильтра по рекрутеру",
+      "method": "GET",
+      "endpoint": "/api/recruiters/",
+      "parameters": null,
+      "returns": "массив рекрутеров",
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Поиск и фильтрация заявок через API\n   - GET `/api/hiring-requests/?q={query}&recruiter={recruiter}&status={status}&priority={priority}`\n   - Параметры: поисковый запрос, рекрутер, статус, приоритет\n   - Возвращает: массив заявок",
+      "method": "GET",
+      "endpoint": "/api/hiring-requests/?q={query}&recruiter={recruiter}&status={status}&priority={priority}",
+      "parameters": "поисковый запрос, рекрутер, статус, приоритет",
+      "returns": "массив заявок",
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Создание заявки через API\n   - POST `/api/hiring-requests/`\n   - Параметры: все поля формы создания заявки\n   - Возвращает: созданную заявку",
+      "method": "POST",
+      "endpoint": "/api/hiring-requests/",
+      "parameters": "все поля формы создания заявки",
+      "returns": "созданную заявку",
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Получение SLA для расчета дедлайна\n   - GET `/api/sla/?vacancy={vacancy}&grade={grade}`\n   - Параметры: вакансия и грейд\n   - Возвращает: количество дней SLA\n   - Используется в `CreateRequestModal` для автоматического расчета дедлайна",
+      "method": "GET",
+      "endpoint": "/api/sla/?vacancy={vacancy}&grade={grade}",
+      "parameters": "вакансия и грейд",
+      "returns": "количество дней SLA",
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Загрузка списка вакансий из API\n   - GET `/api/vacancies/`\n   - Возвращает: массив вакансий\n   - Используется в `CreateRequestModal` для выбора вакансии",
+      "method": "GET",
+      "endpoint": "/api/vacancies/",
+      "parameters": null,
+      "returns": "массив вакансий",
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Загрузка списка грейдов из API\n   - GET `/api/grades/`\n   - Возвращает: массив грейдов\n   - Используется в `CreateRequestModal` для выбора грейда",
+      "method": "GET",
+      "endpoint": "/api/grades/",
+      "parameters": null,
+      "returns": "массив грейдов",
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Обновление заявки через API\n   - PUT/PATCH `/api/hiring-requests/{id}/`\n   - Параметры: обновленные поля заявки\n   - Возвращает: обновленную заявку",
+      "method": "PATCH",
+      "endpoint": "/api/hiring-requests/{id}/",
+      "parameters": "обновленные поля заявки",
+      "returns": "обновленную заявку",
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Удаление заявки через API\n   - DELETE `/api/hiring-requests/{id}/`\n   - Возвращает: статус удаления",
+      "method": "DELETE",
+      "endpoint": "/api/hiring-requests/{id}/",
+      "parameters": null,
+      "returns": "статус удаления",
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Навигация к детальной странице заявки\n    - Реализовать переход на `/hiring-requests/{id}` при клике на заявку\n    - Реализовать переход на `/hiring-requests/{id}/edit` при клике на редактирование",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.322329"
+}

@@ -1,0 +1,228 @@
+.messagesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0;
+}
+
+.messageWrapper {
+  width: 100%;
+  align-items: flex-end;
+}
+
+.messageUser {
+  justify-content: flex-end;
+}
+
+.messageAssistant {
+  justify-content: flex-start;
+}
+
+.userMessageContainer {
+  align-items: flex-end;
+  width: 100%;
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.assistantMessageContainer {
+  align-items: flex-start;
+  max-width: 70%;
+  display: flex;
+  flex-direction: column;
+}
+
+.avatarUser,
+.avatarAssistant {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid var(--gray-6);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  align-self: flex-end;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+.avatarUser {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.avatarAssistant {
+  background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.avatarIcon {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.messageBubble {
+  padding: 12px 16px;
+  border-radius: 12px;
+  word-wrap: break-word;
+}
+
+.messageBubbleUser {
+  background-color: var(--accent-9);
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+  max-width: none;
+  width: fit-content;
+  margin-left: auto;
+}
+
+.messageBubbleAssistant {
+  background-color: var(--gray-2);
+  color: var(--gray-12);
+  border-bottom-left-radius: 4px;
+  border: 1px solid var(--gray-6);
+  max-width: 70%;
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 48px;
+}
+
+.filesInfo {
+  padding: 6px 10px;
+  background: var(--gray-3);
+  border: 1px solid var(--gray-6);
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-end;
+  margin-top: -4px;
+  position: relative;
+  z-index: 1;
+}
+
+.messageTimestamp {
+  color: var(--gray-10);
+  font-size: 10px;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+.messageUser .messageTimestamp {
+  align-self: flex-end;
+}
+
+.messageAssistant .messageTimestamp {
+  align-self: flex-start;
+}
+
+.singleFileInfo,
+.multipleFilesInfo {
+  cursor: default;
+}
+
+.multipleFilesInfo {
+  cursor: help;
+}
+
+.filesTooltip {
+  background: var(--gray-2) !important;
+  background-color: var(--gray-2) !important;
+  border: 1px solid var(--gray-6) !important;
+  border-radius: 8px !important;
+  padding: 8px !important;
+  min-width: 200px;
+  max-width: 280px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  z-index: 1000 !important;
+  animation: tooltipShow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes tooltipShow {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tooltipArrow {
+  fill: var(--gray-2) !important;
+  stroke: var(--gray-6) !important;
+}
+
+.filesTooltipList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filesTooltipItem {
+  padding: 4px 0;
+  border-bottom: 1px solid var(--gray-6);
+  min-width: 0;
+}
+
+.filesTooltipItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.filesTooltipList :global(.rt-Text) {
+  color: var(--gray-12);
+  line-height: 1.3;
+  font-size: 10px;
+}
+
+.filesTooltipItem :global(.rt-Text:first-child) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.filesTooltipItem :global(.rt-Text:last-child) {
+  font-style: italic;
+  color: var(--gray-11);
+  flex-shrink: 0;
+}
+
+/* Темная тема */
+:global([data-theme='dark']) .messageBubbleAssistant {
+  background-color: var(--gray-3);
+  border-color: var(--gray-6);
+}
+
+:global([data-theme='dark']) .filesInfo {
+  background: var(--gray-4);
+  border-color: var(--gray-6);
+}
+
+:global([data-theme='dark']) .filesTooltip {
+  background: var(--gray-3) !important;
+  background-color: var(--gray-3) !important;
+  border-color: var(--gray-6) !important;
+}
+
+:global([data-theme='dark']) .tooltipArrow {
+  fill: var(--gray-3) !important;
+  stroke: var(--gray-6) !important;
+}

@@ -1,0 +1,31 @@
+.editContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 0 24px 24px 24px;
+  padding-bottom: 100px;
+}
+
+.actions {
+  padding-top: 24px;
+  padding-bottom: 20px;
+  padding-right: 32px;
+  border-top: 1px solid var(--gray-6);
+  position: sticky;
+  bottom: 0px;
+  background: var(--gray-1);
+  opacity: 0.95;
+  backdrop-filter: blur(10px);
+  z-index: 10;
+  margin-top: auto;
+}
+
+.actions :global(button[class*="variant-soft"]) {
+  opacity: 1 !important;
+}
+
+@media (max-width: 768px) {
+  .editContainer {
+    padding: 0 16px 16px 16px;
+  }
+}

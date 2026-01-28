@@ -49,6 +49,31 @@ window.switchMeetingType = function(newType) {
         alert(`Кнопка btn${newType.charAt(0).toUpperCase() + newType.slice(1)} не найдена!`);
     }
     
+    // Показываем/скрываем расширяющееся полотно для настроек интервью
+    const interviewOptionsPanel = document.getElementById('interviewOptionsPanel');
+    if (interviewOptionsPanel) {
+        if (newType === 'interview') {
+            interviewOptionsPanel.style.display = 'block';
+            // Плавное появление
+            interviewOptionsPanel.style.opacity = '0';
+            setTimeout(() => {
+                interviewOptionsPanel.style.transition = 'opacity 0.3s ease-in-out';
+                interviewOptionsPanel.style.opacity = '1';
+            }, 10);
+            console.log('✅ [SWITCHER] Панель настроек интервью показана');
+        } else {
+            // Плавное скрытие
+            interviewOptionsPanel.style.transition = 'opacity 0.3s ease-in-out';
+            interviewOptionsPanel.style.opacity = '0';
+            setTimeout(() => {
+                interviewOptionsPanel.style.display = 'none';
+            }, 300);
+            console.log('✅ [SWITCHER] Панель настроек интервью скрыта');
+        }
+    } else {
+        console.warn('⚠️ [SWITCHER] Панель настроек интервью не найдена');
+    }
+    
     currentMeetingType = newType;
     const conf = MEETING_CONFIG[newType];
     
@@ -69,7 +94,11 @@ window.switchMeetingType = function(newType) {
     console.log(`✅ [SWITCHER] Установлена глобальная переменная: window.currentMeetingDuration = ${conf.defaultDuration}`);
     
     // Обновляем отображение слотов с использованием предрассчитанных данных
-    if (typeof window.switchSlotsByMeetingType === 'function') {
+    // Для интервью используем динамический пересчет с учетом выбранных участников
+    if (newType === 'interview' && typeof window.updateInterviewSlots === 'function') {
+        console.log('🔄 [SWITCHER] Переключение на интервью - обновляем слоты с учетом выбранных участников');
+        window.updateInterviewSlots();
+    } else if (typeof window.switchSlotsByMeetingType === 'function') {
         console.log('🔄 [SWITCHER] Обновление отображения слотов для типа:', newType);
         window.switchSlotsByMeetingType(newType);
         console.log('✅ [SWITCHER] Слоты обновлены');
@@ -85,6 +114,12 @@ window.switchMeetingType = function(newType) {
     }
     
     console.log(`✅ [SWITCHER] Тип: ${newType}, длительность: ${conf.defaultDuration} мин`);
+    
+    // Обновляем состояние кнопки отправки (если функция доступна)
+    if (typeof window.updateSendButtonState === 'function') {
+        window.updateSendButtonState();
+        console.log('✅ [SWITCHER] Состояние кнопки отправки обновлено');
+    }
 };
 
 // Функция для загрузки конфигурации из вакансии

@@ -1,0 +1,448 @@
+{
+  "name": "salary-ranges",
+  "type": "component",
+  "description": "Директория `components/salary-ranges` содержит компоненты для управления зарплатными вилками (salary ranges). Компоненты обеспечивают отображение статистики, поиск и фильтрацию, отображение вилок в разных режимах (карточки, список), создание новых вилок, детальное отображение и редактирование.\n\n**Расположение**: `@/components/salary-ranges`",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/components/salary-ranges/COMPONENTS_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [
+    {
+      "name": "SalaryRange",
+      "definition": "interface SalaryRange {\n  id: number                                    // Уникальный идентификатор вилки\n  vacancyId: number                             // ID вакансии в Huntflow\n  vacancyName: string                           // Название вакансии\n  grade: string                                 // Грейд (Junior, Middle, Senior и т.д.)\n  salaryUsd: { min: number; max: number }      // Зарплатная вилка в USD (net)\n  salaryByn: { min: number; max: number }      // Зарплатная вилка в BYN (net)\n  salaryPln: { min: number; max: number }       // Зарплатная вилка в PLN (gross)\n  salaryEur: { min: number; max: number }      // Зарплатная вилка в EUR (gross)\n  isActive: boolean                             // Флаг активности вилки\n  updatedAt: string                             // Дата последнего обновления (ISO format)\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "number",
+          "optional": false,
+          "comment": "Уникальный идентификатор вилки"
+        },
+        {
+          "name": "vacancyId",
+          "type": "number",
+          "optional": false,
+          "comment": "ID вакансии в Huntflow"
+        },
+        {
+          "name": "vacancyName",
+          "type": "string",
+          "optional": false,
+          "comment": "Название вакансии"
+        },
+        {
+          "name": "grade",
+          "type": "string",
+          "optional": false,
+          "comment": "Грейд (Junior, Middle, Senior и т.д.)"
+        },
+        {
+          "name": "salaryUsd",
+          "type": "{ min: number; max: number }",
+          "optional": false,
+          "comment": "Зарплатная вилка в USD (net)"
+        },
+        {
+          "name": "salaryByn",
+          "type": "{ min: number; max: number }",
+          "optional": false,
+          "comment": "Зарплатная вилка в BYN (net)"
+        },
+        {
+          "name": "salaryPln",
+          "type": "{ min: number; max: number }",
+          "optional": false,
+          "comment": "Зарплатная вилка в PLN (gross)"
+        },
+        {
+          "name": "salaryEur",
+          "type": "{ min: number; max: number }",
+          "optional": false,
+          "comment": "Зарплатная вилка в EUR (gross)"
+        },
+        {
+          "name": "isActive",
+          "type": "boolean",
+          "optional": false,
+          "comment": "Флаг активности вилки"
+        },
+        {
+          "name": "updatedAt",
+          "type": "string",
+          "optional": false,
+          "comment": "Дата последнего обновления (ISO format)"
+        }
+      ]
+    },
+    {
+      "name": "SalaryRangesStatsProps",
+      "definition": "interface SalaryRangesStatsProps {\n  total: number\n  active: number\n  inactive: number\n  activeTab: 'active' | 'inactive' | 'all'\n  onTabChange: (tab: 'active' | 'inactive' | 'all') => void\n  onListViewClick?: () => void\n}",
+      "fields": [
+        {
+          "name": "total",
+          "type": "number",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "active",
+          "type": "number",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "inactive",
+          "type": "number",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "activeTab",
+          "type": "'active' | 'inactive' | 'all'",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onTabChange",
+          "type": "(tab: 'active' | 'inactive' | 'all') => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onListViewClick",
+          "type": "() => void",
+          "optional": true,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "SalaryRangesSearchFiltersProps",
+      "definition": "interface SalaryRangesSearchFiltersProps {\n  searchQuery: string\n  onSearchChange: (value: string) => void\n  selectedVacancy: string\n  onVacancyChange: (value: string) => void\n  selectedGrade: string\n  onGradeChange: (value: string) => void\n  onReset: () => void\n}",
+      "fields": [
+        {
+          "name": "searchQuery",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onSearchChange",
+          "type": "(value: string) => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "selectedVacancy",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onVacancyChange",
+          "type": "(value: string) => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "selectedGrade",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onGradeChange",
+          "type": "(value: string) => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onReset",
+          "type": "() => void",
+          "optional": false,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "SalaryRangeCardProps",
+      "definition": "interface SalaryRangeCardProps {\n  salaryRange: SalaryRange\n  onClick?: () => void\n  onToggleActive?: (id: number) => void\n}",
+      "fields": [
+        {
+          "name": "salaryRange",
+          "type": "SalaryRange",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onClick",
+          "type": "() => void",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "onToggleActive",
+          "type": "(id: number) => void",
+          "optional": true,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "SalaryRangeListItemProps",
+      "definition": "interface SalaryRangeListItemProps {\n  salaryRange: SalaryRange\n  onClick?: () => void\n  onToggleActive?: (id: number) => void\n}",
+      "fields": [
+        {
+          "name": "salaryRange",
+          "type": "SalaryRange",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onClick",
+          "type": "() => void",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "onToggleActive",
+          "type": "(id: number) => void",
+          "optional": true,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "CreateSalaryRangeModalProps",
+      "definition": "interface CreateSalaryRangeModalProps {\n  open: boolean\n  onOpenChange: (open: boolean) => void\n  onSave?: (data: {\n    vacancy: string\n    grade: string\n    salaryMinUsd: number\n    salaryMaxUsd: number\n  }) => void\n}",
+      "fields": [
+        {
+          "name": "open",
+          "type": "boolean",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onOpenChange",
+          "type": "(open: boolean) => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onSave",
+          "type": "(data: {",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "vacancy",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "grade",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "salaryMinUsd",
+          "type": "number",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "salaryMaxUsd",
+          "type": "number",
+          "optional": false,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "SalaryRangeDetailModalProps",
+      "definition": "interface SalaryRangeDetailModalProps {\n  open: boolean\n  onOpenChange: (open: boolean) => void\n  salaryRange: SalaryRangeForDetail | null\n  onToggleActive?: (id: number) => void\n  onSave?: (id: number, data: {\n    vacancyName: string\n    grade: string\n    salaryUsd: { min: number; max: number }\n    salaryByn: { min: number; max: number }\n    salaryPln: { min: number; max: number }\n    salaryEur: { min: number; max: number }\n    updatedAt: string\n  }) => void\n  onDelete?: (id: number) => void\n}",
+      "fields": [
+        {
+          "name": "open",
+          "type": "boolean",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onOpenChange",
+          "type": "(open: boolean) => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "salaryRange",
+          "type": "SalaryRangeForDetail | null",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onToggleActive",
+          "type": "(id: number) => void",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "onSave",
+          "type": "(id: number, data: {",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "vacancyName",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "grade",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "salaryUsd",
+          "type": "{ min: number; max: number }",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "salaryByn",
+          "type": "{ min: number; max: number }",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "salaryPln",
+          "type": "{ min: number; max: number }",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "salaryEur",
+          "type": "{ min: number; max: number }",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "updatedAt",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onDelete",
+          "type": "(id: number) => void",
+          "optional": true,
+          "comment": null
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка статистики из API\n   - GET `/api/salary-ranges/stats/`\n   - Возвращает: объект с количеством вилок (total, active, inactive)",
+      "method": "GET",
+      "endpoint": "/api/salary-ranges/stats/",
+      "parameters": null,
+      "returns": "объект с количеством вилок (total, active, inactive)",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка списка вакансий из API\n   - GET `/api/vacancies/`\n   - Возвращает: массив вакансий\n   - Используется в `SalaryRangesSearchFilters` и модальных окнах",
+      "method": "GET",
+      "endpoint": "/api/vacancies/",
+      "parameters": null,
+      "returns": "массив вакансий",
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Загрузка списка грейдов из API\n   - GET `/api/grades/`\n   - Возвращает: массив грейдов\n   - Используется в модальных окнах",
+      "method": "GET",
+      "endpoint": "/api/grades/",
+      "parameters": null,
+      "returns": "массив грейдов",
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Поиск и фильтрация вилок через API\n   - GET `/api/salary-ranges/?q={query}&vacancy={vacancy}&grade={grade}&status={status}`\n   - Параметры: поисковый запрос, вакансия, грейд, статус (active/inactive)\n   - Возвращает: массив зарплатных вилок",
+      "method": "GET",
+      "endpoint": "/api/salary-ranges/?q={query}&vacancy={vacancy}&grade={grade}&status={status}",
+      "parameters": "поисковый запрос, вакансия, грейд, статус (active/inactive)",
+      "returns": "массив зарплатных вилок",
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Создание вилки через API\n   - POST `/api/salary-ranges/`\n   - Параметры: вакансия, грейд, зарплатные вилки в USD\n   - Backend рассчитывает другие валюты на основе курсов\n   - Возвращает: созданную вилку",
+      "method": "POST",
+      "endpoint": "/api/salary-ranges/",
+      "parameters": "вакансия, грейд, зарплатные вилки в USD",
+      "returns": "созданную вилку",
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Обновление вилки через API\n   - PUT/PATCH `/api/salary-ranges/{id}/`\n   - Параметры: обновленные поля вилки\n   - Backend пересчитывает другие валюты при изменении USD\n   - Возвращает: обновленную вилку",
+      "method": "PATCH",
+      "endpoint": "/api/salary-ranges/{id}/",
+      "parameters": "обновленные поля вилки",
+      "returns": "обновленную вилку",
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Удаление вилки через API\n   - DELETE `/api/salary-ranges/{id}/`\n   - Возвращает: статус удаления",
+      "method": "DELETE",
+      "endpoint": "/api/salary-ranges/{id}/",
+      "parameters": null,
+      "returns": "статус удаления",
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Переключение активности вилки через API\n   - PATCH `/api/salary-ranges/{id}/toggle-active/`\n   - Возвращает: обновленную вилку",
+      "method": "PATCH",
+      "endpoint": "/api/salary-ranges/{id}/toggle-active/",
+      "parameters": null,
+      "returns": "обновленную вилку",
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Загрузка курсов валют из API\n   - GET `/api/currency-rates/`\n   - Возвращает: актуальные курсы валют\n   - Используется для расчета других валют",
+      "method": "GET",
+      "endpoint": "/api/currency-rates/",
+      "parameters": null,
+      "returns": "актуальные курсы валют",
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Загрузка ставок налогов из API\n    - GET `/api/taxes/pln/`\n    - Возвращает: актуальные ставки налогов\n    - Используется для расчета gross зарплат",
+      "method": "GET",
+      "endpoint": "/api/taxes/pln/",
+      "parameters": null,
+      "returns": "актуальные ставки налогов",
+      "status": "pending"
+    },
+    {
+      "task_number": 11,
+      "description": "Навигация к детальной странице вилки\n    - Реализовать переход на `/vacancies/salary-ranges/{id}` при клике на вилку\n    - Отобразить детальную информацию на странице",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.319979"
+}

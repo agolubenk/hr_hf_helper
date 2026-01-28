@@ -281,10 +281,12 @@ class InviteCombinedForm(forms.ModelForm):
         
         candidate_url = urls[0]  # Берем первую найденную ссылку
         
-        # Валидация URL
-        if '/vacancy/' not in candidate_url:
+        # Валидация URL - поддерживаем два формата:
+        # 1. С вакансией: /vacancy/123/filter/456/id/789
+        # 2. Без вакансии: /applicants/filter/all/77231621
+        if '/vacancy/' not in candidate_url and '/applicants/filter/' not in candidate_url:
             raise forms.ValidationError(
-                _('URL должен содержать /vacancy/ и быть ссылкой на кандидата из Huntflow')
+                _('URL должен содержать /vacancy/ или /applicants/filter/ и быть ссылкой на кандидата из Huntflow')
             )
         
         print(f"✅ CLEAN_COMBINED_DATA: URL извлечен: {candidate_url}")
@@ -324,7 +326,8 @@ class InviteCombinedForm(forms.ModelForm):
         # Сохраняем исходные данные из формы
         if 'combined_data' in self.cleaned_data:
             invite.original_form_data = self.cleaned_data['combined_data']
-            print(f"🔍 COMBINED_FORM_SAVE: Сохранены исходные данные: {invite.original_form_data[:100]}...")
+            print(f"🔍 COMBINED_FORM_SAVE: Сохранены исходные данные (полная длина: {len(invite.original_form_data)}): {invite.original_form_data}")
+            print(f"🔍 COMBINED_FORM_SAVE: Проверяем наличие @ в данных: {'@' in invite.original_form_data}")
         
         # Обрабатываем выбранного интервьюера
         if 'selected_interviewer' in self.cleaned_data and self.cleaned_data['selected_interviewer']:
@@ -625,7 +628,25 @@ class HRScreeningForm(forms.ModelForm):
         }
     
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
+        user = kwargs.pop('user', None)
+        # Проверяем, что user является объектом пользователя, а не строкой
+        if user is not None:
+            from apps.accounts.models import User
+            if isinstance(user, str):
+                # Если передан username, получаем объект пользователя
+                try:
+                    user = User.objects.get(username=user)
+                    print(f"🔍 HR_SCREENING_FORM_INIT: Преобразована строка в объект пользователя: {user.username}")
+                except User.DoesNotExist:
+                    raise ValueError(f"Пользователь с username '{user}' не найден")
+            elif not isinstance(user, User):
+                print(f"❌ HR_SCREENING_FORM_INIT: Неверный тип user: {type(user)}, значение: {user}")
+                raise ValueError(f"Ожидается объект User, получен {type(user)}")
+            else:
+                print(f"✅ HR_SCREENING_FORM_INIT: User корректный: {user.username} (ID: {user.id})")
+        else:
+            print(f"⚠️ HR_SCREENING_FORM_INIT: User не передан")
+        self.user = user
         super().__init__(*args, **kwargs)
     
     def clean_input_data(self):
@@ -635,8 +656,19 @@ class HRScreeningForm(forms.ModelForm):
         if not input_data:
             raise forms.ValidationError(_('Поле не может быть пустым'))
         
-        # Проверяем, что в тексте есть ссылка на Huntflow
-        if 'huntflow' not in input_data.lower() and '/vacancy/' not in input_data:
+        # Пропускаем валидацию ссылки на Huntflow, если это ссылка на резюме (hh.ru или rabota.by)
+        # Эти ссылки обрабатываются через команду /add
+        is_resume_link = False
+        if 'hh.ru' in input_data.lower() or 'headhunter.ru' in input_data.lower():
+            # Проверяем, что это ссылка на резюме, а не на вакансию
+            if '/resume/' in input_data.lower() or '/applicants/resume' in input_data.lower():
+                is_resume_link = True
+        elif 'rabota.by' in input_data.lower():
+            if '/resume/' in input_data.lower():
+                is_resume_link = True
+        
+        # Проверяем, что в тексте есть ссылка на Huntflow (только если это не ссылка на резюме)
+        if not is_resume_link and 'huntflow' not in input_data.lower() and '/vacancy/' not in input_data:
             raise forms.ValidationError(
                 _('В тексте должна быть ссылка на кандидата в Huntflow (содержащая /vacancy/)')
             )
@@ -646,9 +678,24 @@ class HRScreeningForm(forms.ModelForm):
     def save(self, commit=True):
         """Сохраняет HR-скрининг с автоматической обработкой"""
         print(f"🔍 HR_SCREENING_FORM_SAVE: Начинаем сохранение HR-скрининга...")
+        
+        # Проверяем, что user установлен и является объектом пользователя
+        if not self.user:
+            raise ValueError("Пользователь не указан для HR-скрининга")
+        
+        from apps.accounts.models import User
+        if isinstance(self.user, str):
+            # Если user является строкой, получаем объект пользователя
+            try:
+                self.user = User.objects.get(username=self.user)
+            except User.DoesNotExist:
+                raise ValueError(f"Пользователь с username '{self.user}' не найден")
+        elif not isinstance(self.user, User):
+            raise ValueError(f"Ожидается объект User, получен {type(self.user)}")
+        
         hr_screening = super().save(commit=False)
         hr_screening.user = self.user
-        print(f"🔍 HR_SCREENING_FORM_SAVE: HR-скрининг создан, user: {hr_screening.user}")
+        print(f"🔍 HR_SCREENING_FORM_SAVE: HR-скрининг создан, user: {hr_screening.user} (ID: {hr_screening.user.id})")
         
         if commit:
             try:

@@ -724,7 +724,13 @@ def bulk_import_view(request):
     
     # Получаем вакансии из Huntflow
     huntflow_vacancies = []
-    if user.huntflow_sandbox_api_key or user.huntflow_prod_api_key:
+    # Проверяем наличие настроек Huntflow (токены для PROD, API ключ или токены для sandbox)
+    huntflow_configured = bool(
+        (getattr(user, 'huntflow_sandbox_api_key', None) and user.huntflow_sandbox_url) or
+        (user.huntflow_access_token and user.huntflow_prod_url) or
+        (user.huntflow_access_token and user.huntflow_sandbox_url)
+    )
+    if huntflow_configured:
         try:
             from logic.integration.shared.huntflow_operations import HuntflowOperations
             huntflow_ops = HuntflowOperations(user)

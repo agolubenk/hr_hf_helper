@@ -142,6 +142,12 @@
                         <i class="fas fa-edit me-1"></i>
                         Редактировать кандидата
                     </a>
+                    {% if huntflow_link %}
+                    <button class="btn btn-outline-primary" onclick="copyHuntflowLink()" title="Скопировать ссылку на кандидата в Huntflow">
+                        <i class="fas fa-link me-1"></i>
+                        Скопировать ссылку Huntflow
+                    </button>
+                    {% endif %}
                     <button class="btn btn-outline-secondary" onclick="copyApplicantInfo()">
                         <i class="fas fa-copy me-1"></i>
                         Скопировать информацию
@@ -350,6 +356,34 @@
 <!-- Стили уже подключены в base.html -->
 
 <script>
+// Функция для копирования ссылки на кандидата в Huntflow
+function copyHuntflowLink() {
+    {% if huntflow_link %}
+    const link = '{{ huntflow_link }}';
+    
+    navigator.clipboard.writeText(link).then(function() {
+        showAlert('success', 'Ссылка на кандидата в Huntflow скопирована в буфер обмена');
+    }, function() {
+        // Fallback для старых браузеров
+        const textArea = document.createElement('textarea');
+        textArea.value = link;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            showAlert('success', 'Ссылка на кандидата в Huntflow скопирована в буфер обмена');
+        } catch (err) {
+            showAlert('danger', 'Не удалось скопировать ссылку');
+        }
+        document.body.removeChild(textArea);
+    });
+    {% else %}
+    showAlert('warning', 'Ссылка на кандидата недоступна. Убедитесь, что кандидат привязан к вакансии.');
+    {% endif %}
+}
+
 function copyApplicantInfo() {
     let info = `Кандидат: ${document.title}\nID: {{ applicant.id }}\nФИО: {{ applicant.first_name|default:"" }} {{ applicant.last_name|default:"" }}{% if applicant.middle_name %} {{ applicant.middle_name }}{% endif %}`;
     

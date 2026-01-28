@@ -1,0 +1,62 @@
+{
+  "name": "edit",
+  "type": "page",
+  "description": "Страница редактирования вакансии. Позволяет редактировать все параметры вакансии через форму с множеством разделов.",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/vacancies/[id]/edit/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockVacancy\nОбъект вакансии со всеми полями для редактирования:\n- Основная информация: название, статус, рекрутер, технологии, Huntflow ID\n- Текст: департамент, заголовок\n- Рекрутеры: список рекрутеров, главный рекрутер\n- И другие разделы\n\n**TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "`mockVacancy` - заменить на загрузку из API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "`loadVacancy()` - реализовать реальный API вызов",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "`handleSave()` - реализовать реальный API вызов",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Все разделы редактирования - реализовать функциональность",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Валидация полей - реализовать детальную валидацию",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.285659"
+}

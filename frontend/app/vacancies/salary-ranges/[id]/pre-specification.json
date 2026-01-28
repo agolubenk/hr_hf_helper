@@ -1,0 +1,11 @@
+{
+  "name": "[id]",
+  "type": "page",
+  "description": "Страница детального просмотра зарплатной вилки. Отображает полную информацию о вилке и выполняет редирект на страницу списка с параметром `?detail=`.",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/vacancies/salary-ranges/[id]/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [],
+  "api_endpoints": [],
+  "generated_at": "2026-01-28T18:00:33.286778"
+}

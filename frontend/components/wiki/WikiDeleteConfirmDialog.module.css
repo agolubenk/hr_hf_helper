@@ -1,0 +1,114 @@
+.popoverContent {
+  background: var(--color-panel) !important;
+  background-color: var(--color-panel) !important;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--gray-6);
+  padding: 0;
+  z-index: 1000;
+  min-width: 260px;
+  max-width: 300px;
+  animation: popoverShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+}
+
+/* Для темной темы */
+[data-theme="dark"] .popoverContent,
+.radix-themes[data-appearance="dark"] .popoverContent {
+  background: var(--gray-3) !important;
+  background-color: var(--gray-3) !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+}
+
+/* Для светлой темы */
+[data-theme="light"] .popoverContent,
+.radix-themes[data-appearance="light"] .popoverContent {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+}
+
+.popoverHeader {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--gray-6);
+  background: transparent !important;
+}
+
+.iconContainer {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--red-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--red-9);
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+
+.messageText {
+  flex: 1;
+  line-height: 1.4;
+}
+
+.popoverFooter {
+  padding: 12px 16px;
+  background: transparent !important;
+}
+
+.cancelButton {
+  min-width: 60px;
+  padding: 6px 16px !important;
+  border-radius: 6px !important;
+}
+
+.confirmButton {
+  min-width: 60px;
+  padding: 6px 16px !important;
+  border-radius: 6px !important;
+  background-color: var(--red-9) !important;
+  color: #ffffff !important;
+}
+
+.confirmButton:hover {
+  background-color: var(--red-10) !important;
+}
+
+.popoverArrow {
+  fill: var(--color-panel) !important;
+  stroke: var(--gray-6);
+}
+
+/* Для темной темы */
+[data-theme="dark"] .popoverArrow,
+.radix-themes[data-appearance="dark"] .popoverArrow {
+  fill: var(--gray-3) !important;
+}
+
+/* Для светлой темы */
+[data-theme="light"] .popoverArrow,
+.radix-themes[data-appearance="light"] .popoverArrow {
+  fill: #ffffff !important;
+}
+
+@keyframes popoverShow {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .popoverContent {
+    min-width: 240px;
+    max-width: calc(100vw - 32px);
+  }
+}

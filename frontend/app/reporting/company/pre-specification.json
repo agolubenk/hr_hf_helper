@@ -1,0 +1,129 @@
+{
+  "name": "company",
+  "type": "page",
+  "description": "Страница детального отчета по компании. Отображает подробную аналитику по рекрутингу, метрики эффективности и статистику.",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/reporting/company/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockMetrics\nОбъект с метриками для отчета:\n- Общие метрики\n- Метрики по вакансиям\n- Метрики по заявкам\n- И другие разделы\n\n**TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [
+    {
+      "name": "ReportMetrics",
+      "definition": "interface ReportMetrics {\n  totalScreenings: number\n  totalInterviews: number\n  conversion: number\n  totalTime: string\n}",
+      "fields": [
+        {
+          "name": "totalScreenings",
+          "type": "number",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "totalInterviews",
+          "type": "number",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "conversion",
+          "type": "number",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "totalTime",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "TableDataItem",
+      "definition": "interface TableDataItem {\n  period: string\n  screenings: number\n  interviews: number\n  total: number\n  time: string\n}",
+      "fields": [
+        {
+          "name": "period",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "screenings",
+          "type": "number",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "interviews",
+          "type": "number",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "total",
+          "type": "number",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "time",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "`mockMetrics` - заменить на загрузку из API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "`loadMetrics()` - реализовать реальный API вызов",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Фильтры отчета - реализовать функциональность",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Графики - реализовать визуализацию данных",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Экспорт отчета - реализовать экспорт в Excel/PDF",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.314434"
+}

@@ -219,6 +219,76 @@ SIDEBAR_MENU = {
                         'url': 'notion_int:settings'
                     }
                 }
+            },
+            'hhru': {
+                'title': 'HeadHunter.ru',
+                'icon': 'fab fa-hire-a-helper',
+                'url': 'hhru:dashboard',
+                'submenu': {
+                    'dashboard': {
+                        'title': 'Главная',
+                        'icon': 'fas fa-tachometer-alt',
+                        'url': 'hhru:dashboard'
+                    },
+                    'accounts': {
+                        'title': 'Аккаунты',
+                        'icon': 'fas fa-user-circle',
+                        'url': 'hhru:accounts_list'
+                    },
+                    'configurations': {
+                        'title': 'Конфигурации',
+                        'icon': 'fas fa-cog',
+                        'url': 'hhru:configurations_list'
+                    },
+                    'create_config': {
+                        'title': 'Создать конфигурацию',
+                        'icon': 'fas fa-plus',
+                        'url': 'hhru:configuration_create'
+                    },
+                    'logs': {
+                        'title': 'Логи',
+                        'icon': 'fas fa-history',
+                        'url': 'hhru:logs_list'
+                    }
+                }
+            }
+        }
+    },
+    'wiki': {
+        'title': 'Вики',
+        'icon': 'fas fa-book',
+        'url': 'wiki:list',
+        'submenu': {}
+    },
+    'reporting': {
+        'title': 'Отчетность',
+        'icon': 'fas fa-chart-bar',
+        'url': 'reporting:dashboard',
+        'submenu': {
+            'dashboard': {
+                'title': 'Главная',
+                'icon': 'fas fa-tachometer-alt',
+                'url': 'reporting:dashboard'
+            },
+            'company': {
+                'title': 'По компании',
+                'icon': 'fas fa-building',
+                'url': 'reporting:company_report'
+            },
+            'recruiter': {
+                'title': 'По рекрутеру',
+                'icon': 'fas fa-user-tie',
+                'url': 'reporting:recruiter_list'
+            },
+            'vacancy': {
+                'title': 'По вакансии',
+                'icon': 'fas fa-briefcase',
+                'url': 'reporting:vacancy_list'
+            },
+            'interviewer': {
+                'title': 'По интервьюеру',
+                'icon': 'fas fa-user-check',
+                'url': 'reporting:interviewer_list'
             }
         }
     }
@@ -323,3 +393,33 @@ def render_sidebar_menu(context):
     html += '</ul>'
     
     return mark_safe(html)
+
+
+@register.simple_tag(takes_context=True)
+def get_admin_url(context):
+    """Возвращает URL админки для текущего приложения"""
+    request = context['request']
+    namespace = request.resolver_match.namespace if request.resolver_match else None
+    
+    # Маппинг namespace -> admin app name
+    namespace_to_admin = {
+        'wiki': 'wiki',
+        'company_settings': 'company_settings',
+        'finance': 'finance',
+        'vacancies': 'vacancies',
+        'hiring_plan': 'hiring_plan',
+        'google_oauth': 'google_oauth',
+        'gemini': 'gemini',
+        'interviewers': 'interviewers',
+        'accounts': 'accounts',
+        'clickup_int': 'clickup_int',
+        'notion_int': 'notion_int',
+        'huntflow': 'huntflow',
+        'reporting': 'reporting',
+    }
+    
+    if namespace and namespace in namespace_to_admin:
+        admin_app = namespace_to_admin[namespace]
+        return f'/admin/{admin_app}/'
+    
+    return '/admin/'

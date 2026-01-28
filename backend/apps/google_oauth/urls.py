@@ -39,7 +39,9 @@ urlpatterns = [
     path('api/slots-settings/', views.api_slots_settings, name='api_slots_settings'),
     path('api/calendar-events/', views.api_calendar_events, name='api_calendar_events'),
     path('api/interviewers-autocomplete/', views.api_interviewers_autocomplete, name='api_interviewers_autocomplete'),
+    path('api/interview-slots/', views.api_interview_slots, name='api_interview_slots'),
     path('api/third-week-slots/', views.api_third_week_slots, name='api_third_week_slots'),
+    path('api/weekly-reports/', views.api_weekly_reports, name='api_weekly_reports'),
     path('debug/cache/', views.debug_cache, name='debug_cache'),
     
     # Инвайты
@@ -64,6 +66,7 @@ urlpatterns = [
     path('hr-screening/<int:pk>/', views.hr_screening_detail, name='hr_screening_detail'),
     path('hr-screening/<int:pk>/delete/', views.hr_screening_delete, name='hr_screening_delete'),
     path('hr-screening/<int:pk>/retry-analysis/', views.hr_screening_retry_analysis, name='hr_screening_retry_analysis'),
+    path('reject-candidate/<int:hr_screening_id>/', views.reject_candidate, name='reject_candidate'),
     
     # Объединенный рабочий процесс
     path('combined-workflow/', views.combined_workflow, name='combined_workflow'),

@@ -1,0 +1,25 @@
+.blocksWrap {
+  max-width: 800px;
+  width: 100%;
+}
+
+.blockCardLink {
+  flex: 0 0 auto;
+  text-decoration: none;
+}
+
+.blockCard {
+  width: max-content;
+  padding: 20px 24px;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.blockCard:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.welcomeTourBtn {
+  flex-shrink: 0;
+}

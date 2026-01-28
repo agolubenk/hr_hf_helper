@@ -2242,7 +2242,47 @@ def api_scorecard_path_settings(request):
         
         # Получаем данные из запроса
         data = json.loads(request.body)
-        folder_structure = data.get('folder_structure', [])
+        folder_structure = data.get('folder_structure', None)
+        protected_sheet_names = data.get('protected_sheet_names', None)
+        
+        # Получаем или создаем настройки (нужно и для частичных обновлений)
+        settings_obj, created = ScorecardPathSettings.objects.get_or_create(
+            user=request.user,
+            defaults={'folder_structure': []}
+        )
+        
+        # Если обновляем только защищённые листы — структуру не трогаем
+        if folder_structure is None and protected_sheet_names is None:
+            return JsonResponse({
+                'success': False,
+                'message': 'Не переданы данные для обновления'
+            })
+
+        # Обновляем список защищённых листов (если пришёл)
+        if protected_sheet_names is not None:
+            raw = (protected_sheet_names or '').strip()
+            # Нормализуем: split по запятым, trim, удаляем пустые, убираем дубли
+            parts = [p.strip() for p in raw.split(',')] if raw else []
+            seen = set()
+            normalized = []
+            for p in parts:
+                if not p:
+                    continue
+                key = p.lower()
+                if key in seen:
+                    continue
+                seen.add(key)
+                normalized.append(p)
+            settings_obj.protected_sheet_names = ', '.join(normalized)
+
+        # Если folder_structure не передали — просто сохраняем защищённые листы и выходим
+        if folder_structure is None:
+            settings_obj.save()
+            return JsonResponse({
+                'success': True,
+                'message': 'Настройки сохранены успешно',
+                'path_preview': settings_obj.generate_path_preview()
+            })
         
         print(f"🔍 DEBUG: Received folder_structure: {folder_structure}")
         for i, item in enumerate(folder_structure):
@@ -2315,12 +2355,6 @@ def api_scorecard_path_settings(request):
                 'success': False,
                 'message': 'Структура папок не может быть пустой'
             })
-        
-        # Получаем или создаем настройки
-        settings_obj, created = ScorecardPathSettings.objects.get_or_create(
-            user=request.user,
-            defaults={'folder_structure': folder_structure}
-        )
         
         # Обновляем структуру
         settings_obj.folder_structure = folder_structure
@@ -2813,6 +2847,181 @@ def hr_screening_delete(request, pk):
 @login_required
 @permission_required('google_oauth.change_hrscreening', raise_exception=True)
 @require_POST
+def reject_candidate(request, hr_screening_id):
+    """Обработка отказа кандидата после HR-скрининга"""
+    try:
+        hr_screening = get_object_or_404(HRScreening, pk=hr_screening_id, user=request.user)
+        
+        # Получаем данные из запроса
+        data = json.loads(request.body) if request.body else {}
+        message_id = data.get('message_id')
+        
+        # Определяем причину отказа и статус
+        rejection_status_id = None
+        rejection_reason_id = None
+        comment = ""
+        
+        from apps.huntflow.services import HuntflowService
+        huntflow_service = HuntflowService(request.user)
+        accounts = huntflow_service.get_accounts()
+        
+        if not accounts or 'items' not in accounts:
+            return JsonResponse({'success': False, 'error': 'Нет доступных аккаунтов Huntflow'})
+        
+        account_id = accounts['items'][0]['id']
+        
+        # Проверяем превышение зарплаты
+        salary_above_range = False
+        if hr_screening.extracted_salary and hr_screening.salary_currency:
+            salary_above_range = hr_screening.is_salary_above_range()
+        
+        # Проверяем офисный формат
+        office_format_rejected = hr_screening.is_office_format_rejected()
+        
+        # Определяем причину отказа
+        if salary_above_range:
+            # Приоритет 1: Зарплата превышает вилку
+            rejection_status_id, rejection_reason_id = hr_screening._find_salary_rejection_status(huntflow_service, account_id)
+            
+            # При отказе по ЗП не передаем комментарий - только причину отказа
+            comment = ""
+            
+            # Причина отказа обязательна для отказа по ЗП
+            if not rejection_reason_id:
+                # Получаем список всех причин отказа для более информативного сообщения
+                try:
+                    rejection_reasons_data = huntflow_service.get_rejection_reasons(account_id)
+                    all_reasons = []
+                    if rejection_reasons_data and 'items' in rejection_reasons_data:
+                        for reason in rejection_reasons_data['items']:
+                            if isinstance(reason, dict) and reason.get('name'):
+                                all_reasons.append(f"'{reason.get('name')}'")
+                    
+                    error_msg = 'Причина отказа "Высокие запросы по зарплате" не найдена в Huntflow.'
+                    if all_reasons:
+                        error_msg += f' Доступные причины отказа: {", ".join(all_reasons)}. Убедитесь, что в списке причин отказа есть причина с названием, содержащим "Высокие запросы по зарплате" или похожим.'
+                    else:
+                        error_msg += ' В списке причин отказа не найдено ни одной причины. Убедитесь, что причины отказа настроены в Huntflow.'
+                    
+                    return JsonResponse({
+                        'success': False, 
+                        'error': error_msg
+                    })
+                except Exception as e:
+                    print(f"⚠️ REJECT_CANDIDATE: Ошибка при получении списка причин отказа: {e}")
+                    return JsonResponse({
+                        'success': False, 
+                        'error': 'Причина отказа "Высокие запросы по зарплате" не найдена в Huntflow. Убедитесь, что в списке причин отказа есть причина с таким названием.'
+                    })
+            
+            # Если статус не найден, но причина найдена, ищем статус отказа
+            if not rejection_status_id and rejection_reason_id:
+                statuses = huntflow_service.get_vacancy_statuses(account_id)
+                if statuses and 'items' in statuses:
+                    for status in statuses['items']:
+                        if status.get('type', '').lower() == 'trash':
+                            rejection_status_id = status.get('id')
+                            print(f"✅ REJECT_CANDIDATE: Найден статус отказа (ID: {rejection_status_id}) для причины отказа (ID: {rejection_reason_id})")
+                            break
+        elif office_format_rejected:
+            # Приоритет 2: Офисный формат
+            rejection_status_id, rejection_reason_id = hr_screening._find_rejection_status_with_reason(huntflow_service, account_id, 'office_format')
+            comment = "Отказ по офисному формату"
+        else:
+            # Общий отказ (если нет специфической причины)
+            # Ищем статус отказа типа 'trash'
+            statuses = huntflow_service.get_vacancy_statuses(account_id)
+            if statuses and 'items' in statuses:
+                for status in statuses['items']:
+                    if status.get('type', '').lower() == 'trash':
+                        rejection_status_id = status.get('id')
+                        break
+        
+        if not rejection_status_id:
+            return JsonResponse({'success': False, 'error': 'Статус отказа не найден в Huntflow'})
+        
+        # Убеждаемся, что комментарий не пустой (только для не-ЗП отказов)
+        if not comment and not salary_above_range:
+            if office_format_rejected:
+                comment = "Отказ по офисному формату"
+            else:
+                comment = "Отказ кандидата"
+        
+        print(f"🔍 REJECT_CANDIDATE: rejection_status_id={rejection_status_id}, rejection_reason_id={rejection_reason_id}, comment='{comment}'")
+        
+        # Формируем текст статуса для отображения (нужен и для ответа, и для metadata)
+        status_text = "Данные сохранены. Статус - Отказ"
+        if salary_above_range:
+            status_text = "Данные сохранены. Статус - Отказ: Высокие ЗП ожидания"
+        elif office_format_rejected:
+            status_text = "Данные сохранены. Статус - Отказ: Офисный формат"
+
+        # Обновляем статус в Huntflow
+        status_result = hr_screening._update_applicant_status_with_rejection(
+            huntflow_service,
+            account_id,
+            int(hr_screening.candidate_id),
+            rejection_status_id,
+            comment,
+            int(hr_screening.vacancy_id) if hr_screening.vacancy_id else None,
+            rejection_reason_id
+        )
+        
+        if not status_result:
+            return JsonResponse({'success': False, 'error': 'Не удалось обновить статус в Huntflow'})
+        
+        # Обновляем metadata сообщения, если указан message_id
+        if message_id:
+            try:
+                from .models import ChatMessage
+                
+                # Получаем текущие metadata из базы
+                chat_message = ChatMessage.objects.get(id=int(message_id), session__user=request.user)
+                current_metadata = chat_message.metadata or {}
+                
+                # Создаем НОВЫЙ словарь с обновленными данными
+                new_metadata = dict(current_metadata)
+                new_metadata['rejected'] = True
+                new_metadata['rejection_status_id'] = rejection_status_id
+                new_metadata['rejection_reason_id'] = rejection_reason_id
+                new_metadata['rejection_comment'] = comment
+                new_metadata['rejection_status_text'] = status_text
+                new_metadata['rejection_form_answered'] = True  # Ключевое поле!
+
+                # Сохраняем через ORM (корректно для SQLite/PostgreSQL и не падает на debug_sql)
+                ChatMessage.objects.filter(id=chat_message.id, session__user=request.user).update(metadata=new_metadata)
+                chat_message.refresh_from_db(fields=['metadata'])
+                
+                # Проверяем, что данные действительно сохранились
+                saved_answered = chat_message.metadata.get('rejection_form_answered', False)
+                saved_rejected = chat_message.metadata.get('rejected', False)
+                print(f"✅ REJECT_CANDIDATE: Metadata сообщения {message_id} сохранено. rejection_form_answered={saved_answered} (тип: {type(saved_answered)}), rejected={saved_rejected}, все ключи: {list(chat_message.metadata.keys())}")
+            except ChatMessage.DoesNotExist:
+                print(f"⚠️ REJECT_CANDIDATE: Сообщение {message_id} не найдено")
+            except Exception as e:
+                print(f"⚠️ REJECT_CANDIDATE: Ошибка обновления metadata: {e}")
+                import traceback
+                traceback.print_exc()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Кандидат успешно отклонен',
+            'rejection_status_id': rejection_status_id,
+            'rejection_reason_id': rejection_reason_id,
+            'status_text': status_text,
+            'rejection_type': 'salary' if salary_above_range else ('office_format' if office_format_rejected else 'general')
+        })
+        
+    except Exception as e:
+        print(f"❌ REJECT_CANDIDATE: Ошибка при отказе кандидата: {e}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({'success': False, 'error': str(e)})
+
+
+@login_required
+@permission_required('google_oauth.change_hrscreening', raise_exception=True)
+@require_POST
 def hr_screening_retry_analysis(request, pk):
     """Повторный анализ HR-скрининга с помощью Gemini"""
     hr_screening = get_object_or_404(HRScreening, pk=pk, user=request.user)
@@ -3167,6 +3376,283 @@ def api_calendar_events(request):
 
 
 @login_required
+@require_http_methods(["GET", "POST"])
+def api_interview_slots(request):
+    """API для пересчета слотов интервью с учетом выбранных участников"""
+    try:
+        from apps.google_oauth.services import GoogleOAuthService, GoogleCalendarService
+        from apps.google_oauth.cache_service import GoogleAPICache
+        from apps.interviewers.models import Interviewer
+        from apps.vacancies.models import Vacancy
+        from logic.slots_calculator import SlotsCalculator
+        import json
+        from datetime import datetime, timedelta, time as dt_time
+        import pytz
+        
+        # Получаем параметры запроса
+        vacancy_id = request.GET.get('vacancy_id') or (json.loads(request.body).get('vacancy_id') if request.method == 'POST' else None)
+        interviewer_ids_str = request.GET.get('interviewer_ids') or (json.loads(request.body).get('interviewer_ids') if request.method == 'POST' else None)
+        include_user = request.GET.get('include_user', '1')  # По умолчанию включаем пользователя
+        include_user = include_user == '1' or include_user == 'true' or include_user == True
+        
+        print(f"🔍 API INTERVIEW SLOTS: vacancy_id={vacancy_id}, interviewer_ids={interviewer_ids_str}, include_user={include_user}")
+        
+        if not vacancy_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Не указан ID вакансии'
+            })
+        
+        # Получаем вакансию
+        try:
+            vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True)
+        except Vacancy.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Вакансия не найдена'
+            })
+        
+        # Получаем выбранных интервьюеров
+        selected_interviewers = []
+        if interviewer_ids_str:
+            try:
+                interviewer_ids = [int(id.strip()) for id in interviewer_ids_str.split(',') if id.strip()]
+                selected_interviewers = Interviewer.objects.filter(id__in=interviewer_ids, is_active=True)
+                print(f"🔍 API INTERVIEW SLOTS: Найдено {len(selected_interviewers)} выбранных интервьюеров")
+            except ValueError:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Неверный формат ID интервьюеров'
+                })
+        
+        # ВАЖНО: если интервьюеры не выбраны — НЕ используем обязательных.
+        # Слоты считаются только по календарю пользователя и компании.
+        if not selected_interviewers:
+            print("🔍 API INTERVIEW SLOTS: Интервьюеры не выбраны — считаем слоты без календарей интервьюеров")
+        
+        # Получаем OAuth аккаунт
+        oauth_service = GoogleOAuthService(request.user)
+        oauth_account = oauth_service.get_oauth_account()
+        
+        if not oauth_account:
+            return JsonResponse({
+                'success': False,
+                'message': 'Google OAuth аккаунт не подключен'
+            })
+        
+        # Получаем календарь компании
+        company_calendar_id = None
+        try:
+            from apps.company_settings.models import CompanySettings
+            company_settings = CompanySettings.get_settings()
+            if company_settings.main_calendar_id:
+                calendar_input = company_settings.main_calendar_id.strip()
+                company_calendar_id = _extract_calendar_id_from_link(calendar_input)
+        except Exception as e:
+            print(f"⚠️ API INTERVIEW SLOTS: Ошибка получения календаря компании: {e}")
+        
+        # Получаем события календаря пользователя и компании
+        calendar_service = GoogleCalendarService(oauth_service)
+        events_data = []
+        
+        # Добавляем события календаря пользователя только если он выбран как участник
+        if include_user:
+            user_events = calendar_service.get_events(calendar_id='primary', days_ahead=14)
+            events_data.extend(user_events)
+            print(f"🔍 API INTERVIEW SLOTS: Добавлены события календаря пользователя: {len(user_events)} событий")
+        else:
+            print(f"🔍 API INTERVIEW SLOTS: События календаря пользователя не учитываются (пользователь не выбран)")
+        
+        # Всегда добавляем события календаря компании
+        if company_calendar_id:
+            try:
+                company_events_data = calendar_service.get_events(calendar_id=company_calendar_id, days_ahead=14)
+                events_data.extend(company_events_data)
+                print(f"🔍 API INTERVIEW SLOTS: Добавлены события календаря компании: {len(company_events_data)} событий")
+            except Exception as e:
+                print(f"⚠️ API INTERVIEW SLOTS: Ошибка получения событий календаря компании: {e}")
+        
+        # Преобразуем события в формат для калькулятора
+        # ВАЖНО: Фильтруем отклоненные события перед расчетом слотов
+        interview_events_for_calc = []
+        current_user_email_lower = request.user.email.lower() if request.user.email else None
+        
+        for event in events_data:
+            try:
+                # Пропускаем отмененные события
+                event_status = event.get('status', 'confirmed')
+                if event_status == 'cancelled' or event_status == 'declined':
+                    print(f"  ❌ API INTERVIEW SLOTS: Исключаем отклоненное событие: \"{event.get('summary', 'Без названия')}\" (статус: {event_status})")
+                    continue
+                
+                # Проверяем, отклонил ли текущий пользователь событие
+                if current_user_email_lower and 'attendees' in event:
+                    current_user_attendee = None
+                    for attendee in event.get('attendees', []):
+                        attendee_email = (attendee.get('email') or '').lower()
+                        if attendee_email == current_user_email_lower:
+                            current_user_attendee = attendee
+                            break
+                    
+                    if current_user_attendee:
+                        user_response_status = current_user_attendee.get('responseStatus', 'needsAction')
+                        if user_response_status == 'declined':
+                            print(f"  ❌ API INTERVIEW SLOTS: Исключаем событие, которое отклонил пользователь: \"{event.get('summary', 'Без названия')}\"")
+                            continue
+                
+                start_time = None
+                if 'dateTime' in event.get('start', {}):
+                    start_time = datetime.fromisoformat(event['start']['dateTime'].replace('Z', '+00:00'))
+                    minsk_tz = pytz.timezone('Europe/Minsk')
+                    start_time = start_time.astimezone(minsk_tz)
+                elif 'date' in event.get('start', {}):
+                    start_time = datetime.fromisoformat(event['start']['date'])
+                    minsk_tz = pytz.timezone('Europe/Minsk')
+                    start_time = minsk_tz.localize(start_time)
+                
+                end_time = None
+                if 'dateTime' in event.get('end', {}):
+                    end_time = datetime.fromisoformat(event['end']['dateTime'].replace('Z', '+00:00'))
+                    minsk_tz = pytz.timezone('Europe/Minsk')
+                    end_time = end_time.astimezone(minsk_tz)
+                elif 'date' in event.get('end', {}):
+                    end_time = datetime.fromisoformat(event['end']['date'])
+                    minsk_tz = pytz.timezone('Europe/Minsk')
+                    end_time = minsk_tz.localize(end_time)
+                
+                if start_time:
+                    is_all_day = 'date' in event.get('start', {})
+                    interview_events_for_calc.append({
+                        'start': start_time.isoformat(),
+                        'end': end_time.isoformat() if end_time else start_time.isoformat(),
+                        'is_all_day': is_all_day,
+                    })
+            except Exception as e:
+                print(f"⚠️ API INTERVIEW SLOTS: Ошибка обработки события: {e}")
+        
+        # Добавляем события выбранных интервьюеров
+        for interviewer in selected_interviewers:
+            calendar_id = None
+            
+            # Способ 1: Извлекаем из calendar_link
+            if interviewer.calendar_link:
+                calendar_id = _extract_calendar_id_from_link(interviewer.calendar_link)
+            
+            # Способ 2: Проверяем календарь по email
+            if not calendar_id:
+                calendar = calendar_service.get_calendar_by_email(interviewer.email)
+                if calendar:
+                    calendar_id = calendar['id']
+            
+            # Способ 3: Используем email
+            if not calendar_id:
+                calendar_id = interviewer.email
+            
+            if calendar_id:
+                try:
+                    interviewer_events = calendar_service.get_events(calendar_id=calendar_id, days_ahead=14)
+                    print(f"📅 API INTERVIEW SLOTS: Получено {len(interviewer_events)} событий от {interviewer.email}")
+                    
+                    for event_data in interviewer_events:
+                        try:
+                            # Пропускаем отмененные события интервьюера
+                            event_status = event_data.get('status', 'confirmed')
+                            if event_status == 'cancelled' or event_status == 'declined':
+                                print(f"  ❌ API INTERVIEW SLOTS: Исключаем отклоненное событие интервьюера {interviewer.email}: \"{event_data.get('summary', 'Без названия')}\" (статус: {event_status})")
+                                continue
+                            
+                            # Проверяем, отклонил ли интервьюер событие
+                            interviewer_email_lower = interviewer.email.lower()
+                            if 'attendees' in event_data:
+                                interviewer_attendee = None
+                                for attendee in event_data.get('attendees', []):
+                                    attendee_email = (attendee.get('email') or '').lower()
+                                    if attendee_email == interviewer_email_lower:
+                                        interviewer_attendee = attendee
+                                        break
+                                
+                                if interviewer_attendee:
+                                    interviewer_response_status = interviewer_attendee.get('responseStatus', 'needsAction')
+                                    if interviewer_response_status == 'declined':
+                                        print(f"  ❌ API INTERVIEW SLOTS: Исключаем событие, которое отклонил интервьюер {interviewer.email}: \"{event_data.get('summary', 'Без названия')}\"")
+                                        continue
+                            
+                            start_time = None
+                            if 'dateTime' in event_data.get('start', {}):
+                                start_time = datetime.fromisoformat(event_data['start']['dateTime'].replace('Z', '+00:00'))
+                                minsk_tz = pytz.timezone('Europe/Minsk')
+                                start_time = start_time.astimezone(minsk_tz)
+                            
+                            end_time = None
+                            if 'dateTime' in event_data.get('end', {}):
+                                end_time = datetime.fromisoformat(event_data['end']['dateTime'].replace('Z', '+00:00'))
+                                minsk_tz = pytz.timezone('Europe/Minsk')
+                                end_time = end_time.astimezone(minsk_tz)
+                            
+                            if start_time:
+                                is_all_day = 'date' in event_data.get('start', {})
+                                interview_events_for_calc.append({
+                                    'start': start_time.isoformat(),
+                                    'end': end_time.isoformat() if end_time else start_time.isoformat(),
+                                    'is_all_day': is_all_day,
+                                })
+                        except Exception as e:
+                            print(f"⚠️ API INTERVIEW SLOTS: Ошибка обработки события интервьюера {interviewer.email}: {e}")
+                except Exception as e:
+                    print(f"⚠️ API INTERVIEW SLOTS: Ошибка получения событий для {interviewer.email}: {e}")
+        
+        # Получаем настройки рабочего времени из профиля пользователя
+        work_start = 11
+        work_end = 18
+        meeting_interval = 15
+        
+        if hasattr(request.user, 'interview_start_time') and request.user.interview_start_time:
+            if isinstance(request.user.interview_start_time, str):
+                work_start = dt_time.fromisoformat(request.user.interview_start_time).hour
+            else:
+                work_start = request.user.interview_start_time.hour
+        
+        if hasattr(request.user, 'interview_end_time') and request.user.interview_end_time:
+            if isinstance(request.user.interview_end_time, str):
+                work_end = dt_time.fromisoformat(request.user.interview_end_time).hour
+            else:
+                work_end = request.user.interview_end_time.hour
+        
+        if hasattr(request.user, 'meeting_interval_minutes') and request.user.meeting_interval_minutes:
+            meeting_interval = request.user.meeting_interval_minutes
+        
+        # Рассчитываем слоты
+        interview_duration = vacancy.tech_interview_duration if hasattr(vacancy, 'tech_interview_duration') and vacancy.tech_interview_duration else 90
+        
+        calculator = SlotsCalculator(
+            work_start_hour=work_start,
+            work_end_hour=work_end,
+            meeting_interval_minutes=meeting_interval
+        )
+        interview_slots = calculator.calculate_slots_for_two_weeks(
+            interview_events_for_calc,
+            required_duration_minutes=interview_duration
+        )
+        
+        print(f"📅 API INTERVIEW SLOTS: Рассчитано {len(interview_slots)} дней со слотами")
+        
+        return JsonResponse({
+            'success': True,
+            'slots': interview_slots,
+            'interviewer_count': len(selected_interviewers)
+        })
+        
+    except Exception as e:
+        print(f"❌ API INTERVIEW SLOTS: Ошибка: {e}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({
+            'success': False,
+            'message': f'Ошибка расчета слотов: {str(e)}'
+        })
+
+
+@login_required
 def api_interviewers_autocomplete(request):
     """API для автодополнения интервьюеров по вакансии"""
     try:
@@ -3230,13 +3716,229 @@ def api_interviewers_autocomplete(request):
 
 
 @login_required
+def api_weekly_reports(request):
+    """API для получения отчетов текущей и предыдущей недели"""
+    from apps.reporting.models import CalendarEvent
+    from apps.vacancies.models import Vacancy
+    from apps.interviewers.models import Interviewer
+    from datetime import timedelta
+    
+    try:
+        vacancy_id = request.GET.get('vacancy_id')
+        week_type = request.GET.get('week_type', 'current')  # 'current' или 'previous'
+        
+        if not vacancy_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Не указан ID вакансии'
+            })
+        
+        # Получаем вакансию
+        try:
+            vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True)
+        except Vacancy.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Вакансия не найдена'
+            })
+        
+        # Определяем границы недели (ПН-СБ)
+        now = timezone.now()
+        days_since_monday = now.weekday()  # 0 = ПН, 6 = ВС
+        
+        if week_type == 'current':
+            # Текущая неделя: от прошлого понедельника до субботы
+            week_start = now - timedelta(days=days_since_monday)
+            week_start = week_start.replace(hour=0, minute=0, second=0, microsecond=0)
+            week_end = week_start + timedelta(days=5)  # До субботы включительно
+            week_end = week_end.replace(hour=23, minute=59, second=59, microsecond=999999)
+        else:
+            # Предыдущая неделя: от понедельника недели назад до субботы
+            week_start = now - timedelta(days=days_since_monday + 7)
+            week_start = week_start.replace(hour=0, minute=0, second=0, microsecond=0)
+            week_end = week_start + timedelta(days=5)  # До субботы включительно
+            week_end = week_end.replace(hour=23, minute=59, second=59, microsecond=999999)
+        
+        # Получаем invite_title вакансии
+        invite_title = vacancy.invite_title or ''
+        if not invite_title:
+            return JsonResponse({
+                'success': True,
+                'data': {
+                    'hr_screening': 0,
+                    'tech_screening': 0,
+                    'interview': 0,
+                    'offer': 0,
+                    'offer_accepted': 0,
+                    'onboarding': 0,
+                }
+            })
+        
+        # Получаем интервьюеров вакансии
+        vacancy_interviewers = vacancy.interviewers.filter(is_active=True)
+        vacancy_interviewer_emails = set()
+        for interviewer in vacancy_interviewers:
+            if interviewer.email:
+                vacancy_interviewer_emails.add(interviewer.email.lower())
+        
+        # Получаем события за неделю
+        events = CalendarEvent.objects.filter(
+            start_time__gte=week_start,
+            start_time__lte=week_end,
+            event_type__in=['screening', 'interview', 'unknown']
+        ).select_related('vacancy', 'recruiter')
+        
+        # Фильтруем события по invite_title вакансии
+        matching_events = []
+        invite_title_lower = invite_title.lower().strip()
+        
+        print(f"📊 WEEKLY REPORTS: Вакансия ID={vacancy_id}, invite_title='{invite_title}'")
+        print(f"📊 WEEKLY REPORTS: Неделя {week_type}, период: {week_start.date()} - {week_end.date()}")
+        print(f"📊 WEEKLY REPORTS: Всего событий за период: {events.count()}")
+        print(f"📊 WEEKLY REPORTS: Интервьюеров вакансии: {len(vacancy_interviewer_emails)}")
+        if vacancy_interviewer_emails:
+            print(f"📊 WEEKLY REPORTS: Email интервьюеров: {', '.join(list(vacancy_interviewer_emails)[:5])}")
+        
+        for event in events:
+            event_title_lower = (event.title or '').lower().strip()
+            # Проверяем, содержит ли название события заголовок инвайта
+            if invite_title_lower and invite_title_lower in event_title_lower:
+                matching_events.append(event)
+                print(f"  ✅ Найдено совпадение: '{event.title}' (ID={event.id}, дата={event.start_time.date()})")
+        
+        print(f"📊 WEEKLY REPORTS: Событий с совпадением invite_title: {len(matching_events)}")
+        
+        # Подсчитываем скрининги
+        hr_screening_count = 0
+        tech_screening_count = 0
+        
+        # Получаем заголовок инвайта для Tech Screening (invite_title из вакансии)
+        # Формат названия события: "[Заголовок инвайтов] | [Фамилия Имя]"
+        tech_screening_invite_title = invite_title.strip() if invite_title else ''
+        tech_screening_invite_title_lower = tech_screening_invite_title.lower().strip().rstrip('|').strip()
+        
+        if not tech_screening_invite_title_lower:
+            # Если заголовок инвайта не указан, возвращаем нули
+            print(f"📊 WEEKLY REPORTS: Заголовок инвайта не указан для вакансии, скрининги не найдены")
+            return JsonResponse({
+                'success': True,
+                'data': {
+                    'hr_screening': 0,
+                    'tech_screening': 0,
+                    'interview': 0,
+                    'offer': 0,
+                    'offer_accepted': 0,
+                    'onboarding': 0,
+                }
+            })
+        
+        for event in matching_events:
+            event_title = event.title or ''
+            event_title_lower = event_title.lower()
+            
+            # Событие считается скринингом ТОЛЬКО если название начинается с invite_title (точное совпадение)
+            # Формат: "[Заголовок инвайтов] | [Фамилия Имя]" или "[Заголовок инвайтов]|[Фамилия Имя]"
+            is_screening = False
+            if event_title_lower.startswith(tech_screening_invite_title_lower):
+                # Проверяем, что после заголовка идет разделитель | или пробел
+                remaining = event_title_lower[len(tech_screening_invite_title_lower):].strip()
+                if remaining.startswith('|') or remaining.startswith(' '):
+                    is_screening = True
+            
+            if not is_screening:
+                continue  # Пропускаем события, которые не являются скринингами (нет точного совпадения с invite_title)
+            
+            # Если это скрининг (есть точное совпадение с invite_title), проверяем участников
+            attendees = event.attendees or []
+            has_interviewer = False
+            found_interviewer_email = None
+            
+            for attendee in attendees:
+                if isinstance(attendee, dict):
+                    attendee_email = attendee.get('email', '').lower()
+                elif isinstance(attendee, str):
+                    attendee_email = attendee.lower()
+                else:
+                    continue
+                
+                if attendee_email in vacancy_interviewer_emails:
+                    has_interviewer = True
+                    found_interviewer_email = attendee_email
+                    break
+            
+            # Определяем тип скрининга на основе участников
+            if has_interviewer:
+                tech_screening_count += 1
+                print(f"  🔵 Tech Screening: '{event.title}' (точное совпадение с invite_title='{invite_title}', интервьюер: {found_interviewer_email})")
+            else:
+                hr_screening_count += 1
+                print(f"  🟢 HR-screening: '{event.title}' (точное совпадение с invite_title='{invite_title}', но нет интервьюеров)")
+        
+        print(f"📊 WEEKLY REPORTS: Итого - HR-screening: {hr_screening_count}, Tech Screening: {tech_screening_count}")
+        
+        # Подсчитываем интервью
+        interview_count = 0
+        
+        # Получаем заголовок инвайта для интервью (tech_invite_title из вакансии)
+        tech_invite_title = vacancy.tech_invite_title or ''
+        tech_invite_title_lower = tech_invite_title.lower().strip().rstrip('|').strip() if tech_invite_title else ''
+        
+        if tech_invite_title_lower:
+            print(f"📊 WEEKLY REPORTS: Заголовок инвайта для интервью: '{tech_invite_title}'")
+            
+            # Проверяем все события за период на совпадение с tech_invite_title
+            for event in events:
+                event_title = event.title or ''
+                event_title_lower = event_title.lower()
+                
+                # Событие считается интервью ТОЛЬКО если название начинается с tech_invite_title (точное совпадение)
+                # Формат: "[Заголовок инвайтов] | [Фамилия Имя]" или "[Заголовок инвайтов]|[Фамилия Имя]"
+                is_interview = False
+                if event_title_lower.startswith(tech_invite_title_lower):
+                    # Проверяем, что после заголовка идет разделитель | или пробел
+                    remaining = event_title_lower[len(tech_invite_title_lower):].strip()
+                    if remaining.startswith('|') or remaining.startswith(' '):
+                        is_interview = True
+                
+                if is_interview:
+                    interview_count += 1
+                    print(f"  🟣 Интервью: '{event.title}' (точное совпадение с tech_invite_title='{tech_invite_title}')")
+        else:
+            print(f"📊 WEEKLY REPORTS: Заголовок инвайта для интервью не указан, интервью не найдены")
+        
+        print(f"📊 WEEKLY REPORTS: Итого интервью: {interview_count}")
+        
+        # Пока остальные этапы возвращаем как 0 (будут реализованы позже)
+        return JsonResponse({
+            'success': True,
+            'data': {
+                'hr_screening': hr_screening_count,
+                'tech_screening': tech_screening_count,
+                'interview': interview_count,
+                'offer': 0,
+                'offer_accepted': 0,
+                'onboarding': 0,
+            }
+        })
+        
+    except Exception as e:
+        import traceback
+        return JsonResponse({
+            'success': False,
+            'message': str(e),
+            'traceback': traceback.format_exc()
+        })
+
+
+@login_required
 def api_third_week_slots(request):
     """API для расчета слотов третьей недели"""
     try:
         vacancy_id = request.GET.get('vacancy_id')
         meeting_type = request.GET.get('meeting_type', 'screening')
+        interviewer_ids_str = request.GET.get('interviewer_ids', '')
         
-        print(f"📅 API THIRD WEEK: vacancy_id={vacancy_id}, meeting_type={meeting_type}")
+        print(f"📅 API THIRD WEEK: vacancy_id={vacancy_id}, meeting_type={meeting_type}, interviewer_ids={interviewer_ids_str}")
         
         if not vacancy_id:
             return JsonResponse({
@@ -3289,34 +3991,65 @@ def api_third_week_slots(request):
         calendar_service = GoogleCalendarService(oauth_service)
         
         events_data = []
+
+        # Добавляем календарь компании (если настроен) — влияет и на screening, и на interview
+        company_calendar_id = None
+        try:
+            from apps.company_settings.models import CompanySettings
+            company_settings = CompanySettings.get_settings()
+            if company_settings.main_calendar_id:
+                company_calendar_id = _extract_calendar_id_from_link(company_settings.main_calendar_id.strip())
+        except Exception as e:
+            print(f"⚠️ THIRD WEEK: Ошибка получения календаря компании: {e}")
         
         if meeting_type == 'screening':
             # Для скринингов только календарь пользователя
             print(f"📅 THIRD WEEK: Получение слотов для скринингов")
             events_data = calendar_service.get_events(days_ahead=21, force_refresh=True)  # Получаем на 3 недели
+            if company_calendar_id:
+                try:
+                    company_events_data = calendar_service.get_events(calendar_id=company_calendar_id, days_ahead=21, force_refresh=True)
+                    events_data.extend(company_events_data)
+                except Exception as e:
+                    print(f"⚠️ THIRD WEEK: Ошибка получения событий календаря компании: {e}")
             duration = vacancy.screening_duration if hasattr(vacancy, 'screening_duration') and vacancy.screening_duration else 45
         else:
-            # Для интервью календарь пользователя + интервьюеров
+            # Для интервью: по умолчанию только календарь пользователя (и компании, если добавлена отдельно).
+            # ВАЖНО: если интервьюеры не выбраны — никого не подтягиваем автоматически.
             print(f"📅 THIRD WEEK: Получение слотов для интервью")
             events_data = calendar_service.get_events(days_ahead=21, force_refresh=True)
-            
-            mandatory_interviewers = vacancy.mandatory_tech_interviewers.filter(is_active=True)
-            print(f"📅 THIRD WEEK: Найдено {len(mandatory_interviewers)} обязательных интервьюеров")
-            
-            for interviewer in mandatory_interviewers:
+            if company_calendar_id:
+                try:
+                    company_events_data = calendar_service.get_events(calendar_id=company_calendar_id, days_ahead=21, force_refresh=True)
+                    events_data.extend(company_events_data)
+                except Exception as e:
+                    print(f"⚠️ THIRD WEEK: Ошибка получения событий календаря компании: {e}")
+
+            # Если интервьюеры выбраны — добавляем их календари; если нет — считаем без них
+            selected_interviewers = []
+            if interviewer_ids_str:
+                try:
+                    from apps.interviewers.models import Interviewer
+                    interviewer_ids = [int(i.strip()) for i in interviewer_ids_str.split(',') if i.strip()]
+                    selected_interviewers = list(Interviewer.objects.filter(id__in=interviewer_ids, is_active=True))
+                    print(f"📅 THIRD WEEK: Выбрано интервьюеров: {len(selected_interviewers)}")
+                except Exception as e:
+                    print(f"⚠️ THIRD WEEK: Ошибка парсинга interviewer_ids: {e}")
+
+            for interviewer in selected_interviewers:
                 calendar_id = None
-                
                 if interviewer.calendar_link:
                     calendar_id = _extract_calendar_id_from_link(interviewer.calendar_link)
-                
                 if not calendar_id:
-                    calendar = calendar_service.get_calendar_by_email(interviewer.email)
-                    if calendar:
-                        calendar_id = calendar['id']
-                
+                    try:
+                        calendar = calendar_service.get_calendar_by_email(interviewer.email)
+                        if calendar:
+                            calendar_id = calendar.get('id')
+                    except Exception:
+                        calendar_id = None
                 if not calendar_id:
                     calendar_id = interviewer.email
-                
+
                 if calendar_id:
                     try:
                         interviewer_events = calendar_service.get_events(calendar_id=calendar_id, days_ahead=21, force_refresh=True)
@@ -3335,9 +4068,108 @@ def api_third_week_slots(request):
                 title = event.get('summary', 'N/A')
                 print(f"📅 THIRD WEEK: Событие {i+1}: {title} - {start_str}")
         
+        # Преобразуем события в формат для калькулятора и фильтруем отклоненные
+        events_for_calc = []
+        current_user_email_lower = request.user.email.lower() if request.user.email else None
+        
+        # Получаем список выбранных интервьюеров для проверки их отклоненных событий (если еще не получен)
+        if meeting_type == 'interview' and 'selected_interviewers' not in locals():
+            selected_interviewers = []
+            if interviewer_ids_str:
+                try:
+                    from apps.interviewers.models import Interviewer
+                    interviewer_ids = [int(i.strip()) for i in interviewer_ids_str.split(',') if i.strip()]
+                    selected_interviewers = list(Interviewer.objects.filter(id__in=interviewer_ids, is_active=True))
+                except Exception as e:
+                    print(f"⚠️ THIRD WEEK: Ошибка парсинга interviewer_ids: {e}")
+                    selected_interviewers = []
+        elif meeting_type != 'interview':
+            selected_interviewers = []
+        
+        for event in events_data:
+            try:
+                # Пропускаем отмененные события
+                event_status = event.get('status', 'confirmed')
+                if event_status == 'cancelled' or event_status == 'declined':
+                    print(f"  ❌ THIRD WEEK: Исключаем отклоненное событие: \"{event.get('summary', 'Без названия')}\" (статус: {event_status})")
+                    continue
+                
+                # Проверяем, отклонил ли текущий пользователь событие
+                if current_user_email_lower and 'attendees' in event:
+                    current_user_attendee = None
+                    for attendee in event.get('attendees', []):
+                        attendee_email = (attendee.get('email') or '').lower()
+                        if attendee_email == current_user_email_lower:
+                            current_user_attendee = attendee
+                            break
+                    
+                    if current_user_attendee:
+                        user_response_status = current_user_attendee.get('responseStatus', 'needsAction')
+                        if user_response_status == 'declined':
+                            print(f"  ❌ THIRD WEEK: Исключаем событие, которое отклонил пользователь: \"{event.get('summary', 'Без названия')}\"")
+                            continue
+                
+                # Для интервью также проверяем, отклонил ли интервьюер событие
+                if meeting_type == 'interview' and selected_interviewers:
+                    event_skipped = False
+                    for interviewer in selected_interviewers:
+                        interviewer_email_lower = interviewer.email.lower()
+                        if 'attendees' in event:
+                            interviewer_attendee = None
+                            for attendee in event.get('attendees', []):
+                                attendee_email = (attendee.get('email') or '').lower()
+                                if attendee_email == interviewer_email_lower:
+                                    interviewer_attendee = attendee
+                                    break
+                            
+                            if interviewer_attendee:
+                                interviewer_response_status = interviewer_attendee.get('responseStatus', 'needsAction')
+                                if interviewer_response_status == 'declined':
+                                    print(f"  ❌ THIRD WEEK: Исключаем событие, которое отклонил интервьюер {interviewer.email}: \"{event.get('summary', 'Без названия')}\"")
+                                    event_skipped = True
+                                    break
+                    
+                    if event_skipped:
+                        continue  # Пропускаем событие, если его отклонил интервьюер
+                
+                # Преобразуем событие в формат для калькулятора
+                import pytz
+                start_time = None
+                if 'dateTime' in event.get('start', {}):
+                    start_time = datetime.fromisoformat(event['start']['dateTime'].replace('Z', '+00:00'))
+                    minsk_tz = pytz.timezone('Europe/Minsk')
+                    start_time = start_time.astimezone(minsk_tz)
+                elif 'date' in event.get('start', {}):
+                    start_time = datetime.fromisoformat(event['start']['date'])
+                    minsk_tz = pytz.timezone('Europe/Minsk')
+                    start_time = minsk_tz.localize(start_time)
+                
+                end_time = None
+                if 'dateTime' in event.get('end', {}):
+                    end_time = datetime.fromisoformat(event['end']['dateTime'].replace('Z', '+00:00'))
+                    minsk_tz = pytz.timezone('Europe/Minsk')
+                    end_time = end_time.astimezone(minsk_tz)
+                elif 'date' in event.get('end', {}):
+                    end_time = datetime.fromisoformat(event['end']['date'])
+                    minsk_tz = pytz.timezone('Europe/Minsk')
+                    end_time = minsk_tz.localize(end_time)
+                
+                if start_time:
+                    is_all_day = 'date' in event.get('start', {})
+                    events_for_calc.append({
+                        'start': start_time.isoformat(),
+                        'end': end_time.isoformat() if end_time else start_time.isoformat(),
+                        'is_all_day': is_all_day,
+                    })
+            except Exception as e:
+                print(f"⚠️ THIRD WEEK: Ошибка обработки события: {e}")
+                continue
+        
+        print(f"📅 THIRD WEEK: После фильтрации осталось {len(events_for_calc)} событий для расчета")
+        
         # Рассчитываем слоты для третьей недели
         third_week_slots = calculator.calculate_slots_for_week(
-            events_data,
+            events_for_calc,
             required_duration_minutes=duration,
             week_offset=2  # Третья неделя
         )
@@ -3373,15 +4205,66 @@ def chat_ajax_handler(request, session_id):
     print(f"🔍 CHAT AJAX HANDLER: Получен запрос на session_id={session_id}")
     print(f"🔍 CHAT AJAX HANDLER: Метод={request.method}, Content-Type={request.content_type}")
     
-    if request.method != 'POST' or request.content_type != 'application/json':
+    # Поддерживаем как JSON, так и multipart/form-data (для файлов)
+    is_json = request.content_type == 'application/json'
+    is_multipart = 'multipart/form-data' in (request.content_type or '')
+    
+    if request.method != 'POST' or (not is_json and not is_multipart):
         print(f"❌ CHAT AJAX HANDLER: Неверный тип запроса - метод={request.method}, content_type={request.content_type}")
         return JsonResponse({'success': False, 'error': 'Неверный тип запроса'})
     
     try:
         import json
-        data = json.loads(request.body)
-        message_text = data.get('text', '').strip()
-        action_type_from_js = data.get('action_type', '')
+        # Обрабатываем JSON или FormData
+        if is_json:
+            data = json.loads(request.body)
+            message_text = data.get('text', '').strip()
+            action_type_from_js = data.get('action_type', '')
+            action = data.get('action', '')
+        else:
+            # FormData
+            data = request.POST
+            message_text = data.get('text', '').strip()
+            action_type_from_js = data.get('action_type', '')
+            action = data.get('action', '')
+        
+        # Обработка специальных действий (не требующих сообщения)
+        if action == 'save_rejection_form_answer':
+            message_id = data.get('message_id')
+            answer = data.get('answer')  # 'yes' или 'no'
+            
+            if not message_id:
+                return JsonResponse({'success': False, 'error': 'Не указан ID сообщения'})
+            
+            try:
+                from .models import ChatMessage
+                
+                # Получаем текущие metadata из базы
+                chat_message = ChatMessage.objects.get(id=int(message_id), session__user=request.user)
+                current_metadata = chat_message.metadata or {}
+                
+                # Создаем НОВЫЙ словарь с обновленными данными
+                new_metadata = dict(current_metadata)
+                new_metadata['rejection_form_answered'] = True  # Ключевое поле!
+                new_metadata['rejection_form_answer'] = answer
+                
+                # Сохраняем через ORM (корректно для SQLite/PostgreSQL и не падает на debug_sql)
+                ChatMessage.objects.filter(id=chat_message.id, session__user=request.user).update(metadata=new_metadata)
+                chat_message.refresh_from_db(fields=['metadata'])
+                
+                # Проверяем, что данные действительно сохранились
+                saved_answered = chat_message.metadata.get('rejection_form_answered', False)
+                print(f"✅ CHAT AJAX: Сохранен ответ на форму отказа для сообщения {message_id}: {answer}. rejection_form_answered={saved_answered} (тип: {type(saved_answered)}), все ключи: {list(chat_message.metadata.keys())}")
+                
+                return JsonResponse({'success': True, 'message': 'Ответ сохранен'})
+            except ChatMessage.DoesNotExist:
+                return JsonResponse({'success': False, 'error': 'Сообщение не найдено'})
+            except Exception as e:
+                print(f"❌ CHAT AJAX: Ошибка при сохранении ответа на форму отказа: {e}")
+                return JsonResponse({'success': False, 'error': str(e)})
+        
+        print(f"🔍 CHAT AJAX HANDLER: Получен message_text (длина: {len(message_text)}): {message_text}")
+        print(f"🔍 CHAT AJAX HANDLER: Проверяем наличие @ в message_text: {'@' in message_text}")
         
         if not message_text:
             return JsonResponse({'success': False, 'error': 'Пустое сообщение'})
@@ -3419,9 +4302,13 @@ def chat_ajax_handler(request, session_id):
             action_type = 'hrscreening'
             print(f"🔍 CHAT AJAX: Команда /s обнаружена в тексте - принудительный HR-скрининг")
             message_text = re.sub(r'^/s\s*', '', message_text, flags=re.IGNORECASE).strip()
+        elif re.match(r'^/t(\s|$)', message_lower):
+            action_type = 'tech_screening'
+            print(f"🔍 CHAT AJAX: Команда /t обнаружена в тексте - Tech Screening")
+            message_text = re.sub(r'^/t\s*', '', message_text, flags=re.IGNORECASE).strip()
         elif re.match(r'^/in(\s|$)', message_lower):
-            action_type = 'invite'
-            print(f"🔍 CHAT AJAX: Команда /in обнаружена в тексте - принудительный инвайт")
+            action_type = 'final_interview'
+            print(f"🔍 CHAT AJAX: Команда /in обнаружена в тексте - Final Interview")
             message_text = re.sub(r'^/in\s*', '', message_text, flags=re.IGNORECASE).strip()
         else:
             # Комбинированный/автоматический режим отключен, но допускаем явный тип из JS
@@ -3431,7 +4318,7 @@ def chat_ajax_handler(request, session_id):
                 print(f"🔍 CHAT AJAX: Используем тип действия из JS (скрытое поле): '{action_type}'")
             else:
                 print(f"❌ CHAT AJAX: НЕТ КОМАНДЫ! message_text: '{message_text}', action_type_from_js: '{action_type_from_js}'")
-                return JsonResponse({'success': False, 'error': 'Укажи команду: /s для HR-скрининга или /in для инвайта'})
+                return JsonResponse({'success': False, 'error': 'Укажи команду: /s для HR-скрининга, /t для Tech Screening или /in для Final Interview'})
         
         print(f"🔍 CHAT AJAX: ФИНАЛЬНЫЙ action_type: '{action_type}'")
 
@@ -3456,7 +4343,8 @@ def chat_ajax_handler(request, session_id):
                     # Создаем стилизованный ответ в виде карточки
                     action_type_display = {
                         'hrscreening': 'HR-скрининг',
-                        'invite': 'Инвайт'
+                        'tech_screening': 'Tech Screening',
+                        'final_interview': 'Final Interview'
                     }.get(delete_result['action_type'], delete_result['action_type'])
                     
                     # Формируем список изменений
@@ -3535,24 +4423,137 @@ def chat_ajax_handler(request, session_id):
                 try:
                     hr_screening = hr_form.save()
                     
+                    # Генерируем полную ссылку с вакансией
+                    full_candidate_url = None
+                    if hr_screening.vacancy_id and hr_screening.candidate_id:
+                        full_candidate_url = _generate_full_huntflow_link(
+                            hr_screening.vacancy_id,
+                            hr_screening.candidate_id,
+                            request.user
+                        )
+                    
+                    # Используем полную ссылку, если она сгенерирована, иначе исходную
+                    # ВАЖНО: Перезагружаем объект из БД, чтобы получить актуальные данные,
+                    # включая зарплату, которая могла быть извлечена в analyze_with_gemini
+                    from apps.google_oauth.models import HRScreening
+                    hr_screening = HRScreening.objects.get(id=hr_screening.id)
+                    
+                    print(f"🔍 CHAT AJAX: HR-скрининг перезагружен, зарплата: {hr_screening.extracted_salary}, валюта: {hr_screening.salary_currency}")
+                    print(f"🔍 CHAT AJAX: gemini_analysis присутствует: {bool(hr_screening.gemini_analysis)}")
+                    if hr_screening.gemini_analysis:
+                        print(f"🔍 CHAT AJAX: gemini_analysis длина: {len(hr_screening.gemini_analysis)} символов")
+                        print(f"🔍 CHAT AJAX: gemini_analysis начало: {hr_screening.gemini_analysis[:200]}")
+                    
+                    candidate_url_for_metadata = full_candidate_url or hr_screening.candidate_url
+                    
+                    # Проверяем, был ли отклонен кандидат по офисному формату
+                    print(f"🔍 CHAT AJAX: Проверяем офисный формат...")
+                    office_format_rejected = hr_screening.is_office_format_rejected()
+                    print(f"🔍 CHAT AJAX: Результат проверки офисного формата: {office_format_rejected}")
+                    
+                    rejection_template = None
+                    if office_format_rejected:
+                        print(f"🔍 CHAT AJAX: Кандидат отклонен по офисному формату, получаем шаблон отказа...")
+                        rejection_template = hr_screening.get_office_format_rejection_template()
+                        if rejection_template:
+                            print(f"✅ CHAT AJAX: Найден шаблон отказа: {rejection_template.title} (ID: {rejection_template.id})")
+                            print(f"✅ CHAT AJAX: Текст шаблона (первые 100 символов): {rejection_template.message[:100]}")
+                        else:
+                            print(f"⚠️ CHAT AJAX: Шаблон отказа не найден")
+                    else:
+                        print(f"ℹ️ CHAT AJAX: Кандидат не отклонен по офисному формату")
+                    
+                    # Проверяем, превышает ли зарплата максимальную вилку
+                    print(f"🔍 CHAT AJAX: Проверяем превышение зарплаты над вилкой...")
+                    salary_above_range = hr_screening.is_salary_above_range()
+                    print(f"🔍 CHAT AJAX: Результат проверки превышения зарплаты: {salary_above_range}")
+                    
+                    finance_more_template = None
+                    if salary_above_range:
+                        print(f"🔍 CHAT AJAX: Зарплата превышает вилку, получаем шаблон отказа 'Финансы - больше'...")
+                        finance_more_template = hr_screening.get_finance_more_rejection_template()
+                        if finance_more_template:
+                            print(f"✅ CHAT AJAX: Найден шаблон отказа 'Финансы - больше': {finance_more_template.title} (ID: {finance_more_template.id})")
+                            print(f"✅ CHAT AJAX: Текст шаблона (первые 100 символов): {finance_more_template.message[:100]}")
+                        else:
+                            print(f"⚠️ CHAT AJAX: Шаблон отказа 'Финансы - больше' не найден")
+                    else:
+                        print(f"ℹ️ CHAT AJAX: Зарплата не превышает вилку")
+                    
                     response_content = ""  # Пустой контент, данные будут браться из metadata
+                    
+                    # Получаем контактную информацию кандидата
+                    candidate_contact_info = {}
+                    if hr_screening.candidate_id:
+                        candidate_contact_info = _get_candidate_contact_info(request.user, hr_screening.candidate_id)
+                        print(f"🔍 CHAT AJAX: Получена контактная информация кандидата: {candidate_contact_info}")
+                    
+                    metadata = {
+                        'action_type': 'hrscreening',
+                        'hr_screening_id': hr_screening.id,
+                        'candidate_name': hr_screening.candidate_name,
+                        'vacancy_name': hr_screening.vacancy_title,
+                        'determined_grade': hr_screening.determined_grade,
+                        'candidate_url': candidate_url_for_metadata,
+                        'extracted_salary': str(hr_screening.extracted_salary) if hr_screening.extracted_salary else None,
+                        'salary_currency': hr_screening.salary_currency,
+                        'candidate_contact_info': candidate_contact_info
+                    }
+                    
+                    # Определяем, нужно ли показывать форму отказа (только при потенциальном отказе)
+                    show_rejection_form = False
+                    
+                    # Добавляем информацию о шаблоне отказа, если кандидат отклонен по офисному формату
+                    if office_format_rejected:
+                        # Сохраняем флаг отказа в метаданные, даже если шаблон не найден
+                        metadata['office_format_rejected'] = True
+                        show_rejection_form = True
+                        
+                        if rejection_template:
+                            metadata['rejection_template_id'] = rejection_template.id
+                            metadata['rejection_template_title'] = rejection_template.title
+                            metadata['rejection_template_message'] = rejection_template.message
+                            print(f"✅ CHAT AJAX: Метаданные обновлены с информацией об отказе. office_format_rejected=True, template_id={rejection_template.id}")
+                            print(f"✅ CHAT AJAX: Текст шаблона (первые 200 символов): {rejection_template.message[:200]}")
+                        else:
+                            print(f"⚠️ CHAT AJAX: Кандидат отклонен по офисному формату, но шаблон отказа не найден. office_format_rejected=True установлен в метаданные")
+                    else:
+                        print(f"ℹ️ CHAT AJAX: Кандидат не отклонен по офисному формату. office_format_rejected={office_format_rejected} (type: {type(office_format_rejected)})")
+                    
+                    # Добавляем информацию о шаблоне отказа "Финансы - больше", если зарплата превышает вилку
+                    if salary_above_range:
+                        # Сохраняем флаг отказа в метаданные, даже если шаблон не найден
+                        metadata['salary_above_range'] = True
+                        show_rejection_form = True
+                        
+                        if finance_more_template:
+                            metadata['finance_more_template_id'] = finance_more_template.id
+                            metadata['finance_more_template_title'] = finance_more_template.title
+                            metadata['finance_more_template_message'] = finance_more_template.message
+                            print(f"✅ CHAT AJAX: Метаданные обновлены с информацией об отказе 'Финансы - больше'. salary_above_range=True, template_id={finance_more_template.id}")
+                            print(f"✅ CHAT AJAX: Текст шаблона (первые 200 символов): {finance_more_template.message[:200]}")
+                        else:
+                            print(f"⚠️ CHAT AJAX: Зарплата превышает вилку, но шаблон отказа 'Финансы - больше' не найден. salary_above_range=True установлен в метаданные")
+                    else:
+                        print(f"ℹ️ CHAT AJAX: Зарплата не превышает вилку. salary_above_range={salary_above_range}")
+                    
+                    # Добавляем флаг для отображения формы отказа
+                    metadata['show_rejection_form'] = show_rejection_form
+                    print(f"🔍 CHAT AJAX: show_rejection_form={show_rejection_form} (salary_above_range={salary_above_range}, office_format_rejected={office_format_rejected})")
+                    
+                    print(f"🔍 CHAT AJAX: Сохраняем сообщение с метаданными. Ключи: {list(metadata.keys())}")
+                    print(f"🔍 CHAT AJAX: office_format_rejected в метаданных: {metadata.get('office_format_rejected', 'NOT SET')}")
+                    print(f"🔍 CHAT AJAX: rejection_template_message в метаданных: {'SET' if metadata.get('rejection_template_message') else 'NOT SET'}")
                     
                     ChatMessage.objects.create(
                         session=chat_session,
-                        message_type='hr_screening',
+                        message_type='hrscreening',
                         content=response_content,
                         hr_screening=hr_screening,
-                        metadata={
-                            'action_type': 'hrscreening',
-                            'hr_screening_id': hr_screening.id,
-                            'candidate_name': hr_screening.candidate_name,
-                            'vacancy_name': hr_screening.vacancy_title,
-                            'determined_grade': hr_screening.determined_grade,
-                            'candidate_url': hr_screening.candidate_url,
-                            'extracted_salary': str(hr_screening.extracted_salary) if hr_screening.extracted_salary else None,
-                            'salary_currency': hr_screening.salary_currency
-                        }
+                        metadata=metadata
                     )
+                    
+                    print(f"✅ CHAT AJAX: Сообщение создано успешно с контактной информацией в metadata")
                 except Exception as e:
                     print(f"🔍 CHAT AJAX: Ошибка сохранения HR: {str(e)}")
                     ChatMessage.objects.create(
@@ -3572,8 +4573,8 @@ def chat_ajax_handler(request, session_id):
                     content=error_content
                 )
 
-        elif action_type == 'invite':
-            # Создаем инвайт
+        elif action_type == 'tech_screening':
+            # Создаем Tech Screening (логика как для invite)
             invite_form_data = {'combined_data': message_text}
             
             # Передаем данные об интервьюере, если они есть
@@ -3587,24 +4588,43 @@ def chat_ajax_handler(request, session_id):
                 try:
                     invite = invite_form.save()
                     
+                    # Генерируем полную ссылку с вакансией
+                    full_candidate_url = None
+                    if invite.vacancy_id and invite.candidate_id:
+                        full_candidate_url = _generate_full_huntflow_link(
+                            invite.vacancy_id,
+                            invite.candidate_id,
+                            request.user
+                        )
+                    
+                    # Используем полную ссылку, если она сгенерирована, иначе исходную
+                    candidate_url_for_metadata = full_candidate_url or invite.candidate_url
+                    
+                    # Получаем контактную информацию кандидата ДО создания сообщения
+                    candidate_contact_info = {}
+                    if invite.candidate_id:
+                        candidate_contact_info = _get_candidate_contact_info(request.user, invite.candidate_id)
+                        print(f"🔍 CHAT AJAX: Получена контактная информация кандидата: {candidate_contact_info}")
+                    
                     response_content = ""  # Пустой контент, данные будут браться из metadata
                     
                     ChatMessage.objects.create(
                         session=chat_session,
-                        message_type='invite',
+                        message_type='invite',  # Используем существующий тип для совместимости
                         content=response_content,
                         invite=invite,
                         metadata={
-                            'action_type': 'invite',
+                            'action_type': 'tech_screening',
                             'invite_id': invite.id,
                             'candidate_name': invite.candidate_name,
                             'vacancy_name': invite.vacancy_title,
                             'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
                             'interviewer_email': invite.interviewer.email if invite.interviewer else None,
                             'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
-                            'candidate_url': invite.candidate_url,
+                            'candidate_url': candidate_url_for_metadata,
                             'calendar_event_url': invite.calendar_event_url,
-                            'google_drive_file_url': invite.google_drive_file_url
+                            'google_drive_file_url': invite.google_drive_file_url,
+                            'candidate_contact_info': candidate_contact_info
                         }
                     )
                 except Exception as e:
@@ -3626,11 +4646,331 @@ def chat_ajax_handler(request, session_id):
                     content=error_content
                 )
         
+        elif action_type == 'final_interview':
+            # Создаем Final Interview БЕЗ скоркарда (используется tech_invite_title)
+            invite_form_data = {'combined_data': message_text}
+            
+            # Передаем данные об интервьюере, если они есть
+            if 'selected_interviewer' in data:
+                invite_form_data['selected_interviewer'] = data['selected_interviewer']
+                print(f"🔍 CHAT AJAX: Передаем данные об интервьюере: {data['selected_interviewer']}")
+            
+            invite_form = InviteCombinedForm(invite_form_data, user=request.user)
+            
+            if invite_form.is_valid():
+                try:
+                    # Создаем инвайт без сохранения (commit=False)
+                    invite = invite_form.save(commit=False)
+                    
+                    # Устанавливаем формат интервью (онлайн/офис)
+                    interview_format = data.get('interview_format', 'online')
+                    invite.interview_format = interview_format
+                    print(f"🔍 CHAT AJAX: Установлен формат интервью: {interview_format}")
+                    
+                    # Используем специальный метод для интервью (без скоркарда)
+                    invite.save_for_interview()
+                    
+                    # Генерируем полную ссылку с вакансией
+                    full_candidate_url = None
+                    if invite.vacancy_id and invite.candidate_id:
+                        full_candidate_url = _generate_full_huntflow_link(
+                            invite.vacancy_id,
+                            invite.candidate_id,
+                            request.user
+                        )
+                    
+                    # Используем полную ссылку, если она сгенерирована, иначе исходную
+                    candidate_url_for_metadata = full_candidate_url or invite.candidate_url
+                    
+                    # Получаем контактную информацию кандидата ДО создания сообщения
+                    candidate_contact_info = {}
+                    if invite.candidate_id:
+                        candidate_contact_info = _get_candidate_contact_info(request.user, invite.candidate_id)
+                        print(f"🔍 CHAT AJAX: Получена контактная информация кандидата: {candidate_contact_info}")
+                    
+                    response_content = ""  # Пустой контент, данные будут браться из metadata
+                    
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='invite',  # Используем существующий тип для совместимости
+                        content=response_content,
+                        invite=invite,
+                        metadata={
+                            'action_type': 'final_interview',
+                            'invite_id': invite.id,
+                            'candidate_name': invite.candidate_name,
+                            'vacancy_name': invite.vacancy_title,
+                            'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
+                            'interviewer_email': invite.interviewer.email if invite.interviewer else None,
+                            'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
+                            'candidate_url': candidate_url_for_metadata,
+                            'calendar_event_url': invite.calendar_event_url,
+                            'candidate_contact_info': candidate_contact_info
+                            # google_drive_file_url не создается для интервью
+                        }
+                    )
+                except Exception as e:
+                    print(f"🔍 CHAT AJAX: Ошибка сохранения Final Interview: {str(e)}")
+                    import traceback
+                    traceback.print_exc()
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content=f"Ошибка при обработке Final Interview: {str(e)}"
+                    )
+            else:
+                # Ошибки валидации
+                error_content = "Ошибка при обработке Final Interview:\n"
+                for field, errors in invite_form.errors.items():
+                    error_content += f"- {field}: {', '.join(errors)}\n"
+                
+                ChatMessage.objects.create(
+                    session=chat_session,
+                    message_type='system',
+                    content=error_content
+                )
+        
+        elif action_type == 'add_candidate':
+            # Создаем кандидата в Huntflow с привязкой к вакансии
+            print(f"🔍 CHAT AJAX: Обрабатываем команду /add для создания кандидата")
+            
+            try:
+                from apps.huntflow.views import get_correct_account_id
+                from apps.huntflow.services import HuntflowService
+                
+                # Получаем правильный account_id
+                correct_account_id = get_correct_account_id(request.user)
+                if not correct_account_id:
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content="❌ Не удалось определить организацию Huntflow. Проверьте настройки."
+                    )
+                else:
+                    huntflow_service = HuntflowService(request.user)
+                    
+                    # Получаем ID вакансии из Huntflow (external_id из нашей БД)
+                    vacancy_id = int(vacancy.external_id) if vacancy.external_id else None
+                    
+                    if not vacancy_id:
+                        ChatMessage.objects.create(
+                            session=chat_session,
+                            message_type='system',
+                            content=f"❌ У выбранной вакансии '{vacancy.name}' не указан ID для связи с Huntflow"
+                        )
+                    else:
+                        # Проверяем наличие ссылок на резюме (hh.ru или rabota.by) в сообщении
+                        resume_url_info = None
+                        if message_text:
+                            resume_url_info = huntflow_service._extract_resume_url(message_text)
+                        
+                        # Проверяем, есть ли файл в запросе
+                        resume_file = None
+                        parsed_data = None
+                        
+                        # Если есть файл в FormData (для AJAX с файлами)
+                        if hasattr(request, 'FILES') and 'resume_file' in request.FILES:
+                            resume_file = request.FILES['resume_file']
+                            print(f"🔍 CHAT AJAX: Получен файл резюме: {resume_file.name} ({resume_file.size} байт)")
+                            
+                            try:
+                                # Читаем файл
+                                file_data = resume_file.read()
+                                file_name = resume_file.name
+                                
+                                # Загружаем и парсим файл через Huntflow API
+                                parsed_data = huntflow_service.upload_file(
+                                    account_id=correct_account_id,
+                                    file_data=file_data,
+                                    file_name=file_name,
+                                    parse_file=True
+                                )
+                                
+                                if parsed_data:
+                                    print(f"✅ CHAT AJAX: Файл успешно обработан парсером Huntflow")
+                                else:
+                                    print(f"⚠️ CHAT AJAX: Не удалось обработать файл через парсер Huntflow")
+                            except Exception as e:
+                                print(f"❌ CHAT AJAX: Ошибка при обработке файла: {e}")
+                                import traceback
+                                traceback.print_exc()
+                        
+                        # Если найдена ссылка на резюме и нет файла, создаем кандидата по ссылке
+                        if resume_url_info and not parsed_data and not resume_file:
+                            print(f"🔍 CHAT AJAX: Найдена ссылка на резюме: {resume_url_info}")
+                            created_applicant = huntflow_service.create_applicant_from_url(
+                                account_id=correct_account_id,
+                                resume_url=resume_url_info['url'],
+                                vacancy_id=vacancy_id,
+                                source_type=resume_url_info['source_type'],
+                                resume_id=resume_url_info.get('resume_id')
+                            )
+                            
+                            if created_applicant:
+                                applicant_id = created_applicant.get('id')
+                                candidate_name = f"{created_applicant.get('last_name', '')} {created_applicant.get('first_name', '')} {created_applicant.get('middle_name', '')}".strip()
+                                if not candidate_name:
+                                    candidate_name = "Кандидат"
+                                
+                                # Формируем ссылку на кандидата
+                                candidate_url = f"https://huntflow.ru/my/org{correct_account_id}#/applicants/{applicant_id}"
+                                
+                                # Формируем источник для отображения
+                                source_display = f"{resume_url_info['source_type'].lower()}.ru" if resume_url_info['source_type'] == 'HH' else "rabota.by"
+                                resume_id_display = resume_url_info.get('resume_id', 'N/A')
+                                
+                                response_content = f"✅ **Кандидат успешно создан и привязан к вакансии**\n\n"
+                                response_content += f"**Кандидат:** {candidate_name}\n"
+                                response_content += f"**Вакансия:** {vacancy.name}\n"
+                                response_content += f"**ID кандидата:** {applicant_id}\n\n"
+                                response_content += f"**{source_display}:** {resume_id_display}\n\n"
+                                response_content += f"[Открыть кандидата в Huntflow]({candidate_url})"
+                                
+                                ChatMessage.objects.create(
+                                    session=chat_session,
+                                    message_type='system',
+                                    content=response_content,
+                                    metadata={
+                                        'action_type': 'add_candidate',
+                                        'applicant_id': applicant_id,
+                                        'candidate_name': candidate_name,
+                                        'vacancy_name': vacancy.name,
+                                        'candidate_url': candidate_url,
+                                        'resume_source': source_display,
+                                        'resume_id': resume_id_display
+                                    }
+                                )
+                                
+                                print(f"✅ CHAT AJAX: Кандидат успешно создан по ссылке: {applicant_id}")
+                            else:
+                                ChatMessage.objects.create(
+                                    session=chat_session,
+                                    message_type='system',
+                                    content="❌ Не удалось создать кандидата по ссылке. Проверьте ссылку и попробуйте снова."
+                                )
+                        else:
+                            # Парсим текст сообщения для извлечения данных кандидата
+                            # Формат: Имя Фамилия Отчество, email, телефон, должность, компания, зарплата
+                            # Или просто текст резюме
+                            candidate_data = {
+                                'first_name': '',
+                                'last_name': '',
+                                'middle_name': '',
+                                'email': '',
+                                'phone': '',
+                                'position': '',
+                                'company': '',
+                                'salary': '',
+                                'resume_text': message_text if message_text else ''
+                            }
+                            
+                            # Если есть распарсенные данные из файла, используем их
+                            if parsed_data:
+                                fields = parsed_data.get('fields', {})
+                                name_data = fields.get('name', {})
+                                
+                                candidate_data['first_name'] = name_data.get('first', '') or candidate_data['first_name']
+                                candidate_data['last_name'] = name_data.get('last', '') or candidate_data['last_name']
+                                candidate_data['middle_name'] = name_data.get('middle', '') or candidate_data['middle_name']
+                                candidate_data['email'] = fields.get('email', '') or candidate_data['email']
+                                
+                                if fields.get('phones'):
+                                    phones = fields.get('phones', [])
+                                    if phones and len(phones) > 0:
+                                        candidate_data['phone'] = phones[0] or candidate_data['phone']
+                                
+                                candidate_data['position'] = fields.get('position', '') or candidate_data['position']
+                                candidate_data['salary'] = str(fields.get('salary', '')) or candidate_data['salary']
+                                
+                                if parsed_data.get('text'):
+                                    candidate_data['resume_text'] = parsed_data.get('text') or candidate_data['resume_text']
+                            
+                            # Если имя и фамилия не заполнены, пытаемся извлечь из текста
+                            if not candidate_data['first_name'] and not candidate_data['last_name'] and message_text:
+                                # Простая попытка извлечь имя из первой строки
+                                lines = message_text.split('\n')
+                                if lines:
+                                    first_line = lines[0].strip()
+                                    name_parts = first_line.split()
+                                    if len(name_parts) >= 2:
+                                        candidate_data['first_name'] = name_parts[0]
+                                        candidate_data['last_name'] = name_parts[1]
+                                        if len(name_parts) >= 3:
+                                            candidate_data['middle_name'] = name_parts[2]
+                            
+                            # Проверяем обязательные поля
+                            if not candidate_data['first_name'] or not candidate_data['last_name']:
+                                ChatMessage.objects.create(
+                                    session=chat_session,
+                                    message_type='system',
+                                    content="❌ Не указаны имя и фамилия кандидата. Укажите их в сообщении или прикрепите файл резюме."
+                                )
+                            else:
+                                # Создаем кандидата в Huntflow
+                                if parsed_data:
+                                    # Используем create_applicant_from_parsed_data для полной поддержки парсера
+                                    created_applicant = huntflow_service.create_applicant_from_parsed_data(
+                                        account_id=correct_account_id,
+                                        parsed_data=parsed_data,
+                                        vacancy_id=vacancy_id
+                                    )
+                                else:
+                                    # Создаем кандидата вручную
+                                    created_applicant = huntflow_service.create_applicant_manual(
+                                        account_id=correct_account_id,
+                                        candidate_data=candidate_data,
+                                        vacancy_id=vacancy_id
+                                    )
+                                
+                                if created_applicant:
+                                    applicant_id = created_applicant.get('id')
+                                    candidate_name = f"{candidate_data.get('last_name', '')} {candidate_data.get('first_name', '')} {candidate_data.get('middle_name', '')}".strip()
+                                    
+                                    # Формируем ссылку на кандидата
+                                    candidate_url = f"https://huntflow.ru/my/org{correct_account_id}#/applicants/{applicant_id}"
+                                    
+                                    response_content = f"✅ **Кандидат успешно создан и привязан к вакансии**\n\n"
+                                    response_content += f"**Кандидат:** {candidate_name}\n"
+                                    response_content += f"**Вакансия:** {vacancy.name}\n"
+                                    response_content += f"**ID кандидата:** {applicant_id}\n\n"
+                                    response_content += f"[Открыть кандидата в Huntflow]({candidate_url})"
+                                    
+                                    ChatMessage.objects.create(
+                                        session=chat_session,
+                                        message_type='system',
+                                        content=response_content,
+                                        metadata={
+                                            'action_type': 'add_candidate',
+                                            'applicant_id': applicant_id,
+                                            'candidate_name': candidate_name,
+                                            'vacancy_name': vacancy.name,
+                                            'candidate_url': candidate_url
+                                        }
+                                    )
+                                    
+                                    print(f"✅ CHAT AJAX: Кандидат успешно создан: {applicant_id}")
+                                else:
+                                    ChatMessage.objects.create(
+                                        session=chat_session,
+                                        message_type='system',
+                                        content="❌ Не удалось создать кандидата в Huntflow. Проверьте данные и попробуйте снова."
+                                    )
+                                
+            except Exception as e:
+                print(f"❌ CHAT AJAX: Ошибка создания кандидата: {e}")
+                import traceback
+                traceback.print_exc()
+                ChatMessage.objects.create(
+                    session=chat_session,
+                    message_type='system',
+                    content=f"❌ Ошибка при создании кандидата: {str(e)}"
+                )
+        
         # Получаем последнее СИСТЕМНОЕ сообщение из чата (то, что только что создали)
         # Исключаем пользовательские сообщения, чтобы получить именно результат обработки
         last_message = ChatMessage.objects.filter(
             session=chat_session,
-            message_type__in=['hr_screening', 'invite', 'system', 'delete']
+            message_type__in=['hrscreening', 'invite', 'system', 'delete']
         ).order_by('-created_at').first()
         
         # Если не нашли системное, пытаемся найти любое сообщение кроме пользовательского
@@ -3655,11 +4995,68 @@ def chat_ajax_handler(request, session_id):
                 })
                 print(f"🔍 CHAT AJAX: HTML сгенерирован, длина: {len(message_html)}")
                 
+                # Получаем контактную информацию кандидата из metadata сообщения (если есть)
+                candidate_contact_info = last_message.metadata.get('candidate_contact_info', {}) if last_message.metadata else {}
+                if not candidate_contact_info:
+                    # Если нет в metadata, пытаемся получить из кандидата
+                    if last_message.message_type == 'hrscreening' and last_message.hr_screening:
+                        if last_message.hr_screening.candidate_id:
+                            candidate_contact_info = _get_candidate_contact_info(request.user, last_message.hr_screening.candidate_id)
+                            print(f"🔍 CHAT AJAX: Получена контактная информация для ответа (из API): {candidate_contact_info}")
+                            # Обновляем метаданные сообщения, чтобы сохранить контактную информацию
+                            if last_message.metadata:
+                                last_message.metadata['candidate_contact_info'] = candidate_contact_info
+                                
+                                # Также обновляем show_rejection_form, если его нет
+                                if 'show_rejection_form' not in last_message.metadata:
+                                    # Проверяем потенциальный отказ
+                                    hr_screening = last_message.hr_screening
+                                    show_rejection_form = False
+                                    
+                                    # Проверяем превышение зарплаты
+                                    if hr_screening.extracted_salary and hr_screening.salary_currency:
+                                        salary_above_range = hr_screening.is_salary_above_range()
+                                        if salary_above_range:
+                                            show_rejection_form = True
+                                    
+                                    # Проверяем офисный формат
+                                    if not show_rejection_form:
+                                        office_format_rejected = hr_screening.is_office_format_rejected()
+                                        if office_format_rejected:
+                                            show_rejection_form = True
+                                    
+                                    last_message.metadata['show_rejection_form'] = show_rejection_form
+                                    last_message.metadata['hr_screening_id'] = hr_screening.id  # Убеждаемся, что ID есть
+                                    print(f"🔍 CHAT AJAX: Обновлен show_rejection_form={show_rejection_form} для существующего сообщения")
+                                
+                                last_message.save(update_fields=['metadata'])
+                    elif last_message.message_type == 'invite' and last_message.invite:
+                        if last_message.invite.candidate_id:
+                            candidate_contact_info = _get_candidate_contact_info(request.user, last_message.invite.candidate_id)
+                            print(f"🔍 CHAT AJAX: Получена контактная информация для ответа (из API): {candidate_contact_info}")
+                            # Обновляем метаданные сообщения, чтобы сохранить контактную информацию
+                            if last_message.metadata:
+                                last_message.metadata['candidate_contact_info'] = candidate_contact_info
+                                last_message.save(update_fields=['metadata'])
+                    elif last_message.metadata and last_message.metadata.get('action_type') == 'add_candidate':
+                        # Для add_candidate получаем по applicant_id из метаданных
+                        applicant_id = last_message.metadata.get('applicant_id')
+                        if applicant_id:
+                            candidate_contact_info = _get_candidate_contact_info(request.user, applicant_id)
+                            print(f"🔍 CHAT AJAX: Получена контактная информация для add_candidate (из API): {candidate_contact_info}")
+                            # Обновляем метаданные сообщения, чтобы сохранить контактную информацию
+                            if last_message.metadata:
+                                last_message.metadata['candidate_contact_info'] = candidate_contact_info
+                                last_message.save(update_fields=['metadata'])
+                else:
+                    print(f"🔍 CHAT AJAX: Используем контактную информацию из metadata: {candidate_contact_info}")
+                
                 return JsonResponse({
                     "success": True,
                     "message_html": message_html,
                     "message_type": last_message.message_type,
-                    "message_id": last_message.id
+                    "message_id": last_message.id,
+                    "candidate_contact_info": candidate_contact_info
                 })
             except Exception as e:
                 import traceback
@@ -3685,18 +5082,507 @@ def chat_ajax_handler(request, session_id):
         return JsonResponse({'success': False, 'error': str(e)})
 
 
+def _get_candidate_contact_info(user, candidate_id):
+    """
+    Получает контактную информацию кандидата из Huntflow
+    
+    Returns:
+        dict: Словарь с ключами: email, telegram, linkedin, communication_where
+    """
+    contact_info = {
+        'email': None,
+        'telegram': None,
+        'linkedin': None,
+        'communication_where': None
+    }
+    
+    try:
+        from apps.huntflow.services import HuntflowService
+        
+        huntflow_service = HuntflowService(user)
+        accounts = huntflow_service.get_accounts()
+        
+        if not accounts or 'items' not in accounts or not accounts['items']:
+            return contact_info
+        
+        account_id = accounts['items'][0]['id']
+        candidate_data = huntflow_service.get_applicant(account_id, int(candidate_id))
+        
+        if not candidate_data:
+            return contact_info
+        
+        # Получаем email
+        contact_info['email'] = candidate_data.get('email')
+        
+        # Получаем социальные сети
+        social = candidate_data.get('social', [])
+        print(f"🔍 LINKEDIN_SEARCH: Проверяем social: {social}")
+        for soc in social:
+            # В спецификации API поле называется social_type, но проверяем оба варианта
+            soc_type = (soc.get('social_type', '') or soc.get('type', '') or '').upper()
+            # В спецификации API поле называется value
+            soc_value = soc.get('value', '') or soc.get('url', '') or ''
+            
+            if not soc_value:
+                continue
+            
+            print(f"🔍 LINKEDIN_SEARCH: Соцсеть type={soc_type}, value={soc_value}, полный объект: {soc}")
+            
+            # Проверяем Telegram
+            if soc_type == 'TELEGRAM' or 'TELEGRAM' in soc_type:
+                contact_info['telegram'] = soc_value.lstrip('@')
+                print(f"✅ LINKEDIN_SEARCH: Найден Telegram: {contact_info['telegram']}")
+            # Проверяем LinkedIn - может быть в разных форматах
+            elif soc_type == 'LINKEDIN' or 'LINKEDIN' in soc_type or soc_type == 'LI':
+                # Если value содержит linkedin.com, это URL
+                if 'linkedin.com' in soc_value.lower():
+                    contact_info['linkedin'] = soc_value if 'http' in soc_value.lower() else f"https://{soc_value}"
+                else:
+                    # Если это username, формируем URL
+                    contact_info['linkedin'] = f"https://www.linkedin.com/in/{soc_value.lstrip('/')}"
+                print(f"✅ LINKEDIN_SEARCH: Найден LinkedIn в social: {contact_info['linkedin']}")
+            # Также проверяем, может быть value содержит linkedin.com даже если тип другой
+            elif 'linkedin.com' in soc_value.lower():
+                contact_info['linkedin'] = soc_value if 'http' in soc_value.lower() else f"https://{soc_value}"
+                print(f"✅ LINKEDIN_SEARCH: Найден LinkedIn в social (по URL в value): {contact_info['linkedin']}")
+        
+        # Если LinkedIn не найден в social, проверяем источник резюме (external/externals)
+        if not contact_info['linkedin']:
+            # Проверяем оба варианта: external и externals
+            external = candidate_data.get('external', []) or candidate_data.get('externals', [])
+            print(f"🔍 LINKEDIN_SEARCH: Проверяем external/externals: {external}")
+            
+            for ext in external:
+                print(f"🔍 LINKEDIN_SEARCH: Обрабатываем external: {ext}")
+                auth_type = ext.get('auth_type', '').upper()
+                external_id = ext.get('id')
+                print(f"🔍 LINKEDIN_SEARCH: auth_type={auth_type}, external_id={external_id}")
+                
+                if auth_type == 'LI' or 'LINKEDIN' in auth_type:
+                    print(f"✅ LINKEDIN_SEARCH: Найден LinkedIn в external с auth_type={auth_type}")
+                    
+                    # Согласно спецификации API, для получения полной информации о резюме
+                    # нужно делать запрос к /accounts/{account_id}/applicants/{applicant_id}/externals/{external_id}
+                    # Там будет поле source_url с ссылкой на LinkedIn профиль
+                    if external_id:
+                        try:
+                            print(f"🔍 LINKEDIN_SEARCH: Получаем детали резюме для external_id={external_id}")
+                            external_detail = huntflow_service._make_request(
+                                'GET', 
+                                f"/accounts/{account_id}/applicants/{int(candidate_id)}/externals/{external_id}"
+                            )
+                            if external_detail:
+                                print(f"🔍 LINKEDIN_SEARCH: Получены детали резюме, ключи: {list(external_detail.keys())}")
+                                # Проверяем source_url - это основное поле для LinkedIn URL
+                                source_url = external_detail.get('source_url')
+                                if source_url and 'linkedin.com' in source_url.lower():
+                                    contact_info['linkedin'] = source_url
+                                    print(f"✅ LINKEDIN_SEARCH: Найден LinkedIn в external_detail.source_url: {contact_info['linkedin']}")
+                                    break
+                                # Также проверяем data и resume
+                                ext_data = external_detail.get('data', {})
+                                if isinstance(ext_data, dict):
+                                    for key in ['url', 'profile_url', 'linkedin_url', 'link', 'source_url']:
+                                        if key in ext_data and ext_data[key]:
+                                            value = ext_data[key]
+                                            if isinstance(value, str) and 'linkedin.com' in value.lower():
+                                                contact_info['linkedin'] = value if 'http' in value.lower() else f"https://{value}"
+                                                print(f"✅ LINKEDIN_SEARCH: Найден LinkedIn в external_detail.data.{key}: {contact_info['linkedin']}")
+                                                break
+                        except Exception as e:
+                            print(f"⚠️ LINKEDIN_SEARCH: Ошибка получения деталей резюме: {e}")
+                            import traceback
+                            traceback.print_exc()
+                    
+                    # Если не получили через API, проверяем локальные данные
+                    if not contact_info['linkedin']:
+                        ext_data = ext.get('data', {})
+                        print(f"🔍 LINKEDIN_SEARCH: ext_data: {ext_data}")
+                        
+                        if isinstance(ext_data, dict):
+                            for key in ['url', 'profile_url', 'linkedin_url', 'link', 'source_url']:
+                                if key in ext_data and ext_data[key]:
+                                    value = ext_data[key]
+                                    if isinstance(value, str) and 'linkedin.com' in value.lower():
+                                        contact_info['linkedin'] = value if 'http' in value.lower() else f"https://{value}"
+                                        print(f"✅ LINKEDIN_SEARCH: Найден LinkedIn в ext.data.{key}: {contact_info['linkedin']}")
+                                        break
+                        
+                        if not contact_info['linkedin']:
+                            # Проверяем поле resume
+                            resume_data = ext.get('resume', {})
+                            if isinstance(resume_data, dict) and 'url' in resume_data:
+                                resume_url = resume_data['url']
+                                if 'linkedin.com' in resume_url.lower():
+                                    contact_info['linkedin'] = resume_url if 'http' in resume_url.lower() else f"https://{resume_url}"
+                                    print(f"✅ LINKEDIN_SEARCH: Найден LinkedIn в ext.resume.url: {contact_info['linkedin']}")
+                    
+                    if contact_info['linkedin']:
+                        break
+        
+        # Если LinkedIn не найден в social и external, проверяем questionary
+        if not contact_info['linkedin']:
+            print(f"🔍 LINKEDIN_SEARCH: LinkedIn не найден в social/external, проверяем questionary")
+            questionary = huntflow_service.get_applicant_questionary(account_id, int(candidate_id))
+            if questionary:
+                print(f"🔍 LINKEDIN_SEARCH: Получена анкета, полей: {len(questionary)}")
+                questionary_schema = huntflow_service.get_applicant_questionary_schema(account_id)
+                for field_key, field_value in questionary.items():
+                    if field_value and isinstance(field_value, str):
+                        field_title = ""
+                        if questionary_schema and field_key in questionary_schema:
+                            field_title = questionary_schema[field_key].get('title', '')
+                        
+                        print(f"🔍 LINKEDIN_SEARCH: Поле questionary: {field_key} '{field_title}' = {field_value[:100]}")
+                        if 'linkedin.com' in field_value.lower() or ('linkedin' in field_value.lower() and 'http' in field_value.lower()):
+                            contact_info['linkedin'] = field_value if 'http' in field_value.lower() else f"https://{field_value}"
+                            print(f"✅ LINKEDIN_SEARCH: Найден LinkedIn в questionary: {contact_info['linkedin']}")
+                            break
+        
+        # Если все еще не нашли, делаем глубокий поиск по всему объекту candidate_data
+        if not contact_info['linkedin']:
+            print(f"⚠️ LINKEDIN_SEARCH: LinkedIn не найден стандартными методами, делаем глубокий поиск")
+            import json
+            
+            # Рекурсивно ищем все строки, содержащие linkedin.com
+            def find_linkedin_recursive(obj, path=""):
+                if isinstance(obj, dict):
+                    for key, value in obj.items():
+                        current_path = f"{path}.{key}" if path else key
+                        if isinstance(value, str) and ('linkedin.com' in value.lower() or ('linkedin' in value.lower() and 'http' in value.lower())):
+                            print(f"🔍 LINKEDIN_SEARCH: Найден LinkedIn в {current_path}: {value[:100]}")
+                            return value
+                        result = find_linkedin_recursive(value, current_path)
+                        if result:
+                            return result
+                elif isinstance(obj, list):
+                    for i, item in enumerate(obj):
+                        current_path = f"{path}[{i}]" if path else f"[{i}]"
+                        result = find_linkedin_recursive(item, current_path)
+                        if result:
+                            return result
+                return None
+            
+            linkedin_found = find_linkedin_recursive(candidate_data)
+            if linkedin_found:
+                contact_info['linkedin'] = linkedin_found if 'http' in linkedin_found.lower() else f"https://{linkedin_found}"
+                print(f"✅ LINKEDIN_SEARCH: Найден LinkedIn через глубокий поиск: {contact_info['linkedin']}")
+        
+        # Если все еще не нашли, выводим полную структуру данных для отладки
+        if not contact_info['linkedin']:
+            print(f"⚠️ LINKEDIN_SEARCH: LinkedIn не найден. Структура candidate_data:")
+            print(f"  - Ключи верхнего уровня: {list(candidate_data.keys())}")
+            print(f"  - social: {candidate_data.get('social', [])}")
+            print(f"  - external: {candidate_data.get('external', [])}")
+            print(f"  - externals: {candidate_data.get('externals', [])}")
+            # Выводим первые 500 символов JSON для отладки
+            try:
+                import json
+                candidate_json = json.dumps(candidate_data, ensure_ascii=False, indent=2)
+                print(f"  - Первые 1000 символов JSON: {candidate_json[:1000]}")
+            except:
+                pass
+        
+        # Получаем поле "Где ведется коммуникация" из questionary
+        questionary = huntflow_service.get_applicant_questionary(account_id, int(candidate_id))
+        if questionary:
+            questionary_schema = huntflow_service.get_applicant_questionary_schema(account_id)
+            if questionary_schema:
+                for field_id, field_info in questionary_schema.items():
+                    field_title = field_info.get('title', '').lower()
+                    if ('коммуникац' in field_title or 'communication' in field_title or 
+                        'где ведется' in field_title or 'где ведётся' in field_title):
+                        if field_id in questionary:
+                            contact_info['communication_where'] = questionary[field_id]
+                            break
+        
+    except Exception as e:
+        print(f"⚠️ Ошибка получения контактной информации кандидата: {e}")
+        import traceback
+        traceback.print_exc()
+    
+    return contact_info
+
+
+def _generate_full_huntflow_link(vacancy_id, candidate_id, user):
+    """
+    Генерирует полную ссылку на кандидата в Huntflow в формате:
+    https://huntflow.ru/my/{account_nick}#/vacancy/{vacancy_id}/filter/workon/id/{candidate_id}
+    
+    Args:
+        vacancy_id: ID вакансии
+        candidate_id: ID кандидата
+        user: Пользователь Django
+    
+    Returns:
+        str: Полная ссылка на кандидата или None в случае ошибки
+    """
+    try:
+        from apps.huntflow.services import HuntflowService
+        
+        huntflow_service = HuntflowService(user)
+        accounts = huntflow_service.get_accounts()
+        
+        if accounts and 'items' in accounts and accounts['items']:
+            account_data = accounts['items'][0]
+            account_id = account_data.get('id')
+            account_nick = account_data.get('nick', '')
+            
+            # Формируем ссылку в зависимости от активной системы
+            if user.active_system == 'prod':
+                # Для прода используем nickname
+                huntflow_link = f"https://huntflow.ru/my/{account_nick}#/vacancy/{vacancy_id}/filter/workon/id/{candidate_id}"
+            else:
+                # Для sandbox используем account_id
+                huntflow_link = f"https://sandbox.huntflow.dev/my/org{account_id}#/vacancy/{vacancy_id}/filter/workon/id/{candidate_id}"
+            
+            print(f"🔗 Сгенерирована полная ссылка на Huntflow ({user.active_system}): {huntflow_link}")
+            return huntflow_link
+        else:
+            print(f"⚠️ Не удалось получить данные аккаунта из API")
+            return None
+            
+    except Exception as e:
+        print(f"❌ Ошибка генерации полной ссылки на Huntflow: {e}")
+        return None
+
+
 @login_required
 @permission_required('google_oauth.view_hrscreening', raise_exception=True)
 @csrf_exempt
 @require_http_methods(["POST"])
+def _determine_vacancy_from_candidate_link(candidate_url, user):
+    """
+    Определяет вакансию кандидата по ссылке на кандидата без указания вакансии
+    Формат ссылки: https://huntflow.ru/my/softnetix#/applicants/filter/all/77231621
+    
+    Returns:
+        tuple: (vacancy_id, candidate_id, error_message) или (None, None, error_message)
+    """
+    import re
+    from apps.huntflow.services import HuntflowService
+    from apps.vacancies.models import Vacancy
+    from apps.accounts.models import User
+    
+    try:
+        # Проверяем, что user является объектом пользователя
+        if not user:
+            return None, None, "Пользователь не указан"
+        
+        if isinstance(user, str):
+            # Если user является строкой, получаем объект пользователя
+            try:
+                user = User.objects.get(username=user)
+                print(f"🔍 DETERMINE_VACANCY: Преобразована строка в объект пользователя: {user.username}")
+            except User.DoesNotExist:
+                return None, None, f"Пользователь с username '{user}' не найден"
+        elif not isinstance(user, User):
+            print(f"❌ DETERMINE_VACANCY: Неверный тип user: {type(user)}, значение: {user}")
+            return None, None, f"Ожидается объект User, получен {type(user)}"
+        
+        # Извлекаем ID кандидата из ссылки формата /applicants/filter/all/77231621
+        applicant_pattern = r'/applicants/filter/[^/]+/(\d+)'
+        match = re.search(applicant_pattern, candidate_url)
+        
+        if not match:
+            return None, None, "Не удалось извлечь ID кандидата из ссылки"
+        
+        candidate_id = match.group(1)
+        print(f"🔍 DETERMINE_VACANCY: Извлечен ID кандидата: {candidate_id}")
+        
+        # Получаем информацию о кандидате через Huntflow API
+        huntflow_service = HuntflowService(user)
+        accounts = huntflow_service.get_accounts()
+        
+        if not accounts or 'items' not in accounts or not accounts['items']:
+            return None, None, "Нет доступных аккаунтов Huntflow"
+        
+        account_id = accounts['items'][0]['id']
+        print(f"🔍 DETERMINE_VACANCY: Используем account_id: {account_id}")
+        
+        # Получаем данные кандидата
+        candidate_data = huntflow_service.get_applicant(account_id, int(candidate_id))
+        
+        if not candidate_data:
+            return None, None, f"Кандидат {candidate_id} не найден в Huntflow"
+        
+        # Получаем вакансию из links кандидата
+        links = candidate_data.get('links', [])
+        if not links:
+            return None, None, f"У кандидата {candidate_id} нет привязанных вакансий"
+        
+        # Берем первую активную вакансию
+        vacancy_id = None
+        for link in links:
+            if link.get('vacancy'):
+                vacancy_id = link.get('vacancy')
+                break
+        
+        if not vacancy_id:
+            return None, None, f"Не удалось определить вакансию для кандидата {candidate_id}"
+        
+        print(f"✅ DETERMINE_VACANCY: Определена вакансия {vacancy_id} для кандидата {candidate_id}")
+        
+        # Проверяем, существует ли вакансия в локальной БД
+        try:
+            vacancy = Vacancy.objects.get(external_id=str(vacancy_id))
+            print(f"✅ DETERMINE_VACANCY: Вакансия найдена в локальной БД: {vacancy.name}")
+            return str(vacancy_id), candidate_id, None
+        except Vacancy.DoesNotExist:
+            print(f"⚠️ DETERMINE_VACANCY: Вакансия {vacancy_id} не найдена в локальной БД, но продолжаем работу")
+            return str(vacancy_id), candidate_id, None
+            
+    except Exception as e:
+        print(f"❌ DETERMINE_VACANCY: Ошибка определения вакансии: {e}")
+        import traceback
+        traceback.print_exc()
+        return None, None, f"Ошибка определения вакансии: {str(e)}"
+
+
+def _determine_vacancy_from_text(message_text, user):
+    """
+    Определяет вакансию из текста сообщения по названию вакансии
+    
+    Args:
+        message_text: Текст сообщения
+        user: Пользователь Django
+    
+    Returns:
+        Vacancy объект или None
+    """
+    from apps.vacancies.models import Vacancy
+    from django.db.models import Q
+    from apps.accounts.models import User
+    
+    # Проверяем, что user является объектом пользователя
+    if not user:
+        print(f"⚠️ DETERMINE_VACANCY_FROM_TEXT: Пользователь не указан")
+        return None
+    
+    if isinstance(user, str):
+        # Если user является строкой, получаем объект пользователя
+        try:
+            user = User.objects.get(username=user)
+            print(f"🔍 DETERMINE_VACANCY_FROM_TEXT: Преобразована строка в объект пользователя: {user.username}")
+        except User.DoesNotExist:
+            print(f"❌ DETERMINE_VACANCY_FROM_TEXT: Пользователь с username '{user}' не найден")
+            return None
+    elif not isinstance(user, User):
+        print(f"❌ DETERMINE_VACANCY_FROM_TEXT: Неверный тип user: {type(user)}, значение: {user}")
+        return None
+    
+    if not message_text or not message_text.strip():
+        return None
+    
+    # Получаем все активные вакансии пользователя
+    vacancies = Vacancy.objects.filter(is_active=True).order_by('name')
+    
+    # Ищем упоминания названий вакансий в тексте
+    message_lower = message_text.lower()
+    
+    # Сначала пытаемся найти точное совпадение (регистронезависимое)
+    for vacancy in vacancies:
+        vacancy_name_lower = vacancy.name.lower()
+        # Проверяем, содержит ли текст название вакансии как отдельное слово
+        # Используем границы слов для более точного поиска
+        import re
+        pattern = r'\b' + re.escape(vacancy_name_lower) + r'\b'
+        if re.search(pattern, message_lower):
+            print(f"✅ DETERMINE_VACANCY_FROM_TEXT: Найдено точное совпадение: {vacancy.name}")
+            return vacancy
+    
+    # Если точного совпадения нет, ищем частичное совпадение
+    # Разбиваем текст на слова и ищем вакансии, содержащие эти слова
+    words = [w.strip() for w in message_lower.split() if len(w.strip()) > 2]
+    
+    best_match = None
+    best_score = 0
+    
+    for vacancy in vacancies:
+        vacancy_name_lower = vacancy.name.lower()
+        score = 0
+        
+        # Подсчитываем количество совпадающих слов
+        for word in words:
+            if word in vacancy_name_lower:
+                score += len(word)
+        
+        # Если название вакансии содержит значительную часть слов из сообщения
+        if score > best_score and score >= 5:  # Минимальный порог совпадения
+            best_score = score
+            best_match = vacancy
+    
+    if best_match:
+        print(f"✅ DETERMINE_VACANCY_FROM_TEXT: Найдено частичное совпадение: {best_match.name} (score: {best_score})")
+        return best_match
+    
+    return None
+
+
+def _get_or_create_chat_session_for_vacancy(user, vacancy):
+    """
+    Находит или создает сессию чата для указанной вакансии
+    
+    Args:
+        user: Пользователь Django
+        vacancy: Объект Vacancy
+    
+    Returns:
+        ChatSession: Сессия чата для вакансии
+    """
+    from .models import ChatSession
+    from apps.accounts.models import User
+    
+    # Проверяем, что user является объектом пользователя
+    if not user:
+        raise ValueError("Пользователь не указан для создания сессии чата")
+    
+    if isinstance(user, str):
+        # Если user является строкой, получаем объект пользователя
+        try:
+            user = User.objects.get(username=user)
+            print(f"🔍 GET_OR_CREATE_CHAT_SESSION: Преобразована строка в объект пользователя: {user.username}")
+        except User.DoesNotExist:
+            raise ValueError(f"Пользователь с username '{user}' не найден")
+    elif not isinstance(user, User):
+        print(f"❌ GET_OR_CREATE_CHAT_SESSION: Неверный тип user: {type(user)}, значение: {user}")
+        raise ValueError(f"Ожидается объект User, получен {type(user)}")
+    
+    # Ищем существующую сессию чата для этой вакансии
+    chat_session, created = ChatSession.objects.get_or_create(
+        user=user,
+        vacancy=vacancy,
+        defaults={'title': vacancy.name}
+    )
+    
+    if created:
+        print(f"✅ Создана новая сессия чата для вакансии: {vacancy.name}")
+    else:
+        print(f"✅ Найдена существующая сессия чата для вакансии: {vacancy.name}")
+    
+    return chat_session
+
+
 def send_chat_message(request):
     """
     AJAX endpoint для отправки сообщения в Google OAuth чат
+    Автоматически определяет вакансию из сообщения и переключает на соответствующий чат
     """
     try:
+        from apps.accounts.models import User
+        
+        # Проверяем, что request.user является объектом пользователя
+        print(f"🔍 SEND_CHAT_MESSAGE: request.user: {request.user} (тип: {type(request.user)})")
+        if not request.user or not isinstance(request.user, User):
+            print(f"❌ SEND_CHAT_MESSAGE: request.user не является объектом User: {type(request.user)}")
+            return JsonResponse({'success': False, 'error': 'Пользователь не авторизован'})
+        
         data = json.loads(request.body)
+        print(f"🔍 SEND_CHAT_MESSAGE: Получены данные: {data}")
         session_id = data.get('session_id')
-        message_text = data.get('message', '').strip()
+        # Поддерживаем оба варианта: 'message' и 'text'
+        message_text = data.get('message', data.get('text', '')).strip()
+        print(f"🔍 SEND_CHAT_MESSAGE: message_text (длина: {len(message_text)}): {message_text[:100]}...")
         
         if not message_text:
             return JsonResponse({'success': False, 'error': 'Пустое сообщение'})
@@ -3704,68 +5590,661 @@ def send_chat_message(request):
         if not session_id:
             return JsonResponse({'success': False, 'error': 'ID сессии не указан'})
         
-        # Получаем сессию чата
+        # Получаем текущую сессию чата
         try:
-            chat_session = ChatSession.objects.get(id=session_id, user=request.user)
+            print(f"🔍 SEND_CHAT_MESSAGE: Ищем сессию {session_id} для пользователя {request.user.id}")
+            current_chat_session = ChatSession.objects.get(id=session_id, user=request.user)
         except ChatSession.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Сессия чата не найдена'})
         
-        # Получаем вакансию из сессии чата
-        vacancy = chat_session.vacancy
-        if not vacancy:
-            return JsonResponse({'success': False, 'error': 'Вакансия не найдена для данного чата'})
+        # Определяем тип действия ПЕРЕД определением вакансии, чтобы пропустить обработку ссылок на резюме
+        action_type = None
+        parsed_file_data = data.get('parsed_file_data')
+        is_add_command = parsed_file_data or message_text.strip() == '/add' or message_text.startswith('/add ')
         
-        # Сохраняем пользовательское сообщение
+        # Определяем вакансию из сообщения (только если это не команда /add)
+        determined_vacancy = None
+        
+        # 1. Проверяем, есть ли в сообщении ссылка на кандидата (только если не команда /add)
+        if not is_add_command:
+            import re
+            url_pattern = r'https?://[^\s]+'
+            urls = re.findall(url_pattern, message_text)
+            
+            candidate_url_found = None
+            for url in urls:
+                if 'huntflow' in url.lower():
+                    candidate_url_found = url
+                    break
+            
+            # Если найдена ссылка на кандидата, определяем вакансию
+            if candidate_url_found:
+                print(f"🔍 SEND_CHAT_MESSAGE: Найдена ссылка на кандидата: {candidate_url_found}")
+                
+                # Проверяем, есть ли в ссылке вакансия
+                if '/vacancy/' in candidate_url_found:
+                    # Извлекаем vacancy_id из ссылки
+                    vacancy_match = re.search(r'/vacancy/(\d+)/', candidate_url_found)
+                    if vacancy_match:
+                        vacancy_id = vacancy_match.group(1)
+                        from apps.vacancies.models import Vacancy
+                        try:
+                            determined_vacancy = Vacancy.objects.get(external_id=str(vacancy_id))
+                            print(f"✅ SEND_CHAT_MESSAGE: Вакансия определена из ссылки: {determined_vacancy.name}")
+                        except Vacancy.DoesNotExist:
+                            print(f"⚠️ SEND_CHAT_MESSAGE: Вакансия {vacancy_id} не найдена в локальной БД")
+                elif '/applicants/filter/' in candidate_url_found:
+                    # Ссылка без вакансии - определяем через API
+                    vacancy_id, candidate_id, error = _determine_vacancy_from_candidate_link(
+                        candidate_url_found, 
+                        request.user
+                    )
+                    
+                    if error:
+                        return JsonResponse({
+                            'success': False, 
+                            'error': f'Ошибка определения вакансии: {error}'
+                        })
+                    
+                    if vacancy_id:
+                        from apps.vacancies.models import Vacancy
+                        try:
+                            determined_vacancy = Vacancy.objects.get(external_id=str(vacancy_id))
+                            print(f"✅ SEND_CHAT_MESSAGE: Вакансия определена через API: {determined_vacancy.name}")
+                        except Vacancy.DoesNotExist:
+                            print(f"⚠️ SEND_CHAT_MESSAGE: Вакансия {vacancy_id} не найдена в локальной БД")
+        
+        # 2. Если вакансия не определена из ссылки, пытаемся определить из текста сообщения (только если не команда /add)
+        if not determined_vacancy and not is_add_command:
+            print(f"🔍 SEND_CHAT_MESSAGE: Вакансия не найдена в ссылке, пытаемся определить из текста")
+            determined_vacancy = _determine_vacancy_from_text(message_text, request.user)
+            if determined_vacancy:
+                print(f"✅ SEND_CHAT_MESSAGE: Вакансия определена из текста: {determined_vacancy.name}")
+        
+        # Если вакансия определена и отличается от текущей, переключаемся на правильный чат
+        if determined_vacancy and (not current_chat_session.vacancy or current_chat_session.vacancy.id != determined_vacancy.id):
+            print(f"🔄 SEND_CHAT_MESSAGE: Переключаемся с вакансии '{current_chat_session.vacancy.name if current_chat_session.vacancy else 'Без вакансии'}' на '{determined_vacancy.name}'")
+            # Находим или создаем сессию чата для правильной вакансии
+            chat_session = _get_or_create_chat_session_for_vacancy(request.user, determined_vacancy)
+        else:
+            # Используем текущую сессию или определяем вакансию из текущей сессии
+            chat_session = current_chat_session
+            if not chat_session.vacancy:
+                # Если в текущей сессии нет вакансии, но мы определили её из сообщения
+                if determined_vacancy:
+                    chat_session.vacancy = determined_vacancy
+                    chat_session.title = determined_vacancy.name
+                    chat_session.save()
+                    print(f"✅ SEND_CHAT_MESSAGE: Обновлена текущая сессия с вакансией: {determined_vacancy.name}")
+        
+        # Сохраняем исходный текст сообщения для проверки ссылок на резюме
+        original_message_text = message_text
+        
+        # Определяем тип действия (action_type уже определен выше, если это команда /add)
+        if is_add_command:
+            action_type = 'add_candidate'
+            # Убираем префикс '/add ' из сообщения для обработки, если он есть
+            if message_text.startswith('/add '):
+                message_text = message_text[5:].strip()
+            elif message_text.strip() == '/add':
+                message_text = ''
+        elif message_text.startswith('/t '):
+            action_type = 'tech_screening'
+        elif message_text.startswith('/in '):
+            action_type = 'final_interview'
+        elif message_text.startswith('/s '):
+            action_type = 'hrscreening'
+            # Убираем префикс '/s ' из сообщения для обработки
+            message_text = message_text[3:].strip()
+        else:
+            # Проверяем, есть ли ссылка на резюме (hh.ru или rabota.by) - это тоже команда /add
+            # Проверяем в исходном тексте (до удаления префиксов)
+            if original_message_text:
+                from apps.huntflow.services import HuntflowService
+                temp_service = HuntflowService(request.user)
+                resume_url_info = temp_service._extract_resume_url(original_message_text)
+                if resume_url_info:
+                    action_type = 'add_candidate'
+                    is_add_command = True
+                    # Если в исходном тексте был префикс /add, он уже удален выше
+                    # Если нет, но есть ссылка на резюме, используем текст как есть
+                else:
+                    action_type = 'hrscreening'  # По умолчанию HR-скрининг
+            else:
+                action_type = 'hrscreening'  # По умолчанию HR-скрининг
+        
+        # Получаем информацию о файле из запроса (если есть)
+        attached_file_name = data.get('attached_file_name', '')
+        attached_file_type = data.get('attached_file_type', '')
+        
+        # Формируем текст сообщения с информацией о файле, если он был прикреплен
+        display_message_text = message_text
+        if attached_file_name:
+            file_info = f"📎 Прикреплен файл: {attached_file_name}"
+            if attached_file_type:
+                file_info += f" ({attached_file_type})"
+            if display_message_text:
+                display_message_text = f"{display_message_text}\n\n{file_info}"
+            else:
+                display_message_text = file_info
+        
+        # Создаем пользовательское сообщение в правильном чате ДО обработки действий
         user_message = ChatMessage.objects.create(
             session=chat_session,
             message_type='user',
-            content=message_text
+            content=display_message_text
         )
+        print(f"✅ SEND_CHAT_MESSAGE: Создано пользовательское сообщение в сессии {chat_session.id}")
         
-        # Определяем тип действия
-        action_type = 'hrscreening'  # По умолчанию HR-скрининг
-        if message_text.startswith('/in '):
-            action_type = 'invite'
-        elif message_text.startswith('/s '):
-            action_type = 'hrscreening'
+        print(f"🔍 SEND_CHAT_MESSAGE: action_type: {action_type}, message_text после обработки: {message_text[:100]}...")
         
         # Обрабатываем действие
-        if action_type == 'hrscreening':
+        if action_type == 'add_candidate':
+            # Создаем кандидата в Huntflow с привязкой к вакансии
+            print(f"🔍 SEND_CHAT_MESSAGE: Обрабатываем команду /add для создания кандидата")
+            
+            try:
+                from apps.huntflow.views import get_correct_account_id
+                from apps.huntflow.services import HuntflowService
+                
+                # Получаем правильный account_id
+                correct_account_id = get_correct_account_id(request.user)
+                if not correct_account_id:
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content="❌ Не удалось определить организацию Huntflow. Проверьте настройки."
+                    )
+                    return JsonResponse({'success': False, 'error': 'Не удалось определить организацию Huntflow'})
+                
+                huntflow_service = HuntflowService(request.user)
+                
+                # Получаем вакансию из сессии чата
+                if not chat_session.vacancy:
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content="❌ Не выбрана вакансия. Выберите вакансию перед созданием кандидата."
+                    )
+                    return JsonResponse({'success': False, 'error': 'Не выбрана вакансия'})
+                
+                vacancy = chat_session.vacancy
+                vacancy_id = int(vacancy.external_id) if vacancy.external_id else None
+                
+                if not vacancy_id:
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content=f"❌ У выбранной вакансии '{vacancy.name}' не указан ID для связи с Huntflow"
+                    )
+                    return JsonResponse({'success': False, 'error': f'У вакансии "{vacancy.name}" не указан ID для связи с Huntflow'})
+                
+                # Проверяем наличие ссылок на резюме (hh.ru или rabota.by) в сообщении
+                # Используем исходный текст (до удаления префикса /add)
+                resume_url_info = None
+                # Проверяем в обрезанном message_text (после удаления /add) и в исходном original_message_text
+                check_text = message_text if message_text else original_message_text
+                if check_text:
+                    resume_url_info = huntflow_service._extract_resume_url(check_text)
+                
+                # Используем распарсенные данные из файла (передаются через JSON)
+                parsed_data = parsed_file_data
+                
+                if parsed_data:
+                    print(f"🔍 SEND_CHAT_MESSAGE: Получены распарсенные данные из файла")
+                    # Проверяем, что parsed_data - это словарь
+                    if not isinstance(parsed_data, dict):
+                        print(f"⚠️ SEND_CHAT_MESSAGE: parsed_data не является словарем: {type(parsed_data)}")
+                        parsed_data = None
+                
+                # Если найдена ссылка на резюме, создаем кандидата по ссылке
+                if resume_url_info and not parsed_data:
+                    print(f"🔍 SEND_CHAT_MESSAGE: Найдена ссылка на резюме: {resume_url_info}")
+                    created_applicant = huntflow_service.create_applicant_from_url(
+                        account_id=correct_account_id,
+                        resume_url=resume_url_info['url'],
+                        vacancy_id=vacancy_id,
+                        source_type=resume_url_info['source_type'],
+                        resume_id=resume_url_info.get('resume_id')
+                    )
+                    
+                    if created_applicant:
+                        applicant_id = created_applicant.get('id')
+                        candidate_name = f"{created_applicant.get('last_name', '')} {created_applicant.get('first_name', '')} {created_applicant.get('middle_name', '')}".strip()
+                        if not candidate_name:
+                            candidate_name = "Кандидат"
+                        
+                        # Формируем ссылку на кандидата
+                        candidate_url = _generate_full_huntflow_link(
+                            vacancy_id,
+                            applicant_id,
+                            request.user
+                        )
+                        if not candidate_url:
+                            accounts = huntflow_service.get_accounts()
+                            account_nick = ''
+                            if accounts and 'items' in accounts and accounts['items']:
+                                account_data = accounts['items'][0]
+                                account_nick = account_data.get('nick', '')
+                            
+                            if account_nick:
+                                if hasattr(request.user, 'active_system') and request.user.active_system == 'prod':
+                                    candidate_url = f"https://huntflow.ru/my/{account_nick}#/vacancy/{vacancy_id}/filter/workon/id/{applicant_id}"
+                                else:
+                                    candidate_url = f"https://sandbox.huntflow.dev/my/org{correct_account_id}#/vacancy/{vacancy_id}/filter/workon/id/{applicant_id}"
+                            else:
+                                candidate_url = f"https://huntflow.ru/my/org{correct_account_id}#/applicants/{applicant_id}"
+                        
+                        # Получаем контактную информацию
+                        candidate_contact_info = _get_candidate_contact_info(request.user, applicant_id)
+                        
+                        # Формируем источник для отображения
+                        source_display = f"{resume_url_info['source_type'].lower()}.ru" if resume_url_info['source_type'] == 'HH' else "rabota.by"
+                        resume_id_display = resume_url_info.get('resume_id', 'N/A')
+                        
+                        # Формируем ответ
+                        response_content = f"✅ **Кандидат успешно создан и привязан к вакансии**\n\n"
+                        response_content += f"👤 **Кандидат:** {candidate_name}\n"
+                        response_content += f"💼 **Вакансия:** {vacancy.name}\n"
+                        response_content += f"🆔 **ID кандидата:** {applicant_id}\n\n"
+                        response_content += f"📎 **{source_display}:** {resume_id_display}\n\n"
+                        response_content += f"🔗 [Открыть кандидата в Huntflow]({candidate_url})"
+                        
+                        metadata = {
+                            'action_type': 'add_candidate',
+                            'applicant_id': applicant_id,
+                            'candidate_name': candidate_name,
+                            'vacancy_name': vacancy.name,
+                            'candidate_url': candidate_url,
+                            'candidate_contact_info': candidate_contact_info,
+                            'resume_source': source_display,
+                            'resume_id': resume_id_display
+                        }
+                        
+                        response_message = ChatMessage.objects.create(
+                            session=chat_session,
+                            message_type='system',
+                            content=response_content,
+                            metadata=metadata
+                        )
+                        
+                        from django.template.loader import render_to_string
+                        try:
+                            message_html = render_to_string('google_oauth/partials/chat_message.html', {
+                                'message': response_message,
+                                'user': request.user
+                            })
+                        except Exception as e:
+                            print(f"⚠️ SEND_CHAT_MESSAGE: Ошибка генерации HTML: {e}")
+                            message_html = f"<div class='chat-message system'>{response_content}</div>"
+                        
+                        return JsonResponse({
+                            'success': True,
+                            'message_html': message_html,
+                            'message_id': response_message.id
+                        })
+                    else:
+                        ChatMessage.objects.create(
+                            session=chat_session,
+                            message_type='system',
+                            content="❌ Не удалось создать кандидата по ссылке. Проверьте ссылку и попробуйте снова."
+                        )
+                        return JsonResponse({'success': False, 'error': 'Не удалось создать кандидата по ссылке'})
+                
+                # Парсим текст сообщения для извлечения данных кандидата
+                candidate_data = {
+                    'first_name': '',
+                    'last_name': '',
+                    'middle_name': '',
+                    'email': '',
+                    'phone': '',
+                    'position': '',
+                    'company': '',
+                    'salary': '',
+                    'resume_text': message_text if message_text else ''
+                }
+                
+                # Если есть распарсенные данные из файла, используем их напрямую без проверок
+                # Huntflow сам извлечет все необходимые данные из файла, включая имя и фамилию
+                if parsed_data and isinstance(parsed_data, dict):
+                    print(f"🔍 SEND_CHAT_MESSAGE: Создаем кандидата из распарсенных данных файла (без проверок)")
+                    # Используем create_applicant_from_parsed_data для полной поддержки парсера
+                    # Метод сам обработает все данные из файла, включая имя и фамилию
+                    created_applicant = huntflow_service.create_applicant_from_parsed_data(
+                        account_id=correct_account_id,
+                        parsed_data=parsed_data,
+                        vacancy_id=vacancy_id
+                    )
+                else:
+                    # Если нет распарсенных данных, пытаемся извлечь имя из текста
+                    if not candidate_data['first_name'] and not candidate_data['last_name'] and message_text:
+                        lines = message_text.split('\n')
+                        if lines:
+                            first_line = lines[0].strip()
+                            name_parts = first_line.split()
+                            if len(name_parts) >= 2:
+                                candidate_data['first_name'] = name_parts[0]
+                                candidate_data['last_name'] = name_parts[1]
+                                if len(name_parts) >= 3:
+                                    candidate_data['middle_name'] = name_parts[2]
+                    
+                    # Проверяем обязательные поля только если нет распарсенных данных
+                    if not candidate_data['first_name'] or not candidate_data['last_name']:
+                        ChatMessage.objects.create(
+                            session=chat_session,
+                            message_type='system',
+                            content="❌ Не указаны имя и фамилия кандидата. Укажите их в сообщении или прикрепите файл резюме.\n\nПример: `/add Иван Иванов\nemail@example.com\n+7 999 123-45-67`"
+                        )
+                        return JsonResponse({'success': False, 'error': 'Не указаны имя и фамилия кандидата'})
+                    
+                    # Создаем кандидата вручную
+                    created_applicant = huntflow_service.create_applicant_manual(
+                        account_id=correct_account_id,
+                        candidate_data=candidate_data,
+                        vacancy_id=vacancy_id
+                    )
+                
+                if created_applicant:
+                    applicant_id = created_applicant.get('id')
+                    
+                    # Получаем имя кандидата из созданного объекта или из распарсенных данных
+                    candidate_name = ''
+                    if parsed_data and isinstance(parsed_data, dict):
+                        # Извлекаем имя из распарсенных данных
+                        fields = parsed_data.get('fields', {})
+                        name_data = fields.get('name', {}) if fields else {}
+                        last_name = name_data.get('last', '') if name_data else ''
+                        first_name = name_data.get('first', '') if name_data else ''
+                        middle_name = name_data.get('middle', '') if name_data else ''
+                        candidate_name = f"{last_name} {first_name} {middle_name}".strip()
+                    
+                    # Если имя не извлечено, используем данные из созданного кандидата
+                    if not candidate_name:
+                        candidate_name = f"{created_applicant.get('last_name', '')} {created_applicant.get('first_name', '')} {created_applicant.get('middle_name', '')}".strip()
+                    
+                    # Если имя все еще пустое, используем данные из candidate_data (для ручного ввода)
+                    if not candidate_name:
+                        candidate_name = f"{candidate_data.get('last_name', '')} {candidate_data.get('first_name', '')} {candidate_data.get('middle_name', '')}".strip()
+                    
+                    # Если имя все еще пустое, используем дефолтное значение
+                    if not candidate_name:
+                        candidate_name = "Кандидат"
+                    
+                    # Формируем ссылку на кандидата в правильном формате
+                    # Используем функцию генерации ссылки с account_nick
+                    candidate_url = _generate_full_huntflow_link(
+                        vacancy_id,
+                        applicant_id,
+                        request.user
+                    )
+                    
+                    # Если функция вернула None, формируем ссылку вручную
+                    if not candidate_url:
+                        # Получаем account_nick из API
+                        accounts = huntflow_service.get_accounts()
+                        account_nick = ''
+                        if accounts and 'items' in accounts and accounts['items']:
+                            account_data = accounts['items'][0]
+                            account_nick = account_data.get('nick', '')
+                        
+                        if account_nick:
+                            # Используем account_nick для прода
+                            if hasattr(request.user, 'active_system') and request.user.active_system == 'prod':
+                                candidate_url = f"https://huntflow.ru/my/{account_nick}#/vacancy/{vacancy_id}/filter/workon/id/{applicant_id}"
+                            else:
+                                candidate_url = f"https://sandbox.huntflow.dev/my/org{correct_account_id}#/vacancy/{vacancy_id}/filter/workon/id/{applicant_id}"
+                        else:
+                            # Fallback на старый формат
+                            candidate_url = f"https://huntflow.ru/my/org{correct_account_id}#/applicants/{applicant_id}"
+                    
+                    # Получаем контактную информацию кандидата для истории
+                    candidate_contact_info = _get_candidate_contact_info(request.user, applicant_id)
+                    print(f"🔍 SEND_CHAT_MESSAGE: Получена контактная информация для созданного кандидата: {candidate_contact_info}")
+                    
+                    # Формируем улучшенное сообщение о созданном кандидате
+                    response_content = f"✅ **Кандидат успешно создан и привязан к вакансии**\n\n"
+                    response_content += f"👤 **Кандидат:** {candidate_name}\n"
+                    response_content += f"💼 **Вакансия:** {vacancy.name}\n"
+                    response_content += f"🆔 **ID кандидата:** {applicant_id}\n\n"
+                    if attached_file_name:
+                        file_info = f"📎 **Файл:** {attached_file_name}"
+                        if attached_file_type:
+                            file_info += f" ({attached_file_type})"
+                        response_content += f"{file_info}\n\n"
+                    response_content += f"🔗 [Открыть кандидата в Huntflow]({candidate_url})"
+                    
+                    # Формируем метаданные с информацией о файле и контактах
+                    metadata = {
+                        'action_type': 'add_candidate',
+                        'applicant_id': applicant_id,
+                        'candidate_name': candidate_name,
+                        'vacancy_name': vacancy.name,
+                        'candidate_url': candidate_url,
+                        'candidate_contact_info': candidate_contact_info
+                    }
+                    if attached_file_name:
+                        metadata['attached_file_name'] = attached_file_name
+                        if attached_file_type:
+                            metadata['attached_file_type'] = attached_file_type
+                    
+                    response_message = ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content=response_content,
+                        metadata=metadata
+                    )
+                    
+                    # Генерируем HTML для ответного сообщения
+                    from django.template.loader import render_to_string
+                    try:
+                        message_html = render_to_string('google_oauth/partials/chat_message.html', {
+                            'message': response_message,
+                            'user': request.user
+                        })
+                    except Exception as e:
+                        print(f"⚠️ SEND_CHAT_MESSAGE: Ошибка генерации HTML: {e}")
+                        message_html = None
+                    
+                    print(f"✅ SEND_CHAT_MESSAGE: Кандидат успешно создан: {applicant_id}")
+                    
+                    return JsonResponse({
+                        'success': True,
+                        'message_type': 'system',
+                        'message_html': message_html,
+                        'reload_page': True,  # Флаг для обновления страницы
+                        'metadata': {
+                            'action_type': 'add_candidate',
+                            'applicant_id': applicant_id,
+                            'candidate_name': candidate_name,
+                            'vacancy_name': vacancy.name,
+                            'candidate_url': candidate_url
+                        }
+                    })
+                else:
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content="❌ Не удалось создать кандидата в Huntflow. Проверьте данные и попробуйте снова."
+                    )
+                    return JsonResponse({'success': False, 'error': 'Не удалось создать кандидата в Huntflow'})
+                    
+            except Exception as e:
+                print(f"❌ SEND_CHAT_MESSAGE: Ошибка создания кандидата: {e}")
+                import traceback
+                traceback.print_exc()
+                ChatMessage.objects.create(
+                    session=chat_session,
+                    message_type='system',
+                    content=f"❌ Ошибка при создании кандидата: {str(e)}"
+                )
+                return JsonResponse({'success': False, 'error': f'Ошибка при создании кандидата: {str(e)}'})
+        
+        elif action_type == 'hrscreening':
+            # Пропускаем обработку hrscreening, если это была команда /add (даже если ссылка на резюме не найдена)
+            if is_add_command:
+                ChatMessage.objects.create(
+                    session=chat_session,
+                    message_type='system',
+                    content="❌ Не удалось создать кандидата. Проверьте ссылку на резюме (hh.ru или rabota.by) или прикрепите файл."
+                )
+                return JsonResponse({'success': False, 'error': 'Не удалось создать кандидата по ссылке'})
             # Создаем HR-скрининг
+            print(f"🔍 SEND_CHAT_MESSAGE: Создаем HRScreeningForm с user: {request.user} (тип: {type(request.user)})")
             screening_form_data = {'input_data': message_text}
             screening_form = HRScreeningForm(screening_form_data, user=request.user)
+            print(f"🔍 SEND_CHAT_MESSAGE: Форма создана, user в форме: {screening_form.user} (тип: {type(screening_form.user)})")
             
             if screening_form.is_valid():
                 try:
                     screening = screening_form.save()
                     
+                    # Определяем вакансию из созданного скрининга
+                    screening_vacancy = None
+                    if screening.vacancy_id:
+                        from apps.vacancies.models import Vacancy
+                        try:
+                            screening_vacancy = Vacancy.objects.get(external_id=str(screening.vacancy_id))
+                            print(f"✅ SEND_CHAT_MESSAGE: Вакансия определена из скрининга: {screening_vacancy.name}")
+                        except Vacancy.DoesNotExist:
+                            print(f"⚠️ SEND_CHAT_MESSAGE: Вакансия {screening.vacancy_id} не найдена в локальной БД")
+                    
+                    # Если вакансия из скрининга отличается от текущей, переключаемся на правильный чат
+                    if screening_vacancy and (not chat_session.vacancy or chat_session.vacancy.id != screening_vacancy.id):
+                        print(f"🔄 SEND_CHAT_MESSAGE: Переключаемся на правильный чат для вакансии: {screening_vacancy.name}")
+                        # Находим или создаем сессию чата для правильной вакансии
+                        correct_chat_session = _get_or_create_chat_session_for_vacancy(request.user, screening_vacancy)
+                        # Перемещаем пользовательское сообщение в правильную сессию
+                        user_message.session = correct_chat_session
+                        user_message.save()
+                        chat_session = correct_chat_session
+                    
+                    # Генерируем полную ссылку с вакансией
+                    full_candidate_url = None
+                    if screening.vacancy_id and screening.candidate_id:
+                        full_candidate_url = _generate_full_huntflow_link(
+                            screening.vacancy_id,
+                            screening.candidate_id,
+                            request.user
+                        )
+                    
+                    # Используем полную ссылку, если она сгенерирована, иначе исходную
+                    candidate_url_for_metadata = full_candidate_url or screening.candidate_url
+                    
+                    # Получаем контактную информацию кандидата
+                    candidate_contact_info = {}
+                    if screening.candidate_id:
+                        candidate_contact_info = _get_candidate_contact_info(request.user, screening.candidate_id)
+                        print(f"🔍 SEND_CHAT_MESSAGE: Получена контактная информация кандидата: {candidate_contact_info}")
+                    
+                    # Проверяем, превышает ли зарплата максимальную вилку
+                    print(f"🔍 SEND_CHAT_MESSAGE: Проверяем превышение зарплаты над вилкой...")
+                    salary_above_range = screening.is_salary_above_range()
+                    print(f"🔍 SEND_CHAT_MESSAGE: Результат проверки превышения зарплаты: {salary_above_range}")
+                    
+                    finance_more_template = None
+                    if salary_above_range:
+                        print(f"🔍 SEND_CHAT_MESSAGE: Зарплата превышает вилку, получаем шаблон отказа 'Финансы - больше'...")
+                        finance_more_template = screening.get_finance_more_rejection_template()
+                        if finance_more_template:
+                            print(f"✅ SEND_CHAT_MESSAGE: Найден шаблон отказа 'Финансы - больше': {finance_more_template.title} (ID: {finance_more_template.id})")
+                        else:
+                            print(f"⚠️ SEND_CHAT_MESSAGE: Шаблон отказа 'Финансы - больше' не найден")
+                    
                     response_content = ""  # Пустой контент, данные будут браться из metadata
+                    
+                    # Определяем, нужно ли показывать форму отказа (только при потенциальном отказе)
+                    show_rejection_form = False
+                    
+                    # Проверяем превышение зарплаты
+                    if salary_above_range:
+                        show_rejection_form = True
+                    
+                    # Проверяем офисный формат
+                    office_format_rejected = screening.is_office_format_rejected()
+                    if office_format_rejected:
+                        show_rejection_form = True
+                    
+                    metadata = {
+                        'action_type': 'hrscreening',
+                        'hr_screening_id': screening.id,  # Исправлено: было screening_id
+                        'candidate_name': screening.candidate_name,
+                        'vacancy_name': screening.vacancy_title,
+                        'determined_grade': screening.determined_grade,
+                        'candidate_url': candidate_url_for_metadata,
+                        'extracted_salary': str(screening.extracted_salary) if screening.extracted_salary else None,
+                        'salary_currency': screening.salary_currency,
+                        'candidate_contact_info': candidate_contact_info,
+                        'show_rejection_form': show_rejection_form
+                    }
+                    
+                    # Добавляем информацию о шаблоне отказа "Финансы - больше", если зарплата превышает вилку
+                    if salary_above_range:
+                        metadata['salary_above_range'] = True
+                        if finance_more_template:
+                            metadata['finance_more_template_id'] = finance_more_template.id
+                            metadata['finance_more_template_title'] = finance_more_template.title
+                            metadata['finance_more_template_message'] = finance_more_template.message
+                            print(f"✅ SEND_CHAT_MESSAGE: Метаданные обновлены с информацией об отказе 'Финансы - больше'")
+                    
+                    # Добавляем информацию об офисном формате
+                    if office_format_rejected:
+                        metadata['office_format_rejected'] = True
+                        rejection_template = screening.get_office_format_rejection_template()
+                        if rejection_template:
+                            metadata['rejection_template_id'] = rejection_template.id
+                            metadata['rejection_template_title'] = rejection_template.title
+                            metadata['rejection_template_message'] = rejection_template.message
+                    
+                    print(f"🔍 SEND_CHAT_MESSAGE: show_rejection_form={show_rejection_form} (salary_above_range={salary_above_range}, office_format_rejected={office_format_rejected})")
                     
                     ChatMessage.objects.create(
                         session=chat_session,
                         message_type='hrscreening',
                         content=response_content,
                         hr_screening=screening,
-                        metadata={
-                            'action_type': 'hrscreening',
-                            'screening_id': screening.id,
-                            'candidate_name': screening.candidate_name,
-                            'vacancy_name': screening.vacancy_name,
-                            'determined_grade': screening.determined_grade,
-                            'candidate_url': screening.candidate_url
-                        }
+                        metadata=metadata
                     )
+                    
+                    # Формируем URL для перенаправления
+                    from django.urls import reverse
+                    redirect_url = reverse('google_oauth:chat_workflow_session', args=[chat_session.id])
+                    if chat_session.vacancy:
+                        redirect_url += f'?vacancy_id={chat_session.vacancy.id}'
+                    
+                    # Генерируем HTML для ответного сообщения
+                    from django.template.loader import render_to_string
+                    try:
+                        response_message = ChatMessage.objects.filter(
+                            session=chat_session,
+                            hr_screening=screening
+                        ).order_by('-created_at').first()
+                        if response_message:
+                            message_html = render_to_string('google_oauth/partials/chat_message.html', {
+                                'message': response_message,
+                                'user': request.user
+                            })
+                        else:
+                            message_html = None
+                    except Exception as e:
+                        print(f"⚠️ SEND_CHAT_MESSAGE: Ошибка генерации HTML: {e}")
+                        message_html = None
                     
                     return JsonResponse({
                         'success': True,
                         'message_type': 'hrscreening',
+                        'redirect_url': redirect_url,
+                        'session_id': chat_session.id,
+                        'message_html': message_html,
                         'metadata': {
                             'action_type': 'hrscreening',
-                            'screening_id': screening.id,
+                            'hr_screening_id': screening.id,
                             'candidate_name': screening.candidate_name,
-                            'vacancy_name': screening.vacancy_name,
+                            'vacancy_name': screening.vacancy_title,
                             'determined_grade': screening.determined_grade,
-                            'candidate_url': screening.candidate_url
+                            'candidate_url': candidate_url_for_metadata,
+                            'extracted_salary': str(screening.extracted_salary) if screening.extracted_salary else None,
+                            'salary_currency': screening.salary_currency,
+                            'show_rejection_form': show_rejection_form
                         }
                     })
                     
@@ -3787,8 +6266,8 @@ def send_chat_message(request):
                 )
                 return JsonResponse({'success': False, 'error': error_content})
         
-        elif action_type == 'invite':
-            # Создаем инвайт
+        elif action_type == 'tech_screening':
+            # Создаем Tech Screening (логика как для invite)
             invite_form_data = {'combined_data': message_text}
             
             # Передаем данные об интервьюере, если они есть
@@ -3801,39 +6280,98 @@ def send_chat_message(request):
                 try:
                     invite = invite_form.save()
                     
+                    # Определяем вакансию из созданного инвайта
+                    invite_vacancy = None
+                    if invite.vacancy_id:
+                        from apps.vacancies.models import Vacancy
+                        try:
+                            invite_vacancy = Vacancy.objects.get(external_id=str(invite.vacancy_id))
+                            print(f"✅ SEND_CHAT_MESSAGE: Вакансия определена из инвайта: {invite_vacancy.name}")
+                        except Vacancy.DoesNotExist:
+                            print(f"⚠️ SEND_CHAT_MESSAGE: Вакансия {invite.vacancy_id} не найдена в локальной БД")
+                    
+                    # Если вакансия из инвайта отличается от текущей, переключаемся на правильный чат
+                    if invite_vacancy and (not chat_session.vacancy or chat_session.vacancy.id != invite_vacancy.id):
+                        print(f"🔄 SEND_CHAT_MESSAGE: Переключаемся на правильный чат для вакансии: {invite_vacancy.name}")
+                        # Находим или создаем сессию чата для правильной вакансии
+                        correct_chat_session = _get_or_create_chat_session_for_vacancy(request.user, invite_vacancy)
+                        # Перемещаем пользовательское сообщение в правильную сессию
+                        user_message.session = correct_chat_session
+                        user_message.save()
+                        chat_session = correct_chat_session
+                    
+                    # Генерируем полную ссылку с вакансией
+                    full_candidate_url = None
+                    if invite.vacancy_id and invite.candidate_id:
+                        full_candidate_url = _generate_full_huntflow_link(
+                            invite.vacancy_id,
+                            invite.candidate_id,
+                            request.user
+                        )
+                    
+                    # Используем полную ссылку, если она сгенерирована, иначе исходную
+                    candidate_url_for_metadata = full_candidate_url or invite.candidate_url
+                    
                     response_content = ""  # Пустой контент, данные будут браться из metadata
                     
                     ChatMessage.objects.create(
                         session=chat_session,
-                        message_type='invite',
+                        message_type='invite',  # Используем существующий тип для совместимости
                         content=response_content,
                         invite=invite,
                         metadata={
-                            'action_type': 'invite',
+                            'action_type': 'tech_screening',
                             'invite_id': invite.id,
                             'candidate_name': invite.candidate_name,
                             'vacancy_name': invite.vacancy_title,
                             'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
                             'interviewer_email': invite.interviewer.email if invite.interviewer else None,
                             'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
-                            'candidate_url': invite.candidate_url,
+                            'candidate_url': candidate_url_for_metadata,
                             'calendar_event_url': invite.calendar_event_url,
                             'google_drive_file_url': invite.google_drive_file_url
                         }
                     )
                     
+                    # Формируем URL для перенаправления
+                    from django.urls import reverse
+                    redirect_url = reverse('google_oauth:chat_workflow_session', args=[chat_session.id])
+                    if chat_session.vacancy:
+                        redirect_url += f'?vacancy_id={chat_session.vacancy.id}'
+                    
+                    # Генерируем HTML для ответного сообщения
+                    from django.template.loader import render_to_string
+                    try:
+                        response_message = ChatMessage.objects.filter(
+                            session=chat_session,
+                            invite=invite
+                        ).order_by('-created_at').first()
+                        if response_message:
+                            message_html = render_to_string('google_oauth/partials/chat_message.html', {
+                                'message': response_message,
+                                'user': request.user
+                            })
+                        else:
+                            message_html = None
+                    except Exception as e:
+                        print(f"⚠️ SEND_CHAT_MESSAGE: Ошибка генерации HTML: {e}")
+                        message_html = None
+                    
                     return JsonResponse({
                         'success': True,
                         'message_type': 'invite',
+                        'redirect_url': redirect_url,
+                        'session_id': chat_session.id,
+                        'message_html': message_html,
                         'metadata': {
-                            'action_type': 'invite',
+                            'action_type': 'tech_screening',
                             'invite_id': invite.id,
                             'candidate_name': invite.candidate_name,
                             'vacancy_name': invite.vacancy_title,
                             'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
                             'interviewer_email': invite.interviewer.email if invite.interviewer else None,
                             'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
-                            'candidate_url': invite.candidate_url,
+                            'candidate_url': candidate_url_for_metadata,
                             'calendar_event_url': invite.calendar_event_url,
                             'google_drive_file_url': invite.google_drive_file_url
                         }
@@ -3849,7 +6387,11 @@ def send_chat_message(request):
                     )
                     return JsonResponse({'success': False, 'error': error_content})
             else:
-                error_content = f"Ошибка валидации инвайта: {invite_form.errors}"
+                # Ошибки валидации
+                error_content = "Ошибка при обработке Tech Screening:\n"
+                for field, errors in invite_form.errors.items():
+                    error_content += f"- {field}: {', '.join(errors)}\n"
+                
                 ChatMessage.objects.create(
                     session=chat_session,
                     message_type='system',
@@ -3857,12 +6399,329 @@ def send_chat_message(request):
                 )
                 return JsonResponse({'success': False, 'error': error_content})
         
+        elif action_type == 'final_interview':
+            # Создаем Final Interview БЕЗ скоркарда (используется tech_invite_title)
+            invite_form_data = {'combined_data': message_text}
+            
+            # Передаем данные об интервьюере, если они есть
+            if 'selected_interviewer' in data:
+                invite_form_data['selected_interviewer'] = data['selected_interviewer']
+
+            # Поддержка множественного выбора интервьюеров из UI (пилюли).
+            # Эти данные приходят из frontend как массив ID и используются для attendees календарного события.
+            selected_interviewer_ids = data.get('selected_interviewer_ids') or []
+            
+            invite_form = InviteCombinedForm(invite_form_data, user=request.user)
+            
+            if invite_form.is_valid():
+                try:
+                    # Создаем инвайт без сохранения (commit=False)
+                    invite = invite_form.save(commit=False)
+
+                    # Если пользователь выбрал интервьюеров в UI, используем только их.
+                    # 1) Сохраняем "первого" как основного (для отображения в UI, FK interviewer)
+                    # 2) Все выбранные используем как attendees при создании события (через временный атрибут)
+                    if selected_interviewer_ids:
+                        try:
+                            from apps.interviewers.models import Interviewer
+                            selected_objs = list(Interviewer.objects.filter(id__in=selected_interviewer_ids, is_active=True))
+                            if selected_objs:
+                                # основной интервьюер для UI
+                                invite.interviewer = selected_objs[0]
+                                # все выбранные для календаря
+                                invite._selected_interviewer_ids = [i.id for i in selected_objs]
+                                print(f"✅ SEND_CHAT_MESSAGE: Выбраны интервьюеры из UI: {invite._selected_interviewer_ids}")
+                        except Exception as e:
+                            print(f"⚠️ SEND_CHAT_MESSAGE: Не удалось обработать выбранных интервьюеров: {e}")
+                    
+                    # Устанавливаем формат интервью (онлайн/офис)
+                    interview_format = data.get('interview_format', 'online')
+                    invite.interview_format = interview_format
+                    print(f"🔍 SEND_CHAT_MESSAGE: Установлен формат интервью: {interview_format}")
+                    
+                    # Используем специальный метод для интервью (без скоркарда)
+                    invite.save_for_interview()
+                    
+                    # Определяем вакансию из созданного инвайта
+                    invite_vacancy = None
+                    if invite.vacancy_id:
+                        from apps.vacancies.models import Vacancy
+                        try:
+                            invite_vacancy = Vacancy.objects.get(external_id=str(invite.vacancy_id))
+                            print(f"✅ SEND_CHAT_MESSAGE: Вакансия определена из инвайта (final_interview): {invite_vacancy.name}")
+                        except Vacancy.DoesNotExist:
+                            print(f"⚠️ SEND_CHAT_MESSAGE: Вакансия {invite.vacancy_id} не найдена в локальной БД")
+                    
+                    # Если вакансия из инвайта отличается от текущей, переключаемся на правильный чат
+                    if invite_vacancy and (not chat_session.vacancy or chat_session.vacancy.id != invite_vacancy.id):
+                        print(f"🔄 SEND_CHAT_MESSAGE: Переключаемся на правильный чат для вакансии (final_interview): {invite_vacancy.name}")
+                        # Находим или создаем сессию чата для правильной вакансии
+                        correct_chat_session = _get_or_create_chat_session_for_vacancy(request.user, invite_vacancy)
+                        # Перемещаем пользовательское сообщение в правильную сессию
+                        user_message.session = correct_chat_session
+                        user_message.save()
+                        chat_session = correct_chat_session
+                    
+                    # Генерируем полную ссылку с вакансией
+                    full_candidate_url = None
+                    if invite.vacancy_id and invite.candidate_id:
+                        full_candidate_url = _generate_full_huntflow_link(
+                            invite.vacancy_id,
+                            invite.candidate_id,
+                            request.user
+                        )
+                    
+                    # Используем полную ссылку, если она сгенерирована, иначе исходную
+                    candidate_url_for_metadata = full_candidate_url or invite.candidate_url
+                    
+                    response_content = ""  # Пустой контент, данные будут браться из metadata
+                    
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='invite',  # Используем существующий тип для совместимости
+                        content=response_content,
+                        invite=invite,
+                        metadata={
+                            'action_type': 'final_interview',
+                            'invite_id': invite.id,
+                            'candidate_name': invite.candidate_name,
+                            'vacancy_name': invite.vacancy_title,
+                            'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
+                            'interviewer_email': invite.interviewer.email if invite.interviewer else None,
+                            'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
+                            'candidate_url': candidate_url_for_metadata,
+                            'calendar_event_url': invite.calendar_event_url,
+                            # google_drive_file_url не создается для интервью
+                        }
+                    )
+                    
+                    # Формируем URL для перенаправления
+                    from django.urls import reverse
+                    redirect_url = reverse('google_oauth:chat_workflow_session', args=[chat_session.id])
+                    if chat_session.vacancy:
+                        redirect_url += f'?vacancy_id={chat_session.vacancy.id}'
+                    
+                    # Генерируем HTML для ответного сообщения
+                    from django.template.loader import render_to_string
+                    try:
+                        response_message = ChatMessage.objects.filter(
+                            session=chat_session,
+                            invite=invite
+                        ).order_by('-created_at').first()
+                        if response_message:
+                            message_html = render_to_string('google_oauth/partials/chat_message.html', {
+                                'message': response_message,
+                                'user': request.user
+                            })
+                        else:
+                            message_html = None
+                    except Exception as e:
+                        print(f"⚠️ SEND_CHAT_MESSAGE: Ошибка генерации HTML: {e}")
+                        message_html = None
+                    
+                    return JsonResponse({
+                        'success': True,
+                        'message_type': 'invite',
+                        'redirect_url': redirect_url,
+                        'session_id': chat_session.id,
+                        'message_html': message_html,
+                        'metadata': {
+                            'action_type': 'final_interview',
+                            'invite_id': invite.id,
+                            'candidate_name': invite.candidate_name,
+                            'vacancy_name': invite.vacancy_title,
+                            'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
+                            'interviewer_email': invite.interviewer.email if invite.interviewer else None,
+                            'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
+                            'candidate_url': candidate_url_for_metadata,
+                            'calendar_event_url': invite.calendar_event_url,
+                            # google_drive_file_url не создается для интервью
+                        }
+                    })
+                    
+                except Exception as e:
+                    print(f"❌ CHAT AJAX: Ошибка создания Final Interview: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    error_content = f"Ошибка при обработке Final Interview: {str(e)}"
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content=error_content
+                    )
+                    return JsonResponse({'success': False, 'error': error_content})
+            else:
+                # Ошибки валидации
+                error_content = "Ошибка при обработке Final Interview:\n"
+                for field, errors in invite_form.errors.items():
+                    error_content += f"- {field}: {', '.join(errors)}\n"
+                
+                ChatMessage.objects.create(
+                    session=chat_session,
+                    message_type='system',
+                    content=error_content
+                )
+                return JsonResponse({'success': False, 'error': error_content})
+        
+        elif action_type == 'add_candidate':
+            # Создаем кандидата в Huntflow с привязкой к вакансии
+            print(f"🔍 SEND_CHAT_MESSAGE: Обрабатываем команду /add для создания кандидата")
+            
+            try:
+                from apps.huntflow.views import get_correct_account_id
+                from apps.huntflow.services import HuntflowService
+                
+                # Получаем правильный account_id
+                correct_account_id = get_correct_account_id(request.user)
+                if not correct_account_id:
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content="❌ Не удалось определить организацию Huntflow. Проверьте настройки."
+                    )
+                    return JsonResponse({'success': False, 'error': 'Не удалось определить организацию Huntflow'})
+                
+                huntflow_service = HuntflowService(request.user)
+                
+                # Получаем вакансию из сессии чата
+                if not chat_session.vacancy:
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content="❌ Не выбрана вакансия. Выберите вакансию перед созданием кандидата."
+                    )
+                    return JsonResponse({'success': False, 'error': 'Не выбрана вакансия'})
+                
+                vacancy = chat_session.vacancy
+                vacancy_id = int(vacancy.external_id) if vacancy.external_id else None
+                
+                if not vacancy_id:
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content=f"❌ У выбранной вакансии '{vacancy.name}' не указан ID для связи с Huntflow"
+                    )
+                    return JsonResponse({'success': False, 'error': f'У вакансии "{vacancy.name}" не указан ID для связи с Huntflow'})
+                
+                # Парсим текст сообщения для извлечения данных кандидата
+                candidate_data = {
+                    'first_name': '',
+                    'last_name': '',
+                    'middle_name': '',
+                    'email': '',
+                    'phone': '',
+                    'position': '',
+                    'company': '',
+                    'salary': '',
+                    'resume_text': message_text if message_text else ''
+                }
+                
+                # Если имя и фамилия не заполнены, пытаемся извлечь из текста
+                if message_text:
+                    lines = message_text.split('\n')
+                    if lines:
+                        first_line = lines[0].strip()
+                        name_parts = first_line.split()
+                        if len(name_parts) >= 2:
+                            candidate_data['first_name'] = name_parts[0]
+                            candidate_data['last_name'] = name_parts[1]
+                            if len(name_parts) >= 3:
+                                candidate_data['middle_name'] = name_parts[2]
+                
+                # Проверяем обязательные поля
+                if not candidate_data['first_name'] or not candidate_data['last_name']:
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content="❌ Не указаны имя и фамилия кандидата. Укажите их в сообщении или прикрепите файл резюме.\n\nПример: `/add Иван Иванов\nemail@example.com\n+7 999 123-45-67`"
+                    )
+                    return JsonResponse({'success': False, 'error': 'Не указаны имя и фамилия кандидата'})
+                
+                # Создаем кандидата вручную
+                created_applicant = huntflow_service.create_applicant_manual(
+                    account_id=correct_account_id,
+                    candidate_data=candidate_data,
+                    vacancy_id=vacancy_id
+                )
+                
+                if created_applicant:
+                    applicant_id = created_applicant.get('id')
+                    candidate_name = f"{candidate_data.get('last_name', '')} {candidate_data.get('first_name', '')} {candidate_data.get('middle_name', '')}".strip()
+                    
+                    # Формируем ссылку на кандидата
+                    candidate_url = f"https://huntflow.ru/my/org{correct_account_id}#/applicants/{applicant_id}"
+                    
+                    response_content = f"✅ **Кандидат успешно создан и привязан к вакансии**\n\n"
+                    response_content += f"**Кандидат:** {candidate_name}\n"
+                    response_content += f"**Вакансия:** {vacancy.name}\n"
+                    response_content += f"**ID кандидата:** {applicant_id}\n\n"
+                    response_content += f"[Открыть кандидата в Huntflow]({candidate_url})"
+                    
+                    response_message = ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content=response_content,
+                        metadata={
+                            'action_type': 'add_candidate',
+                            'applicant_id': applicant_id,
+                            'candidate_name': candidate_name,
+                            'vacancy_name': vacancy.name,
+                            'candidate_url': candidate_url
+                        }
+                    )
+                    
+                    # Генерируем HTML для ответного сообщения
+                    from django.template.loader import render_to_string
+                    try:
+                        message_html = render_to_string('google_oauth/partials/chat_message.html', {
+                            'message': response_message,
+                            'user': request.user
+                        })
+                    except Exception as e:
+                        print(f"⚠️ SEND_CHAT_MESSAGE: Ошибка генерации HTML: {e}")
+                        message_html = None
+                    
+                    print(f"✅ SEND_CHAT_MESSAGE: Кандидат успешно создан: {applicant_id}")
+                    
+                    return JsonResponse({
+                        'success': True,
+                        'message_type': 'system',
+                        'message_html': message_html,
+                        'metadata': {
+                            'action_type': 'add_candidate',
+                            'applicant_id': applicant_id,
+                            'candidate_name': candidate_name,
+                            'vacancy_name': vacancy.name,
+                            'candidate_url': candidate_url
+                        }
+                    })
+                else:
+                    ChatMessage.objects.create(
+                        session=chat_session,
+                        message_type='system',
+                        content="❌ Не удалось создать кандидата в Huntflow. Проверьте данные и попробуйте снова."
+                    )
+                    return JsonResponse({'success': False, 'error': 'Не удалось создать кандидата в Huntflow'})
+                    
+            except Exception as e:
+                print(f"❌ SEND_CHAT_MESSAGE: Ошибка создания кандидата: {e}")
+                import traceback
+                traceback.print_exc()
+                ChatMessage.objects.create(
+                    session=chat_session,
+                    message_type='system',
+                    content=f"❌ Ошибка при создании кандидата: {str(e)}"
+                )
+                return JsonResponse({'success': False, 'error': f'Ошибка при создании кандидата: {str(e)}'})
+        
         return JsonResponse({'success': False, 'error': 'Неизвестный тип действия'})
         
     except json.JSONDecodeError:
         return JsonResponse({'success': False, 'error': 'Неверный JSON в запросе'})
     except Exception as e:
         print(f"❌ CHAT AJAX: Общая ошибка: {e}")
+        import traceback
+        traceback.print_exc()
         return JsonResponse({'success': False, 'error': f'Внутренняя ошибка сервера: {str(e)}'})
 
 
@@ -3914,10 +6773,58 @@ def chat_workflow(request, session_id=None):
         )
 
     # Получаем все сообщения в этой сессии
+    # Важно: используем select_related/prefetch_related если нужно, но для JSONField это не требуется
     messages_queryset = chat_session.messages.all().order_by('created_at')
     
     # Добавляем информацию о команде для каждого пользовательского сообщения
     messages_list = list(messages_queryset)
+    
+    # Логируем информацию о формах отказа для отладки и нормализуем данные
+    # ВАЖНО: Инициализируем флаг для всех сообщений
+    for msg in messages_list:
+        msg.should_show_rejection_form = False  # По умолчанию форма не показывается
+        
+        if msg.message_type == 'hrscreening':
+            # Принудительно обновляем объект из базы для получения актуальных данных
+            msg.refresh_from_db()
+            
+            if msg.metadata:
+                # КРИТИЧЕСКИ ВАЖНО: Создаем копию metadata для нормализации, чтобы не изменять оригинал
+                normalized_metadata = dict(msg.metadata)
+                
+                # Нормализуем булевы значения - убеждаемся, что они действительно булевы
+                if 'rejection_form_answered' in normalized_metadata:
+                    val = normalized_metadata['rejection_form_answered']
+                    if isinstance(val, str):
+                        normalized_metadata['rejection_form_answered'] = val.lower() in ('true', '1', 'yes')
+                    elif not isinstance(val, bool):
+                        normalized_metadata['rejection_form_answered'] = bool(val)
+                
+                if 'rejected' in normalized_metadata:
+                    val = normalized_metadata['rejected']
+                    if isinstance(val, str):
+                        normalized_metadata['rejected'] = val.lower() in ('true', '1', 'yes')
+                    elif not isinstance(val, bool):
+                        normalized_metadata['rejected'] = bool(val)
+                
+                # Присваиваем нормализованные значения обратно
+                msg.metadata = normalized_metadata
+                
+                show_form = msg.metadata.get('show_rejection_form', False)
+                answered = msg.metadata.get('rejection_form_answered', False)
+                rejected = msg.metadata.get('rejected', False)
+                answered_type = type(answered).__name__
+                rejected_type = type(rejected).__name__
+                
+                # КРИТИЧЕСКИ ВАЖНО: Добавляем флаг прямо в объект сообщения для упрощения проверки в шаблоне
+                should_show_rejection_form = bool(show_form and not answered and not rejected)
+                msg.should_show_rejection_form = should_show_rejection_form
+                
+                print(f"🔍 CHAT_WORKFLOW: Сообщение {msg.id} - show_rejection_form={show_form} (тип: {type(show_form).__name__}), rejection_form_answered={answered} (тип: {answered_type}), rejected={rejected} (тип: {rejected_type}), metadata_keys={list(msg.metadata.keys())}")
+                print(f"🔍 CHAT_WORKFLOW: Должна ли форма показываться? show_form=True AND answered=False AND rejected=False = {should_show_rejection_form}")
+                print(f"🔍 CHAT_WORKFLOW: Установлен флаг msg.should_show_rejection_form = {should_show_rejection_form}")
+            else:
+                print(f"🔍 CHAT_WORKFLOW: Сообщение {msg.id} - metadata отсутствует или пуст")
     for i, msg in enumerate(messages_list):
         if msg.message_type == 'user':
             command_used = None
@@ -3927,18 +6834,27 @@ def chat_workflow(request, session_id=None):
                 if next_msg.message_type == 'hrscreening':
                     command_used = '/s'
                 elif next_msg.message_type == 'invite':
-                    command_used = '/in'
+                    # Определяем команду по metadata
+                    metadata = next_msg.metadata or {}
+                    action_type = metadata.get('action_type', '')
+                    if action_type == 'tech_screening':
+                        command_used = '/t'
+                    elif action_type == 'final_interview':
+                        command_used = '/in'
+                    else:
+                        command_used = '/t'  # По умолчанию для обратной совместимости
             # Если не нашли по следующему сообщению, проверяем текст
             if not command_used:
                 content = msg.content or ''
                 if content.startswith('/s ') or content.startswith('/hr '):
                     command_used = '/s'
+                elif content.startswith('/t '):
+                    command_used = '/t'
                 elif content.startswith('/in ') or content.startswith('/invite '):
                     command_used = '/in'
             # Добавляем атрибут к объекту сообщения для использования в шаблоне
             msg.command_used = command_used
     
-    messages = messages_list
     form = ChatForm(user=request.user)
 
     if request.method == 'POST':
@@ -3969,16 +6885,20 @@ def chat_workflow(request, session_id=None):
                 action_type = 'hrscreening'
                 print(f"🔍 CHAT: Команда /s обнаружена - принудительный HR-скрининг")
                 message_text = re.sub(r'^/s\s*', '', message_text, flags=re.IGNORECASE).strip()
+            elif re.match(r'^/t(\s|$)', message_lower):
+                action_type = 'tech_screening'
+                print(f"🔍 CHAT: Команда /t обнаружена - Tech Screening")
+                message_text = re.sub(r'^/t\s*', '', message_text, flags=re.IGNORECASE).strip()
             elif re.match(r'^/in(\s|$)', message_lower):
-                action_type = 'invite'
-                print(f"🔍 CHAT: Команда /in обнаружена - принудительный инвайт")
+                action_type = 'final_interview'
+                print(f"🔍 CHAT: Команда /in обнаружена - Final Interview")
                 message_text = re.sub(r'^/in\s*', '', message_text, flags=re.IGNORECASE).strip()
             else:
                 # Комбинированный/автоматический режим отключен: требуем явные команды
                 ChatMessage.objects.create(
                     session=chat_session,
                     message_type='system',
-                    content='Укажи команду: /s для HR-скрининга или /in для инвайта'
+                    content='Укажи команду: /s для HR-скрининга, /t для Tech Screening или /in для Final Interview'
                 )
                 # Возвращаемся на исходный URL с сохранением query-параметров
                 return redirect(request.get_full_path())
@@ -4004,7 +6924,8 @@ def chat_workflow(request, session_id=None):
                             # Создаем стилизованный ответ в виде карточки
                             action_type_display = {
                                 'hrscreening': 'HR-скрининг',
-                                'invite': 'Инвайт'
+                                'tech_screening': 'Tech Screening',
+                        'final_interview': 'Final Interview'
                             }.get(delete_result['action_type'], delete_result['action_type'])
                             
                             # Формируем список изменений
@@ -4083,23 +7004,86 @@ def chat_workflow(request, session_id=None):
                         try:
                             hr_screening = hr_form.save()
                             
+                            # ВАЖНО: Перезагружаем объект из БД, чтобы получить актуальные данные,
+                            # включая зарплату, которая могла быть извлечена в analyze_with_gemini
+                            from apps.google_oauth.models import HRScreening
+                            hr_screening = HRScreening.objects.get(id=hr_screening.id)
+                            
+                            print(f"🔍 CHAT: HR-скрининг перезагружен, зарплата: {hr_screening.extracted_salary}, валюта: {hr_screening.salary_currency}")
+                            
+                            # Получаем контактную информацию кандидата
+                            candidate_contact_info = {}
+                            if hr_screening.candidate_id:
+                                candidate_contact_info = _get_candidate_contact_info(request.user, hr_screening.candidate_id)
+                                print(f"🔍 CHAT: Получена контактная информация кандидата: {candidate_contact_info}")
+                            
+                            # Проверяем, превышает ли зарплата максимальную вилку
+                            print(f"🔍 CHAT: Проверяем превышение зарплаты над вилкой...")
+                            salary_above_range = hr_screening.is_salary_above_range()
+                            print(f"🔍 CHAT: Результат проверки превышения зарплаты: {salary_above_range}")
+                            
+                            finance_more_template = None
+                            if salary_above_range:
+                                print(f"🔍 CHAT: Зарплата превышает вилку, получаем шаблон отказа 'Финансы - больше'...")
+                                finance_more_template = hr_screening.get_finance_more_rejection_template()
+                                if finance_more_template:
+                                    print(f"✅ CHAT: Найден шаблон отказа 'Финансы - больше': {finance_more_template.title} (ID: {finance_more_template.id})")
+                                else:
+                                    print(f"⚠️ CHAT: Шаблон отказа 'Финансы - больше' не найден")
+                            
                             response_content = ""  # Пустой контент, данные будут браться из metadata
+                            
+                            # Определяем, нужно ли показывать форму отказа (только при потенциальном отказе)
+                            show_rejection_form = False
+                            
+                            # Проверяем офисный формат
+                            office_format_rejected = hr_screening.is_office_format_rejected()
+                            if office_format_rejected:
+                                show_rejection_form = True
+                            
+                            # Проверяем превышение зарплаты
+                            if salary_above_range:
+                                show_rejection_form = True
+                            
+                            metadata = {
+                                'action_type': 'hrscreening',
+                                'hr_screening_id': hr_screening.id,
+                                'candidate_name': hr_screening.candidate_name,
+                                'vacancy_name': hr_screening.vacancy_title,
+                                'determined_grade': hr_screening.determined_grade,
+                                'candidate_url': hr_screening.candidate_url,
+                                'extracted_salary': str(hr_screening.extracted_salary) if hr_screening.extracted_salary else None,
+                                'salary_currency': hr_screening.salary_currency,
+                                'candidate_contact_info': candidate_contact_info,
+                                'show_rejection_form': show_rejection_form
+                            }
+                            
+                            # Добавляем информацию о шаблоне отказа "Финансы - больше", если зарплата превышает вилку
+                            if salary_above_range:
+                                metadata['salary_above_range'] = True
+                                if finance_more_template:
+                                    metadata['finance_more_template_id'] = finance_more_template.id
+                                    metadata['finance_more_template_title'] = finance_more_template.title
+                                    metadata['finance_more_template_message'] = finance_more_template.message
+                                    print(f"✅ CHAT: Метаданные обновлены с информацией об отказе 'Финансы - больше'")
+                            
+                            # Добавляем информацию об офисном формате
+                            if office_format_rejected:
+                                metadata['office_format_rejected'] = True
+                                rejection_template = hr_screening.get_office_format_rejection_template()
+                                if rejection_template:
+                                    metadata['rejection_template_id'] = rejection_template.id
+                                    metadata['rejection_template_title'] = rejection_template.title
+                                    metadata['rejection_template_message'] = rejection_template.message
+                            
+                            print(f"🔍 CHAT: show_rejection_form={show_rejection_form} (salary_above_range={salary_above_range}, office_format_rejected={office_format_rejected})")
                             
                             ChatMessage.objects.create(
                                 session=chat_session,
                                 message_type='hrscreening',
                                 content=response_content,
                                 hr_screening=hr_screening,
-                                metadata={
-                                    'action_type': 'hrscreening',
-                                    'hr_screening_id': hr_screening.id,
-                                    'candidate_name': hr_screening.candidate_name,
-                                    'vacancy_name': hr_screening.vacancy_title,
-                                    'determined_grade': hr_screening.determined_grade,
-                                    'candidate_url': hr_screening.candidate_url,
-                                    'extracted_salary': str(hr_screening.extracted_salary) if hr_screening.extracted_salary else None,
-                                    'salary_currency': hr_screening.salary_currency
-                                }
+                                metadata=metadata
                             )
                         except Exception as e:
                             print(f"🔍 CHAT: Ошибка сохранения HR: {str(e)}")
@@ -4120,8 +7104,8 @@ def chat_workflow(request, session_id=None):
                             content=error_content
                         )
 
-                elif action_type == 'invite':
-                    # Создаем инвайт с ПРАВИЛЬНЫМИ данными
+                elif action_type == 'tech_screening':
+                    # Создаем Tech Screening с ПРАВИЛЬНЫМИ данными
                     invite_form_data = {'combined_data': message_text}
                     
                     # Передаем данные об интервьюере, если они есть
@@ -4135,7 +7119,7 @@ def chat_workflow(request, session_id=None):
                         try:
                             invite = invite_form.save()
                             
-                            response_content = f"""**Инвайт создан**
+                            response_content = f"""**Tech Screening создан**
 
 **Кандидат:** {invite.candidate_name or 'Не указан'}
 **Вакансия:** {invite.vacancy_title or 'Не указана'}
@@ -4145,15 +7129,15 @@ def chat_workflow(request, session_id=None):
 **Дата интервью:** {invite.interview_datetime.strftime('%d.%m.%Y %H:%M') if invite.interview_datetime else 'Не указана'}
 **Google Meet:** {invite.google_meet_url or 'Будет создана'}
 
-✅ **Инвайт отправлен и добавлен в календарь**"""
+✅ **Tech Screening отправлен и добавлен в календарь**"""
                             
                             ChatMessage.objects.create(
                                 session=chat_session,
-                                message_type='invite',
+                                message_type='invite',  # Используем существующий тип для совместимости
                                 content=response_content,
                                 invite=invite,
                                 metadata={
-                                    'action_type': 'invite',
+                                    'action_type': 'tech_screening',
                                     'invite_id': invite.id,
                                     'candidate_name': invite.candidate_name,
                                     'vacancy_name': invite.vacancy_title,
@@ -4165,15 +7149,15 @@ def chat_workflow(request, session_id=None):
                                 }
                             )
                         except Exception as e:
-                            print(f"🔍 CHAT: Ошибка сохранения инвайта: {str(e)}")
+                            print(f"🔍 CHAT: Ошибка сохранения Tech Screening: {str(e)}")
                             ChatMessage.objects.create(
                                 session=chat_session,
                                 message_type='system',
-                                content=f"Ошибка при обработке инвайта: {str(e)}"
+                                content=f"Ошибка при обработке Tech Screening: {str(e)}"
                             )
                     else:
                         # Ошибки валидации
-                        error_content = "Ошибка при обработке инвайта:\n"
+                        error_content = "Ошибка при обработке Tech Screening:\n"
                         for field, errors in invite_form.errors.items():
                             error_content += f"- {field}: {', '.join(errors)}\n"
                         
@@ -4400,6 +7384,22 @@ def chat_workflow(request, session_id=None):
                                 description = description.replace('"', "'").replace("'", "'")
                             
                             is_all_day_event = 'date' in event_data['start']
+                            
+                            # Извлекаем участников для проверки статуса ответа
+                            attendees = []
+                            if 'attendees' in event_data:
+                                for attendee in event_data['attendees']:
+                                    attendee_info = {
+                                        'email': attendee.get('email', ''),
+                                        'name': attendee.get('displayName', ''),
+                                        'response_status': attendee.get('responseStatus', 'needsAction'),
+                                        'organizer': attendee.get('organizer', False),
+                                    }
+                                    attendees.append(attendee_info)
+                            
+                            # Получаем статус события
+                            event_status = event_data.get('status', 'confirmed')
+                            
                             # Добавляем информацию об организаторе и источнике в данные для фронтенда
                             event_obj = {
                                 'id': event_data['id'],
@@ -4410,6 +7410,8 @@ def chat_workflow(request, session_id=None):
                                 'isallday': is_all_day_event,  # Для совместимости с существующим кодом
                                 'location': event_data.get('location', ''),
                                 'description': description,
+                                'status': event_status,  # Статус события для фильтрации отклоненных
+                                'attendees': attendees,  # Участники для проверки статуса ответа
                             }
                             # Добавляем метаданные для отладки в браузерной консоли
                             if organizer_email:
@@ -4498,8 +7500,32 @@ def chat_workflow(request, session_id=None):
         
         # Создаем список событий для калькулятора слотов (в формате для SlotsCalculator)
         # Преобразуем calendar_events_data в формат, который понимает калькулятор
+        # ВАЖНО: Фильтруем отклоненные события перед расчетом слотов
         screening_events_for_calc = []
+        current_user_email_lower = request.user.email.lower() if request.user.email else None
+        
         for event in calendar_events_data:
+            # Пропускаем отмененные события
+            if event.get('status') == 'cancelled' or event.get('status') == 'declined':
+                print(f"  ❌ СЛОТЫ СКРИНИНГОВ: Исключаем отклоненное событие: \"{event.get('title', 'Без названия')}\" (статус: {event.get('status')})")
+                continue
+            
+            # Проверяем, отклонил ли текущий пользователь событие
+            if current_user_email_lower and event.get('attendees'):
+                current_user_attendee = None
+                for attendee in event.get('attendees', []):
+                    attendee_email = (attendee.get('email') or '').lower()
+                    if attendee_email == current_user_email_lower:
+                        current_user_attendee = attendee
+                        break
+                
+                if current_user_attendee:
+                    user_response_status = current_user_attendee.get('response_status') or current_user_attendee.get('responseStatus') or 'needsAction'
+                    if user_response_status == 'declined':
+                        print(f"  ❌ СЛОТЫ СКРИНИНГОВ: Исключаем событие, которое отклонил пользователь: \"{event.get('title', 'Без названия')}\"")
+                        continue
+            
+            # Если событие не отклонено, добавляем его в расчет
             screening_events_for_calc.append({
                 'start': event['start'],
                 'end': event['end'],
@@ -4520,8 +7546,32 @@ def chat_workflow(request, session_id=None):
         # Для интервью мы должны учитывать занятость ВСЕХ участников
         # Поэтому объединяем события из календарей пользователя, компании и интервьюеров
         # Начинаем с событий пользователя и компании (уже объединены в calendar_events_data)
+        # ВАЖНО: Фильтруем отклоненные события перед расчетом слотов
         interview_events_for_calc = []
+        current_user_email_lower = request.user.email.lower() if request.user.email else None
+        
         for event in calendar_events_data:
+            # Пропускаем отмененные события
+            if event.get('status') == 'cancelled' or event.get('status') == 'declined':
+                print(f"  ❌ СЛОТЫ ИНТЕРВЬЮ: Исключаем отклоненное событие: \"{event.get('title', 'Без названия')}\" (статус: {event.get('status')})")
+                continue
+            
+            # Проверяем, отклонил ли текущий пользователь событие
+            if current_user_email_lower and event.get('attendees'):
+                current_user_attendee = None
+                for attendee in event.get('attendees', []):
+                    attendee_email = (attendee.get('email') or '').lower()
+                    if attendee_email == current_user_email_lower:
+                        current_user_attendee = attendee
+                        break
+                
+                if current_user_attendee:
+                    user_response_status = current_user_attendee.get('response_status') or current_user_attendee.get('responseStatus') or 'needsAction'
+                    if user_response_status == 'declined':
+                        print(f"  ❌ СЛОТЫ ИНТЕРВЬЮ: Исключаем событие, которое отклонил пользователь: \"{event.get('title', 'Без названия')}\"")
+                        continue
+            
+            # Если событие не отклонено, добавляем его в расчет
             interview_events_for_calc.append({
                 'start': event['start'],
                 'end': event['end'],
@@ -4532,99 +7582,15 @@ def chat_workflow(request, session_id=None):
         print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Базовые события от пользователя и компании: {len(interview_events_for_calc)}")
         print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Из них событий календаря компании: {len([e for e in calendar_events_data if e.get('calendar_source', '').startswith('company')])}")
         
-        if mandatory_interviewers:
-            print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Найдено {len(mandatory_interviewers)} обязательных интервьюеров")
-            
-            try:
-                from apps.google_oauth.services import GoogleOAuthService, GoogleCalendarService
-                oauth_service = GoogleOAuthService(request.user)
-                calendar_service = GoogleCalendarService(oauth_service)
-                
-                # Список используемых календарей для логирования
-                used_calendars = []
-                
-                for interviewer in mandatory_interviewers:
-                    calendar_id = None
-                    
-                    # Способ 1: Извлекаем из calendar_link
-                    if interviewer.calendar_link:
-                        calendar_id = _extract_calendar_id_from_link(interviewer.calendar_link)
-                        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Интервьюер {interviewer.email} - извлечен calendar_id из ссылки: {calendar_id}")
-                    
-                    # Способ 2: Проверяем календарь по email
-                    if not calendar_id:
-                        calendar = calendar_service.get_calendar_by_email(interviewer.email)
-                        if calendar:
-                            calendar_id = calendar['id']
-                            print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Интервьюер {interviewer.email} - найден календарь по email: {calendar_id}")
-                    
-                    # Способ 3: Используем email
-                    if not calendar_id:
-                        calendar_id = interviewer.email
-                        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Интервьюер {interviewer.email} - используем email как calendar_id: {calendar_id}")
-                    
-                    if calendar_id:
-                        used_calendars.append(f"{interviewer.email} ({calendar_id})")
-                        
-                        try:
-                            print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Загружаем события для {interviewer.email}, calendar_id={calendar_id}")
-                            interviewer_events = calendar_service.get_events(calendar_id=calendar_id, days_ahead=14)
-                            print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Получено {len(interviewer_events)} событий от {interviewer.email}")
-                            
-                            # Преобразуем в формат для калькулятора
-                            for event_data in interviewer_events:
-                                try:
-                                    # Получаем информацию о владельце/организаторе события
-                                    organizer_email = None
-                                    organizer_name = None
-                                    if 'organizer' in event_data:
-                                        organizer_email = event_data['organizer'].get('email', '')
-                                        organizer_name = event_data['organizer'].get('displayName', '')
-                                    
-                                    # Логируем информацию о событии интервьюера
-                                    event_title = event_data.get('summary', 'Без названия')
-                                    print(f"📅 СОБЫТИЕ ИНТЕРВЬЮЕРА [{interviewer.email}]: '{event_title}'")
-                                    if organizer_email:
-                                        print(f"   👤 Организатор: {organizer_email}" + (f" ({organizer_name})" if organizer_name else ""))
-                                    
-                                    start_time = None
-                                    if 'dateTime' in event_data['start']:
-                                        start_time = datetime.fromisoformat(event_data['start']['dateTime'].replace('Z', '+00:00'))
-                                        minsk_tz = pytz.timezone('Europe/Minsk')
-                                        start_time = start_time.astimezone(minsk_tz)
-                                    
-                                    end_time = None
-                                    if 'dateTime' in event_data['end']:
-                                        end_time = datetime.fromisoformat(event_data['end']['dateTime'].replace('Z', '+00:00'))
-                                        minsk_tz = pytz.timezone('Europe/Minsk')
-                                        end_time = end_time.astimezone(minsk_tz)
-                                    
-                                    if start_time:
-                                        is_all_day = 'date' in event_data['start']
-                                        # Добавляем событие интервьюера в формат для калькулятора
-                                        interview_events_for_calc.append({
-                                            'start': start_time.isoformat(),
-                                            'end': end_time.isoformat() if end_time else start_time.isoformat(),
-                                            'is_all_day': is_all_day,
-                                        })
-                                except Exception as e:
-                                    print(f"⚠️ Ошибка обработки события интервьюера {interviewer.email}: {e}")
-                            
-                            print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Обработано событий от {interviewer.email}, теперь всего: {len(interview_events_for_calc)}")
-                        except Exception as e:
-                            print(f"⚠️ Ошибка получения событий для {interviewer.email}: {e}")
-                    else:
-                        print(f"⚠️ СЛОТЫ ИНТЕРВЬЮ: Не удалось определить calendar_id для {interviewer.email}")
-                            
-                print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Итого событий для расчета слотов: {len(interview_events_for_calc)}")
-                print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Из них: пользователь + компания = {len(calendar_events_data)}, интервьюеры = {len(interview_events_for_calc) - len(calendar_events_data)}")
-                print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Использованные календари: пользователь + компания + {', '.join(used_calendars) if used_calendars else 'нет интервьюеров'}")
-            except Exception as e:
-                print(f"⚠️ Ошибка при получении событий интервьюеров: {e}")
-                import traceback
-                traceback.print_exc()
+        # ВАЖНО: При загрузке страницы НЕ добавляем события интервьюеров
+        # Слоты для интервью будут рассчитываться динамически через API
+        # на основе выбранных участников (через JavaScript)
+        # Это позволяет показывать слоты только для выбранных интервьюеров
+        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Пропускаем добавление событий интервьюеров при загрузке страницы")
+        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Слоты будут обновлены через API на основе выбранных участников")
         
-        # Рассчитываем слоты для интервью
+        # Рассчитываем слоты для интервью только на основе событий пользователя и компании
+        # JavaScript обновит их для выбранных участников
         interview_duration = None
         if hasattr(vacancy, 'tech_interview_duration') and vacancy.tech_interview_duration:
             interview_duration = vacancy.tech_interview_duration
@@ -4632,30 +7598,271 @@ def chat_workflow(request, session_id=None):
             interview_duration = 90
         
         print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Длительность встречи: {interview_duration} минут")
+        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Рассчитываем базовые слоты (без интервьюеров) - будут обновлены через API")
         
+        # Рассчитываем базовые слоты только для пользователя и компании
+        # JavaScript обновит их для выбранных участников при загрузке страницы
         interview_slots = calculator.calculate_slots_for_two_weeks(
             interview_events_for_calc,
             required_duration_minutes=interview_duration
         )
         
-        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Рассчитано {len(interview_slots)} дней со слотами")
+        print(f"📅 СЛОТЫ ИНТЕРВЬЮ: Рассчитано {len(interview_slots)} дней со слотами (базовые, без интервьюеров)")
+    
+    # Получаем интервьюеров для технического интервью из обязательных участников
+    vacancy_interviewers = []
+    if vacancy:
+        vacancy_interviewers = vacancy.mandatory_tech_interviewers.filter(is_active=True).order_by('last_name', 'first_name')
+    
+    # Получаем быстрые кнопки пользователя
+    from apps.accounts.models import QuickButton
+    quick_buttons = QuickButton.objects.filter(user=request.user).order_by('order', 'created_at')
+    
+    # Получаем ссылки на соцсети и контактную информацию из последнего HR-скрининга или инвайта
+    candidate_social_links = {}
+    candidate_contact_info = {}
+    try:
+        from apps.huntflow.services import HuntflowService
+        
+        # Ищем последний HR-скрининг или инвайт в сообщениях
+        candidate_id = None
+        
+        # Проверяем последние сообщения с HR-скринингом или инвайтом
+        for msg in reversed(messages_list):
+            if msg.message_type == 'hrscreening' and msg.hr_screening:
+                if msg.hr_screening.candidate_id:
+                    candidate_id = msg.hr_screening.candidate_id
+                    print(f"🔍 CANDIDATE_SOCIAL_LINKS: Найден candidate_id из HR-скрининга: {candidate_id}")
+                    break
+            elif msg.message_type == 'invite' and msg.invite:
+                if msg.invite.candidate_id:
+                    candidate_id = msg.invite.candidate_id
+                    print(f"🔍 CANDIDATE_SOCIAL_LINKS: Найден candidate_id из инвайта: {candidate_id}")
+                    break
+        
+        if candidate_id:
+            # Получаем данные кандидата из Huntflow API
+            huntflow_service = HuntflowService(request.user)
+            accounts = huntflow_service.get_accounts()
+            
+            if accounts and 'items' in accounts and accounts['items']:
+                account_id = accounts['items'][0]['id']
+                print(f"🔍 CANDIDATE_SOCIAL_LINKS: Используем account_id: {account_id}, candidate_id: {candidate_id}")
+                candidate_data = huntflow_service.get_applicant(account_id, int(candidate_id))
+                
+                if candidate_data:
+                    print(f"🔍 CANDIDATE_SOCIAL_LINKS: Получены данные кандидата, social: {candidate_data.get('social', [])}")
+                    # Извлекаем социальные сети из поля social
+                    social = candidate_data.get('social', [])
+                    for soc in social:
+                        # В Huntflow API используется поле social_type
+                        soc_type = (soc.get('social_type', '') or soc.get('type', '') or '').upper()
+                        soc_value = soc.get('value', '') or soc.get('url', '') or ''
+                        
+                        if not soc_value:
+                            continue
+                        
+                        print(f"🔍 CANDIDATE_SOCIAL_LINKS: Обрабатываем соцсеть: type={soc_type}, value={soc_value}")
+                        
+                        # Telegram
+                        if soc_type == 'TELEGRAM' or 'TELEGRAM' in soc_type:
+                            # Убираем @ если есть
+                            telegram_value = soc_value.lstrip('@')
+                            candidate_social_links['telegram'] = telegram_value
+                            print(f"✅ CANDIDATE_SOCIAL_LINKS: Добавлен Telegram: {telegram_value}")
+                        # WhatsApp
+                        elif soc_type == 'WHATSAPP' or 'WHATSAPP' in soc_type:
+                            candidate_social_links['whatsapp'] = soc_value
+                            print(f"✅ CANDIDATE_SOCIAL_LINKS: Добавлен WhatsApp: {soc_value}")
+                        # Viber
+                        elif soc_type == 'VIBER' or 'VIBER' in soc_type:
+                            candidate_social_links['viber'] = soc_value
+                            print(f"✅ CANDIDATE_SOCIAL_LINKS: Добавлен Viber: {soc_value}")
+                        # LinkedIn
+                        elif soc_type == 'LINKEDIN' or 'LINKEDIN' in soc_type:
+                            candidate_social_links['linkedin'] = soc_value
+                            print(f"✅ CANDIDATE_SOCIAL_LINKS: Добавлен LinkedIn: {soc_value}")
+                    
+                    # Также проверяем questionary на наличие LinkedIn
+                    if 'linkedin' not in candidate_social_links:
+                        print(f"🔍 CANDIDATE_SOCIAL_LINKS: LinkedIn не найден в social, проверяем questionary")
+                        questionary = huntflow_service.get_applicant_questionary(account_id, int(candidate_id))
+                        if questionary:
+                            print(f"🔍 CANDIDATE_SOCIAL_LINKS: Получена анкета, поля: {list(questionary.keys())}")
+                            # Получаем схему для понимания названий полей
+                            questionary_schema = huntflow_service.get_applicant_questionary_schema(account_id)
+                            # Ищем LinkedIn в значениях questionary
+                            for field_key, field_value in questionary.items():
+                                if field_value and isinstance(field_value, str):
+                                    field_title = ""
+                                    if questionary_schema and field_key in questionary_schema:
+                                        field_title = questionary_schema[field_key].get('title', '')
+                                    # Проверяем, содержит ли значение LinkedIn URL
+                                    if 'linkedin.com' in field_value.lower():
+                                        linkedin_value = field_value if 'http' in field_value.lower() else f"https://{field_value}"
+                                        candidate_social_links['linkedin'] = linkedin_value
+                                        print(f"✅ CANDIDATE_SOCIAL_LINKS: Добавлен LinkedIn из questionary (поле {field_key} '{field_title}'): {linkedin_value}")
+                                        break
+                                    # Также логируем все поля для отладки
+                                    if 'linkedin' in field_value.lower() or 'linkedin' in field_title.lower():
+                                        print(f"🔍 CANDIDATE_SOCIAL_LINKS: Найдено похожее поле: {field_key} '{field_title}' = {field_value[:100]}")
+                else:
+                    print(f"⚠️ CANDIDATE_SOCIAL_LINKS: Данные кандидата не получены из Huntflow API")
+            else:
+                print(f"⚠️ CANDIDATE_SOCIAL_LINKS: Нет доступных аккаунтов Huntflow")
+        else:
+            print(f"⚠️ CANDIDATE_SOCIAL_LINKS: candidate_id не найден в последних HR-скринингах или инвайтах")
+    except Exception as e:
+        import traceback
+        print(f"⚠️ Ошибка получения ссылок на соцсети: {e}")
+        print(f"⚠️ Traceback: {traceback.format_exc()}")
+    
+    print(f"🔍 CANDIDATE_SOCIAL_LINKS: Итоговые ссылки: {candidate_social_links}")
+    
+    # Получаем полную контактную информацию кандидата
+    if candidate_id:
+        candidate_contact_info = _get_candidate_contact_info(request.user, candidate_id)
+        print(f"🔍 CANDIDATE_CONTACT_INFO: Получена контактная информация: {candidate_contact_info}")
+        
+        # Объединяем данные из candidate_social_links и candidate_contact_info
+        if candidate_contact_info.get('telegram'):
+            candidate_social_links['telegram'] = candidate_contact_info['telegram']
+        if candidate_contact_info.get('linkedin'):
+            candidate_social_links['linkedin'] = candidate_contact_info['linkedin']
+        if candidate_contact_info.get('email'):
+            candidate_social_links['email'] = candidate_contact_info['email']
+        if candidate_contact_info.get('communication_where'):
+            candidate_social_links['communication_where'] = candidate_contact_info['communication_where']
+    
+    # Получаем историю контактной информации из сообщений сессии
+    contact_history = []
+    try:
+        # Получаем все сообщения с контактной информацией (hrscreening, invite и add_candidate)
+        # Для add_candidate ищем по metadata.action_type, так как message_type='system'
+        from django.db.models import Q
+        
+        messages_with_contacts = ChatMessage.objects.filter(
+            session=chat_session
+        ).filter(
+            Q(message_type__in=['hrscreening', 'invite']) |
+            Q(message_type='system', metadata__action_type='add_candidate')
+        ).order_by('-created_at')[:50]  # Берем последние 50
+        
+        for msg in messages_with_contacts:
+            contact_info = msg.metadata.get('candidate_contact_info', {}) if msg.metadata else {}
+            if contact_info and (contact_info.get('communication_where') or 
+                                contact_info.get('telegram') or 
+                                contact_info.get('linkedin') or 
+                                contact_info.get('email')):
+                contact_history.append({
+                    'timestamp': msg.created_at.isoformat(),
+                    'communication_where': contact_info.get('communication_where'),
+                    'telegram': contact_info.get('telegram'),
+                    'linkedin': contact_info.get('linkedin'),
+                    'email': contact_info.get('email')
+                })
+        
+        print(f"🔍 CONTACT_HISTORY: Получено {len(contact_history)} записей истории контактов")
+    except Exception as e:
+        print(f"⚠️ CONTACT_HISTORY: Ошибка получения истории: {e}")
+        import traceback
+        traceback.print_exc()
+    
+    # Сериализуем историю в JSON для передачи в шаблон
+    import json
+    contact_history_json = json.dumps(contact_history, ensure_ascii=False, default=str)
+    print(f"🔍 CONTACT_HISTORY: JSON длина: {len(contact_history_json)} символов")
+    
+    # Загружаем данные по скринингам и интервью из БД для текущей вакансии
+    screenings_data = []
+    interviews_data = []
+    try:
+        from apps.google_oauth.models import HRScreening, Invite
+        from datetime import datetime, timedelta
+        
+        # Получаем вакансию по external_id для фильтрации
+        vacancy_external_id = None
+        if vacancy and hasattr(vacancy, 'external_id'):
+            vacancy_external_id = str(vacancy.external_id)
+        
+        # Загружаем скрининги за последние 30 дней
+        if vacancy_external_id:
+            screenings = HRScreening.objects.filter(
+                vacancy_id=vacancy_external_id,
+                created_at__gte=datetime.now() - timedelta(days=30)
+            ).order_by('-created_at')[:50]  # Берем последние 50
+            
+            for screening in screenings:
+                screenings_data.append({
+                    'id': screening.id,
+                    'candidate_name': screening.candidate_name or 'Не указан',
+                    'candidate_id': screening.candidate_id,
+                    'created_at': screening.created_at.isoformat() if screening.created_at else None,
+                    'status': screening.status,
+                    'score': getattr(screening, 'score', None),
+                })
+            
+            print(f"🔍 SCREENINGS_DATA: Загружено {len(screenings_data)} скринингов для вакансии {vacancy_external_id}")
+        
+        # Загружаем интервью (инвайты) за последние 30 дней
+        if vacancy_external_id:
+            invites = Invite.objects.filter(
+                vacancy_id=vacancy_external_id,
+                created_at__gte=datetime.now() - timedelta(days=30)
+            ).order_by('-created_at')[:50]  # Берем последние 50
+            
+            for invite in invites:
+                # Определяем тип события (скрининг или интервью)
+                event_type = 'interview' if not invite.google_drive_file_id else 'screening'
+                
+                interviews_data.append({
+                    'id': invite.id,
+                    'candidate_name': invite.candidate_name or 'Не указан',
+                    'candidate_id': invite.candidate_id,
+                    'interview_datetime': invite.interview_datetime.isoformat() if invite.interview_datetime else None,
+                    'status': invite.status,
+                    'event_type': event_type,
+                    'calendar_event_id': invite.calendar_event_id,
+                    'interviewer_name': invite.interviewer.get_full_name() if invite.interviewer else None,
+                    'created_at': invite.created_at.isoformat() if invite.created_at else None,
+                })
+            
+            print(f"🔍 INTERVIEWS_DATA: Загружено {len(interviews_data)} интервью/скринингов для вакансии {vacancy_external_id}")
+        
+    except Exception as e:
+        print(f"⚠️ Ошибка загрузки данных по скринингам и интервью: {e}")
+        import traceback
+        traceback.print_exc()
+    
+    # Получаем email текущего пользователя для фильтрации отклоненных событий
+    current_user_email = request.user.email.lower() if request.user.email else None
     
     context = {
         'form': form,
         'chat_session': chat_session,
-        'messages': messages,
+        'messages': messages_list,  # Используем messages_list, который обновлен через refresh_from_db
         'active_vacancies': active_vacancies,
         'selected_vacancy': vacancy,
         'timestamp': int(time()),
+        'contact_history': contact_history_json,  # Передаем JSON-строку для шаблона
         'calendar_events_data': calendar_events_data,
         'slots_settings': slots_settings,
+        'slots_settings_json': json.dumps(slots_settings.to_dict()) if slots_settings else '{}',
         'user_photo_url': user_photo_url,
+        'user_email': current_user_email,  # Email пользователя для фильтрации отклоненных событий
         'mandatory_interviewers': mandatory_interviewers,
+        'vacancy_interviewers': vacancy_interviewers,
         'screening_slots_json': json.dumps(screening_slots),
         'interview_slots_json': json.dumps(interview_slots),
         'company_calendar_id': company_calendar_id,
         'company_calendar_warning': company_calendar_warning,
         'title': 'Чат-помощник',
+        'quick_buttons': quick_buttons,
+        'candidate_social_links': candidate_social_links,
+        'candidate_contact_info': candidate_contact_info,
+        'contact_history': contact_history_json,
+        'screenings_data': json.dumps(screenings_data, ensure_ascii=False, default=str),
+        'interviews_data': json.dumps(interviews_data, ensure_ascii=False, default=str),
     }
 
     # Отладочная информация (как на странице gdata_automation)

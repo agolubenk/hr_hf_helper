@@ -26,6 +26,7 @@ urlpatterns = [
     
     # Годовая таблица заявок
     path('yearly/', views.YearlyHiringPlanView.as_view(), name='yearly_hiring_plan'),
+    path('yearly/export.xlsx', views.yearly_hiring_plan_export_excel, name='yearly_hiring_plan_export_excel'),
     
 ]
 

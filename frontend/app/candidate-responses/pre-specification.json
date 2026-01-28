@@ -1,0 +1,275 @@
+{
+  "name": "candidate-responses",
+  "type": "page",
+  "description": "Страница управления шаблонами ответов кандидатам. Позволяет создавать и управлять шаблонами ответов для отказа кандидатам, привязанными к грейдам или общими, а также управлять настройками слотов для быстрого копирования свободного времени.\n\n**Путь**: `/candidate-responses`",
+  "route_path": "`/candidate-responses`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/candidate-responses/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockGrades\n- **Тип**: Grade[]\n- **Структура**: список грейдов\n- **Значения**: \n  - { id: 1, name: 'Junior' }\n  - { id: 2, name: 'Junior+' }\n  - { id: 3, name: 'Middle' }\n  - { id: 4, name: 'Middle+' }\n  - { id: 5, name: 'Senior' }\n- **TODO**: Загружать из настроек компании через API",
+      "extracted_from": "documentation"
+    },
+    "mockData_1": {
+      "description": "### REJECTION_TYPES\n- **Тип**: Array<{ value: string, label: string }>\n- **Структура**: список типов отказа\n- **Значения**: \n  - { value: 'office_format', label: 'Офисный формат' }\n  - { value: 'finance', label: 'Финансы' }\n  - { value: 'finance_more', label: 'Финансы - больше' }\n  - { value: 'finance_less', label: 'Финансы - меньше' }\n  - { value: 'general', label: 'Общий отказ' }",
+      "extracted_from": "documentation"
+    },
+    "mockData_2": {
+      "description": "- **Тип**: Record<string, RejectionTemplate[]>\n- **Структура**: словарь шаблонов по типам отказа",
+      "extracted_from": "documentation"
+    },
+    "mockData_3": {
+      "description": "- **Тип**: Record<number, RejectionTemplate[]>\n- **Структура**: словарь шаблонов по грейдам",
+      "extracted_from": "documentation"
+    },
+    "mockData_4": {
+      "description": "- **Тип**: Grade[]\n- **Структура**: список грейдов",
+      "extracted_from": "documentation"
+    },
+    "mockData_5": {
+      "description": "- **Тип**: Array<{ value: string, label: string }>\n- **Структура**: список типов отказа",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [
+    {
+      "name": "RejectionTemplate",
+      "definition": "interface RejectionTemplate {\n  id: number                                    // Уникальный идентификатор шаблона\n  rejection_type: string                       // Тип отказа (office_format, finance, etc.)\n  rejection_type_display: string               // Отображаемое название типа отказа\n  grade_id: number | null                      // ID грейда (null для общих шаблонов)\n  grade_name: string | null                    // Название грейда (null для общих шаблонов)\n  title: string                                // Название шаблона\n  message: string                              // Текст ответа для отказа\n  is_active: boolean                           // Флаг активности шаблона\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "number",
+          "optional": false,
+          "comment": "Уникальный идентификатор шаблона"
+        },
+        {
+          "name": "rejection_type",
+          "type": "string",
+          "optional": false,
+          "comment": "Тип отказа (office_format, finance, etc.)"
+        },
+        {
+          "name": "rejection_type_display",
+          "type": "string",
+          "optional": false,
+          "comment": "Отображаемое название типа отказа"
+        },
+        {
+          "name": "grade_id",
+          "type": "number | null",
+          "optional": false,
+          "comment": "ID грейда (null для общих шаблонов)"
+        },
+        {
+          "name": "grade_name",
+          "type": "string | null",
+          "optional": false,
+          "comment": "Название грейда (null для общих шаблонов)"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "optional": false,
+          "comment": "Название шаблона"
+        },
+        {
+          "name": "message",
+          "type": "string",
+          "optional": false,
+          "comment": "Текст ответа для отказа"
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "optional": false,
+          "comment": "Флаг активности шаблона"
+        }
+      ]
+    },
+    {
+      "name": "Grade",
+      "definition": "interface Grade {\n  id: number                                   // Уникальный идентификатор грейда\n  name: string                                 // Название грейда (Junior, Middle, Senior и т.д.)\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "number",
+          "optional": false,
+          "comment": "Уникальный идентификатор грейда"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false,
+          "comment": "Название грейда (Junior, Middle, Senior и т.д.)"
+        }
+      ]
+    },
+    {
+      "name": "SlotsSettings",
+      "definition": "interface SlotsSettings {\n  textBeforeCurrentWeek: string                // Текст перед слотами текущей недели\n  textBeforeNextWeek: string                   // Текст перед слотами следующей недели\n  textBeforeAllSlots: string                   // Текст перед всеми слотами\n  separatorBetweenWeeks: string               // Разделитель между неделями\n}",
+      "fields": [
+        {
+          "name": "textBeforeCurrentWeek",
+          "type": "string",
+          "optional": false,
+          "comment": "Текст перед слотами текущей недели"
+        },
+        {
+          "name": "textBeforeNextWeek",
+          "type": "string",
+          "optional": false,
+          "comment": "Текст перед слотами следующей недели"
+        },
+        {
+          "name": "textBeforeAllSlots",
+          "type": "string",
+          "optional": false,
+          "comment": "Текст перед всеми слотами"
+        },
+        {
+          "name": "separatorBetweenWeeks",
+          "type": "string",
+          "optional": false,
+          "comment": "Разделитель между неделями"
+        }
+      ]
+    },
+    {
+      "name": "RejectionTemplateFormProps",
+      "definition": "interface RejectionTemplateFormProps {\n  template: RejectionTemplate | null           // Шаблон для редактирования (null для создания)\n  rejectionType: string                        // Тип отказа или 'grade'\n  gradeId?: number | null                     // ID грейда (для шаблонов по грейдам)\n  onSave: () => void                          // Обработчик сохранения\n  onCancel: () => void                        // Обработчик отмены\n}",
+      "fields": [
+        {
+          "name": "template",
+          "type": "RejectionTemplate | null",
+          "optional": false,
+          "comment": "Шаблон для редактирования (null для создания)"
+        },
+        {
+          "name": "rejectionType",
+          "type": "string",
+          "optional": false,
+          "comment": "Тип отказа или 'grade'"
+        },
+        {
+          "name": "gradeId",
+          "type": "number | null",
+          "optional": true,
+          "comment": "ID грейда (для шаблонов по грейдам)"
+        },
+        {
+          "name": "onSave",
+          "type": "() => void",
+          "optional": false,
+          "comment": "Обработчик сохранения"
+        },
+        {
+          "name": "onCancel",
+          "type": "() => void",
+          "optional": false,
+          "comment": "Обработчик отмены"
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка общих шаблонов из API\n   - GET `/api/candidate-responses/templates/general/` - получение всех общих шаблонов\n   - Параметры: rejection_type (опционально)\n   - Замена mockTemplates в GeneralTemplatesTab",
+      "method": "GET",
+      "endpoint": "/api/candidate-responses/templates/general/",
+      "parameters": "rejection_type (опционально)",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Создание общего шаблона через API\n   - POST `/api/candidate-responses/templates/general/` - создание нового шаблона\n   - Параметры: все поля RejectionTemplate (кроме id)\n   - Обновление списка шаблонов после создания",
+      "method": "POST",
+      "endpoint": "/api/candidate-responses/templates/general/",
+      "parameters": "все поля RejectionTemplate (кроме id)",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Редактирование общего шаблона через API\n   - PUT `/api/candidate-responses/templates/general/{id}/` - обновление шаблона\n   - Параметры: измененные поля шаблона\n   - Обновление списка шаблонов после редактирования",
+      "method": "PUT",
+      "endpoint": "/api/candidate-responses/templates/general/{id}/",
+      "parameters": "измененные поля шаблона",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Удаление общего шаблона через API\n   - DELETE `/api/candidate-responses/templates/general/{id}/` - удаление шаблона\n   - Обновление списка шаблонов после удаления",
+      "method": "DELETE",
+      "endpoint": "/api/candidate-responses/templates/general/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Загрузка шаблонов по грейдам из API\n   - GET `/api/candidate-responses/templates/grades/` - получение всех шаблонов по грейдам\n   - Параметры: grade_id (опционально)\n   - Замена mockTemplates в GradeTemplatesTab",
+      "method": "GET",
+      "endpoint": "/api/candidate-responses/templates/grades/",
+      "parameters": "grade_id (опционально)",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Создание шаблона по грейду через API\n   - POST `/api/candidate-responses/templates/grades/` - создание нового шаблона\n   - Параметры: все поля RejectionTemplate (кроме id)\n   - Обновление списка шаблонов после создания",
+      "method": "POST",
+      "endpoint": "/api/candidate-responses/templates/grades/",
+      "parameters": "все поля RejectionTemplate (кроме id)",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Редактирование шаблона по грейду через API\n   - PUT `/api/candidate-responses/templates/grades/{id}/` - обновление шаблона\n   - Параметры: измененные поля шаблона\n   - Обновление списка шаблонов после редактирования",
+      "method": "PUT",
+      "endpoint": "/api/candidate-responses/templates/grades/{id}/",
+      "parameters": "измененные поля шаблона",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Удаление шаблона по грейду через API\n   - DELETE `/api/candidate-responses/templates/grades/{id}/` - удаление шаблона\n   - Обновление списка шаблонов после удаления",
+      "method": "DELETE",
+      "endpoint": "/api/candidate-responses/templates/grades/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Загрузка грейдов из API\n   - GET `/api/company-settings/grades/` - получение списка грейдов\n   - Замена mockGrades в GradeTemplatesTab и RejectionTemplateForm",
+      "method": "GET",
+      "endpoint": "/api/company-settings/grades/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Загрузка настроек слотов из API\n    - GET `/api/candidate-responses/slots/settings/` - получение настроек слотов\n    - Замена значений по умолчанию в SlotsTab",
+      "method": "GET",
+      "endpoint": "/api/candidate-responses/slots/settings/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 11,
+      "description": "Сохранение настроек слотов через API\n    - PUT `/api/candidate-responses/slots/settings/` - сохранение настроек\n    - Параметры: все поля SlotsSettings\n    - Обновление состояния после сохранения",
+      "method": "PUT",
+      "endpoint": "/api/candidate-responses/slots/settings/",
+      "parameters": "все поля SlotsSettings",
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.282520"
+}

@@ -1,0 +1,51 @@
+.container {
+  padding: 24px;
+}
+
+.metricCard {
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid var(--gray-a6);
+  background: var(--color-panel);
+  transition: all 0.2s;
+}
+
+.metricCard:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.graphCard {
+  padding: 24px;
+  background: var(--color-panel);
+  border: 1px solid var(--gray-a6);
+  border-radius: 8px;
+}
+
+.graphHeader {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.graphControls {
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+}
+
+.graphArea {
+  width: 100%;
+  min-height: 400px;
+  background: var(--gray-2);
+  border: 1px solid var(--gray-a6);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tableHeader {
+  background: var(--accent-9);
+  padding: 12px 16px;
+  border-radius: 6px 6px 0 0;
+}

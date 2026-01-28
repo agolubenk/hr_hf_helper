@@ -5,210 +5,139 @@
 
 {% block extra_css %}
 <style>
-/* Принудительные стили для числовых значений в статистике */
-[data-theme="light"] .card.bg-primary h4.card-title,
-[data-theme="light"] .card.bg-success h4.card-title,
-[data-theme="light"] .card.bg-warning h4.card-title,
-[data-theme="light"] .card.bg-danger h4.card-title,
-[data-theme="light"] .card.bg-info h4.card-title,
-[data-theme="light"] .card.bg-secondary h4.card-title {
-    color: white !important;
+/* Стили для stat-card (как в benchmarks) */
+.stat-card {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    min-height: 118px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-/* Максимально специфичные правила */
-[data-theme="light"] .card.bg-primary .card-body .d-flex .d-flex h4.card-title.mb-0.me-2,
-[data-theme="light"] .card.bg-success .card-body .d-flex .d-flex h4.card-title.mb-0.me-2,
-[data-theme="light"] .card.bg-warning .card-body .d-flex .d-flex h4.card-title.mb-0.me-2,
-[data-theme="light"] .card.bg-danger .card-body .d-flex .d-flex h4.card-title.mb-0.me-2,
-[data-theme="light"] .card.bg-info .card-body .d-flex .d-flex h4.card-title.mb-0.me-2,
-[data-theme="light"] .card.bg-secondary .card-body .d-flex .d-flex h4.card-title.mb-0.me-2 {
-    color: white !important !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    display: block !important;
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    pointer-events: none;
 }
 
-/* Проверка на скрытие элементов */
-[data-theme="light"] .card.bg-primary h4,
-[data-theme="light"] .card.bg-success h4,
-[data-theme="light"] .card.bg-warning h4,
-[data-theme="light"] .card.bg-danger h4,
-[data-theme="light"] .card.bg-info h4,
-[data-theme="light"] .card.bg-secondary h4 {
-    color: white !important !important !important;
-    visibility: visible !important !important;
-    opacity: 1 !important !important;
-    display: block !important !important;
-    font-size: 1.25rem !important !important;
-    font-weight: 600 !important !important;
+.stat-card .stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
 }
 
-/* Стили для новых элементов статистики */
-.statistic-number {
-    color: white !important;
-    font-size: 1.25rem !important;
-    font-weight: 600 !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    display: block !important;
+.stat-card .stat-label {
+    font-size: 1rem;
+    opacity: 0.9;
+    position: relative;
+    z-index: 1;
 }
 
-[data-theme="light"] .statistic-number {
-    color: white !important !important !important;
+.stat-card .stat-icon {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 3rem;
+    opacity: 0.2;
+    z-index: 0;
+}
+
+.stat-card {
+    width: 100%;
 }
 </style>
 {% endblock %}
 
 {% block extra_js %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Принудительное отображение числовых значений в светлой теме
-    if (document.documentElement.getAttribute('data-theme') === 'light') {
-        // Старые h4 элементы
-        const numbers = document.querySelectorAll('.card.bg-primary h4.card-title, .card.bg-success h4.card-title, .card.bg-warning h4.card-title, .card.bg-danger h4.card-title, .card.bg-info h4.card-title, .card.bg-secondary h4.card-title');
-        
-        numbers.forEach(function(el) {
-            el.style.color = 'white';
-            el.style.visibility = 'visible';
-            el.style.opacity = '1';
-            el.style.display = 'block';
-            el.style.fontSize = '1.25rem';
-            el.style.fontWeight = '600';
-            console.log('Fixed h4 element:', el.textContent, el.style.color);
-        });
-        
-        // Новые statistic-number элементы
-        const newNumbers = document.querySelectorAll('.statistic-number');
-        
-        newNumbers.forEach(function(el) {
-            el.style.color = 'white';
-            el.style.visibility = 'visible';
-            el.style.opacity = '1';
-            el.style.display = 'block';
-            el.style.fontSize = '1.25rem';
-            el.style.fontWeight = '600';
-            console.log('Fixed statistic-number element:', el.textContent, el.style.color);
-        });
-    }
-});
-</script>
 {% endblock %}
 
 {% block content %}
-<div class="row">
+<div class="row g-3 align-items-stretch">
     <!-- Статистика -->
-    <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card bg-primary text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-baseline">
-                        <div class="statistic-number" style="color: white !important; font-size: 1.25rem; font-weight: 600;">{{ total_vacancies }}</div>
-                        <span class="card-text">Всего вакансий</span>
-                    </div>
-                    <div>
-                        <i class="fas fa-briefcase fa-2x"></i>
-                    </div>
-                </div>
+    <div class="col-lg-3 col-md-6 reporting-section d-flex">
+        <div class="stat-card h-100 w-100" style="background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);">
+            <div class="stat-icon">
+                <i class="fas fa-briefcase"></i>
             </div>
+            <div class="stat-number">{{ total_vacancies }}</div>
+            <div class="stat-label">Всего вакансий</div>
         </div>
     </div>
     
-    <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card bg-success text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-baseline">
-                        <div class="statistic-number" style="color: white !important; font-size: 1.25rem; font-weight: 600;">{{ active_vacancies }}</div>
-                        <span class="card-text">Активных</span>
-                    </div>
-                    <div>
-                        <i class="fas fa-check-circle fa-2x"></i>
-                    </div>
-                </div>
+    <div class="col-lg-3 col-md-6 reporting-section d-flex">
+        <div class="stat-card h-100 w-100" style="background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
             </div>
+            <div class="stat-number">{{ active_vacancies }}</div>
+            <div class="stat-label">Активных</div>
         </div>
     </div>
     
-    <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card bg-warning text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-baseline">
-                        <div class="statistic-number" style="color: white !important; font-size: 1.25rem; font-weight: 600;">{{ inactive_vacancies }}</div>
-                        <span class="card-text">Неактивных</span>
-                    </div>
-                    <div>
-                        <i class="fas fa-pause-circle fa-2x"></i>
-                    </div>
-                </div>
+    <div class="col-lg-3 col-md-6 reporting-section d-flex">
+        <div class="stat-card h-100 w-100" style="background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);">
+            <div class="stat-icon">
+                <i class="fas fa-pause-circle"></i>
             </div>
+            <div class="stat-number">{{ inactive_vacancies }}</div>
+            <div class="stat-label">Неактивных</div>
         </div>
     </div>
     
-    <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card bg-info text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-baseline">
-                        <div class="statistic-number" style="color: white !important; font-size: 1.25rem; font-weight: 600;">{{ total_grades }}</div>
-                        <span class="card-text">Грейдов</span>
-                    </div>
-                    <div>
-                        <i class="fas fa-star fa-2x"></i>
-                    </div>
-                </div>
+    <div class="col-lg-3 col-md-6 reporting-section d-flex">
+        <div class="stat-card h-100 w-100" style="background: linear-gradient(135deg, #17a2b8 0%, #117a8b 100%);">
+            <div class="stat-icon">
+                <i class="fas fa-star"></i>
             </div>
+            <div class="stat-number">{{ total_grades }}</div>
+            <div class="stat-label">Грейдов</div>
         </div>
     </div>
 </div>
 
 <!-- Статистика по зарплатным вилкам -->
-<div class="row">
-    <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card bg-secondary text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-baseline">
-                        <div class="statistic-number" style="color: white !important; font-size: 1.25rem; font-weight: 600;">{{ total_salary_ranges }}</div>
-                        <span class="card-text">Зарплатных вилок</span>
-                    </div>
-                    <div>
-                        <i class="fas fa-money-bill-wave fa-2x"></i>
-                    </div>
-                </div>
+<div class="row g-3 align-items-stretch">
+    <div class="col-lg-3 col-md-6 reporting-section d-flex">
+        <div class="stat-card h-100 w-100" style="background: linear-gradient(135deg, #6c757d 0%, #545b62 100%);">
+            <div class="stat-icon">
+                <i class="fas fa-money-bill-wave"></i>
             </div>
+            <div class="stat-number">{{ total_salary_ranges }}</div>
+            <div class="stat-label">Зарплатных вилок</div>
         </div>
     </div>
     
-    <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card bg-success text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-baseline">
-                        <div class="statistic-number" style="color: white !important; font-size: 1.25rem; font-weight: 600;">{{ active_salary_ranges }}</div>
-                        <span class="card-text">Активных вилок</span>
-                    </div>
-                    <div>
-                        <i class="fas fa-check-circle fa-2x"></i>
-                    </div>
-                </div>
+    <div class="col-lg-3 col-md-6 reporting-section d-flex">
+        <div class="stat-card h-100 w-100" style="background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
             </div>
+            <div class="stat-number">{{ active_salary_ranges }}</div>
+            <div class="stat-label">Активных вилок</div>
         </div>
     </div>
     
-    <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card bg-warning text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-baseline">
-                        <div class="statistic-number" style="color: white !important; font-size: 1.25rem; font-weight: 600;">{{ inactive_salary_ranges }}</div>
-                        <span class="card-text">Неактивных вилок</span>
-                    </div>
-                    <div>
-                        <i class="fas fa-pause-circle fa-2x"></i>
-                    </div>
-                </div>
+    <div class="col-lg-3 col-md-6 reporting-section d-flex">
+        <div class="stat-card h-100 w-100" style="background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);">
+            <div class="stat-icon">
+                <i class="fas fa-pause-circle"></i>
             </div>
+            <div class="stat-number">{{ inactive_salary_ranges }}</div>
+            <div class="stat-label">Неактивных вилок</div>
         </div>
     </div>
 </div>

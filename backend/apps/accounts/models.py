@@ -156,3 +156,94 @@ class User(AbstractUser):
     def get_meeting_interval_display(self):
         """Получить отображаемое значение времени между встречами"""
         return f"{self.meeting_interval_minutes} минут"
+
+
+class QuickButtonType(models.TextChoices):
+    """Типы быстрых кнопок"""
+    LINK = "link", _("Ссылка")
+    TEXT = "text", _("Текст")
+    DATETIME = "datetime", _("Дата и время")
+
+
+class QuickButton(models.Model):
+    """Модель для быстрых кнопок пользователя"""
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='quick_buttons',
+        verbose_name=_("Пользователь")
+    )
+    name = models.CharField(
+        _("Название"),
+        max_length=100,
+        help_text="Название быстрой кнопки"
+    )
+    icon = models.CharField(
+        _("Иконка"),
+        max_length=50,
+        default="fas fa-circle",
+        help_text="Класс иконки Font Awesome (например: fas fa-link, fas fa-calendar)"
+    )
+    button_type = models.CharField(
+        _("Тип"),
+        max_length=20,
+        choices=QuickButtonType.choices,
+        default=QuickButtonType.LINK,
+        help_text="Тип быстрой кнопки"
+    )
+    value = models.TextField(
+        _("Значение"),
+        help_text="Значение в зависимости от типа: URL для ссылки, текст для текста, дата/время для datetime"
+    )
+    order = models.PositiveIntegerField(
+        _("Порядок"),
+        default=0,
+        help_text="Порядок отображения (меньше = выше)"
+    )
+    color = models.CharField(
+        _("Цвет фона"),
+        max_length=7,
+        default="#007bff",
+        help_text="Цвет фона кнопки в формате HEX (например: #007bff)"
+    )
+    created_at = models.DateTimeField(_("Создано"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("Обновлено"), auto_now=True)
+
+    class Meta:
+        verbose_name = _("Быстрая кнопка")
+        verbose_name_plural = _("Быстрые кнопки")
+        ordering = ['order', 'created_at']
+        indexes = [
+            models.Index(fields=['user', 'order']),
+        ]
+
+    def __str__(self):
+        return f"{self.name} ({self.get_button_type_display()})"
+
+    def clean(self):
+        """Валидация данных"""
+        super().clean()
+        if self.button_type == QuickButtonType.LINK:
+            # Проверяем, что значение похоже на URL
+            if not (self.value.startswith('http://') or self.value.startswith('https://') or 
+                    self.value.startswith('/') or self.value.startswith('mailto:') or
+                    self.value.startswith('tel:')):
+                raise ValidationError({
+                    'value': 'Для типа "Ссылка" значение должно быть URL (начинаться с http://, https://, /, mailto: или tel:)'
+                })
+        elif self.button_type == QuickButtonType.DATETIME:
+            # Проверяем, что значение можно распарсить как дату/время
+            from datetime import datetime
+            try:
+                # Пробуем разные форматы
+                datetime.strptime(self.value, '%Y-%m-%d %H:%M:%S')
+            except ValueError:
+                try:
+                    datetime.strptime(self.value, '%Y-%m-%d')
+                except ValueError:
+                    try:
+                        datetime.strptime(self.value, '%d.%m.%Y %H:%M')
+                    except ValueError:
+                        raise ValidationError({
+                            'value': 'Для типа "Дата и время" значение должно быть в формате YYYY-MM-DD HH:MM:SS, YYYY-MM-DD или DD.MM.YYYY HH:MM'
+                        })

@@ -1,0 +1,48 @@
+{
+  "name": "account",
+  "type": "page",
+  "description": "Модуль `account/` содержит все страницы, связанные с аутентификацией пользователя и управлением аккаунтом. Все страницы объединены в единую структуру для удобства управления и поддержки.",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/account/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "POST `/api/auth/login` - авторизация пользователя\n   - POST `/api/auth/google` - авторизация через Google\n   - Сохранение токена доступа в localStorage/cookies\n   - Редирект на главную страницу после успешной авторизации",
+      "method": "POST",
+      "endpoint": "/api/auth/login",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "POST `/api/auth/forgot-password` - отправка email с инструкциями\n   - Валидация email на сервере\n   - Обработка ошибок",
+      "method": "POST",
+      "endpoint": "/api/auth/forgot-password",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "POST `/api/auth/reset-password` - сброс пароля по токену\n   - Валидация токена на сервере\n   - Обработка ошибок (невалидный или истекший токен)",
+      "method": "POST",
+      "endpoint": "/api/auth/reset-password",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "GET `/api/user/profile` - получение данных пользователя\n   - PUT `/api/user/profile` - обновление данных пользователя\n   - GET `/api/user/integrations` - получение списка интеграций\n   - POST `/api/user/integrations` - добавление интеграции\n   - DELETE `/api/user/integrations/:id` - удаление интеграции\n   - GET `/api/user/quick-buttons` - получение быстрых кнопок\n   - PUT `/api/user/quick-buttons` - обновление быстрых кнопок\n   - PUT `/api/user/theme` - обновление акцентного цвета темы",
+      "method": "GET",
+      "endpoint": "/api/user/profile",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.280992"
+}

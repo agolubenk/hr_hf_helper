@@ -1,0 +1,57 @@
+{
+  "name": "reset-password",
+  "type": "page",
+  "description": "Страница сброса пароля. Позволяет установить новый пароль после перехода по ссылке из email. Требует токен из URL параметра `?token=...` для работы.\n\n**Путь**: `/account/reset-password?token=TOKEN`",
+  "route_path": "`/account/reset-password?token=TOKEN`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/account/reset-password/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "`handleSubmit()` - реализовать реальную отправку через API\n   - POST `/api/auth/reset-password` с `{ token, password }`\n   - Валидация токена на сервере\n   - Обновление пароля в базе данных\n   - Инвалидация токена после использования",
+      "method": "POST",
+      "endpoint": "/api/auth/reset-password",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Валидация пароля - реализовать проверку сложности\n   - Проверка наличия букв, цифр, символов\n   - Проверка на распространенные пароли\n   - Проверка на пароли из истории пользователя",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Валидация токена - реализовать проверку на сервере\n   - Проверка существования токена в базе данных\n   - Проверка срока действия токена\n   - Проверка использования токена (одноразовый)\n   - Обработка ошибок (невалидный, истекший, использованный токен)",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Обработка ошибок - реализовать детальные сообщения об ошибках\n   - \"Недействительная ссылка для сброса пароля\"\n   - \"Ссылка истекла, запросите новую\"\n   - \"Ссылка уже использована\"\n   - \"Пароль слишком простой\"\n   - \"Пароли не совпадают\"",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Редирект - реализовать переход на страницу входа после успешного сброса\n   - Автоматический редирект через несколько секунд\n   - Или кнопка \"Войти в систему\" для ручного перехода",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.291702"
+}

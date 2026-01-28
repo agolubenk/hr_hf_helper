@@ -1,0 +1,50 @@
+/* Стили для карточки пользователя */
+
+.userCard {
+  background-color: var(--color-panel);
+  border: 1px solid var(--gray-a6);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+}
+
+.avatarContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.avatar {
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background-color: var(--gray-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-11);
+}
+
+.userName {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--gray-12);
+}
+
+.emailRow,
+.telegramRow {
+  justify-content: center;
+  margin-bottom: 8px;
+  color: var(--gray-11);
+}
+
+.telegramRow {
+  margin-bottom: 0;
+}

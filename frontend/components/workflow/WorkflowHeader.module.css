@@ -1,0 +1,462 @@
+.header {
+  width: 100%;
+  position: relative;
+  padding: 8px 24px 11px 24px; /* Уменьшен нижний отступ на 5px (16px -> 11px) */
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Уменьшен gap */
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+/* Фон с акцентным цветом и 30% прозрачностью через псевдоэлемент */
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--accent-9);
+  opacity: 0.3;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.header > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Альтернативный способ через color-mix для современных браузеров */
+@supports (background: color-mix(in srgb, red 30%, transparent)) {
+  .header::before {
+    background: color-mix(in srgb, var(--accent-9) 30%, transparent);
+    opacity: 1;
+  }
+}
+
+.headerRow {
+  display: flex;
+  align-items: center; /* Центрирование по вертикали - центры блоков на одном уровне */
+  justify-content: space-between; /* Левая и правая части */
+  width: 100%;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Левая часть: быстрые кнопки и тогглеры в один ряд */
+.leftSection {
+  flex: 1;
+  display: flex;
+  align-items: center; /* Центрирование по вертикали */
+  justify-content: space-between; /* Быстрые кнопки слева, тогглеры справа */
+  gap: 16px;
+  min-width: 0;
+  padding: 5px; /* Внутренний отступ 3px */
+  border: 1px solid var(--gray-6); /* Тонкая граница */
+  border-radius: 6px; /* Скругление углов */
+  margin: 0; /* Убираем все отступы для правильного выравнивания */
+}
+
+.quickButtonsGroup {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 46px; /* Та же высота, что и у тогглеров */
+  gap: 8px;
+  margin-top: 0; /* Убираем верхний отступ */
+  padding-top: 0; /* Убираем верхний отступ */
+}
+
+/* Правая часть: выпадающий список и кнопки управления */
+.rightSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Центрирование по вертикали */
+  gap: 8px;
+  min-width: 200px;
+  max-width: 360px; /* Максимальная ширина для правой части */
+  flex: 0 0 auto; /* Не растягивается, фиксированный размер */
+  margin-left: auto; /* Прижимается к правому краю */
+  margin: 0 0 0 auto; /* Убираем все отступы кроме левого для правильного выравнивания */
+  padding: 0; /* Убираем все внутренние отступы */
+}
+
+.vacancySelect {
+  width: calc(100% + 80px) !important; /* Увеличиваем на 80px */
+  max-width: 100% !important; /* Максимум 100% */
+  min-width: 200px;
+  height: 44px !important; /* Та же высота, что и у быстрых кнопок */
+  margin-top: 0 !important; /* Убираем верхний отступ */
+  padding-top: 0 !important; /* Убираем верхний отступ */
+}
+
+.controlsRow {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.controlButton {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.calendarText {
+  display: inline;
+}
+
+@media (max-width: 768px) {
+  .calendarText {
+    display: none;
+  }
+}
+
+.quickButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+}
+
+.quickButton:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.flagBadge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  font-size: 20px;
+  line-height: 1;
+  overflow: visible;
+}
+
+.flagBadge span {
+  font-size: 20px !important;
+  line-height: 1;
+  display: inline-block;
+}
+
+/* Тогглер этапов процесса */
+.workflowToggle {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Выравнивание по левому краю */
+}
+
+.workflowButton {
+  position: relative;
+  padding: 0 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: #1e40af; /* Синий по умолчанию (невыбранная) */
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 108px; /* Примерно в 3 раза меньше (324px / 3 = 108px) */
+  height: 46px; /* 40px * 1.15 = 46px (на 15% выше быстрых кнопок) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.workflowButton[data-selected="true"] {
+  background-color: #10b981; /* Зеленый для выбранного */
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  /* Учитываем рамку в высоте - общая высота остается 46px */
+  height: 46px;
+  box-sizing: border-box;
+}
+
+.workflowButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.workflowIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.selectedBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #10b981;
+  border: 2px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.controlsGroup {
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+/* Стили для выпадающего списка вакансии */
+.vacancySelect {
+  background: var(--gray-3) !important;
+  border: 1px solid var(--gray-6) !important;
+  border-radius: 6px !important;
+  width: calc(100% + 80px) !important; /* Увеличиваем на 80px */
+  max-width: 100% !important; /* Максимум 100% */
+  min-width: 200px;
+}
+
+/* Стили для контента выпадающего списка */
+.selectContent {
+  z-index: 3000 !important;
+}
+
+/* Полупрозрачные элементы выпадающего списка */
+.selectItem {
+  opacity: 0.7 !important;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.selectItem:hover,
+.selectItem[data-highlighted] {
+  opacity: 1 !important;
+}
+
+/* Выбранный элемент остается полупрозрачным */
+.selectItem[data-state="checked"] {
+  opacity: 0.7 !important;
+}
+
+/* Адаптивность для экранов до 580px (вертикальное расположение как на скриншоте) */
+@media (max-width: 580px) {
+  .header {
+    padding: 12px 16px;
+  }
+  
+  .headerRow {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .leftSection {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .quickButtonsGroup {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .workflowToggle {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .workflowButton {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .rightSection {
+    width: 100%;
+    align-items: center;
+  }
+  
+  .vacancySelect {
+    width: 100%;
+  }
+  
+  .controlsRow {
+    width: 100%;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+}
+
+/* Адаптивность для экранов от 581px до 879px (быстрые кнопки и тогглеры в один ряд, остальное с новой строки) */
+@media (min-width: 581px) and (max-width: 879px) {
+  .headerRow {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .leftSection {
+    width: 100%;
+    flex-direction: row; /* Быстрые кнопки и тогглеры в один ряд */
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .quickButtonsGroup {
+    flex-shrink: 0;
+  }
+  
+  .workflowToggle {
+    flex-shrink: 0;
+  }
+  
+  .rightSection {
+    width: auto; /* Автоматическая ширина, не растягивается на всю ширину */
+    align-items: flex-end;
+    margin-left: auto; /* Прижимается к правому краю */
+  }
+  
+  .vacancySelect {
+    width: 100%;
+  }
+  
+  .controlsRow {
+    width: 100%;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+}
+
+/* Адаптивность для экранов шире 880px (все в один ряд) */
+@media (min-width: 880px) {
+  .headerRow {
+    flex-direction: row; /* Все элементы в один ряд */
+    align-items: flex-start; /* Выравнивание по верхнему краю */
+    justify-content: space-between;
+  }
+  
+  .leftSection {
+    flex-direction: row; /* Быстрые кнопки и тогглеры в один ряд */
+    align-items: flex-start; /* Выравнивание по верхнему краю */
+    flex: 1;
+  }
+  
+  .rightSection {
+    align-items: flex-end;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  .header {
+    padding: 12px 16px;
+  }
+  
+  .vacancyInput {
+    min-width: 150px;
+  }
+}
+
+/* Блок настроек интервью */
+.interviewOptionsPanel {
+  background: color-mix(in srgb, var(--gray-2) 50%, transparent); /* Фон с прозрачностью 50% */
+  border-radius: 8px;
+  padding: 8px 12px; /* Уменьшены паддинги */
+  margin-top: 4px; /* Уменьшен верхний отступ */
+  border: 1px solid var(--gray-6);
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(10px); /* Размытие для эффекта стекла */
+}
+
+/* Fallback для браузеров без поддержки color-mix */
+@supports not (background: color-mix(in srgb, red 50%, transparent)) {
+  .interviewOptionsPanel {
+    background: rgba(var(--gray-2-rgb, 245, 245, 245), 0.5); /* Fallback с rgba */
+  }
+}
+
+.formatButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: var(--gray-3);
+  border: 1px solid var(--gray-6);
+}
+
+.formatButton[data-selected="true"] {
+  background-color: var(--accent-9);
+  border-color: var(--accent-9);
+  color: #ffffff;
+}
+
+.formatButton:hover {
+  background-color: var(--gray-4);
+}
+
+.formatButton[data-selected="true"]:hover {
+  background-color: var(--accent-10);
+}
+
+/* Тогглер выбора офиса */
+.officeToggle {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.officeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  background-color: var(--gray-3);
+  border: 1px solid var(--gray-6);
+  min-height: 27px;
+}
+
+.officeButton[data-selected="true"] {
+  background-color: var(--accent-9);
+  border-color: var(--accent-9);
+  color: #ffffff;
+}
+
+.officeButton:hover {
+  background-color: var(--gray-4);
+}
+
+.officeButton[data-selected="true"]:hover {
+  background-color: var(--accent-10);
+}

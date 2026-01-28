@@ -32,7 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
             'id', 'username', 'email', 'first_name', 'last_name', 'full_name',
             'telegram_username', 'groups', 'groups_display',
             'gemini_api_key', 'clickup_api_key', 'notion_integration_token',
-            'huntflow_prod_url', 'huntflow_prod_api_key',
+            'huntflow_prod_url',
             'huntflow_sandbox_url', 'huntflow_sandbox_api_key',
             'active_system', 'interviewer_calendar_url',
             'is_observer_active', 'is_active', 'is_staff', 'is_superuser',
@@ -45,7 +45,6 @@ class UserSerializer(serializers.ModelSerializer):
             'gemini_api_key': {'write_only': True},
             'clickup_api_key': {'write_only': True},
             'notion_integration_token': {'write_only': True},
-            'huntflow_prod_api_key': {'write_only': True},
             'huntflow_sandbox_api_key': {'write_only': True},
         }
     
@@ -95,7 +94,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
             'username', 'email', 'first_name', 'last_name', 'full_name',
             'telegram_username', 'password', 'password_confirm',
             'gemini_api_key', 'clickup_api_key', 'notion_integration_token',
-            'huntflow_prod_url', 'huntflow_prod_api_key',
+            'huntflow_prod_url',
             'huntflow_sandbox_url', 'huntflow_sandbox_api_key',
             'active_system', 'interviewer_calendar_url',
             'is_observer_active', 'is_active', 'is_staff'
@@ -175,7 +174,7 @@ class UserSettingsSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'gemini_api_key', 'clickup_api_key', 'notion_integration_token',
-            'huntflow_prod_url', 'huntflow_prod_api_key',
+            'huntflow_prod_url',
             'huntflow_sandbox_url', 'huntflow_sandbox_api_key',
             'active_system', 'interviewer_calendar_url',
             'is_observer_active'

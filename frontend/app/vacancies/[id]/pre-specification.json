@@ -1,0 +1,11 @@
+{
+  "name": "[id]",
+  "type": "page",
+  "description": "Страница редиректа с URL `/vacancies/[id]` на `/vacancies?edit=[id]`. Обеспечивает обратную совместимость со старыми ссылками и автоматически открывает модальное окно редактирования вакансии.",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/vacancies/[id]/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [],
+  "api_endpoints": [],
+  "generated_at": "2026-01-28T18:00:33.285101"
+}

@@ -1,0 +1,191 @@
+.container {
+  padding: 24px;
+}
+
+.statCard {
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #fff;
+}
+
+.statNumber {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  opacity: 0.95;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--gray-a6);
+  border-radius: 8px;
+}
+
+.tableWrap table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.tableWrap th {
+  text-align: left;
+  padding: 10px 12px;
+  background: var(--gray-3);
+  font-weight: 600;
+  border-bottom: 1px solid var(--gray-a6);
+}
+
+.tableWrap td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--gray-a5);
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+/* Столбцы, где разрешено 2+ строк: Рекрутер, Статус, Факт/SLA, T2H|SLA */
+.tableWrap td.recruiterCell,
+.tableWrap td.statusCell,
+.tableWrap td.factSlaCell,
+.tableWrap td.t2hSlaCell {
+  white-space: normal;
+}
+
+.tableWrap tbody tr:hover td {
+  background: var(--gray-2);
+}
+
+.vacancyCell {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+  max-width: 100%;
+}
+
+.vacancyLink {
+  color: var(--accent-11);
+  text-decoration: none;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.vacancyLink:hover {
+  text-decoration: underline;
+}
+
+.recruiterCell .recruiterLine {
+  display: block;
+  line-height: 1.4;
+}
+.recruiterCell .recruiterLine + .recruiterLine {
+  margin-top: 2px;
+}
+
+.projectName {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.candidateLink {
+  color: var(--accent-11);
+  text-decoration: none;
+}
+.candidateLink:hover {
+  text-decoration: underline;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.badgePlanned { background: var(--blue-4); color: var(--blue-11); }
+.badgeProgress { background: var(--amber-4); color: var(--amber-11); }
+.badgeClosed { background: var(--green-4); color: var(--green-11); }
+.badgeCancelled { background: var(--gray-5); color: var(--gray-11); }
+.badgeSlaOk { background: var(--green-4); color: var(--green-11); }
+.badgeSlaOver { background: var(--red-4); color: var(--red-11); }
+.badgeSlaRisk { background: var(--amber-4); color: var(--amber-11); }
+.badgeSlaNormal { background: var(--blue-4); color: var(--blue-11); }
+
+.filterRow {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 12px;
+  align-items: flex-end;
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+
+.filterField {
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.filterFieldPeriod input {
+  min-width: 161px;
+}
+
+/* Кнопка «Сбросить»: по умолчанию текст, иконка скрыта */
+.resetBtn {
+  flex-shrink: 0;
+}
+.resetBtnIcon {
+  display: none;
+}
+.resetBtnText {
+  /* виден по умолчанию */
+}
+
+/* Узкий экран: только иконка, текст скрыт; поля сужаем */
+@media (max-width: 1100px) {
+  .resetBtnIcon {
+    display: inline-block;
+  }
+  .resetBtnText {
+    display: none;
+  }
+  .filterField {
+    min-width: 100px;
+  }
+  .filterFieldPeriod input {
+    min-width: 140px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .filterField {
+    min-width: 90px;
+  }
+  .filterFieldPeriod input {
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 900px) {
+  .filterField {
+    min-width: 80px;
+  }
+  .filterFieldPeriod input {
+    min-width: 100px;
+  }
+}

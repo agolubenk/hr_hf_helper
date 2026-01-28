@@ -1,0 +1,44 @@
+{
+  "name": "[id]",
+  "type": "page",
+  "description": "Страница детального просмотра инвайта на интервью. Отображает полную информацию об инвайте, позволяет управлять им (копирование текста, пересоздание scorecard, редактирование, удаление).",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/invites/[id]/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockInvite\nОбъект инвайта с полями:\n- `id`, `candidate_name`, `candidate_email`, `candidate_url`\n- `vacancy_title`, `interview_datetime`, `interview_datetime_formatted`\n- `status`, `status_display`, `interview_format`\n- `google_meet_url`, `google_calendar_url`, `google_drive_file_url`\n- `created_at`, `updated_at`\n\n**TODO**: Заменить на реальные данные из `invitesApi.getById()`",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "`mockInvite` - заменить на загрузку из `invitesApi.getById()`",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "`loadInvite()` - реализовать реальный API вызов",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "`handleRecreateScorecard()` - реализовать реальный API вызов\n4. ✅ `handleCopyInvitation()` - использует реальный API\n5. ✅ `handleDelete()` - использует реальный API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.287791"
+}
