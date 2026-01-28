@@ -308,7 +308,7 @@ export default function FloatingActions({ actions = [] }: FloatingActionsProps) 
         }
       }))
     }
-    router.push('/profile') // Переходим на страницу профиля
+    router.push('/account/profile') // Переходим на страницу профиля
   }
   /**
    * isPinned - состояние закрепления панели

@@ -1,8 +1,7 @@
 'use client'
 
 import React, { useRef, useEffect, useCallback, useState } from 'react'
-import { Box, TextField, Button, Flex, Text } from '@radix-ui/themes'
-import { CheckIcon, PlusIcon, MinusIcon } from '@radix-ui/react-icons'
+import { Box, Dialog, TextField, Button, Flex, Text } from '@radix-ui/themes'
 import styles from './RichTextInput.module.css'
 
 interface RichTextInputProps {
@@ -40,22 +39,10 @@ export default function RichTextInput({
   const editorRef = useRef<HTMLDivElement>(null)
   const [isComposing, setIsComposing] = useState(false)
   const isUpdatingRef = useRef(false)
-  const isUserTypingRef = useRef(false) // Флаг активного ввода пользователя
-  const [isLinkTooltipOpen, setIsLinkTooltipOpen] = useState(false)
+  const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false)
   const [linkUrl, setLinkUrl] = useState('')
   const [linkText, setLinkText] = useState('')
-  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 })
   const savedSelectionRef = useRef<Range | null>(null)
-  const tooltipRef = useRef<HTMLDivElement>(null)
-  const linkContextRef = useRef<{ 
-    leftText: string
-    rightText: string
-    leftIndex: number
-    rightIndex: number
-    originalSelectedText: string
-    originalLeftText: string
-    originalRightText: string
-  } | null>(null)
 
   /**
    * convertMarkdownToHTML - конвертирует markdown в HTML для визуального отображения
@@ -135,7 +122,6 @@ export default function RichTextInput({
           
           processedLines.push(html)
         } else {
-          // Пустая строка - добавляем <br> для переноса
           processedLines.push('<br>')
         }
       }
@@ -159,29 +145,7 @@ export default function RichTextInput({
       processedLines.push(`<blockquote>${quoteHtml}</blockquote>`)
     }
 
-    // Объединяем строки, сохраняя переносы через <br>
-    // Между каждой парой строк добавляем <br>, кроме случаев когда:
-    // - текущая строка уже <br>
-    // - следующая строка начинается с <blockquote>
-    const result: string[] = []
-    for (let i = 0; i < processedLines.length; i++) {
-      result.push(processedLines[i])
-      // Если это не последняя строка
-      if (i < processedLines.length - 1) {
-        const current = processedLines[i]
-        const next = processedLines[i + 1]
-        // Добавляем <br> если:
-        // - текущая строка не <br> и не заканчивается на </blockquote>
-        // - следующая строка не начинается с <blockquote>
-        if (current !== '<br>' && 
-            !current.endsWith('</blockquote>') && 
-            !next.startsWith('<blockquote>')) {
-          result.push('<br>')
-        }
-      }
-    }
-    
-    return result.join('')
+    return processedLines.join('')
   }, [])
 
   /**
@@ -263,44 +227,14 @@ export default function RichTextInput({
       return ''
     }
 
-    // Конвертируем все узлы, сохраняя переносы строк
-    // Обрабатываем узлы последовательно, сохраняя <br> как \n
-    let result = ''
-    const nodes = Array.from(tempDiv.childNodes)
-    
-    for (let i = 0; i < nodes.length; i++) {
-      const node = nodes[i]
-      const markdown = nodeToMarkdown(node)
-      result += markdown
-      
-      // Если это не последний узел
-      if (i < nodes.length - 1) {
-        const nextNode = nodes[i + 1]
-        // Если следующий узел - blockquote, добавляем \n перед ним
-        if (nextNode.nodeType === Node.ELEMENT_NODE) {
-          const nextTag = (nextNode as HTMLElement).tagName.toLowerCase()
-          if (nextTag === 'blockquote') {
-            if (!result.endsWith('\n')) {
-              result += '\n'
-            }
-          }
-        }
-        // Если текущий узел - blockquote, добавляем \n после него
-        if (node.nodeType === Node.ELEMENT_NODE) {
-          const tag = (node as HTMLElement).tagName.toLowerCase()
-          if (tag === 'blockquote') {
-            if (!result.endsWith('\n')) {
-              result += '\n'
-            }
-          }
-        }
-      }
-    }
-    
-    // Убираем лишние переносы в конце и начале
-    result = result.replace(/\n+$/, '').replace(/^\n+/, '')
-    
-    // Очищаем от множественных переносов (но сохраняем одиночные)
+    // Конвертируем все узлы
+    let result = Array.from(tempDiv.childNodes)
+      .map(nodeToMarkdown)
+      .join('')
+      .replace(/\n+$/, '') // Убираем лишние переносы в конце
+      .replace(/^\n+/, '') // Убираем лишние переносы в начале
+
+    // Очищаем от лишних пробелов и переносов
     result = result.replace(/\n{3,}/g, '\n\n')
 
     return result
@@ -310,45 +244,23 @@ export default function RichTextInput({
    * Синхронизация содержимого editor с value
    */
   useEffect(() => {
-    // Не синхронизируем, если пользователь активно вводит текст или идет композиция
-    if (!editorRef.current || isUpdatingRef.current || isComposing || isUserTypingRef.current) return
+    if (!editorRef.current || isUpdatingRef.current) return
 
     const currentHTML = editorRef.current.innerHTML
     const expectedHTML = convertMarkdownToHTML(value)
     
-    // Обновляем только если содержимое действительно отличается
-    if (currentHTML !== expectedHTML) {
+    // Обновляем только если содержимое отличается (чтобы не сбрасывать курсор)
+    if (currentHTML !== expectedHTML && !isComposing) {
       isUpdatingRef.current = true
       
-      // Сохраняем текущую позицию курсора через текстовое содержимое
+      // Сохраняем более детальную информацию о позиции курсора
       const selection = window.getSelection()
-      const range = selection?.rangeCount ? selection.getRangeAt(0) : null
-      let savedCursorPosition = 0
-      
-      if (range && editorRef.current.contains(range.commonAncestorContainer)) {
-        // Вычисляем позицию курсора в тексте
-        const walker = document.createTreeWalker(
-          editorRef.current,
-          NodeFilter.SHOW_TEXT,
-          null
-        )
-        
-        let node = walker.nextNode()
-        let offset = 0
-        
-        while (node) {
-          if (node === range.startContainer) {
-            savedCursorPosition = offset + range.startOffset
-            break
-          }
-          if (node.textContent) {
-            offset += node.textContent.length
-          }
-          node = walker.nextNode()
-        }
+      let savedRange: Range | null = null
+      if (selection && selection.rangeCount > 0) {
+        savedRange = selection.getRangeAt(0).cloneRange()
       }
 
-      // Обновляем HTML
+      // Если значение пустое, используем пустой div, чтобы плейсхолдер работал
       editorRef.current.innerHTML = expectedHTML || ''
       
       // Если после установки innerHTML элемент пустой, добавляем <br> для правильной работы плейсхолдера
@@ -356,53 +268,103 @@ export default function RichTextInput({
         editorRef.current.innerHTML = '<br>'
       }
 
-      // Восстанавливаем курсор на основе сохраненной позиции
-      if (savedCursorPosition > 0 && selection) {
-        requestAnimationFrame(() => {
-          if (!editorRef.current) {
-            isUpdatingRef.current = false
-            return
-          }
+      // Восстанавливаем курсор с улучшенной логикой для многострочного текста
+      if (savedRange && selection && editorRef.current.contains(savedRange.commonAncestorContainer)) {
+        try {
+          // Пытаемся восстановить курсор в той же позиции
+          const newRange = document.createRange()
           
-          try {
-            const allText = editorRef.current.textContent || ''
-            const targetPosition = Math.min(savedCursorPosition, allText.length)
+          // Находим соответствующий узел в новом DOM
+          const findNode = (oldNode: Node, newContainer: Node): Node | null => {
+            if (oldNode === editorRef.current) return newContainer
             
-            if (targetPosition >= 0) {
+            // Если это текстовый узел, ищем соответствующий текстовый узел
+            if (oldNode.nodeType === Node.TEXT_NODE) {
               const walker = document.createTreeWalker(
-                editorRef.current,
+                newContainer,
                 NodeFilter.SHOW_TEXT,
                 null
               )
               
               let node = walker.nextNode()
-              let offset = 0
+              let textOffset = 0
+              const oldText = oldNode.textContent || ''
+              const oldOffset = savedRange!.startOffset
               
               while (node) {
-                if (node.textContent) {
-                  const nodeLength = node.textContent.length
-                  if (offset + nodeLength >= targetPosition) {
-                    const newRange = document.createRange()
-                    const nodeOffset = targetPosition - offset
-                    newRange.setStart(node, Math.min(nodeOffset, nodeLength))
-                    newRange.collapse(true)
-                    selection.removeAllRanges()
-                    selection.addRange(newRange)
-                    break
-                  }
-                  offset += nodeLength
+                const nodeText = node.textContent || ''
+                if (textOffset + nodeText.length >= oldOffset) {
+                  // Нашли соответствующий узел
+                  newRange.setStart(node, oldOffset - textOffset)
+                  newRange.setEnd(node, Math.min(savedRange!.endOffset - textOffset, nodeText.length))
+                  return node
                 }
+                textOffset += nodeText.length
                 node = walker.nextNode()
               }
             }
-          } catch (e) {
-            // Если не удалось восстановить, оставляем курсор на текущей позиции
+            
+            return null
           }
-          isUpdatingRef.current = false
-        })
-      } else {
-        isUpdatingRef.current = false
+          
+          const newStartNode = findNode(savedRange.startContainer, editorRef.current)
+          const newEndNode = findNode(savedRange.endContainer, editorRef.current)
+          
+          if (newStartNode && newEndNode) {
+            // Вычисляем смещение для нового узла
+            const walker = document.createTreeWalker(
+              editorRef.current,
+              NodeFilter.SHOW_TEXT,
+              null
+            )
+            
+            let startOffset = 0
+            let endOffset = 0
+            let node = walker.nextNode()
+            
+            while (node) {
+              if (node === newStartNode) {
+                startOffset = savedRange.startOffset
+                break
+              }
+              startOffset += (node.textContent || '').length
+              node = walker.nextNode()
+            }
+            
+            node = walker.nextNode()
+            while (node) {
+              if (node === newEndNode) {
+                endOffset = savedRange.endOffset
+                break
+              }
+              endOffset += (node.textContent || '').length
+              node = walker.nextNode()
+            }
+            
+            if (newStartNode.nodeType === Node.TEXT_NODE) {
+              const startTextNode = newStartNode as Text
+              const endTextNode = newEndNode as Text
+              newRange.setStart(startTextNode, Math.min(savedRange.startOffset, startTextNode.length))
+              newRange.setEnd(endTextNode, Math.min(savedRange.endOffset, endTextNode.length))
+              selection.removeAllRanges()
+              selection.addRange(newRange)
+            }
+          }
+        } catch (e) {
+          // Если не удалось восстановить курсор, ставим в конец
+          try {
+            const range = document.createRange()
+            range.selectNodeContents(editorRef.current)
+            range.collapse(false)
+            selection.removeAllRanges()
+            selection.addRange(range)
+          } catch (e2) {
+            // Игнорируем ошибки восстановления курсора
+          }
+        }
       }
+      
+      isUpdatingRef.current = false
     }
   }, [value, convertMarkdownToHTML, isComposing])
 
@@ -412,40 +374,16 @@ export default function RichTextInput({
   const handleInput = useCallback((e: React.FormEvent<HTMLDivElement>) => {
     if (!editorRef.current || isComposing || isUpdatingRef.current) return
 
-    // Устанавливаем флаг активного ввода
-    isUserTypingRef.current = true
-    
+    // Сохраняем позицию курсора перед обновлением
+    const selection = window.getSelection()
+    let savedRange: Range | null = null
+    if (selection && selection.rangeCount > 0) {
+      savedRange = selection.getRangeAt(0).cloneRange()
+    }
+
     // Используем requestAnimationFrame для отложенной обработки
     requestAnimationFrame(() => {
       if (!editorRef.current || isUpdatingRef.current) return
-      
-      // Сохраняем текущую позицию курсора
-      const selection = window.getSelection()
-      const range = selection?.rangeCount ? selection.getRangeAt(0) : null
-      let savedCursorPosition = 0
-      
-      if (range && editorRef.current.contains(range.commonAncestorContainer)) {
-        // Вычисляем позицию курсора в тексте
-        const walker = document.createTreeWalker(
-          editorRef.current,
-          NodeFilter.SHOW_TEXT,
-          null
-        )
-        
-        let node = walker.nextNode()
-        let offset = 0
-        
-        while (node) {
-          if (node === range.startContainer) {
-            savedCursorPosition = offset + range.startOffset
-            break
-          }
-          if (node.textContent) {
-            offset += node.textContent.length
-          }
-          node = walker.nextNode()
-        }
-      }
       
       // Проверяем, пустой ли редактор (только <br> или пусто)
       const isEmpty = !editorRef.current.textContent || 
@@ -462,14 +400,64 @@ export default function RichTextInput({
       
       // Обновляем только если markdown изменился
       if (markdown !== value) {
-        // Обновляем значение без синхронизации HTML (чтобы не сбрасывать курсор)
+        isUpdatingRef.current = true
         onChange(markdown)
+        
+        // Восстанавливаем курсор после обновления
+        requestAnimationFrame(() => {
+          if (savedRange && selection && editorRef.current) {
+            try {
+              // Пытаемся восстановить курсор в той же позиции
+              const newRange = document.createRange()
+              
+              // Находим узел, который соответствует сохраненному контейнеру
+              const findTextNode = (offset: number): { node: Node; nodeOffset: number } | null => {
+                const walker = document.createTreeWalker(
+                  editorRef.current!,
+                  NodeFilter.SHOW_TEXT,
+                  null
+                )
+                
+                let node = walker.nextNode()
+                let currentOffset = 0
+                
+                while (node) {
+                  const nodeText = node.textContent || ''
+                  if (currentOffset + nodeText.length >= offset) {
+                    return {
+                      node,
+                      nodeOffset: offset - currentOffset
+                    }
+                  }
+                  currentOffset += nodeText.length
+                  node = walker.nextNode()
+                }
+                
+                return null
+              }
+              
+              const startPos = findTextNode(savedRange.startOffset)
+              const endPos = findTextNode(savedRange.endOffset)
+              
+              if (startPos && endPos && startPos.node.nodeType === Node.TEXT_NODE && endPos.node.nodeType === Node.TEXT_NODE) {
+                newRange.setStart(startPos.node as Text, Math.min(startPos.nodeOffset, (startPos.node as Text).length))
+                newRange.setEnd(endPos.node as Text, Math.min(endPos.nodeOffset, (endPos.node as Text).length))
+                selection.removeAllRanges()
+                selection.addRange(newRange)
+              }
+            } catch (e) {
+              // Игнорируем ошибки восстановления курсора
+            }
+          }
+          
+          // Сбрасываем флаг после небольшой задержки
+          setTimeout(() => {
+            isUpdatingRef.current = false
+          }, 0)
+        })
+      } else {
+        isUpdatingRef.current = false
       }
-      
-      // Сбрасываем флаг активного ввода через небольшую задержку
-      setTimeout(() => {
-        isUserTypingRef.current = false
-      }, 200)
     })
   }, [onChange, convertHTMLToMarkdown, value, isComposing])
 
@@ -609,9 +597,9 @@ export default function RichTextInput({
   }, [onChange, convertHTMLToMarkdown])
 
   /**
-   * Открывает тултип для вставки ссылки
+   * Открывает диалог для вставки ссылки
    */
-  const openLinkTooltip = useCallback(() => {
+  const openLinkDialog = useCallback(() => {
     if (!editorRef.current) return
 
     const selection = window.getSelection()
@@ -623,80 +611,10 @@ export default function RichTextInput({
     // Сохраняем выделение
     saveSelection()
     
-    // Получаем весь текст редактора
-    const allText = editorRef.current.textContent || ''
-    
-    // Находим позицию выделенного текста в общем тексте
-    // Используем TreeWalker для точного определения позиции
-    const walker = document.createTreeWalker(
-      editorRef.current,
-      NodeFilter.SHOW_TEXT,
-      null
-    )
-    
-    let selectionStartPos = 0
-    let selectionEndPos = 0
-    let node = walker.nextNode()
-    let currentPos = 0
-    
-    while (node) {
-      const nodeLength = node.textContent?.length || 0
-      
-      if (node === range.startContainer) {
-        selectionStartPos = currentPos + range.startOffset
-      }
-      if (node === range.endContainer) {
-        selectionEndPos = currentPos + range.endOffset
-        break
-      }
-      
-      currentPos += nodeLength
-      node = walker.nextNode()
-    }
-    
-    // Находим границы строки (до переноса строки)
-    const lastNewlineBefore = allText.lastIndexOf('\n', selectionStartPos - 1)
-    const firstNewlineAfter = allText.indexOf('\n', selectionEndPos)
-    
-    const lineStart = lastNewlineBefore === -1 ? 0 : lastNewlineBefore + 1
-    const lineEnd = firstNewlineAfter === -1 ? allText.length : firstNewlineAfter
-    
-    // Извлекаем текст строки
-    const lineText = allText.substring(lineStart, lineEnd)
-    const selectionStartInLine = selectionStartPos - lineStart
-    const selectionEndInLine = selectionEndPos - lineStart
-    
-    // Разбиваем на слова и знаки препинания для умного добавления
-    const leftPart = lineText.substring(0, selectionStartInLine)
-    const rightPart = lineText.substring(selectionEndInLine)
-    
-    // Сохраняем контекст для кнопок +/-
-    linkContextRef.current = {
-      leftText: leftPart,
-      rightText: rightPart,
-      leftIndex: leftPart.length,
-      rightIndex: 0,
-      originalSelectedText: selectedText,
-      originalLeftText: leftPart,
-      originalRightText: rightPart
-    }
-    
     // Устанавливаем текст ссылки
     setLinkText(selectedText)
     setLinkUrl('')
-    
-    // Вычисляем позицию тултипа (центр выделенного текста)
-    const rect = range.getBoundingClientRect()
-    const editorRect = editorRef.current.getBoundingClientRect()
-    const scrollTop = editorRef.current.scrollTop || 0
-    const scrollLeft = editorRef.current.scrollLeft || 0
-    
-    setTooltipPosition({
-      top: rect.top - editorRect.top + rect.height / 2 + scrollTop,
-      left: rect.left - editorRect.left + rect.width / 2 + scrollLeft
-    })
-    
-    setIsLinkTooltipOpen(true)
+    setIsLinkDialogOpen(true)
   }, [saveSelection])
 
   /**
@@ -708,212 +626,35 @@ export default function RichTextInput({
     // Восстанавливаем выделение
     restoreSelection()
 
-    if (!editorRef.current) return
-
     const selection = window.getSelection()
     if (!selection || selection.rangeCount === 0) return
 
     const range = selection.getRangeAt(0)
-    
-    // Проверяем, что выделение находится внутри редактора
-    if (!editorRef.current.contains(range.commonAncestorContainer)) {
-      return
-    }
-
     const text = linkText.trim() || linkUrl.trim()
-    
-    // Обрабатываем URL: убираем https:// или https://www. если они есть
-    let processedUrl = linkUrl.trim()
-    if (processedUrl.startsWith('https://www.')) {
-      processedUrl = processedUrl.substring(12) // Убираем "https://www."
-    } else if (processedUrl.startsWith('https://')) {
-      processedUrl = processedUrl.substring(8) // Убираем "https://"
-    }
-    
-    const linkMarkdown = `[${text}](https://${processedUrl})`
-
-    // Вычисляем, какой текст был добавлен через кнопки +/-
-    let textToRemoveFromLeft = ''
-    let textToRemoveFromRight = ''
-    
-    if (linkContextRef.current) {
-      const { originalLeftText, originalRightText, leftIndex, rightIndex } = linkContextRef.current
-      
-      // Текст, который был добавлен слева (от leftIndex до конца originalLeftText)
-      textToRemoveFromLeft = originalLeftText.substring(leftIndex)
-      
-      // Текст, который был добавлен справа (от начала до rightIndex в originalRightText)
-      textToRemoveFromRight = originalRightText.substring(0, rightIndex)
-    }
+    const linkMarkdown = `[${text}](${linkUrl.trim()})`
 
     // Если был выделен текст, заменяем его на ссылку
-    // Но сначала нужно удалить добавленный текст слева и справа
-    if (textToRemoveFromLeft || textToRemoveFromRight) {
-      // Расширяем выделение, чтобы включить добавленный текст
-      const expandedRange = range.cloneRange()
-      
-      // Расширяем влево на длину добавленного текста слева
-      if (textToRemoveFromLeft) {
-        try {
-          expandedRange.setStart(range.startContainer, Math.max(0, range.startOffset - textToRemoveFromLeft.length))
-        } catch (e) {
-          // Если не удалось, используем исходный range
-        }
-      }
-      
-      // Расширяем вправо на длину добавленного текста справа
-      if (textToRemoveFromRight) {
-        try {
-          expandedRange.setEnd(range.endContainer, range.endOffset + textToRemoveFromRight.length)
-        } catch (e) {
-          // Если не удалось, используем исходный range
-        }
-      }
-      
-      // Удаляем весь текст (включая добавленный)
-      expandedRange.deleteContents()
-      
-      // Вставляем ссылку
-      const textNode = document.createTextNode(linkMarkdown)
-      expandedRange.insertNode(textNode)
-      
-      // Перемещаем курсор после вставленной ссылки
-      expandedRange.setStartAfter(textNode)
-      expandedRange.collapse(true)
-      selection.removeAllRanges()
-      selection.addRange(expandedRange)
-    } else {
-      // Обычная вставка без добавленного текста
-      if (range.toString()) {
-        range.deleteContents()
-      }
-
-      // Вставляем ссылку как текстовый узел (markdown формат)
-      const textNode = document.createTextNode(linkMarkdown)
-      range.insertNode(textNode)
-      
-      // Перемещаем курсор после вставленной ссылки
-      range.setStartAfter(textNode)
-      range.collapse(true)
-      selection.removeAllRanges()
-      selection.addRange(range)
+    if (range.toString()) {
+      range.deleteContents()
     }
 
-    // Обновляем markdown через handleInput для правильной обработки
-    isUserTypingRef.current = true
+    // Вставляем ссылку
+    const textNode = document.createTextNode(linkMarkdown)
+    range.insertNode(textNode)
+
+    // Обновляем markdown
     requestAnimationFrame(() => {
       if (editorRef.current) {
         const html = editorRef.current.innerHTML
         const markdown = convertHTMLToMarkdown(html)
-        if (markdown !== value) {
-          onChange(markdown)
-        }
-        isUserTypingRef.current = false
+        onChange(markdown)
       }
     })
 
-    setIsLinkTooltipOpen(false)
+    setIsLinkDialogOpen(false)
     setLinkUrl('')
     setLinkText('')
-    linkContextRef.current = null
-    
-    // Возвращаем фокус в редактор
-    editorRef.current.focus()
-  }, [linkUrl, linkText, restoreSelection, onChange, convertHTMLToMarkdown, value])
-
-  /**
-   * Добавляет текст слева от текста ссылки из контекста строки
-   */
-  const addCharLeft = useCallback(() => {
-    if (!linkContextRef.current) return
-    
-    const { leftText, leftIndex } = linkContextRef.current
-    
-    if (leftIndex <= 0) return // Нет больше текста слева
-    
-    // Находим следующее слово/символ слева
-    // Ищем последний пробел, запятую или другой разделитель перед leftIndex
-    let newIndex = leftIndex - 1
-    
-    // Пропускаем пробелы
-    while (newIndex > 0 && leftText[newIndex - 1] === ' ') {
-      newIndex--
-    }
-    
-    // Ищем начало слова или знака препинания
-    if (newIndex > 0) {
-      // Если перед нами знак препинания, берем его
-      if (/[.,!?;:—–\-]/.test(leftText[newIndex - 1])) {
-        newIndex--
-      } else {
-        // Иначе ищем начало слова
-        while (newIndex > 0 && !/[.,!?;:\s—–\-]/.test(leftText[newIndex - 1])) {
-          newIndex--
-        }
-      }
-    }
-    
-    const textToAdd = leftText.substring(newIndex, leftIndex)
-    linkContextRef.current.leftIndex = newIndex
-    
-    setLinkText(prev => textToAdd + prev)
-  }, [])
-
-  /**
-   * Добавляет текст справа от текста ссылки из контекста строки
-   */
-  const addCharRight = useCallback(() => {
-    if (!linkContextRef.current) return
-    
-    const { rightText, rightIndex } = linkContextRef.current
-    
-    if (rightIndex >= rightText.length) return // Нет больше текста справа
-    
-    // Находим следующее слово/символ справа
-    let newIndex = rightIndex
-    
-    // Пропускаем пробелы
-    while (newIndex < rightText.length && rightText[newIndex] === ' ') {
-      newIndex++
-    }
-    
-    if (newIndex >= rightText.length) return
-    
-    // Если это знак препинания, берем его
-    if (/[.,!?;:—–\-]/.test(rightText[newIndex])) {
-      newIndex++
-    } else {
-      // Иначе ищем конец слова
-      while (newIndex < rightText.length && !/[.,!?;:\s—–\-]/.test(rightText[newIndex])) {
-        newIndex++
-      }
-    }
-    
-    const textToAdd = rightText.substring(rightIndex, newIndex)
-    linkContextRef.current.rightIndex = newIndex
-    
-    setLinkText(prev => prev + textToAdd)
-  }, [])
-
-  /**
-   * Обработка клика вне тултипа для его закрытия
-   */
-  useEffect(() => {
-    if (!isLinkTooltipOpen) return
-
-    const handleClickOutside = (e: MouseEvent) => {
-      if (tooltipRef.current && !tooltipRef.current.contains(e.target as Node) &&
-          editorRef.current && !editorRef.current.contains(e.target as Node)) {
-        setIsLinkTooltipOpen(false)
-        setLinkUrl('')
-        setLinkText('')
-        linkContextRef.current = null
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [isLinkTooltipOpen])
+  }, [linkUrl, linkText, restoreSelection, onChange, convertHTMLToMarkdown])
 
   /**
    * Проверяет, применено ли форматирование к выделенному тексту
@@ -994,7 +735,7 @@ export default function RichTextInput({
         const isBold = isFormatApplied('bold')
         if (isBold) {
           // Если уже жирный - снимаем форматирование
-          document.execCommand('bold', false, null)
+          document.execCommand('bold', false, undefined)
         } else {
           // Если не жирный - применяем форматирование
           document.execCommand('bold', false)
@@ -1014,7 +755,7 @@ export default function RichTextInput({
         // Проверяем, применен ли уже курсив
         const isItalic = isFormatApplied('italic')
         if (isItalic) {
-          document.execCommand('italic', false, null)
+          document.execCommand('italic', false, undefined)
         } else {
           document.execCommand('italic', false)
         }
@@ -1033,7 +774,7 @@ export default function RichTextInput({
         // Проверяем, применено ли уже подчеркивание
         const isUnderline = isFormatApplied('underline')
         if (isUnderline) {
-          document.execCommand('underline', false, null)
+          document.execCommand('underline', false, undefined)
         } else {
           document.execCommand('underline', false)
         }
@@ -1050,7 +791,7 @@ export default function RichTextInput({
       // Cmd+K для вставки ссылки
       if (keyCode === 'keyk') {
         e.preventDefault()
-        openLinkTooltip()
+        openLinkDialog()
         return
       }
     }
@@ -1061,7 +802,7 @@ export default function RichTextInput({
       // Проверяем, применено ли уже зачеркивание
       const isStrikethrough = isFormatApplied('strikethrough')
       if (isStrikethrough) {
-        document.execCommand('strikeThrough', false, null)
+        document.execCommand('strikeThrough', false, undefined)
       } else {
         document.execCommand('strikeThrough', false)
       }
@@ -1087,7 +828,7 @@ export default function RichTextInput({
     if (onKeyDown) {
       onKeyDown(e)
     }
-  }, [onChange, convertHTMLToMarkdown, openLinkTooltip, applyQuote, isFormatApplied])
+  }, [onChange, convertHTMLToMarkdown, openLinkDialog, applyQuote, isFormatApplied])
 
   /**
    * Обработка composition events (для IME ввода)
@@ -1102,7 +843,7 @@ export default function RichTextInput({
   }, [handleInput])
 
   return (
-    <Box style={{ position: 'relative', flex: '1 1 0%' }}>
+    <>
       <Box
         ref={editorRef}
         contentEditable
@@ -1124,6 +865,7 @@ export default function RichTextInput({
           outline: 'none',
           fontSize: '14px',
           lineHeight: '1.5',
+          position: 'relative',
           ...(value ? {} : {
             color: 'var(--gray-9)',
           })
@@ -1131,67 +873,30 @@ export default function RichTextInput({
         data-placeholder={placeholder}
       />
       
-      {/* Тултип для вставки ссылки */}
-      {isLinkTooltipOpen && (
-        <Box
-          ref={tooltipRef}
-          style={{
-            position: 'absolute',
-            top: `${tooltipPosition.top}px`,
-            left: `${tooltipPosition.left}px`,
-            transform: 'translate(-50%, -50%)',
-            zIndex: 1000,
-            backgroundColor: 'var(--gray-1)',
-            border: '1px solid var(--gray-6)',
-            borderRadius: '8px',
-            padding: '12px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            minWidth: '280px',
-            maxWidth: '400px'
-          }}
-        >
-          <Flex direction="column" gap="2">
-            {/* Первая строка: текст ссылки с кнопками +/- */}
-            <Flex align="center" gap="1">
-              <Button
-                size="1"
-                variant="soft"
-                onClick={addCharLeft}
-                disabled={!linkContextRef.current || linkContextRef.current.leftIndex <= 0}
-                style={{ flexShrink: 0, width: '24px', height: '24px', padding: 0 }}
-              >
-                <PlusIcon />
-              </Button>
+      {/* Диалог для вставки ссылки */}
+      <Dialog.Root open={isLinkDialogOpen} onOpenChange={setIsLinkDialogOpen}>
+        <Dialog.Content style={{ maxWidth: 450 }}>
+          <Dialog.Title>Вставить ссылку</Dialog.Title>
+          <Flex direction="column" gap="3" mt="3">
+            <Box>
+              <Text size="2" weight="medium" mb="1" as="div">
+                Текст ссылки
+              </Text>
               <TextField.Root
                 value={linkText}
                 onChange={(e) => setLinkText(e.target.value)}
                 placeholder="Текст ссылки"
                 autoFocus
-                style={{ flex: 1 }}
-                size="2"
               />
-              <Button
-                size="1"
-                variant="soft"
-                onClick={addCharRight}
-                disabled={!linkContextRef.current || 
-                  linkContextRef.current.rightIndex >= (linkContextRef.current.rightText.length)}
-                style={{ flexShrink: 0, width: '24px', height: '24px', padding: 0 }}
-              >
-                <PlusIcon />
-              </Button>
-            </Flex>
-            {/* Вторая строка: URL с префиксом https:// и галочкой подтверждения */}
-            <Flex align="center" gap="1">
-              <Text size="2" style={{ flexShrink: 0, color: 'var(--gray-11)' }}>
-                https://
+            </Box>
+            <Box>
+              <Text size="2" weight="medium" mb="1" as="div">
+                URL
               </Text>
               <TextField.Root
                 value={linkUrl}
                 onChange={(e) => setLinkUrl(e.target.value)}
-                placeholder="example.com"
-                style={{ flex: 1 }}
-                size="2"
+                placeholder="https://example.com"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && linkUrl.trim()) {
                     e.preventDefault()
@@ -1199,19 +904,23 @@ export default function RichTextInput({
                   }
                 }}
               />
-              <Button
-                size="2"
-                variant="solid"
-                onClick={insertLink}
+            </Box>
+            <Flex gap="3" justify="end" mt="2">
+              <Dialog.Close>
+                <Button variant="soft" color="gray">
+                  Отмена
+                </Button>
+              </Dialog.Close>
+              <Button 
+                onClick={insertLink} 
                 disabled={!linkUrl.trim()}
-                style={{ flexShrink: 0 }}
               >
-                <CheckIcon />
+                Вставить
               </Button>
             </Flex>
           </Flex>
-        </Box>
-      )}
-    </Box>
+        </Dialog.Content>
+      </Dialog.Root>
+    </>
   )
 }

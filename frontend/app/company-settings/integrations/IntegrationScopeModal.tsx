@@ -199,7 +199,7 @@ export default function IntegrationScopeModal({
             <Text size="2" color="gray" style={{ marginBottom: 8, display: 'block' }}>
               Инструкции по получению API-ключей и токенов — в профиле на вкладке «Интеграции и API» при настройке этой интеграции.
             </Text>
-            <Link href="/profile?tab=integrations" style={{ color: 'var(--accent-9)', textDecoration: 'underline', fontSize: 14 }}>
+            <Link href="/account/profile?tab=integrations" style={{ color: 'var(--accent-9)', textDecoration: 'underline', fontSize: 14 }}>
               Перейти на страницу настройки: Профиль → Интеграции и API
             </Link>
             <Text size="2" weight="medium" style={{ marginTop: 12, marginBottom: 8, display: 'block' }}>

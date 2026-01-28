@@ -14,6 +14,14 @@ const LinkedInIcon = ({ width = 16, height = 16 }: { width?: number; height?: nu
   </svg>
 )
 
+interface WorkTimeByDay {
+  monday?: { start: string; end: string }
+  tuesday?: { start: string; end: string }
+  wednesday?: { start: string; end: string }
+  thursday?: { start: string; end: string }
+  friday?: { start: string; end: string }
+}
+
 interface ProfileInfoProps {
   userData: {
     firstName: string
@@ -23,7 +31,10 @@ interface ProfileInfoProps {
     linkedin?: string
     registrationDate: string
     lastLoginDate: string
-    workSchedule: string
+    workSchedule?: string
+    workStartTime?: string
+    workEndTime?: string
+    workTimeByDay?: WorkTimeByDay
     meetingInterval: string
     activeEnvironment: string
   }
@@ -70,7 +81,40 @@ export default function ProfileInfo({ userData }: ProfileInfoProps) {
           <Box>
             <InfoRow label="Дата регистрации:" value={userData.registrationDate} />
             <InfoRow label="Дата последнего входа:" value={userData.lastLoginDate} />
-            <InfoRow label="Рабочий график:" value={userData.workSchedule} />
+            {/* Рабочий график: отображаем либо простое время, либо по дням */}
+            {userData.workSchedule || (userData.workStartTime && userData.workEndTime) ? (
+              <InfoRow 
+                label="Рабочий график:" 
+                value={userData.workSchedule || `${userData.workStartTime} - ${userData.workEndTime}`}
+              />
+            ) : userData.workTimeByDay ? (
+              <Box className={styles.infoRow}>
+                <Text size="2" weight="medium" style={{ color: 'var(--gray-11)', marginBottom: '8px' }}>
+                  Рабочий график:
+                </Text>
+                <Flex direction="column" gap="1">
+                  {(['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as Array<keyof WorkTimeByDay>).map((day) => {
+                    const dayData = userData.workTimeByDay?.[day]
+                    if (!dayData) return null
+                    const dayLabels: Record<keyof WorkTimeByDay, string> = {
+                      monday: 'Понедельник',
+                      tuesday: 'Вторник',
+                      wednesday: 'Среда',
+                      thursday: 'Четверг',
+                      friday: 'Пятница'
+                    }
+                    return (
+                      <Flex key={day} align="center" gap="2">
+                        <ClockIcon width={16} height={16} />
+                        <Text size="3" style={{ color: 'var(--gray-12)' }}>
+                          {dayLabels[day]}: {dayData.start} - {dayData.end}
+                        </Text>
+                      </Flex>
+                    )
+                  })}
+                </Flex>
+              </Box>
+            ) : null}
             <InfoRow 
               label="Время между встречами:" 
               value={userData.meetingInterval}

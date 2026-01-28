@@ -567,8 +567,7 @@ function LinkPreview({ url }: { url: string }) {
   }
 
   return (
-    <Box
-      as="a"
+    <a
       href={url.startsWith('http') ? url : `https://${url}`}
       target="_blank"
       rel="noopener noreferrer"
@@ -597,7 +596,7 @@ function LinkPreview({ url }: { url: string }) {
       <Text size="1" color="gray" style={{ display: 'block', wordBreak: 'break-all' }}>
         {url.startsWith('http') ? url : `https://${url}`}
       </Text>
-    </Box>
+    </a>
   )
 }
 

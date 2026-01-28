@@ -169,7 +169,7 @@ export default function Header({
       localStorage.setItem('profileActiveTab', 'profile')
     }
     // Переходим на страницу профиля
-    router.push('/profile')
+    router.push('/account/profile')
   }
 
   /**

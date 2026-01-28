@@ -350,7 +350,7 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
       } else {
         // Внутренняя ссылка - используем Next.js роутер
         // Если это ссылка на профиль, устанавливаем активную вкладку
-        if (item.href === '/profile') {
+        if (item.href === '/account/profile') {
           if (typeof window !== 'undefined') {
             let tabValue = 'profile' // По умолчанию вкладка "Профиль"
             
@@ -790,8 +790,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
    * - Отображаются в нижней части Sidebar
    * 
    * Пункты:
-   * - Профиль: переход на /profile (вкладка "Профиль")
-   * - Интеграции и API: переход на /profile (вкладка "Интеграции")
+   * - Профиль: переход на /account/profile (вкладка "Профиль")
+   * - Интеграции и API: переход на /account/profile (вкладка "Интеграции")
    * - Настройки компании: раздел с подпунктами (Общие, Оргструктура, Финансы и т.д.)
    * - Admin-панель: внешняя ссылка (открывается в новой вкладке)
    */
@@ -800,7 +800,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       id: 'profile',
       label: 'Профиль',
       icon: <PersonIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-      href: '/profile',
+      href: '/account/profile',
     },
     {
       id: 'settings-integrations',
@@ -809,7 +809,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <Box style={{ width: '8px', height: '8px', border: '1px solid var(--gray-12)', borderRadius: '2px', position: 'absolute', top: '0', left: '0' }} />
         <Box style={{ width: '4px', height: '4px', borderTop: '1px solid var(--gray-12)', borderRight: '1px solid var(--gray-12)', position: 'absolute', bottom: '0', right: '0' }} />
       </Box>,
-      href: '/profile',
+      href: '/account/profile',
     },
     {
       id: 'company-settings',
@@ -895,6 +895,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 <Box style={{ width: '2px', height: '12px', backgroundColor: 'var(--gray-12)' }} />
               </Box>,
               href: '/company-settings/recruiting/stages',
+            },
+            {
+              id: 'recruiting-settings-commands',
+              label: 'Команды workflow',
+              icon: <MixerHorizontalIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
+              href: '/company-settings/recruiting/commands',
             },
             {
               id: 'recruiting-settings-candidate-fields',
@@ -1054,12 +1060,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           let isActive = pathname === item.href
           
           // Для страницы интеграций проверяем активную вкладку в localStorage
-          if (item.id === 'settings-integrations' && pathname === '/profile') {
+          if (item.id === 'settings-integrations' && pathname === '/account/profile') {
             if (typeof window !== 'undefined') {
               const activeTab = localStorage.getItem('profileActiveTab')
               isActive = activeTab === 'integrations' // Активен только если активная вкладка 'integrations'
             }
-          } else if (item.id === 'profile' && pathname === '/profile') {
+          } else if (item.id === 'profile' && pathname === '/account/profile') {
             // Для профиля проверяем, что активная вкладка - это профиль (или не установлена)
             if (typeof window !== 'undefined') {
               const activeTab = localStorage.getItem('profileActiveTab')

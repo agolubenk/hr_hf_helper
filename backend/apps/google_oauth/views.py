@@ -6855,7 +6855,6 @@ def chat_workflow(request, session_id=None):
             # Добавляем атрибут к объекту сообщения для использования в шаблоне
             msg.command_used = command_used
     
-    messages = messages_list
     form = ChatForm(user=request.user)
 
     if request.method == 'POST':

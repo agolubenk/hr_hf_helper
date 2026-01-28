@@ -26,10 +26,10 @@
 ### Основные страницы
 - `/PAGE_DOCUMENTATION.md` - Главная страница
 - `/LAYOUT_DOCUMENTATION.md` - Корневой layout
-- `/login/PAGE_DOCUMENTATION.md` - Вход
-- `/forgot-password/PAGE_DOCUMENTATION.md` - Восстановление пароля
-- `/reset-password/PAGE_DOCUMENTATION.md` - Сброс пароля
-- `/profile/PAGE_DOCUMENTATION.md` - Профиль
+- `/account/login/PAGE_DOCUMENTATION.md` - Вход
+- `/account/forgot-password/PAGE_DOCUMENTATION.md` - Восстановление пароля
+- `/account/reset-password/PAGE_DOCUMENTATION.md` - Сброс пароля
+- `/account/profile/PAGE_DOCUMENTATION.md` - Профиль
 - `/search/PAGE_DOCUMENTATION.md` - Поиск
 
 ### Рабочие страницы

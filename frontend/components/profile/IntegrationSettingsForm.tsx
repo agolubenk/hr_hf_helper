@@ -125,7 +125,7 @@ export default function IntegrationSettingsForm({ integrationName, settings, onS
           <Text size="2" color="gray" style={{ marginBottom: 8, display: 'block' }}>
             OAuth Google настраивается в профиле пользователя при подключении интеграции.
           </Text>
-          <Link href="/profile?tab=integrations" style={{ color: 'var(--accent-9)', textDecoration: 'underline', fontSize: 14 }}>
+          <Link href="/account/profile?tab=integrations" style={{ color: 'var(--accent-9)', textDecoration: 'underline', fontSize: 14 }}>
             Профиль → Интеграции и API
           </Link>
         </Box>
@@ -241,7 +241,7 @@ export default function IntegrationSettingsForm({ integrationName, settings, onS
             <Text size="2" color="gray" style={{ marginBottom: 8, display: 'block' }}>
               При режиме «У каждого свой» Huntflow настраивается каждым пользователем в профиле. Форма данных компании не используется.
             </Text>
-            <Link href="/profile?tab=integrations" style={{ color: 'var(--accent-9)', textDecoration: 'underline', fontSize: 14 }}>
+            <Link href="/account/profile?tab=integrations" style={{ color: 'var(--accent-9)', textDecoration: 'underline', fontSize: 14 }}>
               Профиль → Интеграции и API
             </Link>
           </Box>

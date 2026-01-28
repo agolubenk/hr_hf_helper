@@ -281,198 +281,136 @@ export default function WorkflowSidebar() {
         </Flex>
 
         <Box className={styles.panelContent}>
-          <Flex direction="column" gap="2">
+          <Flex direction="column" gap="3" align="center">
             {/* Telegram */}
             <Box
-              className={styles.quickActionBlock}
+              className={styles.quickActionButton}
               onClick={() => window.open('https://web.telegram.org', '_blank')}
-              style={{ borderColor: '#0088cc' }}
+              style={{ backgroundColor: '#0088cc' }}
+              title="Telegram @username"
             >
-              <Flex align="center" gap="2" style={{ width: '100%' }}>
-                <PaperPlaneIcon width={18} height={18} style={{ color: '#0088cc' }} />
-                <Flex direction="column" align="start" style={{ flex: 1 }}>
-                  <Text size="2" weight="medium">Telegram</Text>
-                  <Text size="1" style={{ color: 'var(--gray-9)', opacity: 0.7 }}>@username</Text>
-                </Flex>
-              </Flex>
+              <PaperPlaneIcon width={20} height={20} style={{ color: '#ffffff' }} />
             </Box>
 
             <Box
-              className={styles.quickActionBlock}
+              className={styles.quickActionButton}
               onClick={() => window.open('https://web.telegram.org', '_blank')}
-              style={{ borderColor: '#0088cc' }}
+              style={{ backgroundColor: '#0088cc' }}
+              title="Telegram @hr_manager"
             >
-              <Flex align="center" gap="2" style={{ width: '100%' }}>
-                <PaperPlaneIcon width={18} height={18} style={{ color: '#0088cc' }} />
-                <Flex direction="column" align="start" style={{ flex: 1 }}>
-                  <Text size="2" weight="medium">Telegram</Text>
-                  <Text size="1" style={{ color: 'var(--gray-9)', opacity: 0.7 }}>@hr_manager</Text>
-                </Flex>
-              </Flex>
+              <PaperPlaneIcon width={20} height={20} style={{ color: '#ffffff' }} />
             </Box>
 
             <Box
-              className={styles.quickActionBlock}
+              className={styles.quickActionButton}
               onClick={() => window.open('https://web.telegram.org', '_blank')}
-              style={{ borderColor: '#0088cc' }}
+              style={{ backgroundColor: '#0088cc' }}
+              title="Telegram @recruiter"
             >
-              <Flex align="center" gap="2" style={{ width: '100%' }}>
-                <PaperPlaneIcon width={18} height={18} style={{ color: '#0088cc' }} />
-                <Flex direction="column" align="start" style={{ flex: 1 }}>
-                  <Text size="2" weight="medium">Telegram</Text>
-                  <Text size="1" style={{ color: 'var(--gray-9)', opacity: 0.7 }}>@recruiter</Text>
-                </Flex>
-              </Flex>
+              <PaperPlaneIcon width={20} height={20} style={{ color: '#ffffff' }} />
             </Box>
 
             {/* WhatsApp */}
             <Box
-              className={styles.quickActionBlock}
+              className={styles.quickActionButton}
               onClick={() => window.open('https://web.whatsapp.com', '_blank')}
-              style={{ borderColor: '#25D366' }}
+              style={{ backgroundColor: '#25D366' }}
+              title="WhatsApp +7 (999) 123-45-67"
             >
-              <Flex align="center" gap="2" style={{ width: '100%' }}>
-                <Flex direction="column" align="start" style={{ flex: 1 }}>
-                  <Text size="2" weight="medium">WhatsApp</Text>
-                  <Text size="1" style={{ color: 'var(--gray-9)', opacity: 0.7 }}>+7 (999) 123-45-67</Text>
-                </Flex>
-              </Flex>
+              <Text size="4" weight="bold" style={{ color: '#ffffff' }}>W</Text>
             </Box>
 
             <Box
-              className={styles.quickActionBlock}
+              className={styles.quickActionButton}
               onClick={() => window.open('https://web.whatsapp.com', '_blank')}
-              style={{ borderColor: '#25D366' }}
+              style={{ backgroundColor: '#25D366' }}
+              title="WhatsApp +7 (999) 987-65-43"
             >
-              <Flex align="center" gap="2" style={{ width: '100%' }}>
-                <Flex direction="column" align="start" style={{ flex: 1 }}>
-                  <Text size="2" weight="medium">WhatsApp</Text>
-                  <Text size="1" style={{ color: 'var(--gray-9)', opacity: 0.7 }}>+7 (999) 987-65-43</Text>
-                </Flex>
-              </Flex>
+              <Text size="4" weight="bold" style={{ color: '#ffffff' }}>W</Text>
             </Box>
 
             <Box
-              className={styles.quickActionBlock}
+              className={styles.quickActionButton}
               onClick={() => window.open('https://web.whatsapp.com', '_blank')}
-              style={{ borderColor: '#25D366' }}
+              style={{ backgroundColor: '#25D366' }}
+              title="WhatsApp +7 (999) 555-44-33"
             >
-              <Flex align="center" gap="2" style={{ width: '100%' }}>
-                <Flex direction="column" align="start" style={{ flex: 1 }}>
-                  <Text size="2" weight="medium">WhatsApp</Text>
-                  <Text size="1" style={{ color: 'var(--gray-9)', opacity: 0.7 }}>+7 (999) 555-44-33</Text>
-                </Flex>
-              </Flex>
+              <Text size="4" weight="bold" style={{ color: '#ffffff' }}>W</Text>
             </Box>
 
             {/* Viber */}
             <Box
-              className={styles.quickActionBlock}
+              className={styles.quickActionButton}
               onClick={() => window.open('https://web.viber.com', '_blank')}
-              style={{ borderColor: '#665CAC' }}
+              style={{ backgroundColor: '#665CAC' }}
+              title="Viber +7 (999) 123-45-67"
             >
-              <Flex align="center" gap="2" style={{ width: '100%' }}>
-                <Flex direction="column" align="start" style={{ flex: 1 }}>
-                  <Text size="2" weight="medium">Viber</Text>
-                  <Text size="1" style={{ color: 'var(--gray-9)', opacity: 0.7 }}>+7 (999) 123-45-67</Text>
-                </Flex>
-              </Flex>
+              <Text size="4" weight="bold" style={{ color: '#ffffff' }}>V</Text>
             </Box>
 
             <Box
-              className={styles.quickActionBlock}
+              className={styles.quickActionButton}
               onClick={() => window.open('https://web.viber.com', '_blank')}
-              style={{ borderColor: '#665CAC' }}
+              style={{ backgroundColor: '#665CAC' }}
+              title="Viber +7 (999) 111-22-33"
             >
-              <Flex align="center" gap="2" style={{ width: '100%' }}>
-                <Flex direction="column" align="start" style={{ flex: 1 }}>
-                  <Text size="2" weight="medium">Viber</Text>
-                  <Text size="1" style={{ color: 'var(--gray-9)', opacity: 0.7 }}>+7 (999) 111-22-33</Text>
-                </Flex>
-              </Flex>
+              <Text size="4" weight="bold" style={{ color: '#ffffff' }}>V</Text>
             </Box>
 
             {/* LinkedIn */}
             <Box
-              className={styles.quickActionBlock}
+              className={styles.quickActionButton}
               onClick={() => window.open('https://www.linkedin.com', '_blank')}
-              style={{ borderColor: '#0077B5' }}
+              style={{ backgroundColor: '#0077B5' }}
+              title="LinkedIn linkedin.com/in/username"
             >
-              <Flex align="center" gap="2" style={{ width: '100%' }}>
-                <Flex direction="column" align="start" style={{ flex: 1 }}>
-                  <Text size="2" weight="medium">LinkedIn</Text>
-                  <Text size="1" style={{ color: 'var(--gray-9)', opacity: 0.7 }}>linkedin.com/in/username</Text>
-                </Flex>
-              </Flex>
+              <Text size="4" weight="bold" style={{ color: '#ffffff' }}>in</Text>
             </Box>
 
             <Box
-              className={styles.quickActionBlock}
+              className={styles.quickActionButton}
               onClick={() => window.open('https://www.linkedin.com', '_blank')}
-              style={{ borderColor: '#0077B5' }}
+              style={{ backgroundColor: '#0077B5' }}
+              title="LinkedIn linkedin.com/in/recruiter"
             >
-              <Flex align="center" gap="2" style={{ width: '100%' }}>
-                <Flex direction="column" align="start" style={{ flex: 1 }}>
-                  <Text size="2" weight="medium">LinkedIn</Text>
-                  <Text size="1" style={{ color: 'var(--gray-9)', opacity: 0.7 }}>linkedin.com/in/recruiter</Text>
-                </Flex>
-              </Flex>
+              <Text size="4" weight="bold" style={{ color: '#ffffff' }}>in</Text>
             </Box>
 
             <Box
-              className={styles.quickActionBlock}
+              className={styles.quickActionButton}
               onClick={() => window.open('https://www.linkedin.com', '_blank')}
-              style={{ borderColor: '#0077B5' }}
+              style={{ backgroundColor: '#0077B5' }}
+              title="LinkedIn linkedin.com/company/companyname"
             >
-              <Flex align="center" gap="2" style={{ width: '100%' }}>
-                <Flex direction="column" align="start" style={{ flex: 1 }}>
-                  <Text size="2" weight="medium">LinkedIn</Text>
-                  <Text size="1" style={{ color: 'var(--gray-9)', opacity: 0.7 }}>linkedin.com/company/companyname</Text>
-                </Flex>
-              </Flex>
+              <Text size="4" weight="bold" style={{ color: '#ffffff' }}>in</Text>
             </Box>
 
             {/* Email */}
             <Box
-              className={styles.quickActionBlock}
+              className={styles.quickActionButton}
               onClick={() => window.open('mailto:', '_blank')}
-              style={{ borderColor: '#EA4335' }}
+              style={{ backgroundColor: '#EA4335' }}
+              title="Email example@email.com"
             >
-              <Flex align="center" gap="2" style={{ width: '100%' }}>
-                <EnvelopeClosedIcon width={18} height={18} style={{ color: '#EA4335' }} />
-                <Flex direction="column" align="start" style={{ flex: 1 }}>
-                  <Text size="2" weight="medium">Email</Text>
-                  <Text size="1" style={{ color: 'var(--gray-9)', opacity: 0.7 }}>example@email.com</Text>
-                </Flex>
-              </Flex>
+              <EnvelopeClosedIcon width={20} height={20} style={{ color: '#ffffff' }} />
             </Box>
 
             <Box
-              className={styles.quickActionBlock}
+              className={styles.quickActionButton}
               onClick={() => window.open('mailto:', '_blank')}
-              style={{ borderColor: '#EA4335' }}
+              style={{ backgroundColor: '#EA4335' }}
+              title="Email hr@company.com"
             >
-              <Flex align="center" gap="2" style={{ width: '100%' }}>
-                <EnvelopeClosedIcon width={18} height={18} style={{ color: '#EA4335' }} />
-                <Flex direction="column" align="start" style={{ flex: 1 }}>
-                  <Text size="2" weight="medium">Email</Text>
-                  <Text size="1" style={{ color: 'var(--gray-9)', opacity: 0.7 }}>hr@company.com</Text>
-                </Flex>
-              </Flex>
+              <EnvelopeClosedIcon width={20} height={20} style={{ color: '#ffffff' }} />
             </Box>
 
             <Box
-              className={styles.quickActionBlock}
+              className={styles.quickActionButton}
               onClick={() => window.open('mailto:', '_blank')}
-              style={{ borderColor: '#EA4335' }}
+              style={{ backgroundColor: '#EA4335' }}
+              title="Email recruiting@company.com"
             >
-              <Flex align="center" gap="2" style={{ width: '100%' }}>
-                <EnvelopeClosedIcon width={18} height={18} style={{ color: '#EA4335' }} />
-                <Flex direction="column" align="start" style={{ flex: 1 }}>
-                  <Text size="2" weight="medium">Email</Text>
-                  <Text size="1" style={{ color: 'var(--gray-9)', opacity: 0.7 }}>recruiting@company.com</Text>
-                </Flex>
-              </Flex>
+              <EnvelopeClosedIcon width={20} height={20} style={{ color: '#ffffff' }} />
             </Box>
           </Flex>
         </Box>
