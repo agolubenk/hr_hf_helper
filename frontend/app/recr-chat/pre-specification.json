@@ -1,7 +1,7 @@
 {
   "name": "recr-chat",
   "type": "page",
-  "description": "Страница чата рекрутера с кандидатами. Централизованный интерфейс для общения со всеми кандидатами из разных мессенджеров (Telegram, WhatsApp, Viber), управления контактами, информацией о кандидатах, настройками вакансий и workflow процессами.\n\n**Путь**: `/recr-chat`\n\n**Размер файла**: ~7982 строки кода (очень большой компонент)",
+  "description": "Страница чата рекрутера с кандидатами. Централизованный интерфейс для общения со всеми кандидатами из разных мессенджеров (Telegram, WhatsApp, Viber), управления контактами, информацией о кандидатах, настройками вакансий и workflow процессами.\n\n**Путь**: `/recr-chat`\n\n**Размер файла**: ~9754 строки кода (очень большой компонент)\n\n**Особенности workflow**:\n- Тогглеры этапов процесса: динамические кнопки на основе этапов найма с меткой \"встреча\" (`isMeeting = true`)\n- Кнопка \"Скрининг\" - всегда доступна (30 минут)\n- Динамические кнопки этапов-встреч - формируются из этапов найма с `isMeeting = true`\n- Панель настроек встречи: условное отображение элементов в зависимости от настроек этапа (`showOffices`, `showInterviewers`)\n- Настройки этапов задаются на странице `/company-settings/recruiting/stages`",
   "route_path": "`/recr-chat`",
   "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/recr-chat/PAGE_DOCUMENTATION.md",
   "mock_data": {
@@ -41,8 +41,9 @@
   "interfaces": [
     {
       "name": "WorkflowType",
-      "definition": "type WorkflowType = 'screening' | 'interview'  // Тип workflow процесса",
-      "fields": []
+      "definition": "type WorkflowType = 'screening' | string  // Тип workflow процесса: 'screening' для скрининга, или ID этапа найма с isMeeting = true",
+      "fields": [],
+      "description": "Тип workflow процесса. 'screening' для скрининга (всегда доступен), или ID этапа найма с isMeeting = true для динамических кнопок этапов-встреч"
     },
     {
       "name": "InterviewFormat",
@@ -286,6 +287,15 @@
       "description": "Workflow процессы через API\n    - POST `/api/workflow/screening/` - запуск скрининга\n    - POST `/api/workflow/interview/` - запуск интервью\n    - Обновление статусов кандидатов",
       "method": "POST",
       "endpoint": "/api/workflow/screening/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 13,
+      "description": "Загрузка этапов найма с настройками встреч\n    - GET `/api/company-settings/recruiting/stages/` - получение этапов найма с полями isMeeting, showOffices, showInterviewers\n    - Обновление recruitmentStagesWithMeetings для формирования динамических тогглеров этапов",
+      "method": "GET",
+      "endpoint": "/api/company-settings/recruiting/stages/",
       "parameters": null,
       "returns": null,
       "status": "pending"

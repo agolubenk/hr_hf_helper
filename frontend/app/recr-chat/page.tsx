@@ -8,6 +8,7 @@
  * - Управление контактами кандидатов (email, телефоны, социальные сети)
  * - Отметка кандидатов как просмотренных/непросмотренных
  * - Управление подозрениями на дубликаты
+ * - Управление workflow процессами (скрининг, этапы-встречи)
  * 
  * Функциональность:
  * - WorkflowChat: компонент чата с кандидатами
@@ -19,6 +20,22 @@
  * - Отметка кандидата как просмотренного
  * - Управление подозрениями на дубликаты
  * - Интеграция с различными мессенджерами и социальными сетями
+ * - Тогглеры этапов процесса: динамические кнопки на основе этапов найма с меткой "встреча"
+ * - Панель настроек встречи: условное отображение элементов в зависимости от настроек этапа
+ * 
+ * Тогглеры этапов процесса:
+ * - Кнопка "Скрининг" - всегда доступна (30 минут)
+ * - Динамические кнопки этапов-встреч - формируются из этапов найма с `isMeeting = true`
+ *   - Количество кнопок: 0 и более (зависит от количества этапов с `isMeeting = true`)
+ *   - Названия кнопок: берутся из названий этапов найма, отмеченных чекбоксом "встреча"
+ *   - Если этапов-встреч нет, тогглер может быть пустым или содержать только "Скрининг"
+ * 
+ * Панель настроек встречи:
+ * - Отображается только при выборе этапа-встречи (не "Скрининг")
+ * - Содержимое зависит от настроек выбранного этапа:
+ *   - `showOffices`: если true, показывается выбор формата (Онлайн/Офис) и выбор офиса при выборе "Офис"
+ *   - `showInterviewers`: если true, показывается выбор интервьюеров
+ * - Настройки этапа задаются на странице `/company-settings/recruiting/stages`
  * 
  * Связи:
  * - AppLayout: оборачивает страницу в общий layout
@@ -26,6 +43,7 @@
  * - SlotsPanel: компонент управления слотами
  * - useToast: для отображения уведомлений
  * - Sidebar: содержит ссылку на эту страницу в разделе "Рекрутинг"
+ * - /company-settings/recruiting/stages: настройки этапов найма с метками "встреча"
  * 
  * Поведение:
  * - При загрузке отображает список кандидатов и выбранный чат
@@ -33,14 +51,20 @@
  * - При получении новых сообщений обновляет счетчик непрочитанных
  * - При редактировании кандидата открывает форму редактирования
  * - Поддерживает множественные контакты для каждого мессенджера/соцсети
+ * - При загрузке компонента загружаются этапы найма с настройками встреч
+ * - Тогглер типа процесса динамически формируется из этапов-встреч
+ * - При выборе этапа-встречи показывается панель настроек встречи
+ * - В зависимости от настроек этапа (`showOffices`, `showInterviewers`) отображаются соответствующие элементы
+ * - При выборе формата "Офис" и `showOffices = true` показывается выбор офиса
  * 
  * TODO: Заменить моковые данные на реальные из API
  * TODO: Реализовать реальную интеграцию с мессенджерами
+ * TODO: Загружать этапы найма с настройками встреч из API /api/company-settings/recruiting/stages/
  */
 
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import AppLayout from "@/components/AppLayout"
 import WorkflowChat from "@/components/workflow/WorkflowChat"
 import SlotsPanel from "@/components/workflow/SlotsPanel"
@@ -509,7 +533,7 @@ const getMessageDotInfo = (candidate: any) => {
   }
 }
 
-type WorkflowType = 'screening' | 'interview'
+type WorkflowType = 'screening' | string // 'screening' для скрининга, или ID этапа найма с isMeeting = true
 type InterviewFormat = 'online' | 'office'
 type Office = 'minsk' | 'warsaw' | 'gomel'
 
@@ -1216,14 +1240,28 @@ export default function RecrChatPage() {
   const [slotsOpen, setSlotsOpen] = useState(false)
   const [selectedOffice, setSelectedOffice] = useState<Office>('minsk')
   
-  // Офисы для выбора
+  /**
+   * Офисы для выбора
+   * 
+   * Используется для:
+   * - Выбора офиса при настройке интервью
+   * - Отображения в панели настроек встречи при выборе формата "Офис"
+   */
   const offices: { id: Office; label: string }[] = [
     { id: 'minsk', label: 'Минск' },
     { id: 'warsaw', label: 'Варшава' },
     { id: 'gomel', label: 'Гомель' },
   ]
   
-  // Моковые данные интервьюеров (автор добавляется в начало списка)
+  /**
+   * Моковые данные интервьюеров (автор добавляется в начало списка)
+   * 
+   * Используется для:
+   * - Выбора интервьюеров при настройке интервью
+   * - Отображения в панели настроек встречи при `showInterviewers = true`
+   * 
+   * TODO: Загружать из API
+   */
   const currentUser = { id: 'author', name: 'Я (Андрей Голубенко)' }
   const interviewers: Interviewer[] = [
     { id: '1', name: 'Иван Петров' },
@@ -1231,7 +1269,12 @@ export default function RecrChatPage() {
     { id: '3', name: 'Алексей Иванов' },
   ]
   
-  // Объединяем автора и интервьюеров
+  /**
+   * Объединяем автора и интервьюеров
+   * 
+   * Используется для:
+   * - Отображения полного списка участников в панели настроек встречи
+   */
   const allParticipants = [currentUser, ...interviewers]
   
   /**
@@ -1906,11 +1949,146 @@ export default function RecrChatPage() {
     format: 'office' | 'online' | ''
   }
   
+  /**
+   * Состояние для этапов найма с настройками встреч
+   * 
+   * Структура:
+   * - id: уникальный идентификатор этапа
+   * - name: название этапа
+   * - description: описание этапа (опционально)
+   * - color: цвет этапа (hex)
+   * - isMeeting: метка "встреча" - этап используется в тогглере на странице /workflow и /recr-chat
+   * - showOffices: отображать офисы для этапа-встречи (да/нет)
+   * - showInterviewers: отображать интервьюеров для этапа-встречи (да/нет)
+   * 
+   * Используется для:
+   * - Формирования динамических кнопок тогглера этапов процесса
+   * - Определения настроек панели встречи (showOffices, showInterviewers)
+   * - Условного отображения элементов панели настроек встречи
+   * 
+   * Инициализация:
+   * - По умолчанию все этапы имеют isMeeting = false, showOffices = false, showInterviewers = false
+   * - Обновляется через useEffect при загрузке данных из API
+   */
+  const [recruitmentStagesWithMeetings, setRecruitmentStagesWithMeetings] = useState<Array<{
+    id: string
+    name: string
+    description?: string
+    color: string
+    isMeeting?: boolean
+    showOffices?: boolean
+    showInterviewers?: boolean
+  }>>(recruitmentStages.map(s => ({ ...s, isMeeting: false, showOffices: false, showInterviewers: false })))
+
+  /**
+   * Загрузка этапов найма с настройками встреч
+   * 
+   * Функциональность:
+   * - Загружает этапы найма из API (TODO: реализовать)
+   * - Обновляет recruitmentStagesWithMeetings с учетом isMeeting, showOffices, showInterviewers
+   * - Пока использует моковые данные для демонстрации функциональности
+   * 
+   * Используется для:
+   * - Формирования динамических кнопок тогглера этапов процесса
+   * - Определения настроек панели встречи (showOffices, showInterviewers)
+   * 
+   * TODO: Загрузить этапы найма из API /api/company-settings/recruiting/stages/
+   */
+  useEffect(() => {
+    // TODO: Загрузить этапы найма из API /api/company-settings/recruiting/stages/
+    // и обновить recruitmentStagesWithMeetings с учетом isMeeting, showOffices, showInterviewers
+    // Пока используем моковые данные
+    const mockStagesWithMeetings = recruitmentStages.map(s => ({
+      ...s,
+      isMeeting: s.id === 'interview' || s.id === 'hr-screening' || s.id === 'final-interview',
+      showOffices: s.id === 'interview' ? true : false,
+      showInterviewers: s.id === 'interview' ? true : false,
+    }))
+    setRecruitmentStagesWithMeetings(mockStagesWithMeetings)
+  }, [])
+
+  /**
+   * Получаем этапы-встречи для формирования тогглера
+   * 
+   * Функциональность:
+   * - Фильтрует этапы найма с меткой "встреча" (isMeeting = true)
+   * - Используется для динамического формирования кнопок тогглера этапов процесса
+   * 
+   * Возвращает:
+   * - Массив этапов найма с isMeeting = true
+   * - Пустой массив, если recruitmentStagesWithMeetings не является массивом
+   * 
+   * Используется для:
+   * - Формирования динамических кнопок в тогглере этапов процесса
+   * - Определения количества и названий кнопок тогглера
+   */
+  const meetingStages = useMemo(() => {
+    if (!Array.isArray(recruitmentStagesWithMeetings)) return []
+    return recruitmentStagesWithMeetings.filter(s => s.isMeeting === true)
+  }, [recruitmentStagesWithMeetings])
+  
+  /**
+   * Получаем настройки выбранного этапа-встречи
+   * 
+   * Функциональность:
+   * - Находит этап найма по ID, если выбран этап-встреча (не "Скрининг")
+   * - Возвращает null, если выбран "Скрининг" или этап не найден
+   * 
+   * Возвращает:
+   * - Объект этапа найма с настройками (isMeeting, showOffices, showInterviewers)
+   * - null, если выбран "Скрининг" или этап не найден
+   * 
+   * Используется для:
+   * - Определения настроек панели встречи (showOffices, showInterviewers)
+   * - Условного отображения элементов панели настроек встречи
+   */
+  const selectedMeetingStage = useMemo(() => {
+    if (!Array.isArray(recruitmentStagesWithMeetings)) return null
+    return typeof selectedWorkflow === 'string' && selectedWorkflow !== 'screening' 
+      ? recruitmentStagesWithMeetings.find(s => s.id === selectedWorkflow)
+      : null
+  }, [recruitmentStagesWithMeetings, selectedWorkflow])
+  
+  /**
+   * Флаг отображения офисов для выбранного этапа-встречи
+   * 
+   * Функциональность:
+   * - Определяет, нужно ли показывать выбор формата (Онлайн/Офис) и выбор офиса
+   * - Используется для условного отображения элементов панели настроек встречи
+   * 
+   * Возвращает:
+   * - true, если showOffices = true для выбранного этапа
+   * - false, если выбран "Скрининг" или showOffices = false
+   * 
+   * Используется для:
+   * - Условного отображения тогглера формата встречи (Онлайн/Офис)
+   * - Условного отображения выбора офиса при выборе формата "Офис"
+   */
+  const showOfficesForSelectedStage = useMemo(() => selectedMeetingStage?.showOffices ?? false, [selectedMeetingStage])
+  
+  /**
+   * Флаг отображения интервьюеров для выбранного этапа-встречи
+   * 
+   * Функциональность:
+   * - Определяет, нужно ли показывать выбор интервьюеров
+   * - Используется для условного отображения элементов панели настроек встречи
+   * 
+   * Возвращает:
+   * - true, если showInterviewers = true для выбранного этапа
+   * - false, если выбран "Скрининг" или showInterviewers = false
+   * 
+   * Используется для:
+   * - Условного отображения списка интервьюеров в панели настроек встречи
+   */
+  const showInterviewersForSelectedStage = useMemo(() => selectedMeetingStage?.showInterviewers ?? false, [selectedMeetingStage])
+
   // Вычисляем количество встреч: активные этапы до оффера - 2
   const getStagesBeforeOffer = () => {
-    return recruitmentStages.filter(s => {
-      const stageIndex = recruitmentStages.findIndex(st => st.id === s.id)
-      const offerIndex = recruitmentStages.findIndex(st => st.id === 'offer')
+    // Используем этапы с настройками встреч, если они загружены, иначе используем базовые этапы
+    const stagesToUse = recruitmentStagesWithMeetings.length > 0 ? recruitmentStagesWithMeetings : recruitmentStages
+    return stagesToUse.filter(s => {
+      const stageIndex = stagesToUse.findIndex(st => st.id === s.id)
+      const offerIndex = stagesToUse.findIndex(st => st.id === 'offer')
       return stageIndex < offerIndex && activeStages.has(s.id)
     })
   }
@@ -2043,6 +2221,57 @@ export default function RecrChatPage() {
   const [questionsLinksByOffice, setQuestionsLinksByOffice] = useState<Record<string, OfficeQuestionsState>>(() => {
     const init: Record<string, OfficeQuestionsState> = {}
     questionLinkOffices.forEach((o) => { init[o.id] = getDefaultOfficeState() })
+    return init
+  })
+
+  // Состояние для вкладок стран в разделе "Текст вакансии"
+  const [selectedCountryTab, setSelectedCountryTab] = useState<string>(questionLinkOffices[0]?.id || 'by')
+  // Состояние активности вакансии для каждой страны
+  const [vacancyActiveByCountry, setVacancyActiveByCountry] = useState<Record<string, boolean>>(() => {
+    const init: Record<string, boolean> = {}
+    questionLinkOffices.forEach(o => { init[o.id] = true })
+    return init
+  })
+
+  // Состояние для полей вакансии по странам
+  const [vacancyFieldsByCountry, setVacancyFieldsByCountry] = useState<Record<string, {
+    title: string
+    department: string
+    header: string
+    responsibilities: string
+    requirements: string
+    niceToHave: string
+    conditions: string
+    closing: string
+    link: string
+    fieldSettings: Record<string, { active: boolean; visible: boolean }>
+  }>>(() => {
+    const init: Record<string, any> = {}
+    questionLinkOffices.forEach(o => {
+      init[o.id] = {
+        title: '',
+        department: '',
+        header: '',
+        responsibilities: '',
+        requirements: '',
+        niceToHave: '',
+        conditions: '',
+        closing: '',
+        link: '',
+        fieldSettings: {
+          title: { active: true, visible: true },
+          department: { active: true, visible: true },
+          header: { active: true, visible: true },
+          responsibilities: { active: true, visible: true },
+          requirements: { active: true, visible: true },
+          niceToHave: { active: true, visible: true },
+          conditions: { active: true, visible: true },
+          closing: { active: true, visible: true },
+          link: { active: true, visible: true },
+          attachment: { active: true, visible: true },
+        }
+      }
+    })
     return init
   })
   
@@ -4276,75 +4505,78 @@ export default function RecrChatPage() {
               </Box>
             </Flex>
 
-            {/* Тогглер выбора офиса (над блоком с кнопками) */}
-            <Flex gap="1" align="center" className={styles.officeToggle} mb="2">
-              {offices.map(office => (
-                <Box
-                  key={office.id}
-                  className={styles.officeButton}
-                  data-selected={selectedOffice === office.id}
-                  onClick={() => setSelectedOffice(office.id)}
-                >
-                  <Text size="1" weight={selectedOffice === office.id ? "medium" : "regular"}>
-                    {office.label}
-                  </Text>
-                </Box>
-              ))}
-            </Flex>
-
             <Flex gap="2" align="center" style={{ flexShrink: 0, minWidth: 'max-content' }}>
-              {/* Тогглеры этапов процесса */}
-              <Box
-                className={styles.workflowButton}
-                data-selected={selectedWorkflow === 'screening'}
-                onClick={() => setSelectedWorkflow('screening')}
-                style={{ flexShrink: 0 }}
-              >
-                <Flex align="center" gap="2">
-                  <Box className={styles.workflowIcon}>
-                    <ClipboardIcon width={18} height={18} />
+              {/* Тогглеры этапов процесса: динамические кнопки на основе этапов найма с меткой "встреча"
+                  - Количество кнопок: 0 и более (зависит от количества этапов с isMeeting = true)
+                  - Названия кнопок: берутся из названий этапов найма, отмеченных чекбоксом "встреча"
+                  - Если этапов-встреч нет, тогглер может быть пустым или содержать только системные опции
+                  - Настройки этапов-встреч задаются на странице /company-settings/recruiting/stages */}
+              <Flex gap="3" align="center" className={styles.workflowToggle}>
+                {/* Кнопка "Скрининг" - всегда доступна
+                    - Отображается всегда, независимо от настроек этапов
+                    - Длительность: 30 минут
+                    - Используется для процесса скрининга кандидатов */}
+                <Box
+                  className={styles.workflowButton}
+                  data-selected={selectedWorkflow === 'screening'}
+                  onClick={() => setSelectedWorkflow('screening')}
+                  style={{ flexShrink: 0 }}
+                >
+                  <Flex align="center" gap="2">
+                    <Box className={styles.workflowIcon}>
+                      <ClipboardIcon width={18} height={18} />
+                    </Box>
+                    <Box>
+                      <Text size="2" weight="bold" style={{ display: 'block', color: '#ffffff' }}>
+                        Скрининг
+                      </Text>
+                      <Text size="1" style={{ opacity: 0.9, color: '#ffffff' }}>
+                        30 мин
+                      </Text>
+                    </Box>
+                  </Flex>
+                  {selectedWorkflow === 'screening' && (
+                    <Box className={styles.selectedBadge}>
+                      <CheckIcon width={12} height={12} style={{ color: '#ffffff' }} />
+                    </Box>
+                  )}
+                </Box>
+                
+                {/* Динамические кнопки этапов-встреч
+                    - Формируются из этапов найма с isMeeting = true
+                    - Название кнопки берется из stage.description или stage.name
+                    - Длительность: 90 минут (по умолчанию)
+                    - При клике устанавливается selectedWorkflow = stage.id
+                    - Настройки этапа (showOffices, showInterviewers) определяют содержимое панели настроек встречи */}
+                {meetingStages.map((stage) => (
+                  <Box
+                    key={stage.id}
+                    className={styles.workflowButton}
+                    data-selected={selectedWorkflow === stage.id}
+                    onClick={() => setSelectedWorkflow(stage.id)}
+                    style={{ flexShrink: 0 }}
+                  >
+                    <Flex align="center" gap="2">
+                      <Box className={styles.workflowIcon}>
+                        <PersonIcon width={18} height={18} />
+                      </Box>
+                      <Box>
+                        <Text size="2" weight="bold" style={{ display: 'block', color: '#ffffff' }}>
+                          {stage.description || stage.name}
+                        </Text>
+                        <Text size="1" style={{ opacity: 0.9, color: '#ffffff' }}>
+                          90 мин
+                        </Text>
+                      </Box>
+                    </Flex>
+                    {selectedWorkflow === stage.id && (
+                      <Box className={styles.selectedBadge}>
+                        <CheckIcon width={12} height={12} style={{ color: '#ffffff' }} />
+                      </Box>
+                    )}
                   </Box>
-                  <Box>
-                    <Text size="2" weight="bold" style={{ display: 'block', color: '#ffffff' }}>
-                      Скрининг
-                    </Text>
-                    <Text size="1" style={{ opacity: 0.9, color: '#ffffff' }}>
-                      30 мин
-                    </Text>
-                  </Box>
-                </Flex>
-                {selectedWorkflow === 'screening' && (
-                  <Box className={styles.selectedBadge}>
-                    <CheckIcon width={12} height={12} style={{ color: '#ffffff' }} />
-                  </Box>
-                )}
-              </Box>
-              
-              <Box
-                className={styles.workflowButton}
-                data-selected={selectedWorkflow === 'interview'}
-                onClick={() => setSelectedWorkflow('interview')}
-                style={{ flexShrink: 0 }}
-              >
-                <Flex align="center" gap="2">
-                  <Box className={styles.workflowIcon}>
-                    <PersonIcon width={18} height={18} />
-                  </Box>
-                  <Box>
-                    <Text size="2" weight="bold" style={{ display: 'block', color: '#ffffff' }}>
-                      Интервью
-                    </Text>
-                    <Text size="1" style={{ opacity: 0.9, color: '#ffffff' }}>
-                      90 мин
-                    </Text>
-                  </Box>
-                </Flex>
-                {selectedWorkflow === 'interview' && (
-                  <Box className={styles.selectedBadge}>
-                    <CheckIcon width={12} height={12} style={{ color: '#ffffff' }} />
-                  </Box>
-                )}
-              </Box>
+                ))}
+              </Flex>
               
               {/* Кнопка со слотами */}
               <Button
@@ -4365,43 +4597,153 @@ export default function RecrChatPage() {
               </Button>
             </Flex>
 
-            {/* Блок настроек интервью (показывается только при выборе "Интервью") */}
-            {selectedWorkflow === 'interview' && (
-              <Box mt="3" p="3" style={{ backgroundColor: 'var(--accent-2)', borderRadius: '8px' }}>
-                <Flex direction="column" gap="3">
-                  <Text size="2" weight="bold">Формат интервью</Text>
-                  <Flex gap="2">
-                    <Button
-                      variant={interviewFormat === 'online' ? 'solid' : 'soft'}
-                      size="2"
-                      onClick={() => setInterviewFormat('online')}
-                    >
-                      <VideoIcon width={16} height={16} />
-                      <Text size="2">Онлайн</Text>
-                    </Button>
-                    <Button
-                      variant={interviewFormat === 'office' ? 'solid' : 'soft'}
-                      size="2"
-                      onClick={() => setInterviewFormat('office')}
-                    >
-                      <PersonIcon width={16} height={16} />
-                      <Text size="2">Офлайн</Text>
-                    </Button>
+            {/* Блок настроек встречи (показывается только при выборе этапа-встречи)
+                - Отображается для этапов найма с isMeeting = true
+                - Не отображается для "Скрининг" (selectedWorkflow === 'screening')
+                - Содержимое зависит от настроек выбранного этапа:
+                  - showOffices: если true, показывается выбор формата (Онлайн/Офис) и выбор офиса при выборе "Офис"
+                  - showInterviewers: если true, показывается выбор интервьюеров
+                - Настройки этапа задаются на странице /company-settings/recruiting/stages
+                - Элементы отображаются условно в зависимости от настроек этапа */}
+            {selectedWorkflow !== 'screening' && selectedMeetingStage && (
+              <Box className={styles.interviewOptionsPanel} mt="2">
+                <Box 
+                  className={styles.participantsScrollContainer}
+                  style={{ 
+                    width: '100%',
+                    overflowX: 'auto',
+                    overflowY: 'hidden',
+                    WebkitOverflowScrolling: 'touch',
+                    scrollbarWidth: 'thin',
+                  }}
+                >
+                  <Flex gap="4" align="center" wrap="nowrap" style={{ minWidth: 'max-content' }}>
+                    {/* Тогглер формата встречи (отображается если showOffices = true для выбранного этапа)
+                        - Позволяет выбрать формат: Онлайн или Офис
+                        - При выборе "Офис" показывается дополнительная карточка с выбором офиса
+                        - Если showOffices = false, этот блок не отображается */}
+                    {showOfficesForSelectedStage && (
+                      <>
+                        <Flex gap="2" align="center" style={{ flexShrink: 0 }}>
+                          <Box
+                            className={styles.formatButton}
+                            data-selected={interviewFormat === 'online'}
+                            onClick={() => setInterviewFormat('online')}
+                          >
+                            <VideoIcon width={14} height={14} />
+                            <Text size="2" weight="medium">Онлайн</Text>
+                          </Box>
+                          <Box
+                            className={styles.formatButton}
+                            data-selected={interviewFormat === 'office'}
+                            onClick={() => setInterviewFormat('office')}
+                          >
+                            <BoxIcon width={14} height={14} />
+                            <Text size="2" weight="medium">Офис</Text>
+                          </Box>
+                        </Flex>
+
+                        {/* Выбор офиса (отображается если выбран формат "Офис" и showOffices = true)
+                            - Показывается сразу после кнопки выбора формата "Офис"
+                            - Содержит список офисов для выбора (Минск, Варшава, Гомель)
+                            - Разделитель добавляется перед списком офисов */}
+                        {interviewFormat === 'office' && (
+                          <>
+                            <Separator orientation="vertical" style={{ height: '20px', flexShrink: 0 }} />
+                            <Flex gap="1" align="center" className={styles.officeToggle} style={{ flexShrink: 0 }}>
+                              {offices.map(office => (
+                                <Box
+                                  key={office.id}
+                                  className={styles.officeButton}
+                                  data-selected={selectedOffice === office.id}
+                                  onClick={() => setSelectedOffice(office.id)}
+                                >
+                                  <Text size="1" weight={selectedOffice === office.id ? "medium" : "regular"}>
+                                    {office.label}
+                                  </Text>
+                                </Box>
+                              ))}
+                            </Flex>
+                          </>
+                        )}
+                      </>
+                    )}
+
+                    {/* Чекбоксы интервьюеров (отображается если showInterviewers = true для выбранного этапа)
+                        - Позволяет выбрать несколько интервьюеров для встречи
+                        - Автор (текущий пользователь) добавляется в начало списка
+                        - Разделитель добавляется условно в зависимости от наличия других элементов
+                        - Если showInterviewers = false, этот блок не отображается */}
+                    {showInterviewersForSelectedStage && (
+                      <>
+                        {/* Разделитель добавляется условно в зависимости от наличия других элементов */}
+                        {(showOfficesForSelectedStage && interviewFormat === 'office') && (
+                          <Separator orientation="vertical" style={{ height: '20px', flexShrink: 0 }} />
+                        )}
+                        {showOfficesForSelectedStage && interviewFormat === 'online' && (
+                          <Separator orientation="vertical" style={{ height: '20px', flexShrink: 0 }} />
+                        )}
+                        {!showOfficesForSelectedStage && (
+                          <Separator orientation="vertical" style={{ height: '20px', flexShrink: 0 }} />
+                        )}
+                        <Flex gap="3" align="center" wrap="nowrap" style={{ minWidth: 'max-content', flexShrink: 0 }}>
+                          {allParticipants.map(participant => {
+                            const isSelected = selectedInterviewers.includes(participant.id)
+                            return (
+                              <Box
+                                key={participant.id}
+                                onClick={() => handleInterviewerToggle(participant.id)}
+                                style={{
+                                  position: 'relative',
+                                  padding: '2px 12px',
+                                  borderRadius: '6px',
+                                  border: isSelected ? '2px solid var(--accent-9)' : '2px solid transparent',
+                                  backgroundColor: isSelected ? 'var(--accent-3)' : 'transparent',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.2s ease',
+                                  whiteSpace: 'nowrap',
+                                  flexShrink: 0,
+                                }}
+                                onMouseEnter={(e) => {
+                                  if (!isSelected) {
+                                    e.currentTarget.style.backgroundColor = 'var(--gray-3)'
+                                  }
+                                }}
+                                onMouseLeave={(e) => {
+                                  if (!isSelected) {
+                                    e.currentTarget.style.backgroundColor = 'transparent'
+                                  }
+                                }}
+                              >
+                                <Text size="2">{participant.name}</Text>
+                                {isSelected && (
+                                  <Box
+                                    style={{
+                                      position: 'absolute',
+                                      top: '-6px',
+                                      right: '-6px',
+                                      width: '18px',
+                                      height: '18px',
+                                      borderRadius: '50%',
+                                      backgroundColor: 'var(--accent-9)',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      border: '2px solid white',
+                                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+                                    }}
+                                  >
+                                    <CheckIcon width={10} height={10} style={{ color: '#ffffff' }} />
+                                  </Box>
+                                )}
+                              </Box>
+                            )
+                          })}
+                        </Flex>
+                      </>
+                    )}
                   </Flex>
-                  
-                  <Text size="2" weight="bold">Интервьюеры</Text>
-                  <Flex direction="column" gap="2">
-                    {interviewers.map((interviewer) => (
-                      <Flex key={interviewer.id} align="center" gap="2">
-                        <Checkbox
-                          checked={selectedInterviewers.includes(interviewer.id)}
-                          onCheckedChange={() => handleInterviewerToggle(interviewer.id)}
-                        />
-                        <Text size="2">{interviewer.name}</Text>
-                      </Flex>
-                    ))}
-                  </Flex>
-                </Flex>
+                </Box>
               </Box>
             )}
           </Box>
@@ -4669,23 +5011,16 @@ export default function RecrChatPage() {
 
               {/* Тогглеры и кнопка справа - всегда видимы */}
               <Flex gap="3" align="center" style={{ flexShrink: 0 }}>
-                {/* Тогглер выбора офиса (перед блоком с кнопками, когда ширина позволяет) */}
-                <Flex gap="1" align="center" className={styles.officeToggle}>
-                  {offices.map(office => (
-                    <Box
-                      key={office.id}
-                      className={styles.officeButton}
-                      data-selected={selectedOffice === office.id}
-                      onClick={() => setSelectedOffice(office.id)}
-                    >
-                      <Text size="1" weight={selectedOffice === office.id ? "medium" : "regular"}>
-                        {office.label}
-                      </Text>
-                    </Box>
-                  ))}
-                </Flex>
-                {/* Тогглер этапов процесса */}
-                <Flex gap="3" align="center">
+                {/* Тогглер этапов процесса: динамические кнопки на основе этапов найма с меткой "встреча"
+                    - Количество кнопок: 0 и более (зависит от количества этапов с isMeeting = true)
+                    - Названия кнопок: берутся из названий этапов найма, отмеченных чекбоксом "встреча"
+                    - Если этапов-встреч нет, тогглер может быть пустым или содержать только системные опции
+                    - Настройки этапов-встреч задаются на странице /company-settings/recruiting/stages */}
+                <Flex gap="3" align="center" className={styles.workflowToggle}>
+                  {/* Кнопка "Скрининг" - всегда доступна
+                      - Отображается всегда, независимо от настроек этапов
+                      - Длительность: 30 минут
+                      - Используется для процесса скрининга кандидатов */}
                   <Box
                     className={styles.workflowButton}
                     data-selected={selectedWorkflow === 'screening'}
@@ -4711,30 +5046,39 @@ export default function RecrChatPage() {
                     )}
                   </Box>
                   
-                  <Box
-                    className={styles.workflowButton}
-                    data-selected={selectedWorkflow === 'interview'}
-                    onClick={() => setSelectedWorkflow('interview')}
-                  >
-                    <Flex align="center" gap="2">
-                      <Box className={styles.workflowIcon}>
-                        <PersonIcon width={18} height={18} />
-                      </Box>
-                      <Box>
-                        <Text size="2" weight="bold" style={{ display: 'block', color: '#ffffff' }}>
-                          Интервью
-                        </Text>
-                        <Text size="1" style={{ opacity: 0.9, color: '#ffffff' }}>
-                          90 мин
-                        </Text>
-                      </Box>
-                    </Flex>
-                    {selectedWorkflow === 'interview' && (
-                      <Box className={styles.selectedBadge}>
-                        <CheckIcon width={12} height={12} style={{ color: '#ffffff' }} />
-                      </Box>
-                    )}
-                  </Box>
+                  {/* Динамические кнопки этапов-встреч
+                      - Формируются из этапов найма с isMeeting = true
+                      - Название кнопки берется из stage.description или stage.name
+                      - Длительность: 90 минут (по умолчанию)
+                      - При клике устанавливается selectedWorkflow = stage.id
+                      - Настройки этапа (showOffices, showInterviewers) определяют содержимое панели настроек встречи */}
+                  {meetingStages.map((stage) => (
+                    <Box
+                      key={stage.id}
+                      className={styles.workflowButton}
+                      data-selected={selectedWorkflow === stage.id}
+                      onClick={() => setSelectedWorkflow(stage.id)}
+                    >
+                      <Flex align="center" gap="2">
+                        <Box className={styles.workflowIcon}>
+                          <PersonIcon width={18} height={18} />
+                        </Box>
+                        <Box>
+                          <Text size="2" weight="bold" style={{ display: 'block', color: '#ffffff' }}>
+                            {stage.description || stage.name}
+                          </Text>
+                          <Text size="1" style={{ opacity: 0.9, color: '#ffffff' }}>
+                            90 мин
+                          </Text>
+                        </Box>
+                      </Flex>
+                      {selectedWorkflow === stage.id && (
+                        <Box className={styles.selectedBadge}>
+                          <CheckIcon width={12} height={12} style={{ color: '#ffffff' }} />
+                        </Box>
+                      )}
+                    </Box>
+                  ))}
                 </Flex>
                 
                 {/* Кнопка со слотами */}
@@ -4757,8 +5101,15 @@ export default function RecrChatPage() {
               </Flex>
             </Flex>
 
-            {/* Блок настроек интервью (показывается только при выборе "Интервью") */}
-            {selectedWorkflow === 'interview' && (
+            {/* Блок настроек встречи (показывается только при выборе этапа-встречи)
+                - Отображается для этапов найма с isMeeting = true
+                - Не отображается для "Скрининг" (selectedWorkflow === 'screening')
+                - Содержимое зависит от настроек выбранного этапа:
+                  - showOffices: если true, показывается выбор формата (Онлайн/Офис) и выбор офиса при выборе "Офис"
+                  - showInterviewers: если true, показывается выбор интервьюеров
+                - Настройки этапа задаются на странице /company-settings/recruiting/stages
+                - Элементы отображаются условно в зависимости от настроек этапа */}
+            {selectedWorkflow !== 'screening' && selectedMeetingStage && (
               <Box className={styles.interviewOptionsPanel} mt="2">
                 <Box 
                   className={styles.participantsScrollContainer}
@@ -4771,84 +5122,130 @@ export default function RecrChatPage() {
                   }}
                 >
                   <Flex gap="4" align="center" wrap="nowrap" style={{ minWidth: 'max-content' }}>
-                    {/* Тогглер формата интервью */}
-                    <Flex gap="2" align="center" style={{ flexShrink: 0 }}>
-                      <Box
-                        className={styles.formatButton}
-                        data-selected={interviewFormat === 'online'}
-                        onClick={() => setInterviewFormat('online')}
-                      >
-                        <VideoIcon width={14} height={14} />
-                        <Text size="2" weight="medium">Онлайн</Text>
-                      </Box>
-                      <Box
-                        className={styles.formatButton}
-                        data-selected={interviewFormat === 'office'}
-                        onClick={() => setInterviewFormat('office')}
-                      >
-                        <BoxIcon width={14} height={14} />
-                        <Text size="2" weight="medium">Офис</Text>
-                      </Box>
-                    </Flex>
-
-                    {/* Вертикальная линия-разделитель */}
-                    <Separator orientation="vertical" style={{ height: '20px', flexShrink: 0 }} />
-
-                    {/* Список участников */}
-                    <Flex gap="3" align="center" wrap="nowrap" style={{ minWidth: 'max-content', flexShrink: 0 }}>
-                      {allParticipants.map(participant => {
-                        const isSelected = selectedInterviewers.includes(participant.id)
-                        return (
+                    {/* Тогглер формата встречи (отображается если showOffices = true для выбранного этапа)
+                        - Позволяет выбрать формат: Онлайн или Офис
+                        - При выборе "Офис" показывается дополнительная карточка с выбором офиса
+                        - Если showOffices = false, этот блок не отображается */}
+                    {showOfficesForSelectedStage && (
+                      <>
+                        <Flex gap="2" align="center" style={{ flexShrink: 0 }}>
                           <Box
-                            key={participant.id}
-                            onClick={() => handleInterviewerToggle(participant.id)}
-                            style={{
-                              position: 'relative',
-                              padding: '2px 12px',
-                              borderRadius: '6px',
-                              border: isSelected ? '2px solid var(--accent-9)' : '2px solid transparent',
-                              backgroundColor: isSelected ? 'var(--accent-3)' : 'transparent',
-                              cursor: 'pointer',
-                              transition: 'all 0.2s ease',
-                              whiteSpace: 'nowrap',
-                              flexShrink: 0,
-                            }}
-                            onMouseEnter={(e) => {
-                              if (!isSelected) {
-                                e.currentTarget.style.backgroundColor = 'var(--gray-3)'
-                              }
-                            }}
-                            onMouseLeave={(e) => {
-                              if (!isSelected) {
-                                e.currentTarget.style.backgroundColor = 'transparent'
-                              }
-                            }}
+                            className={styles.formatButton}
+                            data-selected={interviewFormat === 'online'}
+                            onClick={() => setInterviewFormat('online')}
                           >
-                            <Text size="2">{participant.name}</Text>
-                            {isSelected && (
+                            <VideoIcon width={14} height={14} />
+                            <Text size="2" weight="medium">Онлайн</Text>
+                          </Box>
+                          <Box
+                            className={styles.formatButton}
+                            data-selected={interviewFormat === 'office'}
+                            onClick={() => setInterviewFormat('office')}
+                          >
+                            <BoxIcon width={14} height={14} />
+                            <Text size="2" weight="medium">Офис</Text>
+                          </Box>
+                        </Flex>
+
+                        {/* Выбор офиса (отображается если выбран формат "Офис" и showOffices = true)
+                            - Показывается сразу после кнопки выбора формата "Офис"
+                            - Содержит список офисов для выбора (Минск, Варшава, Гомель)
+                            - Разделитель добавляется перед списком офисов */}
+                        {interviewFormat === 'office' && (
+                          <>
+                            <Separator orientation="vertical" style={{ height: '20px', flexShrink: 0 }} />
+                            <Flex gap="1" align="center" className={styles.officeToggle} style={{ flexShrink: 0 }}>
+                              {offices.map(office => (
+                                <Box
+                                  key={office.id}
+                                  className={styles.officeButton}
+                                  data-selected={selectedOffice === office.id}
+                                  onClick={() => setSelectedOffice(office.id)}
+                                >
+                                  <Text size="1" weight={selectedOffice === office.id ? "medium" : "regular"}>
+                                    {office.label}
+                                  </Text>
+                                </Box>
+                              ))}
+                            </Flex>
+                          </>
+                        )}
+                      </>
+                    )}
+
+                    {/* Чекбоксы интервьюеров (отображается если showInterviewers = true для выбранного этапа)
+                        - Позволяет выбрать несколько интервьюеров для встречи
+                        - Автор (текущий пользователь) добавляется в начало списка
+                        - Разделитель добавляется условно в зависимости от наличия других элементов
+                        - Если showInterviewers = false, этот блок не отображается */}
+                    {showInterviewersForSelectedStage && (
+                      <>
+                        {/* Разделитель добавляется условно в зависимости от наличия других элементов */}
+                        {(showOfficesForSelectedStage && interviewFormat === 'office') && (
+                          <Separator orientation="vertical" style={{ height: '20px', flexShrink: 0 }} />
+                        )}
+                        {showOfficesForSelectedStage && interviewFormat === 'online' && (
+                          <Separator orientation="vertical" style={{ height: '20px', flexShrink: 0 }} />
+                        )}
+                        {!showOfficesForSelectedStage && (
+                          <Separator orientation="vertical" style={{ height: '20px', flexShrink: 0 }} />
+                        )}
+                        <Flex gap="3" align="center" wrap="nowrap" style={{ minWidth: 'max-content', flexShrink: 0 }}>
+                          {allParticipants.map(participant => {
+                            const isSelected = selectedInterviewers.includes(participant.id)
+                            return (
                               <Box
+                                key={participant.id}
+                                onClick={() => handleInterviewerToggle(participant.id)}
                                 style={{
-                                  position: 'absolute',
-                                  top: '-6px',
-                                  right: '-6px',
-                                  width: '18px',
-                                  height: '18px',
-                                  borderRadius: '50%',
-                                  backgroundColor: 'var(--accent-9)',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  border: '2px solid white',
-                                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+                                  position: 'relative',
+                                  padding: '2px 12px',
+                                  borderRadius: '6px',
+                                  border: isSelected ? '2px solid var(--accent-9)' : '2px solid transparent',
+                                  backgroundColor: isSelected ? 'var(--accent-3)' : 'transparent',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.2s ease',
+                                  whiteSpace: 'nowrap',
+                                  flexShrink: 0,
+                                }}
+                                onMouseEnter={(e) => {
+                                  if (!isSelected) {
+                                    e.currentTarget.style.backgroundColor = 'var(--gray-3)'
+                                  }
+                                }}
+                                onMouseLeave={(e) => {
+                                  if (!isSelected) {
+                                    e.currentTarget.style.backgroundColor = 'transparent'
+                                  }
                                 }}
                               >
-                                <CheckIcon width={10} height={10} style={{ color: 'white' }} />
+                                <Text size="2">{participant.name}</Text>
+                                {isSelected && (
+                                  <Box
+                                    style={{
+                                      position: 'absolute',
+                                      top: '-6px',
+                                      right: '-6px',
+                                      width: '18px',
+                                      height: '18px',
+                                      borderRadius: '50%',
+                                      backgroundColor: 'var(--accent-9)',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      border: '2px solid white',
+                                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+                                    }}
+                                  >
+                                    <CheckIcon width={10} height={10} style={{ color: 'white' }} />
+                                  </Box>
+                                )}
                               </Box>
-                            )}
-                          </Box>
-                        )
-                      })}
-                    </Flex>
+                            )
+                          })}
+                        </Flex>
+                      </>
+                    )}
                   </Flex>
                 </Box>
               </Box>
@@ -5056,337 +5453,494 @@ export default function RecrChatPage() {
                     </Flex>
                   </Flex>
                   
-                  <Flex direction="column" gap="4">
-                    {/* Название вакансии */}
-                    <Box>
-                      <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Название</Text>
-                      <TextField.Root
-                        value={vacancyTitle}
-                        onChange={(e) => setVacancyTitle(e.target.value)}
-                        placeholder="Введите название вакансии"
-                      />
-                    </Box>
-                    
-                    {/* Отдел */}
-                    <Box>
-                      <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Отдел</Text>
-                      <Select.Root
-                        value={vacancyDepartment}
-                        onValueChange={setVacancyDepartment}
-                      >
-                        <Select.Trigger placeholder="Выберите отдел" />
-                        <Select.Content>
-                          {getAllDepartmentsFlat(mockDepartments).map((dept) => (
-                            <Select.Item key={dept.id} value={dept.id}>
-                              {'  '.repeat(dept.level)}{dept.name}
-                            </Select.Item>
-                          ))}
-                        </Select.Content>
-                      </Select.Root>
-                    </Box>
-                    
-                    {/* Шапка */}
-                    <Box>
-                      <Flex align="center" justify="between" mb="2">
-                        <Text size="2" weight="medium">Шапка</Text>
-                        <Flex align="center" gap="3">
+                  {/* Вкладки с выбором страны */}
+                  <Tabs.Root value={selectedCountryTab} onValueChange={setSelectedCountryTab} mb="4">
+                    <Tabs.List>
+                      {questionLinkOffices.map(office => (
+                        <Tabs.Trigger key={office.id} value={office.id}>
+                          {office.name}
+                        </Tabs.Trigger>
+                      ))}
+                    </Tabs.List>
+                    {questionLinkOffices.map(office => (
+                      <Tabs.Content key={office.id} value={office.id}>
+                        <Flex align="center" justify="between" mb="3">
+                          <Text size="2" color="gray">Настройки для {office.name}</Text>
                           <Flex align="center" gap="2">
-                            <Text size="1" color="gray">Активность:</Text>
-                            <Switch
-                              checked={fieldSettings.header.active}
-                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, header: { ...prev.header, active: checked } }))}
-                            />
-                          </Flex>
-                          <Flex align="center" gap="2">
-                            <Text size="1" color="gray">Видимость:</Text>
-                            <Switch
-                              checked={fieldSettings.header.visible}
-                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, header: { ...prev.header, visible: checked } }))}
+                            <Text size="2" color="gray">Активность:</Text>
+                            <Switch 
+                              checked={vacancyActiveByCountry[office.id] || false} 
+                              onCheckedChange={(checked) => setVacancyActiveByCountry(prev => ({ ...prev, [office.id]: checked }))} 
                             />
                           </Flex>
                         </Flex>
-                      </Flex>
-                      <TextArea
-                        value={vacancyHeader}
-                        onChange={(e) => setVacancyHeader(e.target.value)}
-                        placeholder="Введите текст шапки"
-                        disabled={!fieldSettings.header.active}
-                        style={{ minHeight: '100px' }}
-                      />
-                    </Box>
+                        <Flex direction="column" gap="4">
+                          {/* Название вакансии */}
+                          <Box>
+                            <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Название</Text>
+                            <TextField.Root
+                              value={vacancyFieldsByCountry[office.id]?.title || vacancyTitle}
+                              onChange={(e) => { 
+                                const fields = vacancyFieldsByCountry[office.id] || {}
+                                setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, title: e.target.value } }))
+                                if (office.id === selectedCountryTab) setVacancyTitle(e.target.value)
+                              }}
+                              placeholder="Введите название вакансии"
+                              disabled={!vacancyActiveByCountry[office.id]}
+                            />
+                          </Box>
                     
-                    {/* Обязанности */}
-                    <Box>
-                      <Flex align="center" justify="between" mb="2">
-                        <Text size="2" weight="medium">Обязанности</Text>
-                        <Flex align="center" gap="3">
-                          <Flex align="center" gap="2">
-                            <Text size="1" color="gray">Активность:</Text>
-                            <Switch
-                              checked={fieldSettings.responsibilities.active}
-                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, responsibilities: { ...prev.responsibilities, active: checked } }))}
-                            />
-                          </Flex>
-                          <Flex align="center" gap="2">
-                            <Text size="1" color="gray">Видимость:</Text>
-                            <Switch
-                              checked={fieldSettings.responsibilities.visible}
-                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, responsibilities: { ...prev.responsibilities, visible: checked } }))}
-                            />
-                          </Flex>
-                        </Flex>
-                      </Flex>
-                      <TextArea
-                        value={vacancyResponsibilities}
-                        onChange={(e) => setVacancyResponsibilities(e.target.value)}
-                        placeholder="Введите обязанности"
-                        disabled={!fieldSettings.responsibilities.active}
-                        style={{ minHeight: '100px' }}
-                      />
-                    </Box>
-                    
-                    {/* Пожелания */}
-                    <Box>
-                      <Flex align="center" justify="between" mb="2">
-                        <Text size="2" weight="medium">Пожелания</Text>
-                        <Flex align="center" gap="3">
-                          <Flex align="center" gap="2">
-                            <Text size="1" color="gray">Активность:</Text>
-                            <Switch
-                              checked={fieldSettings.requirements.active}
-                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, requirements: { ...prev.requirements, active: checked } }))}
-                            />
-                          </Flex>
-                          <Flex align="center" gap="2">
-                            <Text size="1" color="gray">Видимость:</Text>
-                            <Switch
-                              checked={fieldSettings.requirements.visible}
-                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, requirements: { ...prev.requirements, visible: checked } }))}
-                            />
-                          </Flex>
-                        </Flex>
-                      </Flex>
-                      <TextArea
-                        value={vacancyRequirements}
-                        onChange={(e) => setVacancyRequirements(e.target.value)}
-                        placeholder="Введите пожелания"
-                        disabled={!fieldSettings.requirements.active}
-                        style={{ minHeight: '100px' }}
-                      />
-                    </Box>
-                    
-                    {/* Будет плюсом */}
-                    <Box>
-                      <Flex align="center" justify="between" mb="2">
-                        <Text size="2" weight="medium">Будет плюсом</Text>
-                        <Flex align="center" gap="3">
-                          <Flex align="center" gap="2">
-                            <Text size="1" color="gray">Активность:</Text>
-                            <Switch
-                              checked={fieldSettings.niceToHave.active}
-                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, niceToHave: { ...prev.niceToHave, active: checked } }))}
-                            />
-                          </Flex>
-                          <Flex align="center" gap="2">
-                            <Text size="1" color="gray">Видимость:</Text>
-                            <Switch
-                              checked={fieldSettings.niceToHave.visible}
-                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, niceToHave: { ...prev.niceToHave, visible: checked } }))}
-                            />
-                          </Flex>
-                        </Flex>
-                      </Flex>
-                      <TextArea
-                        value={vacancyNiceToHave}
-                        onChange={(e) => setVacancyNiceToHave(e.target.value)}
-                        placeholder="Введите что будет плюсом"
-                        disabled={!fieldSettings.niceToHave.active}
-                        style={{ minHeight: '100px' }}
-                      />
-                    </Box>
-                    
-                    {/* Условия работы */}
-                    <Box>
-                      <Flex align="center" justify="between" mb="2">
-                        <Text size="2" weight="medium">Условия работы</Text>
-                        <Flex align="center" gap="3">
-                          <Flex align="center" gap="2">
-                            <Text size="1" color="gray">Активность:</Text>
-                            <Switch
-                              checked={fieldSettings.conditions.active}
-                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, conditions: { ...prev.conditions, active: checked } }))}
-                            />
-                          </Flex>
-                          <Flex align="center" gap="2">
-                            <Text size="1" color="gray">Видимость:</Text>
-                            <Switch
-                              checked={fieldSettings.conditions.visible}
-                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, conditions: { ...prev.conditions, visible: checked } }))}
-                            />
-                          </Flex>
-                        </Flex>
-                      </Flex>
-                      <TextArea
-                        value={vacancyConditions}
-                        onChange={(e) => setVacancyConditions(e.target.value)}
-                        placeholder="Введите условия работы"
-                        disabled={!fieldSettings.conditions.active}
-                        style={{ minHeight: '100px' }}
-                      />
-                    </Box>
-                    
-                    {/* Завершение */}
-                    <Box>
-                      <Flex align="center" justify="between" mb="2">
-                        <Text size="2" weight="medium">Завершение</Text>
-                        <Flex align="center" gap="3">
-                          <Flex align="center" gap="2">
-                            <Text size="1" color="gray">Активность:</Text>
-                            <Switch
-                              checked={fieldSettings.closing.active}
-                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, closing: { ...prev.closing, active: checked } }))}
-                            />
-                          </Flex>
-                          <Flex align="center" gap="2">
-                            <Text size="1" color="gray">Видимость:</Text>
-                            <Switch
-                              checked={fieldSettings.closing.visible}
-                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, closing: { ...prev.closing, visible: checked } }))}
-                            />
-                          </Flex>
-                        </Flex>
-                      </Flex>
-                      <TextArea
-                        value={vacancyClosing}
-                        onChange={(e) => setVacancyClosing(e.target.value)}
-                        placeholder="Введите завершающий текст"
-                        disabled={!fieldSettings.closing.active}
-                        style={{ minHeight: '100px' }}
-                      />
-                    </Box>
-                    
-                    {/* Дополнительная ссылка */}
-                    <Box>
-                      <Flex align="center" justify="between" mb="2">
-                        <Text size="2" weight="medium">Дополнительная ссылка</Text>
-                        <Flex align="center" gap="3">
-                          <Flex align="center" gap="2">
-                            <Text size="1" color="gray">Активность:</Text>
-                            <Switch
-                              checked={fieldSettings.link.active}
-                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, link: { ...prev.link, active: checked } }))}
-                            />
-                          </Flex>
-                          <Flex align="center" gap="2">
-                            <Text size="1" color="gray">Видимость:</Text>
-                            <Switch
-                              checked={fieldSettings.link.visible}
-                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, link: { ...prev.link, visible: checked } }))}
-                            />
-                          </Flex>
-                        </Flex>
-                      </Flex>
-                      <TextField.Root
-                        value={vacancyLink}
-                        onChange={(e) => setVacancyLink(e.target.value)}
-                        placeholder="https://example.com/vacancy"
-                        disabled={!fieldSettings.link.active}
-                      />
-                    </Box>
-                    
-                    {/* Вложения */}
-                    <Box>
-                      <Flex align="center" justify="between" mb="2">
-                        <Text size="2" weight="medium">Вложения</Text>
-                        <Flex align="center" gap="3">
-                          <Flex align="center" gap="2">
-                            <Text size="1" color="gray">Активность:</Text>
-                            <Switch
-                              checked={fieldSettings.attachment.active}
-                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, attachment: { ...prev.attachment, active: checked } }))}
-                            />
-                          </Flex>
-                          <Flex align="center" gap="2">
-                            <Text size="1" color="gray">Видимость:</Text>
-                            <Switch
-                              checked={fieldSettings.attachment.visible}
-                              onCheckedChange={(checked) => setFieldSettings(prev => ({ ...prev, attachment: { ...prev.attachment, visible: checked } }))}
-                            />
-                          </Flex>
-                        </Flex>
-                      </Flex>
-                      <Flex direction="column" gap="2">
-                        <Box
-                          style={{
-                            position: 'relative',
-                            display: 'inline-block',
-                            width: '100%'
-                          }}
-                        >
-                          <input
-                            type="file"
-                            accept=".docx,.pptx,.figma"
-                            onChange={(e) => setVacancyAttachment(e.target.files?.[0] || null)}
-                            disabled={!fieldSettings.attachment.active}
-                            id="vacancy-attachment-input"
-                            style={{
-                              position: 'absolute',
-                              opacity: 0,
-                              width: 0,
-                              height: 0,
-                              overflow: 'hidden'
-                            }}
-                          />
-                          <Button
-                            asChild
-                            variant="soft"
-                            disabled={!fieldSettings.attachment.active}
-                            style={{ width: '100%', justifyContent: 'flex-start' }}
-                          >
-                            <label
-                              htmlFor="vacancy-attachment-input"
-                              style={{
-                                cursor: fieldSettings.attachment.active ? 'pointer' : 'not-allowed',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                                width: '100%',
-                                padding: '0'
+                          {/* Отдел */}
+                          <Box>
+                            <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Отдел</Text>
+                            <Select.Root
+                              value={vacancyFieldsByCountry[office.id]?.department || vacancyDepartment}
+                              onValueChange={(v) => { 
+                                const fields = vacancyFieldsByCountry[office.id] || {}
+                                setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, department: v } }))
+                                if (office.id === selectedCountryTab) setVacancyDepartment(v)
                               }}
                             >
-                              <Box style={{ marginLeft: '8px', display: 'flex', alignItems: 'center' }}>
-                                <UploadIcon width={16} height={16} />
-                              </Box>
-                              <Text size="2">
-                                {vacancyAttachment ? vacancyAttachment.name : 'Выберите файл (docx, pptx, figma)'}
-                              </Text>
-                            </label>
-                          </Button>
-                        </Box>
-                        {vacancyAttachment && (
-                          <Flex align="center" gap="2" style={{ padding: '8px 12px', backgroundColor: 'var(--gray-2)', borderRadius: '6px' }}>
-                            <FileTextIcon width={16} height={16} style={{ color: 'var(--gray-9)' }} />
-                            <Text size="2" style={{ flex: 1 }}>
-                              {vacancyAttachment.name}
-                            </Text>
-                            <Text size="1" color="gray">
-                              {(vacancyAttachment.size / 1024).toFixed(2)} KB
-                            </Text>
-                            <Button
-                              size="1"
-                              variant="ghost"
-                              color="red"
-                              onClick={() => setVacancyAttachment(null)}
-                            >
-                              <Cross2Icon width={14} height={14} />
-                            </Button>
+                              <Select.Trigger placeholder="Выберите отдел" disabled={!vacancyActiveByCountry[office.id]} />
+                              <Select.Content>
+                                {getAllDepartmentsFlat(mockDepartments).map((dept) => (
+                                  <Select.Item key={dept.id} value={dept.id}>
+                                    {'  '.repeat(dept.level)}{dept.name}
+                                  </Select.Item>
+                                ))}
+                              </Select.Content>
+                            </Select.Root>
+                          </Box>
+                          
+                          {/* Шапка */}
+                          <Box>
+                            <Flex align="center" justify="between" mb="2">
+                              <Text size="2" weight="medium">Шапка</Text>
+                              <Flex align="center" gap="3">
+                                <Flex align="center" gap="2">
+                                  <Text size="1" color="gray">Активность:</Text>
+                                  <Switch
+                                    checked={vacancyFieldsByCountry[office.id]?.fieldSettings?.header?.active ?? fieldSettings.header.active}
+                                    onCheckedChange={(c) => { 
+                                      const fields = vacancyFieldsByCountry[office.id] || {}
+                                      const fs = fields.fieldSettings || fieldSettings
+                                      setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, fieldSettings: { ...fs, header: { ...fs.header, active: !!c } } } }))
+                                      if (office.id === selectedCountryTab) setFieldSettings(prev => ({ ...prev, header: { ...prev.header, active: !!c } }))
+                                    }}
+                                    disabled={!vacancyActiveByCountry[office.id]}
+                                  />
+                                </Flex>
+                                <Flex align="center" gap="2">
+                                  <Text size="1" color="gray">Видимость:</Text>
+                                  <Switch
+                                    checked={vacancyFieldsByCountry[office.id]?.fieldSettings?.header?.visible ?? fieldSettings.header.visible}
+                                    onCheckedChange={(c) => { 
+                                      const fields = vacancyFieldsByCountry[office.id] || {}
+                                      const fs = fields.fieldSettings || fieldSettings
+                                      setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, fieldSettings: { ...fs, header: { ...fs.header, visible: !!c } } } }))
+                                      if (office.id === selectedCountryTab) setFieldSettings(prev => ({ ...prev, header: { ...prev.header, visible: !!c } }))
+                                    }}
+                                    disabled={!vacancyActiveByCountry[office.id]}
+                                  />
+                                </Flex>
+                              </Flex>
+                            </Flex>
+                            <TextArea
+                              value={vacancyFieldsByCountry[office.id]?.header || vacancyHeader}
+                              onChange={(e) => { 
+                                const fields = vacancyFieldsByCountry[office.id] || {}
+                                setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, header: e.target.value } }))
+                                if (office.id === selectedCountryTab) setVacancyHeader(e.target.value)
+                              }}
+                              placeholder="Введите текст шапки"
+                              disabled={!vacancyActiveByCountry[office.id] || !(vacancyFieldsByCountry[office.id]?.fieldSettings?.header?.active ?? fieldSettings.header.active)}
+                              style={{ minHeight: '100px' }}
+                            />
+                          </Box>
+                          
+                          {/* Обязанности */}
+                          <Box>
+                            <Flex align="center" justify="between" mb="2">
+                              <Text size="2" weight="medium">Обязанности</Text>
+                              <Flex align="center" gap="3">
+                                <Flex align="center" gap="2">
+                                  <Text size="1" color="gray">Активность:</Text>
+                                  <Switch
+                                    checked={vacancyFieldsByCountry[office.id]?.fieldSettings?.responsibilities?.active ?? fieldSettings.responsibilities.active}
+                                    onCheckedChange={(c) => { 
+                                      const fields = vacancyFieldsByCountry[office.id] || {}
+                                      const fs = fields.fieldSettings || fieldSettings
+                                      setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, fieldSettings: { ...fs, responsibilities: { ...fs.responsibilities, active: !!c } } } }))
+                                      if (office.id === selectedCountryTab) setFieldSettings(prev => ({ ...prev, responsibilities: { ...prev.responsibilities, active: !!c } }))
+                                    }}
+                                    disabled={!vacancyActiveByCountry[office.id]}
+                                  />
+                                </Flex>
+                                <Flex align="center" gap="2">
+                                  <Text size="1" color="gray">Видимость:</Text>
+                                  <Switch
+                                    checked={vacancyFieldsByCountry[office.id]?.fieldSettings?.responsibilities?.visible ?? fieldSettings.responsibilities.visible}
+                                    onCheckedChange={(c) => { 
+                                      const fields = vacancyFieldsByCountry[office.id] || {}
+                                      const fs = fields.fieldSettings || fieldSettings
+                                      setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, fieldSettings: { ...fs, responsibilities: { ...fs.responsibilities, visible: !!c } } } }))
+                                      if (office.id === selectedCountryTab) setFieldSettings(prev => ({ ...prev, responsibilities: { ...prev.responsibilities, visible: !!c } }))
+                                    }}
+                                    disabled={!vacancyActiveByCountry[office.id]}
+                                  />
+                                </Flex>
+                              </Flex>
+                            </Flex>
+                            <TextArea
+                              value={vacancyFieldsByCountry[office.id]?.responsibilities || vacancyResponsibilities}
+                              onChange={(e) => { 
+                                const fields = vacancyFieldsByCountry[office.id] || {}
+                                setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, responsibilities: e.target.value } }))
+                                if (office.id === selectedCountryTab) setVacancyResponsibilities(e.target.value)
+                              }}
+                              placeholder="Введите обязанности"
+                              disabled={!vacancyActiveByCountry[office.id] || !(vacancyFieldsByCountry[office.id]?.fieldSettings?.responsibilities?.active ?? fieldSettings.responsibilities.active)}
+                              style={{ minHeight: '100px' }}
+                            />
+                          </Box>
+                          
+                          {/* Пожелания */}
+                          <Box>
+                            <Flex align="center" justify="between" mb="2">
+                              <Text size="2" weight="medium">Пожелания</Text>
+                              <Flex align="center" gap="3">
+                                <Flex align="center" gap="2">
+                                  <Text size="1" color="gray">Активность:</Text>
+                                  <Switch
+                                    checked={vacancyFieldsByCountry[office.id]?.fieldSettings?.requirements?.active ?? fieldSettings.requirements.active}
+                                    onCheckedChange={(c) => { 
+                                      const fields = vacancyFieldsByCountry[office.id] || {}
+                                      const fs = fields.fieldSettings || fieldSettings
+                                      setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, fieldSettings: { ...fs, requirements: { ...fs.requirements, active: !!c } } } }))
+                                      if (office.id === selectedCountryTab) setFieldSettings(prev => ({ ...prev, requirements: { ...prev.requirements, active: !!c } }))
+                                    }}
+                                    disabled={!vacancyActiveByCountry[office.id]}
+                                  />
+                                </Flex>
+                                <Flex align="center" gap="2">
+                                  <Text size="1" color="gray">Видимость:</Text>
+                                  <Switch
+                                    checked={vacancyFieldsByCountry[office.id]?.fieldSettings?.requirements?.visible ?? fieldSettings.requirements.visible}
+                                    onCheckedChange={(c) => { 
+                                      const fields = vacancyFieldsByCountry[office.id] || {}
+                                      const fs = fields.fieldSettings || fieldSettings
+                                      setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, fieldSettings: { ...fs, requirements: { ...fs.requirements, visible: !!c } } } }))
+                                      if (office.id === selectedCountryTab) setFieldSettings(prev => ({ ...prev, requirements: { ...prev.requirements, visible: !!c } }))
+                                    }}
+                                    disabled={!vacancyActiveByCountry[office.id]}
+                                  />
+                                </Flex>
+                              </Flex>
+                            </Flex>
+                            <TextArea
+                              value={vacancyFieldsByCountry[office.id]?.requirements || vacancyRequirements}
+                              onChange={(e) => { 
+                                const fields = vacancyFieldsByCountry[office.id] || {}
+                                setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, requirements: e.target.value } }))
+                                if (office.id === selectedCountryTab) setVacancyRequirements(e.target.value)
+                              }}
+                              placeholder="Введите пожелания"
+                              disabled={!vacancyActiveByCountry[office.id] || !(vacancyFieldsByCountry[office.id]?.fieldSettings?.requirements?.active ?? fieldSettings.requirements.active)}
+                              style={{ minHeight: '100px' }}
+                            />
+                          </Box>
+                          
+                          {/* Будет плюсом */}
+                          <Box>
+                            <Flex align="center" justify="between" mb="2">
+                              <Text size="2" weight="medium">Будет плюсом</Text>
+                              <Flex align="center" gap="3">
+                                <Flex align="center" gap="2">
+                                  <Text size="1" color="gray">Активность:</Text>
+                                  <Switch
+                                    checked={vacancyFieldsByCountry[office.id]?.fieldSettings?.niceToHave?.active ?? fieldSettings.niceToHave.active}
+                                    onCheckedChange={(c) => { 
+                                      const fields = vacancyFieldsByCountry[office.id] || {}
+                                      const fs = fields.fieldSettings || fieldSettings
+                                      setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, fieldSettings: { ...fs, niceToHave: { ...fs.niceToHave, active: !!c } } } }))
+                                      if (office.id === selectedCountryTab) setFieldSettings(prev => ({ ...prev, niceToHave: { ...prev.niceToHave, active: !!c } }))
+                                    }}
+                                    disabled={!vacancyActiveByCountry[office.id]}
+                                  />
+                                </Flex>
+                                <Flex align="center" gap="2">
+                                  <Text size="1" color="gray">Видимость:</Text>
+                                  <Switch
+                                    checked={vacancyFieldsByCountry[office.id]?.fieldSettings?.niceToHave?.visible ?? fieldSettings.niceToHave.visible}
+                                    onCheckedChange={(c) => { 
+                                      const fields = vacancyFieldsByCountry[office.id] || {}
+                                      const fs = fields.fieldSettings || fieldSettings
+                                      setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, fieldSettings: { ...fs, niceToHave: { ...fs.niceToHave, visible: !!c } } } }))
+                                      if (office.id === selectedCountryTab) setFieldSettings(prev => ({ ...prev, niceToHave: { ...prev.niceToHave, visible: !!c } }))
+                                    }}
+                                    disabled={!vacancyActiveByCountry[office.id]}
+                                  />
+                                </Flex>
+                              </Flex>
+                            </Flex>
+                            <TextArea
+                              value={vacancyFieldsByCountry[office.id]?.niceToHave || vacancyNiceToHave}
+                              onChange={(e) => { 
+                                const fields = vacancyFieldsByCountry[office.id] || {}
+                                setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, niceToHave: e.target.value } }))
+                                if (office.id === selectedCountryTab) setVacancyNiceToHave(e.target.value)
+                              }}
+                              placeholder="Введите что будет плюсом"
+                              disabled={!vacancyActiveByCountry[office.id] || !(vacancyFieldsByCountry[office.id]?.fieldSettings?.niceToHave?.active ?? fieldSettings.niceToHave.active)}
+                              style={{ minHeight: '100px' }}
+                            />
+                          </Box>
+                          
+                          {/* Условия работы */}
+                          <Box>
+                            <Flex align="center" justify="between" mb="2">
+                              <Text size="2" weight="medium">Условия работы</Text>
+                              <Flex align="center" gap="3">
+                                <Flex align="center" gap="2">
+                                  <Text size="1" color="gray">Активность:</Text>
+                                  <Switch
+                                    checked={vacancyFieldsByCountry[office.id]?.fieldSettings?.conditions?.active ?? fieldSettings.conditions.active}
+                                    onCheckedChange={(c) => { 
+                                      const fields = vacancyFieldsByCountry[office.id] || {}
+                                      const fs = fields.fieldSettings || fieldSettings
+                                      setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, fieldSettings: { ...fs, conditions: { ...fs.conditions, active: !!c } } } }))
+                                      if (office.id === selectedCountryTab) setFieldSettings(prev => ({ ...prev, conditions: { ...prev.conditions, active: !!c } }))
+                                    }}
+                                    disabled={!vacancyActiveByCountry[office.id]}
+                                  />
+                                </Flex>
+                                <Flex align="center" gap="2">
+                                  <Text size="1" color="gray">Видимость:</Text>
+                                  <Switch
+                                    checked={vacancyFieldsByCountry[office.id]?.fieldSettings?.conditions?.visible ?? fieldSettings.conditions.visible}
+                                    onCheckedChange={(c) => { 
+                                      const fields = vacancyFieldsByCountry[office.id] || {}
+                                      const fs = fields.fieldSettings || fieldSettings
+                                      setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, fieldSettings: { ...fs, conditions: { ...fs.conditions, visible: !!c } } } }))
+                                      if (office.id === selectedCountryTab) setFieldSettings(prev => ({ ...prev, conditions: { ...prev.conditions, visible: !!c } }))
+                                    }}
+                                    disabled={!vacancyActiveByCountry[office.id]}
+                                  />
+                                </Flex>
+                              </Flex>
+                            </Flex>
+                            <TextArea
+                              value={vacancyFieldsByCountry[office.id]?.conditions || vacancyConditions}
+                              onChange={(e) => { 
+                                const fields = vacancyFieldsByCountry[office.id] || {}
+                                setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, conditions: e.target.value } }))
+                                if (office.id === selectedCountryTab) setVacancyConditions(e.target.value)
+                              }}
+                              placeholder="Введите условия работы"
+                              disabled={!vacancyActiveByCountry[office.id] || !(vacancyFieldsByCountry[office.id]?.fieldSettings?.conditions?.active ?? fieldSettings.conditions.active)}
+                              style={{ minHeight: '100px' }}
+                            />
+                          </Box>
+                          
+                          {/* Завершение */}
+                          <Box>
+                            <Flex align="center" justify="between" mb="2">
+                              <Text size="2" weight="medium">Завершение</Text>
+                              <Flex align="center" gap="3">
+                                <Flex align="center" gap="2">
+                                  <Text size="1" color="gray">Активность:</Text>
+                                  <Switch
+                                    checked={vacancyFieldsByCountry[office.id]?.fieldSettings?.closing?.active ?? fieldSettings.closing.active}
+                                    onCheckedChange={(c) => { 
+                                      const fields = vacancyFieldsByCountry[office.id] || {}
+                                      const fs = fields.fieldSettings || fieldSettings
+                                      setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, fieldSettings: { ...fs, closing: { ...fs.closing, active: !!c } } } }))
+                                      if (office.id === selectedCountryTab) setFieldSettings(prev => ({ ...prev, closing: { ...prev.closing, active: !!c } }))
+                                    }}
+                                    disabled={!vacancyActiveByCountry[office.id]}
+                                  />
+                                </Flex>
+                                <Flex align="center" gap="2">
+                                  <Text size="1" color="gray">Видимость:</Text>
+                                  <Switch
+                                    checked={vacancyFieldsByCountry[office.id]?.fieldSettings?.closing?.visible ?? fieldSettings.closing.visible}
+                                    onCheckedChange={(c) => { 
+                                      const fields = vacancyFieldsByCountry[office.id] || {}
+                                      const fs = fields.fieldSettings || fieldSettings
+                                      setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, fieldSettings: { ...fs, closing: { ...fs.closing, visible: !!c } } } }))
+                                      if (office.id === selectedCountryTab) setFieldSettings(prev => ({ ...prev, closing: { ...prev.closing, visible: !!c } }))
+                                    }}
+                                    disabled={!vacancyActiveByCountry[office.id]}
+                                  />
+                                </Flex>
+                              </Flex>
+                            </Flex>
+                            <TextArea
+                              value={vacancyFieldsByCountry[office.id]?.closing || vacancyClosing}
+                              onChange={(e) => { 
+                                const fields = vacancyFieldsByCountry[office.id] || {}
+                                setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, closing: e.target.value } }))
+                                if (office.id === selectedCountryTab) setVacancyClosing(e.target.value)
+                              }}
+                              placeholder="Введите завершающий текст"
+                              disabled={!vacancyActiveByCountry[office.id] || !(vacancyFieldsByCountry[office.id]?.fieldSettings?.closing?.active ?? fieldSettings.closing.active)}
+                              style={{ minHeight: '100px' }}
+                            />
+                          </Box>
+                          
+                          {/* Дополнительная ссылка */}
+                          <Box>
+                            <Flex align="center" justify="between" mb="2">
+                              <Text size="2" weight="medium">Дополнительная ссылка</Text>
+                              <Flex align="center" gap="3">
+                                <Flex align="center" gap="2">
+                                  <Text size="1" color="gray">Активность:</Text>
+                                  <Switch
+                                    checked={vacancyFieldsByCountry[office.id]?.fieldSettings?.link?.active ?? fieldSettings.link.active}
+                                    onCheckedChange={(c) => { 
+                                      const fields = vacancyFieldsByCountry[office.id] || {}
+                                      const fs = fields.fieldSettings || fieldSettings
+                                      setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, fieldSettings: { ...fs, link: { ...fs.link, active: !!c } } } }))
+                                      if (office.id === selectedCountryTab) setFieldSettings(prev => ({ ...prev, link: { ...prev.link, active: !!c } }))
+                                    }}
+                                    disabled={!vacancyActiveByCountry[office.id]}
+                                  />
+                                </Flex>
+                                <Flex align="center" gap="2">
+                                  <Text size="1" color="gray">Видимость:</Text>
+                                  <Switch
+                                    checked={vacancyFieldsByCountry[office.id]?.fieldSettings?.link?.visible ?? fieldSettings.link.visible}
+                                    onCheckedChange={(c) => { 
+                                      const fields = vacancyFieldsByCountry[office.id] || {}
+                                      const fs = fields.fieldSettings || fieldSettings
+                                      setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, fieldSettings: { ...fs, link: { ...fs.link, visible: !!c } } } }))
+                                      if (office.id === selectedCountryTab) setFieldSettings(prev => ({ ...prev, link: { ...prev.link, visible: !!c } }))
+                                    }}
+                                    disabled={!vacancyActiveByCountry[office.id]}
+                                  />
+                                </Flex>
+                              </Flex>
+                            </Flex>
+                            <TextField.Root
+                              value={vacancyFieldsByCountry[office.id]?.link || vacancyLink}
+                              onChange={(e) => { 
+                                const fields = vacancyFieldsByCountry[office.id] || {}
+                                setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, link: e.target.value } }))
+                                if (office.id === selectedCountryTab) setVacancyLink(e.target.value)
+                              }}
+                              placeholder="https://example.com/vacancy"
+                              disabled={!vacancyActiveByCountry[office.id] || !(vacancyFieldsByCountry[office.id]?.fieldSettings?.link?.active ?? fieldSettings.link.active)}
+                            />
+                          </Box>
+                          
+                          {/* Вложения */}
+                          <Box>
+                            <Flex align="center" justify="between" mb="2">
+                              <Text size="2" weight="medium">Вложения</Text>
+                              <Flex align="center" gap="3">
+                                <Flex align="center" gap="2">
+                                  <Text size="1" color="gray">Активность:</Text>
+                                  <Switch
+                                    checked={vacancyFieldsByCountry[office.id]?.fieldSettings?.attachment?.active ?? fieldSettings.attachment.active}
+                                    onCheckedChange={(c) => { 
+                                      const fields = vacancyFieldsByCountry[office.id] || {}
+                                      const fs = fields.fieldSettings || fieldSettings
+                                      setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, fieldSettings: { ...fs, attachment: { ...fs.attachment, active: !!c } } } }))
+                                      if (office.id === selectedCountryTab) setFieldSettings(prev => ({ ...prev, attachment: { ...prev.attachment, active: !!c } }))
+                                    }}
+                                    disabled={!vacancyActiveByCountry[office.id]}
+                                  />
+                                </Flex>
+                                <Flex align="center" gap="2">
+                                  <Text size="1" color="gray">Видимость:</Text>
+                                  <Switch
+                                    checked={vacancyFieldsByCountry[office.id]?.fieldSettings?.attachment?.visible ?? fieldSettings.attachment.visible}
+                                    onCheckedChange={(c) => { 
+                                      const fields = vacancyFieldsByCountry[office.id] || {}
+                                      const fs = fields.fieldSettings || fieldSettings
+                                      setVacancyFieldsByCountry(prev => ({ ...prev, [office.id]: { ...fields, fieldSettings: { ...fs, attachment: { ...fs.attachment, visible: !!c } } } }))
+                                      if (office.id === selectedCountryTab) setFieldSettings(prev => ({ ...prev, attachment: { ...prev.attachment, visible: !!c } }))
+                                    }}
+                                    disabled={!vacancyActiveByCountry[office.id]}
+                                  />
+                                </Flex>
+                              </Flex>
+                            </Flex>
+                            <Flex direction="column" gap="2">
+                              <Box
+                                style={{
+                                  position: 'relative',
+                                  display: 'inline-block',
+                                  width: '100%'
+                                }}
+                              >
+                                <input
+                                  type="file"
+                                  accept=".docx,.pptx,.figma"
+                                  onChange={(e) => setVacancyAttachment(e.target.files?.[0] || null)}
+                                  disabled={!vacancyActiveByCountry[office.id] || !(vacancyFieldsByCountry[office.id]?.fieldSettings?.attachment?.active ?? fieldSettings.attachment.active)}
+                                  id={`vacancy-attachment-input-${office.id}`}
+                                  style={{
+                                    position: 'absolute',
+                                    opacity: 0,
+                                    width: 0,
+                                    height: 0,
+                                    overflow: 'hidden'
+                                  }}
+                                />
+                                <Button
+                                  asChild
+                                  variant="soft"
+                                  disabled={!vacancyActiveByCountry[office.id] || !(vacancyFieldsByCountry[office.id]?.fieldSettings?.attachment?.active ?? fieldSettings.attachment.active)}
+                                  style={{ width: '100%', justifyContent: 'flex-start' }}
+                                >
+                                <label
+                                  htmlFor={`vacancy-attachment-input-${office.id}`}
+                                  style={{
+                                    cursor: (vacancyActiveByCountry[office.id] && (vacancyFieldsByCountry[office.id]?.fieldSettings?.attachment?.active ?? fieldSettings.attachment.active)) ? 'pointer' : 'not-allowed',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    width: '100%',
+                                    padding: '0'
+                                  }}
+                                >
+                                  <Box style={{ marginLeft: '8px', display: 'flex', alignItems: 'center' }}>
+                                    <UploadIcon width={16} height={16} />
+                                  </Box>
+                                  <Text size="2">
+                                    {vacancyAttachment ? vacancyAttachment.name : 'Выберите файл (docx, pptx, figma)'}
+                                  </Text>
+                                </label>
+                              </Button>
+                            </Box>
+                            {vacancyAttachment && (
+                              <Flex align="center" gap="2" style={{ padding: '8px 12px', backgroundColor: 'var(--gray-2)', borderRadius: '6px' }}>
+                                <FileTextIcon width={16} height={16} style={{ color: 'var(--gray-9)' }} />
+                                <Text size="2" style={{ flex: 1 }}>
+                                  {vacancyAttachment.name}
+                                </Text>
+                                <Text size="1" color="gray">
+                                  {(vacancyAttachment.size / 1024).toFixed(2)} KB
+                                </Text>
+                                <Button
+                                  size="1"
+                                  variant="ghost"
+                                  color="red"
+                                  onClick={() => setVacancyAttachment(null)}
+                                >
+                                  <Cross2Icon width={14} height={14} />
+                                </Button>
+                              </Flex>
+                            )}
                           </Flex>
-                        )}
+                        </Box>
                       </Flex>
-                    </Box>
-                  </Flex>
-                </Box>
-              )}
+                    </Tabs.Content>
+                  ))}
+                </Tabs.Root>
+              </Box>
+            )}
               
               {selectedSettingTab === 'recruiters' && (
                 <Box>
@@ -5534,19 +6088,29 @@ export default function RecrChatPage() {
                 <Box>
                   <Text size="3" weight="bold" mb="3" style={{ display: 'block' }}>Вопросы и ссылки</Text>
                   <Text size="2" color="gray" mb="4" style={{ display: 'block' }}>
-                    Ссылка на вакансию, тогглер использования на сайте и один вопрос по вакансии на офис. Настройки задаются отдельно для каждого офиса. У ссылки и вопроса можно выбрать цвет.
+                    Ссылка на вакансию, тогглер использования на сайте и один вопрос по вакансии на офис. Настройки задаются отдельно для каждого офиса. У ссылки и вопроса можно выбрать цвет. Страны автоматически включаются/выключаются на основе активности вакансии для каждой страны из раздела "Текст вакансии".
                   </Text>
                   
                   <Flex direction="column" gap="4">
                     {questionLinkOffices.map((office) => {
+                      const isActive = vacancyActiveByCountry[office.id] ?? true
                       const state = questionsLinksByOffice[office.id] ?? getDefaultOfficeState()
                       const { link, question } = state
                       const q = question ?? { text: '', color: questionLinkColors[0].hex }
                       
                       return (
-                        <Card key={office.id} style={{ padding: '16px' }}>
+                        <Card key={office.id} style={{ padding: '16px', opacity: isActive ? 1 : 0.6 }}>
                           <Flex direction="column" gap="4">
-                            <Text size="4" weight="bold">{office.name}</Text>
+                            <Flex align="center" justify="between">
+                              <Text size="4" weight="bold">{office.name}</Text>
+                              <Flex align="center" gap="2">
+                                <Text size="2" color="gray">Активность:</Text>
+                                <Switch 
+                                  checked={isActive} 
+                                  onCheckedChange={(checked) => setVacancyActiveByCountry(prev => ({ ...prev, [office.id]: checked }))} 
+                                />
+                              </Flex>
+                            </Flex>
                             
                             {/* Ссылка на вакансию */}
                             <Box>
@@ -5558,12 +6122,14 @@ export default function RecrChatPage() {
                                     onChange={(e) => updateOfficeLink(office.id, { url: e.target.value })}
                                     placeholder="https://example.com/vacancy"
                                     style={{ flex: 1, minWidth: '200px' }}
+                                    disabled={!isActive}
                                   />
                                   <Flex align="center" gap="2" style={{ flexShrink: 0 }}>
                                     <Text size="2" color="gray">Использовать с сайта:</Text>
                                     <Switch
                                       checked={link.useOnSite}
                                       onCheckedChange={(checked) => updateOfficeLink(office.id, { useOnSite: checked })}
+                                      disabled={!isActive}
                                     />
                                   </Flex>
                                 </Flex>
@@ -5576,14 +6142,16 @@ export default function RecrChatPage() {
                                         type="button"
                                         onClick={() => updateOfficeLink(office.id, { color: c.hex })}
                                         title={c.label}
+                                        disabled={!isActive}
                                         style={{
                                           width: 28,
                                           height: 28,
                                           borderRadius: 6,
                                           backgroundColor: c.hex,
                                           border: link.color === c.hex ? '2px solid var(--gray-12)' : '2px solid transparent',
-                                          cursor: 'pointer',
+                                          cursor: isActive ? 'pointer' : 'not-allowed',
                                           padding: 0,
+                                          opacity: isActive ? 1 : 0.5,
                                         }}
                                         aria-pressed={link.color === c.hex}
                                       />
@@ -5604,6 +6172,7 @@ export default function RecrChatPage() {
                                   onChange={(e) => updateOfficeQuestion(office.id, { text: e.target.value })}
                                   placeholder="Текст вопроса..."
                                   style={{ minWidth: '100%', minHeight: 60 }}
+                                  disabled={!isActive}
                                 />
                                 <Flex gap="2" align="center">
                                   <Text size="2" color="gray">Цвет:</Text>
@@ -5613,14 +6182,16 @@ export default function RecrChatPage() {
                                       type="button"
                                       onClick={() => updateOfficeQuestion(office.id, { color: c.hex })}
                                       title={c.label}
+                                      disabled={!isActive}
                                       style={{
                                         width: 22,
                                         height: 22,
                                         borderRadius: 4,
                                         backgroundColor: c.hex,
                                         border: q.color === c.hex ? '2px solid var(--gray-12)' : '2px solid transparent',
-                                        cursor: 'pointer',
+                                        cursor: isActive ? 'pointer' : 'not-allowed',
                                         padding: 0,
+                                        opacity: isActive ? 1 : 0.5,
                                       }}
                                       aria-pressed={q.color === c.hex}
                                     />
@@ -5952,7 +6523,7 @@ export default function RecrChatPage() {
                   </Flex>
                   
                   <Text size="2" color="gray" mb="4" style={{ display: 'block' }}>
-                    Рекомендуемое количество встреч: {maxMeetingsCount} (активные этапы до оффера - 2). Для каждой встречи укажите этап, длительность, заголовок, сопровождающий текст и формат (офис или онлайн).
+                    Рекомендуемое количество встреч: {maxMeetingsCount} (активные этапы до оффера - 2). Для каждой встречи укажите этап, длительность, заголовок, сопровождающий текст и формат (офис или онлайн). Формат встречи связан с настройками этапа: если для выбранного этапа включено показывание офисов (showOffices = true), то выбор "Офис" активен, а если нет, то по определению ставится "Онлайн" и поле disabled.
                   </Text>
                   
                   {interviewMeetings.length === 0 ? (
@@ -5963,81 +6534,99 @@ export default function RecrChatPage() {
                     </Card>
                   ) : (
                     <Flex direction="column" gap="4">
-                      {interviewMeetings.map((meeting, index) => (
-                        <Card key={meeting.id} style={{ padding: '16px' }}>
-                          <Flex direction="column" gap="4">
-                            <Flex align="center" justify="between">
-                              <Text size="3" weight="medium">Встреча {index + 1}</Text>
-                              {interviewMeetings.length > 1 && (
-                                <Button
-                                  size="1"
-                                  variant="ghost"
-                                  color="red"
-                                  onClick={() => removeInterviewMeeting(meeting.id)}
+                      {interviewMeetings.map((meeting, index) => {
+                        const selectedStage = recruitmentStagesWithMeetings.find(s => s.id === meeting.stage)
+                        const showOfficesForStage = selectedStage?.showOffices ?? false
+                        const isFormatDisabled = !showOfficesForStage
+                        const currentFormat = isFormatDisabled ? 'online' : (meeting.format || 'online')
+                        return (
+                          <Card key={meeting.id} style={{ padding: '16px' }}>
+                            <Flex direction="column" gap="4">
+                              <Flex align="center" justify="between">
+                                <Text size="3" weight="medium">Встреча {index + 1}</Text>
+                                {interviewMeetings.length > 1 && (
+                                  <Button
+                                    size="1"
+                                    variant="ghost"
+                                    color="red"
+                                    onClick={() => removeInterviewMeeting(meeting.id)}
+                                  >
+                                    <TrashIcon width={14} height={14} />
+                                  </Button>
+                                )}
+                              </Flex>
+                              
+                              {/* Этап */}
+                              <Box>
+                                <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Этап</Text>
+                                <Select.Root
+                                  value={meeting.stage}
+                                  onValueChange={(v) => {
+                                    const stage = recruitmentStagesWithMeetings.find(s => s.id === v)
+                                    const showOffices = stage?.showOffices ?? false
+                                    // Если showOffices = false, автоматически устанавливаем формат "Онлайн"
+                                    // Если showOffices = true, сохраняем текущий формат или устанавливаем "Онлайн" по умолчанию
+                                    const newFormat: 'office' | 'online' | '' = showOffices 
+                                      ? (meeting.format === 'office' || meeting.format === 'online' ? meeting.format : 'online') 
+                                      : 'online'
+                                    updateInterviewMeeting(meeting.id, {
+                                      stage: v,
+                                      format: newFormat
+                                    })
+                                  }}
                                 >
-                                  <TrashIcon width={14} height={14} />
-                                </Button>
-                              )}
-                            </Flex>
-                            
-                            {/* Этап */}
-                            <Box>
-                              <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Этап</Text>
-                              <Select.Root
-                                value={meeting.stage}
-                                onValueChange={(value) => updateInterviewMeeting(meeting.id, { stage: value })}
-                              >
-                                <Select.Trigger placeholder="Выберите этап" style={{ width: '100%' }} />
-                                <Select.Content>
-                                  {stagesBeforeOffer.map((stage) => (
-                                    <Select.Item key={stage.id} value={stage.id}>
-                                      {stage.description || stage.name}
-                                    </Select.Item>
-                                  ))}
-                                </Select.Content>
-                              </Select.Root>
-                            </Box>
-                            
-                            {/* Длительность встречи */}
-                            <Box>
-                              <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Длительность встречи (минут)</Text>
-                              <TextField.Root
-                                type="number"
-                                value={meeting.duration.toString()}
-                                onChange={(e) => updateInterviewMeeting(meeting.id, { duration: parseInt(e.target.value) || 60 })}
-                                placeholder="60"
-                                style={{ width: '200px' }}
-                              />
-                            </Box>
-                            
-                            {/* Заголовок названия встречи */}
-                            <Box>
-                              <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Заголовок названия встречи</Text>
-                              <TextField.Root
-                                value={meeting.title}
-                                onChange={(e) => updateInterviewMeeting(meeting.id, { title: e.target.value })}
-                                placeholder="Например: Техническое интервью - Frontend Developer"
-                                style={{ width: '100%' }}
-                              />
-                            </Box>
-                            
-                            {/* Формат (офис или онлайн) */}
-                            <Box>
-                              <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Формат встречи</Text>
-                              <Text size="1" color="gray" mb="2" style={{ display: 'block' }}>
-                                Выберите офис или онлайн
-                              </Text>
-                              <Select.Root
-                                value={meeting.format || undefined}
-                                onValueChange={(v) => updateInterviewMeeting(meeting.id, { format: (v || '') as 'office' | 'online' | '' })}
-                              >
-                                <Select.Trigger placeholder="Офис или онлайн" style={{ width: '100%' }} />
-                                <Select.Content>
-                                  <Select.Item value="office">Офис</Select.Item>
-                                  <Select.Item value="online">Онлайн</Select.Item>
-                                </Select.Content>
-                              </Select.Root>
-                            </Box>
+                                  <Select.Trigger placeholder="Выберите этап" style={{ width: '100%' }} />
+                                  <Select.Content>
+                                    {stagesBeforeOffer.map((stage) => (
+                                      <Select.Item key={stage.id} value={stage.id}>
+                                        {stage.description || stage.name}
+                                      </Select.Item>
+                                    ))}
+                                  </Select.Content>
+                                </Select.Root>
+                              </Box>
+                              
+                              {/* Длительность встречи */}
+                              <Box>
+                                <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Длительность встречи (минут)</Text>
+                                <TextField.Root
+                                  type="number"
+                                  value={meeting.duration.toString()}
+                                  onChange={(e) => updateInterviewMeeting(meeting.id, { duration: parseInt(e.target.value) || 60 })}
+                                  placeholder="60"
+                                  style={{ width: '200px' }}
+                                />
+                              </Box>
+                              
+                              {/* Заголовок названия встречи */}
+                              <Box>
+                                <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Заголовок названия встречи</Text>
+                                <TextField.Root
+                                  value={meeting.title}
+                                  onChange={(e) => updateInterviewMeeting(meeting.id, { title: e.target.value })}
+                                  placeholder="Например: Техническое интервью - Frontend Developer"
+                                  style={{ width: '100%' }}
+                                />
+                              </Box>
+                              
+                              {/* Формат (офис или онлайн) */}
+                              <Box>
+                                <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>Формат встречи</Text>
+                                <Text size="1" color="gray" mb="2" style={{ display: 'block' }}>
+                                  {isFormatDisabled ? 'Для выбранного этапа показывание офисов отключено. Автоматически установлен формат "Онлайн".' : 'Выберите офис или онлайн'}
+                                </Text>
+                                <Select.Root
+                                  value={currentFormat}
+                                  onValueChange={(v) => updateInterviewMeeting(meeting.id, { format: (v || 'online') as 'office' | 'online' | '' })}
+                                  disabled={isFormatDisabled}
+                                >
+                                  <Select.Trigger placeholder={isFormatDisabled ? 'Онлайн (автоматически)' : 'Офис или онлайн'} style={{ width: '100%' }} />
+                                  <Select.Content>
+                                    <Select.Item value="office">Офис</Select.Item>
+                                    <Select.Item value="online">Онлайн</Select.Item>
+                                  </Select.Content>
+                                </Select.Root>
+                              </Box>
                             
                             {/* Сопровождающий текст */}
                             <Box>
@@ -6111,7 +6700,8 @@ export default function RecrChatPage() {
                             </Box>
                           </Flex>
                         </Card>
-                      ))}
+                        )
+                      })}
                     </Flex>
                   )}
                 </Box>
