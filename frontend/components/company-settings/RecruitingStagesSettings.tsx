@@ -1,18 +1,80 @@
+/**
+ * RecruitingStagesSettings - компонент управления этапами найма и причинами отказа
+ * 
+ * Назначение:
+ * - Управление этапами найма (воронка подбора)
+ * - Управление причинами отказа на каждом этапе
+ * - Настройка структуры pipeline для ATS и отчётов
+ * - Настройка этапов-встреч для использования в workflow
+ * 
+ * Функциональность:
+ * - Список этапов найма с возможностью редактирования
+ * - Создание и редактирование этапов найма
+ * - Управление причинами отказа для каждого этапа
+ * - Порядок этапов в воронке
+ * - Настройка этапов-встреч:
+ *   - Метка "встреча" (isMeeting): отмечает этап как встречу
+ *   - Отображать офисы (showOffices): настройка отображения выбора офисов в workflow
+ *   - Отображать интервьюеров (showInterviewers): настройка отображения выбора интервьюеров в workflow
+ * 
+ * Особенности этапов-встреч:
+ * - Этапы с isMeeting = true используются в тогглере на странице /workflow
+ * - Названия этапов-встреч становятся названиями кнопок в тогглере
+ * - Количество кнопок в тогглере: 0 и более (зависит от количества этапов с isMeeting = true)
+ * - Настройки showOffices и showInterviewers определяют, какие элементы отображаются в панели настроек встречи
+ * 
+ * Связи:
+ * - /workflow: этапы-встречи используются для формирования тогглера типа процесса
+ * - WorkflowHeader: использует этапы-встречи для динамического формирования кнопок
+ * - /company-settings/recruiting/stages: страница настроек этапов найма
+ * 
+ * Поведение:
+ * - При редактировании этапа с isMeeting = true появляется карточка "Настройки встречи"
+ * - В карточке можно выбрать: отображать ли офисы и интервьюеров (да/нет)
+ * - Эти настройки влияют на отображение элементов в панели настроек встречи на странице /workflow
+ */
+
 'use client'
 
-import { Box, Flex, Text, Button, Card, Table, TextField, Dialog, Tabs } from "@radix-ui/themes"
+import { Box, Flex, Text, Button, Card, Table, TextField, Dialog, Tabs, Checkbox, Select } from "@radix-ui/themes"
 import { useState } from "react"
 import { PlusIcon, Pencil2Icon, TrashIcon, CheckIcon, MixerHorizontalIcon } from "@radix-ui/react-icons"
 import Link from "next/link"
 import { useToast } from "@/components/Toast/ToastContext"
 import styles from './RecruitingStagesSettings.module.css'
 
+/**
+ * RejectionReason - интерфейс причины отказа
+ * 
+ * @property id - уникальный идентификатор причины отказа
+ * @property name - название причины отказа
+ * @property description - описание причины отказа (опционально)
+ */
 interface RejectionReason {
   id: string
   name: string
   description?: string
 }
 
+/**
+ * HiringStage - интерфейс этапа найма
+ * 
+ * @property id - уникальный идентификатор этапа
+ * @property name - название этапа
+ * @property order - порядок отображения этапа в воронке
+ * @property color - цвет этапа (hex)
+ * @property description - описание этапа (опционально)
+ * @property autoTransition - автоматический переход на следующий этап (опционально)
+ * @property rejectionReasonIds - массив ID причин отказа для этого этапа (опционально)
+ * @property isMeeting - метка "встреча": если true, этап используется в тогглере на странице /workflow
+ * @property showOffices - отображать ли выбор офисов для этапа-встречи (да/нет)
+ * @property showInterviewers - отображать ли выбор интервьюеров для этапа-встречи (да/нет)
+ * 
+ * Особенности:
+ * - Этапы с isMeeting = true становятся кнопками в тогглере на странице /workflow
+ * - Названия этапов-встреч используются как названия кнопок в тогглере
+ * - Настройки showOffices и showInterviewers определяют содержимое панели настроек встречи
+ */
 interface HiringStage {
   id: string
   name: string
@@ -21,6 +83,9 @@ interface HiringStage {
   description?: string
   autoTransition?: boolean
   rejectionReasonIds?: string[]
+  isMeeting?: boolean // Метка "встреча" - этап используется в тогглере на странице /workflow
+  showOffices?: boolean // Отображать офисы для этапа-встречи (да/нет)
+  showInterviewers?: boolean // Отображать интервьюеров для этапа-встречи (да/нет)
 }
 
 // Моковые данные причин отказа
@@ -145,7 +210,10 @@ export default function RecruitingStagesSettings() {
     name: '',
     color: defaultColors[0],
     description: '',
-    rejectionReasonIds: []
+    rejectionReasonIds: [],
+    isMeeting: false,
+    showOffices: false,
+    showInterviewers: false
   })
   
   // Состояние для причин отказа
@@ -164,7 +232,10 @@ export default function RecruitingStagesSettings() {
       name: '',
       color: defaultColors[0],
       description: '',
-      rejectionReasonIds: []
+      rejectionReasonIds: [],
+      isMeeting: false,
+      showOffices: false,
+      showInterviewers: false
     })
     setIsStageDialogOpen(true)
   }
@@ -175,19 +246,14 @@ export default function RecruitingStagesSettings() {
       name: stage.name,
       color: stage.color,
       description: stage.description,
-      rejectionReasonIds: stage.rejectionReasonIds || []
+      rejectionReasonIds: stage.rejectionReasonIds || [],
+      isMeeting: stage.isMeeting || false,
+      showOffices: stage.showOffices || false,
+      showInterviewers: stage.showInterviewers || false
     })
     setIsStageDialogOpen(true)
   }
 
-  const handleDeleteStage = (id: string) => {
-    toast.showWarning('Удалить этап?', 'Вы уверены, что хотите удалить этот этап?', {
-      actions: [
-        { label: 'Отмена', onClick: () => {}, variant: 'soft', color: 'gray' },
-        { label: 'Удалить', onClick: () => setStages(prev => prev.filter(s => s.id !== id).map((s, index) => ({ ...s, order: index + 1 }))), variant: 'solid', color: 'red' },
-      ],
-    })
-  }
 
   const handleSaveStage = () => {
     if (!editingStage && !stageFormData.name) {
@@ -199,7 +265,14 @@ export default function RecruitingStagesSettings() {
       const { name: _n, ...rest } = stageFormData
       setStages(stages.map(s =>
         s.id === editingStage.id
-          ? { ...s, ...rest, rejectionReasonIds: stageFormData.rejectionReasonIds || [] }
+          ? { 
+              ...s, 
+              ...rest, 
+              rejectionReasonIds: stageFormData.rejectionReasonIds || [], 
+              isMeeting: stageFormData.isMeeting || false,
+              showOffices: stageFormData.showOffices || false,
+              showInterviewers: stageFormData.showInterviewers || false
+            }
           : s
       ))
     } else {
@@ -210,7 +283,10 @@ export default function RecruitingStagesSettings() {
         color: stageFormData.color || defaultColors[0],
         description: stageFormData.description,
         autoTransition: false,
-        rejectionReasonIds: stageFormData.rejectionReasonIds || []
+        rejectionReasonIds: stageFormData.rejectionReasonIds || [],
+        isMeeting: stageFormData.isMeeting || false,
+        showOffices: stageFormData.showOffices || false,
+        showInterviewers: stageFormData.showInterviewers || false
       }
       setStages([...stages, newStage])
     }
@@ -311,10 +387,6 @@ export default function RecruitingStagesSettings() {
               <Text size="3" color="gray">
                 Настройте этапы найма. Выберите доступные причины отказа для каждого этапа.
               </Text>
-              <Button onClick={handleAddStage}>
-                <PlusIcon width={16} height={16} />
-                Добавить этап
-              </Button>
             </Flex>
 
             <Card>
@@ -364,23 +436,13 @@ export default function RecruitingStagesSettings() {
                         )}
                       </Table.Cell>
                       <Table.Cell>
-                        <Flex gap="2">
-                          <Button
-                            size="1"
-                            variant="soft"
-                            onClick={() => handleEditStage(stage)}
-                          >
-                            <Pencil2Icon width={14} height={14} />
-                          </Button>
-                          <Button
-                            size="1"
-                            variant="soft"
-                            color="red"
-                            onClick={() => handleDeleteStage(stage.id)}
-                          >
-                            <TrashIcon width={14} height={14} />
-                          </Button>
-                        </Flex>
+                        <Button
+                          size="1"
+                          variant="soft"
+                          onClick={() => handleEditStage(stage)}
+                        >
+                          <Pencil2Icon width={14} height={14} />
+                        </Button>
                       </Table.Cell>
                     </Table.Row>
                   ))}
@@ -455,18 +517,29 @@ export default function RecruitingStagesSettings() {
 
           <Flex direction="column" gap="3" mt="4">
             <Box>
-              <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>
-                Название этапа {editingStage ? '' : '*'}
-              </Text>
-              {editingStage ? (
-                <Text size="2" color="gray">{editingStage.name}</Text>
-              ) : (
-                <TextField.Root
-                  value={stageFormData.name || ''}
-                  onChange={(e) => setStageFormData({ ...stageFormData, name: e.target.value })}
-                  placeholder="Например: Interview"
-                />
-              )}
+              <Flex align="center" gap="3">
+                <Box style={{ flex: 1 }}>
+                  <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>
+                    Название этапа {editingStage ? '' : '*'}
+                  </Text>
+                  {editingStage ? (
+                    <Text size="2" color="gray">{editingStage.name}</Text>
+                  ) : (
+                    <TextField.Root
+                      value={stageFormData.name || ''}
+                      onChange={(e) => setStageFormData({ ...stageFormData, name: e.target.value })}
+                      placeholder="Например: Interview"
+                    />
+                  )}
+                </Box>
+                <Flex align="center" gap="2" style={{ marginTop: editingStage ? '0' : '24px' }}>
+                  <Checkbox
+                    checked={stageFormData.isMeeting || false}
+                    onCheckedChange={(checked) => setStageFormData({ ...stageFormData, isMeeting: checked as boolean })}
+                  />
+                  <Text size="2" weight="medium">Встреча</Text>
+                </Flex>
+              </Flex>
             </Box>
 
             <Box>
@@ -546,6 +619,60 @@ export default function RecruitingStagesSettings() {
                 )}
               </Flex>
             </Box>
+
+            {/* Карточка настроек встречи (отображается только если isMeeting = true)
+                - Позволяет настроить, какие элементы будут отображаться в панели настроек встречи на странице /workflow
+                - showOffices: если "Да", то в панели настроек встречи будет выбор формата (Онлайн/Офис) и выбор офиса при выборе "Офис"
+                - showInterviewers: если "Да", то в панели настроек встречи будет выбор интервьюеров
+                - Эти настройки влияют на отображение элементов в WorkflowHeader при выборе этапа-встречи */}
+            {stageFormData.isMeeting && (
+              <Card style={{ padding: '16px', backgroundColor: 'var(--gray-2)' }}>
+                <Text size="2" weight="bold" mb="3" style={{ display: 'block' }}>
+                  Настройки встречи
+                </Text>
+                <Text size="1" color="gray" mb="3" style={{ display: 'block' }}>
+                  Настройте, какие элементы будут отображаться в панели настроек встречи на странице /workflow
+                </Text>
+                <Flex direction="column" gap="3">
+                  <Box>
+                    <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>
+                      Отображать офисы?
+                    </Text>
+                    <Select.Root
+                      value={stageFormData.showOffices ? 'yes' : 'no'}
+                      onValueChange={(value) => setStageFormData({ ...stageFormData, showOffices: value === 'yes' })}
+                    >
+                      <Select.Trigger style={{ width: '100%' }} />
+                      <Select.Content>
+                        <Select.Item value="yes">Да</Select.Item>
+                        <Select.Item value="no">Нет</Select.Item>
+                      </Select.Content>
+                    </Select.Root>
+                    <Text size="1" color="gray" mt="1" style={{ display: 'block' }}>
+                      Если "Да", то в панели настроек встречи будет выбор формата (Онлайн/Офис) и выбор офиса при выборе "Офис"
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Text size="2" weight="medium" mb="2" style={{ display: 'block' }}>
+                      Отображать интервьюеров?
+                    </Text>
+                    <Select.Root
+                      value={stageFormData.showInterviewers ? 'yes' : 'no'}
+                      onValueChange={(value) => setStageFormData({ ...stageFormData, showInterviewers: value === 'yes' })}
+                    >
+                      <Select.Trigger style={{ width: '100%' }} />
+                      <Select.Content>
+                        <Select.Item value="yes">Да</Select.Item>
+                        <Select.Item value="no">Нет</Select.Item>
+                      </Select.Content>
+                    </Select.Root>
+                    <Text size="1" color="gray" mt="1" style={{ display: 'block' }}>
+                      Если "Да", то в панели настроек встречи будет выбор интервьюеров
+                    </Text>
+                  </Box>
+                </Flex>
+              </Card>
+            )}
           </Flex>
 
           <Flex gap="3" justify="end" mt="4">

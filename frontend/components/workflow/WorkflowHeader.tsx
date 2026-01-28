@@ -3,32 +3,47 @@
  * 
  * Назначение:
  * - Управление процессом скрининга и интервью
- * - Выбор типа процесса (скрининг/интервью)
+ * - Выбор типа процесса (динамические кнопки на основе этапов найма)
  * - Выбор вакансии
- * - Настройка параметров интервью (формат, интервьюеры, офис)
+ * - Настройка параметров встреч (формат, интервьюеры, офис)
  * - Быстрые действия (ссылки на коммуникацию, календарь, вакансия, слоты)
  * 
  * Функциональность:
  * - Быстрые кнопки: ссылки на коммуникацию (Telegram, WhatsApp, Viber, LinkedIn, Email)
- * - Тогглер типа процесса: Скрининг (30 мин) / Интервью (90 мин)
+ * - Тогглер типа процесса: динамические кнопки на основе этапов найма с меткой "встреча"
+ *   - Количество кнопок: 0 и более (зависит от количества этапов с isMeeting = true)
+ *   - Названия кнопок: берутся из названий этапов найма, отмеченных чекбоксом "встреча"
+ *   - Если этапов-встреч нет, тогглер может быть пустым или содержать только системные опции
  * - Выбор вакансии: выпадающий список с вакансиями
  * - Выбор офиса: тогглер офисов (Минск, Варшава, Гомель)
  * - Кнопки управления: Календарь, Вакансия, Свободные слоты, Обновить
- * - Настройки интервью (только для типа "Интервью"):
- *   - Формат интервью: Онлайн / Офис
- *   - Выбор интервьюеров: чекбоксы для выбора нескольких интервьюеров
+ * - Настройки встречи (для этапов с isMeeting = true):
+ *   - Формат встречи: Онлайн / Офис (отображается если showOffices = true)
+ *   - Выбор интервьюеров: чекбоксы для выбора нескольких интервьюеров (отображается если showInterviewers = true)
+ *   - Выбор офиса: появляется после выбора формата "Офис", если showOffices = true
  * 
  * Связи:
  * - workflow/page.tsx: используется на странице workflow
  * - SlotsPanel: открывается при клике на кнопку "слоты"
  * - Google Calendar: переход к календарю
  * - Huntflow: переход к вакансии
+ * - /company-settings/recruiting/stages: этапы найма с настройками встреч
  * 
  * Поведение:
- * - При выборе типа процесса обновляет интерфейс
- * - При выборе "Интервью" показывает панель настроек интервью
+ * - При загрузке компонента загружаются этапы найма с isMeeting = true
+ * - Тогглер типа процесса динамически формируется из этапов-встреч
+ * - При выборе этапа-встречи показывается панель настроек встречи
+ * - В зависимости от настроек этапа (showOffices, showInterviewers) отображаются соответствующие элементы
+ * - При выборе формата "Офис" и showOffices = true показывается выбор офиса
  * - При клике на "слоты" открывает/закрывает панель слотов
  * - Быстрые кнопки открывают соответствующие сервисы в новой вкладке
+ * 
+ * Настройки этапов-встреч:
+ * - isMeeting: метка "встреча" для этапа
+ * - showOffices: отображать ли выбор офисов (да/нет)
+ * - showInterviewers: отображать ли выбор интервьюеров (да/нет)
+ * 
+ * Эти настройки задаются на странице /company-settings/recruiting/stages в модальном окне редактирования этапа.
  */
 'use client'
 
@@ -226,7 +241,11 @@ export default function WorkflowHeader({ onSlotsClick, slotsOpen }: WorkflowHead
             </Box>
           </Flex>
 
-          {/* Тогглер этапов процесса: Скрининг / Интервью */}
+          {/* Тогглер этапов процесса: динамические кнопки на основе этапов найма с меткой "встреча"
+              - Количество кнопок: 0 и более (зависит от количества этапов с isMeeting = true)
+              - Названия кнопок: берутся из названий этапов найма, отмеченных чекбоксом "встреча"
+              - Если этапов-встреч нет, тогглер может быть пустым или содержать только системные опции
+              TODO: Загружать этапы найма с isMeeting = true из API и формировать кнопки динамически */}
           <Flex data-tour="workflow-toggle" gap="3" align="center" className={styles.workflowToggle}>
             <Box
               className={styles.workflowButton}
@@ -300,22 +319,6 @@ export default function WorkflowHeader({ onSlotsClick, slotsOpen }: WorkflowHead
           
           {/* Кнопки управления строго под выпадающим списком */}
           <Flex gap="2" align="center" justify="end" className={styles.controlsRow}>
-            {/* Тогглер выбора офиса */}
-            <Flex gap="1" align="center" className={styles.officeToggle}>
-              {offices.map(office => (
-                <Box
-                  key={office.id}
-                  className={styles.officeButton}
-                  data-selected={selectedOffice === office.id}
-                  onClick={() => setSelectedOffice(office.id)}
-                >
-                  <Text size="1" weight={selectedOffice === office.id ? "medium" : "regular"}>
-                    {office.label}
-                  </Text>
-                </Box>
-              ))}
-            </Flex>
-
             {/* Кнопка 1: Календарь с иконкой "Поделиться" */}
             <Button
               variant="soft"
@@ -374,11 +377,19 @@ export default function WorkflowHeader({ onSlotsClick, slotsOpen }: WorkflowHead
         </Box>
       </Flex>
 
-      {/* Блок настроек интервью (показывается только при выборе "Интервью") */}
+      {/* Блок настроек встречи (показывается только при выборе этапа-встречи)
+          - Отображается для этапов найма с isMeeting = true
+          - Содержимое зависит от настроек этапа:
+            - showOffices: если true, показывается выбор формата (Онлайн/Офис) и выбор офиса при выборе "Офис"
+            - showInterviewers: если true, показывается выбор интервьюеров
+          - Настройки этапа задаются на странице /company-settings/recruiting/stages
+          TODO: Загружать настройки выбранного этапа из API и отображать элементы в зависимости от showOffices и showInterviewers */}
       {selectedWorkflow === 'interview' && (
         <Box className={styles.interviewOptionsPanel}>
           <Flex gap="4" align="center" wrap="wrap">
-            {/* Тогглер формата интервью */}
+            {/* Тогглер формата встречи (отображается если showOffices = true для выбранного этапа)
+                - Позволяет выбрать формат: Онлайн или Офис
+                - При выборе "Офис" показывается дополнительная карточка с выбором офиса */}
             <Flex gap="2" align="center">
               <Box
                 className={styles.formatButton}
@@ -398,10 +409,33 @@ export default function WorkflowHeader({ onSlotsClick, slotsOpen }: WorkflowHead
               </Box>
             </Flex>
 
-            {/* Вертикальная линия-разделитель */}
-            <Separator orientation="vertical" style={{ height: '24px' }} />
+            {/* Выбор офиса (отображается если выбран формат "Офис" и showOffices = true)
+                - Показывается сразу после кнопки выбора формата "Офис"
+                - Содержит список офисов для выбора */}
+            {interviewFormat === 'office' && (
+              <>
+                <Separator orientation="vertical" style={{ height: '24px' }} />
+                <Flex gap="1" align="center" className={styles.officeToggle}>
+                  {offices.map(office => (
+                    <Box
+                      key={office.id}
+                      className={styles.officeButton}
+                      data-selected={selectedOffice === office.id}
+                      onClick={() => setSelectedOffice(office.id)}
+                    >
+                      <Text size="1" weight={selectedOffice === office.id ? "medium" : "regular"}>
+                        {office.label}
+                      </Text>
+                    </Box>
+                  ))}
+                </Flex>
+              </>
+            )}
 
-            {/* Чекбоксы интервьюеров */}
+            {/* Чекбоксы интервьюеров (отображается если showInterviewers = true для выбранного этапа)
+                TODO: Загружать настройки выбранного этапа из API и проверять showInterviewers
+                Сейчас отображается всегда для демонстрации функциональности */}
+            <Separator orientation="vertical" style={{ height: '24px' }} />
             <Flex gap="3" align="center" wrap="wrap">
               {interviewers.map(interviewer => (
                 <Flex key={interviewer.id} align="center" gap="2">
