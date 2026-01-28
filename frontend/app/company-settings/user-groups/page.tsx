@@ -40,7 +40,7 @@ import { Flex, Text, Button, Box, TextField, Select, Badge, Table } from "@radix
 import { PlusIcon, Pencil1Icon, TrashIcon, CheckIcon, Cross2Icon, MagnifyingGlassIcon, GearIcon } from "@radix-ui/react-icons"
 import { useState, useEffect } from "react"
 import { useToast } from "@/components/Toast/ToastContext"
-import GroupAccessModal, { type AccessRights } from "@/components/company-settings/GroupAccessModal"
+import GroupAccessModal, { type AccessRights, type ATSAccessRights, type RecruitingSettingsAccessRights } from "@/components/company-settings/GroupAccessModal"
 
 /**
  * UserGroup - интерфейс группы пользователей
@@ -53,6 +53,8 @@ import GroupAccessModal, { type AccessRights } from "@/components/company-settin
  * - permissions: массив разрешений группы
  * - applications: массив приложений, доступных группе (опционально)
  * - access_rights: права доступа к разделам приложения (опционально)
+ * - ats_access: детальные права доступа для ATS (блок Рекрутинг) (опционально)
+ * - recruiting_settings_access: детальные права доступа для настроек рекрутинга (опционально)
  * - created_at, updated_at: даты создания и обновления
  */
 interface UserGroup {
@@ -63,6 +65,8 @@ interface UserGroup {
   permissions: string[]
   applications?: string[]
   access_rights?: AccessRights
+  ats_access?: ATSAccessRights
+  recruiting_settings_access?: RecruitingSettingsAccessRights
   created_at: string
   updated_at: string
 }
@@ -360,7 +364,7 @@ export default function UserGroupsPage() {
    * Поведение:
    * - Вызывается из GroupAccessModal при сохранении изменений
    * - Проверяет наличие selectedGroup
-   * - Обновляет applications и access_rights группы
+   * - Обновляет applications, access_rights и ats_access группы
    * - Обновляет группу в массиве groups
    * - Показывает toast-уведомление об успехе
    * 
@@ -369,17 +373,21 @@ export default function UserGroupsPage() {
    * 
    * @param applications - массив приложений, доступных группе
    * @param access - права доступа к разделам приложения
+   * @param atsAccess - детальные права доступа для ATS (блок Рекрутинг)
+   * @param recruitingSettingsAccess - детальные права доступа для настроек рекрутинга
    * 
    * TODO: Реализовать сохранение через API
    * - PUT /api/company-settings/user-groups/{id}/access/ - обновление прав доступа группы
    */
-  const handleApplyAccess = (applications: string[], access: AccessRights) => {
+  const handleApplyAccess = (applications: string[], access: AccessRights, atsAccess?: ATSAccessRights, recruitingSettingsAccess?: RecruitingSettingsAccessRights) => {
     if (!selectedGroup) return
     
     const updatedGroup: UserGroup = {
       ...selectedGroup,
       applications,
       access_rights: access,
+      ats_access: atsAccess,
+      recruiting_settings_access: recruitingSettingsAccess,
     }
     
     setGroups(prev => prev.map(g => g.id === selectedGroup.id ? updatedGroup : g))
@@ -741,6 +749,8 @@ export default function UserGroupsPage() {
             groupName={selectedGroup.name}
             initialApplications={selectedGroup.applications || []}
             initialAccess={selectedGroup.access_rights}
+            initialATSAccess={selectedGroup.ats_access}
+            initialRecruitingSettingsAccess={selectedGroup.recruiting_settings_access}
             onApply={handleApplyAccess}
           />
         )}

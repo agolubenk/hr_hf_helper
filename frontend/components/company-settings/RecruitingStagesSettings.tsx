@@ -37,8 +37,9 @@
 'use client'
 
 import { Box, Flex, Text, Button, Card, Table, TextField, Dialog, Tabs, Checkbox, Select } from "@radix-ui/themes"
+import * as Tooltip from '@radix-ui/react-tooltip'
 import { useState } from "react"
-import { PlusIcon, Pencil2Icon, TrashIcon, CheckIcon, MixerHorizontalIcon } from "@radix-ui/react-icons"
+import { PlusIcon, Pencil2Icon, TrashIcon, CheckIcon, MixerHorizontalIcon, InfoCircledIcon } from "@radix-ui/react-icons"
 import Link from "next/link"
 import { useToast } from "@/components/Toast/ToastContext"
 import styles from './RecruitingStagesSettings.module.css'
@@ -398,6 +399,7 @@ export default function RecruitingStagesSettings() {
                     <Table.ColumnHeaderCell>Цвет</Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell>Описание</Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell>Причины отказа</Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell style={{ width: '80px', textAlign: 'center' }}>Встреча</Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell style={{ width: '150px' }}>Действия</Table.ColumnHeaderCell>
                   </Table.Row>
                 </Table.Header>
@@ -433,6 +435,13 @@ export default function RecruitingStagesSettings() {
                           </Text>
                         ) : (
                           <Text size="1" color="gray">-</Text>
+                        )}
+                      </Table.Cell>
+                      <Table.Cell style={{ textAlign: 'center' }}>
+                        {stage.isMeeting ? (
+                          <CheckIcon width="16" height="16" color="var(--green-11)" />
+                        ) : (
+                          <Box style={{ width: '16px', height: '16px' }} />
                         )}
                       </Table.Cell>
                       <Table.Cell>
@@ -538,6 +547,39 @@ export default function RecruitingStagesSettings() {
                     onCheckedChange={(checked) => setStageFormData({ ...stageFormData, isMeeting: checked as boolean })}
                   />
                   <Text size="2" weight="medium">Встреча</Text>
+                  <Tooltip.Provider>
+                    <Tooltip.Root>
+                      <Tooltip.Trigger asChild>
+                        <Box
+                          as="span"
+                          style={{ cursor: 'help', display: 'inline-flex', alignItems: 'center', marginLeft: '4px' }}
+                        >
+                          <InfoCircledIcon width="14" height="14" color="var(--gray-9)" />
+                        </Box>
+                      </Tooltip.Trigger>
+                      <Tooltip.Portal>
+                        <Tooltip.Content
+                          side="top"
+                          sideOffset={5}
+                          style={{
+                            backgroundColor: 'var(--gray-2)',
+                            border: '1px solid var(--gray-6)',
+                            borderRadius: '6px',
+                            padding: '8px 12px',
+                            maxWidth: '300px',
+                            fontSize: '12px',
+                            lineHeight: '1.4',
+                            color: 'var(--gray-12)',
+                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                            zIndex: 1000,
+                          }}
+                        >
+                          Этапы-встречи используются в тогглере на странице /workflow. Названия этапов-встреч становятся названиями кнопок в тогглере. Настройки 'Отображать офисы' и 'Отображать интервьюеров' определяют, какие элементы отображаются в панели настроек встречи.
+                          <Tooltip.Arrow style={{ fill: 'var(--gray-2)', stroke: 'var(--gray-6)' }} />
+                        </Tooltip.Content>
+                      </Tooltip.Portal>
+                    </Tooltip.Root>
+                  </Tooltip.Provider>
                 </Flex>
               </Flex>
             </Box>

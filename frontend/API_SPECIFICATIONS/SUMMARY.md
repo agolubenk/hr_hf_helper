@@ -193,8 +193,52 @@ frontend/API_SPECIFICATIONS/
 - Версионирование документов для отслеживания изменений
 - Связь с pre-specification.json файлами для детализации по страницам
 
+## 📝 Обновления (версия 1.1.0)
+
+### Новые функции и изменения:
+
+1. **Этапы найма с настройками встреч:**
+   - Добавлены поля `is_meeting`, `show_offices`, `show_interviewers` в таблицу `recruiting_stages`
+   - Этапы с `is_meeting = true` используются для формирования динамических тогглеров на страницах `/workflow` и `/recr-chat`
+   - Панель настроек встречи отображается условно в зависимости от настроек этапа
+
+2. **Команды рекрутинга:**
+   - Добавлена таблица `recruiting_commands`
+   - Команда должна быть обязательно связана с этапом найма (`stage_id` обязателен)
+   - Поддержка работы в любой раскладке клавиатуры (`allow_any_layout`)
+   - Типы команд: `analysis` (анализ) или `event` (событие)
+
+3. **Настройки вакансии по странам:**
+   - Добавлены таблицы `vacancy_text_by_country`, `vacancy_activity_by_country`, `vacancy_questions_by_office`
+   - Текст вакансии настраивается отдельно для каждой страны
+   - Активность вакансии управляется отдельно для каждой страны
+   - Вопросы и ссылки настраиваются отдельно для каждого офиса
+
+4. **Новые коды ошибок:**
+   - Команды рекрутинга: `COMMAND_DUPLICATE`, `COMMAND_INVALID_FORMAT`, `COMMAND_STAGE_REQUIRED`, `COMMAND_TYPE_INVALID`, `COMMAND_STAGE_NOT_FOUND`
+   - Вакансии по странам: `VACANCY_COUNTRY_NOT_FOUND`, `VACANCY_COUNTRY_INACTIVE`, `VACANCY_FIELD_INACTIVE`, `VACANCY_OFFICE_NOT_FOUND`, `VACANCY_OFFICE_INACTIVE`
+   - Этапы найма: `RECRUITING_STAGE_NOT_FOUND`, `RECRUITING_STAGE_MEETING_SETTINGS_INVALID`
+
+5. **Новые права доступа:**
+   - `read:recruiting_stages`, `write:recruiting_stages` - для управления этапами найма с настройками встреч
+   - `read:recruiting_commands`, `write:recruiting_commands`, `delete:recruiting_commands` - для управления командами рекрутинга
+   - `read:vacancy_country_settings`, `write:vacancy_country_settings` - для управления настройками вакансии по странам
+
+6. **Интеграционные требования:**
+   - API endpoint `GET /api/company-settings/recruiting/stages/` должен возвращать этапы с полными настройками встреч
+   - API endpoints для команд должны поддерживать новые поля: `command_type`, `allow_any_layout`, обязательный `stage_id`
+   - API endpoints для настроек вакансии по странам: `GET/PUT /api/vacancies/{id}/country-settings/{country_code}/`
+   - API endpoints для настроек офисов: `GET/PUT /api/vacancies/{id}/office-settings/{office_id}/`
+
+7. **Производительность:**
+   - Кэширование этапов-встреч (TTL: 10 минут)
+   - Кэширование настроек вакансии по странам (TTL: 5 минут)
+   - Оптимизированные запросы с JOIN для загрузки этапов с настройками
+   - Индексы на `is_meeting`, `country_code`, `office_id` для быстрого поиска
+
 ---
 
-**Версия:** 1.0.0  
+**Версия:** 1.1.0  
 **Дата создания:** 2026-01-28  
+**Последнее обновление:** 2026-01-28  
 **Автор:** HR Helper Development Team

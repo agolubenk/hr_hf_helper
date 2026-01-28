@@ -134,6 +134,17 @@
 | `STAGE_TRANSITION_INVALID` | 422 | Недопустимый переход между этапами |
 | `WORKFLOW_RULE_NOT_FOUND` | 404 | Правило workflow не найдено |
 
+#### Команды рекрутинга
+
+| Error Code | HTTP Status | Описание |
+|------------|-------------|----------|
+| `COMMAND_NOT_FOUND` | 404 | Команда не найдена |
+| `COMMAND_DUPLICATE` | 409 | Команда уже существует (с учетом раскладки, если `allow_any_layout = true`) |
+| `COMMAND_INVALID_FORMAT` | 422 | Команда должна начинаться с "/" |
+| `COMMAND_STAGE_REQUIRED` | 422 | Команда должна быть связана с этапом найма (`stage_id` обязателен) |
+| `COMMAND_TYPE_INVALID` | 422 | Неверный тип команды (должен быть "analysis" или "event") |
+| `COMMAND_STAGE_NOT_FOUND` | 404 | Этап найма, связанный с командой, не найден |
+
 #### Аутентификация
 
 | Error Code | HTTP Status | Описание |
@@ -404,8 +415,25 @@ Content-Type: application/json
 - **INFO**: Информационные сообщения (успешные операции)
 - **DEBUG**: Детальная информация для отладки
 
+#### Вакансии (расширенные)
+
+| Error Code | HTTP Status | Описание |
+|------------|-------------|----------|
+| `VACANCY_COUNTRY_NOT_FOUND` | 404 | Настройки вакансии для указанной страны не найдены |
+| `VACANCY_COUNTRY_INACTIVE` | 409 | Вакансия неактивна для указанной страны |
+| `VACANCY_FIELD_INACTIVE` | 409 | Поле вакансии неактивно для указанной страны |
+| `VACANCY_OFFICE_NOT_FOUND` | 404 | Настройки вакансии для указанного офиса не найдены |
+| `VACANCY_OFFICE_INACTIVE` | 409 | Вакансия неактивна для указанного офиса (синхронизируется с активностью страны) |
+
+#### Этапы найма с настройками встреч
+
+| Error Code | HTTP Status | Описание |
+|------------|-------------|----------|
+| `RECRUITING_STAGE_NOT_FOUND` | 404 | Этап найма не найден |
+| `RECRUITING_STAGE_MEETING_SETTINGS_INVALID` | 422 | Некорректные настройки встречи (например, `show_offices = true` при `is_meeting = false`) |
+
 ---
 
-**Версия:** 1.0.0  
+**Версия:** 1.1.0  
 **Последнее обновление:** 2026-01-28  
 **Автор:** HR Helper Development Team

@@ -473,8 +473,40 @@ def change_candidate_stage(candidate_id, new_stage_id):
 - RAM: 16 GB
 - Database: 8 cores, 32 GB RAM
 
+## Обновления (версия 1.1.0)
+
+### Новые требования к производительности:
+
+**Загрузка этапов найма:**
+- Запрос этапов с настройками встреч должен быть оптимизирован (использовать JOIN или prefetch)
+- Кэширование этапов-встреч (TTL: 10 минут)
+- Индекс на `is_meeting` для быстрого фильтрования (`idx_recruiting_stages_is_meeting`)
+- Оптимизированный запрос для получения только этапов-встреч:
+  ```sql
+  SELECT ls.*, rs.is_meeting, rs.show_offices, rs.show_interviewers
+  FROM lifecycle_stages ls
+  JOIN recruiting_stages rs ON ls.id = rs.lifecycle_stage_id
+  WHERE ls.company_id = ? AND ls.block_id = 'recruiting' AND rs.is_meeting = true
+  ORDER BY ls.order_index;
+  ```
+
+**Команды рекрутинга:**
+- Кэширование списка команд для компании (TTL: 15 минут)
+- Индексы на `company_id`, `stage_id`, `command` для быстрого поиска
+- Проверка уникальности команд с учетом раскладки должна быть оптимизирована (использовать индексы)
+
+**Настройки вакансии по странам:**
+- Загрузка настроек вакансии по странам должна быть оптимизирована (batch loading)
+- Кэширование настроек вакансии по странам (TTL: 5 минут)
+- Ключи кэша:
+  - `vacancy_country_settings:{vacancy_id}` - все настройки по странам
+  - `vacancy_country_text:{vacancy_id}:{country_code}` - текст для конкретной страны
+  - `vacancy_office_settings:{vacancy_id}` - настройки по офисам
+- Индексы на `vacancy_id`, `country_code`, `office_id` для быстрого поиска
+- При изменении активности страны инвалидировать кэш для всех связанных офисов
+
 ---
 
-**Версия:** 1.0.0  
+**Версия:** 1.1.0  
 **Последнее обновление:** 2026-01-28  
 **Автор:** HR Helper Development Team

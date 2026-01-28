@@ -458,8 +458,47 @@ def call_ai_with_fallback(prompt):
 - `https://www.googleapis.com/auth/calendar` - чтение и запись календаря
 - `https://www.googleapis.com/auth/calendar.events` - управление событиями
 
+## Обновления (версия 1.1.0)
+
+### Новые интеграционные требования:
+
+**Workflow процессы:**
+- Загрузка этапов найма с настройками встреч (`is_meeting`, `show_offices`, `show_interviewers`)
+- API endpoint: `GET /api/company-settings/recruiting/stages/` должен возвращать этапы с полными настройками встреч
+- Используется на страницах `/workflow` и `/recr-chat` для формирования динамических тогглеров
+- Формат ответа должен включать:
+  ```json
+  {
+    "id": "stage_123",
+    "name": "Техническое интервью",
+    "is_meeting": true,
+    "show_offices": true,
+    "show_interviewers": true,
+    "color": "#3B82F6",
+    "description": "..."
+  }
+  ```
+
+**Команды рекрутинга:**
+- API endpoints для управления командами должны поддерживать новые поля: `command_type`, `allow_any_layout`, обязательный `stage_id`
+- Проверка уникальности команд с учетом раскладки клавиатуры
+- Endpoints:
+  - `GET /api/company-settings/recruiting/commands/` - список команд с полями `stage_id`, `command_type`, `allow_any_layout`
+  - `POST /api/company-settings/recruiting/commands/` - создание команды (обязательный `stage_id`)
+  - `PUT /api/company-settings/recruiting/commands/{id}/` - обновление команды
+  - `DELETE /api/company-settings/recruiting/commands/{id}/` - удаление команды
+
+**Настройки вакансии по странам:**
+- API endpoints для управления настройками вакансии по странам:
+  - `GET /api/vacancies/{id}/country-settings/` - получение всех настроек по странам
+  - `GET /api/vacancies/{id}/country-settings/{country_code}/` - настройки для конкретной страны
+  - `PUT /api/vacancies/{id}/country-settings/{country_code}/` - обновление настроек для страны
+  - `GET /api/vacancies/{id}/office-settings/` - получение настроек "Вопросы и ссылки" по офисам
+  - `PUT /api/vacancies/{id}/office-settings/{office_id}/` - обновление настроек для офиса
+- Синхронизация активности: при изменении `is_active` в `vacancy_activity_by_country` автоматически обновляется активность полей в `vacancy_questions_by_office`
+
 ---
 
-**Версия:** 1.0.0  
+**Версия:** 1.1.0  
 **Последнее обновление:** 2026-01-28  
 **Автор:** HR Helper Development Team

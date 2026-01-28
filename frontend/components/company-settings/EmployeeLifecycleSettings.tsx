@@ -4,6 +4,7 @@ import { Box, Flex, Text, Card, Button, TextField, Dialog } from "@radix-ui/them
 import { useState } from "react"
 import { PlusIcon, Pencil2Icon, TrashIcon } from "@radix-ui/react-icons"
 import { useToast } from "@/components/Toast/ToastContext"
+import Link from "next/link"
 import {
   DndContext,
   DragEndEvent,
@@ -168,7 +169,7 @@ function SortableStageRow({
               обязательный
             </Text>
           )}
-          <Box style={{ marginLeft: 'auto' }}>
+          <Box style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
             <Button size="1" variant="ghost" onClick={onStartRename} title="Переименовать">
               <Pencil2Icon width={14} height={14} />
             </Button>
@@ -281,9 +282,18 @@ export default function EmployeeLifecycleSettings() {
           const blockStages = getStagesInBlock(stages, block.id)
           return (
             <Card key={block.id} className={styles.blockCard}>
-              <Text size="4" weight="bold" mb="3" style={{ display: 'block' }}>
-                {block.name}
-              </Text>
+              <Flex align="center" justify="between" mb="3">
+                <Text size="4" weight="bold">
+                  {block.name}
+                </Text>
+                {block.id === 'recruiting' && (
+                  <Link href="/company-settings/recruiting/stages">
+                    <Button size="2" variant="soft" title="Настройка этапов найма и причин отказа">
+                      Далее причины отказа...
+                    </Button>
+                  </Link>
+                )}
+              </Flex>
               <DndContext
                 sensors={sensors}
                 onDragEnd={handleDragEnd(block.id)}
