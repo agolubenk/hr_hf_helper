@@ -1,0 +1,255 @@
+{
+  "name": "vacancies",
+  "type": "component",
+  "description": "Директория `components/vacancies` содержит компоненты для управления вакансиями в системе HR Helper. Компоненты обеспечивают отображение списка вакансий, создание новых вакансий, редактирование существующих, просмотр детальной информации и настройку различных параметров вакансий.\n\n**Расположение**: `@/components/vacancies`",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/components/vacancies/COMPONENTS_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockDepartments\n- **Тип**: `Department[]`\n- **Назначение**: Моковые данные департаментов\n- **Используется для**: Выбора департамента при создании вакансии\n- **TODO**: Загружать из API",
+      "extracted_from": "documentation"
+    },
+    "mockData_1": {
+      "description": "### mockRecruiters\n- **Тип**: массив объектов с полями `id`, `name`, `email`, `phone`, `position`\n- **Назначение**: Моковые данные рекрутеров\n- **Используется для**: Выбора рекрутеров при создании вакансии\n- **TODO**: Загружать из API",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [
+    {
+      "name": "Vacancy",
+      "definition": "interface Vacancy {\n  id: number                                    // Уникальный идентификатор вакансии\n  title: string                                 // Название вакансии\n  status: 'active' | 'inactive'                 // Статус вакансии\n  recruiter: string                            // Имя рекрутера\n  locations: string[]                           // Массив локаций вакансии\n  interviewers: number                          // Количество интервьюеров\n  date: string | null                           // Дата создания/обновления\n  hasWarning: boolean                           // Флаг наличия предупреждения\n  warningText?: string                          // Текст предупреждения\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "number",
+          "optional": false,
+          "comment": "Уникальный идентификатор вакансии"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "optional": false,
+          "comment": "Название вакансии"
+        },
+        {
+          "name": "status",
+          "type": "'active' | 'inactive'",
+          "optional": false,
+          "comment": "Статус вакансии"
+        },
+        {
+          "name": "recruiter",
+          "type": "string",
+          "optional": false,
+          "comment": "Имя рекрутера"
+        },
+        {
+          "name": "locations",
+          "type": "string[]",
+          "optional": false,
+          "comment": "Массив локаций вакансии"
+        },
+        {
+          "name": "interviewers",
+          "type": "number",
+          "optional": false,
+          "comment": "Количество интервьюеров"
+        },
+        {
+          "name": "date",
+          "type": "string | null",
+          "optional": false,
+          "comment": "Дата создания/обновления"
+        },
+        {
+          "name": "hasWarning",
+          "type": "boolean",
+          "optional": false,
+          "comment": "Флаг наличия предупреждения"
+        },
+        {
+          "name": "warningText",
+          "type": "string",
+          "optional": true,
+          "comment": "Текст предупреждения"
+        }
+      ]
+    },
+    {
+      "name": "AddVacancyFormData",
+      "definition": "interface AddVacancyFormData {\n  basicInfo: {\n    title: string                               // Название вакансии\n    status: 'active' | 'inactive'               // Статус вакансии\n    recruiter: string                           // ID рекрутера\n    technologies: string                         // Технологии (через запятую)\n    huntflowId: string                          // ID в Huntflow\n  }\n  text: {\n    departmentId: string                        // ID департамента\n    header: string                              // Заголовок вакансии\n  }\n  recruiters: {\n    selectedIds: string[]                       // Массив ID выбранных рекрутеров\n    mainId: string | null                       // ID главного рекрутера\n  }\n}",
+      "fields": [
+        {
+          "name": "basicInfo",
+          "type": "{",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "optional": false,
+          "comment": "Название вакансии"
+        },
+        {
+          "name": "status",
+          "type": "'active' | 'inactive'",
+          "optional": false,
+          "comment": "Статус вакансии"
+        },
+        {
+          "name": "recruiter",
+          "type": "string",
+          "optional": false,
+          "comment": "ID рекрутера"
+        },
+        {
+          "name": "technologies",
+          "type": "string",
+          "optional": false,
+          "comment": "Технологии (через запятую)"
+        },
+        {
+          "name": "huntflowId",
+          "type": "string",
+          "optional": false,
+          "comment": "ID в Huntflow"
+        },
+        {
+          "name": "text",
+          "type": "{",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "departmentId",
+          "type": "string",
+          "optional": false,
+          "comment": "ID департамента"
+        },
+        {
+          "name": "header",
+          "type": "string",
+          "optional": false,
+          "comment": "Заголовок вакансии"
+        },
+        {
+          "name": "recruiters",
+          "type": "{",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "selectedIds",
+          "type": "string[]",
+          "optional": false,
+          "comment": "Массив ID выбранных рекрутеров"
+        },
+        {
+          "name": "mainId",
+          "type": "string | null",
+          "optional": false,
+          "comment": "ID главного рекрутера"
+        }
+      ]
+    },
+    {
+      "name": "AddVacancyTab",
+      "definition": "type AddVacancyTab =\n  | 'basic'                                     // Основная информация\n  | 'text'                                      // Текст вакансии\n  | 'recruiters'                                // Рекрутеры\n  | 'customers'                                 // Заказчики и интервьюеры\n  | 'questions'                                 // Вопросы и ссылки\n  | 'integrations'                              // Связи и интеграции\n  | 'statuses'                                  // Статусы\n  | 'salary'                                    // Зарплатные вилки\n  | 'interviews'                                // Встречи и интервью\n  | 'scorecard'                                 // Scorecard\n  | 'dataProcessing'                            // Обработка данных\n  | 'history'                                   // История правок",
+      "fields": []
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка списка вакансий\n   - GET `/api/vacancies/`\n   - Параметры: фильтры, поиск, пагинация\n   - Возвращает: список вакансий",
+      "method": "GET",
+      "endpoint": "/api/vacancies/",
+      "parameters": "фильтры, поиск, пагинация",
+      "returns": "список вакансий",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Создание новой вакансии\n   - POST `/api/vacancies/`\n   - Параметры: данные вакансии (AddVacancyFormData)\n   - Возвращает: созданную вакансию",
+      "method": "POST",
+      "endpoint": "/api/vacancies/",
+      "parameters": "данные вакансии (AddVacancyFormData)",
+      "returns": "созданную вакансию",
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Обновление вакансии\n   - PUT `/api/vacancies/{id}/`\n   - Параметры: данные вакансии\n   - Возвращает: обновленную вакансию",
+      "method": "PUT",
+      "endpoint": "/api/vacancies/{id}/",
+      "parameters": "данные вакансии",
+      "returns": "обновленную вакансию",
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Получение детальной информации о вакансии\n   - GET `/api/vacancies/{id}/`\n   - Возвращает: полную информацию о вакансии",
+      "method": "GET",
+      "endpoint": "/api/vacancies/{id}/",
+      "parameters": null,
+      "returns": "полную информацию о вакансии",
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Загрузка списка рекрутеров\n   - GET `/api/recruiters/`\n   - Возвращает: список рекрутеров",
+      "method": "GET",
+      "endpoint": "/api/recruiters/",
+      "parameters": null,
+      "returns": "список рекрутеров",
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Загрузка списка департаментов\n   - GET `/api/departments/`\n   - Возвращает: иерархию департаментов",
+      "method": "GET",
+      "endpoint": "/api/departments/",
+      "parameters": null,
+      "returns": "иерархию департаментов",
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Загрузка списка интервьюеров\n   - GET `/api/interviewers/`\n   - Возвращает: список интервьюеров",
+      "method": "GET",
+      "endpoint": "/api/interviewers/",
+      "parameters": null,
+      "returns": "список интервьюеров",
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Загрузка зарплатных вилок\n   - GET `/api/vacancies/{id}/salary-ranges/`\n   - Возвращает: зарплатные вилки для вакансии",
+      "method": "GET",
+      "endpoint": "/api/vacancies/{id}/salary-ranges/",
+      "parameters": null,
+      "returns": "зарплатные вилки для вакансии",
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Сохранение истории правок\n   - POST `/api/vacancies/{id}/history/`\n   - Параметры: изменения, примечание\n   - Возвращает: запись истории",
+      "method": "POST",
+      "endpoint": "/api/vacancies/{id}/history/",
+      "parameters": "изменения, примечание",
+      "returns": "запись истории",
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Загрузка истории правок\n    - GET `/api/vacancies/{id}/history/`\n    - Возвращает: список изменений вакансии",
+      "method": "GET",
+      "endpoint": "/api/vacancies/{id}/history/",
+      "parameters": null,
+      "returns": "список изменений вакансии",
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.328861"
+}

@@ -1,0 +1,385 @@
+{
+  "name": "chats",
+  "type": "page",
+  "description": "Страница управления чатами Telegram (`/telegram/chats`) - это самый сложный и функциональный компонент модуля Telegram интеграции, содержащий более 3900 строк кода. Страница предоставляет полный функционал для работы с чатами Telegram, включая просмотр переписки, отправку сообщений с форматированием, управление настройками чатов и аккаунта, организацию чатов в папки, управление исключениями уведомлений и многое другое.\n\n**Путь**: `/telegram/chats`",
+  "route_path": "`/telegram/chats`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/telegram/chats/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockChats\n- **Тип**: `TelegramChat[]`\n- **Назначение**: Моковые данные чатов Telegram для демонстрации функциональности\n- **Структура**: Массив чатов с различными типами (личные чаты, группы, каналы)\n- **Поля**: См. интерфейс TelegramChat выше\n- **TODO**: Заменить на реальные данные из Telegram API",
+      "extracted_from": "documentation"
+    },
+    "mockData_1": {
+      "description": "### mockFolders\n- **Тип**: `Folder[]`\n- **Назначение**: Моковые данные папок для организации чатов\n- **Структура**: Массив папок с иконками и названиями\n- **Поля**: См. интерфейс Folder выше\n- **TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    },
+    "mockData_2": {
+      "description": "### mockAccountData\n- **Тип**: объект с полями профиля\n- **Назначение**: Моковые данные профиля Telegram аккаунта\n- **Поля**: имя, username, телефон, about, изображения профиля\n- **TODO**: Заменить на реальные данные из Telegram API",
+      "extracted_from": "documentation"
+    },
+    "mockData_3": {
+      "description": "- **Тип**: `TelegramChat[]`\n- **Назначение**: Моковые данные чатов Telegram для демонстрации функциональности\n- **Структура**: Массив чатов с различными типами (личные чаты, группы, каналы)",
+      "extracted_from": "documentation"
+    },
+    "mockData_4": {
+      "description": "- **Тип**: `Folder[]`\n- **Назначение**: Моковые данные папок для организации чатов\n- **Структура**: Массив папок с иконками и названиями",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [
+    {
+      "name": "TelegramMessage",
+      "definition": "interface TelegramMessage {\n  id: string                              // Уникальный идентификатор сообщения\n  text: string                            // Текст сообщения (может содержать Markdown)\n  timestamp: string                       // Время сообщения (форматированная строка)\n  sender: 'user' | 'telegram'            // Отправитель\n  senderName?: string                     // Имя отправителя (для сообщений из Telegram)\n  file?: {                                // Прикрепленный файл (опционально)\n    name: string\n    type: string\n    size: number\n  }\n  subChatId?: string                     // ID подгруппы для групп\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "Уникальный идентификатор сообщения"
+        },
+        {
+          "name": "text",
+          "type": "string",
+          "optional": false,
+          "comment": "Текст сообщения (может содержать Markdown)"
+        },
+        {
+          "name": "timestamp",
+          "type": "string",
+          "optional": false,
+          "comment": "Время сообщения (форматированная строка)"
+        },
+        {
+          "name": "sender",
+          "type": "'user' | 'telegram'",
+          "optional": false,
+          "comment": "Отправитель"
+        },
+        {
+          "name": "senderName",
+          "type": "string",
+          "optional": true,
+          "comment": "Имя отправителя (для сообщений из Telegram)"
+        },
+        {
+          "name": "file",
+          "type": "{",
+          "optional": true,
+          "comment": "Прикрепленный файл (опционально)"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "size",
+          "type": "number",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "subChatId",
+          "type": "string",
+          "optional": true,
+          "comment": "ID подгруппы для групп"
+        }
+      ]
+    },
+    {
+      "name": "TelegramChat",
+      "definition": "interface TelegramChat {\n  id: string                              // Уникальный идентификатор чата\n  name: string                            // Название чата\n  preview: string                         // Превью последнего сообщения\n  avatar: string                          // Символ для аватара (первая буква названия)\n  date: string                           // Дата/время последнего сообщения\n  unreadCount?: number                    // Количество непрочитанных сообщений\n  messages?: TelegramMessage[]            // Массив сообщений в чате\n  folderId?: string                       // ID папки, к которой привязан чат\n  type: 'chat' | 'channel' | 'group'     // Тип чата\n  username?: string                       // Имя пользователя в Telegram\n  nickname?: string                       // Никнейм\n  about?: string                          // Информация \"О себе\"\n  note?: string                           // Заметка пользователя\n  link?: string                           // Внешняя ссылка\n  filesCount?: number                     // Количество прикрепленных файлов\n  autoReplyEnabled?: boolean              // Включены ли автоматические ответы\n  status?: string                         // Статус пользователя\n  isBlocked?: boolean                     // Заблокирован ли контакт\n  lastName?: string                       // Фамилия пользователя\n  phone?: string                          // Номер телефона\n  subChats?: Array<{                      // Подгруппы для групп\n    id: string\n    name: string\n  }>\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "Уникальный идентификатор чата"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false,
+          "comment": "Название чата"
+        },
+        {
+          "name": "preview",
+          "type": "string",
+          "optional": false,
+          "comment": "Превью последнего сообщения"
+        },
+        {
+          "name": "avatar",
+          "type": "string",
+          "optional": false,
+          "comment": "Символ для аватара (первая буква названия)"
+        },
+        {
+          "name": "date",
+          "type": "string",
+          "optional": false,
+          "comment": "Дата/время последнего сообщения"
+        },
+        {
+          "name": "unreadCount",
+          "type": "number",
+          "optional": true,
+          "comment": "Количество непрочитанных сообщений"
+        },
+        {
+          "name": "messages",
+          "type": "TelegramMessage[]",
+          "optional": true,
+          "comment": "Массив сообщений в чате"
+        },
+        {
+          "name": "folderId",
+          "type": "string",
+          "optional": true,
+          "comment": "ID папки, к которой привязан чат"
+        },
+        {
+          "name": "type",
+          "type": "'chat' | 'channel' | 'group'",
+          "optional": false,
+          "comment": "Тип чата"
+        },
+        {
+          "name": "username",
+          "type": "string",
+          "optional": true,
+          "comment": "Имя пользователя в Telegram"
+        },
+        {
+          "name": "nickname",
+          "type": "string",
+          "optional": true,
+          "comment": "Никнейм"
+        },
+        {
+          "name": "about",
+          "type": "string",
+          "optional": true,
+          "comment": "Информация \"О себе\""
+        },
+        {
+          "name": "note",
+          "type": "string",
+          "optional": true,
+          "comment": "Заметка пользователя"
+        },
+        {
+          "name": "link",
+          "type": "string",
+          "optional": true,
+          "comment": "Внешняя ссылка"
+        },
+        {
+          "name": "filesCount",
+          "type": "number",
+          "optional": true,
+          "comment": "Количество прикрепленных файлов"
+        },
+        {
+          "name": "autoReplyEnabled",
+          "type": "boolean",
+          "optional": true,
+          "comment": "Включены ли автоматические ответы"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "optional": true,
+          "comment": "Статус пользователя"
+        },
+        {
+          "name": "isBlocked",
+          "type": "boolean",
+          "optional": true,
+          "comment": "Заблокирован ли контакт"
+        },
+        {
+          "name": "lastName",
+          "type": "string",
+          "optional": true,
+          "comment": "Фамилия пользователя"
+        },
+        {
+          "name": "phone",
+          "type": "string",
+          "optional": true,
+          "comment": "Номер телефона"
+        },
+        {
+          "name": "subChats",
+          "type": "Array<{",
+          "optional": true,
+          "comment": "Подгруппы для групп"
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "Folder",
+      "definition": "interface Folder {\n  id: string                              // Уникальный идентификатор папки\n  name: string                            // Название папки\n  icon?: 'briefcase' | 'folder' | 'person' | 'box' | 'star' | 'archive' | 'users' | 'project' | 'urgent'  // Иконка папки\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "Уникальный идентификатор папки"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false,
+          "comment": "Название папки"
+        },
+        {
+          "name": "icon",
+          "type": "'briefcase' | 'folder' | 'person' | 'box' | 'star' | 'archive' | 'users' | 'project' | 'urgent'",
+          "optional": true,
+          "comment": "Иконка папки"
+        }
+      ]
+    },
+    {
+      "name": "AttachedFile",
+      "definition": "interface AttachedFile {\n  id: string                              // Уникальный идентификатор файла\n  file: File                              // Объект File\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "Уникальный идентификатор файла"
+        },
+        {
+          "name": "file",
+          "type": "File",
+          "optional": false,
+          "comment": "Объект File"
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка чатов из Telegram API\n   - GET `/api/telegram/chats/` - получение списка всех чатов\n   - Параметры: фильтры (папка, тип), пагинация\n   - Возвращает: массив чатов (TelegramChat[])\n   - Заменить mockChats на данные из API",
+      "method": "GET",
+      "endpoint": "/api/telegram/chats/",
+      "parameters": "фильтры (папка, тип), пагинация",
+      "returns": "массив чатов (TelegramChat[])",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Отправка сообщений через Telegram API\n   - POST `/api/telegram/chats/{chatId}/messages/` - отправка сообщения\n   - Параметры: текст в markdown формате, прикрепленные файлы\n   - Возвращает: отправленное сообщение\n   - Реализовать в handleSendMessage",
+      "method": "POST",
+      "endpoint": "/api/telegram/chats/{chatId}/messages/",
+      "parameters": "текст в markdown формате, прикрепленные файлы",
+      "returns": "отправленное сообщение",
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Загрузка истории сообщений\n   - GET `/api/telegram/chats/{chatId}/messages/` - получение истории сообщений\n   - Параметры: пагинация (offset, limit), фильтр по подгруппе\n   - Возвращает: массив сообщений (TelegramMessage[])\n   - Загружать при открытии чата и при прокрутке вверх",
+      "method": "GET",
+      "endpoint": "/api/telegram/chats/{chatId}/messages/",
+      "parameters": "пагинация (offset, limit), фильтр по подгруппе",
+      "returns": "массив сообщений (TelegramMessage[])",
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Синхронизация в реальном времени (WebSocket или polling)\n   - WebSocket `/ws/telegram/` - получение новых сообщений в реальном времени\n   - Или polling: GET `/api/telegram/chats/{chatId}/messages/new/` - проверка новых сообщений\n   - Обновление списка чатов при получении новых сообщений\n   - Обновление окна чата при получении новых сообщений",
+      "method": "GET",
+      "endpoint": "/api/telegram/chats/{chatId}/messages/new/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Загрузка изображений на сервер\n   - POST `/api/telegram/upload-image/` - загрузка изображения профиля или чата\n   - Параметры: файл изображения, тип (profile/chat), chatId (для чата)\n   - Возвращает: URL загруженного изображения\n   - Реализовать в handleAccountImageChange и handleChatImageChange",
+      "method": "POST",
+      "endpoint": "/api/telegram/upload-image/",
+      "parameters": "файл изображения, тип (profile/chat), chatId (для чата)",
+      "returns": "URL загруженного изображения",
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Сохранение настроек чатов и аккаунта\n   - PUT `/api/telegram/chats/{chatId}/settings/` - обновление настроек чата\n   - Параметры: autoReplyEnabled, note, и другие настройки\n   - PUT `/api/telegram/account/settings/` - обновление настроек аккаунта\n   - Параметры: имя, username, about, изображения профиля",
+      "method": "PUT",
+      "endpoint": "/api/telegram/chats/{chatId}/settings/",
+      "parameters": "autoReplyEnabled, note, и другие настройки",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Управление папками через API\n   - GET `/api/telegram/folders/` - получение списка папок\n   - POST `/api/telegram/folders/` - создание новой папки\n   - PUT `/api/telegram/folders/{id}/` - обновление папки (название, порядок)\n   - DELETE `/api/telegram/folders/{id}/` - удаление папки\n   - Заменить mockFolders на данные из API",
+      "method": "GET",
+      "endpoint": "/api/telegram/folders/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Управление исключениями уведомлений через API\n   - GET `/api/telegram/notifications/exceptions/` - получение списка исключений\n   - POST `/api/telegram/notifications/exceptions/` - добавление исключения\n   - DELETE `/api/telegram/notifications/exceptions/{chatId}/` - удаление исключения\n   - Сохранение notificationExceptions на сервер",
+      "method": "GET",
+      "endpoint": "/api/telegram/notifications/exceptions/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Редактирование контактов через API\n   - PUT `/api/telegram/chats/{chatId}/contact/` - обновление информации о контакте\n   - Параметры: имя, фамилия, телефон, username\n   - Реализовать в handleSaveContact и handleSaveInlineField",
+      "method": "PUT",
+      "endpoint": "/api/telegram/chats/{chatId}/contact/",
+      "parameters": "имя, фамилия, телефон, username",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Блокировка/разблокировка контактов через API\n    - POST `/api/telegram/chats/{chatId}/block/` - блокировка контакта\n    - POST `/api/telegram/chats/{chatId}/unblock/` - разблокировка контакта\n    - Реализовать в performBlockContact и performUnblockContact",
+      "method": "POST",
+      "endpoint": "/api/telegram/chats/{chatId}/block/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 11,
+      "description": "Удаление контактов через API\n    - DELETE `/api/telegram/chats/{chatId}/` - удаление контакта\n    - Реализовать в performDeleteContact\n\n### Дополнительные задачи\n\n- Реализовать пагинацию для больших списков чатов\n  - GET `/api/telegram/chats/` с параметрами page и page_size\n  - Кнопки \"Загрузить еще\" или бесконечный скролл\n\n- Добавить кэширование сообщений\n  - Кэшировать загруженные сообщения в localStorage или IndexedDB\n  - Обновлять кэш при получении новых сообщений\n\n- Реализовать оптимистичные обновления UI\n  - Обновлять UI сразу при отправке сообщения\n  - Откатывать изменения при ошибке отправки\n\n- Добавить обработку ошибок сети\n  - Обработка ошибок подключения\n  - Показ сообщений об ошибках пользователю\n  - Retry логика для failed запросов\n\n- Реализовать офлайн-режим\n  - Сохранение сообщений локально при отсутствии сети\n  - Синхронизация при восстановлении соединения\n\n- Добавить индикаторы загрузки\n  - Индикатор загрузки при загрузке чатов\n  - Индикатор загрузки при отправке сообщения\n  - Индикатор загрузки при загрузке изображений\n\n- Реализовать retry логику для failed запросов\n  - Автоматический retry с экспоненциальной задержкой\n  - Максимальное количество попыток",
+      "method": "DELETE",
+      "endpoint": "/api/telegram/chats/{chatId}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.296423"
+}

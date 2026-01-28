@@ -1,0 +1,1432 @@
+{
+  "summary": {
+    "total_specs": 76,
+    "low_coverage": 2,
+    "medium_coverage": 0,
+    "high_coverage": 74,
+    "average_coverage": 97.36842105263158
+  },
+  "results": [
+    {
+      "file": "app/huntflow/pre-specification.json",
+      "name": "huntflow",
+      "type": "page",
+      "coverage_score": 0.0,
+      "mock_entities_count": 12,
+      "endpoints_count": 13,
+      "missing_endpoints_count": 12,
+      "coverage_issues": [
+        "Отсутствует GET для 15",
+        "Отсутствует POST для 15",
+        "Отсутствует PUT/PATCH для 15",
+        "Отсутствует DELETE для 15",
+        "Отсутствует GET для 17",
+        "Отсутствует POST для 17",
+        "Отсутствует PUT/PATCH для 17",
+        "Отсутствует DELETE для 17",
+        "Отсутствует GET для 10",
+        "Отсутствует POST для 10",
+        "Отсутствует PUT/PATCH для 10",
+        "Отсутствует DELETE для 10",
+        "Отсутствует GET для 14",
+        "Отсутствует POST для 14",
+        "Отсутствует PUT/PATCH для 14",
+        "Отсутствует DELETE для 14",
+        "Отсутствует GET для 19",
+        "Отсутствует POST для 19",
+        "Отсутствует PUT/PATCH для 19",
+        "Отсутствует DELETE для 19",
+        "Отсутствует GET для 20",
+        "Отсутствует POST для 20",
+        "Отсутствует PUT/PATCH для 20",
+        "Отсутствует DELETE для 20",
+        "Отсутствует GET для 13",
+        "Отсутствует POST для 13",
+        "Отсутствует PUT/PATCH для 13",
+        "Отсутствует DELETE для 13",
+        "Отсутствует GET для 16",
+        "Отсутствует POST для 16",
+        "Отсутствует PUT/PATCH для 16",
+        "Отсутствует DELETE для 16",
+        "Отсутствует GET для 18",
+        "Отсутствует POST для 18",
+        "Отсутствует PUT/PATCH для 18",
+        "Отсутствует DELETE для 18",
+        "Отсутствует GET для 12",
+        "Отсутствует POST для 12",
+        "Отсутствует PUT/PATCH для 12",
+        "Отсутствует DELETE для 12",
+        "Отсутствует GET для 21",
+        "Отсутствует POST для 21",
+        "Отсутствует PUT/PATCH для 21",
+        "Отсутствует DELETE для 21",
+        "Отсутствует GET для 11",
+        "Отсутствует POST для 11",
+        "Отсутствует PUT/PATCH для 11",
+        "Отсутствует DELETE для 11"
+      ],
+      "suggestions": [
+        {
+          "method": "GET",
+          "endpoint": "/api/15s/",
+          "description": "Получение списка 15",
+          "parameters": "page, page_size, search (опционально)",
+          "returns": "Массив объектов 15",
+          "priority": "high"
+        },
+        {
+          "method": "POST",
+          "endpoint": "/api/15s/",
+          "description": "Создание нового 15",
+          "parameters": "Все поля интерфейса 15",
+          "returns": "Созданный объект 15",
+          "priority": "high"
+        },
+        {
+          "method": "PUT",
+          "endpoint": "/api/15s/{id}/",
+          "description": "Обновление 15",
+          "parameters": "Измененные поля 15",
+          "returns": "Обновленный объект 15",
+          "priority": "high"
+        },
+        {
+          "method": "DELETE",
+          "endpoint": "/api/15s/{id}/",
+          "description": "Удаление 15",
+          "parameters": "id",
+          "returns": "Статус удаления",
+          "priority": "medium"
+        },
+        {
+          "method": "GET",
+          "endpoint": "/api/17s/",
+          "description": "Получение списка 17",
+          "parameters": "page, page_size, search (опционально)",
+          "returns": "Массив объектов 17",
+          "priority": "high"
+        },
+        {
+          "method": "POST",
+          "endpoint": "/api/17s/",
+          "description": "Создание нового 17",
+          "parameters": "Все поля интерфейса 17",
+          "returns": "Созданный объект 17",
+          "priority": "high"
+        },
+        {
+          "method": "PUT",
+          "endpoint": "/api/17s/{id}/",
+          "description": "Обновление 17",
+          "parameters": "Измененные поля 17",
+          "returns": "Обновленный объект 17",
+          "priority": "high"
+        },
+        {
+          "method": "DELETE",
+          "endpoint": "/api/17s/{id}/",
+          "description": "Удаление 17",
+          "parameters": "id",
+          "returns": "Статус удаления",
+          "priority": "medium"
+        },
+        {
+          "method": "GET",
+          "endpoint": "/api/10s/",
+          "description": "Получение списка 10",
+          "parameters": "page, page_size, search (опционально)",
+          "returns": "Массив объектов 10",
+          "priority": "high"
+        },
+        {
+          "method": "POST",
+          "endpoint": "/api/10s/",
+          "description": "Создание нового 10",
+          "parameters": "Все поля интерфейса 10",
+          "returns": "Созданный объект 10",
+          "priority": "high"
+        },
+        {
+          "method": "PUT",
+          "endpoint": "/api/10s/{id}/",
+          "description": "Обновление 10",
+          "parameters": "Измененные поля 10",
+          "returns": "Обновленный объект 10",
+          "priority": "high"
+        },
+        {
+          "method": "DELETE",
+          "endpoint": "/api/10s/{id}/",
+          "description": "Удаление 10",
+          "parameters": "id",
+          "returns": "Статус удаления",
+          "priority": "medium"
+        },
+        {
+          "method": "GET",
+          "endpoint": "/api/14s/",
+          "description": "Получение списка 14",
+          "parameters": "page, page_size, search (опционально)",
+          "returns": "Массив объектов 14",
+          "priority": "high"
+        },
+        {
+          "method": "POST",
+          "endpoint": "/api/14s/",
+          "description": "Создание нового 14",
+          "parameters": "Все поля интерфейса 14",
+          "returns": "Созданный объект 14",
+          "priority": "high"
+        },
+        {
+          "method": "PUT",
+          "endpoint": "/api/14s/{id}/",
+          "description": "Обновление 14",
+          "parameters": "Измененные поля 14",
+          "returns": "Обновленный объект 14",
+          "priority": "high"
+        },
+        {
+          "method": "DELETE",
+          "endpoint": "/api/14s/{id}/",
+          "description": "Удаление 14",
+          "parameters": "id",
+          "returns": "Статус удаления",
+          "priority": "medium"
+        },
+        {
+          "method": "GET",
+          "endpoint": "/api/19s/",
+          "description": "Получение списка 19",
+          "parameters": "page, page_size, search (опционально)",
+          "returns": "Массив объектов 19",
+          "priority": "high"
+        },
+        {
+          "method": "POST",
+          "endpoint": "/api/19s/",
+          "description": "Создание нового 19",
+          "parameters": "Все поля интерфейса 19",
+          "returns": "Созданный объект 19",
+          "priority": "high"
+        },
+        {
+          "method": "PUT",
+          "endpoint": "/api/19s/{id}/",
+          "description": "Обновление 19",
+          "parameters": "Измененные поля 19",
+          "returns": "Обновленный объект 19",
+          "priority": "high"
+        },
+        {
+          "method": "DELETE",
+          "endpoint": "/api/19s/{id}/",
+          "description": "Удаление 19",
+          "parameters": "id",
+          "returns": "Статус удаления",
+          "priority": "medium"
+        },
+        {
+          "method": "GET",
+          "endpoint": "/api/20s/",
+          "description": "Получение списка 20",
+          "parameters": "page, page_size, search (опционально)",
+          "returns": "Массив объектов 20",
+          "priority": "high"
+        },
+        {
+          "method": "POST",
+          "endpoint": "/api/20s/",
+          "description": "Создание нового 20",
+          "parameters": "Все поля интерфейса 20",
+          "returns": "Созданный объект 20",
+          "priority": "high"
+        },
+        {
+          "method": "PUT",
+          "endpoint": "/api/20s/{id}/",
+          "description": "Обновление 20",
+          "parameters": "Измененные поля 20",
+          "returns": "Обновленный объект 20",
+          "priority": "high"
+        },
+        {
+          "method": "DELETE",
+          "endpoint": "/api/20s/{id}/",
+          "description": "Удаление 20",
+          "parameters": "id",
+          "returns": "Статус удаления",
+          "priority": "medium"
+        },
+        {
+          "method": "GET",
+          "endpoint": "/api/13s/",
+          "description": "Получение списка 13",
+          "parameters": "page, page_size, search (опционально)",
+          "returns": "Массив объектов 13",
+          "priority": "high"
+        },
+        {
+          "method": "POST",
+          "endpoint": "/api/13s/",
+          "description": "Создание нового 13",
+          "parameters": "Все поля интерфейса 13",
+          "returns": "Созданный объект 13",
+          "priority": "high"
+        },
+        {
+          "method": "PUT",
+          "endpoint": "/api/13s/{id}/",
+          "description": "Обновление 13",
+          "parameters": "Измененные поля 13",
+          "returns": "Обновленный объект 13",
+          "priority": "high"
+        },
+        {
+          "method": "DELETE",
+          "endpoint": "/api/13s/{id}/",
+          "description": "Удаление 13",
+          "parameters": "id",
+          "returns": "Статус удаления",
+          "priority": "medium"
+        },
+        {
+          "method": "GET",
+          "endpoint": "/api/16s/",
+          "description": "Получение списка 16",
+          "parameters": "page, page_size, search (опционально)",
+          "returns": "Массив объектов 16",
+          "priority": "high"
+        },
+        {
+          "method": "POST",
+          "endpoint": "/api/16s/",
+          "description": "Создание нового 16",
+          "parameters": "Все поля интерфейса 16",
+          "returns": "Созданный объект 16",
+          "priority": "high"
+        },
+        {
+          "method": "PUT",
+          "endpoint": "/api/16s/{id}/",
+          "description": "Обновление 16",
+          "parameters": "Измененные поля 16",
+          "returns": "Обновленный объект 16",
+          "priority": "high"
+        },
+        {
+          "method": "DELETE",
+          "endpoint": "/api/16s/{id}/",
+          "description": "Удаление 16",
+          "parameters": "id",
+          "returns": "Статус удаления",
+          "priority": "medium"
+        },
+        {
+          "method": "GET",
+          "endpoint": "/api/18s/",
+          "description": "Получение списка 18",
+          "parameters": "page, page_size, search (опционально)",
+          "returns": "Массив объектов 18",
+          "priority": "high"
+        },
+        {
+          "method": "POST",
+          "endpoint": "/api/18s/",
+          "description": "Создание нового 18",
+          "parameters": "Все поля интерфейса 18",
+          "returns": "Созданный объект 18",
+          "priority": "high"
+        },
+        {
+          "method": "PUT",
+          "endpoint": "/api/18s/{id}/",
+          "description": "Обновление 18",
+          "parameters": "Измененные поля 18",
+          "returns": "Обновленный объект 18",
+          "priority": "high"
+        },
+        {
+          "method": "DELETE",
+          "endpoint": "/api/18s/{id}/",
+          "description": "Удаление 18",
+          "parameters": "id",
+          "returns": "Статус удаления",
+          "priority": "medium"
+        },
+        {
+          "method": "GET",
+          "endpoint": "/api/12s/",
+          "description": "Получение списка 12",
+          "parameters": "page, page_size, search (опционально)",
+          "returns": "Массив объектов 12",
+          "priority": "high"
+        },
+        {
+          "method": "POST",
+          "endpoint": "/api/12s/",
+          "description": "Создание нового 12",
+          "parameters": "Все поля интерфейса 12",
+          "returns": "Созданный объект 12",
+          "priority": "high"
+        },
+        {
+          "method": "PUT",
+          "endpoint": "/api/12s/{id}/",
+          "description": "Обновление 12",
+          "parameters": "Измененные поля 12",
+          "returns": "Обновленный объект 12",
+          "priority": "high"
+        },
+        {
+          "method": "DELETE",
+          "endpoint": "/api/12s/{id}/",
+          "description": "Удаление 12",
+          "parameters": "id",
+          "returns": "Статус удаления",
+          "priority": "medium"
+        },
+        {
+          "method": "GET",
+          "endpoint": "/api/21s/",
+          "description": "Получение списка 21",
+          "parameters": "page, page_size, search (опционально)",
+          "returns": "Массив объектов 21",
+          "priority": "high"
+        },
+        {
+          "method": "POST",
+          "endpoint": "/api/21s/",
+          "description": "Создание нового 21",
+          "parameters": "Все поля интерфейса 21",
+          "returns": "Созданный объект 21",
+          "priority": "high"
+        },
+        {
+          "method": "PUT",
+          "endpoint": "/api/21s/{id}/",
+          "description": "Обновление 21",
+          "parameters": "Измененные поля 21",
+          "returns": "Обновленный объект 21",
+          "priority": "high"
+        },
+        {
+          "method": "DELETE",
+          "endpoint": "/api/21s/{id}/",
+          "description": "Удаление 21",
+          "parameters": "id",
+          "returns": "Статус удаления",
+          "priority": "medium"
+        },
+        {
+          "method": "GET",
+          "endpoint": "/api/11s/",
+          "description": "Получение списка 11",
+          "parameters": "page, page_size, search (опционально)",
+          "returns": "Массив объектов 11",
+          "priority": "high"
+        },
+        {
+          "method": "POST",
+          "endpoint": "/api/11s/",
+          "description": "Создание нового 11",
+          "parameters": "Все поля интерфейса 11",
+          "returns": "Созданный объект 11",
+          "priority": "high"
+        },
+        {
+          "method": "PUT",
+          "endpoint": "/api/11s/{id}/",
+          "description": "Обновление 11",
+          "parameters": "Измененные поля 11",
+          "returns": "Обновленный объект 11",
+          "priority": "high"
+        },
+        {
+          "method": "DELETE",
+          "endpoint": "/api/11s/{id}/",
+          "description": "Удаление 11",
+          "parameters": "id",
+          "returns": "Статус удаления",
+          "priority": "medium"
+        }
+      ]
+    },
+    {
+      "file": "app/company-settings/candidate-fields/pre-specification.json",
+      "name": "candidate-fields",
+      "type": "page",
+      "coverage_score": 0.0,
+      "mock_entities_count": 1,
+      "endpoints_count": 5,
+      "missing_endpoints_count": 1,
+      "coverage_issues": [
+        "Отсутствует GET для поля",
+        "Отсутствует POST для поля",
+        "Отсутствует PUT/PATCH для поля",
+        "Отсутствует DELETE для поля"
+      ],
+      "suggestions": [
+        {
+          "method": "GET",
+          "endpoint": "/api/поляs/",
+          "description": "Получение списка поля",
+          "parameters": "page, page_size, search (опционально)",
+          "returns": "Массив объектов поля",
+          "priority": "high"
+        },
+        {
+          "method": "POST",
+          "endpoint": "/api/поляs/",
+          "description": "Создание нового поля",
+          "parameters": "Все поля интерфейса поля",
+          "returns": "Созданный объект поля",
+          "priority": "high"
+        },
+        {
+          "method": "PUT",
+          "endpoint": "/api/поляs/{id}/",
+          "description": "Обновление поля",
+          "parameters": "Измененные поля поля",
+          "returns": "Обновленный объект поля",
+          "priority": "high"
+        },
+        {
+          "method": "DELETE",
+          "endpoint": "/api/поляs/{id}/",
+          "description": "Удаление поля",
+          "parameters": "id",
+          "returns": "Статус удаления",
+          "priority": "medium"
+        }
+      ]
+    },
+    {
+      "file": "app/pre-specification.json",
+      "name": "app",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 3,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "components/pre-specification.json",
+      "name": "components",
+      "type": "component",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 10,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс AppLayoutProps не имеет соответствующих эндпоинтов",
+        "Интерфейс FloatingActionsProps не имеет соответствующих эндпоинтов",
+        "Интерфейс FloatingLabelInputProps не имеет соответствующих эндпоинтов",
+        "Интерфейс HeaderProps не имеет соответствующих эндпоинтов",
+        "Интерфейс QuickButton не имеет соответствующих эндпоинтов",
+        "Интерфейс SidebarProps не имеет соответствующих эндпоинтов",
+        "Интерфейс StatusBarProps не имеет соответствующих эндпоинтов",
+        "Интерфейс ThemeProviderProps не имеет соответствующих эндпоинтов",
+        "Интерфейс ThemeContextType не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "components/company-settings/pre-specification.json",
+      "name": "company-settings",
+      "type": "component",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 20,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "components/salary-ranges/pre-specification.json",
+      "name": "salary-ranges",
+      "type": "component",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 11,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс SalaryRangesStatsProps не имеет соответствующих эндпоинтов",
+        "Интерфейс SalaryRangesSearchFiltersProps не имеет соответствующих эндпоинтов",
+        "Интерфейс SalaryRangeCardProps не имеет соответствующих эндпоинтов",
+        "Интерфейс SalaryRangeListItemProps не имеет соответствующих эндпоинтов",
+        "Интерфейс CreateSalaryRangeModalProps не имеет соответствующих эндпоинтов",
+        "Интерфейс SalaryRangeDetailModalProps не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "components/Toast/pre-specification.json",
+      "name": "Toast",
+      "type": "component",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 10,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс ToastType не имеет соответствующих эндпоинтов",
+        "Интерфейс ToastProps не имеет соответствующих эндпоинтов",
+        "Интерфейс ToastAction не имеет соответствующих эндпоинтов",
+        "Интерфейс ToastData не имеет соответствующих эндпоинтов",
+        "Интерфейс ToastContextType не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "components/wiki/pre-specification.json",
+      "name": "wiki",
+      "type": "component",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 10,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс ContentSection не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "components/requests/pre-specification.json",
+      "name": "requests",
+      "type": "component",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 10,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс RequestsStatsProps не имеет соответствующих эндпоинтов",
+        "Интерфейс RequestsSearchFiltersProps не имеет соответствующих эндпоинтов",
+        "Интерфейс RequestCardProps не имеет соответствующих эндпоинтов",
+        "Интерфейс RequestListItemProps не имеет соответствующих эндпоинтов",
+        "Интерфейс RequestsTableProps не имеет соответствующих эндпоинтов",
+        "Интерфейс RequestTableRowProps не имеет соответствующих эндпоинтов",
+        "Интерфейс RequestTableRowExpandedProps не имеет соответствующих эндпоинтов",
+        "Интерфейс CreateRequestModalProps не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "components/aichat/pre-specification.json",
+      "name": "aichat",
+      "type": "component",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 7,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс FormattedTextProps не имеет соответствующих эндпоинтов",
+        "Интерфейс ChatMessagesProps не имеет соответствующих эндпоинтов",
+        "Интерфейс ChatInputProps не имеет соответствующих эндпоинтов",
+        "Интерфейс AnimatedAIInputProps не имеет соответствующих эндпоинтов",
+        "Интерфейс AIModel не имеет соответствующих эндпоинтов",
+        "Интерфейс AttachedFile не имеет соответствующих эндпоинтов",
+        "Интерфейс ChatHeaderProps не имеет соответствующих эндпоинтов",
+        "Интерфейс ChatHistoryProps не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "components/profile/pre-specification.json",
+      "name": "profile",
+      "type": "component",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 10,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс ProfileNavigationProps не имеет соответствующих эндпоинтов",
+        "Интерфейс TabType не имеет соответствующих эндпоинтов",
+        "Интерфейс ProfileInfoProps не имеет соответствующих эндпоинтов",
+        "Интерфейс ProfileEditFormProps не имеет соответствующих эндпоинтов",
+        "Интерфейс UserCardProps не имеет соответствующих эндпоинтов",
+        "Интерфейс GoogleIntegrationProps не имеет соответствующих эндпоинтов",
+        "Интерфейс IntegrationSettingsModalProps не имеет соответствующих эндпоинтов",
+        "Интерфейс AccentColorSettingsProps не имеет соответствующих эндпоинтов",
+        "Интерфейс AccentColorValue не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "components/workflow/pre-specification.json",
+      "name": "workflow",
+      "type": "component",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 10,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс WorkflowType не имеет соответствующих эндпоинтов",
+        "Интерфейс InterviewFormat не имеет соответствующих эндпоинтов",
+        "Интерфейс Office не имеет соответствующих эндпоинтов",
+        "Интерфейс WeekSlot не имеет соответствующих эндпоинтов",
+        "Интерфейс WeekSection не имеет соответствующих эндпоинтов",
+        "Интерфейс AttachedFile не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "components/telegram/pre-specification.json",
+      "name": "telegram",
+      "type": "component",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 10,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс RichTextInputProps не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "components/finance/pre-specification.json",
+      "name": "finance",
+      "type": "component",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 6,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "components/invites/pre-specification.json",
+      "name": "invites",
+      "type": "component",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 4,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс InvitesStatsProps не имеет соответствующих эндпоинтов",
+        "Интерфейс CreateInviteModalProps не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "components/candidate-responses/pre-specification.json",
+      "name": "candidate-responses",
+      "type": "component",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 8,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс SlotsSettings не имеет соответствующих эндпоинтов",
+        "Интерфейс RejectionTemplateFormProps не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "components/GlobalSearch/pre-specification.json",
+      "name": "GlobalSearch",
+      "type": "component",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 10,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс ScopeType не имеет соответствующих эндпоинтов",
+        "Интерфейс SuggestionType не имеет соответствующих эндпоинтов",
+        "Интерфейс GlobalSearchProps не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "components/vacancies/pre-specification.json",
+      "name": "vacancies",
+      "type": "component",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 10,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс AddVacancyTab не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "app/interviewers/pre-specification.json",
+      "name": "interviewers",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 10,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс InterviewerEditModalProps не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "app/reporting/pre-specification.json",
+      "name": "reporting",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 8,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/page/pre-specification.json",
+      "name": "page",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 3,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/calendar/pre-specification.json",
+      "name": "calendar",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 9,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс Attendee не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "app/company-settings/pre-specification.json",
+      "name": "company-settings",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 26,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс Office не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "app/not-found/pre-specification.json",
+      "name": "not-found",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 0,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/wiki/pre-specification.json",
+      "name": "wiki",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 10,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/search/pre-specification.json",
+      "name": "search",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 10,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс SCOPE_LABELS не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "app/aichat/pre-specification.json",
+      "name": "aichat",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 9,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс AIModel не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "app/hiring-requests/pre-specification.json",
+      "name": "hiring-requests",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 10,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/recr-chat/pre-specification.json",
+      "name": "recr-chat",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 12,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс WorkflowType не имеет соответствующих эндпоинтов",
+        "Интерфейс InterviewFormat не имеет соответствующих эндпоинтов",
+        "Интерфейс Office не имеет соответствующих эндпоинтов",
+        "Интерфейс Interviewer не имеет соответствующих эндпоинтов",
+        "Интерфейс HistoryItem не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "app/workflow/pre-specification.json",
+      "name": "workflow",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 10,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс WorkflowHeaderProps не имеет соответствующих эндпоинтов",
+        "Интерфейс WorkflowType не имеет соответствующих эндпоинтов",
+        "Интерфейс InterviewFormat не имеет соответствующих эндпоинтов",
+        "Интерфейс Office не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "app/telegram/pre-specification.json",
+      "name": "telegram",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 6,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/finance/pre-specification.json",
+      "name": "finance",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 11,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс PLNTax не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "app/errors/pre-specification.json",
+      "name": "errors",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 0,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/account/pre-specification.json",
+      "name": "account",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 4,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/invites/pre-specification.json",
+      "name": "invites",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 7,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс InviteListResponse не имеет соответствующих эндпоинтов",
+        "Интерфейс InvitesStatsProps не имеет соответствующих эндпоинтов",
+        "Интерфейс CreateInviteModalProps не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "app/candidate-responses/pre-specification.json",
+      "name": "candidate-responses",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 11,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс RejectionTemplateFormProps не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "app/vacancies/pre-specification.json",
+      "name": "vacancies",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 9,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/vacancies/salary-ranges/pre-specification.json",
+      "name": "salary-ranges",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 7,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/vacancies/[id]/pre-specification.json",
+      "name": "[id]",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 0,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/vacancies/[id]/edit/pre-specification.json",
+      "name": "edit",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 5,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/vacancies/salary-ranges/[id]/pre-specification.json",
+      "name": "[id]",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 0,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/invites/[id]/pre-specification.json",
+      "name": "[id]",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 3,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/invites/[id]/edit/pre-specification.json",
+      "name": "edit",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 5,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/account/profile/pre-specification.json",
+      "name": "profile",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 5,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/account/forgot-password/pre-specification.json",
+      "name": "forgot-password",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 4,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/account/reset-password/pre-specification.json",
+      "name": "reset-password",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 5,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/account/login/pre-specification.json",
+      "name": "login",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 5,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/errors/401/pre-specification.json",
+      "name": "401",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 0,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/errors/forbidden/pre-specification.json",
+      "name": "forbidden",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 0,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/errors/500/pre-specification.json",
+      "name": "500",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 0,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/errors/402/pre-specification.json",
+      "name": "402",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 0,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/errors/404/pre-specification.json",
+      "name": "404",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 0,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/finance/benchmarks/pre-specification.json",
+      "name": "benchmarks",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 4,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/telegram/2fa/pre-specification.json",
+      "name": "2fa",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 3,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/telegram/chats/pre-specification.json",
+      "name": "chats",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 11,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс AttachedFile не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "app/hiring-requests/[id]/pre-specification.json",
+      "name": "[id]",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 6,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/hiring-requests/[id]/edit/pre-specification.json",
+      "name": "edit",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 4,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/wiki/[id]/pre-specification.json",
+      "name": "[id]",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 5,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/wiki/[id]/edit/pre-specification.json",
+      "name": "edit",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 5,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/company-settings/vacancy-prompt/pre-specification.json",
+      "name": "vacancy-prompt",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 5,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/company-settings/employee-lifecycle/pre-specification.json",
+      "name": "employee-lifecycle",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 6,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/company-settings/grades/pre-specification.json",
+      "name": "grades",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 5,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/company-settings/org-structure/pre-specification.json",
+      "name": "org-structure",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 6,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс Department не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "app/company-settings/user-groups/pre-specification.json",
+      "name": "user-groups",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 5,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/company-settings/integrations/pre-specification.json",
+      "name": "integrations",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 7,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс IntegrationId не имеет соответствующих эндпоинтов",
+        "Интерфейс IntegrationGroupId не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "app/company-settings/users/pre-specification.json",
+      "name": "users",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 7,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/company-settings/finance/pre-specification.json",
+      "name": "finance",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 2,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/company-settings/sla/pre-specification.json",
+      "name": "sla",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 4,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/company-settings/scorecard/pre-specification.json",
+      "name": "scorecard",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 5,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/company-settings/recruiting/stages/pre-specification.json",
+      "name": "stages",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 7,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/company-settings/recruiting/rules/pre-specification.json",
+      "name": "rules",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 5,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/company-settings/recruiting/commands/pre-specification.json",
+      "name": "commands",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 6,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/company-settings/recruiting/offer-template/pre-specification.json",
+      "name": "offer-template",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 5,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/reporting/hiring-plan/pre-specification.json",
+      "name": "hiring-plan",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 8,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    },
+    {
+      "file": "app/reporting/company/pre-specification.json",
+      "name": "company",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 5,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [
+        "Интерфейс ReportMetrics не имеет соответствующих эндпоинтов",
+        "Интерфейс TableDataItem не имеет соответствующих эндпоинтов"
+      ],
+      "suggestions": []
+    },
+    {
+      "file": "app/reporting/hiring-plan/yearly/pre-specification.json",
+      "name": "yearly",
+      "type": "page",
+      "coverage_score": 100.0,
+      "mock_entities_count": 0,
+      "endpoints_count": 4,
+      "missing_endpoints_count": 0,
+      "coverage_issues": [],
+      "suggestions": []
+    }
+  ]
+}

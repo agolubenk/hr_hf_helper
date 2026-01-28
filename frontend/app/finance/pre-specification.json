@@ -1,0 +1,247 @@
+{
+  "name": "finance",
+  "type": "page",
+  "description": "Страница финансовых настроек компании. Управление грейдами сотрудников, курсами валют и налоговыми настройками для расчета зарплатных вилок и финансовых метрик.\n\n**Путь**: `/finance`",
+  "route_path": "`/finance`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/finance/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### ALL_POSSIBLE_GRADES\n- **Тип**: string[]\n- **Структура**: список всех возможных грейдов\n- **Значения**: \n  - Trainee, Junior-, Junior, Junior+, Middle-, Middle, Middle+, Senior-, Senior, Senior+, Lead, Lead+, Head, C-Level",
+      "extracted_from": "documentation"
+    },
+    "mockData_1": {
+      "description": "- **Тип**: Grade[]\n- **Структура**: массив грейдов с начальными значениями",
+      "extracted_from": "documentation"
+    },
+    "mockData_2": {
+      "description": "- **Тип**: string[]\n- **Структура**: список всех возможных грейдов",
+      "extracted_from": "documentation"
+    },
+    "mockData_3": {
+      "description": "- **Тип**: CurrencyRate[]\n- **Структура**: массив курсов валют",
+      "extracted_from": "documentation"
+    },
+    "mockData_4": {
+      "description": "- **Тип**: PLNTax[]\n- **Структура**: массив налогов",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [
+    {
+      "name": "Grade",
+      "definition": "interface Grade {\n  id: number                    // Уникальный идентификатор грейда\n  name: string                  // Название грейда (Trainee, Junior, Middle, Senior и т.д.)\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "number",
+          "optional": false,
+          "comment": "Уникальный идентификатор грейда"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false,
+          "comment": "Название грейда (Trainee, Junior, Middle, Senior и т.д.)"
+        }
+      ]
+    },
+    {
+      "name": "CurrencyRate",
+      "definition": "interface CurrencyRate {\n  id: number                    // Уникальный идентификатор курса\n  code: string                  // Код валюты (BYN, USD, EUR, PLN)\n  rate: string                  // Курс валюты (строка для точности)\n  scale: number                 // Масштаб (количество единиц валюты)\n  fetched_at: string            // Дата и время получения курса (ISO строка)\n  status_info?: string          // Информация о статусе (опционально)\n  display_rate?: string         // Отображаемый курс (опционально)\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "number",
+          "optional": false,
+          "comment": "Уникальный идентификатор курса"
+        },
+        {
+          "name": "code",
+          "type": "string",
+          "optional": false,
+          "comment": "Код валюты (BYN, USD, EUR, PLN)"
+        },
+        {
+          "name": "rate",
+          "type": "string",
+          "optional": false,
+          "comment": "Курс валюты (строка для точности)"
+        },
+        {
+          "name": "scale",
+          "type": "number",
+          "optional": false,
+          "comment": "Масштаб (количество единиц валюты)"
+        },
+        {
+          "name": "fetched_at",
+          "type": "string",
+          "optional": false,
+          "comment": "Дата и время получения курса (ISO строка)"
+        },
+        {
+          "name": "status_info",
+          "type": "string",
+          "optional": true,
+          "comment": "Информация о статусе (опционально)"
+        },
+        {
+          "name": "display_rate",
+          "type": "string",
+          "optional": true,
+          "comment": "Отображаемый курс (опционально)"
+        }
+      ]
+    },
+    {
+      "name": "PLNTax",
+      "definition": "interface PLNTax {\n  id: number                    // Уникальный идентификатор налога\n  name: string                  // Название налога\n  rate: string                  // Ставка налога в процентах (строка)\n  rate_decimal?: number         // Ставка налога в десятичном виде (опционально)\n  is_active: boolean            // Флаг активности налога\n  created_at: string            // Дата создания (ISO строка)\n  updated_at: string            // Дата обновления (ISO строка)\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "number",
+          "optional": false,
+          "comment": "Уникальный идентификатор налога"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false,
+          "comment": "Название налога"
+        },
+        {
+          "name": "rate",
+          "type": "string",
+          "optional": false,
+          "comment": "Ставка налога в процентах (строка)"
+        },
+        {
+          "name": "rate_decimal",
+          "type": "number",
+          "optional": true,
+          "comment": "Ставка налога в десятичном виде (опционально)"
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "optional": false,
+          "comment": "Флаг активности налога"
+        },
+        {
+          "name": "created_at",
+          "type": "string",
+          "optional": false,
+          "comment": "Дата создания (ISO строка)"
+        },
+        {
+          "name": "updated_at",
+          "type": "string",
+          "optional": false,
+          "comment": "Дата обновления (ISO строка)"
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка грейдов из API\n   - GET `/api/finance/grades/` - получение всех грейдов\n   - Замена mockGrades в GradesSection",
+      "method": "GET",
+      "endpoint": "/api/finance/grades/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Создание грейда через API\n   - POST `/api/finance/grades/` - создание нового грейда\n   - Параметры: name\n   - Обновление списка грейдов после создания",
+      "method": "POST",
+      "endpoint": "/api/finance/grades/",
+      "parameters": "name",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Редактирование грейда через API\n   - PUT `/api/finance/grades/{id}/` - обновление грейда\n   - Параметры: name\n   - Обновление списка грейдов после редактирования",
+      "method": "PUT",
+      "endpoint": "/api/finance/grades/{id}/",
+      "parameters": "name",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Удаление грейда через API\n   - DELETE `/api/finance/grades/{id}/` - удаление грейда\n   - Обновление списка грейдов после удаления",
+      "method": "DELETE",
+      "endpoint": "/api/finance/grades/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Загрузка курсов валют из API\n   - GET `/api/finance/currency-rates/` - получение всех курсов валют\n   - Замена mockRates в CurrencyRatesSection",
+      "method": "GET",
+      "endpoint": "/api/finance/currency-rates/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Обновление курсов валют через API\n   - POST `/api/finance/currency-rates/update/` - обновление курсов из НБРБ\n   - Обновление списка курсов после обновления",
+      "method": "POST",
+      "endpoint": "/api/finance/currency-rates/update/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Автоматическое обновление курсов валют\n   - Реализовать периодическое обновление курсов (например, раз в день)\n   - Использовать cron job или scheduled task на backend",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Загрузка налогов из API\n   - GET `/api/finance/taxes/pln/` - получение всех налогов для PLN\n   - Замена mockTaxes в TaxesSection",
+      "method": "GET",
+      "endpoint": "/api/finance/taxes/pln/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Создание налога через API\n   - POST `/api/finance/taxes/pln/` - создание нового налога\n   - Параметры: name, rate, is_active\n   - Обновление списка налогов после создания",
+      "method": "POST",
+      "endpoint": "/api/finance/taxes/pln/",
+      "parameters": "name, rate, is_active",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Редактирование налога через API\n    - PUT `/api/finance/taxes/pln/{id}/` - обновление налога\n    - Параметры: name, rate, is_active\n    - Обновление списка налогов после редактирования",
+      "method": "PUT",
+      "endpoint": "/api/finance/taxes/pln/{id}/",
+      "parameters": "name, rate, is_active",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 11,
+      "description": "Удаление налога через API\n    - DELETE `/api/finance/taxes/pln/{id}/` - удаление налога\n    - Обновление списка налогов после удаления",
+      "method": "DELETE",
+      "endpoint": "/api/finance/taxes/pln/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.279805"
+}

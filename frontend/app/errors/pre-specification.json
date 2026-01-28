@@ -1,0 +1,11 @@
+{
+  "name": "errors",
+  "type": "page",
+  "description": "Модуль `errors/` содержит все страницы ошибок приложения, объединенные в единую структуру для удобства управления и поддержки. Все страницы ошибок следуют единому дизайну и функциональности, обеспечивая консистентный пользовательский опыт при возникновении различных типов ошибок.",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/errors/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [],
+  "api_endpoints": [],
+  "generated_at": "2026-01-28T18:00:33.280489"
+}

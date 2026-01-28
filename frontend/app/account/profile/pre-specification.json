@@ -1,0 +1,57 @@
+{
+  "name": "profile",
+  "type": "page",
+  "description": "Страница профиля пользователя. Позволяет управлять личными данными, настраивать интеграции, управлять быстрыми кнопками и настраивать акцентный цвет темы. Поддерживает несколько вкладок с различным содержимым.\n\n**Путь**: `/account/profile` или `/account/profile?tab=integrations`",
+  "route_path": "`/account/profile` или `/account/profile?tab=integrations`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/account/profile/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Данные пользователя в `UserCard` и `ProfileInfo` - загружать из API\n   - GET `/api/user/profile` - получение данных пользователя\n   - Обновление данных после редактирования",
+      "method": "GET",
+      "endpoint": "/api/user/profile",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "`ProfileEditForm.onSave()` - реализовать сохранение через API\n   - PUT `/api/user/profile` с данными пользователя\n   - Обработка ответа: успех или ошибка\n   - Обновление данных в компоненте после успешного сохранения",
+      "method": "PUT",
+      "endpoint": "/api/user/profile",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "`IntegrationsPage` - загружать настройки интеграций из API\n   - GET `/api/user/integrations` - получение списка интеграций\n   - POST `/api/user/integrations` - добавление интеграции\n   - DELETE `/api/user/integrations/:id` - удаление интеграции",
+      "method": "GET",
+      "endpoint": "/api/user/integrations",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "`QuickButtonsPage` - загружать список быстрых кнопок из API\n   - GET `/api/user/quick-buttons` - получение списка быстрых кнопок\n   - PUT `/api/user/quick-buttons` - обновление списка быстрых кнопок",
+      "method": "GET",
+      "endpoint": "/api/user/quick-buttons",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Сохранение акцентных цветов - сохранять в настройках пользователя через API\n   - PUT `/api/user/theme` с `{ lightThemeAccentColor, darkThemeAccentColor }`\n   - Загрузка сохраненных цветов при инициализации",
+      "method": "PUT",
+      "endpoint": "/api/user/theme",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.290801"
+}

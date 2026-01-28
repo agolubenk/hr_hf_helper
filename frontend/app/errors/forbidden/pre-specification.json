@@ -1,0 +1,11 @@
+{
+  "name": "forbidden",
+  "type": "page",
+  "description": "Страница ошибки 403 (Forbidden). Отображается при отсутствии прав доступа к запрашиваемому ресурсу. Использует единый дизайн с другими страницами ошибок: анимированный фон с плавающими иконками, крупный код ошибки, и кнопки навигации.\n\n**Путь**: `/errors/forbidden`",
+  "route_path": "`/errors/forbidden`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/errors/forbidden/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [],
+  "api_endpoints": [],
+  "generated_at": "2026-01-28T18:00:33.293117"
+}

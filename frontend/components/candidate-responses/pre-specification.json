@@ -1,0 +1,211 @@
+{
+  "name": "candidate-responses",
+  "type": "component",
+  "description": "Директория `components/candidate-responses` содержит компоненты для управления шаблонами ответов кандидатам. Компоненты обеспечивают создание, редактирование и управление шаблонами отказов, а также настройку текста для слотов интервью.\n\n**Расположение**: `@/components/candidate-responses`",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/components/candidate-responses/COMPONENTS_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [
+    {
+      "name": "RejectionTemplate",
+      "definition": "interface RejectionTemplate {\n  id: number                    // Уникальный идентификатор шаблона\n  rejection_type: string        // Тип отказа (office_format, finance, и т.д.)\n  rejection_type_display: string // Отображаемое название типа отказа\n  title: string                 // Название шаблона\n  message: string               // Текст сообщения отказа\n  is_active: boolean            // Активен ли шаблон\n  grade_id?: number | null      // ID грейда (для шаблонов по грейдам)\n  grade_name?: string | null    // Название грейда (для шаблонов по грейдам)\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "number",
+          "optional": false,
+          "comment": "Уникальный идентификатор шаблона"
+        },
+        {
+          "name": "rejection_type",
+          "type": "string",
+          "optional": false,
+          "comment": "Тип отказа (office_format, finance, и т.д.)"
+        },
+        {
+          "name": "rejection_type_display",
+          "type": "string",
+          "optional": false,
+          "comment": "Отображаемое название типа отказа"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "optional": false,
+          "comment": "Название шаблона"
+        },
+        {
+          "name": "message",
+          "type": "string",
+          "optional": false,
+          "comment": "Текст сообщения отказа"
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "optional": false,
+          "comment": "Активен ли шаблон"
+        },
+        {
+          "name": "grade_id",
+          "type": "number | null",
+          "optional": true,
+          "comment": "ID грейда (для шаблонов по грейдам)"
+        },
+        {
+          "name": "grade_name",
+          "type": "string | null",
+          "optional": true,
+          "comment": "Название грейда (для шаблонов по грейдам)"
+        }
+      ]
+    },
+    {
+      "name": "Grade",
+      "definition": "interface Grade {\n  id: number                    // Уникальный идентификатор грейда\n  name: string                  // Название грейда\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "number",
+          "optional": false,
+          "comment": "Уникальный идентификатор грейда"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false,
+          "comment": "Название грейда"
+        }
+      ]
+    },
+    {
+      "name": "SlotsSettings",
+      "definition": "interface SlotsSettings {\n  textBefore: string            // Текст перед списком слотов\n  textAfter: string            // Текст после списка слотов\n}",
+      "fields": [
+        {
+          "name": "textBefore",
+          "type": "string",
+          "optional": false,
+          "comment": "Текст перед списком слотов"
+        },
+        {
+          "name": "textAfter",
+          "type": "string",
+          "optional": false,
+          "comment": "Текст после списка слотов"
+        }
+      ]
+    },
+    {
+      "name": "RejectionTemplateFormProps",
+      "definition": "interface RejectionTemplateFormProps {\n  template: RejectionTemplate | null  // Шаблон для редактирования\n  rejectionType: string               // Тип отказа\n  gradeId?: number | null             // ID грейда (для шаблонов по грейдам)\n  onSave: () => void                  // Обработчик сохранения\n  onCancel: () => void                // Обработчик отмены\n}",
+      "fields": [
+        {
+          "name": "template",
+          "type": "RejectionTemplate | null",
+          "optional": false,
+          "comment": "Шаблон для редактирования"
+        },
+        {
+          "name": "rejectionType",
+          "type": "string",
+          "optional": false,
+          "comment": "Тип отказа"
+        },
+        {
+          "name": "gradeId",
+          "type": "number | null",
+          "optional": true,
+          "comment": "ID грейда (для шаблонов по грейдам)"
+        },
+        {
+          "name": "onSave",
+          "type": "() => void",
+          "optional": false,
+          "comment": "Обработчик сохранения"
+        },
+        {
+          "name": "onCancel",
+          "type": "() => void",
+          "optional": false,
+          "comment": "Обработчик отмены"
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка общих шаблонов из API\n   - GET `/api/candidate-responses/templates/general/`\n   - Возвращает: массив общих шаблонов",
+      "method": "GET",
+      "endpoint": "/api/candidate-responses/templates/general/",
+      "parameters": null,
+      "returns": "массив общих шаблонов",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка шаблонов по грейдам из API\n   - GET `/api/candidate-responses/templates/grades/`\n   - Возвращает: массив шаблонов по грейдам",
+      "method": "GET",
+      "endpoint": "/api/candidate-responses/templates/grades/",
+      "parameters": null,
+      "returns": "массив шаблонов по грейдам",
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Создание шаблона через API\n   - POST `/api/candidate-responses/templates/`\n   - Параметры: rejection_type, grade_id (опционально), title, message, is_active",
+      "method": "POST",
+      "endpoint": "/api/candidate-responses/templates/",
+      "parameters": "rejection_type, grade_id (опционально), title, message, is_active",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Обновление шаблона через API\n   - PUT/PATCH `/api/candidate-responses/templates/{id}/`\n   - Параметры: все поля шаблона",
+      "method": "PATCH",
+      "endpoint": "/api/candidate-responses/templates/{id}/",
+      "parameters": "все поля шаблона",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Удаление шаблона через API\n   - DELETE `/api/candidate-responses/templates/{id}/`",
+      "method": "DELETE",
+      "endpoint": "/api/candidate-responses/templates/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Загрузка настроек слотов из API\n   - GET `/api/candidate-responses/slots-settings/`\n   - Возвращает: textBefore, textAfter",
+      "method": "GET",
+      "endpoint": "/api/candidate-responses/slots-settings/",
+      "parameters": null,
+      "returns": "textBefore, textAfter",
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Сохранение настроек слотов через API\n   - PUT `/api/candidate-responses/slots-settings/`\n   - Параметры: textBefore, textAfter",
+      "method": "PUT",
+      "endpoint": "/api/candidate-responses/slots-settings/",
+      "parameters": "textBefore, textAfter",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Загрузка списка грейдов из API\n   - GET `/api/grades/`\n   - Использовать в RejectionTemplateForm",
+      "method": "GET",
+      "endpoint": "/api/grades/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.326783"
+}

@@ -1,0 +1,202 @@
+{
+  "name": "interviewers",
+  "type": "page",
+  "description": "Страница управления интервьюерами компании. Позволяет управлять базой интервьюеров: добавлять, редактировать, удалять интервьюеров, управлять их активностью, просматривать календари и статистику.\n\n**Путь**: `/interviewers`",
+  "route_path": "`/interviewers`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/interviewers/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockInterviewers\n- **Тип**: Array<Interviewer>\n- **Структура**: массив из 23 интервьюеров\n- **Пример записи**: \n  ```typescript\n  {\n    id: 1,\n    firstName: 'Artur',\n    lastName: 'Akimau',\n    email: 'arthur.akimov@softnetix.io',\n    isActive: true,\n    createdAt: '17.11.2025 16:16',\n    calendarLink: 'https://calendar.google.com/calendar/u/0?cid=arthur.akimov@softnetix.io'\n  }\n  ```\n- **Поля**: \n  - id: уникальный идентификатор (number)\n  - firstName: имя (string)\n  - lastName: фамилия (string)\n  - middleName: отчество (опционально, string)\n  - email: email адрес (string)\n  - isActive: флаг активности (boolean)\n  - createdAt: дата создания (string, формат \"DD.MM.YYYY HH:mm\")\n  - calendarLink: ссылка на календарь (опционально, string)\n- **TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    },
+    "mockData_1": {
+      "description": "- **Тип**: Array<Interviewer>\n- **Структура**: массив из 23 интервьюеров",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [
+    {
+      "name": "Interviewer",
+      "definition": "interface Interviewer {\n  id: number                    // Уникальный идентификатор интервьюера\n  firstName: string             // Имя интервьюера\n  lastName: string              // Фамилия интервьюера\n  middleName?: string           // Отчество интервьюера (опционально)\n  email: string                 // Email интервьюера\n  isActive: boolean             // Флаг активности интервьюера\n  createdAt: string             // Дата добавления интервьюера (строка)\n  calendarLink?: string          // Ссылка на календарь интервьюера в Google Calendar (опционально)\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "number",
+          "optional": false,
+          "comment": "Уникальный идентификатор интервьюера"
+        },
+        {
+          "name": "firstName",
+          "type": "string",
+          "optional": false,
+          "comment": "Имя интервьюера"
+        },
+        {
+          "name": "lastName",
+          "type": "string",
+          "optional": false,
+          "comment": "Фамилия интервьюера"
+        },
+        {
+          "name": "middleName",
+          "type": "string",
+          "optional": true,
+          "comment": "Отчество интервьюера (опционально)"
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "optional": false,
+          "comment": "Email интервьюера"
+        },
+        {
+          "name": "isActive",
+          "type": "boolean",
+          "optional": false,
+          "comment": "Флаг активности интервьюера"
+        },
+        {
+          "name": "createdAt",
+          "type": "string",
+          "optional": false,
+          "comment": "Дата добавления интервьюера (строка)"
+        },
+        {
+          "name": "calendarLink",
+          "type": "string",
+          "optional": true,
+          "comment": "Ссылка на календарь интервьюера в Google Calendar (опционально)"
+        }
+      ]
+    },
+    {
+      "name": "InterviewerEditModalProps",
+      "definition": "interface InterviewerEditModalProps {\n  isOpen: boolean               // Флаг открытия модального окна\n  onClose: () => void           // Функция закрытия модального окна\n  interviewer: Interviewer | null // Интервьюер для редактирования (null для создания)\n  returnToView?: boolean        // Флаг возврата к модальному окну просмотра после закрытия\n  onSave: (data: any) => void   // Функция сохранения данных интервьюера\n}",
+      "fields": [
+        {
+          "name": "isOpen",
+          "type": "boolean",
+          "optional": false,
+          "comment": "Флаг открытия модального окна"
+        },
+        {
+          "name": "onClose",
+          "type": "() => void",
+          "optional": false,
+          "comment": "Функция закрытия модального окна"
+        },
+        {
+          "name": "interviewer",
+          "type": "Interviewer | null",
+          "optional": false,
+          "comment": "Интервьюер для редактирования (null для создания)"
+        },
+        {
+          "name": "returnToView",
+          "type": "boolean",
+          "optional": true,
+          "comment": "Флаг возврата к модальному окну просмотра после закрытия"
+        },
+        {
+          "name": "onSave",
+          "type": "(data: any) => void",
+          "optional": false,
+          "comment": "Функция сохранения данных интервьюера"
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка списка интервьюеров из API\n   - GET `/api/interviewers/` - получение списка интервьюеров\n   - Параметры: search, status, page, page_size\n   - Замена mockInterviewers на данные из API",
+      "method": "GET",
+      "endpoint": "/api/interviewers/",
+      "parameters": "search, status, page, page_size",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Создание интервьюера через API\n   - POST `/api/interviewers/` - создание нового интервьюера\n   - Параметры: firstName, lastName, middleName, email, isActive, calendarLink\n   - Обновление списка после создания",
+      "method": "POST",
+      "endpoint": "/api/interviewers/",
+      "parameters": "firstName, lastName, middleName, email, isActive, calendarLink",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Редактирование интервьюера через API\n   - PUT `/api/interviewers/{id}/` - обновление интервьюера\n   - Параметры: firstName, lastName, middleName, email, isActive, calendarLink\n   - Обновление списка после редактирования",
+      "method": "PUT",
+      "endpoint": "/api/interviewers/{id}/",
+      "parameters": "firstName, lastName, middleName, email, isActive, calendarLink",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Удаление интервьюера через API\n   - DELETE `/api/interviewers/{id}/` - удаление интервьюера\n   - Обновление списка после удаления",
+      "method": "DELETE",
+      "endpoint": "/api/interviewers/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Переключение активности интервьюера через API\n   - PATCH `/api/interviewers/{id}/toggle-active/` - переключение активности\n   - Параметры: isActive\n   - Обновление статуса в списке",
+      "method": "PATCH",
+      "endpoint": "/api/interviewers/{id}/toggle-active/",
+      "parameters": "isActive",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Загрузка статистики интервьюера из API\n   - GET `/api/interviewers/{id}/statistics/` - получение статистики\n   - Параметры: количество интервью, количество завершенных интервью\n   - Отображение в модальном окне просмотра",
+      "method": "GET",
+      "endpoint": "/api/interviewers/{id}/statistics/",
+      "parameters": "количество интервью, количество завершенных интервью",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Интеграция с Google Calendar API\n   - Получение ссылок на календари из Google Calendar API\n   - Автоматическое создание ссылок при создании интервьюера\n   - Синхронизация календарей",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Валидация email при создании/редактировании\n   - Проверка уникальности email на сервере\n   - Проверка формата email\n   - Отображение ошибок валидации",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Обработка ошибок API\n   - Отображение ошибок при загрузке данных\n   - Отображение ошибок при создании/редактировании/удалении\n   - Toast уведомления об ошибках",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Оптимизация загрузки данных\n    - Кэширование списка интервьюеров\n    - Debounce для поиска\n    - Ленивая загрузка статистики",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.269631"
+}

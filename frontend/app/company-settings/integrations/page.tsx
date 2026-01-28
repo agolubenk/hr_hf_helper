@@ -9,8 +9,37 @@ import styles from '../company-settings.module.css'
 import integrationsStyles from './integrations.module.css'
 import IntegrationScopeModal from './IntegrationScopeModal'
 
+/**
+ * ACTIVE_STORAGE_KEY - ключ для хранения состояния активности интеграций в localStorage
+ * 
+ * Используется для:
+ * - Сохранения состояния активности интеграций между сессиями
+ * - Восстановления состояния при следующей загрузке страницы
+ */
 const ACTIVE_STORAGE_KEY = 'integrationActive'
 
+/**
+ * getIntegrationActive - получение состояния активности интеграции из localStorage
+ * 
+ * Функциональность:
+ * - Читает состояние активности интеграции из localStorage
+ * - Возвращает значение по умолчанию, если значение не найдено
+ * - Безопасно работает на сервере (SSR) - возвращает fallback
+ * 
+ * Поведение:
+ * - Проверяет наличие window (для SSR безопасности)
+ * - Читает значение из localStorage по ключу `${ACTIVE_STORAGE_KEY}_${id}`
+ * - Парсит строковое значение в boolean
+ * - Если значение не найдено или некорректно - возвращает fallback
+ * 
+ * Используется для:
+ * - Восстановления состояния активности интеграций при загрузке страницы
+ * - Сохранения пользовательских настроек между сессиями
+ * 
+ * @param id - ID интеграции
+ * @param fallback - значение по умолчанию, если в localStorage нет значения
+ * @returns состояние активности интеграции (true/false)
+ */
 function getIntegrationActive(id: string, fallback: boolean): boolean {
   if (typeof window === 'undefined') return fallback
   const raw = localStorage.getItem(`${ACTIVE_STORAGE_KEY}_${id}`)
@@ -19,11 +48,49 @@ function getIntegrationActive(id: string, fallback: boolean): boolean {
   return fallback
 }
 
+/**
+ * setIntegrationActive - сохранение состояния активности интеграции в localStorage
+ * 
+ * Функциональность:
+ * - Сохраняет состояние активности интеграции в localStorage
+ * - Безопасно работает на сервере (SSR) - ничего не делает
+ * 
+ * Поведение:
+ * - Проверяет наличие window (для SSR безопасности)
+ * - Сохраняет значение в localStorage по ключу `${ACTIVE_STORAGE_KEY}_${id}`
+ * - Преобразует boolean в строку для хранения
+ * 
+ * Используется для:
+ * - Сохранения состояния активности интеграций при переключении
+ * - Сохранения пользовательских настроек между сессиями
+ * 
+ * @param id - ID интеграции
+ * @param value - новое состояние активности (true/false)
+ */
 function setIntegrationActive(id: string, value: boolean): void {
   if (typeof window === 'undefined') return
   localStorage.setItem(`${ACTIVE_STORAGE_KEY}_${id}`, String(value))
 }
 
+/**
+ * IntegrationId - тип идентификатора интеграции
+ * 
+ * Используется для:
+ * - Типизации ID интеграций в коде
+ * - Обеспечения типобезопасности при работе с интеграциями
+ * 
+ * Значения:
+ * - 'google': интеграция с Google (OAuth, Calendar, Drive)
+ * - 'telegram': интеграция с Telegram (мессенджер)
+ * - 'hh': интеграция с hh.ru и rabota.by (job-сайты)
+ * - 'huntflow': интеграция с Huntflow (ATS система)
+ * - 'gemini': интеграция с Google Gemini (ИИ)
+ * - 'openai': интеграция с OpenAI (ИИ)
+ * - 'cloud-ai': интеграция с Cloud AI (ИИ)
+ * - 'clickup': интеграция с ClickUp (task tracker)
+ * - 'notion': интеграция с Notion (task tracker)
+ * - 'n8n': интеграция с n8n (автоматизация)
+ */
 type IntegrationId =
   | 'google'
   | 'telegram'
@@ -36,6 +103,22 @@ type IntegrationId =
   | 'notion'
   | 'n8n'
 
+/**
+ * IntegrationGroupId - тип идентификатора группы интеграций
+ * 
+ * Используется для:
+ * - Группировки интеграций по категориям
+ * - Фильтрации интеграций в интерфейсе
+ * 
+ * Значения:
+ * - 'all': все интеграции (используется для фильтра "Все")
+ * - 'ai': интеграции с ИИ сервисами (Gemini, OpenAI, Cloud AI, n8n)
+ * - 'auth': интеграции для авторизации (Google OAuth)
+ * - 'messengers': мессенджеры (Telegram)
+ * - 'job-sites': job-сайты (hh.ru, rabota.by)
+ * - 'hrm-ats': HRM и ATS системы (Huntflow)
+ * - 'task-trackers': системы управления задачами (ClickUp, Notion)
+ */
 type IntegrationGroupId =
   | 'all'
   | 'ai'
@@ -45,6 +128,23 @@ type IntegrationGroupId =
   | 'hrm-ats'
   | 'task-trackers'
 
+/**
+ * Integration - интерфейс данных интеграции
+ * 
+ * Структура:
+ * - id: уникальный идентификатор интеграции
+ * - name: полное название интеграции
+ * - shortName: короткое название (для отображения в компактном виде)
+ * - active: флаг активности интеграции (включена/выключена)
+ * - href: URL для перехода к настройкам интеграции (опционально)
+ * - group: группа интеграции для фильтрации
+ * - allowsScopeChoice: разрешает ли выбор области применения (общий/у каждого свой/оба)
+ * 
+ * Используется для:
+ * - Хранения данных об интеграциях
+ * - Отображения списка интеграций в интерфейсе
+ * - Фильтрации интеграций по группам
+ */
 interface Integration {
   id: IntegrationId
   name: string
@@ -56,6 +156,17 @@ interface Integration {
   allowsScopeChoice?: boolean
 }
 
+/**
+ * INTEGRATION_GROUPS - массив групп интеграций для фильтрации
+ * 
+ * Используется для:
+ * - Отображения списка групп в интерфейсе фильтрации
+ * - Группировки интеграций по категориям
+ * 
+ * Структура каждой группы:
+ * - id: идентификатор группы (IntegrationGroupId)
+ * - label: отображаемое название группы
+ */
 const INTEGRATION_GROUPS: { id: IntegrationGroupId; label: string }[] = [
   { id: 'all', label: 'Все' },
   { id: 'ai', label: 'ИИ' },
@@ -66,6 +177,29 @@ const INTEGRATION_GROUPS: { id: IntegrationGroupId; label: string }[] = [
   { id: 'task-trackers', label: "Task Tracker's" },
 ]
 
+/**
+ * INTEGRATIONS - массив всех доступных интеграций
+ * 
+ * Используется для:
+ * - Отображения списка интеграций в интерфейсе
+ * - Фильтрации интеграций по группам
+ * - Управления активностью интеграций
+ * 
+ * Структура каждой интеграции:
+ * - id: уникальный идентификатор (IntegrationId)
+ * - name: полное название интеграции
+ * - shortName: короткое название для компактного отображения
+ * - active: флаг активности (true - включена, false - выключена)
+ * - group: группа интеграции для фильтрации
+ * - allowsScopeChoice: разрешает ли выбор области применения учетных данных
+ * 
+ * Примечания:
+ * - active: true означает, что интеграция включена (по умолчанию)
+ * - allowsScopeChoice: true означает, что можно выбрать режим хранения ключей (общий/у каждого свой/оба)
+ * - href: опционально, используется для перехода к настройкам интеграции
+ * 
+ * TODO: Загружать из API вместо хардкода
+ */
 const INTEGRATIONS: Integration[] = [
   { id: 'google', name: 'Google', shortName: 'G', active: false, group: 'auth', allowsScopeChoice: true },
   { id: 'telegram', name: 'Telegram', shortName: 'T', active: false, group: 'messengers', allowsScopeChoice: true },
@@ -79,6 +213,25 @@ const INTEGRATIONS: Integration[] = [
   { id: 'notion', name: 'Notion', shortName: 'N', active: false, group: 'task-trackers', allowsScopeChoice: true },
 ]
 
+/**
+ * filterByGroup - фильтрация интеграций по группе
+ * 
+ * Функциональность:
+ * - Фильтрует массив интеграций по указанной группе
+ * - Если группа 'all' - возвращает все интеграции без фильтрации
+ * 
+ * Поведение:
+ * - Если group === 'all' - возвращает исходный массив
+ * - Иначе фильтрует интеграции, оставляя только те, у которых group совпадает с указанным
+ * 
+ * Используется для:
+ * - Отображения интеграций выбранной группы в интерфейсе
+ * - Фильтрации при переключении между группами
+ * 
+ * @param items - массив интеграций для фильтрации
+ * @param group - ID группы для фильтрации ('all' - все группы)
+ * @returns отфильтрованный массив интеграций
+ */
 function filterByGroup(items: Integration[], group: IntegrationGroupId): Integration[] {
   if (group === 'all') return items
   return items.filter((i) => i.group === group)

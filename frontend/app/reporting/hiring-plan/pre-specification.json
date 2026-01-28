@@ -1,0 +1,101 @@
+{
+  "name": "hiring-plan",
+  "type": "page",
+  "description": "Страница плана найма (заявки на найм). Отображает заявки на найм с фильтрацией и поиском, статистику по заявкам (всего, планируется, в процессе, закрыто, отменено), метрики SLA и Time-to-Hire, а также позволяет перейти к годовой таблице плана найма.\n\n**Путь**: `/reporting/hiring-plan`",
+  "route_path": "`/reporting/hiring-plan`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/reporting/hiring-plan/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### MOCK_REQUESTS\n- **Тип**: массив объектов HiringRequest\n- **Назначение**: Моковые данные заявок на найм для демонстрации функциональности\n- **Структура**: 10 моковых заявок с различными статусами, приоритетами и данными\n- **Поля заявки**: См. интерфейс HiringRequest выше\n- **TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    },
+    "mockData_1": {
+      "description": "### LIMIT_OPTIONS\n- **Тип**: `[5, 10, 15, 25, 50, 100] as const`\n- **Назначение**: Опции лимита записей на странице для пагинации\n- **Используется для**: Заполнения выпадающего списка выбора лимита",
+      "extracted_from": "documentation"
+    },
+    "mockData_2": {
+      "description": "### STATUS_OPTIONS\n- **Тип**: массив объектов `{ value: string; label: string }`\n- **Назначение**: Опции статусов заявок для фильтрации\n- **Используется для**: Заполнения выпадающего списка фильтра по статусу",
+      "extracted_from": "documentation"
+    },
+    "mockData_3": {
+      "description": "- **Тип**: массив объектов HiringRequest\n- **Назначение**: Моковые данные заявок на найм для демонстрации функциональности\n- **Структура**: 10 моковых заявок с различными статусами, приоритетами и данными",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка заявок на найм из API\n   - GET `/api/reporting/hiring-plan/requests/` - получение списка заявок\n   - Параметры: фильтры (поиск, статус, период, вакансия, рекрутер), пагинация\n   - Возвращает: массив заявок на найм\n   - Заменить MOCK_REQUESTS на данные из API",
+      "method": "GET",
+      "endpoint": "/api/reporting/hiring-plan/requests/",
+      "parameters": "фильтры (поиск, статус, период, вакансия, рекрутер), пагинация",
+      "returns": "массив заявок на найм",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка списка вакансий из API\n   - GET `/api/vacancies/` - получение списка вакансий\n   - Использовать для фильтра по вакансиям\n   - Заменить вычисление vacancies на данные из API",
+      "method": "GET",
+      "endpoint": "/api/vacancies/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Загрузка списка рекрутеров из API\n   - GET `/api/recruiters/` - получение списка рекрутеров\n   - Использовать для фильтра по рекрутерам\n   - Заменить вычисление recruiters на данные из API",
+      "method": "GET",
+      "endpoint": "/api/recruiters/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Вычисление статистики на сервере\n   - GET `/api/reporting/hiring-plan/stats/` - получение статистики\n   - Параметры: фильтры\n   - Возвращает: статистику по заявкам\n   - Заменить вычисление статистики на клиенте",
+      "method": "GET",
+      "endpoint": "/api/reporting/hiring-plan/stats/",
+      "parameters": "фильтры",
+      "returns": "статистику по заявкам",
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Вычисление метрик SLA на сервере\n   - GET `/api/reporting/hiring-plan/sla-metrics/` - получение метрик SLA\n   - Параметры: фильтры\n   - Возвращает: метрики SLA (avgSlaPlan, avgSlaFact)\n   - Заменить вычисление метрик на клиенте",
+      "method": "GET",
+      "endpoint": "/api/reporting/hiring-plan/sla-metrics/",
+      "parameters": "фильтры",
+      "returns": "метрики SLA (avgSlaPlan, avgSlaFact)",
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Вычисление метрик T2H на сервере\n   - GET `/api/reporting/hiring-plan/t2h-metrics/` - получение метрик T2H\n   - Параметры: фильтры\n   - Возвращает: метрики T2H (avgT2H)\n   - Заменить вычисление метрик на клиенте",
+      "method": "GET",
+      "endpoint": "/api/reporting/hiring-plan/t2h-metrics/",
+      "parameters": "фильтры",
+      "returns": "метрики T2H (avgT2H)",
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Пагинация на сервере\n   - Реализовать пагинацию через API с параметрами page и page_size\n   - Заменить клиентскую пагинацию (slice) на серверную",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Сортировка на сервере\n   - Реализовать сортировку через API с параметром ordering\n   - Заменить клиентскую сортировку на серверную",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.313931"
+}

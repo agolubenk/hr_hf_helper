@@ -32,22 +32,70 @@
   - По источнику данных
 - **TODO**: Реализовать фильтры
 
+## Интерфейсы и типы
+
+### Benchmark
+```typescript
+interface Benchmark {
+  id: number
+  type: 'candidate' | 'vacancy'
+  vacancy: number
+  vacancy_name: string
+  grade: number
+  grade_name: string
+  salary_from: string
+  salary_to: string
+  salary_display: string
+  location: string
+  work_format: string
+  compensation?: string
+  benefits?: string
+  development?: string
+  technologies: string
+  domain: string
+  domain_display: string
+  hh_vacancy_id?: string
+  date_added: string
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+```
+
 ## Состояние компонента
 
 ### State переменные:
-- `benchmarks`: массив всех бенчмарков
-- `loading`: флаг загрузки данных
-- `filters`: объект фильтров
+- `benchmarks`: массив всех бенчмарков (Benchmark[])
+- `loading`: флаг загрузки данных (boolean)
+- `search`: поисковый запрос (string)
+- `typeFilter`: фильтр по типу ('all' | 'candidate' | 'vacancy')
+- `gradeFilter`: фильтр по грейду (string)
+- `vacancyFilter`: фильтр по вакансии (string)
+- `statusFilter`: фильтр по статусу ('all' | 'active' | 'inactive')
+- `stats`: статистика по бенчмаркам (BenchmarkStats)
 
 ## Функции и обработчики
 
 ### loadBenchmarks()
-- **Назначение**: Загрузка бенчмарков
-- **Логика**: 
-  - Загружает данные бенчмарков из API
-  - Применяет фильтры
-  - Обновляет состояние
-- **TODO**: Реализовать реальный API вызов
+- Загружает список бенчмарков из API
+- Применяет фильтры
+- TODO: GET `/api/finance/benchmarks/`
+
+### handleAddBenchmark()
+- Открывает форму добавления бенчмарка
+- TODO: POST `/api/finance/benchmarks/`
+
+### handleEditBenchmark(benchmark)
+- Открывает форму редактирования
+- TODO: PUT `/api/finance/benchmarks/{id}/`
+
+### handleDeleteBenchmark(id)
+- Удаляет бенчмарк с подтверждением
+- TODO: DELETE `/api/finance/benchmarks/{id}/`
+
+### handleToggleActive(id)
+- Переключает активность бенчмарка
+- TODO: PATCH `/api/finance/benchmarks/{id}/active/`
 
 ## Моковые данные
 

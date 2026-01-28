@@ -1,0 +1,84 @@
+{
+  "name": "users",
+  "type": "page",
+  "description": "Страница управления пользователями компании. Позволяет добавлять, редактировать, удалять пользователей, управлять их правами доступа и группами.",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/company-settings/users/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockUsers\nМассив объектов пользователей с полями:\n- `id`: уникальный идентификатор\n- `email`: email пользователя\n- `first_name`, `last_name`: имя и фамилия\n- `position`: должность\n- `groups`: массив групп\n- `is_active`: флаг активности\n- `last_login`: дата последнего входа (может быть null)\n- `created_at`: дата создания\n- `access`: права доступа (опционально)\n\n**TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    },
+    "mockData_1": {
+      "description": "### availableGroups\nМассив доступных групп:\n- 'Администраторы'\n- 'Рекрутеры'\n- 'Менеджеры'\n- 'HR'\n\n**TODO**: Загружать из API",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "`mockUsers` - заменить на загрузку из API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "`loadUsers()` - реализовать реальный API вызов",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "`handleAddUser()` - реализовать реальный API вызов",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "`handleSaveEdit()` - реализовать реальный API вызов",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "`performDeleteUser()` - реализовать реальный API вызов",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "`availableGroups` - загружать из API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "`UserAccessModal.onSave()` - реализовать сохранение прав через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.305845"
+}

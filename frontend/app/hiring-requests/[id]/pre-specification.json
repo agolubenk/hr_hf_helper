@@ -1,0 +1,71 @@
+{
+  "name": "[id]",
+  "type": "page",
+  "description": "Страница детального просмотра заявки на подбор. Отображает полную информацию о заявке, позволяет редактировать и управлять заявкой. Страница является детальным представлением заявки из списка на странице `/hiring-requests`.\n\n**Путь**: `/hiring-requests/[id]`\n\n**Примечание**: Файл `page.tsx` не существует, страница существует только в виде документации. Вместо этого используется модальное окно или страница редактирования.",
+  "route_path": "`/hiring-requests/[id]`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/hiring-requests/[id]/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockRequest\nОбъект заявки со всеми полями:\n- Основная информация: название, грейд, проект, отдел\n- Статус и приоритет: статус заявки, приоритет, дата изменения статуса\n- Рекрутер и сроки: рекрутер, дни работы, даты начала/окончания, дедлайн\n- SLA метрики: фактические дни, SLA дни, статус SLA, время до найма\n- Кандидаты: количество кандидатов, информация о найденном кандидате\n- Технологии: массив требуемых технологий\n- Предупреждения: флаг наличия предупреждений\n\n**Структура данных**: См. интерфейс HiringRequest выше\n\n**TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка данных заявки из API\n   - GET `/api/hiring-requests/{id}/` - получение данных заявки по ID\n   - Параметры: id (из URL параметра)\n   - Возвращает: полную информацию о заявке (HiringRequest)\n   - Заменить mockRequest на данные из API",
+      "method": "GET",
+      "endpoint": "/api/hiring-requests/{id}/",
+      "parameters": "id (из URL параметра)",
+      "returns": "полную информацию о заявке (HiringRequest)",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Редактирование заявки через API\n   - PUT `/api/hiring-requests/{id}/` - обновление заявки\n   - Параметры: все поля заявки\n   - Обработка ошибок сохранения",
+      "method": "PUT",
+      "endpoint": "/api/hiring-requests/{id}/",
+      "parameters": "все поля заявки",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Изменение статуса через API\n   - PATCH `/api/hiring-requests/{id}/status/` - обновление статуса\n   - Параметры: status (новый статус)\n   - Подтверждение изменения статуса\n   - Обновление statusDate при изменении статуса",
+      "method": "PATCH",
+      "endpoint": "/api/hiring-requests/{id}/status/",
+      "parameters": "status (новый статус)",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Удаление заявки через API\n   - DELETE `/api/hiring-requests/{id}/` - удаление заявки\n   - Подтверждение удаления\n   - Перенаправление на страницу списка после удаления",
+      "method": "DELETE",
+      "endpoint": "/api/hiring-requests/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Загрузка связанных данных\n   - GET `/api/hiring-requests/{id}/candidates/` - получение списка кандидатов\n   - GET `/api/hiring-requests/{id}/history/` - получение истории изменений\n   - GET `/api/hiring-requests/{id}/comments/` - получение комментариев",
+      "method": "GET",
+      "endpoint": "/api/hiring-requests/{id}/candidates/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Добавление комментариев\n   - POST `/api/hiring-requests/{id}/comments/` - добавление комментария\n   - Параметры: текст комментария, автор",
+      "method": "POST",
+      "endpoint": "/api/hiring-requests/{id}/comments/",
+      "parameters": "текст комментария, автор",
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.298112"
+}

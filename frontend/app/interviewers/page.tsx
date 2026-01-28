@@ -305,47 +305,160 @@ export default function InterviewersPage() {
   const [returnToViewModal, setReturnToViewModal] = useState(false)
   const itemsPerPage = 10
 
-  // Фильтрация интервьюеров
+  /**
+   * filteredInterviewers - отфильтрованный список интервьюеров
+   * 
+   * Логика фильтрации:
+   * 1. Поиск: проверяет наличие запроса в полном имени (имя + фамилия + отчество) или email (без учета регистра)
+   * 2. Фильтр по статусу: если выбран 'all' - пропускает все, иначе проверяет совпадение статуса активности
+   * 
+   * Поведение:
+   * - Все два условия должны выполняться одновременно (логическое И)
+   * - Поиск выполняется без учета регистра
+   * - Результат используется для отображения в таблице и пагинации
+   */
   const filteredInterviewers = mockInterviewers.filter(interviewer => {
+    // Поиск: проверяет полное имя (имя + фамилия + отчество) или email (без учета регистра)
     const matchesSearch = !searchQuery || 
       `${interviewer.firstName} ${interviewer.lastName} ${interviewer.middleName || ''}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
       interviewer.email.toLowerCase().includes(searchQuery.toLowerCase())
     
+    // Фильтр по статусу: 'all' пропускает все, иначе проверяет совпадение статуса активности
     const matchesStatus = statusFilter === 'all' || 
       (statusFilter === 'active' && interviewer.isActive) ||
       (statusFilter === 'inactive' && !interviewer.isActive)
     
+    // Все два условия должны выполняться
     return matchesSearch && matchesStatus
   })
 
-  // Пагинация
+  /**
+   * Пагинация отфильтрованных интервьюеров
+   * 
+   * Вычисляемые значения:
+   * - totalPages: общее количество страниц (округление вверх)
+   * - startIndex: индекс первого элемента на текущей странице
+   * - endIndex: индекс последнего элемента на текущей странице (не включительно)
+   * - paginatedInterviewers: массив интервьюеров для текущей страницы
+   * 
+   * Поведение:
+   * - Используется для отображения только части интервьюеров на странице
+   * - itemsPerPage = 10 (количество элементов на странице)
+   * - При изменении currentPage обновляется список отображаемых интервьюеров
+   */
   const totalPages = Math.ceil(filteredInterviewers.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
   const endIndex = startIndex + itemsPerPage
   const paginatedInterviewers = filteredInterviewers.slice(startIndex, endIndex)
 
-  // Статистика
+  /**
+   * Статистика по интервьюерам
+   * 
+   * Вычисляемые значения:
+   * - totalCount: общее количество интервьюеров
+   * - activeCount: количество активных интервьюеров
+   * - inactiveCount: количество неактивных интервьюеров
+   * 
+   * Используется для:
+   * - Отображения статистики в кнопках фильтров
+   * - Показывает общее количество, активных и неактивных интервьюеров
+   */
   const totalCount = mockInterviewers.length
   const activeCount = mockInterviewers.filter(i => i.isActive).length
   const inactiveCount = mockInterviewers.filter(i => !i.isActive).length
 
-  // Получение инициалов для аватара
+  /**
+   * getInitials - получение инициалов интервьюера для аватара
+   * 
+   * Функциональность:
+   * - Извлекает первую букву имени и первую букву фамилии
+   * - Преобразует в верхний регистр
+   * 
+   * Алгоритм:
+   * - Берет первый символ firstName и преобразует в верхний регистр
+   * - Берет первый символ lastName и преобразует в верхний регистр
+   * - Объединяет их в строку (например, "Иван Петров" → "ИП")
+   * 
+   * Используется для:
+   * - Отображения инициалов в аватаре интервьюера
+   * - Генерации placeholder для аватара, если нет фото
+   * 
+   * @param interviewer - объект интервьюера
+   * @returns строка с инициалами (2 заглавные буквы)
+   */
   const getInitials = (interviewer: Interviewer) => {
     const first = interviewer.firstName.charAt(0).toUpperCase()
     const last = interviewer.lastName.charAt(0).toUpperCase()
     return `${first}${last}`
   }
 
-  // Полное имя
+  /**
+   * getFullName - получение полного имени интервьюера в формате "Фамилия Имя"
+   * 
+   * Функциональность:
+   * - Форматирует имя интервьюера в формате "Фамилия Имя"
+   * - Используется для отображения в таблице и модальных окнах
+   * 
+   * Формат:
+   * - "Фамилия Имя" (например, "Петров Иван")
+   * - Отчество не включается
+   * 
+   * Используется для:
+   * - Отображения полного имени в таблице интервьюеров
+   * - Заголовков модальных окон
+   * - Сообщений об удалении
+   * 
+   * @param interviewer - объект интервьюера
+   * @returns строка с полным именем в формате "Фамилия Имя"
+   */
   const getFullName = (interviewer: Interviewer) => {
     return `${interviewer.lastName} ${interviewer.firstName}`
   }
 
-  // Короткое имя
+  /**
+   * getShortName - получение короткого имени интервьюера (только имя)
+   * 
+   * Функциональность:
+   * - Возвращает только имя интервьюера (firstName)
+   * - Используется для отображения под полным именем
+   * 
+   * Используется для:
+   * - Отображения короткого имени под полным именем в таблице
+   * - Вторичной информации в модальных окнах
+   * 
+   * @param interviewer - объект интервьюера
+   * @returns строка с именем интервьюера
+   */
   const getShortName = (interviewer: Interviewer) => {
     return interviewer.firstName
   }
 
+  /**
+   * handleDeleteInterviewer - обработчик удаления интервьюера
+   * 
+   * Функциональность:
+   * - Показывает предупреждающее уведомление с подтверждением удаления
+   * - Предоставляет кнопки "Отмена" и "Удалить"
+   * 
+   * Поведение:
+   * - Вызывается при клике на кнопку удаления
+   * - Показывает toast-уведомление с вопросом и именем интервьюера
+   * - При подтверждении удаления:
+   *   - Если closeModal === true - закрывает модальное окно просмотра
+   *   - Очищает selectedInterviewer
+   *   - TODO: Реализовать удаление через API
+   * 
+   * Связи:
+   * - useToast: использует toast для отображения уведомления
+   * - getFullName: использует для отображения имени в сообщении
+   * 
+   * @param interviewer - интервьюер для удаления
+   * @param closeModal - флаг закрытия модального окна после удаления (по умолчанию false)
+   * 
+   * TODO: Реализовать удаление через API
+   * - DELETE /api/interviewers/{id}/ - удаление интервьюера
+   * - Обновление списка интервьюеров после удаления
+   */
   const handleDeleteInterviewer = (interviewer: Interviewer, closeModal = false) => {
     toast.showWarning('Удалить интервьюера?', `Вы уверены, что хотите удалить ${getFullName(interviewer)}?`, {
       actions: [

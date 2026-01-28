@@ -1,0 +1,321 @@
+{
+  "name": "invites",
+  "type": "page",
+  "description": "Страница управления инвайтами на интервью. Позволяет создавать, просматривать, редактировать и удалять инвайты для кандидатов. Инвайт — это приглашение кандидата на интервью с указанием даты, времени, формата (онлайн/офис) и других деталей.\n\n**Путь**: `/invites`",
+  "route_path": "`/invites`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/invites/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### MOCK_STATS\n- **Тип**: объект с полями total, pending, sent, completed\n- **Структура**: \n  ```typescript\n  {\n    total: 563,\n    pending: 13,\n    sent: 550,\n    completed: 0\n  }\n  ```\n- **Использование**: передается в компонент InvitesStats\n- **TODO**: Загружать из API",
+      "extracted_from": "documentation"
+    },
+    "mockData_1": {
+      "description": "### MOCK_INVITES\n- **Тип**: Array<Invite>\n- **Структура**: массив из 3 инвайтов\n- **Пример записи**: \n  ```typescript\n  {\n    id: 1,\n    candidate_name: 'Иванов Иван Иванович',\n    candidate_email: 'ivanov@example.com',\n    candidate_url: 'https://huntflow.ru/candidates/123',\n    vacancy_title: 'Frontend Developer',\n    interview_datetime: '2026-01-30T14:00:00Z',\n    interview_datetime_formatted: '30.01.2026 14:00',\n    status: 'pending',\n    status_display: 'Ожидает',\n    interview_format: 'online',\n    google_meet_url: 'https://meet.google.com/abc-defg-hij',\n    created_at: '2026-01-26T10:00:00Z',\n    updated_at: '2026-01-26T10:00:00Z',\n  }\n  ```\n- **Использование**: используется для фильтрации и отображения в таблице\n- **TODO**: Заменить на реальные данные из invitesApi.getAll()",
+      "extracted_from": "documentation"
+    },
+    "mockData_2": {
+      "description": "- **Тип**: объект с полями total, pending, sent, completed\n- **Структура**: \n  ```typescript\n  {\n    total: 563,\n    pending: 13,\n    sent: 550,\n    completed: 0\n  }\n  ```",
+      "extracted_from": "documentation"
+    },
+    "mockData_3": {
+      "description": "- **Тип**: Array<Invite>\n- **Структура**: массив из 3 инвайтов",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [
+    {
+      "name": "Invite",
+      "definition": "interface Invite {\n  id: number                                    // Уникальный идентификатор инвайта\n  candidate_name: string                        // Имя кандидата\n  candidate_email?: string                      // Email кандидата (опционально)\n  candidate_url?: string                        // Ссылка на кандидата в Huntflow (опционально)\n  candidate_id?: string                         // ID кандидата (опционально)\n  candidate_grade?: string                      // Грейд кандидата (опционально)\n  vacancy_id?: string                           // ID вакансии (опционально)\n  vacancy_title?: string                        // Название вакансии (опционально)\n  interview_datetime: string                     // Дата и время интервью (ISO строка)\n  interview_datetime_formatted?: string         // Отформатированная дата и время (опционально)\n  custom_duration_minutes?: number              // Кастомная длительность интервью в минутах (опционально)\n  status: 'pending' | 'sent' | 'completed' | 'cancelled' // Статус инвайта\n  status_display?: string                      // Отображаемое название статуса (опционально)\n  interview_format?: 'online' | 'office'        // Формат интервью (опционально)\n  google_drive_file_id?: string                 // ID файла в Google Drive (опционально)\n  google_drive_file_url?: string                // Ссылка на файл в Google Drive (опционально)\n  calendar_event_id?: string                    // ID события в календаре (опционально)\n  calendar_event_url?: string                  // Ссылка на событие в календаре (опционально)\n  google_meet_url?: string                      // Ссылка на Google Meet (опционально)\n  interviewer?: number                          // ID интервьюера (опционально)\n  interviewer_name?: string                     // Имя интервьюера (опционально)\n  created_at: string                            // Дата создания (ISO строка)\n  updated_at: string                             // Дата обновления (ISO строка)\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "number",
+          "optional": false,
+          "comment": "Уникальный идентификатор инвайта"
+        },
+        {
+          "name": "candidate_name",
+          "type": "string",
+          "optional": false,
+          "comment": "Имя кандидата"
+        },
+        {
+          "name": "candidate_email",
+          "type": "string",
+          "optional": true,
+          "comment": "Email кандидата (опционально)"
+        },
+        {
+          "name": "candidate_url",
+          "type": "string",
+          "optional": true,
+          "comment": "Ссылка на кандидата в Huntflow (опционально)"
+        },
+        {
+          "name": "candidate_id",
+          "type": "string",
+          "optional": true,
+          "comment": "ID кандидата (опционально)"
+        },
+        {
+          "name": "candidate_grade",
+          "type": "string",
+          "optional": true,
+          "comment": "Грейд кандидата (опционально)"
+        },
+        {
+          "name": "vacancy_id",
+          "type": "string",
+          "optional": true,
+          "comment": "ID вакансии (опционально)"
+        },
+        {
+          "name": "vacancy_title",
+          "type": "string",
+          "optional": true,
+          "comment": "Название вакансии (опционально)"
+        },
+        {
+          "name": "interview_datetime",
+          "type": "string",
+          "optional": false,
+          "comment": "Дата и время интервью (ISO строка)"
+        },
+        {
+          "name": "interview_datetime_formatted",
+          "type": "string",
+          "optional": true,
+          "comment": "Отформатированная дата и время (опционально)"
+        },
+        {
+          "name": "custom_duration_minutes",
+          "type": "number",
+          "optional": true,
+          "comment": "Кастомная длительность интервью в минутах (опционально)"
+        },
+        {
+          "name": "status",
+          "type": "'pending' | 'sent' | 'completed' | 'cancelled'",
+          "optional": false,
+          "comment": "Статус инвайта"
+        },
+        {
+          "name": "status_display",
+          "type": "string",
+          "optional": true,
+          "comment": "Отображаемое название статуса (опционально)"
+        },
+        {
+          "name": "interview_format",
+          "type": "'online' | 'office'",
+          "optional": true,
+          "comment": "Формат интервью (опционально)"
+        },
+        {
+          "name": "google_drive_file_id",
+          "type": "string",
+          "optional": true,
+          "comment": "ID файла в Google Drive (опционально)"
+        },
+        {
+          "name": "google_drive_file_url",
+          "type": "string",
+          "optional": true,
+          "comment": "Ссылка на файл в Google Drive (опционально)"
+        },
+        {
+          "name": "calendar_event_id",
+          "type": "string",
+          "optional": true,
+          "comment": "ID события в календаре (опционально)"
+        },
+        {
+          "name": "calendar_event_url",
+          "type": "string",
+          "optional": true,
+          "comment": "Ссылка на событие в календаре (опционально)"
+        },
+        {
+          "name": "google_meet_url",
+          "type": "string",
+          "optional": true,
+          "comment": "Ссылка на Google Meet (опционально)"
+        },
+        {
+          "name": "interviewer",
+          "type": "number",
+          "optional": true,
+          "comment": "ID интервьюера (опционально)"
+        },
+        {
+          "name": "interviewer_name",
+          "type": "string",
+          "optional": true,
+          "comment": "Имя интервьюера (опционально)"
+        },
+        {
+          "name": "created_at",
+          "type": "string",
+          "optional": false,
+          "comment": "Дата создания (ISO строка)"
+        },
+        {
+          "name": "updated_at",
+          "type": "string",
+          "optional": false,
+          "comment": "Дата обновления (ISO строка)"
+        }
+      ]
+    },
+    {
+      "name": "InviteListResponse",
+      "definition": "interface InviteListResponse {\n  count: number                                 // Общее количество инвайтов\n  next: string | null                           // URL следующей страницы (если есть)\n  previous: string | null                       // URL предыдущей страницы (если есть)\n  results: Invite[]                             // Массив инвайтов текущей страницы\n}",
+      "fields": [
+        {
+          "name": "count",
+          "type": "number",
+          "optional": false,
+          "comment": "Общее количество инвайтов"
+        },
+        {
+          "name": "next",
+          "type": "string | null",
+          "optional": false,
+          "comment": "URL следующей страницы (если есть)"
+        },
+        {
+          "name": "previous",
+          "type": "string | null",
+          "optional": false,
+          "comment": "URL предыдущей страницы (если есть)"
+        },
+        {
+          "name": "results",
+          "type": "Invite[]",
+          "optional": false,
+          "comment": "Массив инвайтов текущей страницы"
+        }
+      ]
+    },
+    {
+      "name": "InvitesStatsProps",
+      "definition": "interface InvitesStatsProps {\n  total: number                                 // Общее количество инвайтов\n  pending: number                               // Количество инвайтов со статусом \"pending\"\n  sent: number                                  // Количество инвайтов со статусом \"sent\"\n  completed: number                             // Количество инвайтов со статусом \"completed\"\n}",
+      "fields": [
+        {
+          "name": "total",
+          "type": "number",
+          "optional": false,
+          "comment": "Общее количество инвайтов"
+        },
+        {
+          "name": "pending",
+          "type": "number",
+          "optional": false,
+          "comment": "Количество инвайтов со статусом \"pending\""
+        },
+        {
+          "name": "sent",
+          "type": "number",
+          "optional": false,
+          "comment": "Количество инвайтов со статусом \"sent\""
+        },
+        {
+          "name": "completed",
+          "type": "number",
+          "optional": false,
+          "comment": "Количество инвайтов со статусом \"completed\""
+        }
+      ]
+    },
+    {
+      "name": "CreateInviteModalProps",
+      "definition": "interface CreateInviteModalProps {\n  isOpen: boolean                               // Флаг открытости модального окна\n  onClose: () => void                           // Обработчик закрытия модального окна\n  onSave?: (data: { combined_data: string }) => void // Обработчик успешного сохранения (опционально)\n}",
+      "fields": [
+        {
+          "name": "isOpen",
+          "type": "boolean",
+          "optional": false,
+          "comment": "Флаг открытости модального окна"
+        },
+        {
+          "name": "onClose",
+          "type": "() => void",
+          "optional": false,
+          "comment": "Обработчик закрытия модального окна"
+        },
+        {
+          "name": "onSave",
+          "type": "(data: { combined_data: string }) => void",
+          "optional": true,
+          "comment": "Обработчик успешного сохранения (опционально)"
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка списка инвайтов из API\n   - GET `/google-oauth/invites/` - получение списка инвайтов\n   - Параметры: search, status, page, page_size\n   - Замена моковых данных в loadInvites()\n   - Раскомментировать код API вызова в loadInvites()",
+      "method": "GET",
+      "endpoint": "/google-oauth/invites/",
+      "parameters": "search, status, page, page_size",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка статистики из API\n   - GET `/google-oauth/invites/stats/` - получение статистики по инвайтам\n   - Замена MOCK_STATS на данные из API\n\n3. ✅ Удаление инвайта через API\n   - DELETE `/google-oauth/invites/{id}/` - удаление инвайта\n   - Реализовано в handleDelete()\n\n4. ✅ Получение текста инвайта через API\n   - GET `/google-oauth/invites/{id}/invitation-text/` - получение текста инвайта\n   - Реализовано в handleCopyInvitation()",
+      "method": "GET",
+      "endpoint": "/google-oauth/invites/stats/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Создание инвайта через API\n   - POST `/google-oauth/invites/create/combined/` - создание инвайта из комбинированных данных\n   - Параметры: combined_data (строка со ссылкой и датой-временем)\n   - Раскомментировать код API вызова в CreateInviteModal.handleSave()",
+      "method": "POST",
+      "endpoint": "/google-oauth/invites/create/combined/",
+      "parameters": "combined_data (строка со ссылкой и датой-временем)",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Обработка ошибок API\n   - Отображение ошибок при загрузке данных\n   - Отображение ошибок при создании/редактировании/удалении\n   - Toast уведомления об ошибках",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Оптимизация загрузки данных\n   - Кэширование списка инвайтов\n   - Debounce для поиска (уже реализовано)\n   - Ленивая загрузка статистики",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "DELETE `/google-oauth/invites/{id}/` - удаление инвайта\n   - Реализовано в handleDelete()",
+      "method": "DELETE",
+      "endpoint": "/google-oauth/invites/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "GET `/google-oauth/invites/{id}/invitation-text/` - получение текста инвайта\n   - Реализовано в handleCopyInvitation()",
+      "method": "GET",
+      "endpoint": "/google-oauth/invites/{id}/invitation-text/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.281704"
+}

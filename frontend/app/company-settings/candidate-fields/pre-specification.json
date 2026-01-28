@@ -1,0 +1,62 @@
+{
+  "name": "candidate-fields",
+  "type": "page",
+  "description": "Страница управления дополнительными полями кандидатов. Позволяет создавать, редактировать и удалять кастомные поля для кандидатов.",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/company-settings/candidate-fields/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockFields\nМассив объектов полей кандидатов с полями:\n- `id`: уникальный идентификатор\n- `name`: название поля\n- `type`: тип поля (text, number, date, select, и т.д.)\n- `required`: обязательное поле или нет\n- `options`: опции для полей типа select (опционально)\n\n**TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "`mockFields` - заменить на загрузку из API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка полей - реализовать через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Создание поля - реализовать через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Редактирование поля - реализовать через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Удаление поля - реализовать через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.304190"
+}

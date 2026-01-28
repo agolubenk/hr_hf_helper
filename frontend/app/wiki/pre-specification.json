@@ -1,0 +1,119 @@
+{
+  "name": "wiki",
+  "type": "page",
+  "description": "Главная страница вики (базы знаний). Отображает список статей вики, позволяет фильтровать по тегам и поисковому запросу, группирует статьи по категориям. Страница является центральным хабом для доступа к документации и знаниям о системе HR Helper.\n\n**Путь**: `/wiki`",
+  "route_path": "`/wiki`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/wiki/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### wikiPages\n- **Тип**: WikiPage[]\n- **Структура**: 4 моковые статьи вики с различными категориями и тегами\n- **Примеры статей**:\n  - \"Архитектура продукта\" (категория: Архитектура, тег: #architect)\n  - \"Первичная настройка компании\" (категория: Настройка, теги: #настройка, #финансы)\n  - \"Настройка интервьюеров\" (категория: Настройка, теги: #интервьюеры, #настройка)\n  - \"Управление пользователями\" (категория: Настройка, теги: #пользователи, #настройка)\n- **TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    },
+    "mockData_1": {
+      "description": "### allTags\n- **Тип**: Tag[]\n- **Структура**: 11 тегов с различными цветами\n- **Примеры тегов**:\n  - `#ai` (красный #ef4444)\n  - `#architect` (красный #ef4444)\n  - `#настройка` (синий #3b82f6)\n  - `#финансы` (бирюзовый #06b6d4)\n  - И другие...\n- **Особенности**: \n  - Каждый тег имеет уникальный id, label (с префиксом #) и цвет\n  - Цвета используются для визуального отображения в WikiFilters и WikiCard\n- **TODO**: Извлекать из API или из статей динамически",
+      "extracted_from": "documentation"
+    },
+    "mockData_2": {
+      "description": "- **Тип**: WikiPage[]\n- **Структура**: 4 моковые статьи вики с различными категориями и тегами",
+      "extracted_from": "documentation"
+    },
+    "mockData_3": {
+      "description": "- **Тип**: Tag[]\n- **Структура**: 11 тегов с различными цветами",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка статей вики из API\n   - GET `/api/wiki/pages/` - получение списка всех статей\n   - Параметры: фильтры (тег, поиск), пагинация\n   - Возвращает: массив статей WikiPage\n   - Заменить `wikiPages` на данные из API",
+      "method": "GET",
+      "endpoint": "/api/wiki/pages/",
+      "parameters": "фильтры (тег, поиск), пагинация",
+      "returns": "массив статей WikiPage",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка тегов из API\n   - GET `/api/wiki/tags/` - получение списка всех тегов\n   - Или извлекать теги из статей динамически\n   - Заменить `allTags` на данные из API",
+      "method": "GET",
+      "endpoint": "/api/wiki/tags/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Создание новой статьи\n   - POST `/api/wiki/pages/` - создание новой статьи\n   - Параметры: title, description, tags, category, content\n   - Реализовать форму создания в `/wiki/new/edit`\n   - Обработка ошибок создания",
+      "method": "POST",
+      "endpoint": "/api/wiki/pages/",
+      "parameters": "title, description, tags, category, content",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Редактирование статьи\n   - PUT/PATCH `/api/wiki/pages/{id}/` - обновление статьи\n   - Параметры: все поля статьи\n   - Реализовать через `/wiki/[id]/edit`\n   - Обработка ошибок редактирования",
+      "method": "PATCH",
+      "endpoint": "/api/wiki/pages/{id}/",
+      "parameters": "все поля статьи",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Удаление статьи\n   - DELETE `/api/wiki/pages/{id}/` - удаление статьи\n   - Добавить кнопку удаления в детальной странице\n   - Подтверждение удаления",
+      "method": "DELETE",
+      "endpoint": "/api/wiki/pages/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Функциональность кнопки \"Поиск\"\n   - Реализовать явное применение фильтров при нажатии\n   - Или убрать кнопку, если поиск работает в реальном времени",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Функциональность кнопки \"Быстрый старт\"\n   - Реализовать переход на страницу быстрого старта\n   - Или открытие модального окна с инструкциями",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Функциональность кнопки \"Путеводитель\"\n   - Реализовать переход на страницу путеводителя\n   - Или открытие модального окна с путеводителем",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Пагинация для больших списков статей\n   - Добавить пагинацию при большом количестве статей\n   - Параметры: page, page_size\n   - Кнопки \"Предыдущая\" / \"Следующая\" страница",
+      "method": null,
+      "endpoint": null,
+      "parameters": "page, page_size",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Поиск по содержимому статей\n    - Расширить поиск на полное содержимое статей (content)\n    - Реализовать полнотекстовый поиск через API\n    - Подсветка найденных фрагментов",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.274619"
+}

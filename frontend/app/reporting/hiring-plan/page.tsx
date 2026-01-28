@@ -103,11 +103,22 @@ const STATUS_OPTIONS = [
  * fmt - форматирование даты из формата YYYY-MM-DD в DD.MM.YYYY
  * 
  * Функциональность:
- * - Преобразует дату из ISO формата в читаемый формат
- * - Возвращает '—' если дата отсутствует
+ * - Преобразует дату из ISO формата (YYYY-MM-DD) в читаемый формат (DD.MM.YYYY)
+ * - Возвращает '—' если дата отсутствует (null или пустая строка)
+ * 
+   * Алгоритм:
+ * 1. Проверяет наличие даты
+ * 2. Разбивает строку по разделителю '-'
+ * 3. Переставляет части: год, месяц, день → день, месяц, год
+ * 4. Объединяет через точку
  * 
  * Используется для:
  * - Отображения дат в таблице заявок
+ * - Форматирования дат открытия, дедлайна, закрытия
+ * 
+ * Примеры:
+ * - "2025-12-17" → "17.12.2025"
+ * - null → "—"
  * 
  * @param d - дата в формате YYYY-MM-DD или null
  * @returns отформатированная дата в формате DD.MM.YYYY или '—'
@@ -119,15 +130,24 @@ function fmt(d: string | null) {
 }
 
 /**
- * statusBadge - получение CSS класса для бейджа статуса
+ * statusBadge - получение CSS класса для бейджа статуса заявки
  * 
  * Функциональность:
- * - Возвращает CSS класс для стилизации бейджа статуса
+ * - Возвращает CSS класс для стилизации бейджа статуса заявки
+ * - Используется для цветовой индикации статуса
+ * 
+ * Маппинг статусов на CSS классы:
+ * - 'planned': styles.badgePlanned (планируется)
+ * - 'in_progress': styles.badgeProgress (в процессе)
+ * - 'closed': styles.badgeClosed (закрыта)
+ * - 'cancelled': styles.badgeCancelled (отменена)
+ * - другие: styles.badgePlanned (по умолчанию)
  * 
  * Используется для:
- * - Цветовой индикации статуса заявки
+ * - Цветовой индикации статуса заявки в таблице
+ * - Визуального различия статусов
  * 
- * @param s - статус заявки
+ * @param s - статус заявки ('planned', 'in_progress', 'closed', 'cancelled')
  * @returns CSS класс для бейджа статуса
  */
 function statusBadge(s: string) {
@@ -140,11 +160,19 @@ function statusBadge(s: string) {
  * 
  * Функциональность:
  * - Возвращает CSS класс для стилизации бейджа статуса SLA
+ * - Используется для цветовой индикации выполнения SLA
+ * 
+ * Маппинг статусов SLA на CSS классы:
+ * - 'В срок': styles.badgeSlaOk (зеленый)
+ * - 'Просрочено': styles.badgeSlaOver (красный)
+ * - 'Риск просрочки': styles.badgeSlaRisk (желтый/оранжевый)
+ * - другие: styles.badgeSlaNormal (серый, нормально)
  * 
  * Используется для:
- * - Цветовой индикации статуса SLA (в срок, просрочено, риск просрочки)
+ * - Цветовой индикации статуса SLA в таблице
+ * - Визуального различия выполнения SLA (в срок, просрочено, риск)
  * 
- * @param s - статус SLA
+ * @param s - статус SLA ('В срок', 'Просрочено', 'Риск просрочки', 'Нормально', 'Нет SLA')
  * @returns CSS класс для бейджа статуса SLA
  */
 function slaBadge(s: string) {
@@ -179,23 +207,78 @@ export default function HiringPlanPage() {
   // Лимит записей на странице для пагинации (по умолчанию 10)
   const [tableLimit, setTableLimit] = useState<number>(10)
 
+  /**
+   * filtered - отфильтрованный список заявок на найм
+   * 
+   * Логика фильтрации:
+   * 1. Поиск: проверяет наличие запроса в названии вакансии, имени кандидата или проекте (без учета регистра)
+   * 2. Фильтр по вакансии: если выбрана вакансия - проверяет точное совпадение
+   * 3. Фильтр по статусу: если выбран статус - проверяет совпадение
+   * 4. Фильтр по периоду: если выбран период (YYYY-MM) - проверяет совпадение месяца открытия
+   * 5. Фильтр по рекрутеру: если выбран рекрутер - проверяет наличие в массиве recruiters
+   * 
+   * Поведение:
+   * - Все условия должны выполняться одновременно (логическое И)
+   * - Поиск выполняется без учета регистра
+   * - Результат используется для сортировки и отображения
+   */
   const filtered = MOCK_REQUESTS.filter((r) => {
     const q = search.toLowerCase()
+    // Поиск: проверяет вакансию, имя кандидата или проект (без учета регистра)
     if (search && !(r.vacancy.toLowerCase().includes(q) || (r.candidate_name || '').toLowerCase().includes(q) || (r.project || '').toLowerCase().includes(q))) return false
+    // Фильтр по вакансии: проверяет точное совпадение
     if (vacancy && r.vacancy !== vacancy) return false
+    // Фильтр по статусу: проверяет совпадение статуса
     if (status && r.status !== status) return false
+    // Фильтр по периоду: проверяет совпадение месяца открытия (YYYY-MM)
     if (period) {
       const [y, m] = period.split('-')
       const [ry, rm] = (r.opening_date || '').split('-')
       if (ry !== y || rm !== m) return false
     }
+    // Фильтр по рекрутеру: проверяет наличие рекрутера в массиве
     if (recruiter && !(r.recruiters || []).some((re) => re.name === recruiter)) return false
     return true
   })
 
+  /**
+   * sorted - отсортированный список заявок
+   * 
+   * Логика сортировки:
+   * - Сортирует по дате открытия (opening_date) в порядке убывания (новые сверху)
+   * - Использует localeCompare для сравнения дат в формате YYYY-MM-DD
+   * 
+   * Используется для:
+   * - Отображения заявок в хронологическом порядке (новые первыми)
+   */
   const sorted = [...filtered].sort((a, b) => (b.opening_date || '').localeCompare(a.opening_date || ''))
+  
+  /**
+   * tableRows - список заявок для отображения в таблице (с учетом пагинации)
+   * 
+   * Функциональность:
+   * - Ограничивает количество отображаемых заявок через tableLimit
+   * - Используется для пагинации таблицы
+   * 
+   * Поведение:
+   * - Берет первые tableLimit заявок из отсортированного списка
+   * - При изменении tableLimit обновляется количество отображаемых заявок
+   */
   const tableRows = sorted.slice(0, tableLimit)
 
+  /**
+   * Статистика по заявкам
+   * 
+   * Вычисляемые значения:
+   * - total_requests: общее количество отфильтрованных заявок
+   * - planned_requests: количество запланированных заявок
+   * - in_progress_requests: количество заявок в процессе
+   * - closed_requests: количество закрытых заявок
+   * - cancelled_requests: количество отмененных заявок
+   * 
+   * Используется для:
+   * - Отображения статистики в карточках метрик
+   */
   const s = {
     total_requests: filtered.length,
     planned_requests: filtered.filter((r) => r.status === 'planned').length,
@@ -203,17 +286,72 @@ export default function HiringPlanPage() {
     closed_requests: filtered.filter((r) => r.status === 'closed').length,
     cancelled_requests: filtered.filter((r) => r.status === 'cancelled').length,
   }
+  
+  /**
+   * fulfillment - процент выполнения заявок (закрытые из общего числа)
+   * 
+   * Формула:
+   * - (closed_requests / total_requests) * 100
+   * - Округляется до целого числа
+   * 
+   * Используется для:
+   * - Отображения метрики "Выполнение" в процентах
+   */
   const fulfillment = s.total_requests > 0 ? Math.round((s.closed_requests / s.total_requests) * 100) : 0
 
+  /**
+   * Метрики SLA
+   * 
+   * Вычисляемые значения:
+   * - withSla: заявки со SLA (исключая запланированные и без SLA)
+   * - avgSlaPlan: среднее значение SLA плана (в днях) для заявок со SLA
+   * - closedWithSla: закрытые заявки
+   * - avgSlaFact: среднее фактическое время выполнения (в днях) для закрытых заявок
+   * 
+   * Используется для:
+   * - Отображения метрик SLA в карточках
+   */
   const withSla = filtered.filter((r) => r.status !== 'planned' && r.sla_status_display !== 'Нет SLA')
   const avgSlaPlan = withSla.length > 0 ? Math.round(withSla.reduce((acc, r) => acc + (r.sla_to_offer || 0), 0) / withSla.length) : null
   const closedWithSla = filtered.filter((r) => r.status === 'closed')
   const avgSlaFact = closedWithSla.length > 0 ? Math.round(closedWithSla.reduce((acc, r) => acc + (r.days_in_progress || 0), 0) / closedWithSla.length) : null
 
+  /**
+   * Метрики Time-to-Hire (T2H)
+   * 
+   * Вычисляемые значения:
+   * - closedWithT2H: закрытые заявки с указанным временем до найма
+   * - avgT2H: среднее время до найма (в днях) для закрытых заявок
+   * 
+   * Используется для:
+   * - Отображения метрики "Средний T2H" в карточке
+   */
   const closedWithT2H = filtered.filter((r) => r.status === 'closed' && r.time2hire != null)
   const avgT2H = closedWithT2H.length > 0 ? Math.round(closedWithT2H.reduce((acc, r) => acc + (r.time2hire || 0), 0) / closedWithT2H.length) : null
 
+  /**
+   * vacancies - массив уникальных названий вакансий
+   * 
+   * Функциональность:
+   * - Извлекает все уникальные названия вакансий из MOCK_REQUESTS
+   * - Используется для фильтрации по вакансиям
+   * 
+   * Используется для:
+   * - Заполнения выпадающего списка фильтра по вакансиям
+   */
   const vacancies = [...new Set(MOCK_REQUESTS.map((r) => r.vacancy).filter(Boolean))] as string[]
+  
+  /**
+   * recruiters - массив уникальных имен рекрутеров
+   * 
+   * Функциональность:
+   * - Извлекает все уникальные имена рекрутеров из всех заявок
+   * - Использует flatMap для обработки массивов рекрутеров в каждой заявке
+   * - Используется для фильтрации по рекрутерам
+   * 
+   * Используется для:
+   * - Заполнения выпадающего списка фильтра по рекрутерам
+   */
   const recruiters = [...new Set(MOCK_REQUESTS.flatMap((r) => (r.recruiters || []).map((re) => re.name)).filter(Boolean))] as string[]
 
   return (

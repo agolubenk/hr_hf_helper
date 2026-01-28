@@ -1,0 +1,150 @@
+{
+  "name": "org-structure",
+  "type": "page",
+  "description": "Страница управления организационной структурой компании. Позволяет создавать, редактировать и удалять департаменты, отделы и подразделения.",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/company-settings/org-structure/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockOrgStructure\nИерархическая структура подразделений:\n- Департаменты (верхний уровень)\n- Отделы (средний уровень)\n- Команды (нижний уровень)\n\n**TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [
+    {
+      "name": "Department",
+      "definition": "interface Department {\n  id: string\n  name: string\n  slug: string\n  short_name: string\n  parent: string | null\n  description: string\n  manager: string | null\n  location: string | null\n  created_at: string\n  updated_at: string\n  employee_count?: number\n  children?: Department[]\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "slug",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "short_name",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "parent",
+          "type": "string | null",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "manager",
+          "type": "string | null",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "location",
+          "type": "string | null",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "updated_at",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "employee_count",
+          "type": "number",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "children",
+          "type": "Department[]",
+          "optional": true,
+          "comment": null
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "`mockOrgStructure` - заменить на загрузку из API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка структуры - реализовать через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Создание подразделения - реализовать через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Редактирование подразделения - реализовать через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Удаление подразделения - реализовать через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Перемещение подразделений - реализовать через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.304447"
+}

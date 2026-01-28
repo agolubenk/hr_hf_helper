@@ -1,0 +1,11 @@
+{
+  "name": "not-found",
+  "type": "page",
+  "description": "Страница ошибки 404 (Not Found). Отображается при переходе на несуществующую страницу.",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/not-found/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [],
+  "api_endpoints": [],
+  "generated_at": "2026-01-28T18:00:33.273166"
+}

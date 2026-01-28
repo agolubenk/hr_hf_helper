@@ -1,0 +1,66 @@
+{
+  "name": "finance",
+  "type": "component",
+  "description": "Директория `components/finance` содержит компоненты для управления финансовыми настройками компании. Компоненты обеспечивают управление грейдами сотрудников, курсами валют НБРБ и налогами для польского злотого (PLN).\n\n**Расположение**: `@/components/finance`",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/components/finance/COMPONENTS_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка грейдов из API\n   - GET `/api/finance/grades/`\n   - Возвращает: массив грейдов",
+      "method": "GET",
+      "endpoint": "/api/finance/grades/",
+      "parameters": null,
+      "returns": "массив грейдов",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Сохранение грейдов через API\n   - POST `/api/finance/grades/` - создание\n   - PUT/PATCH `/api/finance/grades/{id}/` - обновление\n   - DELETE `/api/finance/grades/{id}/` - удаление",
+      "method": "POST",
+      "endpoint": "/api/finance/grades/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Загрузка курсов валют из API\n   - GET `/api/finance/currency-rates/`\n   - Возвращает: массив курсов валют",
+      "method": "GET",
+      "endpoint": "/api/finance/currency-rates/",
+      "parameters": null,
+      "returns": "массив курсов валют",
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Обновление курсов валют через API\n   - POST `/api/finance/currency-rates/update/`\n   - Запрос к НБРБ API для получения актуальных курсов",
+      "method": "POST",
+      "endpoint": "/api/finance/currency-rates/update/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Загрузка налогов из API\n   - GET `/api/finance/taxes/pln/`\n   - Возвращает: массив налогов PLN",
+      "method": "GET",
+      "endpoint": "/api/finance/taxes/pln/",
+      "parameters": null,
+      "returns": "массив налогов PLN",
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Сохранение налогов через API\n   - POST `/api/finance/taxes/pln/` - создание\n   - PUT/PATCH `/api/finance/taxes/pln/{id}/` - обновление\n   - DELETE `/api/finance/taxes/pln/{id}/` - удаление",
+      "method": "POST",
+      "endpoint": "/api/finance/taxes/pln/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.325777"
+}

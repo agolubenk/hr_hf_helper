@@ -1,0 +1,53 @@
+{
+  "name": "sla",
+  "type": "page",
+  "description": "Страница управления SLA (Service Level Agreement) для заявок на подбор. Позволяет создавать, редактировать и удалять SLA, настраивать сроки и параметры.",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/company-settings/sla/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockSLAs\nМассив объектов SLA с полями:\n- `id`: уникальный идентификатор\n- `name`: название SLA\n- `days`: количество дней для выполнения\n- `description`: описание SLA\n- `isActive`: флаг активности\n\n**TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка SLA - реализовать через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Создание SLA - реализовать через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Редактирование SLA - реализовать через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Удаление SLA - реализовать через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.306585"
+}

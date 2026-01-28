@@ -1,0 +1,111 @@
+{
+  "name": "hiring-requests",
+  "type": "page",
+  "description": "Страница управления заявками на подбор персонала. Позволяет создавать, просматривать, фильтровать и группировать заявки в двух режимах отображения: таблица (\"Все\") и блоки (\"Блоками\"). Включает статистику по заявкам, поиск, фильтрацию и импорт/экспорт в Excel.\n\n**Путь**: `/hiring-requests`",
+  "route_path": "`/hiring-requests`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/hiring-requests/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockRequests\n- **Тип**: Request[]\n- **Структура**: массив заявок на подбор\n- **Примеры заявок**:\n  - Frontend Engineer (React) - в процессе\n  - Support Engineer - в процессе\n  - DevOps Engineer - закрыта (с найденным кандидатом)\n  - Frontend Engineer (React) - в процессе (просрочена)\n  - Backend Engineer - планируется\n  - QA Engineer - отменена\n- **TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    },
+    "mockData_1": {
+      "description": "- **Тип**: Request[]\n- **Структура**: массив заявок на подбор",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка заявок из API\n   - GET `/api/hiring-requests/` - получение всех заявок\n   - Параметры: search, recruiter, status, priority (опционально)\n   - Замена mockRequests",
+      "method": "GET",
+      "endpoint": "/api/hiring-requests/",
+      "parameters": "search, recruiter, status, priority (опционально)",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Создание заявки через API\n   - POST `/api/hiring-requests/` - создание новой заявки\n   - Параметры: все поля из CreateRequestModal\n   - Обновление списка заявок после создания",
+      "method": "POST",
+      "endpoint": "/api/hiring-requests/",
+      "parameters": "все поля из CreateRequestModal",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Редактирование заявки через API\n   - PUT `/api/hiring-requests/{id}/` - обновление заявки\n   - Параметры: измененные поля заявки\n   - Обновление списка заявок после редактирования",
+      "method": "PUT",
+      "endpoint": "/api/hiring-requests/{id}/",
+      "parameters": "измененные поля заявки",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Удаление заявки через API\n   - DELETE `/api/hiring-requests/{id}/` - удаление заявки\n   - Обновление списка заявок после удаления",
+      "method": "DELETE",
+      "endpoint": "/api/hiring-requests/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Загрузка списка рекрутеров из API\n   - GET `/api/recruiters/` - получение списка рекрутеров\n   - Замена моковых данных в RequestsSearchFilters",
+      "method": "GET",
+      "endpoint": "/api/recruiters/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Загрузка списка вакансий из API\n   - GET `/api/vacancies/` - получение списка вакансий\n   - Замена mockVacancies в CreateRequestModal",
+      "method": "GET",
+      "endpoint": "/api/vacancies/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Загрузка SLA для расчета дедлайна\n   - GET `/api/sla/` - получение SLA по вакансии и грейду\n   - Используется в CreateRequestModal для автоматического расчета дедлайна",
+      "method": "GET",
+      "endpoint": "/api/sla/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Импорт Excel\n   - POST `/api/hiring-requests/import/` - импорт заявок из Excel\n   - Параметры: файл Excel\n   - Обновление списка заявок после импорта",
+      "method": "POST",
+      "endpoint": "/api/hiring-requests/import/",
+      "parameters": "файл Excel",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Экспорт Excel\n   - GET `/api/hiring-requests/export/` - экспорт заявок в Excel\n   - Параметры: фильтры (опционально)\n   - Скачивание файла Excel",
+      "method": "GET",
+      "endpoint": "/api/hiring-requests/export/",
+      "parameters": "фильтры (опционально)",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Кнопка \"Поиск\" в RequestsSearchFilters\n    - Реализовать функциональность (возможно, для применения фильтров с задержкой)",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.276700"
+}

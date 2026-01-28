@@ -241,7 +241,30 @@ export default function RichTextInput({
   }, [])
 
   /**
-   * Синхронизация содержимого editor с value
+   * useEffect - синхронизация содержимого editor с value
+   * 
+   * Функциональность:
+   * - Синхронизирует содержимое contentEditable элемента с пропсом value
+   * - Сохраняет и восстанавливает позицию курсора при обновлении
+   * - Предотвращает бесконечные циклы обновления через isUpdatingRef
+   * 
+   * Поведение:
+   * - Выполняется при изменении value или isComposing
+   * - Проверяет, отличается ли текущий HTML от ожидаемого
+   * - Если отличается и не идет ввод (isComposing) - обновляет содержимое
+   * - Сохраняет позицию курсора перед обновлением
+   * - Восстанавливает курсор после обновления с учетом изменений DOM
+   * 
+   * Алгоритм восстановления курсора:
+   * 1. Сохраняет Range с позицией курсора
+   * 2. Обновляет innerHTML
+   * 3. Находит соответствующий текстовый узел в новом DOM через TreeWalker
+   * 4. Вычисляет смещение курсора относительно начала текста
+   * 5. Восстанавливает курсор в новой позиции
+   * 
+   * Защита от циклов:
+   * - isUpdatingRef предотвращает обновление во время обработки ввода
+   * - isComposing предотвращает обновление во время ввода через IME
    */
   useEffect(() => {
     if (!editorRef.current || isUpdatingRef.current) return
@@ -369,7 +392,33 @@ export default function RichTextInput({
   }, [value, convertMarkdownToHTML, isComposing])
 
   /**
-   * Обработка ввода текста
+   * handleInput - обработчик ввода текста в contentEditable
+   * 
+   * Функциональность:
+   * - Обрабатывает ввод текста в contentEditable элементе
+   * - Конвертирует HTML в markdown и обновляет value через onChange
+   * - Сохраняет и восстанавливает позицию курсора
+   * 
+   * Поведение:
+   * - Вызывается при каждом изменении содержимого editor
+   * - Сохраняет позицию курсора перед обработкой
+   * - Использует requestAnimationFrame для отложенной обработки
+   * - Конвертирует HTML в markdown через convertHTMLToMarkdown
+   * - Обновляет value только если markdown изменился
+   * - Восстанавливает курсор после обновления
+   * 
+   * Алгоритм:
+   * 1. Сохраняет Range с позицией курсора
+   * 2. Проверяет, пустой ли редактор (для правильной работы placeholder)
+   * 3. Конвертирует HTML в markdown
+   * 4. Если markdown изменился - вызывает onChange
+   * 5. Восстанавливает курсор через TreeWalker
+   * 
+   * Защита:
+   * - isUpdatingRef предотвращает обработку во время синхронизации
+   * - isComposing предотвращает обработку во время ввода через IME
+   * 
+   * @param e - событие ввода
    */
   const handleInput = useCallback((e: React.FormEvent<HTMLDivElement>) => {
     if (!editorRef.current || isComposing || isUpdatingRef.current) return
@@ -462,7 +511,18 @@ export default function RichTextInput({
   }, [onChange, convertHTMLToMarkdown, value, isComposing])
 
   /**
-   * Сохраняет текущее выделение текста
+   * saveSelection - сохранение текущего выделения текста
+   * 
+   * Функциональность:
+   * - Сохраняет текущий Range (выделение/позицию курсора) в savedSelectionRef
+   * 
+   * Используется для:
+   * - Сохранения позиции курсора перед операциями форматирования
+   * - Восстановления выделения после вставки ссылок
+   * 
+   * Поведение:
+   * - Вызывается перед операциями, которые могут изменить DOM
+   * - Сохраняет Range в savedSelectionRef для последующего восстановления
    */
   const saveSelection = useCallback(() => {
     const selection = window.getSelection()
@@ -472,7 +532,19 @@ export default function RichTextInput({
   }, [])
 
   /**
-   * Восстанавливает сохраненное выделение
+   * restoreSelection - восстановление сохраненного выделения текста
+   * 
+   * Функциональность:
+   * - Восстанавливает ранее сохраненный Range из savedSelectionRef
+   * 
+   * Используется для:
+   * - Восстановления позиции курсора после операций форматирования
+   * - Восстановления выделения после вставки ссылок
+   * 
+   * Поведение:
+   * - Вызывается после операций, которые изменили DOM
+   * - Восстанавливает Range из savedSelectionRef
+   * - Устанавливает выделение в window.getSelection()
    */
   const restoreSelection = useCallback(() => {
     if (savedSelectionRef.current && editorRef.current) {
@@ -597,7 +669,18 @@ export default function RichTextInput({
   }, [onChange, convertHTMLToMarkdown])
 
   /**
-   * Открывает диалог для вставки ссылки
+   * openLinkDialog - открытие диалога для вставки ссылки
+   * 
+   * Функциональность:
+   * - Открывает диалог для ввода URL и текста ссылки
+   * - Сохраняет текущее выделение текста
+   * - Устанавливает выделенный текст как текст ссылки (если есть)
+   * 
+   * Поведение:
+   * - Вызывается при нажатии Ctrl+K или через UI
+   * - Сохраняет выделение через saveSelection
+   * - Если есть выделенный текст - использует его как текст ссылки
+   * - Открывает диалог вставки ссылки
    */
   const openLinkDialog = useCallback(() => {
     if (!editorRef.current) return
@@ -618,7 +701,26 @@ export default function RichTextInput({
   }, [saveSelection])
 
   /**
-   * Вставляет ссылку в markdown формате
+   * insertLink - вставка ссылки в markdown формате
+   * 
+   * Функциональность:
+   * - Вставляет ссылку в формате [текст](url) в markdown
+   * - Восстанавливает ранее сохраненное выделение
+   * - Заменяет выделенный текст на ссылку (если был выделен текст)
+   * 
+   * Поведение:
+   * - Вызывается при сохранении ссылки в диалоге
+   * - Валидирует URL (не должен быть пустым)
+   * - Восстанавливает выделение через restoreSelection
+   * - Если был выделен текст - заменяет его на ссылку
+   * - Если текста не было - использует URL как текст
+   * - Обновляет markdown через onChange
+   * - Закрывает диалог
+   * 
+   * Формат ссылки:
+   * - [текст](url) - markdown формат ссылки
+   * - Текст берется из linkText или linkUrl
+   * - URL берется из linkUrl
    */
   const insertLink = useCallback(() => {
     if (!linkUrl.trim()) return
@@ -716,9 +818,34 @@ export default function RichTextInput({
   }, [])
 
   /**
-   * Обработка горячих клавиш для форматирования
-   * Использует e.code вместо e.key для работы независимо от раскладки клавиатуры
-   * Поддерживает переключение: повторное нажатие снимает форматирование
+   * handleKeyDown - обработка горячих клавиш для форматирования
+   * 
+   * Функциональность:
+   * - Обрабатывает горячие клавиши для форматирования текста
+   * - Поддерживает переключение форматирования (повторное нажатие снимает)
+   * - Использует e.code вместо e.key для работы независимо от раскладки
+   * 
+   * Поддерживаемые комбинации:
+   * - Ctrl+B (Cmd+B на Mac): жирный текст
+   * - Ctrl+I (Cmd+I на Mac): курсив
+   * - Ctrl+U (Cmd+U на Mac): подчеркнутый
+   * - Ctrl+Shift+X (Cmd+Shift+X на Mac): зачеркнутый
+   * - Ctrl+K (Cmd+K на Mac): вставка ссылки
+   * 
+   * Поведение:
+   * - Определяет платформу (Mac/Windows/Linux) для правильной обработки модификаторов
+   * - Использует document.execCommand для применения форматирования
+   * - Проверяет текущее состояние форматирования через isFormatApplied
+   * - Если форматирование уже применено - снимает его
+   * - Если не применено - применяет его
+   * - После форматирования конвертирует HTML в markdown и обновляет value
+   * 
+   * Особенности:
+   * - Использует e.code для независимости от раскладки клавиатуры
+   * - Использует requestAnimationFrame для отложенного обновления markdown
+   * - Передает событие в onKeyDown (если передан) для дополнительной обработки
+   * 
+   * @param e - событие клавиатуры
    */
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
     const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
@@ -831,12 +958,33 @@ export default function RichTextInput({
   }, [onChange, convertHTMLToMarkdown, openLinkDialog, applyQuote, isFormatApplied])
 
   /**
-   * Обработка composition events (для IME ввода)
+   * handleCompositionStart - обработчик начала ввода через IME (Input Method Editor)
+   * 
+   * Функциональность:
+   * - Устанавливает флаг isComposing в true
+   * - Предотвращает обработку ввода во время ввода через IME
+   * 
+   * Используется для:
+   * - Корректной обработки ввода на китайском, японском, корейском языках
+   * - Предотвращения преждевременной обработки ввода во время композиции
    */
   const handleCompositionStart = useCallback(() => {
     setIsComposing(true)
   }, [])
 
+  /**
+   * handleCompositionEnd - обработчик окончания ввода через IME
+   * 
+   * Функциональность:
+   * - Устанавливает флаг isComposing в false
+   * - Вызывает handleInput для обработки завершенного ввода
+   * 
+   * Используется для:
+   * - Обработки завершенного ввода через IME
+   * - Обновления markdown после завершения композиции
+   * 
+   * @param e - событие композиции
+   */
   const handleCompositionEnd = useCallback((e: React.CompositionEvent<HTMLDivElement>) => {
     setIsComposing(false)
     handleInput(e as any)

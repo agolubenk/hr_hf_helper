@@ -1,0 +1,66 @@
+{
+  "name": "telegram",
+  "type": "page",
+  "description": "Главная страница входа в Telegram. Предоставляет два способа подключения Telegram аккаунта к HR Helper: через сканирование QR-кода в приложении Telegram на телефоне или вход по номеру телефона. Страница является точкой входа для интеграции с Telegram и дальнейшей работы с чатами.\n\n**Путь**: `/telegram`",
+  "route_path": "`/telegram`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/telegram/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Генерация реального QR-кода через Telegram API\n   - GET `/api/telegram/qr-code/` - получение QR-кода для сканирования\n   - Параметры: нет\n   - Возвращает: данные для генерации QR-кода или готовый QR-код\n   - Обновление QR-кода каждые 60 секунд",
+      "method": "GET",
+      "endpoint": "/api/telegram/qr-code/",
+      "parameters": "нет",
+      "returns": "данные для генерации QR-кода или готовый QR-код",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Вход по номеру телефона через Telegram API\n   - POST `/api/telegram/login/phone/` - отправка номера телефона\n   - Параметры: phone_number (string)\n   - Возвращает: статус входа, код подтверждения или ошибку\n   - Обработка кода подтверждения (TODO: реализовать форму ввода кода)",
+      "method": "POST",
+      "endpoint": "/api/telegram/login/phone/",
+      "parameters": "phone_number (string)",
+      "returns": "статус входа, код подтверждения или ошибку",
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Обработка кода подтверждения\n   - POST `/api/telegram/login/verify/` - подтверждение кода\n   - Параметры: phone_number, code\n   - Возвращает: токен доступа или ошибку\n   - Переход к настройке 2FA или к чатам после успешного входа",
+      "method": "POST",
+      "endpoint": "/api/telegram/login/verify/",
+      "parameters": "phone_number, code",
+      "returns": "токен доступа или ошибку",
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Обновление QR-кода по таймеру\n   - Установка таймера на 60 секунд\n   - Автоматическое обновление QR-кода через API\n   - Обработка истечения срока действия QR-кода",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Обработка ошибок входа\n   - Отображение ошибок при неверном номере телефона\n   - Отображение ошибок при неверном коде подтверждения\n   - Toast уведомления об ошибках",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Проверка статуса подключения\n   - GET `/api/telegram/status/` - проверка статуса подключения\n   - Автоматическая проверка при загрузке страницы\n   - Перенаправление на `/telegram/chats` если уже подключен",
+      "method": "GET",
+      "endpoint": "/api/telegram/status/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.279116"
+}

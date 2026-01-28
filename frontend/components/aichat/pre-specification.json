@@ -1,0 +1,268 @@
+{
+  "name": "aichat",
+  "type": "component",
+  "description": "Директория `components/aichat` содержит компоненты для AI чата - интерфейса общения с искусственным интеллектом. Компоненты обеспечивают отображение сообщений, форматирование текста, ввод сообщений, управление историей чатов и заголовком чата.\n\n**Расположение**: `@/components/aichat`",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/components/aichat/COMPONENTS_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [
+    {
+      "name": "FormattedTextProps",
+      "definition": "interface FormattedTextProps {\n  content: string              // Текст для форматирования\n  disableHeadings?: boolean    // Отключить обработку заголовков\n}",
+      "fields": [
+        {
+          "name": "content",
+          "type": "string",
+          "optional": false,
+          "comment": "Текст для форматирования"
+        },
+        {
+          "name": "disableHeadings",
+          "type": "boolean",
+          "optional": true,
+          "comment": "Отключить обработку заголовков"
+        }
+      ]
+    },
+    {
+      "name": "ChatMessagesProps",
+      "definition": "interface ChatMessagesProps {\n  messages: Message[]          // Массив сообщений\n}",
+      "fields": [
+        {
+          "name": "messages",
+          "type": "Message[]",
+          "optional": false,
+          "comment": "Массив сообщений"
+        }
+      ]
+    },
+    {
+      "name": "ChatInputProps",
+      "definition": "interface ChatInputProps {\n  onSend: (message: string, modelId?: string, files?: File[]) => void\n  onFileAttach?: (file: File) => void\n}",
+      "fields": [
+        {
+          "name": "onSend",
+          "type": "(message: string, modelId?: string, files?: File[]) => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onFileAttach",
+          "type": "(file: File) => void",
+          "optional": true,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "AnimatedAIInputProps",
+      "definition": "interface AnimatedAIInputProps {\n  onSend: (message: string, modelId?: string, files?: File[]) => void\n  onFileAttach?: (file: File) => void\n  placeholder?: string         // Placeholder для поля ввода\n  disabled?: boolean           // Отключить ввод\n}",
+      "fields": [
+        {
+          "name": "onSend",
+          "type": "(message: string, modelId?: string, files?: File[]) => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onFileAttach",
+          "type": "(file: File) => void",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "placeholder",
+          "type": "string",
+          "optional": true,
+          "comment": "Placeholder для поля ввода"
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "optional": true,
+          "comment": "Отключить ввод"
+        }
+      ]
+    },
+    {
+      "name": "AIModel",
+      "definition": "interface AIModel {\n  id: string                   // ID модели\n  name: string                 // Название модели\n  icon: React.ReactNode        // Иконка модели\n  provider: 'openai' | 'gemini' | 'claude'  // Провайдер модели\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "ID модели"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false,
+          "comment": "Название модели"
+        },
+        {
+          "name": "icon",
+          "type": "React.ReactNode",
+          "optional": false,
+          "comment": "Иконка модели"
+        },
+        {
+          "name": "provider",
+          "type": "'openai' | 'gemini' | 'claude'",
+          "optional": false,
+          "comment": "Провайдер модели"
+        }
+      ]
+    },
+    {
+      "name": "AttachedFile",
+      "definition": "interface AttachedFile {\n  id: string                   // ID файла\n  file: File                   // Объект файла\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "ID файла"
+        },
+        {
+          "name": "file",
+          "type": "File",
+          "optional": false,
+          "comment": "Объект файла"
+        }
+      ]
+    },
+    {
+      "name": "ChatHeaderProps",
+      "definition": "interface ChatHeaderProps {\n  title: string                // Название чата\n  createdAt?: string           // Дата создания\n  onTitleChange: (newTitle: string) => void\n  onDelete: () => void\n}",
+      "fields": [
+        {
+          "name": "title",
+          "type": "string",
+          "optional": false,
+          "comment": "Название чата"
+        },
+        {
+          "name": "createdAt",
+          "type": "string",
+          "optional": true,
+          "comment": "Дата создания"
+        },
+        {
+          "name": "onTitleChange",
+          "type": "(newTitle: string) => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onDelete",
+          "type": "() => void",
+          "optional": false,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "ChatHistoryProps",
+      "definition": "interface ChatHistoryProps {\n  chats: Chat[]                // Массив чатов\n  selectedChatId: string       // ID выбранного чата\n  onChatSelect: (chatId: string) => void\n  onNewChat: () => void\n  onChatDelete: (chatId: string) => void\n}",
+      "fields": [
+        {
+          "name": "chats",
+          "type": "Chat[]",
+          "optional": false,
+          "comment": "Массив чатов"
+        },
+        {
+          "name": "selectedChatId",
+          "type": "string",
+          "optional": false,
+          "comment": "ID выбранного чата"
+        },
+        {
+          "name": "onChatSelect",
+          "type": "(chatId: string) => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onNewChat",
+          "type": "() => void",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "onChatDelete",
+          "type": "(chatId: string) => void",
+          "optional": false,
+          "comment": null
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Сохранение сообщений через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка истории чатов из API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Сохранение названия чата через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Удаление чата через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Отправка сообщений AI моделям через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Загрузка файлов на сервер",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Получение списка доступных AI моделей из API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.322967"
+}

@@ -1,0 +1,190 @@
+{
+  "name": "aichat",
+  "type": "page",
+  "description": "Страница ИИ чата для помощи в HR задачах. Позволяет общаться с ИИ ассистентом, управлять историей чатов, отправлять сообщения и прикреплять файлы. Поддерживает форматирование текста в сообщениях от ИИ (markdown-подобный синтаксис).\n\n**Путь**: `/aichat`",
+  "route_path": "`/aichat`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/aichat/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [
+    {
+      "name": "Chat",
+      "definition": "interface Chat {\n  id: string                    // Уникальный идентификатор чата\n  title: string                 // Название чата (можно редактировать)\n  createdAt: string             // Дата создания в формате DD.MM.YYYY HH:MM\n  lastMessage?: string          // Последнее сообщение (опционально, для отображения в истории)\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "Уникальный идентификатор чата"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "optional": false,
+          "comment": "Название чата (можно редактировать)"
+        },
+        {
+          "name": "createdAt",
+          "type": "string",
+          "optional": false,
+          "comment": "Дата создания в формате DD.MM.YYYY HH:MM"
+        },
+        {
+          "name": "lastMessage",
+          "type": "string",
+          "optional": true,
+          "comment": "Последнее сообщение (опционально, для отображения в истории)"
+        }
+      ]
+    },
+    {
+      "name": "Message",
+      "definition": "interface Message {\n  id: string                    // Уникальный идентификатор сообщения\n  role: 'user' | 'assistant'   // Роль отправителя\n  content: string               // Текст сообщения\n  timestamp: string             // Время отправки в формате DD.MM.YYYY HH:MM\n  files?: File[]                // Прикрепленные файлы (опционально)\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "Уникальный идентификатор сообщения"
+        },
+        {
+          "name": "role",
+          "type": "'user' | 'assistant'",
+          "optional": false,
+          "comment": "Роль отправителя"
+        },
+        {
+          "name": "content",
+          "type": "string",
+          "optional": false,
+          "comment": "Текст сообщения"
+        },
+        {
+          "name": "timestamp",
+          "type": "string",
+          "optional": false,
+          "comment": "Время отправки в формате DD.MM.YYYY HH:MM"
+        },
+        {
+          "name": "files",
+          "type": "File[]",
+          "optional": true,
+          "comment": "Прикрепленные файлы (опционально)"
+        }
+      ]
+    },
+    {
+      "name": "AIModel",
+      "definition": "interface AIModel {\n  id: string                    // ID модели (например, 'o3-mini', 'gemini-2.5-flash')\n  name: string                  // Название модели для отображения\n  icon: React.ReactNode         // Иконка модели\n  provider: 'openai' | 'gemini' | 'claude'  // Провайдер ИИ\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "ID модели (например, 'o3-mini', 'gemini-2.5-flash')"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false,
+          "comment": "Название модели для отображения"
+        },
+        {
+          "name": "icon",
+          "type": "React.ReactNode",
+          "optional": false,
+          "comment": "Иконка модели"
+        },
+        {
+          "name": "provider",
+          "type": "'openai' | 'gemini' | 'claude'",
+          "optional": false,
+          "comment": "Провайдер ИИ"
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка списка чатов из API\n   - GET `/api/aichat/chats/` - получение всех чатов пользователя\n   - Загрузка при инициализации страницы",
+      "method": "GET",
+      "endpoint": "/api/aichat/chats/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка сообщений чата из API\n   - GET `/api/aichat/chats/{chatId}/messages/` - получение сообщений чата\n   - Загрузка при выборе чата",
+      "method": "GET",
+      "endpoint": "/api/aichat/chats/{chatId}/messages/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Создание нового чата через API\n   - POST `/api/aichat/chats/` - создание нового чата\n   - Получение ID чата от сервера",
+      "method": "POST",
+      "endpoint": "/api/aichat/chats/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Отправка сообщения через API\n   - POST `/api/aichat/chats/{chatId}/messages/` - отправка сообщения\n   - Параметры: `{ content, modelId, files }`\n   - Получение ответа от ИИ и добавление в чат",
+      "method": "POST",
+      "endpoint": "/api/aichat/chats/{chatId}/messages/",
+      "parameters": "`{ content, modelId, files }`",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Переименование чата через API\n   - PUT `/api/aichat/chats/{chatId}/` - обновление названия чата\n   - Параметры: `{ title }`",
+      "method": "PUT",
+      "endpoint": "/api/aichat/chats/{chatId}/",
+      "parameters": "`{ title }`",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Удаление чата через API\n   - DELETE `/api/aichat/chats/{chatId}/` - удаление чата\n   - Удаление всех сообщений чата",
+      "method": "DELETE",
+      "endpoint": "/api/aichat/chats/{chatId}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Загрузка моделей ИИ из API\n   - GET `/api/aichat/models/` - получение списка доступных моделей\n   - Загрузка при инициализации компонента",
+      "method": "GET",
+      "endpoint": "/api/aichat/models/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Загрузка файлов на сервер\n   - POST `/api/aichat/files/upload/` - загрузка файлов\n   - Получение URL загруженных файлов\n   - Передача URL файлов в сообщении",
+      "method": "POST",
+      "endpoint": "/api/aichat/files/upload/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Stream ответа от ИИ\n   - WebSocket или Server-Sent Events для потоковой передачи ответа\n   - Отображение ответа по мере генерации",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.275899"
+}

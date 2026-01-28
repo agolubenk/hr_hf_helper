@@ -1,0 +1,102 @@
+{
+  "name": "vacancies",
+  "type": "page",
+  "description": "Страница управления вакансиями компании. Позволяет просматривать, фильтровать, создавать и редактировать вакансии в двух режимах отображения: карточки и список. Страница является центральным хабом для управления всеми вакансиями компании и предоставляет быстрый доступ к основным операциям с вакансиями.\n\n**Путь**: `/vacancies`",
+  "route_path": "`/vacancies`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/vacancies/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockVacancies\n- **Тип**: массив объектов вакансий\n- **Структура**: 8 моковых вакансий с различными статусами и данными\n- **Поля вакансии**:\n  - `id`: уникальный идентификатор (number)\n  - `title`: название вакансии (string)\n  - `status`: статус ('active' | 'inactive')\n  - `recruiter`: имя рекрутера (string)\n  - `locations`: массив локаций (string[])\n  - `interviewers`: количество интервьюеров (number)\n  - `date`: дата создания/обновления (string | null)\n  - `hasWarning`: флаг наличия предупреждения (boolean)\n  - `warningText`: текст предупреждения (string | undefined)\n- **Примеры предупреждений**: \"Зарплатные вилки не установлены\"\n- **TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    },
+    "mockData_1": {
+      "description": "- **Тип**: массив объектов вакансий\n- **Структура**: 8 моковых вакансий с различными статусами и данными",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка вакансий из API\n   - GET `/api/vacancies/` - получение списка всех вакансий\n   - Параметры: фильтры (поиск, рекрутер, статус), пагинация\n   - Возвращает: массив вакансий\n   - Заменить `mockVacancies` на данные из API",
+      "method": "GET",
+      "endpoint": "/api/vacancies/",
+      "parameters": "фильтры (поиск, рекрутер, статус), пагинация",
+      "returns": "массив вакансий",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка списка рекрутеров из API\n   - GET `/api/recruiters/` - получение списка рекрутеров\n   - Использовать для фильтра по рекрутеру в `VacanciesSearchFilters`\n   - Заменить хардкод \"Andrei Golubenko\" на динамический список",
+      "method": "GET",
+      "endpoint": "/api/recruiters/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Сохранение изменений статуса вакансии\n   - PATCH `/api/vacancies/{id}/status/` - обновление статуса вакансии\n   - Параметры: status ('active' | 'inactive')\n   - Сохранять изменения из `statusOverrides` на сервер\n   - Добавить индикацию несохраненных изменений",
+      "method": "PATCH",
+      "endpoint": "/api/vacancies/{id}/status/",
+      "parameters": "status ('active' | 'inactive')",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Сохранение изменений вакансии в VacancyEditModal\n   - PUT/PATCH `/api/vacancies/{id}/` - обновление вакансии\n   - Параметры: все поля вакансии\n   - Обработка ошибок сохранения",
+      "method": "PATCH",
+      "endpoint": "/api/vacancies/{id}/",
+      "parameters": "все поля вакансии",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Создание новой вакансии\n   - POST `/api/vacancies/` - создание новой вакансии\n   - Параметры: все поля новой вакансии\n   - Реализовать обработчик onClick для кнопки \"Добавить вакансию\"\n   - Открыть модальное окно создания (AddVacancyModal или VacancyEditModal в режиме создания)",
+      "method": "POST",
+      "endpoint": "/api/vacancies/",
+      "parameters": "все поля новой вакансии",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Удаление вакансии\n   - DELETE `/api/vacancies/{id}/` - удаление вакансии\n   - Добавить кнопку удаления в модальное окно\n   - Подтверждение удаления",
+      "method": "DELETE",
+      "endpoint": "/api/vacancies/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Функциональность кнопки \"Поиск\"\n   - Реализовать явное применение фильтров при нажатии\n   - Или убрать кнопку, если поиск работает в реальном времени",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Пагинация для больших списков вакансий\n   - Добавить пагинацию при большом количестве вакансий\n   - Параметры: page, page_size\n   - Кнопки \"Предыдущая\" / \"Следующая\" страница",
+      "method": null,
+      "endpoint": null,
+      "parameters": "page, page_size",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Синхронизация в реальном времени\n   - WebSocket или polling для обновления списка вакансий\n   - Обновление при изменении статусов другими пользователями",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.283472"
+}

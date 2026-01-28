@@ -1,0 +1,277 @@
+{
+  "name": "wiki",
+  "type": "component",
+  "description": "Директория `components/wiki` содержит компоненты для системы вики (базы знаний) в HR Helper. Компоненты обеспечивают отображение списка страниц вики, создание и редактирование страниц, просмотр детальной информации, управление тегами и категориями, загрузку файлов и историю изменений.\n\n**Расположение**: `@/components/wiki`",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/components/wiki/COMPONENTS_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [
+    {
+      "name": "WikiPage",
+      "definition": "interface WikiPage {\n  id: string                                    // Уникальный идентификатор страницы\n  title: string                                 // Название страницы\n  description: string                            // Описание страницы\n  tags: string[]                                // Массив тегов\n  date: string                                  // Дата создания/обновления\n  category: string                              // Категория страницы\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "Уникальный идентификатор страницы"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "optional": false,
+          "comment": "Название страницы"
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "optional": false,
+          "comment": "Описание страницы"
+        },
+        {
+          "name": "tags",
+          "type": "string[]",
+          "optional": false,
+          "comment": "Массив тегов"
+        },
+        {
+          "name": "date",
+          "type": "string",
+          "optional": false,
+          "comment": "Дата создания/обновления"
+        },
+        {
+          "name": "category",
+          "type": "string",
+          "optional": false,
+          "comment": "Категория страницы"
+        }
+      ]
+    },
+    {
+      "name": "WikiPageData",
+      "definition": "interface WikiPageData {\n  id: string                                    // Уникальный идентификатор страницы\n  title: string                                 // Название страницы\n  slug: string                                  // URL-слаг страницы\n  category: string                              // Категория страницы\n  relatedApp: string                            // Связанное приложение\n  tags: string[]                                // Массив тегов\n  description: string                            // Описание страницы\n  content: string                                // Содержимое страницы\n  order: number                                 // Порядок сортировки\n  isPublished: boolean                          // Флаг публикации\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "Уникальный идентификатор страницы"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "optional": false,
+          "comment": "Название страницы"
+        },
+        {
+          "name": "slug",
+          "type": "string",
+          "optional": false,
+          "comment": "URL-слаг страницы"
+        },
+        {
+          "name": "category",
+          "type": "string",
+          "optional": false,
+          "comment": "Категория страницы"
+        },
+        {
+          "name": "relatedApp",
+          "type": "string",
+          "optional": false,
+          "comment": "Связанное приложение"
+        },
+        {
+          "name": "tags",
+          "type": "string[]",
+          "optional": false,
+          "comment": "Массив тегов"
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "optional": false,
+          "comment": "Описание страницы"
+        },
+        {
+          "name": "content",
+          "type": "string",
+          "optional": false,
+          "comment": "Содержимое страницы"
+        },
+        {
+          "name": "order",
+          "type": "number",
+          "optional": false,
+          "comment": "Порядок сортировки"
+        },
+        {
+          "name": "isPublished",
+          "type": "boolean",
+          "optional": false,
+          "comment": "Флаг публикации"
+        }
+      ]
+    },
+    {
+      "name": "ContentSection",
+      "definition": "interface ContentSection {\n  title: string                                 // Заголовок секции\n  content?: string                              // Текст содержимого\n  items?: string[]                              // Список элементов\n  subsections?: Array<{                          // Подсекции\n    title: string\n    items: string[]\n  }>\n}",
+      "fields": [
+        {
+          "name": "title",
+          "type": "string",
+          "optional": false,
+          "comment": "Заголовок секции"
+        },
+        {
+          "name": "content",
+          "type": "string",
+          "optional": true,
+          "comment": "Текст содержимого"
+        },
+        {
+          "name": "items",
+          "type": "string[]",
+          "optional": true,
+          "comment": "Список элементов"
+        },
+        {
+          "name": "subsections",
+          "type": "Array<{",
+          "optional": true,
+          "comment": "Подсекции"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "items",
+          "type": "string[]",
+          "optional": false,
+          "comment": null
+        }
+      ]
+    },
+    {
+      "name": "Tag",
+      "definition": "interface Tag {\n  id: string                                    // Уникальный идентификатор тега\n  label: string                                 // Название тега\n  color: string                                 // Цвет тега (hex)\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "Уникальный идентификатор тега"
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "optional": false,
+          "comment": "Название тега"
+        },
+        {
+          "name": "color",
+          "type": "string",
+          "optional": false,
+          "comment": "Цвет тега (hex)"
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка списка страниц вики\n   - GET `/api/wiki/pages/`\n   - Параметры: фильтры, поиск, категория, теги\n   - Возвращает: список страниц вики",
+      "method": "GET",
+      "endpoint": "/api/wiki/pages/",
+      "parameters": "фильтры, поиск, категория, теги",
+      "returns": "список страниц вики",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Создание новой страницы вики\n   - POST `/api/wiki/pages/`\n   - Параметры: данные страницы (WikiPageData)\n   - Возвращает: созданную страницу",
+      "method": "POST",
+      "endpoint": "/api/wiki/pages/",
+      "parameters": "данные страницы (WikiPageData)",
+      "returns": "созданную страницу",
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Обновление страницы вики\n   - PUT `/api/wiki/pages/{id}/`\n   - Параметры: данные страницы\n   - Возвращает: обновленную страницу",
+      "method": "PUT",
+      "endpoint": "/api/wiki/pages/{id}/",
+      "parameters": "данные страницы",
+      "returns": "обновленную страницу",
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Получение детальной информации о странице\n   - GET `/api/wiki/pages/{id}/`\n   - Возвращает: полную информацию о странице",
+      "method": "GET",
+      "endpoint": "/api/wiki/pages/{id}/",
+      "parameters": null,
+      "returns": "полную информацию о странице",
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Удаление страницы вики\n   - DELETE `/api/wiki/pages/{id}/`\n   - Возвращает: статус удаления",
+      "method": "DELETE",
+      "endpoint": "/api/wiki/pages/{id}/",
+      "parameters": null,
+      "returns": "статус удаления",
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Загрузка файлов\n   - POST `/api/wiki/pages/{id}/files/`\n   - Параметры: файл (multipart/form-data)\n   - Возвращает: информацию о загруженном файле",
+      "method": "POST",
+      "endpoint": "/api/wiki/pages/{id}/files/",
+      "parameters": "файл (multipart/form-data)",
+      "returns": "информацию о загруженном файле",
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Загрузка списка категорий\n   - GET `/api/wiki/categories/`\n   - Возвращает: список категорий",
+      "method": "GET",
+      "endpoint": "/api/wiki/categories/",
+      "parameters": null,
+      "returns": "список категорий",
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Загрузка списка тегов\n   - GET `/api/wiki/tags/`\n   - Возвращает: список тегов",
+      "method": "GET",
+      "endpoint": "/api/wiki/tags/",
+      "parameters": null,
+      "returns": "список тегов",
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Загрузка истории изменений\n   - GET `/api/wiki/pages/{id}/history/`\n   - Возвращает: список изменений страницы",
+      "method": "GET",
+      "endpoint": "/api/wiki/pages/{id}/history/",
+      "parameters": null,
+      "returns": "список изменений страницы",
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Просмотр версии страницы\n    - GET `/api/wiki/pages/{id}/versions/{version}/`\n    - Возвращает: содержимое версии страницы",
+      "method": "GET",
+      "endpoint": "/api/wiki/pages/{id}/versions/{version}/",
+      "parameters": null,
+      "returns": "содержимое версии страницы",
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.321593"
+}

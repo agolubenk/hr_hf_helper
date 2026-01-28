@@ -25,20 +25,83 @@
   - Руководитель
 - **TODO**: Реализовать форму
 
+## Интерфейсы и типы
+
+### Department
+```typescript
+interface Department {
+  id: string
+  name: string
+  slug: string
+  short_name: string
+  parent: string | null
+  description: string
+  manager: string | null
+  location: string | null
+  created_at: string
+  updated_at: string
+  employee_count?: number
+  children?: Department[]
+}
+```
+
 ## Состояние компонента
 
 ### State переменные:
-- `orgStructure`: иерархическая структура подразделений
-- `editingUnit`: подразделение для редактирования
-- `showAddForm`: флаг отображения формы добавления
+- `departments`: иерархическая структура департаментов (Department[])
+- `loading`: флаг загрузки данных (boolean)
+- `saving`: флаг сохранения данных (boolean)
+- `searchTerm`: поисковый запрос (string)
+- `expandedNodes`: множество ID развернутых узлов (Set<string>)
+- `editingDepartment`: редактируемый департамент (Department | null)
+- `showAddForm`: флаг отображения формы добавления (boolean)
+- `newDepartment`: данные нового департамента (Partial<Department>)
 
 ## Функции и обработчики
 
-### CRUD операции:
-- **Создание**: Добавление нового подразделения
-- **Чтение**: Загрузка организационной структуры
-- **Обновление**: Редактирование существующего подразделения
-- **Удаление**: Удаление подразделения с подтверждением
+### loadDepartments()
+- Загружает иерархическую структуру департаментов
+- Разворачивает все узлы дерева по умолчанию
+- TODO: GET `/api/company-settings/org-structure/`
+
+### getAllDepartmentsFlat()
+- Преобразует иерархическую структуру в плоский массив
+- Рекурсивно обходит дерево департаментов
+
+### getFullPath(department)
+- Получает полный путь департамента от корня
+- Рекурсивно строит путь через родительские департаменты
+
+### toggleNode(nodeId)
+- Переключает раскрытие/сворачивание узла дерева
+- Обновляет expandedNodes
+
+### handleAddDepartment()
+- Валидирует данные нового департамента
+- Создает новый департамент
+- TODO: POST `/api/company-settings/org-structure/`
+
+### handleEditDepartment(department)
+- Открывает форму редактирования департамента
+- Заполняет форму данными департамента
+
+### removeDepartmentFromTree(departments, id)
+- Рекурсивно удаляет департамент из дерева
+- Возвращает обновленное дерево
+
+### handleDeleteDepartment(id)
+- Показывает подтверждение удаления
+- Удаляет департамент из дерева
+- TODO: DELETE `/api/company-settings/org-structure/{id}/`
+
+### renderDepartment(department, level)
+- Рекурсивно рендерит департамент и его дочерние элементы
+- Отображает иконки раскрытия/сворачивания
+- Показывает информацию о департаменте
+
+### filterDepartments(departments, searchTerm)
+- Рекурсивно фильтрует департаменты по поисковому запросу
+- Проверяет название и описание департамента
 
 ## Моковые данные
 

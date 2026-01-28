@@ -1,0 +1,62 @@
+{
+  "name": "scorecard",
+  "type": "page",
+  "description": "Страница настроек Scorecard. Позволяет настраивать шаблоны Scorecard для интервью, управлять критериями оценки и вопросами.",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/company-settings/scorecard/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockScorecards\nМассив объектов шаблонов Scorecard с полями:\n- `id`: уникальный идентификатор\n- `name`: название шаблона\n- `criteria`: массив критериев оценки\n- `questions`: массив вопросов для интервью\n- `template`: шаблон Scorecard\n\n**TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "`mockScorecards` - заменить на загрузку из API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка шаблонов - реализовать через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Создание шаблона - реализовать через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Редактирование шаблона - реализовать через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Удаление шаблона - реализовать через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.306825"
+}

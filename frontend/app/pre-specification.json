@@ -1,0 +1,39 @@
+{
+  "name": "app",
+  "type": "page",
+  "description": "Главная страница приложения HR Helper. Точка входа после авторизации, навигационный хаб с карточками быстрого доступа к разделам и приветственным туром.",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Восстановление тура - реализовать логику восстановления из localStorage",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Персонализация - адаптировать тур под роль пользователя",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Статистика - отслеживать прохождение тура через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.268228"
+}

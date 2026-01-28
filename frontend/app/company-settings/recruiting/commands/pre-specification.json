@@ -1,0 +1,66 @@
+{
+  "name": "commands",
+  "type": "page",
+  "description": "Страница управления командами для workflow чата. Позволяет создавать, редактировать и удалять команды, связывать их с этапами найма и типами действий.\n\n**Путь**: `/company-settings/recruiting/commands`",
+  "route_path": "`/company-settings/recruiting/commands`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/company-settings/recruiting/commands/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка списка команд из API\n   - GET `/api/company-settings/recruiting/commands/`\n   - Получение команд для текущей компании",
+      "method": "GET",
+      "endpoint": "/api/company-settings/recruiting/commands/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка списка этапов найма из API\n   - GET `/api/company-settings/recruiting/stages/`\n   - Использование этапов из настроек этапов найма",
+      "method": "GET",
+      "endpoint": "/api/company-settings/recruiting/stages/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Создание команды через API\n   - POST `/api/company-settings/recruiting/commands/`\n   - Создание новой команды",
+      "method": "POST",
+      "endpoint": "/api/company-settings/recruiting/commands/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Обновление команды через API\n   - PUT `/api/company-settings/recruiting/commands/{id}/`\n   - Обновление существующей команды",
+      "method": "PUT",
+      "endpoint": "/api/company-settings/recruiting/commands/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Удаление команды через API\n   - DELETE `/api/company-settings/recruiting/commands/{id}/`\n   - Удаление команды",
+      "method": "DELETE",
+      "endpoint": "/api/company-settings/recruiting/commands/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Валидация уникальности команды на сервере\n   - Проверка, что команда не используется в других компаниях\n   - Проверка, что команда не конфликтует с системными командами",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.308308"
+}

@@ -2533,18 +2533,22 @@ function initGoogleMeet() {
       
       log('  Creating buttons container...');
       
-      // Пытаемся найти контейнер с кнопками рядом с "Уведомить гостей"
-      const notifyContainer = findNotifyGuestsContainer();
+      // Для Google Meet используем старую логику (сразу после ссылки на Huntflow)
+      // Для Google Calendar пытаемся найти контейнер с кнопками рядом с "Уведомить гостей"
       let targetContainer = buttonContainer;
       let insertAfter = null;
       
-      if (notifyContainer && notifyContainer.buttons.length > 0) {
-        log('  Found "Notify guests" container, placing buttons nearby');
-        // Используем последнюю кнопку в контейнере как точку вставки
-        const lastButton = notifyContainer.buttons[notifyContainer.buttons.length - 1];
-        targetContainer = notifyContainer.container;
-        insertAfter = lastButton;
-        log('  Will insert after button:', lastButton.textContent || lastButton.getAttribute('aria-label') || 'button');
+      // Проверяем, находимся ли мы в Google Calendar (функция findNotifyGuestsContainer доступна только там)
+      if (typeof findNotifyGuestsContainer === 'function') {
+        const notifyContainer = findNotifyGuestsContainer();
+        if (notifyContainer && notifyContainer.buttons.length > 0) {
+          log('  Found "Notify guests" container, placing buttons nearby');
+          // Используем последнюю кнопку в контейнере как точку вставки
+          const lastButton = notifyContainer.buttons[notifyContainer.buttons.length - 1];
+          targetContainer = notifyContainer.container;
+          insertAfter = lastButton;
+          log('  Will insert after button:', lastButton.textContent || lastButton.getAttribute('aria-label') || 'button');
+        }
       }
       
       // Создаем контейнер для всех кнопок, если его еще нет
@@ -2554,9 +2558,9 @@ function initGoogleMeet() {
         buttonsContainer.className = 'hrhelper-buttons-container';
         buttonsContainer.style.cssText = 'display:inline-flex;gap:8px;align-items:center;margin-left:8px;';
         
-        // Вставляем контейнер рядом с кнопкой рядом с "Уведомить гостей" или после ссылки на Huntflow
+        // Вставляем контейнер рядом с кнопкой рядом с "Уведомить гостей" (для Calendar) или после ссылки на Huntflow (для Meet)
         if (insertAfter) {
-          // Пытаемся вставить после найденной кнопки
+          // Пытаемся вставить после найденной кнопки (для Google Calendar)
           if (insertAfter.nextSibling) {
             targetContainer.insertBefore(buttonsContainer, insertAfter.nextSibling);
             log('  Buttons container inserted after "Notify guests" button');
@@ -2564,9 +2568,33 @@ function initGoogleMeet() {
             targetContainer.appendChild(buttonsContainer);
             log('  Buttons container appended to container with "Notify guests" button');
           }
-        } else if (huntflowLink && huntflowLink.nextSibling) {
-          buttonContainer.insertBefore(buttonsContainer, huntflowLink.nextSibling);
-          log('  Buttons container inserted after Huntflow link');
+        } else if (huntflowLink) {
+          // Для Google Meet вставляем сразу после ссылки на Huntflow
+          // Проверяем, является ли huntflowLink реальным DOM-элементом
+          if (huntflowLink.nodeType && huntflowLink.nextSibling) {
+            // Это реальный DOM-элемент
+            buttonContainer.insertBefore(buttonsContainer, huntflowLink.nextSibling);
+            log('  Buttons container inserted after Huntflow link (DOM element)');
+          } else if (huntflowLink.nodeType) {
+            // Это реальный DOM-элемент, но нет nextSibling
+            const linkParent = huntflowLink.parentElement || buttonContainer;
+            linkParent.appendChild(buttonsContainer);
+            log('  Buttons container appended after Huntflow link container');
+          } else if (huntflowLink.parentElement) {
+            // Это виртуальная ссылка, используем parentElement
+            const linkParent = huntflowLink.parentElement;
+            if (linkParent.nextSibling) {
+              buttonContainer.insertBefore(buttonsContainer, linkParent.nextSibling);
+              log('  Buttons container inserted after Huntflow link parent');
+            } else {
+              linkParent.appendChild(buttonsContainer);
+              log('  Buttons container appended to Huntflow link parent');
+            }
+          } else {
+            // Fallback: добавляем в buttonContainer
+            buttonContainer.appendChild(buttonsContainer);
+            log('  Buttons container appended to buttonContainer (fallback)');
+          }
         } else if (textNode && textNode.nextSibling) {
           buttonContainer.insertBefore(buttonsContainer, textNode.nextSibling);
           log('  Buttons container inserted after text node');

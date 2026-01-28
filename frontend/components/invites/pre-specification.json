@@ -1,0 +1,103 @@
+{
+  "name": "invites",
+  "type": "component",
+  "description": "Директория `components/invites` содержит компоненты для управления инвайтами на интервью. Компоненты обеспечивают отображение статистики по инвайтам и создание новых инвайтов из комбинированных данных.\n\n**Расположение**: `@/components/invites`",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/components/invites/COMPONENTS_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [
+    {
+      "name": "InvitesStatsProps",
+      "definition": "interface InvitesStatsProps {\n  total: number          // Общее количество инвайтов\n  pending: number        // Количество инвайтов со статусом \"pending\"\n  sent: number          // Количество инвайтов со статусом \"sent\"\n  completed: number     // Количество инвайтов со статусом \"completed\"\n}",
+      "fields": [
+        {
+          "name": "total",
+          "type": "number",
+          "optional": false,
+          "comment": "Общее количество инвайтов"
+        },
+        {
+          "name": "pending",
+          "type": "number",
+          "optional": false,
+          "comment": "Количество инвайтов со статусом \"pending\""
+        },
+        {
+          "name": "sent",
+          "type": "number",
+          "optional": false,
+          "comment": "Количество инвайтов со статусом \"sent\""
+        },
+        {
+          "name": "completed",
+          "type": "number",
+          "optional": false,
+          "comment": "Количество инвайтов со статусом \"completed\""
+        }
+      ]
+    },
+    {
+      "name": "CreateInviteModalProps",
+      "definition": "interface CreateInviteModalProps {\n  isOpen: boolean       // Флаг открытости модального окна\n  onClose: () => void   // Обработчик закрытия\n  onSave?: (data: { combined_data: string }) => void  // Обработчик сохранения\n}",
+      "fields": [
+        {
+          "name": "isOpen",
+          "type": "boolean",
+          "optional": false,
+          "comment": "Флаг открытости модального окна"
+        },
+        {
+          "name": "onClose",
+          "type": "() => void",
+          "optional": false,
+          "comment": "Обработчик закрытия"
+        },
+        {
+          "name": "onSave",
+          "type": "(data: { combined_data: string }) => void",
+          "optional": true,
+          "comment": "Обработчик сохранения"
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Создание инвайта через API\n   - POST `/google-oauth/invites/create/combined/`\n   - Параметры: combined_data (ссылка + дата-время)\n   - Возвращает: детали созданного инвайта или ошибку\n   - Раскомментировать реальный API вызов в handleSave",
+      "method": "POST",
+      "endpoint": "/google-oauth/invites/create/combined/",
+      "parameters": "combined_data (ссылка + дата-время)",
+      "returns": "детали созданного инвайта или ошибку",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Обработка ответа от сервера\n   - Извлечение данных инвайта из ответа\n   - Перенаправление на страницу деталей инвайта (если есть Location header)\n   - Обработка ошибок валидации",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Валидация данных на клиенте\n   - Проверка формата ссылки Huntflow\n   - Проверка формата даты-времени\n   - Проверка формата длительности (если указана)",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Парсинг комбинированных данных\n   - Извлечение ссылки на кандидата\n   - Извлечение даты-времени интервью\n   - Извлечение длительности (если указана)\n   - Валидация каждого компонента",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.326250"
+}

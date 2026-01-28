@@ -33,29 +33,59 @@
   - Круговые диаграммы
 - **TODO**: Реализовать графики
 
+## Интерфейсы и типы
+
+### ReportMetrics
+```typescript
+interface ReportMetrics {
+  totalScreenings: number
+  totalInterviews: number
+  conversion: number
+  totalTime: string
+}
+```
+
+### TableDataItem
+```typescript
+interface TableDataItem {
+  period: string
+  screenings: number
+  interviews: number
+  total: number
+  time: string
+}
+```
+
 ## Состояние компонента
 
 ### State переменные:
-- `metrics`: данные метрик для отображения
-- `loading`: флаг загрузки данных
-- `dateRange`: выбранный период для отчета
+- `period`: тип периода отчета ('daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly')
+- `startDate`: дата начала периода (DD.MM.YYYY)
+- `endDate`: дата окончания периода (DD.MM.YYYY)
+- `graphPeriod`: период графика ('months' | 'weeks' | 'days')
+- `graphUnit`: единица измерения ('hours' | 'count')
+- `graphFilter`: фильтр графика ('vacancies' | 'recruiters')
+- `selectedVacancies`: массив ID выбранных вакансий для графика
 
 ## Функции и обработчики
 
-### loadMetrics()
-- **Назначение**: Загрузка метрик для отчета
-- **Логика**: 
-  - Загружает данные метрик из API
-  - Применяет фильтры (период, вакансии и т.д.)
-  - Обновляет состояние
-- **TODO**: Реализовать реальный API вызов
+### handleExportExcel()
+- Экспорт отчета в Excel
+- TODO: Реализовать экспорт через API или библиотеку
 
-### handleDateRangeChange()
-- **Назначение**: Изменение периода отчета
-- **Логика**: 
-  - Обновляет `dateRange`
-  - Перезагружает метрики
-- **TODO**: Реализовать функциональность
+### handleVacancyToggle(vacancyId)
+- Переключение выбора вакансии на графике
+- Обновляет selectedVacancies
+
+## Вычисляемые значения
+
+### metrics
+- Моковые данные метрик (totalScreenings, totalInterviews, conversion, totalTime)
+- TODO: Вычислять из реальных данных
+
+### tableData
+- Моковые данные таблицы по периодам
+- TODO: Загружать из API
 
 ## Моковые данные
 

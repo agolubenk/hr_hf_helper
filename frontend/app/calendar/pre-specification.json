@@ -1,0 +1,245 @@
+{
+  "name": "calendar",
+  "type": "page",
+  "description": "Страница календаря событий для управления интервью, скринингами и встречами. Поддерживает синхронизацию с Google Calendar, просмотр событий в разных режимах (месяц, неделя, день, список), управление слотами и детальный просмотр событий.\n\n**Путь**: `/calendar`",
+  "route_path": "`/calendar`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/calendar/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockEvents\n- **Тип**: CalendarEvent[]\n- **Структура**: массив событий с полной информацией\n- **Примеры событий**:\n  - Интервью с кандидатом (онлайн, Google Meet)\n  - HR-скрининг (онлайн, Google Meet)\n  - Интервью (офис, очное)\n- **TODO**: Заменить на реальные данные из API (синхронизация с Google Calendar)",
+      "extracted_from": "documentation"
+    },
+    "mockData_1": {
+      "description": "### offices\n- **Тип**: Array<{ id: string, label: string }>\n- **Значения**: \n  - { id: 'minsk', label: 'Минск' }\n  - { id: 'warsaw', label: 'Варшава' }\n  - { id: 'gomel', label: 'Гомель' }",
+      "extracted_from": "documentation"
+    },
+    "mockData_2": {
+      "description": "- **Тип**: CalendarEvent[]\n- **Структура**: массив событий с полной информацией",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [
+    {
+      "name": "Attendee",
+      "definition": "interface Attendee {\n  email: string                                    // Email участника\n  name?: string                                    // Имя участника (опционально)\n  responseStatus: 'accepted' | 'declined' | 'tentative' | 'needsAction'  // Статус ответа\n  organizer?: boolean                              // Флаг организатора\n}",
+      "fields": [
+        {
+          "name": "email",
+          "type": "string",
+          "optional": false,
+          "comment": "Email участника"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": true,
+          "comment": "Имя участника (опционально)"
+        },
+        {
+          "name": "responseStatus",
+          "type": "'accepted' | 'declined' | 'tentative' | 'needsAction'",
+          "optional": false,
+          "comment": "Статус ответа"
+        },
+        {
+          "name": "organizer",
+          "type": "boolean",
+          "optional": true,
+          "comment": "Флаг организатора"
+        }
+      ]
+    },
+    {
+      "name": "CalendarEvent",
+      "definition": "interface CalendarEvent {\n  id: string                                      // Уникальный идентификатор события\n  title: string                                   // Название события\n  start: Date                                     // Дата и время начала\n  end: Date                                       // Дата и время окончания\n  type: 'interview' | 'screening' | 'meeting' | 'other'  // Тип события\n  candidate?: string                              // Имя кандидата (опционально)\n  interviewer?: string                            // Имя интервьюера (опционально)\n  format?: 'online' | 'office'                   // Формат встречи (опционально)\n  vacancy?: string                                // Название вакансии (опционально)\n  status?: 'confirmed' | 'tentative' | 'cancelled'  // Статус события (опционально)\n  location?: string                               // Место проведения (опционально)\n  description?: string                            // Описание события (опционально)\n  meetLink?: string                               // Ссылка на Google Meet (опционально)\n  creatorEmail?: string                           // Email создателя (опционально)\n  creatorName?: string                            // Имя создателя (опционально)\n  attendees?: Attendee[]                          // Массив участников (опционально)\n  allDay?: boolean                                // Флаг события на весь день (опционально)\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "Уникальный идентификатор события"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "optional": false,
+          "comment": "Название события"
+        },
+        {
+          "name": "start",
+          "type": "Date",
+          "optional": false,
+          "comment": "Дата и время начала"
+        },
+        {
+          "name": "end",
+          "type": "Date",
+          "optional": false,
+          "comment": "Дата и время окончания"
+        },
+        {
+          "name": "type",
+          "type": "'interview' | 'screening' | 'meeting' | 'other'",
+          "optional": false,
+          "comment": "Тип события"
+        },
+        {
+          "name": "candidate",
+          "type": "string",
+          "optional": true,
+          "comment": "Имя кандидата (опционально)"
+        },
+        {
+          "name": "interviewer",
+          "type": "string",
+          "optional": true,
+          "comment": "Имя интервьюера (опционально)"
+        },
+        {
+          "name": "format",
+          "type": "'online' | 'office'",
+          "optional": true,
+          "comment": "Формат встречи (опционально)"
+        },
+        {
+          "name": "vacancy",
+          "type": "string",
+          "optional": true,
+          "comment": "Название вакансии (опционально)"
+        },
+        {
+          "name": "status",
+          "type": "'confirmed' | 'tentative' | 'cancelled'",
+          "optional": true,
+          "comment": "Статус события (опционально)"
+        },
+        {
+          "name": "location",
+          "type": "string",
+          "optional": true,
+          "comment": "Место проведения (опционально)"
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "optional": true,
+          "comment": "Описание события (опционально)"
+        },
+        {
+          "name": "meetLink",
+          "type": "string",
+          "optional": true,
+          "comment": "Ссылка на Google Meet (опционально)"
+        },
+        {
+          "name": "creatorEmail",
+          "type": "string",
+          "optional": true,
+          "comment": "Email создателя (опционально)"
+        },
+        {
+          "name": "creatorName",
+          "type": "string",
+          "optional": true,
+          "comment": "Имя создателя (опционально)"
+        },
+        {
+          "name": "attendees",
+          "type": "Attendee[]",
+          "optional": true,
+          "comment": "Массив участников (опционально)"
+        },
+        {
+          "name": "allDay",
+          "type": "boolean",
+          "optional": true,
+          "comment": "Флаг события на весь день (опционально)"
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка событий из Google Calendar\n   - GET `/api/calendar/events/` - получение всех событий\n   - Параметры: startDate, endDate, office (опционально)\n   - Синхронизация с Google Calendar API",
+      "method": "GET",
+      "endpoint": "/api/calendar/events/",
+      "parameters": "startDate, endDate, office (опционально)",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Синхронизация с Google Calendar\n   - POST `/api/calendar/sync/` - запуск синхронизации\n   - Обновление событий из Google Calendar\n   - Обработка ошибок синхронизации",
+      "method": "POST",
+      "endpoint": "/api/calendar/sync/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Создание события через API\n   - POST `/api/calendar/events/` - создание нового события\n   - Параметры: все поля CalendarEvent\n   - Создание события в Google Calendar",
+      "method": "POST",
+      "endpoint": "/api/calendar/events/",
+      "parameters": "все поля CalendarEvent",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Редактирование события через API\n   - PUT `/api/calendar/events/{id}/` - обновление события\n   - Параметры: измененные поля события\n   - Обновление события в Google Calendar",
+      "method": "PUT",
+      "endpoint": "/api/calendar/events/{id}/",
+      "parameters": "измененные поля события",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Удаление события через API\n   - DELETE `/api/calendar/events/{id}/` - удаление события\n   - Удаление события из Google Calendar",
+      "method": "DELETE",
+      "endpoint": "/api/calendar/events/{id}/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Фильтрация по офису\n   - Применение фильтра selectedOffice к событиям\n   - Загрузка событий только для выбранного офиса",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Загрузка слотов из Google Calendar\n   - GET `/api/calendar/slots/` - получение свободных слотов\n   - Синхронизация слотов с календарем интервьюеров\n   - Обновление SlotsPanel через API",
+      "method": "GET",
+      "endpoint": "/api/calendar/slots/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Навигация по неделям и дням\n   - Реализовать навигацию \"←\" и \"→\" для недельного и дневного вида\n   - Обновление currentDate при навигации",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Копирование всех слотов\n   - Реализовать функцию копирования всех слотов в буфер обмена\n   - Форматирование слотов для копирования",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.271832"
+}

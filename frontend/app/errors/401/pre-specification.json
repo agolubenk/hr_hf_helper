@@ -1,0 +1,11 @@
+{
+  "name": "401",
+  "type": "page",
+  "description": "Страница ошибки 401 (Unauthorized). Отображается при отсутствии авторизации или истечении сессии.",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/errors/401/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [],
+  "api_endpoints": [],
+  "generated_at": "2026-01-28T18:00:33.292725"
+}

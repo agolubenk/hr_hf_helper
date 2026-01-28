@@ -1,0 +1,192 @@
+{
+  "name": "benchmarks",
+  "type": "page",
+  "description": "Страница бенчмарков зарплат. Отображает сравнительные данные по зарплатам для разных позиций и грейдов.",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/finance/benchmarks/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockBenchmarks\nМассив объектов бенчмарков с полями:\n- `id`: уникальный идентификатор\n- `position`: позиция (название вакансии)\n- `grade`: грейд\n- `salary`: зарплата в разных валютах\n- `source`: источник данных\n- `updatedAt`: дата обновления\n\n**TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [
+    {
+      "name": "Benchmark",
+      "definition": "interface Benchmark {\n  id: number\n  type: 'candidate' | 'vacancy'\n  vacancy: number\n  vacancy_name: string\n  grade: number\n  grade_name: string\n  salary_from: string\n  salary_to: string\n  salary_display: string\n  location: string\n  work_format: string\n  compensation?: string\n  benefits?: string\n  development?: string\n  technologies: string\n  domain: string\n  domain_display: string\n  hh_vacancy_id?: string\n  date_added: string\n  is_active: boolean\n  created_at: string\n  updated_at: string\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "number",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "type",
+          "type": "'candidate' | 'vacancy'",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "vacancy",
+          "type": "number",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "vacancy_name",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "grade",
+          "type": "number",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "grade_name",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "salary_from",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "salary_to",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "salary_display",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "location",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "work_format",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "compensation",
+          "type": "string",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "benefits",
+          "type": "string",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "development",
+          "type": "string",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "technologies",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "domain",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "domain_display",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "hh_vacancy_id",
+          "type": "string",
+          "optional": true,
+          "comment": null
+        },
+        {
+          "name": "date_added",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "created_at",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        },
+        {
+          "name": "updated_at",
+          "type": "string",
+          "optional": false,
+          "comment": null
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "`mockBenchmarks` - заменить на загрузку из API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "`loadBenchmarks()` - реализовать реальный API вызов",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Фильтры - реализовать функциональность",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Обновление бенчмарков - реализовать синхронизацию с внешними источниками",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.294431"
+}

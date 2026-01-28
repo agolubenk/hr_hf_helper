@@ -1,0 +1,80 @@
+{
+  "name": "salary-ranges",
+  "type": "page",
+  "description": "Страница управления зарплатными вилками для вакансий. Позволяет создавать, просматривать, редактировать и управлять зарплатными вилками в разных валютах (USD, BYN, PLN, EUR).",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/vacancies/salary-ranges/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockSalaryRanges\nМассив объектов зарплатных вилок с полями:\n- `id`: уникальный идентификатор\n- `vacancyId`: ID вакансии в Huntflow\n- `vacancyName`: название вакансии\n- `grade`: грейд (Junior, Middle, Senior и т.д.)\n- `salaryUsd`, `salaryByn`, `salaryPln`, `salaryEur`: объекты с `min` и `max`\n- `isActive`: флаг активности вилки\n- `updatedAt`: дата последнего обновления (ISO строка)\n\n**TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "`mockSalaryRanges` - заменить на загрузку из API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Список вакансий в фильтре - загружать из API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "`CreateSalaryRangeModal.onSave()` - реализовать сохранение через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "`SalaryRangeDetailModal` - реализовать загрузку и сохранение через API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Экспорт Excel - реализовать с учетом фильтров",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Импорт Excel - реализовать валидацию и обработку ошибок",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Кнопка \"Поиск\" в `SalaryRangesSearchFilters` - реализовать функциональность",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.284468"
+}

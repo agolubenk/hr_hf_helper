@@ -1,0 +1,145 @@
+{
+  "name": "telegram",
+  "type": "component",
+  "description": "Директория `components/telegram` содержит компонент для ввода текста с визуальным отображением форматирования. Компонент обеспечивает rich text ввод с поддержкой markdown-форматирования, горячих клавиш и вставки ссылок.\n\n**Расположение**: `@/components/telegram`",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/components/telegram/COMPONENTS_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [
+    {
+      "name": "RichTextInputProps",
+      "definition": "interface RichTextInputProps {\n  value: string                                    // Текст в markdown формате\n  onChange: (value: string) => void              // Обработчик изменения текста\n  onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void  // Обработчик нажатий клавиш\n  placeholder?: string                            // Текст плейсхолдера\n  style?: React.CSSProperties                     // Дополнительные стили\n  rows?: number                                    // Количество строк\n}",
+      "fields": [
+        {
+          "name": "value",
+          "type": "string",
+          "optional": false,
+          "comment": "Текст в markdown формате"
+        },
+        {
+          "name": "onChange",
+          "type": "(value: string) => void",
+          "optional": false,
+          "comment": "Обработчик изменения текста"
+        },
+        {
+          "name": "onKeyDown",
+          "type": "(e: React.KeyboardEvent<HTMLDivElement>) => void",
+          "optional": true,
+          "comment": "Обработчик нажатий клавиш"
+        },
+        {
+          "name": "placeholder",
+          "type": "string",
+          "optional": true,
+          "comment": "Текст плейсхолдера"
+        },
+        {
+          "name": "style",
+          "type": "React.CSSProperties",
+          "optional": true,
+          "comment": "Дополнительные стили"
+        },
+        {
+          "name": "rows",
+          "type": "number",
+          "optional": true,
+          "comment": "Количество строк"
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Отправка сообщения через API\n   - POST `/api/telegram/send-message/`\n   - Параметры: текст в markdown формате, chat_id\n   - Возвращает: статус отправки",
+      "method": "POST",
+      "endpoint": "/api/telegram/send-message/",
+      "parameters": "текст в markdown формате, chat_id",
+      "returns": "статус отправки",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Валидация markdown перед отправкой\n   - Проверка корректности синтаксиса\n   - Обработка ошибок парсинга",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Поддержка дополнительных форматов\n   - Код блоки (```код```)\n   - Списки (маркированные и нумерованные)\n   - Заголовки (# заголовок)",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Поддержка вставки изображений\n   - Загрузка изображений\n   - Вставка в markdown формате",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Поддержка упоминаний (@username)\n   - Автодополнение при вводе @\n   - Вставка упоминаний в markdown формате",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Поддержка эмодзи\n   - Палитра эмодзи\n   - Вставка эмодзи в текст",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "История форматирования (Undo/Redo)\n   - Сохранение истории изменений\n   - Горячие клавиши Ctrl+Z / Ctrl+Y",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Поддержка копирования/вставки из других редакторов\n   - Обработка HTML из буфера обмена\n   - Конвертация в markdown",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Поддержка drag-and-drop для файлов\n   - Обработка перетаскивания файлов\n   - Вставка файлов в сообщение",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Оптимизация производительности\n    - Debounce для обновления markdown\n    - Виртуализация для длинных текстов\n    - Оптимизация регулярных выражений",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.325283"
+}

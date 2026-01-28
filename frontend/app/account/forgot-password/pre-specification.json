@@ -1,0 +1,48 @@
+{
+  "name": "forgot-password",
+  "type": "page",
+  "description": "Страница восстановления пароля. Позволяет запросить восстановление пароля через email. После отправки запроса показывает сообщение об успехе с инструкциями.\n\n**Путь**: `/account/forgot-password`",
+  "route_path": "`/account/forgot-password`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/account/forgot-password/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "`handleSubmit()` - реализовать реальную отправку запроса через API\n   - POST `/api/auth/forgot-password` с `{ email }`\n   - Валидация email на сервере\n   - Генерация токена сброса пароля\n   - Отправка email с инструкциями и ссылкой на сброс пароля\n   - Обработка ошибок (несуществующий email, заблокированный аккаунт)",
+      "method": "POST",
+      "endpoint": "/api/auth/forgot-password",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Валидация email - реализовать детальную валидацию\n   - Проверка существования email в базе данных\n   - Проверка активности аккаунта\n   - Защита от спама (rate limiting)",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Обработка ошибок - реализовать детальные сообщения об ошибках\n   - \"Email не найден\"\n   - \"Аккаунт заблокирован\"\n   - \"Слишком много запросов, попробуйте позже\"",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Email отправка - реализовать отправку письма с инструкциями\n   - Генерация уникального токена сброса пароля\n   - Создание ссылки: `/account/reset-password?token=TOKEN`\n   - Отправка email через email сервис\n   - Срок действия токена (например, 1 час)",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.291287"
+}

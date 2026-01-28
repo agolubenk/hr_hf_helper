@@ -1,0 +1,153 @@
+{
+  "name": "workflow",
+  "type": "page",
+  "description": "Основная рабочая страница для работы рекрутера с кандидатами. Центральный хаб для общения с кандидатами, внесения данных, назначения интервью и управления процессом найма. Страница объединяет все инструменты рекрутера в едином интерфейсе для эффективной работы с кандидатами.\n\n**Путь**: `/workflow`",
+  "route_path": "`/workflow`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/workflow/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### WorkflowChat\n- **Сообщения**: моковые сообщения для демонстрации функциональности\n- **Кандидаты**: моковые данные кандидатов\n- **Инвайты**: моковые данные инвайтов\n- **TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    },
+    "mockData_1": {
+      "description": "### WorkflowSidebar\n- **Отчеты**: моковые данные отчетов за текущую и предыдущую неделю\n- **Быстрые действия**: моковые данные контактов для коммуникации\n- **TODO**: Загружать из API",
+      "extracted_from": "documentation"
+    },
+    "mockData_2": {
+      "description": "### SlotsPanel\n- **Слоты**: моковые данные свободных слотов\n- **TODO**: Синхронизировать с Google Calendar через API",
+      "extracted_from": "documentation"
+    },
+    "mockData_3": {
+      "description": "### WorkflowHeader\n- **Вакансии**: моковые данные списка вакансий\n- **Интервьюеры**: моковые данные списка интервьюеров\n- **TODO**: Загружать из API",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [
+    {
+      "name": "WorkflowHeaderProps",
+      "definition": "interface WorkflowHeaderProps {\n  onSlotsClick: () => void    // Обработчик клика на кнопку \"слоты\"\n  slotsOpen: boolean           // Флаг открытости панели слотов\n}",
+      "fields": [
+        {
+          "name": "onSlotsClick",
+          "type": "() => void",
+          "optional": false,
+          "comment": "Обработчик клика на кнопку \"слоты\""
+        },
+        {
+          "name": "slotsOpen",
+          "type": "boolean",
+          "optional": false,
+          "comment": "Флаг открытости панели слотов"
+        }
+      ]
+    },
+    {
+      "name": "WorkflowType",
+      "definition": "type WorkflowType = 'screening' | 'interview'\n// 'screening': скрининг (30 минут)\n// 'interview': интервью (90 минут)",
+      "fields": []
+    },
+    {
+      "name": "InterviewFormat",
+      "definition": "type InterviewFormat = 'online' | 'office'\n// 'online': онлайн интервью\n// 'office': офисное интервью",
+      "fields": []
+    },
+    {
+      "name": "Office",
+      "definition": "type Office = 'minsk' | 'warsaw' | 'gomel'\n// 'minsk': Минск\n// 'warsaw': Варшава\n// 'gomel': Гомель",
+      "fields": []
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Обработка команд чата через API\n   - POST `/api/workflow/commands/` - обработка команд (#add, #hr_screening, #tech_screening, #interview, #delete)\n   - Параметры: команда, данные (файл, ссылка, текст, дата-время)\n   - Возвращает: результат обработки команды\n   - Заменить имитацию обработки на реальные API вызовы",
+      "method": "POST",
+      "endpoint": "/api/workflow/commands/",
+      "parameters": "команда, данные (файл, ссылка, текст, дата-время)",
+      "returns": "результат обработки команды",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка сообщений чата из API\n   - GET `/api/workflow/chat/messages/` - получение истории сообщений\n   - Параметры: фильтры, пагинация\n   - Возвращает: массив сообщений\n   - Заменить моковые сообщения на данные из API",
+      "method": "GET",
+      "endpoint": "/api/workflow/chat/messages/",
+      "parameters": "фильтры, пагинация",
+      "returns": "массив сообщений",
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Загрузка отчетов из API\n   - GET `/api/workflow/reports/` - получение отчетов за недели\n   - Параметры: неделя (текущая/предыдущая)\n   - Возвращает: статистику по этапам\n   - Заменить моковые данные в WorkflowSidebar",
+      "method": "GET",
+      "endpoint": "/api/workflow/reports/",
+      "parameters": "неделя (текущая/предыдущая)",
+      "returns": "статистику по этапам",
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Синхронизация слотов с Google Calendar\n   - GET `/api/workflow/slots/` - получение свободных слотов\n   - Параметры: неделя, интервьюеры\n   - Возвращает: массив свободных слотов\n   - Заменить моковые данные в SlotsPanel",
+      "method": "GET",
+      "endpoint": "/api/workflow/slots/",
+      "parameters": "неделя, интервьюеры",
+      "returns": "массив свободных слотов",
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Загрузка списка вакансий\n   - GET `/api/vacancies/` - получение списка вакансий\n   - Использовать в WorkflowHeader для выпадающего списка\n   - Заменить моковые данные",
+      "method": "GET",
+      "endpoint": "/api/vacancies/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Загрузка списка интервьюеров\n   - GET `/api/interviewers/` - получение списка интервьюеров\n   - Использовать в WorkflowHeader для выбора интервьюеров\n   - Заменить моковые данные",
+      "method": "GET",
+      "endpoint": "/api/interviewers/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Загрузка быстрых действий\n   - GET `/api/user/quick-actions/` - получение быстрых действий пользователя\n   - Использовать в WorkflowSidebar для отображения контактов\n   - Заменить моковые данные",
+      "method": "GET",
+      "endpoint": "/api/user/quick-actions/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Загрузка файлов резюме\n   - POST `/api/workflow/upload-resume/` - загрузка файла резюме\n   - Параметры: файл, команда (#add)\n   - Возвращает: обработанные данные кандидата\n   - Реализовать обработку файлов на сервере",
+      "method": "POST",
+      "endpoint": "/api/workflow/upload-resume/",
+      "parameters": "файл, команда (#add)",
+      "returns": "обработанные данные кандидата",
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Создание инвайтов\n   - POST `/api/workflow/invites/` - создание инвайта на интервью\n   - Параметры: кандидат, дата-время, формат, интервьюеры\n   - Возвращает: детали инвайта (календарь, Meet, scorecard)\n   - Реализовать создание через API",
+      "method": "POST",
+      "endpoint": "/api/workflow/invites/",
+      "parameters": "кандидат, дата-время, формат, интервьюеры",
+      "returns": "детали инвайта (календарь, Meet, scorecard)",
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Удаление действий\n    - DELETE `/api/workflow/actions/{id}/` - отмена последнего действия\n    - Параметры: ID действия\n    - Возвращает: подтверждение удаления\n    - Реализовать команду #delete через API",
+      "method": "DELETE",
+      "endpoint": "/api/workflow/actions/{id}/",
+      "parameters": "ID действия",
+      "returns": "подтверждение удаления",
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.278555"
+}

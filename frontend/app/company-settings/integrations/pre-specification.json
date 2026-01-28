@@ -1,0 +1,134 @@
+{
+  "name": "integrations",
+  "type": "page",
+  "description": "Страница управления интеграциями компании. Позволяет настраивать интеграции с внешними сервисами (Huntflow, Google, Telegram, ИИ сервисы и т.д.), управлять их активностью и выбирать режим хранения учетных данных (общий/у каждого свой/оба).\n\n**Путь**: `/company-settings/integrations`",
+  "route_path": "`/company-settings/integrations`",
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/company-settings/integrations/PAGE_DOCUMENTATION.md",
+  "mock_data": {},
+  "interfaces": [
+    {
+      "name": "IntegrationId",
+      "definition": "type IntegrationId =\n  | 'google'      // Google (OAuth, Calendar, Drive)\n  | 'telegram'    // Telegram (мессенджер)\n  | 'hh'          // hh.ru и rabota.by (job-сайты)\n  | 'huntflow'    // Huntflow (ATS система)\n  | 'gemini'      // Google Gemini (ИИ)\n  | 'openai'      // OpenAI (ИИ)\n  | 'cloud-ai'    // Cloud AI (ИИ)\n  | 'clickup'     // ClickUp (task tracker)\n  | 'notion'      // Notion (task tracker)\n  | 'n8n'         // n8n (автоматизация)",
+      "fields": []
+    },
+    {
+      "name": "IntegrationGroupId",
+      "definition": "type IntegrationGroupId =\n  | 'all'         // Все интеграции\n  | 'ai'          // ИИ интеграции\n  | 'auth'        // Авторизация\n  | 'messengers'  // Мессенджеры\n  | 'job-sites'   // Job-сайты\n  | 'hrm-ats'     // HRM и ATS системы\n  | 'task-trackers' // Task trackers",
+      "fields": []
+    },
+    {
+      "name": "Integration",
+      "definition": "interface Integration {\n  id: IntegrationId                    // Уникальный идентификатор\n  name: string                         // Полное название\n  shortName?: string                   // Короткое название\n  active: boolean                      // Флаг активности (по умолчанию)\n  href?: string                        // URL для перехода к настройкам\n  group: IntegrationGroupId            // Группа интеграции\n  allowsScopeChoice?: boolean          // Разрешает выбор области применения\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "IntegrationId",
+          "optional": false,
+          "comment": "Уникальный идентификатор"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false,
+          "comment": "Полное название"
+        },
+        {
+          "name": "shortName",
+          "type": "string",
+          "optional": true,
+          "comment": "Короткое название"
+        },
+        {
+          "name": "active",
+          "type": "boolean",
+          "optional": false,
+          "comment": "Флаг активности (по умолчанию)"
+        },
+        {
+          "name": "href",
+          "type": "string",
+          "optional": true,
+          "comment": "URL для перехода к настройкам"
+        },
+        {
+          "name": "group",
+          "type": "IntegrationGroupId",
+          "optional": false,
+          "comment": "Группа интеграции"
+        },
+        {
+          "name": "allowsScopeChoice",
+          "type": "boolean",
+          "optional": true,
+          "comment": "Разрешает выбор области применения"
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка списка интеграций из API\n   - GET `/api/company-settings/integrations/` - получение списка интеграций\n   - Параметры: фильтры\n   - Возвращает: массив интеграций с их настройками\n   - Заменить константу INTEGRATIONS на данные из API",
+      "method": "GET",
+      "endpoint": "/api/company-settings/integrations/",
+      "parameters": "фильтры",
+      "returns": "массив интеграций с их настройками",
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Сохранение состояния активности интеграции\n   - PATCH `/api/company-settings/integrations/{id}/active/` - обновление активности\n   - Параметры: active (boolean)\n   - Сохранять изменения на сервер, а не только в localStorage",
+      "method": "PATCH",
+      "endpoint": "/api/company-settings/integrations/{id}/active/",
+      "parameters": "active (boolean)",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Загрузка состояния активности из API\n   - GET `/api/company-settings/integrations/{id}/active/` - получение состояния активности\n   - Использовать для восстановления состояния при загрузке страницы\n   - localStorage использовать как fallback",
+      "method": "GET",
+      "endpoint": "/api/company-settings/integrations/{id}/active/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Управление областью применения через API\n   - PUT `/api/company-settings/integrations/{id}/scope/` - обновление области применения\n   - Параметры: scope ('common' | 'per_user' | 'both')\n   - Сохранение через IntegrationScopeModal",
+      "method": "PUT",
+      "endpoint": "/api/company-settings/integrations/{id}/scope/",
+      "parameters": "scope ('common' | 'per_user' | 'both')",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Сохранение настроек интеграции через API\n   - PUT `/api/company-settings/integrations/{id}/settings/` - обновление настроек\n   - Параметры: настройки интеграции (API ключи, токены и т.д.)\n   - Использовать IntegrationSettingsForm для сохранения",
+      "method": "PUT",
+      "endpoint": "/api/company-settings/integrations/{id}/settings/",
+      "parameters": "настройки интеграции (API ключи, токены и т.д.)",
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Загрузка настроек интеграции из API\n   - GET `/api/company-settings/integrations/{id}/settings/` - получение настроек\n   - Использовать для отображения текущих настроек в IntegrationScopeModal",
+      "method": "GET",
+      "endpoint": "/api/company-settings/integrations/{id}/settings/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Отправка email с инструкциями\n   - POST `/api/company-settings/integrations/{id}/send-instructions/` - отправка email\n   - Параметры: список email адресов пользователей\n   - Реализовать в IntegrationScopeModal при выборе \"Да\" в блоке \"У каждого свой\"",
+      "method": "POST",
+      "endpoint": "/api/company-settings/integrations/{id}/send-instructions/",
+      "parameters": "список email адресов пользователей",
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.305408"
+}

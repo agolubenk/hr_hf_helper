@@ -1,0 +1,53 @@
+{
+  "name": "yearly",
+  "type": "page",
+  "description": "Страница годового плана найма. Отображает план найма на год с разбивкой по месяцам и кварталам.",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/reporting/hiring-plan/yearly/PAGE_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### mockYearlyPlan\nОбъект годового плана найма с данными:\n- План по месяцам\n- План по кварталам\n- Статистика выполнения\n- И другие данные\n\n**TODO**: Заменить на реальные данные из API",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "`mockYearlyPlan` - заменить на загрузку из API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "`loadYearlyPlan()` - реализовать реальный API вызов",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Управление годовым планом - реализовать создание/редактирование",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Визуализация - реализовать календарь и графики",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.315097"
+}

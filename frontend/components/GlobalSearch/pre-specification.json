@@ -1,0 +1,244 @@
+{
+  "name": "GlobalSearch",
+  "type": "component",
+  "description": "Директория `components/GlobalSearch` содержит компонент глобального поиска по приложению. Компонент обеспечивает поиск по вакансиям, кандидатам и компаниям с автодополнением, историей поиска, популярными запросами и предложениями изменения области поиска.\n\n**Расположение**: `@/components/GlobalSearch`",
+  "route_path": null,
+  "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/components/GlobalSearch/COMPONENTS_DOCUMENTATION.md",
+  "mock_data": {
+    "mockData_0": {
+      "description": "### MOCK_HISTORY\n```typescript\nconst MOCK_HISTORY = [\n  'Python разработчик middle',\n  'Backend Java',\n  'Frontend React',\n  'Data engineer',\n]\n```\n- **Назначение**: История поисковых запросов\n- **Используется для**: Отображения недавних запросов в предложениях\n- **TODO**: Загружать из localStorage или API",
+      "extracted_from": "documentation"
+    },
+    "mockData_1": {
+      "description": "### MOCK_POPULAR\n```typescript\nconst MOCK_POPULAR = [\n  'Python backend удалённо',\n  'senior python data',\n  'React TypeScript',\n]\n```\n- **Назначение**: Популярные поисковые запросы\n- **Используется для**: Отображения популярных запросов в предложениях\n- **TODO**: Загружать из API или аналитики",
+      "extracted_from": "documentation"
+    },
+    "mockData_2": {
+      "description": "### MOCK_SUGGESTS\n```typescript\nconst MOCK_SUGGESTS: Record<string, string[]> = {\n  py: ['Python разработчик', 'Python backend', 'Python data'],\n  python: ['Python разработчик middle', 'Python backend удалённо', 'senior python data'],\n  re: ['React разработчик', 'React TypeScript', 'Backend Java'],\n  java: ['Backend Java', 'Java developer'],\n}\n```\n- **Назначение**: Автодополнение запросов по префиксу\n- **Структура**: Ключ - префикс запроса, значение - массив предложений\n- **Используется для**: Автодополнения при вводе текста\n- **TODO**: Загружать из API или генерировать динамически",
+      "extracted_from": "documentation"
+    },
+    "mockData_3": {
+      "description": "### MOCK_ENTITIES\n```typescript\nconst MOCK_ENTITIES: EntityData[] = [\n  { id: 'v1', entityType: 'vacancy', title: 'Python Backend Developer', subtitle: 'ACME Corp', meta: 'Минск' },\n  { id: 'c1', entityType: 'candidate', title: 'Иван Петров', subtitle: 'Python разработчик', meta: 'Москва' },\n  { id: 'co1', entityType: 'company', title: 'ACME Corp', subtitle: '24 вакансии', meta: '' },\n  // ... и т.д.\n]\n```\n- **Назначение**: Моковые данные сущностей для поиска\n- **Используется для**: Отображения предложений сущностей в автодополнении\n- **TODO**: Загружать из API при вводе текста",
+      "extracted_from": "documentation"
+    }
+  },
+  "interfaces": [
+    {
+      "name": "ScopeType",
+      "definition": "export type ScopeType = 'all' | 'vacancies' | 'candidates' | 'companies'",
+      "fields": []
+    },
+    {
+      "name": "EntityData",
+      "definition": "export interface EntityData {\n  id: string                                    // Уникальный идентификатор сущности\n  entityType: 'vacancy' | 'candidate' | 'company'  // Тип сущности\n  title: string                                 // Заголовок сущности\n  subtitle?: string                             // Подзаголовок (опционально)\n  meta?: string                                 // Дополнительная информация (опционально)\n}",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false,
+          "comment": "Уникальный идентификатор сущности"
+        },
+        {
+          "name": "entityType",
+          "type": "'vacancy' | 'candidate' | 'company'",
+          "optional": false,
+          "comment": "Тип сущности"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "optional": false,
+          "comment": "Заголовок сущности"
+        },
+        {
+          "name": "subtitle",
+          "type": "string",
+          "optional": true,
+          "comment": "Подзаголовок (опционально)"
+        },
+        {
+          "name": "meta",
+          "type": "string",
+          "optional": true,
+          "comment": "Дополнительная информация (опционально)"
+        }
+      ]
+    },
+    {
+      "name": "SuggestionType",
+      "definition": "export type SuggestionType = 'query' | 'entity' | 'scope'",
+      "fields": []
+    },
+    {
+      "name": "Suggestion",
+      "definition": "export interface Suggestion {\n  type: SuggestionType                         // Тип предложения\n  label: string                                // Отображаемый текст предложения\n  query: string                                // Текст запроса для поиска\n  scope?: ScopeType                            // Область поиска (опционально, только для type === 'scope')\n  entity?: EntityData                          // Данные сущности (опционально, только для type === 'entity')\n  matchPrefix?: string                         // Совпадающий префикс для выделения (опционально, только для type === 'query')\n}",
+      "fields": [
+        {
+          "name": "type",
+          "type": "SuggestionType",
+          "optional": false,
+          "comment": "Тип предложения"
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "optional": false,
+          "comment": "Отображаемый текст предложения"
+        },
+        {
+          "name": "query",
+          "type": "string",
+          "optional": false,
+          "comment": "Текст запроса для поиска"
+        },
+        {
+          "name": "scope",
+          "type": "ScopeType",
+          "optional": true,
+          "comment": "Область поиска (опционально, только для type === 'scope')"
+        },
+        {
+          "name": "entity",
+          "type": "EntityData",
+          "optional": true,
+          "comment": "Данные сущности (опционально, только для type === 'entity')"
+        },
+        {
+          "name": "matchPrefix",
+          "type": "string",
+          "optional": true,
+          "comment": "Совпадающий префикс для выделения (опционально, только для type === 'query')"
+        }
+      ]
+    },
+    {
+      "name": "GlobalSearchProps",
+      "definition": "export interface GlobalSearchProps {\n  placeholder?: string                         // Плейсхолдер\n  shortcutHint?: string                        // Подсказка для горячей клавиши, напр. \"⌘K\"\n  dark?: boolean                               // Тема для правого слота (не передаём — не показываем)\n  onSearch?: (query: string, scope: ScopeType | null) => void  // Выполнить поиск (запрос + опциональный скоуп)\n  onEntityClick?: (entity: EntityData) => void  // Переход по сущности (вакансия/кандидат/компания)\n}",
+      "fields": [
+        {
+          "name": "placeholder",
+          "type": "string",
+          "optional": true,
+          "comment": "Плейсхолдер"
+        },
+        {
+          "name": "shortcutHint",
+          "type": "string",
+          "optional": true,
+          "comment": "Подсказка для горячей клавиши, напр. \"⌘K\""
+        },
+        {
+          "name": "dark",
+          "type": "boolean",
+          "optional": true,
+          "comment": "Тема для правого слота (не передаём — не показываем)"
+        },
+        {
+          "name": "onSearch",
+          "type": "(query: string, scope: ScopeType | null) => void",
+          "optional": true,
+          "comment": "Выполнить поиск (запрос + опциональный скоуп)"
+        },
+        {
+          "name": "onEntityClick",
+          "type": "(entity: EntityData) => void",
+          "optional": true,
+          "comment": "Переход по сущности (вакансия/кандидат/компания)"
+        }
+      ]
+    }
+  ],
+  "api_endpoints": [
+    {
+      "task_number": 1,
+      "description": "Загрузка истории поиска из API или localStorage\n   - GET `/api/search/history/` - получение истории\n   - POST `/api/search/history/` - сохранение запроса в историю\n   - Использовать localStorage для кэширования",
+      "method": "GET",
+      "endpoint": "/api/search/history/",
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 2,
+      "description": "Загрузка популярных запросов из API\n   - GET `/api/search/popular/`\n   - Возвращает: массив популярных запросов\n   - Кэшировать на клиенте",
+      "method": "GET",
+      "endpoint": "/api/search/popular/",
+      "parameters": null,
+      "returns": "массив популярных запросов",
+      "status": "pending"
+    },
+    {
+      "task_number": 3,
+      "description": "Автодополнение запросов через API\n   - GET `/api/search/suggestions/?q={query}`\n   - Возвращает: массив предложений для автодополнения\n   - Debounce запросы (не отправлять при каждом символе)",
+      "method": "GET",
+      "endpoint": "/api/search/suggestions/?q={query}",
+      "parameters": null,
+      "returns": "массив предложений для автодополнения",
+      "status": "pending"
+    },
+    {
+      "task_number": 4,
+      "description": "Поиск сущностей через API\n   - GET `/api/search/entities/?q={query}&scope={scope}&limit={limit}`\n   - Параметры:\n     - `q`: поисковый запрос\n     - `scope`: область поиска (опционально)\n     - `limit`: максимальное количество результатов\n   - Возвращает: массив сущностей (EntityData[])",
+      "method": "GET",
+      "endpoint": "/api/search/entities/?q={query}&scope={scope}&limit={limit}",
+      "parameters": "- `q`: поисковый запрос",
+      "returns": "массив сущностей (EntityData[])",
+      "status": "pending"
+    },
+    {
+      "task_number": 5,
+      "description": "Выполнение поиска через API\n   - GET `/api/search/?q={query}&scope={scope}`\n   - Параметры:\n     - `q`: поисковый запрос\n     - `scope`: область поиска (опционально)\n   - Возвращает: результаты поиска (вакансии, кандидаты, компании)",
+      "method": "GET",
+      "endpoint": "/api/search/?q={query}&scope={scope}",
+      "parameters": "- `q`: поисковый запрос",
+      "returns": "результаты поиска (вакансии, кандидаты, компании)",
+      "status": "pending"
+    },
+    {
+      "task_number": 6,
+      "description": "Навигация к результатам поиска\n   - Реализовать переход на страницу `/search` с параметрами запроса\n   - Отобразить результаты поиска на странице",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 7,
+      "description": "Навигация к детальной странице сущности\n   - Реализовать переход на страницу сущности при клике\n   - Вакансии: `/vacancies/{id}`\n   - Кандидаты: `/candidates/{id}`\n   - Компании: `/companies/{id}`",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 8,
+      "description": "Обработка ошибок API\n   - Показывать уведомления об ошибках через Toast\n   - Обрабатывать сетевые ошибки\n   - Fallback на моковые данные при недоступности API",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 9,
+      "description": "Оптимизация производительности\n   - Debounce для запросов автодополнения (300-500ms)\n   - Кэширование результатов поиска\n   - Отмена предыдущих запросов при новом вводе",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    },
+    {
+      "task_number": 10,
+      "description": "Поддержка горячих клавиш для фокуса\n    - Cmd+K (Mac) / Ctrl+K (Windows/Linux) для фокуса на поле поиска\n    - Глобальный обработчик событий клавиатуры",
+      "method": null,
+      "endpoint": null,
+      "parameters": null,
+      "returns": null,
+      "status": "pending"
+    }
+  ],
+  "generated_at": "2026-01-28T18:00:33.327598"
+}

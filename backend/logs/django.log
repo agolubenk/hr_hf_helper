@@ -10704,3 +10704,731 @@ DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'n
 📥 Ответ API: 200
 📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_filter":true,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_filter":true,"placeholder":"","is_archived":false,"search_field":...
 🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/77427451/questionary[28/Jan/2026 16:14:31] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F77427451 HTTP/1.1" 200 109
+WARNING Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+[28/Jan/2026 16:29:38] "GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F77427451 HTTP/1.1" 404 79
+WARNING Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+[28/Jan/2026 16:29:38] "GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F77427451 HTTP/1.1" 404 79
+WARNING Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+[28/Jan/2026 16:29:39] "GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F77427451 HTTP/1.1" 404 79
+WARNING Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+[28/Jan/2026 16:29:45] "GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F77427451 HTTP/1.1" 404 79
+
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1r-vt8rFrpoTdn6T1TCgZSMhbPmeZWU5AluTPmDlDF1c/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Офис: Возможно. | Полный рабочий день: Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":null,"DoOdxUlwbb0nILXQGBDaT":null,"ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/dashkevich-andrei/","RMLxfRH9ra...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","search_filter":true,"disableAutofill":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/77427451/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1r-vt8rFrpoTdn6T1TCgZSMhbPmeZWU5AluTPmDlDF1c/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Офис: Возможно. | Полный рабочий день: Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":null,"DoOdxUlwbb0nILXQGBDaT":null,"ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/dashkevich-andrei/","RMLxfRH9ra...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"search_field":"string_field_1","disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"placeholder":"","search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/77427451/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1r-vt8rFrpoTdn6T1TCgZSMhbPmeZWU5AluTPmDlDF1c/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Офис: Возможно. | Полный рабочий день: Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":null,"DoOdxUlwbb0nILXQGBDaT":null,"ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/dashkevich-andrei/","RMLxfRH9ra...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"account":291341,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"account":291341,"placeholder":"","is_archived":false,"search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/77427451/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1r-vt8rFrpoTdn6T1TCgZSMhbPmeZWU5AluTPmDlDF1c/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Офис: Возможно. | Полный рабочий день: Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":null,"DoOdxUlwbb0nILXQGBDaT":null,"ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/dashkevich-andrei/","RMLxfRH9ra...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"search_field":"string_field_1","disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"placeholder":"","search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/77427451/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1r-vt8rFrpoTdn6T1TCgZSMhbPmeZWU5AluTPmDlDF1c/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Офис: Возможно. | Полный рабочий день: Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":null,"DoOdxUlwbb0nILXQGBDaT":null,"ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/dashkevich-andrei/","RMLxfRH9ra...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"search_filter":true,"search_field":"string_field_1","account":291341},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"search_filter":true,"search_field":"string_field_7","placeholder":"",...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/77427451/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1r-vt8rFrpoTdn6T1TCgZSMhbPmeZWU5AluTPmDlDF1c/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Офис: Возможно. | Полный рабочий день: Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":null,"DoOdxUlwbb0nILXQGBDaT":null,"ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/dashkevich-andrei/","RMLxfR...[28/Jan/2026 16:31:28] "GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F77427451 HTTP/1.1" 200 66
+[28/Jan/2026 16:31:29] "GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F77427451 HTTP/1.1" 200 66
+WARNING Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+[28/Jan/2026 16:31:48] "GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F73677919 HTTP/1.1" 404 79
+WARNING Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+[28/Jan/2026 16:31:49] "GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F73677919 HTTP/1.1" 404 79
+[28/Jan/2026 16:32:00] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F79316232 HTTP/1.1" 200 89
+[28/Jan/2026 16:32:02] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F77427451 HTTP/1.1" 200 109
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","search_filter":true,"account":291341,"is_archived":false,"disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","search_filter":true,"placeholder":"","account":291341,"is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/77427451/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1r-vt8rFrpoTdn6T1TCgZSMhbPmeZWU5AluTPmDlDF1c/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Офис: Возможно. | Полный рабочий день: Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":null,"DoOdxUlwbb0nILXQGBDaT":null,"ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/dashkevich-andrei/","RMLxfR...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"search_field":"string_field_1","disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"placeholder":"","search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/73677919/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"FE-7qnwR7bB0YtS4rasby":"В целом было бы интересно","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Распределения нет, окончил вуз в 2020","S58S9DFqO7w-JzDbF2HJA":"Есть военник","c8wID33nTMvoCpJmtngyq":"В ближайшем будущем нет","Ew3LqHTK8SL67j2VQ-n6y":"Завершение контакта на прошлом месте","DoOdxUlwbb0nILXQGBDaT":"Неделя","ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/robert-kuchynski/","RMLxfRH9r...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","disableAutofill":true,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","placeholder":"","search_filter":true,"is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/73677919/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"FE-7qnwR7bB0YtS4rasby":"В целом было бы интересно","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Распределения нет, окончил вуз в 2020","S58S9DFqO7w-JzDbF2HJA":"Есть военник","c8wID33nTMvoCpJmtngyq":"В ближайшем будущем нет","Ew3LqHTK8SL67j2VQ-n6y":"Завершение контакта на прошлом месте","DoOdxUlwbb0nILXQGBDaT":"Неделя","ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/robert-kuchynski/","RMLxfRH9r...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","disableAutofill":true,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","placeholder":"","search_filter":true,"is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79316232/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1xC9qhnpB9SXIw-dgr5rF2b16Ads1EPeHYoP5VyXe-cU/edit","FE-7qnwR7bB0YtS4rasby":"Да, готов. Проживаю в Минске","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Нет, давно закончил","S58S9DFqO7w-JzDbF2HJA":"Военный билет на руках","c8wID33nTMvoCpJmtngyq":"На ближайшее время нет","Ew3LqHTK8SL67j2VQ-n6y":"Сокращение проектов и переезд. Ищу стабильную и перспективную компании","...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","disableAutofill":true,"account":291341,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","account":291341,"search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/77427451/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1r-vt8rFrpoTdn6T1TCgZSMhbPmeZWU5AluTPmDlDF1c/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Офис: Возможно. | Полный рабочий день: Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":null,"DoOdxUlwbb0nILXQGBDaT":null,"ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/dashkevich-andrei/","RMLxfR...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts[28/Jan/2026 16:32:07] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fdashkevich-andrei%2F HTTP/1.1" 200 288
+[28/Jan/2026 16:33:30] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79225298 HTTP/1.1" 200 90
+[28/Jan/2026 16:33:38] "GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79225298 HTTP/1.1" 200 77
+[28/Jan/2026 16:33:39] "GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79225298 HTTP/1.1" 200 77
+[28/Jan/2026 16:34:39] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fdashkevich-andrei%2F HTTP/1.1" 200 288
+
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/77427451
+📥 Ответ API: 200
+📥 Тело ответа: {"first_name":"Andrei","last_name":"Dashkevich","middle_name":null,"money":"2000 USD (2000$)","phone":null,"email":"andrei.dashkevich7@gmail.com","skype":null,"position":"Lead Delivery Manager","company":"Andersen Lab","photo":null,"id":77427451,"account":291341,"photo_url":"https://store.huntflow.ru/uploads3/0/1/a/01a796035c3cc05dfbbfcfacd522f369.jpeg?s=2Wv6BiieYbWmMfpoRIIOQQ&e=1772199127","birthday":null,"created":"2025-12-17T11:30:32+03:00","tags":[],"links":[{"id":72862603,"status":186502,"u...
+💾 Сохранены данные кандидата в кэш: 77427451
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies/3936534
+📥 Ответ API: 200
+📥 Тело ответа: {"account_division":333497,"account_region":null,"position":"Project Manager","company":null,"money":"800-2000","priority":1,"hidden":false,"state":"OPEN","id":3936534,"created":"2025-03-19T08:33:50+03:00","additional_fields_list":[],"multiple":false,"parent":null,"account_vacancy_status_group":10353,"updated":"2026-01-15T18:21:03+03:00","body":"<ul><li>Организация работы команды на основе практик гибкой разработки программного обеспечения</li><li>Создание доброжелательной командной атмосферы, н...
+💾 Сохранены данные вакансии в кэш: 3936534
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies/statuses
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":186500,"type":"user","name":"New","removed":null,"order":1,"stay_duration":null},{"id":187026,"type":"user","name":"Message","removed":null,"order":2,"stay_duration":null},{"id":186501,"type":"user","name":"Contact","removed":null,"order":3,"stay_duration":null},{"id":187027,"type":"user","name":"Portfolio Review","removed":null,"order":4,"stay_duration":null},{"id":186502,"type":"user","name":"HR Screening","removed":null,"order":5,"stay_duration":null},{"id":189774,"type":"user...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"search_filter":true,"search_field":"string_field_1","account":291341},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"search_filter":true,"search_field":"string_field_7","placeholder":"",...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79225298/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1bMQGVAz23mOMA7kxWdfqb5NsonGfidtTGV--qg07bOk/edit","FE-7qnwR7bB0YtS4rasby":"Да","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"-","S58S9DFqO7w-JzDbF2HJA":"-","c8wID33nTMvoCpJmtngyq":"Да","Ew3LqHTK8SL67j2VQ-n6y":"Достиг потолка роста","DoOdxUlwbb0nILXQGBDaT":"2 нед","ICXvQX-WT9eleJW-QlVa9":"https://t.me/avraamov_yakov","RMLxfRH9raQtHItMcdeq-":null,"X6qYbAqZnb0q1R3...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","search_filter":true,"disableAutofill":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79225298/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1bMQGVAz23mOMA7kxWdfqb5NsonGfidtTGV--qg07bOk/edit","FE-7qnwR7bB0YtS4rasby":"Да","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"-","S58S9DFqO7w-JzDbF2HJA":"-","c8wID33nTMvoCpJmtngyq":"Да","Ew3LqHTK8SL67j2VQ-n6y":"Достиг потолка роста","DoOdxUlwbb0nILXQGBDaT":"2 нед","ICXvQX-WT9eleJW-QlVa9":"https://t.me/avraamov_yakov","RMLxfRH9raQtHItMcdeq-":null,"X6qYbAqZnb0q1R3...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"search_filter":true,"search_field":"string_field_1","account":291341},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"search_filter":true,"search_field":"string_field_7","placeholder":"",...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79225298/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1bMQGVAz23mOMA7kxWdfqb5NsonGfidtTGV--qg07bOk/edit","FE-7qnwR7bB0YtS4rasby":"Да","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"-","S58S9DFqO7w-JzDbF2HJA":"-","c8wID33nTMvoCpJmtngyq":"Да","Ew3LqHTK8SL67j2VQ-n6y":"Достиг потолка роста","DoOdxUlwbb0nILXQGBDaT":"2 нед","ICXvQX-WT9eleJW-QlVa9":"https://t.me/avraamov_yakov","RMLxfRH9raQtHItMcdeq-":null,"X6qYbAqZnb0q1R3...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+📦 Получены данные кандидата из кэша: 77427451
+📦 Получены данные вакансии из кэша: 3936534
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/vacancies/statuses
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":186500,"type":"user","name":"New","removed":null,"order":1,"stay_duration":null},{"id":187026,"type":"user","name":"Message","removed":null,"order":2,"stay_duration":null},{"id":186501,"type":"user","name":"Contact","removed":null,"order":3,"stay_duration":null},{"id":187027,"type":"user","name":"Portfolio Review","removed":null,"order":4,"stay_duration":null},{"id":186502,"type":"user","name":"HR Screening","removed":null,"order":5,"stay_duration":null},{"id":189774,"type":"user...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200[28/Jan/2026 16:37:21] "GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F77427451 HTTP/1.1" 200 66
+[28/Jan/2026 16:37:22] "GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F77427451 HTTP/1.1" 200 66
+[28/Jan/2026 16:37:23] "GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F77427451 HTTP/1.1" 200 66
+[28/Jan/2026 16:37:35] "GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F77427451 HTTP/1.1" 200 66
+
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"search_filter":true,"search_field":"string_field_1","account":291341},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"search_filter":true,"search_field":"string_field_7","placeholder":"",...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/77427451/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1r-vt8rFrpoTdn6T1TCgZSMhbPmeZWU5AluTPmDlDF1c/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Офис: Возможно. | Полный рабочий день: Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":null,"DoOdxUlwbb0nILXQGBDaT":null,"ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/dashkevich-andrei/","RMLxfR...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"account":291341,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"account":291341,"placeholder":"","is_archived":false,"search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/77427451/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1r-vt8rFrpoTdn6T1TCgZSMhbPmeZWU5AluTPmDlDF1c/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Офис: Возможно. | Полный рабочий день: Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":null,"DoOdxUlwbb0nILXQGBDaT":null,"ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/dashkevich-andrei/","RMLxfR...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","search_filter":true,"disableAutofill":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/77427451/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1r-vt8rFrpoTdn6T1TCgZSMhbPmeZWU5AluTPmDlDF1c/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Офис: Возможно. | Полный рабочий день: Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":null,"DoOdxUlwbb0nILXQGBDaT":null,"ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/dashkevich-andrei/","RMLxfR...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"account":291341,"search_field":"string_field_1","search_filter":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"account":291341,"placeholder":"","search_field":"string_field_7","sea...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/77427451/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1r-vt8rFrpoTdn6T1TCgZSMhbPmeZWU5AluTPmDlDF1c/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Офис: Возможно. | Полный рабочий день: Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":null,"DoOdxUlwbb0nILXQGBDaT":null,"ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/dashkevich-andrei/","RMLxfR...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","search_filter":true,"disableAutofill":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/77427451/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"account":291341,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"account":291341,"placeholder":"","is_archived":false,"search_field":...[28/Jan/2026 16:37:36] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F77427451 HTTP/1.1" 200 109
+[28/Jan/2026 16:37:36] "GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F77427451 HTTP/1.1" 200 66
+[28/Jan/2026 16:37:36] "GET /api/v1/huntflow/linkedin-applicants/scorecard-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F77427451 HTTP/1.1" 200 124
+[28/Jan/2026 16:44:52] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fmaksim-klivtsov-610604208%2F HTTP/1.1" 200 103
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 16:44:53] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 16:44:53] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 16:45:04] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fviktor-yarovenko%2F HTTP/1.1" 200 94
+[28/Jan/2026 16:45:11] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Falexanderdolzhenko%2F HTTP/1.1" 200 96
+[28/Jan/2026 16:45:26] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fbelkavets%2F HTTP/1.1" 200 87
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 16:45:27] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 16:45:27] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 16:45:32] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fdmitry-andreyenkov-618072a0%2F HTTP/1.1" 200 105
+[28/Jan/2026 16:45:39] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Falexdvornikov%2F HTTP/1.1" 200 91
+[28/Jan/2026 16:46:38] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fstanislav-nehaichik%2F HTTP/1.1" 200 97
+[28/Jan/2026 16:46:44] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fsergey-karpach%2F HTTP/1.1" 200 92
+[28/Jan/2026 16:46:53] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fvitaliysurko%2F HTTP/1.1" 200 90
+[28/Jan/2026 16:46:59] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fvictorkhorsun%2F HTTP/1.1" 200 91
+[28/Jan/2026 16:47:05] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Falexander-zhevnyak-b7769263%2F HTTP/1.1" 200 105
+WARNING Not Found: /api/v1/huntflow/linkedin-applicants/scorecard-link/
+Not Found: /api/v1/huntflow/linkedin-applicants/scorecard-link/
+[28/Jan/2026 16:48:50] "GET /api/v1/huntflow/linkedin-applicants/scorecard-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F73677919 HTTP/1.1" 404 74
+[28/Jan/2026 16:48:50] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F73677919 HTTP/1.1" 200 108
+WARNING Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+[28/Jan/2026 16:48:50] "GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F73677919 HTTP/1.1" 404 79
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/77427451/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"account":291341,"search_field":"string_field_1","search_filter":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"account":291341,"placeholder":"","search_field":"string_field_7","sea...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/77427451/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1r-vt8rFrpoTdn6T1TCgZSMhbPmeZWU5AluTPmDlDF1c/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Офис: Возможно. | Полный рабочий день: Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":null,"DoOdxUlwbb0nILXQGBDaT":null,"ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/dashkevich-andrei/","RMLxfR...
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1r-vt8rFrpoTdn6T1TCgZSMhbPmeZWU5AluTPmDlDF1c/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Офис: Возможно. | Полный рабочий день: Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":null,"DoOdxUlwbb0nILXQGBDaT":null,"ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/dashkevich-andrei/","RMLxfR...
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1r-vt8rFrpoTdn6T1TCgZSMhbPmeZWU5AluTPmDlDF1c/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Офис: Возможно. | Полный рабочий день: Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":null,"Ew3LqHTK8SL67j2VQ-n6y":null,"DoOdxUlwbb0nILXQGBDaT":null,"ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/dashkevich-andrei/","RMLxfR...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","disableAutofill":true,"account":291341,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","account":291341,"search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/73677919/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"search_filter":true,"search_field":"string_field_1","account":291341},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"search_filter":true,"search_field":"string_field_7","placeholder":"",...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/73677919/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","search_filter":true,"disableAutofill":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/73677919/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"FE-7qnwR7bB0YtS4rasby":"В целом было бы интересно","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Распределения нет, окончил вуз в 2020","S58S9DFqO7w-JzDbF2HJA":"Есть военник","c8wID33nTMvoCpJmtngyq":"В ближайшем будущем нет","Ew3LqHTK8SL67j2VQ-n6y":"Завершение контакта на прошлом месте","DoOdxUlwbb0nILXQGBDaT":"Неделя","ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/robert-kuchynski/","RMLxfRH9r...
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"FE-7qnwR7bB0YtS4rasby":"В целом было бы интересно","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Распределения нет, окончил вуз в 2020","S58S9DFqO7w-JzDbF2HJA":"Есть военник","c8wID33nTMvoCpJmtngyq":"В ближайшем будущем нет","Ew3LqHTK8SL67j2VQ-n6y":"Завершение контакта на прошлом месте","DoOdxUlwbb0nILXQGBDaT":"Неделя","ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/robert-kuchynski/","RMLxfRH9r...
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"FE-7qnwR7bB0YtS4rasby":"В целом было бы интересно","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Распределения нет, окончил вуз в 2020","S58S9DFqO7w-JzDbF2HJA":"Есть военник","c8wID33nTMvoCpJmtngyq":"В ближайшем будущем нет","Ew3LqHTK8SL67j2VQ-n6y":"Завершение контакта на прошлом месте","DoOdxUlwbb0nILXQGBDaT":"Неделя","ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/robert-kuchynski/","RMLxfRH9r...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","search_filter":true,"disableAutofill":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","search_filter":true,"placeholder":"","is...WARNING Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+[28/Jan/2026 16:49:05] "GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F73677919 HTTP/1.1" 404 79
+[28/Jan/2026 16:49:06] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F73677919 HTTP/1.1" 200 108
+WARNING Not Found: /api/v1/huntflow/linkedin-applicants/scorecard-link/
+Not Found: /api/v1/huntflow/linkedin-applicants/scorecard-link/
+[28/Jan/2026 16:49:06] "GET /api/v1/huntflow/linkedin-applicants/scorecard-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F73677919 HTTP/1.1" 404 74
+[28/Jan/2026 16:49:26] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F73677919 HTTP/1.1" 200 108
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/73677919/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"FE-7qnwR7bB0YtS4rasby":"В целом было бы интересно","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Распределения нет, окончил вуз в 2020","S58S9DFqO7w-JzDbF2HJA":"Есть военник","c8wID33nTMvoCpJmtngyq":"В ближайшем будущем нет","Ew3LqHTK8SL67j2VQ-n6y":"Завершение контакта на прошлом месте","DoOdxUlwbb0nILXQGBDaT":"Неделя","ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/robert-kuchynski/","RMLxfRH9r...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"search_field":"string_field_1","disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"placeholder":"","search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/73677919/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","search_filter":true,"disableAutofill":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/73677919/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"FE-7qnwR7bB0YtS4rasby":"В целом было бы интересно","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Распределения нет, окончил вуз в 2020","S58S9DFqO7w-JzDbF2HJA":"Есть военник","c8wID33nTMvoCpJmtngyq":"В ближайшем будущем нет","Ew3LqHTK8SL67j2VQ-n6y":"Завершение контакта на прошлом месте","DoOdxUlwbb0nILXQGBDaT":"Неделя","ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/robert-kuchynski/","RMLxfRH9r...
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"FE-7qnwR7bB0YtS4rasby":"В целом было бы интересно","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Распределения нет, окончил вуз в 2020","S58S9DFqO7w-JzDbF2HJA":"Есть военник","c8wID33nTMvoCpJmtngyq":"В ближайшем будущем нет","Ew3LqHTK8SL67j2VQ-n6y":"Завершение контакта на прошлом месте","DoOdxUlwbb0nILXQGBDaT":"Неделя","ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/robert-kuchynski/","RMLxfRH9r...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"search_field":"string_field_1","disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"placeholder":"","search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/73677919/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","disableAutofill":true,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","placeholder":"","search_filter":true,"is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/73677919/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","disableAutofill":true,"account":291341,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","account":291341,"search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/73677919/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"FE-7qnwR7bB0YtS4rasby":"В целом было бы интересно","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Распределения нет, окончил вуз в 2020","S58S9DFqO7w-JzDbF2HJA":"Есть военник","c8wID33nTMvoCpJmtngyq":"В ближайшем будущем нет","Ew3LqHTK8SL67j2VQ-n6y":"Завершение контакта на прошлом месте","DoOdxUlwbb0nILXQGBDaT":"Неделя","ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/robert-kuchynski/","RMLxfRH9r...
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"FE-7qnwR7bB0YtS4rasby":"В целом было бы интересно","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Распределения нет, окончил вуз в 2020","S58S9DFqO7w-JzDbF2HJA":"Есть военник","c8wID33nTMvoCpJmtngyq":"В ближайшем будущем нет","Ew3LqHTK8SL67j2VQ-n6y":"Завершение контакта на прошлом месте","DoOdxUlwbb0nILXQGBDaT":"Неделя","ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/robert-kuchynski/","RMLxfRH9r...WARNING Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+[28/Jan/2026 16:49:26] "GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F73677919 HTTP/1.1" 404 79
+WARNING Not Found: /api/v1/huntflow/linkedin-applicants/scorecard-link/
+Not Found: /api/v1/huntflow/linkedin-applicants/scorecard-link/
+[28/Jan/2026 16:49:26] "GET /api/v1/huntflow/linkedin-applicants/scorecard-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F73677919 HTTP/1.1" 404 74
+[28/Jan/2026 16:50:01] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F73677919 HTTP/1.1" 200 108
+WARNING Not Found: /api/v1/huntflow/linkedin-applicants/communication-link/
+Not Found: /api/v1/huntflow/linkedin-applicants/communication-link/
+[28/Jan/2026 16:50:04] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79003488 HTTP/1.1" 404 111
+WARNING Not Found: /api/v1/huntflow/linkedin-applicants/communication-link/
+Not Found: /api/v1/huntflow/linkedin-applicants/communication-link/
+[28/Jan/2026 16:50:08] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79003488 HTTP/1.1" 404 111
+[28/Jan/2026 16:51:41] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Falexander-morozz%2F HTTP/1.1" 200 94
+[28/Jan/2026 16:51:50] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fzanimonski%2F HTTP/1.1" 200 88
+[28/Jan/2026 16:52:24] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fmaksim-sudas%2F HTTP/1.1" 200 90
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 16:52:26] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 16:52:26] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 16:52:37] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fsergestepuro%2F HTTP/1.1" 200 90
+[28/Jan/2026 16:52:42] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Falex-tsuranov%2F HTTP/1.1" 200 91
+WARNING Not Found: /api/v1/huntflow/linkedin-applicants/scorecard-link/
+Not Found: /api/v1/huntflow/linkedin-applicants/scorecard-link/
+[28/Jan/2026 16:53:45] "GET /api/v1/huntflow/linkedin-applicants/scorecard-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F73677919 HTTP/1.1" 404 74
+
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"FE-7qnwR7bB0YtS4rasby":"В целом было бы интересно","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Распределения нет, окончил вуз в 2020","S58S9DFqO7w-JzDbF2HJA":"Есть военник","c8wID33nTMvoCpJmtngyq":"В ближайшем будущем нет","Ew3LqHTK8SL67j2VQ-n6y":"Завершение контакта на прошлом месте","DoOdxUlwbb0nILXQGBDaT":"Неделя","ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/robert-kuchynski/","RMLxfRH9r...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","disableAutofill":true,"account":291341,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","account":291341,"search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/73677919/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"FE-7qnwR7bB0YtS4rasby":"В целом было бы интересно","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Распределения нет, окончил вуз в 2020","S58S9DFqO7w-JzDbF2HJA":"Есть военник","c8wID33nTMvoCpJmtngyq":"В ближайшем будущем нет","Ew3LqHTK8SL67j2VQ-n6y":"Завершение контакта на прошлом месте","DoOdxUlwbb0nILXQGBDaT":"Неделя","ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/robert-kuchynski/","RMLxfRH9r...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","search_filter":true,"disableAutofill":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79003488/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1WbL2emUzVvWlbcdP0zYkBl6S06j5UzWUJ3cnTcTrcg8/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Да. | Офис: Уже немного отвык от от офиса, дома оборудовал кабинет с рабочим местом и 2-мя мониторами, но готов попробовать. Текущая локация Минск, минск-мир. Полный рабочий день: Да, на полный рабочий день и рассчитываю","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzD...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","search_filter":true,"disableAutofill":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79003488/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1WbL2emUzVvWlbcdP0zYkBl6S06j5UzWUJ3cnTcTrcg8/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Да. | Офис: Уже немного отвык от от офиса, дома оборудовал кабинет с рабочим местом и 2-мя мониторами, но готов попробовать. Текущая локация Минск, минск-мир. Полный рабочий день: Да, на полный рабочий день и рассчитываю","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzD...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_filter":true,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_filter":true,"placeholder":"","is_archived":false,"search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/73677919/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":null,"oMvUCpzbKSzzhPLUCwmGW":null,"FE-7qnwR7bB0YtS4rasby":"В целом было бы интересно","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Распределения нет, окончил вуз в 2020","S58S9DFqO7w-JzDbF2HJA":"Есть военник","c8wID33nTMvoCpJmtngyq":"В ближайшем будущем нет","Ew3LqHTK8SL67j2VQ-n6y":"Завершение контакта на прошлом месте","DoOdxUlwbb0nILXQGBDaT":"Неделя","ICXvQX-WT9eleJW-QlVa9":"https://www.linkedin.com/in/robert-kuchynski/","RMLxfRH9r...
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"search_filter":true,"search_field":"string_field_1","account":291341},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"search_filter":true,"search_field":"string_field_7","placeholder":"",...WARNING Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+Not Found: /api/v1/huntflow/linkedin-applicants/candidate-level/
+[28/Jan/2026 16:53:46] "GET /api/v1/huntflow/linkedin-applicants/candidate-level/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F73677919 HTTP/1.1" 404 79
+[28/Jan/2026 16:53:46] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936534%2Ffilter%2Fworkon%2Fid%2F73677919 HTTP/1.1" 200 108
+[28/Jan/2026 16:57:10] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Frobert-kuchynski%2F HTTP/1.1" 200 287
+[28/Jan/2026 17:01:29] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Ftsivinsky%2F HTTP/1.1" 200 87
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:01:29] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:01:29] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:01:31] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fpolina-l-333a22218%2F HTTP/1.1" 200 96
+[28/Jan/2026 17:03:27] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fkseniya-trukhan%2F HTTP/1.1" 200 93
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:03:28] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:03:28] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:05:14] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fpolina-l-333a22218%2F HTTP/1.1" 200 96
+[28/Jan/2026 17:10:14] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fdennisyakovlev%2F HTTP/1.1" 200 92
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:10:15] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:10:15] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:10:55] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Ftsimur-mikhalevich-170a37198%2F HTTP/1.1" 200 106
+[28/Jan/2026 17:11:02] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fartyom-loginov%2F HTTP/1.1" 200 92
+[28/Jan/2026 17:11:56] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fnik-zoubritski%2F HTTP/1.1" 200 92
+[28/Jan/2026 17:12:03] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Falexander-lakhno%2F HTTP/1.1" 200 94
+[28/Jan/2026 17:12:12] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fa1pavel%2F HTTP/1.1" 200 85
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:12:14] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:12:14] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:12:17] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2F%25D0%25B2%25D0%25B0%25D0%25B4%25D0%25B8%25D0%25BC-%25D0%25BC%25D0%25B0%25D1%2582%25D0%25B2%25D0%25B5%25D1%2591%25D0%25BD%25D0%25BE%25D0%25BA-b876a2125%2F HTTP/1.1" 200 173
+[28/Jan/2026 17:12:24] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Faliaksei-kavalchuk%2F HTTP/1.1" 200 96
+[28/Jan/2026 17:12:36] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fartem-chalov-3505b8176%2F HTTP/1.1" 200 100
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:12:37] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:12:37] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:12:47] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Feugene-baeshko-21950410a%2F HTTP/1.1" 200 102
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:12:48] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:12:48] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:12:50] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fn-vasileuski%2F HTTP/1.1" 200 90
+[28/Jan/2026 17:12:56] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fstanislav-badov%2F HTTP/1.1" 200 93
+[28/Jan/2026 17:13:03] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fmikhail-dashuk-71507a151%2F HTTP/1.1" 200 102
+[28/Jan/2026 17:13:08] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Faliaksei-baturin-1a64051b3%2F HTTP/1.1" 200 104
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:13:09] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:13:09] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:13:13] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fbulbenov%2F HTTP/1.1" 200 86
+[28/Jan/2026 17:13:45] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Falexeyzhukovsky%2F HTTP/1.1" 200 93
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:13:47] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:13:47] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:13:50] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Falexey-bistrik-184b98196%2F HTTP/1.1" 200 102
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:13:51] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:13:51] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:13:54] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fivan-kazlou-6b903938%2F HTTP/1.1" 200 98
+[28/Jan/2026 17:14:00] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fdzmitry-kuzniatsou-425048b0%2F HTTP/1.1" 200 105
+[28/Jan/2026 17:14:06] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fkolya-seniorba%2F HTTP/1.1" 200 92
+[28/Jan/2026 17:14:11] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Faliaksandrzarouski%2F HTTP/1.1" 200 96
+[28/Jan/2026 17:14:52] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Faliaksandr-pawlowski%2F HTTP/1.1" 200 98
+[28/Jan/2026 17:14:57] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fkiril-zabavski-b86587156%2F HTTP/1.1" 200 102
+[28/Jan/2026 17:15:03] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2F1alexander%2F HTTP/1.1" 200 88
+[28/Jan/2026 17:15:10] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fyuriystoyanov%2F HTTP/1.1" 200 91
+[28/Jan/2026 17:15:54] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fpavel-metelsky-b40688144%2F HTTP/1.1" 200 102
+[28/Jan/2026 17:15:59] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fedolgoy%2F HTTP/1.1" 200 85
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:16:00] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:16:01] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:16:05] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fvladimirbir%2F HTTP/1.1" 200 89
+[28/Jan/2026 17:16:28] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fanton-kostyukevich-3017b4243%2F HTTP/1.1" 200 106
+[28/Jan/2026 17:16:52] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Froman-ankirski%2F HTTP/1.1" 200 92
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:16:53] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:16:55] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:17:37] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fishush%2F HTTP/1.1" 200 84
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:17:38] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:17:39] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:17:42] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Faleksei-s-1b915991%2F HTTP/1.1" 200 96
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:17:44] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:17:44] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:17:52] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fyauheni-babitski-9a9472214%2F HTTP/1.1" 200 104
+[28/Jan/2026 17:19:28] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fandyboyko74%2F HTTP/1.1" 200 89
+[28/Jan/2026 17:19:35] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fyuriy-makarov%2F HTTP/1.1" 200 91
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:19:36] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:19:36] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:19:40] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Foleg-zhartun%2F HTTP/1.1" 200 90
+[28/Jan/2026 17:19:46] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fpavel-sirenski%2F HTTP/1.1" 200 92
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:19:47] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:19:47] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:19:50] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Falexeiberkov%2F HTTP/1.1" 200 90
+[28/Jan/2026 17:19:58] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fyurybedner%2F HTTP/1.1" 200 88
+[28/Jan/2026 17:20:20] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2F%25D0%25B8%25D0%25B3%25D0%25BE%25D1%2580%25D1%258C-%25D0%25B5%25D1%2580%25D0%25BC%25D0%25BE%25D0%25BB%25D0%25B0%25D0%25B5%25D0%25B2-714092a2%2F HTTP/1.1" 200 166
+[28/Jan/2026 17:20:37] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Falexander-karaka-b50b37212%2F HTTP/1.1" 200 104
+[28/Jan/2026 17:20:57] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fevgeny-nazaruk-955bb8229%2F HTTP/1.1" 200 102
+[28/Jan/2026 17:21:36] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Falexanderdolzhenko%2F HTTP/1.1" 200 96
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:21:37] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:21:37] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:29:18] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fmikalai-kalesnik-21a5a423%2F HTTP/1.1" 200 103
+[28/Jan/2026 17:29:28] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Falexandrmalofeev%2F HTTP/1.1" 200 278
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:29:29] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:29:29] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:29:30] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Feugene-yakubitsky-8557a4115%2F HTTP/1.1" 200 105
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:29:31] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:29:31] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:30:03] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Foleg-pachuk-96552b137%2F HTTP/1.1" 200 99
+[28/Jan/2026 17:30:10] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fnmakerov%2F HTTP/1.1" 200 86
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:30:12] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:30:12] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:34:04] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fivan-kanashuk-ba256415b%2F HTTP/1.1" 200 101
+[28/Jan/2026 17:34:10] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fshevtsovalexey753%2F HTTP/1.1" 200 95
+[28/Jan/2026 17:34:17] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fdzmitry-snapok-0929b179%2F HTTP/1.1" 200 101
+[28/Jan/2026 17:34:35] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fanton-savich-1128171%2F HTTP/1.1" 200 98
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:34:37] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:34:38] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:34:49] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fartem-chernenkov90%2F HTTP/1.1" 200 96
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:34:50] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:34:51] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:38:19] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fivan-zaretski-311a3967%2F HTTP/1.1" 200 100
+[28/Jan/2026 17:38:23] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fsemenovaleksey%2F HTTP/1.1" 200 92
+[28/Jan/2026 17:38:35] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fyshilyaev%2F HTTP/1.1" 200 87
+[28/Jan/2026 17:38:40] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Falexander-kodatenko%2F HTTP/1.1" 200 97
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:38:41] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:38:42] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:39:34] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fashalak%2F HTTP/1.1" 200 85
+[28/Jan/2026 17:39:38] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fdzmitry-padaliak-83056476%2F HTTP/1.1" 200 103
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:39:39] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:39:40] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:39:40] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:39:40] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:39:43] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fvital-yefimchyk%2F HTTP/1.1" 200 93
+[28/Jan/2026 17:40:32] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Falexey-komashko%2F HTTP/1.1" 200 93
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:40:33] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:40:34] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:40:36] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Faliaksei-selivonchyk-53b543178%2F HTTP/1.1" 200 108
+[28/Jan/2026 17:40:41] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fdmitriy-antilevskiy-470976b6%2F HTTP/1.1" 200 106
+[28/Jan/2026 17:40:47] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fantonmalchuk%2F HTTP/1.1" 200 90
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:40:50] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:40:51] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:41:15] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fpavelkishkis%2F HTTP/1.1" 200 90
+[28/Jan/2026 17:41:19] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fyauheni-lapkovich%2F HTTP/1.1" 200 95
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:41:20] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:41:22] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:41:37] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fpavelbor%2F HTTP/1.1" 200 86
+[28/Jan/2026 17:41:52] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fartsiom-churau%2F HTTP/1.1" 200 92
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:41:53] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:41:55] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:42:04] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Ftaracheshnikov%2F HTTP/1.1" 200 92
+[28/Jan/2026 17:42:33] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fandrei-pustavoit-6a63162b7%2F HTTP/1.1" 200 104
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:42:38] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:42:39] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:43:00] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fmaksim-daineka%2F HTTP/1.1" 200 92
+[28/Jan/2026 17:43:24] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fkarpilovich-sergey%2F HTTP/1.1" 200 96
+[28/Jan/2026 17:43:29] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fanton-lazovskiy%2F HTTP/1.1" 200 93
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:43:31] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:43:32] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:44:03] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Falexandr-kulitski-b04b65122%2F HTTP/1.1" 200 289
+[28/Jan/2026 17:44:13] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fpmarsikov%2F HTTP/1.1" 200 87
+[28/Jan/2026 17:44:44] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fegor-vilkin%2F HTTP/1.1" 200 89
+[28/Jan/2026 17:46:07] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fbessmertny%2F HTTP/1.1" 200 88
+[28/Jan/2026 17:46:21] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fsergei-dragunov%2F HTTP/1.1" 200 93
+[28/Jan/2026 17:46:21] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fevgeni-alitoit%2F HTTP/1.1" 200 92
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:46:23] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:46:24] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:46:25] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2F%25D0%25B8%25D0%25B2%25D0%25B0%25D0%25BD-%25D0%25B3%25D1%2580%25D1%2583%25D0%25B4%25D1%258C%25D0%25BA%25D0%25BE-23174316a%2F HTTP/1.1" 200 155
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:46:26] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:46:26] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:46:47] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Foleg-kulinkovich%2F HTTP/1.1" 200 94
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:46:48] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:46:49] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fstriha%2F HTTP/1.1" 200 84
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:46:49] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:46:50] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+ERROR Internal Server Error: /api/v1/linkedin/thread-mapping/
+Internal Server Error: /api/v1/linkedin/thread-mapping/
+[28/Jan/2026 17:46:51] "POST /api/v1/linkedin/thread-mapping/ HTTP/1.1" 500 60
+[28/Jan/2026 17:48:08] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fsiarheim%2F HTTP/1.1" 200 86
+[28/Jan/2026 17:48:31] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fsergey-sysoi-35bb8a9a%2F HTTP/1.1" 200 99
+[28/Jan/2026 17:48:47] "GET /api/v1/huntflow/linkedin-applicants/status/?linkedin_url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fdenis-osmakov%2F HTTP/1.1" 200 91
