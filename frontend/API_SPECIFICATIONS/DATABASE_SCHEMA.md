@@ -788,8 +788,52 @@ YYYYMMDD_HHMMSS_description.sql
 - Хранит настройки "Вопросы и ссылки" для каждого офиса
 - Автоматически синхронизируется с активностью вакансии по странам
 
+### 7.3 Настройки профиля пользователя
+
+Настройки, управляемые со страницы профиля (`/account/profile`), могут храниться в расширении таблицы `users` или в отдельной таблице.
+
+**Вариант 1 — колонка `settings` в `users` (JSONB):**
+
+```sql
+ALTER TABLE users ADD COLUMN IF NOT EXISTS settings JSONB DEFAULT '{}';
+
+-- Пример содержимого:
+-- {
+--   "light_theme_accent_color": "blue",
+--   "dark_theme_accent_color": "indigo",
+--   "quick_buttons": [{"id": "...", "name": "...", "icon": "...", "type": "link"|"text"|"datetime", "value": "...", "order": 0}],
+--   "integrations": { "huntflow": {"configured": true}, "telegram": {"configured": false} }
+-- }
+```
+
+**Вариант 2 — отдельная таблица `user_settings` (ключ-значение):**
+
+```sql
+CREATE TABLE user_settings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    key VARCHAR(100) NOT NULL,
+    value JSONB NOT NULL,
+    updated_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(user_id, key)
+);
+CREATE INDEX idx_user_settings_user_id ON user_settings(user_id);
+```
+
+**Использование:**
+
+- **Тема (акцентный цвет):** `light_theme_accent_color`, `dark_theme_accent_color` — используются на странице профиля (вкладка «Редактирование») и в `ThemeProvider`. API: `PUT /api/user/theme`.
+- **Быстрые кнопки:** массив объектов (id, name, icon, color, type, value, order) — настраиваются на вкладке «Быстрые кнопки», отображаются в `FloatingActions`. API: `GET/PUT /api/user/quick-buttons`. До реализации API могут храниться только на клиенте (localStorage).
+- **Интеграции:** ключи и токены хранятся зашифрованно; в БД или в отдельном хранилище секретов. Статус интеграций возвращается через `GET /api/user/integrations/status`.
+
+**Связь с другими документами:**
+
+- Логика страницы профиля, вкладок и API — [BUSINESS_LOGIC.md](./BUSINESS_LOGIC.md) (раздел 10.26).
+- Интеграции в профиле — [INTEGRATIONS.md](./INTEGRATIONS.md) (раздел 5).
+- Аутентификация и доступ к профилю — [AUTHENTICATION_AUTHORIZATION.md](./AUTHENTICATION_AUTHORIZATION.md).
+
 ---
 
-**Версия:** 1.1.0  
+**Версия:** 2.0.0  
 **Последнее обновление:** 2026-01-28  
 **Автор:** HR Helper Development Team

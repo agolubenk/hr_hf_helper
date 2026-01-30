@@ -11798,3 +11798,589 @@ Internal Server Error: /api/v1/linkedin/thread-mapping/
 🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
 🔍 FILTER: event_start=2026-01-30 00:00:00+03:00, date_start=2026-02-05 00:00:00+03:00, date_end=2026-02-05 23:59:59.999999+03:00
 🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk[28/Jan/2026 20:22:49] "GET /google-oauth/api/interview-slots/?vacancy_id=1&interviewer_ids=&include_user=1 HTTP/1.1" 200 1501
+[29/Jan/2026 10:38:07] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79225298 HTTP/1.1" 200 90
+
+🔍 FILTER: event_start=2026-01-30 00:00:00+03:00, date_start=2026-02-05 00:00:00+03:00, date_end=2026-02-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-30 00:00:00+03:00, date_start=2026-02-05 00:00:00+03:00, date_end=2026-02-05 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Чт 05.02.2026: 1 встреч, слоты: 11.05-18.00
+🔍 FILTER: event_start=2026-01-29 11:00:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-29 11:45:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-29 13:00:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-29 13:45:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-29 15:00:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-29 16:00:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-29 17:15:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-30 10:30:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-30 11:15:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-30 12:00:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-30 13:00:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-30 13:45:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-30 15:00:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-30 16:00:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-30 17:00:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-30 18:00:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-02-02 09:00:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-02-02 10:30:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-02-05 09:30:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-02-06 10:30:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-02-09 09:00:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-02-09 10:30:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-29 00:00:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-29 00:00:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-29 00:00:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-30 00:00:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-30 00:00:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-01-30 00:00:00+03:00, date_start=2026-02-06 00:00:00+03:00, date_end=2026-02-06 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пт 06.02.2026: 1 встреч, слоты: 11.15-18.00
+📅 Итого дней со слотами в неделе: 5
+📅 API INTERVIEW SLOTS: Рассчитано 8 дней со слотами
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","search_filter":true,"disableAutofill":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79225298/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1bMQGVAz23mOMA7kxWdfqb5NsonGfidtTGV--qg07bOk/edit","FE-7qnwR7bB0YtS4rasby":"Да","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"-","S58S9DFqO7w-JzDbF2HJA":"-","c8wID33nTMvoCpJmtngyq":"Да","Ew3LqHTK8SL67j2VQ-n6y":"Достиг потолка роста","DoOdxUlwbb0nILXQGBDaT":"2 нед","ICXvQX-WT9eleJW-QlVa9":"https://t.me/avraamov_yakov","RMLxfRH9raQtHItMcdeq-":null,"X6qYbAqZnb0q1R3...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+[29/Jan/2026 10:39:01] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79880045 HTTP/1.1" 200 88
+[29/Jan/2026 10:39:03] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79403313 HTTP/1.1" 200 84
+[29/Jan/2026 10:39:05] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79403313 HTTP/1.1" 200 84
+[29/Jan/2026 10:39:16] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79890582 HTTP/1.1" 200 95
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"account":291341,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"account":291341,"placeholder":"","is_archived":false,"search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79880045/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1ClG3bM812iOL0piZIxc-NtHjeMPwZ_e0nUwBz0_Z7YU/edit","FE-7qnwR7bB0YtS4rasby":"В настоящий момент нахожусь в Минске. К офисному формату в Минске готов рассматривать, приоритет удалённый или гибридный формат.","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, готов работать полный рабочий день (full-time).","n-U2tU6G5iBoxSPkXFN7F":"В данный момент распределения / перераспределения нет.","S58S9DF...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","disableAutofill":true,"account":291341,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","account":291341,"search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79403313/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1sNMKGrjCsVxJuUPDsLLdot8KahRGvH6WonULA2Zevi8/edit","FE-7qnwR7bB0YtS4rasby":"Да, однако всегда приятно иметь возможность поработать дома в случае необходимости","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"мне 28 и я отслужил","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"Проект ушел из Беларуси","DoOdxUlwbb0nILXQGBDaT":"В т...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"account":291341,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"account":291341,"placeholder":"","is_archived":false,"search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79403313/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1sNMKGrjCsVxJuUPDsLLdot8KahRGvH6WonULA2Zevi8/edit","FE-7qnwR7bB0YtS4rasby":"Да, однако всегда приятно иметь возможность поработать дома в случае необходимости","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"мне 28 и я отслужил","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"Проект ушел из Беларуси","DoOdxUlwbb0nILXQGBDaT":"В т...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","disableAutofill":true,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","placeholder":"","search_filter":true,"is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79890582/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1VC6jwEDKJcoMn-jpnuWX1KmGhF9kQ_rQWN8MMXYKn4Y/edit","FE-7qnwR7bB0YtS4rasby":"Да, готов, сейчас проживаю в Москве","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":"В планах была релокация в Минск в августе этого года","Ew3LqHTK8SL67j2VQ-n6y":"Будущий переезд из Москвы, хотел найти, либо офисный формат в Минск,...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"search_filter":true,"search_field":"string_field_1","account":291341},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"search_filter":true,"search_field":"string_field_7","placeholder":"",...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79890582/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1VC6jwEDKJcoMn-jpnuWX1KmGhF9kQ_rQWN8MMXYKn4Y/edit","FE-7qnwR7bB0YtS4rasby":"Да, готов, сейчас проживаю в Москве","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":"В планах была релокация в Минск в августе этого года","Ew3LqHTK8SL67j2VQ-n6y":"Будущий переезд из Москвы, хотел найти, либо офисный формат в Минск,...[29/Jan/2026 10:39:18] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79890582 HTTP/1.1" 200 95
+WARNING Not Found: /api/v1/huntflow/linkedin-applicants/communication-link/
+Not Found: /api/v1/huntflow/linkedin-applicants/communication-link/
+[29/Jan/2026 10:39:28] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79003488 HTTP/1.1" 404 111
+WARNING Not Found: /api/v1/huntflow/linkedin-applicants/communication-link/
+Not Found: /api/v1/huntflow/linkedin-applicants/communication-link/
+[29/Jan/2026 10:39:30] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79003488 HTTP/1.1" 404 111
+[29/Jan/2026 10:39:51] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79403313 HTTP/1.1" 200 84
+[29/Jan/2026 10:39:52] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79890582 HTTP/1.1" 200 95
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"search_field":"string_field_1","disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"placeholder":"","search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79003488/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1WbL2emUzVvWlbcdP0zYkBl6S06j5UzWUJ3cnTcTrcg8/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Да. | Офис: Уже немного отвык от от офиса, дома оборудовал кабинет с рабочим местом и 2-мя мониторами, но готов попробовать. Текущая локация Минск, минск-мир. Полный рабочий день: Да, на полный рабочий день и рассчитываю","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzD...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","search_filter":true,"disableAutofill":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79003488/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1WbL2emUzVvWlbcdP0zYkBl6S06j5UzWUJ3cnTcTrcg8/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Да. | Офис: Уже немного отвык от от офиса, дома оборудовал кабинет с рабочим местом и 2-мя мониторами, но готов попробовать. Текущая локация Минск, минск-мир. Полный рабочий день: Да, на полный рабочий день и рассчитываю","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzD...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_filter":true,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_filter":true,"placeholder":"","is_archived":false,"search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79403313/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1sNMKGrjCsVxJuUPDsLLdot8KahRGvH6WonULA2Zevi8/edit","FE-7qnwR7bB0YtS4rasby":"Да, однако всегда приятно иметь возможность поработать дома в случае необходимости","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"мне 28 и я отслужил","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"Проект ушел из Беларуси","DoOdxUlwbb0nILXQGBDaT":"В т...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","search_filter":true,"account":291341,"is_archived":false,"disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","search_filter":true,"placeholder":"","account":291341,"is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79890582/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1VC6jwEDKJcoMn-jpnuWX1KmGhF9kQ_rQWN8MMXYKn4Y/edit","FE-7qnwR7bB0YtS4rasby":"Да, готов, сейчас проживаю в Москве","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":"В планах была релокация в Минск в августе этого года","Ew3LqHTK8SL67j2VQ-n6y":"Будущий переезд из Москвы, хотел найти, либо офисный формат в Минск,...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"search_filter":true,"search_field":"string_field_1","account":291341},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"search_filter":true,"search_field":"string_field_7","placeholder":"",...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79225298/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1bMQGVAz23mOMA7kxWdfqb5NsonGfidtTGV--qg07bOk/edit","FE-7qnwR7bB0YtS4rasby":"Да","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"-","S58S9DFqO7w-JzDbF2HJA":"-","c8wID33nTMvoCpJmtngyq":"Да","Ew3LqHTK8SL67j2VQ-n6y":"Достиг потолка роста","DoOdxUlwbb0nILXQGBDaT":"2 нед","ICXvQX-WT9eleJW-QlVa9":"https://t.me/avraamov_yakov","RMLxfRH9raQtHItMcdeq-":null,"X6qYbAqZnb0q1R3...[29/Jan/2026 11:05:37] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79225298 HTTP/1.1" 200 90
+[29/Jan/2026 11:07:31] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79880045 HTTP/1.1" 200 88
+[29/Jan/2026 11:07:36] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79403313 HTTP/1.1" 200 84
+[29/Jan/2026 11:31:12] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79403313 HTTP/1.1" 200 84
+[29/Jan/2026 11:51:24] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79403313 HTTP/1.1" 200 84
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","disableAutofill":true,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","placeholder":"","search_filter":true,"is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79880045/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1ClG3bM812iOL0piZIxc-NtHjeMPwZ_e0nUwBz0_Z7YU/edit","FE-7qnwR7bB0YtS4rasby":"В настоящий момент нахожусь в Минске. К офисному формату в Минске готов рассматривать, приоритет удалённый или гибридный формат.","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, готов работать полный рабочий день (full-time).","n-U2tU6G5iBoxSPkXFN7F":"В данный момент распределения / перераспределения нет.","S58S9DF...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","disableAutofill":true,"account":291341,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","account":291341,"search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79403313/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1sNMKGrjCsVxJuUPDsLLdot8KahRGvH6WonULA2Zevi8/edit","FE-7qnwR7bB0YtS4rasby":"Да, однако всегда приятно иметь возможность поработать дома в случае необходимости","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"мне 28 и я отслужил","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"Проект ушел из Беларуси","DoOdxUlwbb0nILXQGBDaT":"В т...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"search_filter":true,"search_field":"string_field_1","account":291341},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"search_filter":true,"search_field":"string_field_7","placeholder":"",...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79403313/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1sNMKGrjCsVxJuUPDsLLdot8KahRGvH6WonULA2Zevi8/edit","FE-7qnwR7bB0YtS4rasby":"Да, однако всегда приятно иметь возможность поработать дома в случае необходимости","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"мне 28 и я отслужил","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"Проект ушел из Беларуси","DoOdxUlwbb0nILXQGBDaT":"В т...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"account":291341,"search_field":"string_field_1","search_filter":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"account":291341,"placeholder":"","search_field":"string_field_7","sea...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79403313/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1sNMKGrjCsVxJuUPDsLLdot8KahRGvH6WonULA2Zevi8/edit","FE-7qnwR7bB0YtS4rasby":"Да, однако всегда приятно иметь возможность поработать дома в случае необходимости","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"мне 28 и я отслужил","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"Проект ушел из Беларуси","DoOdxUlwbb0nILXQGBDaT":"В т...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"search_field":"string_field_1","disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"placeholder":"","search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79403313/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1sNMKGrjCsVxJuUPDsLLdot8KahRGvH6WonULA2Zevi8/edit","FE-7qnwR7bB0YtS4rasby":"Да, однако всегда приятно иметь возможность поработать дома в случае необходимости","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"мне 28 и я отслужил","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"Проект ушел из Беларуси","DoOdxUlwbb0nILXQGBDaT":"В т...[29/Jan/2026 11:51:51] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79403313 HTTP/1.1" 200 84
+Получен 401, пробуем обновить токен
+[29/Jan/2026 13:08:56] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79403313 HTTP/1.1" 200 84
+[29/Jan/2026 14:10:01] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79403313 HTTP/1.1" 200 84
+[29/Jan/2026 15:00:19] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79403313 HTTP/1.1" 200 84
+[29/Jan/2026 16:50:01] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79403313 HTTP/1.1" 200 84
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📝 SIGNAL: Обновлен пользователь: andrei.golubenko
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_filter":true,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_filter":true,"placeholder":"","is_archived":false,"search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79403313/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1sNMKGrjCsVxJuUPDsLLdot8KahRGvH6WonULA2Zevi8/edit","FE-7qnwR7bB0YtS4rasby":"Да, однако всегда приятно иметь возможность поработать дома в случае необходимости","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"мне 28 и я отслужил","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"Проект ушел из Беларуси","DoOdxUlwbb0nILXQGBDaT":"В т...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"search_field":"string_field_1","disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"placeholder":"","search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79403313/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1sNMKGrjCsVxJuUPDsLLdot8KahRGvH6WonULA2Zevi8/edit","FE-7qnwR7bB0YtS4rasby":"Да, однако всегда приятно иметь возможность поработать дома в случае необходимости","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"мне 28 и я отслужил","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"Проект ушел из Беларуси","DoOdxUlwbb0nILXQGBDaT":"В т...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","disableAutofill":true,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","placeholder":"","search_filter":true,"is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79403313/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1sNMKGrjCsVxJuUPDsLLdot8KahRGvH6WonULA2Zevi8/edit","FE-7qnwR7bB0YtS4rasby":"Да, однако всегда приятно иметь возможность поработать дома в случае необходимости","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"мне 28 и я отслужил","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"Проект ушел из Беларуси","DoOdxUlwbb0nILXQGBDaT":"В т...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","search_filter":true,"account":291341,"is_archived":false,"disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","search_filter":true,"placeholder":"","account":291341,"is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79403313/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1sNMKGrjCsVxJuUPDsLLdot8KahRGvH6WonULA2Zevi8/edit","FE-7qnwR7bB0YtS4rasby":"Да, однако всегда приятно иметь возможность поработать дома в случае необходимости","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"мне 28 и я отслужил","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"Проект ушел из Беларуси","DoOdxUlwbb0nILXQGBDaT":"В т...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"search_field":"string_field_1","disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"placeholder":"","search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79403313/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1sNMKGrjCsVxJuUPDsLLdot8KahRGvH6WonULA2Zevi8/edit","FE-7qnwR7bB0YtS4rasby":"Да, однако всегда приятно иметь возможность поработать дома в случае необходимости","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"мне 28 и я отслужил","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"Проект ушел из Беларуси","DoOdxUlwbb0nILXQGBDaT":"В т...[29/Jan/2026 21:41:41] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79403313 HTTP/1.1" 200 84
+[30/Jan/2026 01:45:45] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79403313 HTTP/1.1" 200 84
+[30/Jan/2026 09:02:29] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79225298 HTTP/1.1" 200 90
+[30/Jan/2026 09:02:31] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79678843 HTTP/1.1" 200 83
+[30/Jan/2026 09:02:37] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79678843 HTTP/1.1" 200 83
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"account":291341,"search_field":"string_field_1","search_filter":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"account":291341,"placeholder":"","search_field":"string_field_7","sea...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79403313/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1sNMKGrjCsVxJuUPDsLLdot8KahRGvH6WonULA2Zevi8/edit","FE-7qnwR7bB0YtS4rasby":"Да, однако всегда приятно иметь возможность поработать дома в случае необходимости","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"мне 28 и я отслужил","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"Проект ушел из Беларуси","DoOdxUlwbb0nILXQGBDaT":"В т...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","disableAutofill":true,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","placeholder":"","search_filter":true,"is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79225298/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1bMQGVAz23mOMA7kxWdfqb5NsonGfidtTGV--qg07bOk/edit","FE-7qnwR7bB0YtS4rasby":"Да","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"-","S58S9DFqO7w-JzDbF2HJA":"-","c8wID33nTMvoCpJmtngyq":"Да","Ew3LqHTK8SL67j2VQ-n6y":"Достиг потолка роста","DoOdxUlwbb0nILXQGBDaT":"2 нед","ICXvQX-WT9eleJW-QlVa9":"https://t.me/avraamov_yakov","RMLxfRH9raQtHItMcdeq-":null,"X6qYbAqZnb0q1R3...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","search_filter":true,"disableAutofill":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79678843/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1uuWBzHPTo--TBWLoD29WEfNZHYsqXNXcqpU-v3aqzNo/edit","FE-7qnwR7bB0YtS4rasby":"Да, готов. Сейчас проживаю в городе Ошмяны.","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, смогу работать полный рабочий день.","n-U2tU6G5iBoxSPkXFN7F":"Таких обязательств нет.","S58S9DFqO7w-JzDbF2HJA":"Военный билет на руках (прошёл службу).","c8wID33nTMvoCpJmtngyq":"На данный момент нет.","Ew3LqHTK8SL67j2VQ-n6y...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","search_filter":true,"account":291341,"is_archived":false,"disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","search_filter":true,"placeholder":"","account":291341,"is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79678843/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1uuWBzHPTo--TBWLoD29WEfNZHYsqXNXcqpU-v3aqzNo/edit","FE-7qnwR7bB0YtS4rasby":"Да, готов. Сейчас проживаю в городе Ошмяны.","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, смогу работать полный рабочий день.","n-U2tU6G5iBoxSPkXFN7F":"Таких обязательств нет.","S58S9DFqO7w-JzDbF2HJA":"Военный билет на руках (прошёл службу).","c8wID33nTMvoCpJmtngyq":"На данный момент нет.","Ew3LqHTK8SL67j2VQ-n6y...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"search_field":"string_field_1","disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"placeholder":"","search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79890582/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1VC6jwEDKJcoMn-jpnuWX1KmGhF9kQ_rQWN8MMXYKn4Y/edit","FE-7qnwR7bB0YtS4rasby":"Да, готов, сейчас проживаю в Москве","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":"В планах была релокация в Минск в августе этого года","Ew3LqHTK8SL67j2VQ-n6y":"Будущий переезд из Москвы, хотел найти, либо офисный формат в Минск,...[30/Jan/2026 09:03:47] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79890582 HTTP/1.1" 200 95
+[30/Jan/2026 09:03:48] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79403313 HTTP/1.1" 200 84
+[30/Jan/2026 09:03:51] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79738913 HTTP/1.1" 200 83
+[30/Jan/2026 09:03:52] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79731493 HTTP/1.1" 200 85
+[30/Jan/2026 09:12:27] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79879879 HTTP/1.1" 200 86
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"search_filter":true,"search_field":"string_field_1","account":291341},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"search_filter":true,"search_field":"string_field_7","placeholder":"",...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79403313/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1sNMKGrjCsVxJuUPDsLLdot8KahRGvH6WonULA2Zevi8/edit","FE-7qnwR7bB0YtS4rasby":"Да, однако всегда приятно иметь возможность поработать дома в случае необходимости","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"мне 28 и я отслужил","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"Проект ушел из Беларуси","DoOdxUlwbb0nILXQGBDaT":"В т...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"search_filter":true,"search_field":"string_field_1","account":291341},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"search_filter":true,"search_field":"string_field_7","placeholder":"",...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79738913/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1xrM2ukNAyhsYQym8lZhlh_3IgF-LngC7muOsb6lHHv0/edit","FE-7qnwR7bB0YtS4rasby":"Готов к гибриду, если надо появляться в офисе на встречах, митапах.","CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Закончил давно","S58S9DFqO7w-JzDbF2HJA":"Военный билет до 28 года.","c8wID33nTMvoCpJmtngyq":"Смотря куда, скорее всего нет (но это всё ещё можно обсудить)","Ew3LqHTK8SL67j2VQ...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","search_filter":true,"disableAutofill":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79731493/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1qkw91L-xeMPoadzE8-6GHGK5CVMdNaWI5fsJFoOFzxI/edit","FE-7qnwR7bB0YtS4rasby":"Проживаю в Минске и планирую тут задержаться ещё на несколько следующих лет точно","CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Я планирую полную смену рабочего места, поэтому конечно речь идёт о полном рабочем дне","n-U2tU6G5iBoxSPkXFN7F":"Распределение было закрыто в далёком 2021 году","S58S9DFqO7w-JzDbF2HJA":"И ...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","search_filter":true,"account":291341,"is_archived":false,"disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","search_filter":true,"placeholder":"","account":291341,"is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79879879/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/12BbeAUR4-veYCN3ZqNn7UZmysnHYH25lX8-L169XU2M/edit","FE-7qnwR7bB0YtS4rasby":"Да, готов, данный меня устраивает. Город Минск","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, смогу","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"Не военнообязанный, есть военный билет","c8wID33nTMvoCpJmtngyq":"Релокация возможна при необходимости","Ew3LqHTK8SL67j2VQ-n6y":"Переезд","DoOdxUlwbb0nILXQGBDa...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","disableAutofill":true,"account":291341,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","account":291341,"search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79879879/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/12BbeAUR4-veYCN3ZqNn7UZmysnHYH25lX8-L169XU2M/edit","FE-7qnwR7bB0YtS4rasby":"Да, готов, данный меня устраивает. Город Минск","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, смогу","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"Не военнообязанный, есть военный билет","c8wID33nTMvoCpJmtngyq":"Релокация возможна при необходимости","Ew3LqHTK8SL67j2VQ-n6y":"Переезд","DoOdxUlwbb0nILXQGBDa...[30/Jan/2026 09:12:29] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79879879 HTTP/1.1" 200 86
+[30/Jan/2026 09:15:18] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79879879 HTTP/1.1" 200 86
+[30/Jan/2026 09:34:15] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79879879 HTTP/1.1" 200 86
+[30/Jan/2026 10:16:14] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79879879 HTTP/1.1" 200 86
+[30/Jan/2026 10:29:49] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79879879 HTTP/1.1" 200 86
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"account":291341,"search_field":"string_field_1","search_filter":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"account":291341,"placeholder":"","search_field":"string_field_7","sea...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79879879/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/12BbeAUR4-veYCN3ZqNn7UZmysnHYH25lX8-L169XU2M/edit","FE-7qnwR7bB0YtS4rasby":"Да, готов, данный меня устраивает. Город Минск","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, смогу","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"Не военнообязанный, есть военный билет","c8wID33nTMvoCpJmtngyq":"Релокация возможна при необходимости","Ew3LqHTK8SL67j2VQ-n6y":"Переезд","DoOdxUlwbb0nILXQGBDa...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"account":291341,"search_field":"string_field_1","search_filter":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"account":291341,"placeholder":"","search_field":"string_field_7","sea...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79879879/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/12BbeAUR4-veYCN3ZqNn7UZmysnHYH25lX8-L169XU2M/edit","FE-7qnwR7bB0YtS4rasby":"Да, готов, данный меня устраивает. Город Минск","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, смогу","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"Не военнообязанный, есть военный билет","c8wID33nTMvoCpJmtngyq":"Релокация возможна при необходимости","Ew3LqHTK8SL67j2VQ-n6y":"Переезд","DoOdxUlwbb0nILXQGBDa...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","disableAutofill":true,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","placeholder":"","search_filter":true,"is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79879879/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/12BbeAUR4-veYCN3ZqNn7UZmysnHYH25lX8-L169XU2M/edit","FE-7qnwR7bB0YtS4rasby":"Да, готов, данный меня устраивает. Город Минск","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, смогу","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"Не военнообязанный, есть военный билет","c8wID33nTMvoCpJmtngyq":"Релокация возможна при необходимости","Ew3LqHTK8SL67j2VQ-n6y":"Переезд","DoOdxUlwbb0nILXQGBDa...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"search_field":"string_field_1","disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"placeholder":"","search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79879879/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/12BbeAUR4-veYCN3ZqNn7UZmysnHYH25lX8-L169XU2M/edit","FE-7qnwR7bB0YtS4rasby":"Да, готов, данный меня устраивает. Город Минск","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да, смогу","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"Не военнообязанный, есть военный билет","c8wID33nTMvoCpJmtngyq":"Релокация возможна при необходимости","Ew3LqHTK8SL67j2VQ-n6y":"Переезд","DoOdxUlwbb0nILXQGBDa...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_filter":true,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_filter":true,"placeholder":"","is_archived":false,"search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79403894/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1awrTcjta8lz8C43ERfuqOLjpOV2JhY3EVDVo8VOMY38/edit","FE-7qnwR7bB0YtS4rasby":"Да, живу в Минске, офис подходит","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Нету","S58S9DFqO7w-JzDbF2HJA":"Есть военный билет, без переосвидетельствования","c8wID33nTMvoCpJmtngyq":"Пока нету, но если вариант такой будет, буду только рад","Ew3LqHTK8SL67j2VQ-n6y":"Интенсивность работы н...[30/Jan/2026 10:34:54] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79403894 HTTP/1.1" 200 89
+[30/Jan/2026 10:34:56] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79738913 HTTP/1.1" 200 83
+[30/Jan/2026 10:35:04] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79731493 HTTP/1.1" 200 85
+[30/Jan/2026 10:35:13] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79731493 HTTP/1.1" 200 85
+[30/Jan/2026 10:35:14] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79731493 HTTP/1.1" 200 85
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","disableAutofill":true,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","placeholder":"","search_filter":true,"is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79738913/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1xrM2ukNAyhsYQym8lZhlh_3IgF-LngC7muOsb6lHHv0/edit","FE-7qnwR7bB0YtS4rasby":"Готов к гибриду, если надо появляться в офисе на встречах, митапах.","CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Закончил давно","S58S9DFqO7w-JzDbF2HJA":"Военный билет до 28 года.","c8wID33nTMvoCpJmtngyq":"Смотря куда, скорее всего нет (но это всё ещё можно обсудить)","Ew3LqHTK8SL67j2VQ...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"account":291341,"search_field":"string_field_1","search_filter":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"account":291341,"placeholder":"","search_field":"string_field_7","sea...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79731493/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1qkw91L-xeMPoadzE8-6GHGK5CVMdNaWI5fsJFoOFzxI/edit","FE-7qnwR7bB0YtS4rasby":"Проживаю в Минске и планирую тут задержаться ещё на несколько следующих лет точно","CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Я планирую полную смену рабочего места, поэтому конечно речь идёт о полном рабочем дне","n-U2tU6G5iBoxSPkXFN7F":"Распределение было закрыто в далёком 2021 году","S58S9DFqO7w-JzDbF2HJA":"И ...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"search_field":"string_field_1","disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"placeholder":"","search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79731493/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1qkw91L-xeMPoadzE8-6GHGK5CVMdNaWI5fsJFoOFzxI/edit","FE-7qnwR7bB0YtS4rasby":"Проживаю в Минске и планирую тут задержаться ещё на несколько следующих лет точно","CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Я планирую полную смену рабочего места, поэтому конечно речь идёт о полном рабочем дне","n-U2tU6G5iBoxSPkXFN7F":"Распределение было закрыто в далёком 2021 году","S58S9DFqO7w-JzDbF2HJA":"И ...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"account":291341,"search_field":"string_field_1","search_filter":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"account":291341,"placeholder":"","search_field":"string_field_7","sea...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79731493/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1qkw91L-xeMPoadzE8-6GHGK5CVMdNaWI5fsJFoOFzxI/edit","FE-7qnwR7bB0YtS4rasby":"Проживаю в Минске и планирую тут задержаться ещё на несколько следующих лет точно","CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Я планирую полную смену рабочего места, поэтому конечно речь идёт о полном рабочем дне","n-U2tU6G5iBoxSPkXFN7F":"Распределение было закрыто в далёком 2021 году","S58S9DFqO7w-JzDbF2HJA":"И ...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","search_filter":true,"disableAutofill":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79731493/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1qkw91L-xeMPoadzE8-6GHGK5CVMdNaWI5fsJFoOFzxI/edit","FE-7qnwR7bB0YtS4rasby":"Проживаю в Минске и планирую тут задержаться ещё на несколько следующих лет точно","CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Я планирую полную смену рабочего места, поэтому конечно речь идёт о полном рабочем дне","n-U2tU6G5iBoxSPkXFN7F":"Распределение было закрыто в далёком 2021 году","S58S9DFqO7w-JzDbF2HJA":"И ...[30/Jan/2026 10:35:22] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79731493 HTTP/1.1" 200 85
+[30/Jan/2026 10:35:25] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79725597 HTTP/1.1" 200 94
+[30/Jan/2026 10:35:34] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79890582 HTTP/1.1" 200 95
+[30/Jan/2026 10:35:35] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79403313 HTTP/1.1" 200 84
+[30/Jan/2026 10:35:37] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79890582 HTTP/1.1" 200 95
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"search_filter":true,"search_field":"string_field_1","account":291341},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"search_filter":true,"search_field":"string_field_7","placeholder":"",...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79725597/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1FeGKJkGQ-P5EFQid43uCe1vuTy9Jfl45jALFlqHfxcc/edit","FE-7qnwR7bB0YtS4rasby":"Да, к офисному формату работы отношусь нормально. Минск.","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Да, если сработаемся, то будет необходимо перераспределение","S58S9DFqO7w-JzDbF2HJA":"Отслужил, военный билет","c8wID33nTMvoCpJmtngyq":"Рассматриваю такую возможность","Ew3LqHTK8SL67j2V...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"account":291341,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"account":291341,"placeholder":"","is_archived":false,"search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79890582/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1VC6jwEDKJcoMn-jpnuWX1KmGhF9kQ_rQWN8MMXYKn4Y/edit","FE-7qnwR7bB0YtS4rasby":"Да, готов, сейчас проживаю в Москве","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":"В планах была релокация в Минск в августе этого года","Ew3LqHTK8SL67j2VQ-n6y":"Будущий переезд из Москвы, хотел найти, либо офисный формат в Минск,...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","search_filter":true,"disableAutofill":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79403313/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Senior","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1sNMKGrjCsVxJuUPDsLLdot8KahRGvH6WonULA2Zevi8/edit","FE-7qnwR7bB0YtS4rasby":"Да, однако всегда приятно иметь возможность поработать дома в случае необходимости","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"мне 28 и я отслужил","c8wID33nTMvoCpJmtngyq":"нет","Ew3LqHTK8SL67j2VQ-n6y":"Проект ушел из Беларуси","DoOdxUlwbb0nILXQGBDaT":"В т...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"disableAutofill":true,"is_archived":false,"account":291341,"search_field":"string_field_1","search_filter":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"is_archived":false,"account":291341,"placeholder":"","search_field":"string_field_7","sea...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79890582/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Junior+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1VC6jwEDKJcoMn-jpnuWX1KmGhF9kQ_rQWN8MMXYKn4Y/edit","FE-7qnwR7bB0YtS4rasby":"Да, готов, сейчас проживаю в Москве","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Да","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzDbF2HJA":null,"c8wID33nTMvoCpJmtngyq":"В планах была релокация в Минск в августе этого года","Ew3LqHTK8SL67j2VQ-n6y":"Будущий переезд из Москвы, хотел найти, либо офисный формат в Минск,...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_filter":true,"account":291341,"disableAutofill":true,"is_archived":false,"search_field":"string_field_1"},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_filter":true,"account":291341,"placeholder":"","is_archived":false,"search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79879976/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1VF76ZoJDAz9jycL0t3Do1FWAKfwgh-yoehPX-BlssVw/edit","FE-7qnwR7bB0YtS4rasby":"Готов, хотя предпочел бы гибрид или удаленку. Живу в Минске","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Готов работать полный день","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"Военник на руках","c8wID33nTMvoCpJmtngyq":"Пока что в планах нет, но в целом не против","Ew3LqHTK8SL67j2VQ-n6y":"Сокращение цел...[30/Jan/2026 10:35:39] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79879976 HTTP/1.1" 200 84
+[30/Jan/2026 10:36:12] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79879976 HTTP/1.1" 200 84
+[30/Jan/2026 10:36:24] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79879976 HTTP/1.1" 200 84
+WARNING Not Found: /api/v1/huntflow/linkedin-applicants/communication-link/
+Not Found: /api/v1/huntflow/linkedin-applicants/communication-link/
+[30/Jan/2026 10:36:28] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79003488 HTTP/1.1" 404 111
+WARNING Not Found: /api/v1/huntflow/linkedin-applicants/communication-link/
+Not Found: /api/v1/huntflow/linkedin-applicants/communication-link/
+[30/Jan/2026 10:36:46] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79003488 HTTP/1.1" 404 111
+
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"search_field":"string_field_1","disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"is_archived":false,"search_filter":true,"placeholder":"","search_field":...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79879976/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1VF76ZoJDAz9jycL0t3Do1FWAKfwgh-yoehPX-BlssVw/edit","FE-7qnwR7bB0YtS4rasby":"Готов, хотя предпочел бы гибрид или удаленку. Живу в Минске","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Готов работать полный день","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"Военник на руках","c8wID33nTMvoCpJmtngyq":"Пока что в планах нет, но в целом не против","Ew3LqHTK8SL67j2VQ-n6y":"Сокращение цел...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","search_filter":true,"account":291341,"is_archived":false,"disableAutofill":true},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","search_filter":true,"placeholder":"","account":291341,"is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79879976/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1VF76ZoJDAz9jycL0t3Do1FWAKfwgh-yoehPX-BlssVw/edit","FE-7qnwR7bB0YtS4rasby":"Готов, хотя предпочел бы гибрид или удаленку. Живу в Минске","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Готов работать полный день","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"Военник на руках","c8wID33nTMvoCpJmtngyq":"Пока что в планах нет, но в целом не против","Ew3LqHTK8SL67j2VQ-n6y":"Сокращение цел...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","search_filter":true,"disableAutofill":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79003488/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1WbL2emUzVvWlbcdP0zYkBl6S06j5UzWUJ3cnTcTrcg8/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Да. | Офис: Уже немного отвык от от офиса, дома оборудовал кабинет с рабочим местом и 2-мя мониторами, но готов попробовать. Текущая локация Минск, минск-мир. Полный рабочий день: Да, на полный рабочий день и рассчитываю","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzD...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"account":291341,"search_field":"string_field_1","disableAutofill":true,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"account":291341,"search_field":"string_field_7","placeholder":"","search_filter":true,"is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79003488/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1WbL2emUzVvWlbcdP0zYkBl6S06j5UzWUJ3cnTcTrcg8/edit","FE-7qnwR7bB0YtS4rasby":null,"CsWOTYehY2IkL3I7myfwM":null,"YAMd8vkvLFq5KLmIkiLVf":"Да. | Офис: Уже немного отвык от от офиса, дома оборудовал кабинет с рабочим местом и 2-мя мониторами, но готов попробовать. Текущая локация Минск, минск-мир. Полный рабочий день: Да, на полный рабочий день и рассчитываю","n-U2tU6G5iBoxSPkXFN7F":null,"S58S9DFqO7w-JzD...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":{"type":"select","id":3059,"title":"Уровень","required":false,"order":1,"values":["Junior","Junior+","Middle","Middle+","Senior"],"show_in_profile":true,"search_field":"string_field_1","disableAutofill":true,"account":291341,"search_filter":true,"is_archived":false},"oMvUCpzbKSzzhPLUCwmGW":{"type":"url","id":3067,"title":"Scorecard","required":false,"order":2,"show_in_profile":true,"search_field":"string_field_7","account":291341,"search_filter":true,"placeholder":"","is...
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts/291341/applicants/79879976/questionary
+📥 Ответ API: 200
+📥 Тело ответа: {"kIbah4MN0iHussXm3n2Ar":"Middle+","oMvUCpzbKSzzhPLUCwmGW":"https://docs.google.com/spreadsheets/d/1VF76ZoJDAz9jycL0t3Do1FWAKfwgh-yoehPX-BlssVw/edit","FE-7qnwR7bB0YtS4rasby":"Готов, хотя предпочел бы гибрид или удаленку. Живу в Минске","CsWOTYehY2IkL3I7myfwM":"Да","YAMd8vkvLFq5KLmIkiLVf":"Готов работать полный день","n-U2tU6G5iBoxSPkXFN7F":"Нет","S58S9DFqO7w-JzDbF2HJA":"Военник на руках","c8wID33nTMvoCpJmtngyq":"Пока что в планах нет, но в целом не против","Ew3LqHTK8SL67j2VQ-n6y":"Сокращение цел...[30/Jan/2026 10:37:17] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79879976 HTTP/1.1" 200 84
+[30/Jan/2026 10:37:19] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79879976 HTTP/1.1" 200 84
+[30/Jan/2026 10:37:26] "GET /api/v1/huntflow/linkedin-applicants/communication-link/?huntflow_url=https%3A%2F%2Fhuntflow.ru%2Fmy%2Fsoftnetix%23%2Fvacancy%2F3936868%2Ffilter%2Fworkon%2Fid%2F79370084 HTTP/1.1" 200 86
