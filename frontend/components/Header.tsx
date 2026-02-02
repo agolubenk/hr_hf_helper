@@ -79,6 +79,8 @@ interface HeaderProps {
   currentTheme: 'light' | 'dark'
   menuOpen?: boolean
   onLogout: () => void
+  /** Контент слева от заголовка (например, бургер для админки) */
+  leftContent?: React.ReactNode
 }
 
 /**
@@ -96,7 +98,8 @@ export default function Header({
   onThemeToggle,
   currentTheme,
   menuOpen = false,
-  onLogout
+  onLogout,
+  leftContent,
 }: HeaderProps) {
   // Хук Next.js для программной навигации
   const router = useRouter()
@@ -262,6 +265,8 @@ export default function Header({
           - Заголовок страницы (pageTitle)
           - Глобальный поиск с поддержкой горячих клавиш */}
       <Flex align="center" gap="3" style={{ flex: 1, minWidth: 0 }}>
+        {/* Контент слева от заголовка (например, бургер админки) */}
+        {leftContent}
         {/* Заголовок текущей страницы
             - Отображает pageTitle из пропсов
             - flexShrink: 0 - не сжимается при нехватке места */}
@@ -306,7 +311,8 @@ export default function Header({
             justifyContent: 'center',
             flexShrink: 0,
           }}
-          title={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
+          title="Меню"
+          aria-label="Меню"
         >
           <LightningBoltIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />
         </Box>
@@ -353,7 +359,7 @@ export default function Header({
             justifyContent: 'center',
             flexShrink: 0,
           }}
-          title={currentTheme === 'light' ? 'Переключить на темную тему' : 'Переключить на светлую тему'}
+          title="Переключить тему"
         >
           {currentTheme === 'light' ? (
             <MoonIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />

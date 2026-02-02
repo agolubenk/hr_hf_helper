@@ -430,7 +430,7 @@ function InvitesPage() {
   }
 
   return (
-    <AppLayout pageTitle="Инвайты">
+    <AppLayout pageTitle="Интервью">
       <Box className={styles.invitesContainer}>
         {/* Заголовок и действия */}
         <Flex justify="between" align="center" mb="4">

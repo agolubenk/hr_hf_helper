@@ -4,8 +4,11 @@ const nextConfig = {
   async redirects() {
     return [
       { source: '/finance', destination: '/company-settings/finance', permanent: false },
+      { source: '/admin-crm', destination: '/admin', permanent: false },
+      { source: '/admin-crm/:path*', destination: '/admin/:path*', permanent: false },
     ]
   },
+  // Админка — на Radix UI по маршруту /admin (без прокси Django admin)
   // Исправление проблем с путями статических файлов
   assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
   // Убеждаемся, что статические файлы правильно обслуживаются

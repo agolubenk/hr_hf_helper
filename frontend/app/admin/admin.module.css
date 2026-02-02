@@ -1,0 +1,57 @@
+/* Левосторонний сайдбар админки (как основной Sidebar, но слева) */
+.adminSidebar {
+  width: 280px;
+  z-index: 999;
+}
+
+.sidebarModuleLabel {
+  color: var(--gray-9);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: block;
+}
+
+.adminWrap {
+  width: 100%;
+  max-width: 1200px;
+  min-height: 200px;
+}
+
+@media (max-width: 767px) {
+  .adminSidebar {
+    width: 100%;
+    z-index: 1700;
+  }
+}
+
+.content {
+  min-height: 200px;
+}
+
+.cardLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.dashboardCard {
+  min-width: 280px;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+
+.dashboardCard:hover {
+  box-shadow: 0 4px 12px var(--gray-a5);
+  transform: translateY(-1px);
+}
+
+.cardIcon {
+  color: var(--accent-11);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background: var(--accent-a3);
+}
