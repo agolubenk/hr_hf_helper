@@ -8,6 +8,7 @@ import { useState, useEffect } from "react"
 import styles from '../company-settings.module.css'
 import integrationsStyles from './integrations.module.css'
 import IntegrationScopeModal from './IntegrationScopeModal'
+import { GoogleServicesModal } from './GoogleServicesModal'
 
 /**
  * ACTIVE_STORAGE_KEY - ключ для хранения состояния активности интеграций в localStorage
@@ -80,7 +81,7 @@ function setIntegrationActive(id: string, value: boolean): void {
  * - Обеспечения типобезопасности при работе с интеграциями
  * 
  * Значения:
- * - 'google': интеграция с Google (OAuth, Calendar, Drive)
+ * - 'google': интеграция с Google (включение сервисов: календарь, Drive, таблицы, личные данные — в профиле, у каждого пользователя своё)
  * - 'telegram': интеграция с Telegram (мессенджер)
  * - 'hh': интеграция с hh.ru и rabota.by (job-сайты)
  * - 'huntflow': интеграция с Huntflow (ATS система)
@@ -113,7 +114,7 @@ type IntegrationId =
  * Значения:
  * - 'all': все интеграции (используется для фильтра "Все")
  * - 'ai': интеграции с ИИ сервисами (Gemini, OpenAI, Cloud AI, n8n)
- * - 'auth': интеграции для авторизации (Google OAuth)
+ * - 'auth': интеграции для авторизации (Google — включение сервисов в профиле)
  * - 'messengers': мессенджеры (Telegram)
  * - 'job-sites': job-сайты (hh.ru, rabota.by)
  * - 'hrm-ats': HRM и ATS системы (Huntflow)
@@ -139,6 +140,7 @@ type IntegrationGroupId =
  * - href: URL для перехода к настройкам интеграции (опционально)
  * - group: группа интеграции для фильтрации
  * - allowsScopeChoice: разрешает ли выбор области применения (общий/у каждого свой/оба)
+ * - description: краткое описание для карточки (опционально)
  * 
  * Используется для:
  * - Хранения данных об интеграциях
@@ -152,8 +154,10 @@ interface Integration {
   active: boolean
   href?: string
   group: IntegrationGroupId
-  /** Для ИИ, ClickUp, Notion, n8n, hh: при настройке можно выбрать общий / у каждого свой / оба */
+  /** Для интеграций, где можно выбрать общий / у каждого свой / оба. У Google выбора нет — всегда у каждого свой. */
   allowsScopeChoice?: boolean
+  /** Краткое описание под названием (например, для Google — про включение в профиле). */
+  description?: string
 }
 
 /**
@@ -201,7 +205,15 @@ const INTEGRATION_GROUPS: { id: IntegrationGroupId; label: string }[] = [
  * TODO: Загружать из API вместо хардкода
  */
 const INTEGRATIONS: Integration[] = [
-  { id: 'google', name: 'Google', shortName: 'G', active: false, group: 'auth', allowsScopeChoice: true },
+  {
+    id: 'google',
+    name: 'Google',
+    shortName: 'G',
+    active: false,
+    group: 'auth',
+    allowsScopeChoice: false,
+    description: 'Календарь, Диск, таблицы, личные данные. Включение сервисов — здесь; OAuth и ключи — в профиле.',
+  },
   { id: 'telegram', name: 'Telegram', shortName: 'T', active: false, group: 'messengers', allowsScopeChoice: true },
   { id: 'hh', name: 'hh.ru / rabota.by', shortName: 'HH', active: false, group: 'job-sites', allowsScopeChoice: true },
   { id: 'huntflow', name: 'Huntflow', shortName: 'H', active: true, group: 'hrm-ats', allowsScopeChoice: true },
@@ -248,25 +260,29 @@ function filterByGroup(items: Integration[], group: IntegrationGroupId): Integra
  * Поведение:
  * - При клике на переключатель активности вызывает onActiveChange
  * - При клике на кнопку "Настроить"/"Подключить":
- *   - Если есть href - переходит на страницу настройки
- *   - Если allowsScopeChoice - открывает модальное окно выбора области
+ *   - Для Google — открывает модальное окно включения/отключения сервисов Google (галочки)
+ *   - Если есть href — переходит на страницу настройки
+ *   - Если allowsScopeChoice — открывает модальное окно выбора области
  *   - Иначе показывает сообщение о разработке
- * 
+ *
  * @param item - объект интеграции
  * @param isActive - текущее состояние активности
  * @param onActiveChange - обработчик изменения активности
  * @param onOpenScopeModal - обработчик открытия модального окна выбора области
+ * @param onOpenGoogleServicesModal - обработчик открытия модального окна сервисов Google
  */
 function IntegrationCard({
   item,
   isActive,
   onActiveChange,
   onOpenScopeModal,
+  onOpenGoogleServicesModal,
 }: {
   item: Integration
   isActive: boolean
   onActiveChange: (value: boolean) => void
   onOpenScopeModal: (item: Integration) => void
+  onOpenGoogleServicesModal: () => void
 }) {
   // Хук Next.js для программной навигации
   const router = useRouter()
@@ -275,22 +291,18 @@ function IntegrationCard({
 
   /**
    * handleAction - обработчик клика на кнопку "Настроить"/"Подключить"
-   * 
-   * Функциональность:
-   * - Если у интеграции есть href - переходит на страницу настройки
-   * - Если интеграция позволяет выбрать область применения - открывает модальное окно
-   * - Иначе показывает сообщение о разработке
-   * 
-   * Поведение:
-   * - Вызывается при клике на кнопку действия
-   * - Определяет действие в зависимости от свойств интеграции
+   *
+   * - Для Google: открывает модальное окно включения/отключения сервисов (галочки), без редиректа на профиль
+   * - Если есть href: переход на страницу настройки
+   * - Если allowsScopeChoice: открывает модальное окно выбора области применения
    */
   const handleAction = () => {
-    if (item.href) {
-      // Переход на страницу настройки интеграции
+    if (item.id === 'google') {
+      // Модальное окно включения/отключения сервисов Google и выбора сервисов через галочки
+      onOpenGoogleServicesModal()
+    } else if (item.href) {
       router.push(item.href)
     } else if (item.allowsScopeChoice) {
-      // Открытие модального окна выбора области применения
       onOpenScopeModal(item)
     } else if (item.active) {
       /* настроить: пока нет страницы */
@@ -319,6 +331,11 @@ function IntegrationCard({
             </Box>
             <Text size="3" weight="medium">{item.name}</Text>
           </Flex>
+          {item.description && (
+            <Text size="1" color="gray" style={{ lineHeight: 1.4 }}>
+              {item.description}
+            </Text>
+          )}
           <Flex align="center" gap="2">
             <Badge color={isActive ? 'green' : 'gray'} variant="soft" size="1">
               {isActive ? 'Активна' : 'Неактивна'}
@@ -336,7 +353,7 @@ function IntegrationCard({
           onClick={handleAction}
           style={{ alignSelf: 'flex-start' }}
         >
-          {isActive && item.href ? 'Настроить' : isActive ? 'Настроить' : 'Подключить'}
+          {item.id === 'google' ? (isActive ? 'Настроить' : 'Подключить') : isActive && item.href ? 'Настроить' : isActive ? 'Настроить' : 'Подключить'}
         </Button>
       </Flex>
     </Card>
@@ -354,6 +371,8 @@ function IntegrationCard({
 export default function IntegrationsSettingsPage() {
   // Интеграция, для которой открыто модальное окно выбора области применения
   const [scopeModalItem, setScopeModalItem] = useState<Integration | null>(null)
+  // Открыто ли модальное окно включения/отключения сервисов Google
+  const [googleServicesModalOpen, setGoogleServicesModalOpen] = useState(false)
   // Объект с состоянием активности всех интеграций (ключ - ID интеграции, значение - активна/неактивна)
   const [integrationActive, setIntegrationActiveState] = useState<Record<string, boolean>>({})
   // Выбранная группа интеграций для фильтрации ('all' - все группы)
@@ -447,6 +466,7 @@ export default function IntegrationsSettingsPage() {
               isActive={integrationActive[item.id] ?? item.active}
               onActiveChange={(v) => handleActiveChange(item.id, v)}
               onOpenScopeModal={setScopeModalItem}
+              onOpenGoogleServicesModal={() => setGoogleServicesModalOpen(true)}
             />
           ))}
         </Grid>
@@ -463,6 +483,15 @@ export default function IntegrationsSettingsPage() {
         onOpenChange={(open) => !open && setScopeModalItem(null)}
         integrationId={scopeModalItem?.id ?? ''}
         integrationName={scopeModalItem?.name ?? ''}
+      />
+
+      <GoogleServicesModal
+        open={googleServicesModalOpen}
+        onOpenChange={setGoogleServicesModalOpen}
+        onSave={(state) => {
+          setIntegrationActive('google', state.enabled)
+          setIntegrationActiveState((prev) => ({ ...prev, google: state.enabled }))
+        }}
       />
     </AppLayout>
   )
