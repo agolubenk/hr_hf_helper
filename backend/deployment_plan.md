@@ -1,5 +1,25 @@
 # 🚀 План развертывания миграции
 
+## 📥 Забрать кодовую базу из GitLab в локальную папку
+
+**Источник:** https://gitlab.netx.dev/BobrD/hr.git  
+Код просто клонируется в папку, одноимённую репозиторию (`hr`). Никаких серверов и размещения.
+
+```bash
+# Из корня проекта (fullstack или hrhelper) — забрать код в папку hr
+
+# По HTTPS (для приватного репо понадобится токен при запросе пароля)
+git clone https://gitlab.netx.dev/BobrD/hr.git
+
+# По SSH (удобно для приватных репо — не спрашивает пароль, если ключ добавлен в GitLab)
+git clone git@gitlab.netx.dev:BobrD/hr.git
+
+cd hr
+git checkout main   # или master / develop — при необходимости
+```
+
+**Клонирование по SSH:** один раз добавь SSH-ключ в GitLab (Settings → SSH Keys), затем используй URL `git@gitlab.netx.dev:BobrD/hr.git`. Ключ проверить: `ls -la ~/.ssh/id_*.pub`; если нет — создать: `ssh-keygen -t ed25519 -C "твой@email"`.
+
 ## 📋 Pre-deployment (до развертывания)
 
 ### ✅ Подготовительные работы:

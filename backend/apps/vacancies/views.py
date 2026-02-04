@@ -1,10 +1,12 @@
+import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+from django.http import JsonResponse, HttpResponse
+from django.views.decorators.http import require_POST, require_http_methods
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 from .models import Vacancy
 from apps.finance.models import SalaryRange
@@ -248,14 +250,17 @@ def salary_ranges_list(request):
             salary_ranges = salary_ranges.filter(is_active=False)
     
     salary_ranges = salary_ranges.order_by('-created_at')
-    
+    total_count = salary_ranges.count()
+    active_count = salary_ranges.filter(is_active=True).count()
+    inactive_count = salary_ranges.filter(is_active=False).count()
+
     # Пагинация
     paginator = Paginator(salary_ranges, 10)  # 10 вилок на страницу
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    
+
     from django.utils import timezone
-    
+
     context = {
         'page_obj': page_obj,
         'search_form': search_form,
@@ -263,7 +268,9 @@ def salary_ranges_list(request):
         'vacancy_filter': vacancy_filter,
         'grade_filter': grade_filter,
         'status_filter': status_filter,
-        'total_count': salary_ranges.count(),
+        'total_count': total_count,
+        'active_count': active_count,
+        'inactive_count': inactive_count,
         'page_generated_at': timezone.now()
     }
     
@@ -367,7 +374,7 @@ def salary_range_delete(request, pk):
 def salary_range_toggle_active(request, pk):
     """Переключение статуса активности зарплатной вилки"""
     result = SalaryRangeHandler.toggle_active_logic(pk, request)
-    
+
     if result['success']:
         return ResponseHandler.success_response(
             {'is_active': result['is_active']},
@@ -375,6 +382,98 @@ def salary_range_toggle_active(request, pk):
         )
     else:
         return ResponseHandler.error_response(result['message'])
+
+
+@login_required
+@require_http_methods(['GET'])
+def salary_ranges_export_json(request):
+    """Скачивание всех зарплатных вилок в виде JSON-файла."""
+    from apps.finance.export_import import export_salary_ranges_json
+    data = export_salary_ranges_json()
+    response = HttpResponse(
+        json.dumps(data, ensure_ascii=False, indent=2),
+        content_type='application/json; charset=utf-8'
+    )
+    from django.utils import timezone
+    filename = f'salary_ranges_export_{timezone.now().strftime("%Y%m%d_%H%M")}.json'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
+
+
+@login_required
+@require_http_methods(['POST'])
+def salary_ranges_import_json(request):
+    """Импорт зарплатных вилок из загруженного JSON-файла."""
+    from apps.finance.export_import import import_salary_ranges_json
+
+    if not request.FILES.get('json_file'):
+        messages.error(request, 'Выберите JSON-файл для импорта.')
+        return redirect('vacancies:salary_ranges_list')
+
+    try:
+        raw = request.FILES['json_file'].read().decode('utf-8')
+        data = json.loads(raw)
+    except (UnicodeDecodeError, json.JSONDecodeError) as e:
+        messages.error(request, f'Неверный формат JSON: {e}')
+        return redirect('vacancies:salary_ranges_list')
+
+    created, updated, errors = import_salary_ranges_json(data)
+    if errors:
+        for err in errors[:10]:
+            messages.warning(request, err)
+        if len(errors) > 10:
+            messages.warning(request, f'... и ещё {len(errors) - 10} ошибок.')
+    if created or updated:
+        messages.success(request, f'Импорт завершён: создано {created}, обновлено {updated}.')
+    elif not errors:
+        messages.info(request, 'Нет данных для импорта.')
+    return redirect('vacancies:salary_ranges_list')
+
+
+@login_required
+@require_http_methods(['GET'])
+def vacancies_export_json(request):
+    """Скачивание всех вакансий в виде JSON-файла."""
+    from .export_import import export_vacancies_json
+    data = export_vacancies_json()
+    response = HttpResponse(
+        json.dumps(data, ensure_ascii=False, indent=2),
+        content_type='application/json; charset=utf-8'
+    )
+    from django.utils import timezone
+    filename = f'vacancies_export_{timezone.now().strftime("%Y%m%d_%H%M")}.json'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
+
+
+@login_required
+@require_http_methods(['POST'])
+def vacancies_import_json(request):
+    """Импорт вакансий из загруженного JSON-файла."""
+    from .export_import import import_vacancies_json
+
+    if not request.FILES.get('json_file'):
+        messages.error(request, 'Выберите JSON-файл для импорта.')
+        return redirect('vacancies:vacancy_list')
+
+    try:
+        raw = request.FILES['json_file'].read().decode('utf-8')
+        data = json.loads(raw)
+    except (UnicodeDecodeError, json.JSONDecodeError) as e:
+        messages.error(request, f'Неверный формат JSON: {e}')
+        return redirect('vacancies:vacancy_list')
+
+    created, updated, errors = import_vacancies_json(data)
+    if errors:
+        for err in errors[:10]:
+            messages.warning(request, err)
+        if len(errors) > 10:
+            messages.warning(request, f'... и ещё {len(errors) - 10} ошибок.')
+    if created or updated:
+        messages.success(request, f'Импорт завершён: создано {created}, обновлено {updated}.')
+    elif not errors:
+        messages.info(request, 'Нет данных для импорта.')
+    return redirect('vacancies:vacancy_list')
 
 
 @login_required

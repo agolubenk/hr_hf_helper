@@ -299,6 +299,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:8000",  # Django dev server
     "http://127.0.0.1:8000",
+    "https://hr.sftntx.com",  # Production frontend
+]
+# Запросы из Chrome-расширения (HRHelper LinkedIn → Huntflow); ID может отличаться при загрузке unpacked
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^chrome-extension://[a-z]{32}$",  # стандартный ID расширения
 ]
 
 # Django Allauth настройки

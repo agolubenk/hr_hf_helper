@@ -10,7 +10,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 )
@@ -1558,4 +1558,51 @@ def yearly_hiring_plan_export_excel(request):
     resp['Content-Disposition'] = f'attachment; filename=\"{filename}\"'
     return resp
 
+
+@login_required
+@require_http_methods(['GET'])
+def hiring_requests_export_json(request):
+    """Скачивание заявок и SLA в виде JSON-файла."""
+    from .export_import import export_hiring_requests_json
+    data = export_hiring_requests_json()
+    response = HttpResponse(
+        json.dumps(data, ensure_ascii=False, indent=2),
+        content_type='application/json; charset=utf-8'
+    )
+    filename = f'hiring_requests_export_{timezone.now().strftime("%Y%m%d_%H%M")}.json'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
+
+
+@login_required
+@require_http_methods(['POST'])
+def hiring_requests_import_json(request):
+    """Импорт заявок и SLA из загруженного JSON-файла."""
+    from .export_import import import_hiring_requests_json
+
+    if not request.FILES.get('json_file'):
+        messages.error(request, 'Выберите JSON-файл для импорта.')
+        return redirect('hiring_plan:hiring_requests_list')
+
+    try:
+        raw = request.FILES['json_file'].read().decode('utf-8')
+        data = json.loads(raw)
+    except (UnicodeDecodeError, json.JSONDecodeError) as e:
+        messages.error(request, f'Неверный формат JSON: {e}')
+        return redirect('hiring_plan:hiring_requests_list')
+
+    sla_created, sla_updated, req_created, errors = import_hiring_requests_json(data)
+    if errors:
+        for err in errors[:10]:
+            messages.warning(request, err)
+        if len(errors) > 10:
+            messages.warning(request, f'... и ещё {len(errors) - 10} ошибок.')
+    if sla_created or sla_updated or req_created:
+        messages.success(
+            request,
+            f'Импорт завершён: SLA создано {sla_created}, обновлено {sla_updated}; заявок создано {req_created}.'
+        )
+    elif not errors:
+        messages.info(request, 'Нет данных для импорта.')
+    return redirect('hiring_plan:hiring_requests_list')
 
