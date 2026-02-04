@@ -36280,3 +36280,52 @@ DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'n
 🔍 FILTER: event_start=2026-02-09 16:00:00+03:00, date_start=2026-02-13 00:00:00+03:00, date_end=2026-02-13 23:59:59.999999+03:00[04/Feb/2026 18:08:10] "GET /google-oauth/api/interview-slots/?vacancy_id=1&interviewer_ids=20,14&include_user=1 HTTP/1.1" 200 1802
 [04/Feb/2026 18:14:37] "POST /google-oauth/invites/671/invitation-text/ HTTP/1.1" 200 1888
 [04/Feb/2026 18:14:39] "GET /google-oauth/api/interviewers-autocomplete/?vacancy_id=1&q=talent_softnetix HTTP/1.1" 200 32
+[04/Feb/2026 23:11:23] "GET /vacancies/list/ HTTP/1.1" 200 173040
+[04/Feb/2026 23:11:32] "GET /vacancies/list/ HTTP/1.1" 200 173040
+/Users/agolubenko/hrhelper/fullstack/backend/apps/notion_int/views.py changed, reloading.
+
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-02-10 10:30:00+03:00, date_start=2026-02-13 00:00:00+03:00, date_end=2026-02-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-02-10 11:30:00+03:00, date_start=2026-02-13 00:00:00+03:00, date_end=2026-02-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-02-10 16:00:00+03:00, date_start=2026-02-13 00:00:00+03:00, date_end=2026-02-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-02-10 16:00:00+03:00, date_start=2026-02-13 00:00:00+03:00, date_end=2026-02-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-02-11 08:00:00+03:00, date_start=2026-02-13 00:00:00+03:00, date_end=2026-02-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-02-11 10:00:00+03:00, date_start=2026-02-13 00:00:00+03:00, date_end=2026-02-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-02-11 13:15:00+03:00, date_start=2026-02-13 00:00:00+03:00, date_end=2026-02-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-02-11 16:00:00+03:00, date_start=2026-02-13 00:00:00+03:00, date_end=2026-02-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-02-12 17:00:00+03:00, date_start=2026-02-13 00:00:00+03:00, date_end=2026-02-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-02-13 11:30:00+03:00, date_start=2026-02-13 00:00:00+03:00, date_end=2026-02-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+🔍 FILTER: event_start=2026-02-13 14:30:00+03:00, date_start=2026-02-13 00:00:00+03:00, date_end=2026-02-13 23:59:59.999999+03:00
+🔍 FILTER: event_start.tzinfo=Europe/Minsk, date_start.tzinfo=Europe/Minsk
+📅 День Пт 13.02.2026: 4 встреч, слоты: 15.45-18.00
+📅 Итого дней со слотами в неделе: 5
+📅 API INTERVIEW SLOTS: Рассчитано 8 дней со слотами
+✅ Найдена длительность интервью для вакансии 'Frontend Engineer (React)': 90 минут
+⏱️ Форматирование: Используем длительность интервью: 90 минут
+🔍 API INTERVIEWERS AUTOCOMPLETE: vacancy_id=1, query='talent_softnetix'
+🔍 API INTERVIEWERS AUTOCOMPLETE: Найдено 0 интервьюеров
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+🔍 API запрос: GET https://api.huntflow.ru/v2/accounts
+📥 Ответ API: 200
+📥 Тело ответа: {"items":[{"id":291341,"name":"Softnetix","nick":"softnetix","member_type":"owner","production_calendar":1}]}...
+DEBUG context_processor: accounts_list = [{'id': 291341, 'name': 'Softnetix', 'nick': 'softnetix', 'member_type': 'owner', 'production_calendar': 1}]
+Watching for file changes with StatReloader
+[04/Feb/2026 23:36:52] "GET /reporting/ HTTP/1.1" 200 121609
+[04/Feb/2026 23:36:55] "GET /reporting/ HTTP/1.1" 200 121609
+[04/Feb/2026 23:37:01] "GET /reporting/company/ HTTP/1.1" 200 144209
+[04/Feb/2026 23:37:01] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-02-04&end_date=2026-02-04&recruiter_id=1 HTTP/1.1" 200 664
+[04/Feb/2026 23:37:01] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-02-04&end_date=2026-02-04&recruiter_id=3 HTTP/1.1" 200 820
+[04/Feb/2026 23:37:01] "GET /reporting/api/data/?report_type=company&period=monthly&start_date=2025-02-04&end_date=2026-02-04&recruiter_id=9 HTTP/1.1" 200 1051

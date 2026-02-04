@@ -1605,4 +1605,3 @@ def hiring_requests_import_json(request):
     elif not errors:
         messages.info(request, 'Нет данных для импорта.')
     return redirect('hiring_plan:hiring_requests_list')
-
