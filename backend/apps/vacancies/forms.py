@@ -138,6 +138,9 @@ class VacancyForm(forms.ModelForm):
         
         # Ограничиваем выбор рекрутеров только группой "Рекрутер"
         self.fields['recruiter'].queryset = User.objects.filter(groups__name='Рекрутер')
+        self.fields['additional_recruiter'].queryset = User.objects.filter(groups__name='Рекрутер')
+        self.fields['additional_recruiter'].required = False
+        self.fields['additional_recruiter'].empty_label = 'Не выбран'
         
         # Ограничиваем выбор только активными интервьюерами для обязательных участников
         self.fields['mandatory_tech_interviewers'].queryset = Interviewer.objects.filter(is_active=True)
@@ -160,7 +163,7 @@ class VacancyForm(forms.ModelForm):
     class Meta:
         model = Vacancy
         fields = [
-            'name', 'external_id', 'recruiter', 'technologies', 'tech_interview_duration', 'mandatory_tech_interviewers',
+            'name', 'external_id', 'recruiter', 'additional_recruiter', 'technologies', 'tech_interview_duration', 'mandatory_tech_interviewers',
             'invite_title', 'invite_text', 'tech_invite_title', 'tech_invite_text', 'scorecard_title', 'scorecard_link', 
             'questions_belarus', 'questions_poland', 'vacancy_link_belarus', 'vacancy_link_poland',
             'candidate_update_prompt', 'use_common_prompt', 'screening_duration',
@@ -177,6 +180,9 @@ class VacancyForm(forms.ModelForm):
                 'placeholder': 'Введите ID для связи'
             }),
             'recruiter': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'additional_recruiter': forms.Select(attrs={
                 'class': 'form-select'
             }),
             'technologies': forms.TextInput(attrs={
@@ -269,6 +275,7 @@ class VacancyForm(forms.ModelForm):
             'tech_interview_duration': 'Длительность тех. интервью (минуты)',
             'mandatory_tech_interviewers': 'Обязательные участники тех. интервью',
             'recruiter': 'Ответственный рекрутер',
+            'additional_recruiter': 'Дополнительный рекрутер',
             'invite_title': 'Заголовок инвайтов',
             'invite_text': 'Сопровождающий текст для инвайтов',
             'tech_invite_title': 'Заголовок инвайтов на тех. интервью',
@@ -290,6 +297,7 @@ class VacancyForm(forms.ModelForm):
             'name': 'Название вакансии',
             'external_id': 'Внешний идентификатор для связи с внешними системами',
             'recruiter': 'Рекрутер, ответственный за вакансию',
+            'additional_recruiter': 'Опционально: второй рекрутер по вакансии',
             'invite_title': 'Заголовок для приглашений кандидатов',
             'invite_text': 'Текст сопроводительного письма для приглашений',
             'scorecard_title': 'Заголовок для Scorecard',
@@ -305,6 +313,14 @@ class VacancyForm(forms.ModelForm):
             'interviewers': 'Интервьюеры, привязанные к вакансии',
             'is_active': 'Активна ли вакансия'
         }
+
+    def clean(self):
+        cleaned = super().clean()
+        recruiter = cleaned.get('recruiter')
+        additional_recruiter = cleaned.get('additional_recruiter')
+        if additional_recruiter and recruiter and additional_recruiter.pk == recruiter.pk:
+            self.add_error('additional_recruiter', 'Дополнительный рекрутер не должен совпадать с основным.')
+        return cleaned
     
 class VacancySearchForm(forms.Form):
     """

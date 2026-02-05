@@ -931,6 +931,14 @@ class HiringRequest(models.Model):
     
     # === ЗАМЕТКИ ===
     notes = models.TextField(blank=True, verbose_name='Заметки')
+
+    # === СВЯЗЬ С CLICKUP (ПЛАН НАЙМА) ===
+    clickup_task_id = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name='ID задачи в ClickUp',
+        help_text='ID задачи в ClickUp для связи заявки с планом найма (например, из папки плана найма)'
+    )
     
     # === МЕТАДАННЫЕ ===
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создано')

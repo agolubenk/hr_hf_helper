@@ -1,7 +1,9 @@
 """
 Views для отчетности
 """
-from django.shortcuts import render, get_object_or_404
+import json
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse, HttpResponse
@@ -76,6 +78,48 @@ def parse_date_range(request, period='monthly'):
 def report_dashboard(request):
     """Главная страница отчетности"""
     return render(request, 'reporting/dashboard.html')
+
+
+@login_required
+def export_calendar_events_json(request):
+    """Экспорт событий календаря отчётности в JSON. Существующие при импорте перезаписываются по event_id."""
+    from .export_import import export_calendar_events_json as do_export
+    data = do_export()
+    response = HttpResponse(json.dumps(data, ensure_ascii=False, indent=2), content_type='application/json; charset=utf-8')
+    response['Content-Disposition'] = 'attachment; filename="reporting_calendar_events.json"'
+    return response
+
+
+@login_required
+def import_calendar_events_json(request):
+    """Импорт событий календаря из JSON. Существующие записи перезаписываются по event_id."""
+    from .export_import import import_calendar_events_json as do_import
+    if request.method != 'POST':
+        messages.error(request, 'Неверный метод запроса.')
+        return redirect('reporting:dashboard')
+    data = None
+    if request.FILES.get('json_file'):
+        try:
+            raw = request.FILES['json_file'].read().decode('utf-8')
+            data = json.loads(raw)
+        except (UnicodeDecodeError, json.JSONDecodeError) as e:
+            messages.error(request, f'Ошибка чтения JSON: {e}')
+            return redirect('reporting:dashboard')
+    elif request.POST.get('json_data'):
+        try:
+            data = json.loads(request.POST['json_data'])
+        except json.JSONDecodeError as e:
+            messages.error(request, f'Ошибка формата JSON: {e}')
+            return redirect('reporting:dashboard')
+    if not data:
+        messages.error(request, 'Загрузите JSON-файл или вставьте JSON в поле.')
+        return redirect('reporting:dashboard')
+    created, updated, errors = do_import(data)
+    if errors:
+        messages.warning(request, f'Импорт завершён с ошибками: создано {created}, обновлено {updated}. Ошибки: {"; ".join(errors[:5])}{"..." if len(errors) > 5 else ""}.')
+    else:
+        messages.success(request, f'Импорт завершён: создано {created}, обновлено {updated}.')
+    return redirect('reporting:dashboard')
 
 
 @login_required

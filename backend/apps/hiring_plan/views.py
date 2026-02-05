@@ -563,6 +563,59 @@ class HiringRequestDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'hiring_request'
 
 
+def _fetch_clickup_task_into_notes(hiring_request, request):
+    """Если у заявки указан clickup_task_id и у пользователя есть API-ключ, подтягивает данные задачи в заметки."""
+    import logging
+    import re
+    raw = (hiring_request.clickup_task_id or '').strip()
+    task_id = raw
+    # Извлекаем ID из URL, если вставлена ссылка (например https://app.clickup.com/t/86c7y88xk)
+    if task_id and ('clickup.com' in task_id or '/t/' in task_id):
+        m = re.search(r'/t/([a-zA-Z0-9_-]+)', task_id)
+        if m:
+            task_id = m.group(1)
+            if task_id != raw:
+                hiring_request.clickup_task_id = task_id
+                hiring_request.save(update_fields=['clickup_task_id'])
+    if not task_id:
+        return
+    api_key = getattr(request.user, 'clickup_api_key', None) or ''
+    if not (api_key and api_key.strip()):
+        messages.warning(
+            request,
+            'Укажите API-токен ClickUp в профиле, чтобы подгружать данные задачи в заметки.'
+        )
+        return
+    try:
+        from apps.clickup_int.services import ClickUpService, ClickUpAPIError
+        from apps.clickup_int.hiring_plan_sync import format_clickup_task_for_notes
+        service = ClickUpService(api_key.strip())
+        task_data = service.get_task(task_id)
+        if task_data:
+            new_block = format_clickup_task_for_notes(task_data)
+            current_notes = hiring_request.notes or ''
+            marker_start = "--- Данные из ClickUp"
+            marker_end = "--- Конец данных ClickUp ---"
+            if marker_start in current_notes and marker_end in current_notes:
+                start_i = current_notes.find(marker_start)
+                end_i = current_notes.find(marker_end) + len(marker_end)
+                before = current_notes[:start_i].rstrip()
+                after = current_notes[end_i:].lstrip()
+                hiring_request.notes = "\n\n".join(filter(None, [before, new_block, after]))
+            else:
+                hiring_request.notes = (current_notes.rstrip() + "\n\n" + new_block).strip()
+            hiring_request.save(update_fields=['notes'])
+            messages.info(request, 'Данные из задачи ClickUp добавлены в заметки.')
+        else:
+            messages.warning(request, 'Задача в ClickUp не найдена. Проверьте ID задачи.')
+    except ClickUpAPIError as e:
+        logging.getLogger(__name__).warning('ClickUp при подтягивании в заметки: %s', e)
+        messages.warning(request, f'ClickUp: {str(e)}')
+    except Exception as e:
+        logging.getLogger(__name__).exception('Ошибка подтягивания данных ClickUp в заметки')
+        messages.warning(request, f'Не удалось загрузить данные из ClickUp: {str(e)}')
+
+
 class HiringRequestCreateView(LoginRequiredMixin, CreateView):
     """Создание заявки"""
     model = HiringRequest
@@ -582,6 +635,9 @@ class HiringRequestCreateView(LoginRequiredMixin, CreateView):
         
         # Синхронизируем рекрутера с вакансией
         self.object.sync_recruiter_with_vacancy()
+        
+        # Подтягиваем данные из задачи ClickUp в заметки, если указан clickup_task_id
+        _fetch_clickup_task_into_notes(self.object, self.request)
         
         # Если есть candidate_id, пытаемся получить данные кандидата из Huntflow
         if self.object.candidate_id:
@@ -676,6 +732,9 @@ class HiringRequestUpdateView(LoginRequiredMixin, UpdateView):
                     messages.info(self.request, 'Данные кандидата проверены в Huntflow, но новых данных не найдено')
             else:
                 messages.warning(self.request, 'Не удалось получить данные кандидата из Huntflow. Проверьте ID кандидата.')
+
+        # Если указана связь с задачей ClickUp — подтягиваем данные задачи в заметки
+        _fetch_clickup_task_into_notes(self.object, self.request)
         
         messages.success(self.request, f'Заявка "{self.object}" успешно обновлена!')
         return response

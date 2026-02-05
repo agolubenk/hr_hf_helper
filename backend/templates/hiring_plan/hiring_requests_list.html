@@ -562,6 +562,13 @@
                                            class="btn btn-outline-warning" title="Редактировать">
                                             <i class="fas fa-edit"></i>
                                         </a>
+                                        {% if request.clickup_task_id %}
+                                        <a href="https://app.clickup.com/t/{{ request.clickup_task_id }}" 
+                                           target="_blank" rel="noopener"
+                                           class="btn btn-outline-info" title="Задача в ClickUp">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>

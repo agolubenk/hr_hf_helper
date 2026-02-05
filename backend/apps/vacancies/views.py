@@ -489,8 +489,8 @@ def update_scorecards(request, pk):
         # Получаем вакансию
         vacancy = get_object_or_404(Vacancy, pk=pk)
         
-        # Проверяем права доступа
-        if not (request.user == vacancy.recruiter or request.user.is_superuser):
+        # Проверяем права доступа (основной или дополнительный рекрутер, либо суперпользователь)
+        if not (request.user == vacancy.recruiter or request.user == vacancy.additional_recruiter or request.user.is_superuser):
             return JsonResponse({
                 'success': False,
                 'message': 'Недостаточно прав для обновления скоркардов'
@@ -910,8 +910,8 @@ def get_upcoming_interviews(request, pk):
         # Получаем вакансию
         vacancy = get_object_or_404(Vacancy, pk=pk)
         
-        # Проверяем права доступа
-        if not (request.user == vacancy.recruiter or request.user.is_superuser):
+        # Проверяем права доступа (основной или дополнительный рекрутер, либо суперпользователь)
+        if not (request.user == vacancy.recruiter or request.user == vacancy.additional_recruiter or request.user.is_superuser):
             return JsonResponse({
                 'success': False,
                 'message': 'Недостаточно прав для просмотра предстоящих интервью'

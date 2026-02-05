@@ -18,6 +18,11 @@
                         <a href="{% url 'hiring_plan:hiring_request_update' hiring_request.pk %}" class="btn btn-primary">
                             <i class="fas fa-edit me-2"></i>Редактировать
                         </a>
+                        {% if hiring_request.clickup_task_id %}
+                        <a href="https://app.clickup.com/t/{{ hiring_request.clickup_task_id }}" target="_blank" rel="noopener" class="btn btn-outline-info">
+                            <i class="fas fa-external-link-alt me-2"></i>Задача в ClickUp
+                        </a>
+                        {% endif %}
                         <a href="{% url 'hiring_plan:hiring_requests_list' %}" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left me-2"></i>К списку заявок
                         </a>
@@ -69,6 +74,16 @@
                                                 {% endif %}
                                             {% else %}
                                                 <span class="text-muted">Не назначен</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Задача в ClickUp:</strong></td>
+                                        <td>
+                                            {% if hiring_request.clickup_task_id %}
+                                                <a href="https://app.clickup.com/t/{{ hiring_request.clickup_task_id }}" target="_blank" rel="noopener"><code>{{ hiring_request.clickup_task_id }}</code> <i class="fas fa-external-link-alt small"></i></a>
+                                            {% else %}
+                                                <span class="text-muted">Не привязана</span> — укажите ID в <a href="{% url 'hiring_plan:hiring_request_update' hiring_request.pk %}">редактировании</a>
                                             {% endif %}
                                         </td>
                                     </tr>

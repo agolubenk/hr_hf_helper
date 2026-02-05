@@ -8,6 +8,8 @@ app_name = 'reporting'
 
 urlpatterns = [
     path('', views.report_dashboard, name='dashboard'),
+    path('export-events-json/', views.export_calendar_events_json, name='export_calendar_events_json'),
+    path('import-events-json/', views.import_calendar_events_json, name='import_calendar_events_json'),
     path('company/', views.company_report, name='company_report'),
     path('company/export/', views.export_company_report_excel, name='export_company_report_excel'),
     path('recruiters/summary/', views.recruiters_summary_report, name='recruiters_summary_report'),

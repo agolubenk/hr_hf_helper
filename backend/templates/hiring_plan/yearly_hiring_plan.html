@@ -668,6 +668,12 @@
                                         </span>
                                         <i class="fas fa-external-link-alt external-icon"></i>
                                     </a>
+                                    {% if row.request.clickup_task_id %}
+                                    <a href="https://app.clickup.com/t/{{ row.request.clickup_task_id }}" 
+                                       target="_blank" rel="noopener" class="ms-1" title="Задача в ClickUp">
+                                        <i class="fas fa-tasks text-info"></i>
+                                    </a>
+                                    {% endif %}
                                 </td>
                                 <td>{{ row.grade|grade_short }}</td>
                                 <td>{{ row.project }}</td>

@@ -7,15 +7,68 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
                 <h2 class="mb-0">
                     <i class="fas fa-chart-bar me-2"></i>
                     Отчетность
                 </h2>
-                <button id="syncBtn" class="btn btn-primary" onclick="syncCalendarEvents()">
-                    <i class="fas fa-sync-alt me-2"></i>
-                    Синхронизировать события
-                </button>
+                <div class="d-flex flex-wrap gap-2">
+                    <button id="syncBtn" class="btn btn-primary" onclick="syncCalendarEvents()">
+                        <i class="fas fa-sync-alt me-2"></i>
+                        Синхронизировать события
+                    </button>
+                </div>
+            </div>
+
+            <!-- Блок импорт/экспорт -->
+            <div class="card mb-4 border-secondary">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-file-export me-2"></i>
+                        Импорт и экспорт данных
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small mb-3">События календаря отчётности можно выгрузить в JSON или загрузить из ранее экспортированного файла. При импорте существующие записи обновляются по <code>event_id</code>.</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{% url 'reporting:export_calendar_events_json' %}" class="btn btn-success" title="Скачать все события календаря в JSON">
+                            <i class="fas fa-download me-1"></i>Экспорт в JSON
+                        </a>
+                        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#importReportingJsonModal" title="Загрузить события календаря из JSON">
+                            <i class="fas fa-upload me-1"></i>Импорт из JSON
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Модальное окно импорта событий календаря -->
+            <div class="modal fade" id="importReportingJsonModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><i class="fas fa-upload me-2"></i>Импорт событий календаря из JSON</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form method="post" action="{% url 'reporting:import_calendar_events_json' %}" enctype="multipart/form-data" id="importReportingJsonForm">
+                            {% csrf_token %}
+                            <div class="modal-body">
+                                <p class="text-muted small mb-3">При импорте существующие записи перезаписываются по <code>event_id</code>. Рекрутеры — по <code>username</code>, вакансии — по <code>external_id</code>. Укажите файл <strong>или</strong> вставьте JSON с ключом <code>calendar_events</code>.</p>
+                                <div class="mb-3">
+                                    <label for="id_reporting_json_file" class="form-label">Файл JSON</label>
+                                    <input type="file" name="json_file" id="id_reporting_json_file" class="form-control" accept=".json,application/json">
+                                </div>
+                                <div class="mb-0">
+                                    <label for="id_reporting_json_data" class="form-label">Или вставьте JSON</label>
+                                    <textarea name="json_data" id="id_reporting_json_data" class="form-control font-monospace small" rows="6" placeholder='{"calendar_events": [...], "version": 1}'></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                <button type="submit" class="btn btn-primary" id="importReportingSubmitBtn"><i class="fas fa-upload me-1"></i>Загрузить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
             <div id="syncStatus" class="alert alert-info d-none" role="alert"></div>
         </div>
@@ -92,6 +145,22 @@
 
 {% block extra_js %}
 <script>
+(function() {
+    var form = document.getElementById('importReportingJsonForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            var fileInput = document.getElementById('id_reporting_json_file');
+            var textarea = document.getElementById('id_reporting_json_data');
+            var hasFile = fileInput && fileInput.files && fileInput.files.length > 0;
+            var hasText = textarea && textarea.value && textarea.value.trim().length > 0;
+            if (!hasFile && !hasText) {
+                e.preventDefault();
+                alert('Укажите файл JSON или вставьте JSON в поле.');
+                return false;
+            }
+        });
+    }
+})();
 function syncCalendarEvents() {
     const btn = document.getElementById('syncBtn');
     const status = document.getElementById('syncStatus');

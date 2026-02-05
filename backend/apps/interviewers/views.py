@@ -13,8 +13,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+from django.http import JsonResponse, HttpResponse
+from django.views.decorators.http import require_POST, require_http_methods
+from django.utils import timezone
+import json
 
 from .models import Interviewer, InterviewRule
 from .forms import InterviewerForm, InterviewerSearchForm, InterviewRuleForm, InterviewRuleSearchForm
@@ -364,3 +366,102 @@ def auto_fill_all_calendars(request):
     result = CalendarHandler.auto_fill_all_calendars_logic(request.user)
     
     return JsonResponse(result)
+
+
+def _interviewers_to_export_data(queryset):
+    """Сериализация интервьюеров для экспорта в JSON."""
+    return [
+        {
+            'first_name': o.first_name,
+            'last_name': o.last_name,
+            'middle_name': o.middle_name or '',
+            'email': o.email,
+            'calendar_link': o.calendar_link or '',
+            'is_active': o.is_active,
+        }
+        for o in queryset
+    ]
+
+
+@login_required
+@require_http_methods(['GET'])
+def export_interviewers_json(request):
+    """Экспорт списка интервьюеров в JSON-файл."""
+    interviewers = Interviewer.objects.all().order_by('last_name', 'first_name')
+    data = {'interviewers': _interviewers_to_export_data(interviewers), 'exported_at': timezone.now().isoformat()}
+    response = HttpResponse(
+        json.dumps(data, ensure_ascii=False, indent=2),
+        content_type='application/json; charset=utf-8',
+    )
+    response['Content-Disposition'] = 'attachment; filename="interviewers.json"'
+    return response
+
+
+@login_required
+@require_http_methods(['POST'])
+def import_interviewers_json(request):
+    """Импорт интервьюеров из JSON-файла. По email: обновление существующих, иначе создание."""
+    file_obj = request.FILES.get('file')
+    if not file_obj:
+        messages.error(request, 'Файл не выбран.')
+        return redirect('interviewers:interviewer_list')
+    try:
+        raw = file_obj.read().decode('utf-8')
+    except UnicodeDecodeError:
+        try:
+            raw = file_obj.read().decode('cp1251')
+        except Exception:
+            messages.error(request, 'Недопустимая кодировка файла. Используйте UTF-8.')
+            return redirect('interviewers:interviewer_list')
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError as e:
+        messages.error(request, f'Ошибка формата JSON: {e}')
+        return redirect('interviewers:interviewer_list')
+    if isinstance(data, list):
+        items = data
+    elif isinstance(data, dict) and 'interviewers' in data:
+        items = data['interviewers']
+    else:
+        messages.error(request, 'В файле ожидается массив интервьюеров или объект с ключом "interviewers".')
+        return redirect('interviewers:interviewer_list')
+    created, updated, errors = 0, 0, []
+    for i, item in enumerate(items):
+        if not isinstance(item, dict):
+            errors.append(f'Строка {i + 1}: не объект')
+            continue
+        email = (item.get('email') or '').strip()
+        if not email:
+            errors.append(f'Строка {i + 1}: не указан email')
+            continue
+        first_name = (item.get('first_name') or '').strip() or '—'
+        last_name = (item.get('last_name') or '').strip() or '—'
+        middle_name = (item.get('middle_name') or '').strip()
+        calendar_link = (item.get('calendar_link') or '').strip()
+        is_active = item.get('is_active', True)
+        if isinstance(is_active, str):
+            is_active = is_active.lower() in ('1', 'true', 'yes', 'да')
+        try:
+            obj, was_created = Interviewer.objects.update_or_create(
+                email=email,
+                defaults={
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'middle_name': middle_name,
+                    'calendar_link': calendar_link,
+                    'is_active': bool(is_active),
+                },
+            )
+            if was_created:
+                created += 1
+            else:
+                updated += 1
+        except Exception as e:
+            errors.append(f'{email}: {e}')
+    if errors:
+        messages.warning(request, f'Импорт завершён с ошибками: {"; ".join(errors[:5])}{"…" if len(errors) > 5 else ""}')
+    if created or updated:
+        messages.success(request, f'Импорт: создано {created}, обновлено {updated}.')
+    elif not errors:
+        messages.info(request, 'Нет данных для импорта.')
+    return redirect('interviewers:interviewer_list')
